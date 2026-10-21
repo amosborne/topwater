@@ -194,6 +194,68 @@ a claimed runtime speedup. The compared energy matrices are bit-for-bit identica
 The buffer byte report describes `V` after factorization and the final energy
 buffer; hypersingular and energy storage are no longer distinct allocations.
 
+## Conforming quadratic comparison
+
+The separate `quadratic` experiment compares a continuous P2 potential with the
+existing P1 method at equal global trace and free-surface node counts. Each edge
+has one shared midpoint. The auxiliary flux is discontinuous P1: the curl of a
+P2 trace is linear on each flat triangle, so averaging it into P0 would discard
+part of the represented field. The mixed half-jump mass is integrated exactly.
+The same energy construction, wall elimination and consistent surface mass
+produce the flat Dirichlet-to-Neumann operator; no additional public backend or
+simulation interface is introduced.
+
+| Method | Faces / auxiliary flux DOFs | Global / surface trace DOFs | Axial / oblique continuous velocity error | Five-period elevation error |
+| --- | ---: | ---: | ---: | ---: |
+| P1 | 1280 / 1280 | 642 / 153 | 6.07% / 7.95% | 6.31% |
+| P2 | 320 / 960 | 642 / 153 | 4.22% / 5.83% | 3.02% |
+| P1 | 5120 / 5120 | 2562 / 561 | 1.71% / 2.29% | 1.46% |
+| P2 | 1280 / 3840 | 2562 / 561 | 1.18% / 1.40% | 0.431% |
+
+Errors compare continuous fields over the entire surface with independent
+analytic tank modes. Evolution uses the actual frozen-flat BEM operator and RK23
+for five periods, with `rtol=1e-9`, rather than substituting analytic eigenvalues.
+Equal trace sizes do not mean equal auxiliary matrix sizes. The P2 results still
+fail a one-percent whole-velocity-field criterion.
+
+On the development host described above, fresh workers with empty compilation
+caches and one BLAS thread measured the complete five-period verification path:
+
+| Method / surface DOFs | Empty-cache first call | Five-run warm median | Fresh-worker peak RSS |
+| --- | ---: | ---: | ---: |
+| P1 / 153 | 3.70 s | 2.14 s | 200 MiB |
+| P2 / 153 | 3.64 s | 1.22 s | 198 MiB |
+| P1 / 561 | 40.70 s | 40.42 s | 819 MiB |
+| P2 / 561 | 21.59 s | 19.38 s | 620 MiB |
+
+These timings include geometry, assembly, wall elimination, diagnostics and
+time integration. They exclude imports and are not nonlinear timestep timings.
+The reports retain raw samples, matrix-buffer bytes and thread information.
+
+Source-moment tests use two canonical-canoe triangles and independent quadrature
+from near to far, radial self integration and both polynomial trace limits.
+The analytic recurrence switches to eighth-order source quadrature beyond eight
+triangle diameters to avoid far-field cancellation. This fixed switch is not a
+tolerance-controlled general integration policy. The full energy matrix of all
+eight harmonic polynomials of degrees one and two is checked against independent
+volume integration. Increasing target quadrature from order three to six reduces
+its coarse P2 error from 0.0405% to 0.00301%.
+
+```powershell
+uv run --locked python -m tests.experiments.free_surface.quadratic --fine
+uv run --locked python -m tests.experiments.free_surface.benchmark --quadratic --fine
+```
+
+The standalone comparison writes `free-surface-p2-comparison.json`. CI retains
+`free-surface-benchmark-quadratic.json`, including the first call's full physical
+report for each case, separately from the nonlinear P1 reports. It avoids rerunning
+the standalone comparison because the benchmark already computes those cases.
+Every P2 comparison remains `qualified=false`. Curved P2 surface geometry,
+singular integration on that geometry, moving-waterline state transfer and P2
+body coupling are unimplemented. Their correctness and full-path cost must be
+established before choosing this representation for the simulator. Existing
+Capytaine checks exercise the earlier body solvers; they do not validate P2 waves.
+
 ## Evidence and limits
 
 With 460 wetted canoe triangles, increasing outer horizontal resolution from

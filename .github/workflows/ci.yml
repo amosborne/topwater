@@ -91,3 +91,22 @@ jobs:
           name: experimental-free-surface-reports
           path: artifacts/free-surface-*.json
           if-no-files-found: warn
+
+  experimental-quadratic:
+    name: Experimental P2 Galerkin waves (not qualification)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: '0.12.10'
+          python-version: '3.12'
+          enable-cache: true
+      - run: uv sync --locked
+      - run: uv run --locked python -m tests.experiments.free_surface.benchmark --quadratic --fine
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: experimental-p2-reports
+          path: artifacts/free-surface-benchmark-quadratic.json
+          if-no-files-found: warn
