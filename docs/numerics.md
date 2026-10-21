@@ -149,14 +149,75 @@ at 128/512/2048 panels are `0.290`, `0.190`, `0.125`, with declared `Phi=1` and
 `L=3.5`. At 2048 panels the all-Neumann potential error is `0.00717`, but its bulk
 velocity error is `0.0259`. Algebraic backward errors are small in both cases;
 they do not excuse those field errors. Source fields also expose insufficient
-flux recovery. The all-Neumann bounded point-source test still needs independent
-panel-average flux, and surface velocity recovery is not implemented.
+flux recovery. The all-Neumann bounded point-source test now uses independently
+integrated panel-average flux; surface velocity recovery is not implemented.
 
 Constant panels are therefore a verified kernel and algebraic prototype, not a
 qualified wave-solver discretization. The next method decision must improve
 nonlinear harmonic and point-source fields, near-rim behavior and off-boundary
 velocity at matched complete cost. Exact reproduction of a polynomial used to
 construct a method is insufficient. Stage 1 remains open.
+
+### Instantaneous flat-water fluid inertia
+
+At startup from rest with a flat surface, atmospheric Bernoulli gives the
+acceleration potential `psi=phi_t=0` on that surface. The same spatial problem
+is the infinite-frequency linear limit. Eliminate the plane exactly with
+`G_D(x,y)=G(x,y)-G(R(x),y)`, where `R` reflects the target across the water level.
+This is the reflected Rankine limit in
+[Capytaine's infinite-depth Green function](https://capytaine.org/v3.0.0/theory_manual/inf_depth_green_function.html).
+It introduces no finite-domain boundary, wave-frequency table or reflected
+geometry cache. `assemble_dirichlet_halfspace` reuses the existing kernel and
+cached source panels with bounded target-block scratch.
+
+The smooth image self term remains on `K`'s diagonal. It is not the trace jump;
+`H=K+.5I` still adds that jump exactly once. `BoundarySystem` now computes the
+actual `||H||_1` during its tiled factor-buffer fill, including this diagonal.
+
+For physical wetted panels with fluid normals, define each row of
+`Q=[n, (x-reference) cross n]`. The six simultaneous auxiliary solves give
+`H*Psi=S*Q`. Pressure then gives `A=rho*Q.T*diag(area)*Psi` and fluid reaction
+`-A*acceleration`. Rows and columns are world translations followed by rotations
+about the stated reference. `instantaneous_added_mass` returns the raw matrix
+without symmetrization, auxiliary potentials and conditioning/reciprocity/energy
+diagnostics. Its diagnostic normalization length is the recorded maximum wetted
+world-axis extent; it can change under yaw. No separate inertia load is added on
+top of the same dynamic pressure in a future coupled calculation.
+
+Independent checks include target versus source reflection, rationalized
+image-kernel quadrature near the waterline, the smooth self diagonal and single
+jump, source-plus-mirror bulk convergence, zero plane potential/tangential
+gradient, yaw/translation covariance, density scaling and moment-reference
+transformations. The bulk-gradient reflection includes its vertical chain-rule
+sign, not just a difference of gradient arrays.
+
+Capytaine 3.0.0's independent indirect radiation solve at `omega=inf` checks the
+complete six-motion matrix on 140/460/1644 identical physical wetted triangles,
+with the same CG, density and water depth. This uses the predeclared added-mass
+normalization and 5% plus family-floor comparison above. Fine-mesh diagonal
+differences are below 2%; reciprocity and positive energy are checked separately.
+The infinite-frequency limit cancels frequency factors as described in
+[Capytaine's force conventions](https://capytaine.org/v3.0.0/theory_manual/theory.html).
+Both solvers' raw matrices are retained in CI artifacts. Exact coordinate
+deduplication supplies shared reference-mesh indices without moving any triangle.
+
+**Same-mesh correlation is not continuous-hull convergence.** The heave entries
+are `293.91/285.76/281.47 kg` in Topwater and `297.62/288.84/283.11 kg` in Capytaine
+over those three refinements. Some other modes still change by more than 1%.
+This qualifies neither a mesh-independent inertia value nor finite-frequency
+radiation, damping, excitation, evolving-surface coupling or the broader boundary
+field gate. This flat-plane calculation is verification/initialization, not a
+fixed-coefficient replacement for the nonlinear fluid solve.
+
+`uv run --locked python -m tests.benchmark_inertia` times heave equilibrium,
+clipping, numerical-panel construction, image assembly, one LU, six RHS and
+matrix integration together. On the development Windows host with one BLAS
+thread, warm medians at 140/460/1644 wetted panels were `0.0082/0.0529/0.7240 s`;
+peak process RSS was `202/207/268 MiB`. At 1644 panels, assembly took `0.582 s`,
+factor setup `0.117 s`, and six RHS `0.0147 s`; operators/factors occupy
+`41.2/20.6 MiB`. First full calls with empty JIT caches took `7.45/7.54/8.15 s`.
+Reports retain all five warm samples, first-call stages, actual library threads
+and memory. These are initialization costs, not timestep timings.
 
 ## Interfaces, controls and cost
 
@@ -343,8 +404,9 @@ At 2048 panels, 651954 of 4194304 pairs fall in the checked analytic region;
 maximum converted S/K differences are `4.4e-17`/`6.5e-15`. Every source panel has
 nonself coverage. The largest disagreements outside that region are checked
 separately against independent quadrature, without weakening Topwater's gate.
-These checks establish neither boundary-solve accuracy nor hydrodynamic force
-correlation; added mass, damping and wave excitation remain future work.
+These kernel checks establish neither boundary-solve accuracy nor hydrodynamic
+force correlation. Instantaneous added mass is compared separately above;
+finite-frequency added mass, damping and wave excitation remain future work.
 
 Independent calm-water hydrostatics now clips the original physical hull, never
 its artificial cap. Exact triangle pressure and moment integration is checked

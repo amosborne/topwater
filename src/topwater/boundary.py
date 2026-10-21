@@ -24,20 +24,22 @@ _blas = ThreadpoolController()
 
 @njit(cache=True, nogil=True)
 def _fill_mixed_matrix(single, double, dirichlet, length, matrix):
-    """Tile C-order operators into the one Fortran-order factor buffer."""
+    """Fill the factor buffer and compute ||K+.5I||_1 in the same tiled pass."""
     n = len(single)
+    columns = np.zeros(n)
     for first in range(0, n, 16):
         for start in range(0, n, 16):
             for col in range(start, min(start+16, n)):
                 if dirichlet[col]:
                     for row in range(first, min(first+16, n)):
                         matrix[row, col] = -single[row, col]/length
+                        columns[col] += abs(double[row, col]+(.5 if row == col else 0.))
                 else:
                     for row in range(first, min(first+16, n)):
-                        matrix[row, col] = double[row, col]
-    for j in range(n):
-        if not dirichlet[j]:
-            matrix[j, j] += .5
+                        value = double[row, col]+(.5 if row == col else 0.)
+                        matrix[row, col] = value
+                        columns[col] += abs(value)
+    return np.max(columns)
 
 
 @dataclass(frozen=True, eq=False)
@@ -104,8 +106,6 @@ class BoundarySystem:
             or factorization_threads < 1
         ):
             raise ValueError("factorization_threads must be a positive integer or None")
-        if np.any(np.diag(operators.double_layer) != 0):
-            raise ValueError("flat-panel principal-value K must have zero diagonal")
         if factorization_threads is not None:
             factorization_threads = int(factorization_threads)
         weights = areas/areas.sum()
@@ -120,7 +120,7 @@ class BoundarySystem:
         size = n+int(self._bordered)
         # One Fortran-order system buffer becomes its LU factors in place.
         matrix = np.empty((size, size), order="F")
-        _fill_mixed_matrix(operators.single_layer, operators.double_layer, mask, length, matrix)
+        h_norm = _fill_mixed_matrix(operators.single_layer, operators.double_layer, mask, length, matrix)
         if self._bordered:
             matrix[:n, n] = 1
             matrix[n, :n] = self._weights
@@ -142,8 +142,8 @@ class BoundarySystem:
         object.__setattr__(self, '_pivots', pivots)
         # Transposed C-order operators are already Fortran views. The infinity
         # norm of that view is the original 1-norm, without copies/abs matrices.
-        # K has zero self diagonal; hence ||H||_1 = .5 + ||K||_1.
-        h_norm = .5+dlange('I', operators.double_layer.T)
+        # H's actual norm was accumulated while filling the factor buffer.
+        # A smooth image contribution can give principal-value K a diagonal.
         s_norm = dlange('I', operators.single_layer.T)/length
         object.__setattr__(self, '_h_norm', h_norm)
         object.__setattr__(self, '_s_norm', s_norm)

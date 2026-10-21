@@ -9,6 +9,7 @@ import numpy as np
 
 from .numerics import DenseOperatorPlan, LaplaceControls
 from .rankine import TrianglePanels, _evaluate_block
+from ._validation import array
 
 
 @dataclass(frozen=True, eq=False)
@@ -84,6 +85,27 @@ def assemble_laplace(panels, *, controls=None):
     actual thread/library metadata are collected by the fresh-process benchmark,
     not inferred from allocated operator sizes here.
     """
+    return _assemble(panels, controls, None)
+
+
+def assemble_dirichlet_halfspace(panels, *, water_level=0., controls=None):
+    """Assemble G(x,y)-G(reflect(x),y) for water below a flat zero-potential plane.
+
+    The plane is eliminated exactly by reflection; only physical wetted panels
+    enter the matrices. Fluid normals are retained. K includes the smooth image
+    self contribution, excludes the half jump, and need not have zero diagonal.
+    This is the instantaneous acceleration-potential problem at calm startup,
+    not a finite-frequency wave Green function or an evolving free surface.
+    """
+    level = array(water_level, (), 'water_level').item()
+    if not isinstance(panels, TrianglePanels):
+        raise ValueError('panels must be cached TrianglePanels')
+    if np.any(panels.triangles[:, :, 2] > level) or np.any(panels.centroids[:, 2] >= level):
+        raise ValueError('half-space panels must lie below the water plane')
+    return _assemble(panels, controls, level)
+
+
+def _assemble(panels, controls, level):
     if not isinstance(panels, TrianglePanels):
         raise ValueError("panels must be cached TrianglePanels")
     controls = LaplaceControls() if controls is None else controls
@@ -99,6 +121,15 @@ def assemble_laplace(panels, *, controls=None):
                                  outputs=(single[first:last], double[first:last]))
         fallback_pairs += result.fallback_pairs
         evaluations += result.quadrature_evaluations
+        if level is not None:
+            reflected = panels.centroids[first:last].copy()
+            reflected[:, 2] = 2*level-reflected[:, 2]
+            image = _evaluate_block(reflected, panels, controls=controls)
+            single[first:last] -= image.single_layer
+            double[first:last] -= image.double_layer
+            fallback_pairs += image.fallback_pairs
+            evaluations += image.quadrature_evaluations
+            del image
     elapsed = perf_counter()-start
     single.setflags(write=False)
     double.setflags(write=False)
@@ -108,5 +139,8 @@ def assemble_laplace(panels, *, controls=None):
         target_block_size=plan.block_rows, assembly_seconds=elapsed,
         fallback_pairs=fallback_pairs, quadrature_evaluations=evaluations,
         controls=asdict(controls), estimated_error_max=None, peak_rss_bytes=None,
+        green_function='rankine' if level is None else 'dirichlet_halfspace',
     )
+    if level is not None:
+        metadata['water_level'] = level
     return LaplaceOperators(single, double, metadata)

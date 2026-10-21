@@ -4,7 +4,7 @@
 
 Topwater is a planned open-source, three-dimensional time-domain potential-flow solver for freely floating bodies in directional waves. The initial target is one rigid boat with six free motions, an evolving free surface and changing wetted hull geometry, explicit viscous damping, and an external force and torque interface.
 
-**Status: calm-water hydrostatics, verified Laplace kernels and prototype boundary solves. The boundary
+**Status: calm-water hydrostatics, instantaneous fluid inertia, verified Laplace kernels and prototype boundary solves. The boundary
 field-accuracy gate remains unmet. Wave evolution and body dynamics are not implemented.**
 
 ## Approach
@@ -12,7 +12,7 @@ field-accuracy gate remains unmet. Wave evolution and body dynamics are not impl
 Solve incompressible, inviscid, irrotational water flow using boundary elements on the wetted hull and surrounding free surface. Couple pressure and body acceleration consistently, so buoyancy, wave excitation, diffraction, radiation and added-mass effects emerge from the fluid solution rather than being added from fixed coefficient tables.
 
 Use NumPy/SciPy arrays and linear algebra, with a compiled Numba panel kernel.
-Existing Capytaine results will supply independent linear benchmarks.
+Capytaine supplies independent hydrostatic and instantaneous added-mass benchmarks.
 
 The initial scope is a single rigid body in deep water, with reproducible directional wave realizations and no anchor or mooring forces. Viscous damping remains an explicit model requiring sensitivity analysis or calibration. Breaking/overturning waves, resolved slamming jets, flooding, propulsion and multiple bodies are outside the initial scope. Free yaw does not guarantee a settled heading.
 
@@ -21,7 +21,7 @@ The initial scope is a single rigid body in deep water, with reproducible direct
 ![Canonical canoe mesh at computed buoyancy equilibrium in flat water](docs/images/reference-hull.png)
 
 One canonical single-person canoe supplies the shared geometry and loading for
-tests and future Capytaine comparisons. It is an open lower half-ellipsoid,
+tests and Capytaine comparisons. It is an open lower half-ellipsoid,
 **3.5 m long, 0.9 m wide and 0.35 m deep**, with its rim at body `z = 0`.
 An explicitly marked artificial cap closes the test mesh; the image omits it
 to show the opening. That cap is not a watertight deck. The image shows the
@@ -139,6 +139,35 @@ warm execution and process peak memory. The first pressure call includes JIT
 compilation; equilibrium follows that warmup. These are static calculations,
 not timestep or wave-force validation.
 
+## Instantaneous fluid inertia
+
+`topwater.inertia.instantaneous_added_mass(panels, reference_point)` solves all
+six acceleration-potential problems with one factorization. Use the physical
+wetted triangles, fluid-outward normals and a world load reference, normally CG:
+
+```python
+from topwater.hydrostatics import equilibrate_heave
+from topwater.inertia import instantaneous_added_mass
+from topwater.rankine import TrianglePanels
+
+rest, wet = equilibrate_heave(body, initial_state)
+panels = TrianglePanels(wet.wetted_triangles, -1)
+result = instantaneous_added_mass(panels, rest.position)
+```
+
+The result contains the raw six-motion added-mass matrix, auxiliary potentials
+and diagnostics. This is the flat-water startup problem, equivalent to the
+infinite-frequency linear limit. The acceleration reaction is `-A @ acceleration`;
+it belongs to pressure coupling and must not be added to the same total-pressure
+integral twice. Finite-frequency radiation, wave excitation and body evolution
+remain future work.
+
+Capytaine comparisons cover all six modes and couplings on matching wetted
+meshes. Mesh-refinement uncertainty remains separate from that agreement.
+Run `uv run --locked --group correlation pytest tests/test_capytaine_inertia.py`
+and benchmark equilibrium through the complete inertia solve with
+`uv run --locked python -m tests.benchmark_inertia`.
+
 ## Roadmap
 
 The [numerical contract and verification gates](docs/numerics.md) define the
@@ -168,12 +197,13 @@ Benchmark the full path with `uv run --locked python -m tests.benchmark_boundary
 Run `uv run --locked python -m tests.verify_laplace` for independent harmonic and
 point-source accuracy. That command currently exits with a failed gate: constant
 panels do not yet recover boundary flux accurately enough. A passing algebraic
-residual is insufficient to proceed to wave/body dynamics.
+residual does not qualify wave/body dynamics.
 
 The validation-only Capytaine group checks Rankine kernels on the same triangles;
 run `uv run --locked --group correlation pytest tests/test_capytaine_rankine.py`.
 The [numerical record](docs/numerics.md) explains reference approximation branches
-and normalization. Hydrodynamic force correlation remains future work.
+and normalization. Instantaneous added mass is compared separately above;
+finite-frequency forces, damping and excitation remain future work.
 
 Requirements, implementation stages and acceptance criteria live in [GitHub issues](https://github.com/amosborne/topwater/issues/1). Each stage requires verification evidence and measured execution time before later stages rely on it.
 

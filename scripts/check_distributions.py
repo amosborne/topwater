@@ -18,6 +18,9 @@ import sys
 import numpy
 import scipy
 import topwater
+from topwater.bem import assemble_dirichlet_halfspace
+from topwater.hydrostatics import equilibrate_heave
+from topwater.inertia import instantaneous_added_mass
 
 info = metadata('topwater')
 assert info['Name'] == 'topwater'
