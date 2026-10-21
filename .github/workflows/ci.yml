@@ -79,7 +79,7 @@ jobs:
           enable-cache: true
       - run: uv sync --locked
       - run: uv run --locked python -m tests.experiments.free_surface.verify
-      - run: uv run --locked python -m tests.experiments.free_surface.evolution
+      - run: uv run --locked python -m tests.experiments.free_surface.evolution --fine
       - run: uv run --locked python -m tests.experiments.free_surface.linear
       - run: uv run --locked python -m tests.experiments.free_surface.shape_check
       - run: uv run --locked python -m tests.experiments.free_surface.coupling

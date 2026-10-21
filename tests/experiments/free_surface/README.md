@@ -145,7 +145,7 @@ Run from a locked checkout; outputs go to ignored `artifacts/`:
 ```powershell
 uv run --locked python -m tests.experiments.free_surface.verify
 uv run --locked python -m tests.experiments.free_surface.linear
-uv run --locked python -m tests.experiments.free_surface.evolution
+uv run --locked python -m tests.experiments.free_surface.evolution --fine
 uv run --locked python -m tests.experiments.free_surface.integrate
 uv run --locked python -m tests.experiments.free_surface.integrate --rtol 1e-5
 uv run --locked python -m tests.experiments.free_surface.shape_check
@@ -258,8 +258,25 @@ quadratic kinematic error from 6.65% to 0.667% and dynamic error from 1.73% to
 0.353% **at nodes in the fixed interior comparison region**. Reports also include
 independent continuous whole-surface errors. The `kd=4` case is retained; its quadratic kinematic term nearly
 cancels and is reported both relatively and against a natural dimensional scale.
-For `kd=1`, the fine continuous quadratic errors are 2.41% kinematic and 1.57%
-dynamic; the nodal result is not a one-percent whole-field gate pass.
+For `kd=1`, continuous whole-surface quadratic errors over three refinements are:
+
+| Tank faces | Surface nodes | Kinematic error | Dynamic error |
+| ---: | ---: | ---: | ---: |
+| 320 | 45 | 6.68% | 5.05% |
+| 1280 | 153 | 2.41% | 1.57% |
+| 5120 | 561 | 0.868% | 0.513% |
+
+The finest case reaches the one-percent whole-field target for these nonzero
+quadratic coefficients. Its integrated elevation rates are below `1e-15 m^3/s`.
+It does not qualify the general field, long nonlinear evolution or open water.
+At `a=0.02 m`, `k=0.25 m^-1`, the complete positive/negative-state evaluation
+measured 70.4 s and 793 MiB peak RSS on the development host above. That single
+invocation includes fixed data construction, both moving geometries, both BEM
+assemblies/solves, nonlinear rates and independent continuous diagnostics. It is
+not a five-sample throughput benchmark. Wall time remains a major limitation.
+`evolution --fine` retains this third refinement with the other cases in CI;
+the existing physical test checks whole-field convergence and the one-percent
+target, separately from interior-node accuracy. Reports remain `qualified=false`.
 Halving amplitude separates perturbation truncation from spatial error.
 
 The independent kinetic-energy shape derivative differs from the dynamic RHS
