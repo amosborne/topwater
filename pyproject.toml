@@ -15,6 +15,7 @@ dependencies = [
     "numba>=0.67",
     "numpy>=2.0",
     "scipy>=1.14",
+    "threadpoolctl>=3.7.0",
 ]
 
 [project.urls]
@@ -27,7 +28,6 @@ correlation = [
 ]
 dev = [
     "pytest>=8",
-    "threadpoolctl>=3.7.0",
 ]
 
 [tool.hatch.build.targets.wheel]

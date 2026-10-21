@@ -30,6 +30,12 @@ from topwater.rankine import TrianglePanels, panel_influence
 from .reference_hull import mesh_arrays
 
 
+def benchmark_environment():
+    return dict(format_version=1, python=sys.version, numpy=np.__version__, scipy=scipy.__version__,
+                numba=version("numba"), platform=platform.platform(), processor=platform.processor(),
+                logical_cpu_count=os.cpu_count())
+
+
 def peak_rss_bytes():
     if sys.platform == "win32":
         from ctypes import wintypes
@@ -140,10 +146,7 @@ def main():
             print(f"N={result['panel_count']:4} block={block:3}: "
                   f"{result['median_seconds']:.4f} s, peak RSS "
                   f"{result['process_peak_rss_bytes']/2**20:.1f} MiB", flush=True)
-    report = dict(format_version=1, python=sys.version, numpy=np.__version__, scipy=scipy.__version__,
-                  numba=version("numba"),
-                  platform=platform.platform(), processor=platform.processor(),
-                  logical_cpu_count=os.cpu_count(), results=results)
+    report = dict(benchmark_environment(), results=results)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, indent=2, allow_nan=False)+"\n", encoding="utf-8")
 

@@ -4,8 +4,8 @@
 
 Topwater is a planned open-source, three-dimensional time-domain potential-flow solver for freely floating bodies in directional waves. The initial target is one rigid boat with six free motions, an evolving free surface and changing wetted hull geometry, explicit viscous damping, and an external force and torque interface.
 
-**Status: verified Laplace panel kernels and operator assembly. Boundary solves,
-wave evolution and body dynamics are not implemented yet.**
+**Status: verified Laplace kernels and prototype boundary solves. The boundary
+field-accuracy gate remains unmet. Wave evolution and body dynamics are not implemented.**
 
 ## Approach
 
@@ -127,6 +127,21 @@ a second production formula. Benchmark assembly with
 for 128 fixed bulk targets and gradients. Reports record five warm timings,
 isolated cold compilation, actual BLAS threads, numerical errors and fresh-process
 peak RSS. These are kernel costs, not timestep or Capytaine validation results.
+
+`BoundarySystem` in `topwater.boundary` owns an immutable boundary assignment,
+length scale and reusable LU factorization. It returns physical potential/normal
+velocity, conditioning, compatibility, gauge and residual diagnostics. The
+implementation reuses one factor buffer and supports multiple right-hand sides.
+Benchmark the full path with `uv run --locked python -m tests.benchmark_boundary`.
+Run `uv run --locked python -m tests.verify_laplace` for independent harmonic and
+point-source accuracy. That command currently exits with a failed gate: constant
+panels do not yet recover boundary flux accurately enough. A passing algebraic
+residual is insufficient to proceed to wave/body dynamics.
+
+The validation-only Capytaine group checks Rankine kernels on the same triangles;
+run `uv run --locked --group correlation pytest tests/test_capytaine_rankine.py`.
+The [numerical record](docs/numerics.md) explains reference approximation branches
+and normalization. Hydrodynamic force correlation remains future work.
 
 Requirements, implementation stages and acceptance criteria live in [GitHub issues](https://github.com/amosborne/topwater/issues/1). Each stage requires verification evidence and measured execution time before later stages rely on it.
 

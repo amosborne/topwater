@@ -70,11 +70,12 @@ Implementation status: `HullMesh` owns validated physical arrays;
 `TrianglePanels` caches O(N) numerical geometry; one fused, serial Numba kernel
 fills final S/K buffers directly. `LaplaceOperators` owns those arrays and their
 measured diagnostics. Independent quadrature remains a separate verification
-method, not a second analytic backend. Boundary factorization is the next layer:
-it must own its operators, boundary assignments and scaling, reuse factors for
-unchanged systems, and avoid keeping a redundant unfactored mixed matrix just
-for residuals. Geometry changes require rebuilding the system. No global cache
-or extensible backend framework is planned.
+method, not a second analytic backend. `BoundarySystem` now owns its operators,
+boundary assignments, scaling and reusable LU factors. Its configuration is
+immutable, and it retains no redundant unfactored mixed matrix just for
+residuals. Geometry changes require rebuilding the system. No geometry cache or
+extensible backend framework is implemented. The prototype still fails the
+boundary field-accuracy gate described below.
 
 Choose a **direct Rankine-kernel BEM**, whose unknowns are physical potential or
 normal velocity, rather than an indirect source-strength formulation. The initial
@@ -128,6 +129,34 @@ separately and must converge with discretization; it is not required to reach
 evidence of field accuracy.
 Geometry, boundary tags or numerical operator changes invalidate a factorization;
 matching panel counts alone never justify reuse.
+
+`BoundarySystem.solve` accepts physical full-panel potential and normal-velocity
+arrays, with one or several RHS columns; entries where a field is unknown are
+ignored. Its unknowns have common units (`phi` and `L*q`); a common potential
+scale cancels from the relative diagnostics, so there is no redundant API knob.
+Bounded all-Neumann data must satisfy discrete area-weighted flux compatibility;
+the constrained solve imposes an area-weighted zero-mean potential. Exterior
+data may have nonzero net flux balanced at infinity. Diagnostics expose actual
+net flux, compatibility, gauge multiplier, original BIE residual and backward
+error separately.
+
+### Boundary prototype limitation
+
+`uv run --locked python -m tests.verify_laplace` writes independent field errors
+to `artifacts/laplace-verification.json` and deliberately exits 1 while gates are
+unmet. For the bounded linear field `phi=x/3.5`, the dimensionless flux RMS errors
+at 128/512/2048 panels are `0.290`, `0.190`, `0.125`, with declared `Phi=1` and
+`L=3.5`. At 2048 panels the all-Neumann potential error is `0.00717`, but its bulk
+velocity error is `0.0259`. Algebraic backward errors are small in both cases;
+they do not excuse those field errors. Source fields also expose insufficient
+flux recovery. The all-Neumann bounded point-source test still needs independent
+panel-average flux, and surface velocity recovery is not implemented.
+
+Constant panels are therefore a verified kernel and algebraic prototype, not a
+qualified wave-solver discretization. The next method decision must improve
+nonlinear harmonic and point-source fields, near-rim behavior and off-boundary
+velocity at matched complete cost. Exact reproduction of a polynomial used to
+construct a method is insufficient. Stage 1 remains open.
 
 ## Interfaces, controls and cost
 
@@ -194,6 +223,35 @@ the duplicate NumPy formula was removed. Smaller cases pay a larger relative
 compiler-memory cost. Block sweeps from 16 to 128 rows did not establish a
 consistent runtime winner, so the default remains 128. These are panel costs,
 not boundary-solve, timestep or Capytaine-correlation results.
+
+### Boundary setup and reuse measurements (2026-10-21)
+
+Same host and versions as above; five warm repeats after isolated cold
+compilation. Setup includes validation, mixed-matrix construction, LU, condition
+estimation and norm diagnostics. The six RHS are independent harmonic fields,
+not six hydrodynamic radiation results.
+
+| Panels | Complete setup | One RHS | Six RHS together | Process peak RSS |
+| ---: | ---: | ---: | ---: | ---: |
+| 128 | 0.28 ms | 0.15 ms | 0.50 ms | 158 MiB |
+| 512 | 5.0 ms | 0.54 ms | 1.8 ms | 172 MiB |
+| 2048 | 235 ms | 6.9 ms | 21 ms | 268 MiB |
+
+At 2048 panels, operators occupy 64 MiB and factors about 32 MiB. Cold assembly
+took 2.47 s and first system setup 0.51 s including compilation. Profiling found
+column norm scans and mixed-matrix construction consumed substantial setup time;
+LAPACK norms on transpose views and a tiled fill into the one factor buffer
+reduced setup from 430 ms without adding another dense matrix. Repeated library
+discovery also dominated small cases, so already-loaded NumPy/SciPy thread
+controls are discovered once.
+
+The host's 22-thread BLAS default took 2.34 s for setup. The default now scopes
+LU/condition estimation to one BLAS thread while repeated solves retain ambient
+threading. `factorization_threads=None` preserves caller configuration. This
+context temporarily changes process-wide limits; concurrent applications should
+coordinate threading externally. No persistent thread limit is set at import.
+Benchmark with `python -m tests.benchmark_boundary`; use `--threads 0` to retain
+the host default for solves and `--factorization-threads 0` to test ambient LU.
 
 ## Verification gates and implementation order
 
