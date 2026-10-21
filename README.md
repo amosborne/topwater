@@ -32,7 +32,7 @@ The first end-to-end demonstration will cover one boat and one observed directio
 
 ## Contributing
 
-Development uses Python 3.12 by default and uv 0.12.10. Install
+Development requires Python 3.12 or newer and uses uv 0.12.10. Install
 [uv](https://docs.astral.sh/uv/getting-started/installation/), then run from a clean
 checkout:
 
