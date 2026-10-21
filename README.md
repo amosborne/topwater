@@ -107,6 +107,11 @@ and revalidate every panel transformation.
 
 ## Roadmap
 
+The [numerical contract and verification gates](docs/numerics.md) define the
+initial direct Rankine-kernel BEM, sign/gauge conventions, planned accuracy
+checks and cost measurements. `topwater.numerics` currently implements controls
+and dense-storage preflight only; numerical solver gates are not yet passed.
+
 Requirements, implementation stages and acceptance criteria live in [GitHub issues](https://github.com/amosborne/topwater/issues/1). Each stage requires verification evidence and measured execution time before later stages rely on it.
 
 - [ ] [Stage 0: Define solver contracts, physical scope and verification gates](https://github.com/amosborne/topwater/issues/2)

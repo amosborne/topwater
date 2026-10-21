@@ -1,0 +1,13 @@
+{
+  "format_version": 1,
+  "panel_count": 2048,
+  "operator_bytes": 67108864,
+  "block_rows": 128,
+  "controls": {
+    "quadrature_rtol": 1e-8,
+    "quadrature_atol": 1e-10,
+    "max_refinement": 8,
+    "target_block_size": 128,
+    "max_operator_bytes": 536870912
+  }
+}
