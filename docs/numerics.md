@@ -5,6 +5,64 @@ work to verify; it does not certify an operator, a wave solver or hydrodynamic
 correlation that has not been implemented. The canonical canoe and loading in
 `tests/reference_hull.py` remain the one shared hull reference.
 
+## Production runtime and near/far decomposition
+
+The user's target is 600 simulated seconds in at most 600 wall-clock seconds on
+the development machine (Core Ultra 7 155H, approximately 32 GiB RAM, RTX 2000 Ada
+Laptop GPU with 8 GiB VRAM). GPU use is allowed. Speed is the first priority,
+memory the second, subject to the physical accuracy gates below. Count startup,
+geometry updates, all attempted fluid/body stages, pressure recovery, diagnostics
+and declared result output. A wave-only or fixed-coefficient load benchmark does
+not qualify the coupled solver. Timestep and resolution must earn their accuracy;
+they cannot be enlarged merely to meet the clock.
+
+Dense global free-surface BEM is a verification choice, not a user requirement.
+The next architecture candidate is a small detailed near-body potential-flow
+domain coupled to efficient nonlinear far-field wave propagation. Do not build a
+general backend framework before the coupling earns its accuracy and cost.
+Both incoming waves and outgoing radiation/scattering must cross the artificial
+interface. Nonlinear incident/disturbed cross terms remain part of the total
+near-field flow.
+
+The target marine-gyro hull geometry is basic. Keep the physical geometry mesh
+distinct from any numerical subdivision: neither one unknown per geometry face
+nor thousands of refined hull panels is a requirement. Start with the smallest
+adequate discretization. Vary hull resolution, near-surface resolution, far-field
+wave resolution and interface position independently, and justify increases by
+load/motion error rather than mesh appearance. The curved canonical canoe remains
+the common validation hull; its required geometry resolution need not transfer
+to a hull made of a few planar faces.
+
+With opposite fluid-outward interface normals, the coupled solution must satisfy
+`phi_near = phi_far + a(t)` and `q_near + q_far = 0`. Potential continuity supplies
+tangential velocity continuity; flux matching supplies normal velocity continuity.
+Bernoulli pressure also requires consistent time derivatives and gauges:
+`C_near = C_far + a'(t)`. A common `C=0` allows only a time-independent offset.
+On a moving interface with velocity `w`, recover the Eulerian derivative using
+`phi_t = d(phi(X_interface,t))/dt - w dot grad(phi)`. At the free-surface junction,
+share elevation and gauge-aligned surface potential at the same location and time.
+These are coupled matching conditions, not independent prescriptions of both
+Dirichlet and Neumann data to each subdomain. Smooth visual blending alone does
+not establish continuity of velocity, pressure or energy transfer.
+
+The first coupling falsifier is two finite-amplitude oblique wave packets crossing
+the interface in opposite directions in a body-free domain. Compare with an
+unsplit reference at matched accuracy. Report interface potential, velocity,
+pressure and elevation errors, artificial reflection, volume and energy budgets,
+and complete wall time and peak memory. Refine space/time and move the interface:
+its position must not materially change the physical result within the demonstrated
+discretization error. Then repeat with the canonical canoe, including radiation,
+diffraction, pressure and six-motion coupling and the Capytaine gates below.
+Benchmark the full coupled path before claiming real-time capability. No near/far
+implementation or real-time result is qualified yet.
+
+The [spectral coupled BEM study](https://doi.org/10.1016/j.joes.2023.07.003)
+supports investigating this split, but its sequential spectral/Green-function
+formulation neglects the local residual potential outside its BEM region.
+That approximation must be measured; a smooth transition is not a substitute
+for satisfying the global boundary-value problem. Fixed-body diffraction in
+that study does not qualify a moving canoe or this machine's runtime.
+
 ## Mathematical signs and physical ownership
 
 Use `u = grad(phi)` and the positive free-space Rankine kernel
@@ -77,7 +135,7 @@ residuals. Geometry changes require rebuilding the system. No geometry cache or
 extensible backend framework is implemented. The prototype still fails the
 boundary field-accuracy gate described below.
 
-Choose a **direct Rankine-kernel BEM**, whose unknowns are physical potential or
+The first verification prototype uses a **direct Rankine-kernel BEM**, whose unknowns are physical potential or
 normal velocity, rather than an indirect source-strength formulation. The initial
 correctness prototype uses constant values on flat triangular numerical panels,
 collocated at their centroids. This is an explicit prototype choice, not a promise
@@ -254,9 +312,10 @@ Each numerical branch benchmarks implemented panel integration, assembly,
 factorization, repeated multi-RHS solves and field evaluation as applicable.
 Record geometry/unknown counts, CPU/OS, Python/NumPy/SciPy, BLAS implementation,
 actual thread count, block size and controls. Compare one BLAS thread with the
-host default where it affects the measured operation. Do not invent a universal
-runtime threshold before obtaining a baseline; explain regressions on comparable
-hardware, including any accuracy benefit. Benchmark data go under `artifacts/`,
+host default where it affects the measured operation. The complete solver must
+meet the development-machine real-time target above; component baselines explain
+where its budget is spent. Explain regressions on comparable hardware, including
+any accuracy benefit. Benchmark data go under `artifacts/`,
 with concise accuracy/time/memory evidence in the PR.
 
 ### Initial kernel measurements (2026-10-21)

@@ -9,7 +9,14 @@ field-accuracy gate remains unmet. Wave evolution and body dynamics are not impl
 
 ## Approach
 
-Solve incompressible, inviscid, irrotational water flow using boundary elements on the wetted hull and surrounding free surface. Couple pressure and body acceleration consistently, so buoyancy, wave excitation, diffraction, radiation and added-mass effects emerge from the fluid solution rather than being added from fixed coefficient tables.
+Solve incompressible, inviscid, irrotational water flow. Couple pressure and body acceleration consistently, so buoyancy, wave excitation, diffraction, radiation and added-mass effects emerge from the fluid solution rather than being added from fixed coefficient tables.
+
+The runtime target is ten simulated minutes in at most ten wall-clock minutes on
+the development machine, with GPU use allowed. The existing dense boundary-element
+experiments are verification references; they have not earned the production
+architecture. The next candidate separates detailed flow near the boat from
+efficient far-field wave propagation, with bidirectional coupling and measured
+interface error. Its accuracy and end-to-end speed remain unproven.
 
 Use NumPy/SciPy arrays and linear algebra, with a compiled Numba panel kernel.
 Capytaine supplies independent hydrostatic and instantaneous added-mass benchmarks.
