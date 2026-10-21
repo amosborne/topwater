@@ -57,6 +57,8 @@ jobs:
       - run: uv sync --locked --group correlation
       - run: uv run --locked --group correlation python -c "import capytaine"
       - run: uv run --locked --group correlation pytest tests/test_capytaine_rankine.py tests/test_capytaine_hydrostatics.py tests/test_capytaine_inertia.py
+      - run: uv run --locked --group correlation pytest tests/test_capytaine_frequency_reference.py
+      - run: uv run --locked --group correlation python -m tests.experiments.capytaine_mesh_cost --case 2 0 --case 2 1 --case 2 2 --case 3 0
       - run: uv run --locked --group correlation python -m tests.experiments.free_surface.canoe --study
       - uses: actions/upload-artifact@v4
         if: always()

@@ -1,5 +1,58 @@
 # Symmetric free-surface BEM experiment
 
+The production architecture is under review against the real-time requirement in
+`docs/numerics.md`. These dense experiments remain numerical references.
+The separate mesh-cost study isolates coplanar solver-panel subdivision from
+changes to the canonical curved hull geometry:
+
+```text
+uv run --locked --group correlation python -m tests.experiments.capytaine_mesh_cost --case 2 0 --case 2 1
+```
+
+Omitting `--case` runs three successive panel resolutions of the fixed level-2
+canoe; larger predeclared cases are selected explicitly after inspecting cost and
+error. Each case uses a fresh worker and Numba cache, records first and five warm
+Topwater instantaneous-inertia solves, and retains complete Capytaine finite-
+frequency added-mass/damping matrices and total complex excitation at three
+frequencies and headings. Excitation includes Froude-Krylov pressure. See
+`artifacts/capytaine-mesh-cost.json` and individual case files.
+
+Inspect roll and other individual modes as well as the family-wide tolerance:
+its absolute floor can conceal large relative errors in weak modes. Differences
+between physical hull refinements also contain remaining solver-panel error.
+These are static resolution/cost results, not moving-step benchmarks or finite-
+frequency Topwater correlation. They do not qualify near/far coupling or real-time
+performance. Partly submerged physical faces are clipped, not marked wholly wet
+or dry; flat-water clipping already implements that operation.
+
+On the development CPU (Python 3.12.8, one BLAS thread), the first fixed-geometry
+study produced the following results. All rows use the same 44 physical wetted
+triangles; only coplanar numerical subdivisions change.
+
+| Solver panels | Median of five warm Topwater instantaneous-inertia solves | Capytaine roll added-mass change to next row | Roll damping change to next row | Roll excitation change to next row |
+| --- | --- | --- | --- | --- |
+| 44 | 1.27 ms | 27.3–28.2% | 27.7–29.5% | 15.8% |
+| 176 | 7.72 ms | 3.9–4.6% | 6.1–6.8% | 3.8% |
+| 704 | 126.6 ms | — | — | — |
+
+Added-mass/damping changes are relative diagonal differences across the three
+frequencies; excitation is maximum complex difference divided by the finer
+roll family's peak magnitude. The finest row is a comparison, not established
+truth. Aggregate family tolerances pass even for 44 versus 176 panels, concealing
+the roll errors above. Same-mesh Topwater/Capytaine instantaneous roll added-mass
+differences decrease from 2.38% to 0.34% to 0.092%; that agreement does not establish
+mesh convergence. These results justify mode-specific resolution studies, not a
+blanket 704-panel requirement. Runtime includes assembly/factorization and six
+auxiliary right-hand sides on cached clipped panels, and excludes wave evolution,
+changing geometry and dynamic pressure. No timestep rate follows from this table.
+
+The additional level-3 geometry case has 140 wetted panels and a 4.66 ms warm
+median. Comparing it with the subdivided level-2 hull changes both physical
+geometry and remaining panel error; the added-mass and damping family criteria
+fail. It therefore cannot establish geometry convergence or supply a faster
+equivalent mesh. CI retains all four selected cases; reproduce them with
+`--case 2 0 --case 2 1 --case 2 2 --case 3 0`.
+
 This checkout-only experiment tests a concrete path from nodal free-surface
 state through moving geometry, a BEM solve and nonlinear time derivatives.
 It is not an installed Topwater solver, a completed Stage 1/2, or an open-water
