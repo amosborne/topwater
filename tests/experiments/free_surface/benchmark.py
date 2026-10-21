@@ -29,7 +29,7 @@ def canoe_run(data, resolution):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--canoe', action='store_true', help='equilibrium through seven-RHS auxiliary solve')
+    parser.add_argument('--canoe', action='store_true', help='equilibrium through ten-RHS coupling solve')
     parser.add_argument('--worker', nargs=3, type=int, help=argparse.SUPPRESS)
     args = parser.parse_args()
     case = 'canoe' if args.canoe else 'flat'

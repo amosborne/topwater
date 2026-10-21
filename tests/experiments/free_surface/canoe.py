@@ -15,6 +15,7 @@ from topwater.rankine import TrianglePanels
 from tests.reference_hull import input_data, surface_integrals
 from .domain import tank
 from .operator import assemble_energy
+from .coupling import check_flow
 
 
 def fluid_domain(wet, resolution=(8, 4, 4), domain_scale=1.):
@@ -72,30 +73,52 @@ def body_load(mesh, panels, body, center):
     return load
 
 
+def solve_mixed(energy, fixed, trace, normal_load):
+    """Prescribed nodal potential plus weak non-free-surface flux; one factor."""
+    unknown = np.setdiff1d(np.arange(len(energy)), fixed)
+    rhs = normal_load[unknown]
+    if np.any(trace):
+        rhs -= energy[np.ix_(unknown, fixed)]@trace
+    potential = np.empty_like(normal_load)
+    potential[fixed] = trace
+    potential[unknown] = solve(energy[np.ix_(unknown, unknown)], rhs, assume_a='pos')
+    return potential
+
+
 def solve_inertia(mesh, body, free, center, order=3):
-    """One mixed factorization: six body modes plus independent phi=z check."""
+    """One mixed factorization: six body modes plus four independent fields."""
     panels = TrianglePanels.from_mesh(mesh)
     energy, diagnostics = assemble_energy(mesh.faces, panels, order)
     fixed = np.unique(mesh.faces[free])
     unknown = np.setdiff1d(np.arange(len(mesh.vertices)), fixed)
     load = body_load(mesh, panels, body, center)
-    affine_load = np.zeros(len(mesh.vertices))
+    # phi=x,y,z,1: matching body translations and outer-wall normal flux.
+    # Keep all body/wall load rows, including shared free-surface nodes.
+    walls = np.setdiff1d(np.arange(len(mesh.faces)), np.r_[body, free])
+    fields = np.column_stack((mesh.vertices, np.ones(len(mesh.vertices))))
+    velocity = np.zeros((6, 4))
+    velocity[:3, :3] = np.eye(3)
+    field_load = load@velocity
     for corner in range(3):
-        np.add.at(affine_load, mesh.faces[:, corner],
-                  panels.areas*panels.normals[:, 2]/3)
-    rhs = np.column_stack((load[unknown], affine_load[unknown]))
-    potential = solve(energy[np.ix_(unknown, unknown)], rhs, assume_a='pos')
-    added_mass = 1000*load[unknown].T@potential[:, :6]
+        np.add.at(field_load[:, :3], mesh.faces[walls, corner],
+                  panels.areas[walls, None]*panels.normals[walls]/3)
+    rhs = np.column_stack((load, field_load))
+    trace = np.zeros((len(fixed), 10))
+    trace[:, 6:] = fields[fixed]
+    potential = solve_mixed(energy, fixed, trace, rhs)
+    added_mass = 1000*load.T@potential[:, :6]
     volume, _ = surface_integrals(mesh.vertices, mesh.faces)
     depth = -mesh.vertices[:, 2].min()
     affine = dict(
         potential_max_depth_normalized=float(np.max(np.abs(
-            potential[:, -1]-mesh.vertices[unknown, 2]))/depth),
-        energy_relative_error=float((affine_load[unknown]@potential[:, -1]-volume)/volume),
+            potential[unknown, 8]-mesh.vertices[unknown, 2]))/depth),
+        energy_relative_error=float((field_load[:, 2]@potential[:, 8]-volume)/volume),
         exact_trace_energy_relative_error=float(
             (mesh.vertices[:, 2]@energy@mesh.vertices[:, 2]-volume)/volume),
-        pressure_load=(-load[unknown].T@potential[:, -1]).tolist(),
+        pressure_load=(-load.T@potential[:, 8]).tolist(),
     )
+    diagnostics['coupling'] = check_flow(mesh, panels, body, free, center, energy,
+                                         load, potential[:, 6:], field_load)
     return added_mass, affine, diagnostics
 
 

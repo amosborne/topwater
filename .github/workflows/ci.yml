@@ -82,6 +82,7 @@ jobs:
       - run: uv run --locked python -m tests.experiments.free_surface.evolution
       - run: uv run --locked python -m tests.experiments.free_surface.linear
       - run: uv run --locked python -m tests.experiments.free_surface.shape_check
+      - run: uv run --locked python -m tests.experiments.free_surface.coupling
       - run: uv run --locked python -m tests.experiments.free_surface.benchmark
       - run: uv run --locked python -m tests.experiments.free_surface.benchmark --canoe
       - uses: actions/upload-artifact@v4

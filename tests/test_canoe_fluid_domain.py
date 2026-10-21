@@ -39,15 +39,17 @@ def test_canoe_hole_closes_and_weak_load_recovers_pressure(refinement, rotvec, o
     assert_allclose(load.sum(axis=0), expected, atol=1e-13, rtol=1e-12)
 
 
-def test_same_domain_affine_solution_refines_with_canoe_present():
+def test_same_domain_affine_flow_and_loads_refine_with_canoe_present():
     data = SimulationInputs.from_json(json.dumps(input_data(4)))
     rest, wet = equilibrate_heave(data.body, data.initial_state)
     rows = []
+    coupling = []
     with threadpool_limits(1):
         for resolution in ((8, 4, 4), (16, 8, 4)):
             mesh, body, free = fluid_domain(wet, resolution)
-            _, affine, _ = solve_inertia(mesh, body, free, rest.position)
+            _, affine, diagnostics = solve_inertia(mesh, body, free, rest.position)
             rows.append(affine)
+            coupling.append(diagnostics['coupling'])
     # phi=z satisfies zero FS potential and q=n_z on every other face,
     # including the bottom. Exact Dirichlet energy (twice unit-density kinetic
     # energy) is the actual fluid volume.
@@ -61,3 +63,15 @@ def test_same_domain_affine_solution_refines_with_canoe_present():
     errors = [np.linalg.norm((np.array(row['pressure_load'])-expected)/scale) for row in rows]
     assert errors[1] < errors[0]/2
     assert errors[1] < .01
+    # Nonzero FS potential and body/wall forcing share one solve. Independently
+    # known fields x,y,z,1 have elevation rates 0,0,1,0 over the WHOLE surface.
+    for row in coupling:
+        assert_allclose(row['integrated_flux'], row['expected_integrated_flux'], atol=1e-11, rtol=0)
+        assert row['whole_surface_rate_rms'][3] < 1e-12
+        assert row['potential_max_length_normalized'][3] < 1e-12
+        assert row['exact_trace_load_max_length_normalized'] < 1e-13
+    coarse = np.array(coupling[0]['whole_surface_rate_rms'][:3])
+    fine = np.array(coupling[1]['whole_surface_rate_rms'][:3])
+    assert np.all(fine < coarse)
+    assert np.max(fine) < .002
+    assert coupling[1]['solved_load_max_length_normalized'] < coupling[0]['solved_load_max_length_normalized']/2

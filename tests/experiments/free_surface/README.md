@@ -115,11 +115,19 @@ mesh, domain-size and quadrature studies on identical wetted hull geometry.
 `canoe.py` exercises this auxiliary solve. Its caller owns heave equilibrium and
 the physical wet geometry; domain construction owns only the joined mesh and
 body/free-surface face indices. One exact P1 load map drives both forcing and
-pressure integration. A seventh right-hand side, `phi=z`, has independently
-known potential, Dirichlet energy and hydrostatic load. The Dirichlet energy is
+pressure integration. Four additional right-hand sides, `phi=x,y,z,1`, exercise
+nonzero free-surface potential, prescribed body translation and matching outer
+wall flux. All ten columns share the same factorization. The `phi=z` column has
+independently known potential, Dirichlet energy and hydrostatic load. The Dirichlet energy is
 twice unit-density kinetic energy and equals fluid volume for this field.
-It shares the six-mode
-factorization rather than constructing a separate verification solver.
+The other three columns add no assembly or factorization.
+
+`coupling.py` checks their surface elevation rates against the independently
+known values `0,0,1,0`. Removing body and wall load rows at shared surface nodes
+would corrupt those rates. The check also compares `B.T @ phi` against independent
+triangle integration, both for the exact trace and for the solved potential.
+For prescribed pressure `p=-phi`, the force/moment is the negative of that
+potential-load vector. This is not Bernoulli pressure of uniform flow.
 
 The mesher supports the canonical single convex horizontal waterline at `z=0`,
 strictly inside the box. It uses unconstrained Delaunay triangulation, checks
@@ -141,6 +149,7 @@ uv run --locked python -m tests.experiments.free_surface.evolution
 uv run --locked python -m tests.experiments.free_surface.integrate
 uv run --locked python -m tests.experiments.free_surface.integrate --rtol 1e-5
 uv run --locked python -m tests.experiments.free_surface.shape_check
+uv run --locked python -m tests.experiments.free_surface.coupling
 uv run --locked python -m tests.experiments.free_surface.hull_check
 uv run --locked python -m tests.experiments.free_surface.benchmark
 uv run --locked python -m tests.experiments.free_surface.benchmark --canoe
@@ -159,7 +168,7 @@ supplied physical triangles and CG, outside candidate timing. It never reads
 another test's report. CI retains its six-case outer-mesh/domain/quadrature study
 beside the existing Capytaine reports; `qualified=false` remains explicit.
 The canoe benchmark uses the same fresh-worker harness, including equilibrium,
-clipping, joined-domain geometry, assembly, seven-RHS solve, pressure and affine
+clipping, joined-domain geometry, assembly, ten-RHS solve, pressure and affine
 diagnostics. Validated input construction, imports and Capytaine are excluded.
 
 On the Windows development host (Intel family 6 model 170, 22 logical CPUs,
@@ -201,9 +210,17 @@ error, while relative solved Dirichlet-energy error decreases from 0.0198% to 0.
 The solved affine pressure load also converges toward independent hydrostatics;
 tests check the complete force/moment vector, not a symmetry-repaired matrix.
 
+For the four nonzero-surface/body-motion fields, whole-surface continuous P1
+elevation-rate RMS errors decrease from `[0.00318, 0.00267, 0.00426]` to
+`[0.00154, 0.00181, 0.00156]` for the three coordinate fields. Each has unit
+velocity scale. The constant field remains at roundoff, and integrated flux
+matches the independently known free-surface area times vertical velocity.
+These manufactured problems prescribe the required outer-wall flux: they do
+not establish a wave solution with impermeable stationary walls.
+
 Fresh-worker canoe-path warm medians at 864/1820 complete fluid faces are
-0.689/3.25 s, with 220/285 MiB peak RSS on the host described above. Empty-cache
-first calls are 6.24/9.12 s. These include the additional affine diagnostics;
+0.772/3.47 s, with 220/287 MiB peak RSS on the host described above. Empty-cache
+first calls are 6.93/9.72 s. These include all four coupling-field diagnostics;
 they are static auxiliary solves, not coupled timestep throughput. The dense
 method has not demonstrated the cost or accuracy required for production.
 
