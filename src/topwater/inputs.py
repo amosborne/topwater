@@ -16,7 +16,7 @@ from numpy.typing import ArrayLike
 from scipy.sparse import coo_array
 from scipy.sparse.csgraph import connected_components
 
-from ._validation import array, quaternion
+from ._validation import array, indices, quaternion
 
 
 @dataclass(frozen=True, eq=False)
@@ -25,6 +25,9 @@ class HullMesh:
 
     vertices: (n, 3) body coordinates [m]. faces: (m, 3) integer vertex indices,
     ordered so their right-hand normals point from the body into the water/air.
+    An open hull supplies an ordered opening_rim vertex loop and artificial_faces
+    closing it for topology validation. Those faces never carry water pressure.
+    Empty opening metadata denotes a genuinely closed hull.
     Rejects open/non-manifold edges, inconsistent winding, duplicate or unused
     vertices, degenerate panels and non-positive enclosed volume. Does not test
     self-intersections or suitability for free-surface intersection/remeshing.
@@ -32,6 +35,8 @@ class HullMesh:
 
     vertices: ArrayLike
     faces: ArrayLike
+    opening_rim: ArrayLike = ()
+    artificial_faces: ArrayLike = ()
 
     def __post_init__(self):
         vertices = array(self.vertices, (None, 3), "vertices")
@@ -89,9 +94,26 @@ class HullMesh:
         volume = np.sum(np.einsum("ij,ij->i", p, np.cross(q, r))) / 6
         if not np.isfinite(volume) or volume <= tolerance:
             raise ValueError("mesh must have outward winding and positive enclosed volume")
+        rim = indices(self.opening_rim, len(vertices), 'opening_rim')
+        artificial = indices(self.artificial_faces, len(faces), 'artificial_faces')
+        if bool(len(rim)) != bool(len(artificial)) or (len(rim) and len(rim) < 3):
+            raise ValueError("an opening needs an ordered rim and artificial closure faces together")
+        artificial_mask = np.zeros(len(faces), dtype=bool)
+        artificial_mask[artificial] = True
+        if len(rim):
+            boundary = ordered[starts][artificial_mask[owners[:, 0]] != artificial_mask[owners[:, 1]]]
+            expected = np.sort(np.column_stack((rim, np.roll(rim, -1))), axis=1)
+            expected = expected[np.lexsort((expected[:, 1], expected[:, 0]))]
+            if not np.array_equal(boundary, expected):
+                raise ValueError("opening_rim must be exactly the boundary of artificial_faces")
+        physical = np.flatnonzero(~artificial_mask)
+        physical.setflags(write=False)
         faces.setflags(write=False)
         object.__setattr__(self, "vertices", vertices)
         object.__setattr__(self, "faces", faces)
+        object.__setattr__(self, "opening_rim", rim)
+        object.__setattr__(self, "artificial_faces", artificial)
+        object.__setattr__(self, "physical_faces", physical)
 
 
 @dataclass(frozen=True, eq=False)
@@ -192,7 +214,7 @@ class InitialState:
 
 @dataclass(frozen=True, eq=False)
 class SimulationInputs:
-    """Physical inputs only; serialization version 1 is not a restart format."""
+    """Physical inputs only; serialization version 2 is not a restart format."""
 
     body: RigidBody
     waves: WaveComponents
@@ -207,10 +229,12 @@ class SimulationInputs:
     def to_json(self) -> str:
         """Return portable JSON with SI arrays, actual phases and provenance."""
         return json.dumps({
-            "format_version": 1,
+            "format_version": 2,
             "body": {
                 "mesh": {"vertices": self.body.mesh.vertices.tolist(),
-                         "faces": self.body.mesh.faces.tolist()},
+                         "faces": self.body.mesh.faces.tolist(),
+                         "opening_rim": self.body.mesh.opening_rim.tolist(),
+                         "artificial_faces": self.body.mesh.artificial_faces.tolist()},
                 "mass": self.body.mass,
                 "cg": self.body.cg.tolist(),
                 "inertia_cg": self.body.inertia_cg.tolist(),
@@ -231,16 +255,18 @@ class SimulationInputs:
 
     @classmethod
     def from_json(cls, text: str) -> "SimulationInputs":
-        """Read version 1 JSON, applying the same validation as constructors."""
+        """Read version 2 JSON with explicit opening/closure identity."""
         try:
             data = json.loads(text)
             if not isinstance(data, dict) or set(data) != {
                 "format_version", "body", "waves", "initial_state"
             }:
                 raise ValueError("expected format_version, body, waves and initial_state")
-            if type(data["format_version"]) is not int or data["format_version"] != 1:
-                raise ValueError("unsupported input format_version; expected 1")
+            if type(data["format_version"]) is not int or data["format_version"] != 2:
+                raise ValueError("unsupported input format_version; expected 2")
             body = dict(data["body"])
+            if set(body['mesh']) != {'vertices', 'faces', 'opening_rim', 'artificial_faces'}:
+                raise ValueError("mesh must explicitly identify opening_rim and artificial_faces")
             body["mesh"] = HullMesh(**body["mesh"])
             return cls(
                 body=RigidBody(**body),

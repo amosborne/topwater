@@ -45,7 +45,7 @@ jobs:
       - run: uv run --locked python scripts/check_distributions.py
 
   capytaine-rankine:
-    name: Capytaine Rankine correlation
+    name: Capytaine Rankine and hydrostatic correlation
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -56,10 +56,10 @@ jobs:
           enable-cache: true
       - run: uv sync --locked --group correlation
       - run: uv run --locked --group correlation python -c "import capytaine"
-      - run: uv run --locked --group correlation pytest tests/test_capytaine_rankine.py
+      - run: uv run --locked --group correlation pytest tests/test_capytaine_rankine.py tests/test_capytaine_hydrostatics.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: capytaine-rankine-report
-          path: artifacts/capytaine-rankine-*.json
+          name: capytaine-correlation-report
+          path: artifacts/capytaine-*.json
           if-no-files-found: warn

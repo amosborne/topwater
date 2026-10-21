@@ -29,3 +29,17 @@ def quaternion(value: ArrayLike) -> NDArray:
     result = result / norm
     result.setflags(write=False)
     return result
+
+
+def indices(value: ArrayLike, size: int, name: str) -> NDArray:
+    """Own a unique one-dimensional index list, including an empty list."""
+    raw = np.asarray(value)
+    if raw.ndim != 1 or (raw.size and raw.dtype.kind not in 'iu'):
+        raise ValueError(f"{name} must be a one-dimensional integer index list")
+    if np.any(raw < 0) or np.any(raw >= size):
+        raise ValueError(f"{name} contains out-of-range indices")
+    result = np.array(raw, dtype=np.int64, copy=True)
+    if len(np.unique(result)) != len(result):
+        raise ValueError(f"{name} contains duplicate indices")
+    result.setflags(write=False)
+    return result

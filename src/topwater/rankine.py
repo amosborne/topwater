@@ -60,6 +60,11 @@ class TrianglePanels:
 
     @classmethod
     def from_mesh(cls, mesh, normal_sign=1):
+        """Use the full closed shell, including any artificial closure.
+
+        This constructs manufactured closed-domain problems. Physical wetted
+        panels instead use TrianglePanels(result.wetted_triangles, -1).
+        """
         return cls(mesh.vertices[mesh.faces], normal_sign)
 
     def __len__(self):

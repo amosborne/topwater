@@ -109,8 +109,8 @@ def mesh_arrays(refinement=2):
 def opening_boundaries(vertices, faces):
     """Identify the ordered open rim and artificial closure faces explicitly.
 
-    Future moving-geometry checks must terminate at rim immersion, before an
-    artificial cap can produce pressure loads. No flooding detector exists yet.
+    Rim immersion terminates calm-water evaluation before an artificial cap can
+    produce pressure loads. Evolving-wave contact detection remains future work.
     """
     on_surface = np.isclose(np.sum((vertices / SEMI_AXES)**2, axis=1), 1, rtol=0, atol=1e-12)
     rim = np.flatnonzero((vertices[:, 2] == RIM_HEIGHT) & on_surface)
@@ -125,14 +125,16 @@ def input_data(refinement=2):
     Integrated thin-shell mass plus one centred point payload supplies mass, CG
     and inertia. The artificial cap has no mass. The exact ellipsoid's displaced
     volume gives a shape-specific reference draft; a finite mesh only approximates
-    that pose. No fluid solver exists. Initial velocities are zero. No random
+    that pose. No wave solver exists. Initial velocities are zero. No random
     phases are generated here; the seed is illustrative provenance metadata.
     """
     vertices, faces = mesh_arrays(refinement)
+    rim, cap = opening_boundaries(vertices, faces)
     return {
-        "format_version": 1,
+        "format_version": 2,
         "body": {
-            "mesh": {"vertices": vertices.tolist(), "faces": faces.tolist()},
+            "mesh": {"vertices": vertices.tolist(), "faces": faces.tolist(),
+                     "opening_rim": rim.tolist(), "artificial_faces": cap.tolist()},
             "mass": float(MASS), "cg": CG.tolist(),
             "inertia_cg": np.diag(INERTIA).tolist(),
         },

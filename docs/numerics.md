@@ -322,6 +322,23 @@ separately against independent quadrature, without weakening Topwater's gate.
 These checks establish neither boundary-solve accuracy nor hydrodynamic force
 correlation; added mass, damping and wave excitation remain future work.
 
+Independent calm-water hydrostatics now clips the original physical hull, never
+its artificial cap. Exact triangle pressure and moment integration is checked
+against tetrahedral displacement/first moments and finite differences of all six
+world-axis load derivatives. A volume-only root solves fixed-attitude heave
+balance; it does not solve attitude equilibrium or certify stability. Static
+rim contact and loss of water contact terminate evaluation. Evolving-surface
+failure detection and still-water time integration remain unimplemented.
+
+The analytic ellipsoid checks volume, buoyancy center, waterplane area and
+roll/pitch restoring at 512/2048/8192 total hull faces. Capytaine independently
+clips 128/512/2048 original hull faces at equilibrium, at two yaw headings.
+Its `Gauss-Legendre 2` rule integrates the quadratic planar-face moments instead
+of its default centroid approximation. Displacement, wetted/waterplane areas and
+buoyancy center agree within `1e-12 + 1e-10*abs(reference)`; restoring entries
+within `1e-8 + 1e-10*abs(reference)` in physical SI units at the same CG, mass,
+density and gravity. These are hydrostatic comparisons, not wave-force gates.
+
 The progression is panel kernels, assembled mixed boundary problems, waves,
 moving wetted geometry/failure detection, pressure, then coupled motion. Each
 stage must earn its own gates. Numerical verification and comparison with another

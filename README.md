@@ -4,7 +4,7 @@
 
 Topwater is a planned open-source, three-dimensional time-domain potential-flow solver for freely floating bodies in directional waves. The initial target is one rigid boat with six free motions, an evolving free surface and changing wetted hull geometry, explicit viscous damping, and an external force and torque interface.
 
-**Status: verified Laplace kernels and prototype boundary solves. The boundary
+**Status: calm-water hydrostatics, verified Laplace kernels and prototype boundary solves. The boundary
 field-accuracy gate remains unmet. Wave evolution and body dynamics are not implemented.**
 
 ## Approach
@@ -18,14 +18,14 @@ The initial scope is a single rigid body in deep water, with reproducible direct
 
 ## Reference hull
 
-![Triangular mesh of a canoe-like truncated ellipsoid, with its open rim visible](docs/images/reference-hull.png)
+![Canonical canoe mesh at computed buoyancy equilibrium in flat water](docs/images/reference-hull.png)
 
 One canonical single-person canoe supplies the shared geometry and loading for
 tests and future Capytaine comparisons. It is an open lower half-ellipsoid,
 **3.5 m long, 0.9 m wide and 0.35 m deep**, with its rim at body `z = 0`.
 An explicitly marked artificial cap closes the test mesh; the image omits it
-to show the opening. That cap is not a watertight deck. The image shows geometry
-and the payload's specified CG; no fluid simulation is implemented.
+to show the opening. That cap is not a watertight deck. The image shows the
+computed calm-water heave equilibrium and the payload's specified CG.
 Refinements approximate the same exact surface; they are not different hulls.
 The smooth reference does not exercise chines or transoms.
 
@@ -41,14 +41,15 @@ Mass, CG and the full inertia tensor about combined CG are integrated from that
 loading. Independent surface quadrature supplies the reference; triangle
 integration must converge toward it. A scalar root of the exact shape's
 displacement sets the initial draft in water of density 1000 kg/m³, placing the
-world waterline at `z = 0`. The finite mesh approximates that pose. This is a
-shape-specific initialization, not a general hydrostatic or fluid solver.
+world waterline at `z = 0`. The finite mesh approximates that pose.
+`equilibrate_heave` solves buoyancy balance on the actual mesh; the image uses
+that solved pose. Neither calculation asserts roll/pitch stability.
 
-Future moving-geometry checks must stop at **rim immersion** (flooding onset) or
+Calm-water checks stop at **rim immersion** (flooding onset) or
 **complete loss of hull–water contact**, including invalid initial states.
 Rim clearance must use the local evolving free surface. An artificial closure
 must never hide flooding by supporting deck pressure. These failure detectors
-belong to the moving-waterline stage and are not implemented yet.
+are implemented for a flat water surface; evolving-wave detection remains future work.
 
 The definition, generator and analytical reference values live together in
 [tests/reference_hull.py](tests/reference_hull.py). Run the geometry checks with
@@ -75,6 +76,9 @@ and unknown placement remain a separate Stage 1 choice.
   identity pose. Positive rotations follow the right-hand rule.
 - Hull vertices are in body coordinates; triangular faces wind outward from
   the body. Supply the complete closed hull, including initially dry geometry.
+  For an open hull, supply an ordered `opening_rim` vertex loop and
+  `artificial_faces` closing that loop. Empty metadata means a genuinely closed
+  hull. Closure faces are excluded from physical pressure and clipping.
   `RigidBody.cg` uses those same body coordinates; `inertia_cg` is the symmetric
   positive-definite inertia tensor about CG in body axes, in kg m². Principal
   moments must satisfy the inertia triangle inequality.
@@ -98,7 +102,7 @@ limits. Body-outward normals are a geometry convention; the numerical contract
 defines fluid-domain normals and the pressure gauge separately.
 
 `SimulationInputs.to_json()` and `SimulationInputs.from_json(text)` round-trip
-the physical inputs using `format_version: 1` and revalidate on import. For a
+the physical inputs using `format_version: 2` and revalidate on import. For a
 small synthetic example, see [the shared reference case](tests/reference_hull.py).
 This format contains no numerical controls, evolving fluid state, integrator
 state or solver outputs and cannot serve as a restart. It is a development API;
@@ -106,6 +110,34 @@ the initial solver scope remains the one-body, zero-forward-speed case above.
 The validated frame helpers are boundary conveniences. Future timestep code
 should reuse validated arrays and one rotation matrix per pose rather than copy
 and revalidate every panel transformation.
+
+## Calm-water hydrostatics
+
+`topwater.hydrostatics.hydrostatics(body, state)` clips physical hull faces at a
+flat water surface and returns exact planar-triangle pressure loads, displacement,
+buoyancy center, wetted geometry and the six-motion restoring derivative about
+world CG. `equilibrate_heave(body, state)` returns a resting state and these results
+at fixed-attitude buoyancy balance. Density, gravity and water level are explicit
+keyword arguments. This is initialization and independent verification; dynamic
+Bernoulli pressure must include hydrostatic pressure only once.
+
+The data path uses the validated body mesh, transforms vertices once per pose,
+and clips directly into uncapped wetted triangles and waterline segments.
+Physical numerical panels consume `TrianglePanels(result.wetted_triangles, -1)`;
+`TrianglePanels.from_mesh` deliberately includes the full closed shell for
+manufactured mathematical tests. Boundary factorization belongs to the current
+panel geometry and boundary conditions, with repeated right-hand sides reusing it.
+
+The shared canoe checks analytical ellipsoid convergence, buoyancy balance,
+independent pressure moments, all six load derivatives and contact failures.
+Pinned Capytaine independently clips the original physical mesh and matches
+displacement, buoyancy center, wetted/waterplane areas and restoring stiffness.
+Run `uv run --locked --group correlation pytest tests/test_capytaine_hydrostatics.py`.
+Benchmark clipping, pressure and equilibrium with
+`uv run --locked python -m tests.benchmark_hydrostatics`; reports first-call and
+warm execution and process peak memory. The first pressure call includes JIT
+compilation; equilibrium follows that warmup. These are static calculations,
+not timestep or wave-force validation.
 
 ## Roadmap
 
