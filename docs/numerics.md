@@ -241,6 +241,29 @@ to Topwater's `q` or raw matrix entries without conversion. Use
 `Re(Phi*exp(-i*omega*t))`, so linear dynamic pressure amplitude is `i*rho*omega*Phi`.
 Capytaine is a benchmark dependency, never a substituted runtime load model.
 
+The first independent comparison is kernel-only: run
+`uv run --locked --group correlation python -m tests.test_capytaine_rankine`.
+The validation group pins Capytaine 3.0.0; it is not a runtime dependency. A
+dedicated CI job requires its native import and retains JSON comparison reports.
+Exactly the same 128/512/2048 canonical triangles are used, with source-normal
+differentiation and no diagonal trace contribution.
+
+The [tagged Rankine implementation](https://github.com/capytaine/capytaine/blob/v3.0.0/libs/libDelhommeau/src/Green_Rankine.f90)
+uses a point approximation beyond seven panel radii, an angle cutoff below
+`1e-4*radius`, an absolute edge cutoff `1e-5`, and a tiny-edge threshold. The
+comparison classifies those branches from geometry, not from observed agreement.
+Its [PI initializer](https://github.com/capytaine/capytaine/blob/v3.0.0/libs/libDelhommeau/src/constants.f90)
+also rounds through default real precision: the installed constant is
+`3.1415927410125732`. The report retains raw differences and explicitly converts
+the reference normalization by `-pi_reference/pi` before strict kernel checks.
+
+At 2048 panels, 651954 of 4194304 pairs fall in the checked analytic region;
+maximum converted S/K differences are `4.4e-17`/`6.5e-15`. Every source panel has
+nonself coverage. The largest disagreements outside that region are checked
+separately against independent quadrature, without weakening Topwater's gate.
+These checks establish neither boundary-solve accuracy nor hydrodynamic force
+correlation; added mass, damping and wave excitation remain future work.
+
 The progression is panel kernels, assembled mixed boundary problems, waves,
 moving wetted geometry/failure detection, pressure, then coupled motion. Each
 stage must earn its own gates. Numerical verification and comparison with another

@@ -22,6 +22,9 @@ Repository = "https://github.com/amosborne/topwater"
 Issues = "https://github.com/amosborne/topwater/issues"
 
 [dependency-groups]
+correlation = [
+    "capytaine==3.0.0",
+]
 dev = [
     "pytest>=8",
     "threadpoolctl>=3.7.0",

@@ -43,3 +43,23 @@ jobs:
       - run: uv sync --locked
       - run: uv build
       - run: uv run --locked python scripts/check_distributions.py
+
+  capytaine-rankine:
+    name: Capytaine Rankine correlation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: '0.12.10'
+          python-version: '3.12'
+          enable-cache: true
+      - run: uv sync --locked --group correlation
+      - run: uv run --locked --group correlation python -c "import capytaine"
+      - run: uv run --locked --group correlation pytest tests/test_capytaine_rankine.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: capytaine-rankine-report
+          path: artifacts/capytaine-rankine-*.json
+          if-no-files-found: warn
