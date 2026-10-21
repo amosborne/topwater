@@ -63,3 +63,26 @@ jobs:
           name: capytaine-correlation-report
           path: artifacts/capytaine-*.json
           if-no-files-found: warn
+
+  experimental-free-surface:
+    name: Experimental free-surface evidence (not qualification)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: '0.12.10'
+          python-version: '3.12'
+          enable-cache: true
+      - run: uv sync --locked
+      - run: uv run --locked python -m tests.experiments.free_surface.verify
+      - run: uv run --locked python -m tests.experiments.free_surface.evolution
+      - run: uv run --locked python -m tests.experiments.free_surface.linear
+      - run: uv run --locked python -m tests.experiments.free_surface.shape_check
+      - run: uv run --locked python -m tests.experiments.free_surface.benchmark
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: experimental-free-surface-reports
+          path: artifacts/free-surface-*.json
+          if-no-files-found: warn
