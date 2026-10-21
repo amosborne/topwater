@@ -37,20 +37,20 @@ Development requires Python 3.12 or newer and uses uv 0.12.10. Install
 checkout:
 
 ```sh
-uv sync --locked
-uv run --locked pytest
+uv sync
+uv run pytest
 ```
 
-`uv sync` and `uv run pytest` also work for local development. After intentionally
-changing dependencies in `pyproject.toml`, run `uv lock` and commit `uv.lock`.
-CI uses locked commands so dependency changes without an updated lockfile fail.
+After changing dependencies in `pyproject.toml`, run `uv lock` and commit `uv.lock`.
+CI uses `uv sync --locked` and `uv run --locked pytest` so dependency changes
+without an updated lockfile fail.
 Tests run on Linux with Python 3.12–3.14 and Windows with Python 3.12.
 
 Build and check local distributions with:
 
 ```sh
 uv build
-uv run --locked python scripts/check_distributions.py
+uv run python scripts/check_distributions.py
 ```
 
 Start with an empty `dist/` directory when repeating the packaging check after a
