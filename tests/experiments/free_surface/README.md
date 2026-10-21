@@ -28,7 +28,9 @@ wall/bottom nodes,
 and returns both state rates, integrated elevation rate and fluid energy.
 No operator, factorization or potential mean is cached across moving stages.
 The flat linear verification can reuse a frozen operator because its geometry
-does not change. The unoptimized dense temporary ownership remains experimental.
+does not change. Assembly consumes the owned single-layer buffer after forming
+the curl contribution and accumulates the remaining contribution into that same
+energy buffer. Dense assembly and factorization still dominate moving stages.
 
 The potential space is globally continuous P1; auxiliary flux uses P0 panels.
 Use the existing positive Rankine kernel and outward **fluid** normals. The
@@ -77,6 +79,36 @@ This weak dynamic equation is a consistent continuous formulation, but it is
 not exactly the shape gradient of the discrete BEM energy. `shape_check.py`
 measures that difference independently. Spectral positivity of the symmetric
 construction does not by itself prove physical accuracy.
+
+## Body-coupling constraint
+
+The current evolution has no moving body. A coupled extension must use the same
+body flux map for the boundary condition and pressure loads. With six body
+motions `v`, define `B[i,j] = integral_body(N_i * Q_j * dS)`, where `Q` uses
+fluid-outward normals and rotations about the declared load reference. This is
+a nodal weak load, not a separate panel-centroid pressure rule.
+
+Partition nodes into prescribed free-surface potential `F` and unknown potential
+`U`. Natural wall/bottom flux is zero. The mixed solve and remaining flux are
+
+```text
+S_UU @ phi_U = B_U @ v - S_UF @ phi_F
+free_surface_flux = S_FU @ phi_U + S_FF @ phi_F - B_F @ v
+generalized_potential_load = B_U.T @ phi_U + B_F.T @ phi_F
+```
+
+Retain the full `B`, including waterline nodes in `F`. Dropping its fixed rows
+when computing the instantaneous inertia matrix alone is valid for zero
+free-surface acceleration potential. Those rows are still needed to recover
+free-surface acceleration flux, and for a general moving body. For that auxiliary
+solve, `A = density * B_U.T @ solve(S_UU, B_U)` and the acceleration reaction is
+`-A @ acceleration`. One factorization handles all six right-hand sides.
+
+This algebra constrains shared ownership; it does not qualify the quadrature,
+waterline state transfer, nonlinear pressure or open-water domain treatment.
+Finite rigid-wall tanks and Capytaine's infinite-depth open-water problem have
+different boundary conditions. Their agreement cannot replace separate outer
+mesh, domain-size and quadrature studies on identical wetted hull geometry.
 
 ## Reproduce
 
