@@ -62,8 +62,8 @@ Consumers can install the local wheel with `python -m pip install path/to/topwat
 (using the actual wheel filename). No PyPI release is available yet.
 
 Package metadata and dependency declarations live in `pyproject.toml`; the
-PEP 517 build backend can change when compiled kernels become necessary. See
-[dependency licenses](DEPENDENCIES.md). Publishing is deferred until Stage 8,
+PEP 517 build backend can change when compiled kernels become necessary.
+Publishing is deferred until Stage 8,
 after Stage 7 qualification; development and CI never upload packages.
 
 Start with an open stage issue and discuss changes that affect its physical assumptions or interfaces. Contributions should distinguish numerical verification from physical validation, preserve wave/input provenance, and include timing and convergence evidence appropriate to the change. Do not commit generated simulation output or third-party code without checking its license.
