@@ -15,6 +15,7 @@ from topwater.hydrostatics import equilibrate_heave
 from topwater.inertia import instantaneous_added_mass
 from topwater.rankine import TrianglePanels
 from .reference_hull import input_data
+from .capytaine_reference import instantaneous_inertia as reference_inertia
 
 
 def compare_inertia(refinement):
@@ -22,31 +23,9 @@ def compare_inertia(refinement):
     data = SimulationInputs.from_json(json.dumps(input_data(refinement)))
     rest, wet = equilibrate_heave(data.body, data.initial_state)
     panels = TrianglePanels(wet.wetted_triangles, -1)
-    names = ['Surge', 'Sway', 'Heave', 'Roll', 'Pitch', 'Yaw']
-    # Load the native kernel before discovering process BLAS/OpenMP controls.
-    green = cpt.Delhommeau(tabulation_nr=0, tabulation_nz=0, tabulation_cache_dir=None)
     with threadpool_limits(1):
         actual = instantaneous_added_mass(panels, rest.position)
-        # Clipping was independently correlated separately. Here both methods
-        # use identical physical triangles, no artificial cap, CG and fluid.
-        vertices, indices = np.unique(panels.triangles.reshape(-1, 3), axis=0, return_inverse=True)
-        faces = indices.reshape(-1, 3)
-        # Share exactly equal coordinates without moving/healing any point.
-        # Disjoint vertex indices would make Capytaine's topology checks see
-        # every triangle as a separate body component.
-        assert_allclose(vertices[faces], panels.triangles, atol=0, rtol=0)
-        mesh = cpt.Mesh(vertices=vertices, faces=faces, auto_clean=False, auto_check=False)
-        assert_allclose(mesh.faces_normals, -panels.normals, atol=1e-13, rtol=1e-12)
-        body = cpt.FloatingBody(mesh=mesh, dofs=cpt.rigid_body_dofs(rotation_center=rest.position),
-                                mass=data.body.mass, center_of_mass=rest.position)
-        solver = cpt.BEMSolver(green_function=green)
-        reference = np.empty((6, 6))
-        damping = np.empty((6, 6))
-        for column, name in enumerate(names):
-            result = solver.solve(cpt.RadiationProblem(body=body, radiating_dof=name,
-                omega=np.inf, rho=1000., g=9.81, water_depth=np.inf))
-            reference[:, column] = [result.added_mass[row] for row in names]
-            damping[:, column] = [result.radiation_damping[row] for row in names]
+    reference, damping = reference_inertia(panels.triangles, rest.position, data.body.mass)
     scale = np.array([1., 1., 1., 3.5, 3.5, 3.5])
     normalized = actual.added_mass/scale[:, None]/scale[None, :]/(1000*3.5**3)
     expected = reference/scale[:, None]/scale[None, :]/(1000*3.5**3)

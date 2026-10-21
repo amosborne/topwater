@@ -57,11 +57,14 @@ jobs:
       - run: uv sync --locked --group correlation
       - run: uv run --locked --group correlation python -c "import capytaine"
       - run: uv run --locked --group correlation pytest tests/test_capytaine_rankine.py tests/test_capytaine_hydrostatics.py tests/test_capytaine_inertia.py
+      - run: uv run --locked --group correlation python -m tests.experiments.free_surface.canoe --study
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: capytaine-correlation-report
-          path: artifacts/capytaine-*.json
+          path: |
+            artifacts/capytaine-*.json
+            artifacts/free-surface-canoe.json
           if-no-files-found: warn
 
   experimental-free-surface:
@@ -80,6 +83,7 @@ jobs:
       - run: uv run --locked python -m tests.experiments.free_surface.linear
       - run: uv run --locked python -m tests.experiments.free_surface.shape_check
       - run: uv run --locked python -m tests.experiments.free_surface.benchmark
+      - run: uv run --locked python -m tests.experiments.free_surface.benchmark --canoe
       - uses: actions/upload-artifact@v4
         if: always()
         with:

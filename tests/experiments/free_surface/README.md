@@ -5,6 +5,8 @@ state through moving geometry, a BEM solve and nonlinear time derivatives.
 It is not an installed Topwater solver, a completed Stage 1/2, or an open-water
 wave-body simulation. The rectangular tank is a fluid verification domain;
 `hull_check.py` uses the existing canonical canoe, not another test hull.
+`canoe.py` joins its actual wetted shell to a surrounding flat free surface and
+tests static acceleration coupling on the complete finite fluid domain.
 
 The earlier centroid-constant prototype cannot simply be wrapped in nodal
 evolution: averaging vertex potential onto triangles exactly erases nonconstant
@@ -110,6 +112,24 @@ Finite rigid-wall tanks and Capytaine's infinite-depth open-water problem have
 different boundary conditions. Their agreement cannot replace separate outer
 mesh, domain-size and quadrature studies on identical wetted hull geometry.
 
+`canoe.py` exercises this auxiliary solve. Its caller owns heave equilibrium and
+the physical wet geometry; domain construction owns only the joined mesh and
+body/free-surface face indices. One exact P1 load map drives both forcing and
+pressure integration. A seventh right-hand side, `phi=z`, has independently
+known potential, Dirichlet energy and hydrostatic load. The Dirichlet energy is
+twice unit-density kinetic energy and equals fluid volume for this field.
+It shares the six-mode
+factorization rather than constructing a separate verification solver.
+
+The mesher supports the canonical single convex horizontal waterline at `z=0`,
+strictly inside the box. It uses unconstrained Delaunay triangulation, checks
+convexity and rejects lost shared edges through full closed-mesh validation.
+It neither welds coordinates nor supplies general moving-waterline remeshing.
+Two hull refinements, off-grid translation, yaw and heel verify exact closure,
+fluid volume, free-surface area and pressure/moment integration. The rectangular
+`Tank.rhs` still cannot evolve this perforated surface: moving connectivity and
+fluid-state transfer remain required.
+
 ## Reproduce
 
 Run from a locked checkout; outputs go to ignored `artifacts/`:
@@ -123,6 +143,8 @@ uv run --locked python -m tests.experiments.free_surface.integrate --rtol 1e-5
 uv run --locked python -m tests.experiments.free_surface.shape_check
 uv run --locked python -m tests.experiments.free_surface.hull_check
 uv run --locked python -m tests.experiments.free_surface.benchmark
+uv run --locked python -m tests.experiments.free_surface.benchmark --canoe
+uv run --locked --group correlation python -m tests.experiments.free_surface.canoe --study
 ```
 
 `verify` reports `qualified=false` and remaining work; command completion is not
@@ -131,6 +153,14 @@ about a minute for the finer short case on the development host. The benchmark
 uses fresh workers, empty compilation caches and five warm samples. Its scope
 is geometry through the flat solve and independent diagnostics, **not** a moving
 timestep, whose actual cost is recorded by `integrate`.
+
+The canoe comparison generates pinned Capytaine references directly from the
+supplied physical triangles and CG, outside candidate timing. It never reads
+another test's report. CI retains its six-case outer-mesh/domain/quadrature study
+beside the existing Capytaine reports; `qualified=false` remains explicit.
+The canoe benchmark uses the same fresh-worker harness, including equilibrium,
+clipping, joined-domain geometry, assembly, seven-RHS solve, pressure and affine
+diagnostics. Validated input construction, imports and Capytaine are excluded.
 
 On the Windows development host (Intel family 6 model 170, 22 logical CPUs,
 Python 3.12.8/NumPy 2.5.4/SciPy 1.18.1/Numba 0.68.0, one BLAS thread), the
@@ -156,6 +186,26 @@ The buffer byte report describes `V` after factorization and the final energy
 buffer; hypersingular and energy storage are no longer distinct allocations.
 
 ## Evidence and limits
+
+With 460 wetted canoe triangles, increasing outer horizontal resolution from
+`(8,4,4)` to `(16,8,4)` changes diagonal inertia by several percentage points.
+Doubling domain width, length and depth at the finer horizontal spacing changes
+those diagonals by at most 0.15 percentage point. Doubling vertical resolution
+alone changes them by less than 0.0002 percentage point. Third- to sixth-order
+quadrature on the coarse outer mesh changes them by at most 0.086 percentage
+point. Within these probes, outer horizontal discretization dominates the
+remaining difference from the open-water reference; this is not qualification.
+
+For that canoe, refining the outer mesh halves the independent affine potential
+error, while relative solved Dirichlet-energy error decreases from 0.0198% to 0.00849%.
+The solved affine pressure load also converges toward independent hydrostatics;
+tests check the complete force/moment vector, not a symmetry-repaired matrix.
+
+Fresh-worker canoe-path warm medians at 864/1820 complete fluid faces are
+0.689/3.25 s, with 220/285 MiB peak RSS on the host described above. Empty-cache
+first calls are 6.24/9.12 s. These include the additional affine diagnostics;
+they are static auxiliary solves, not coupled timestep throughput. The dense
+method has not demonstrated the cost or accuracy required for production.
 
 On the 320/1280-panel tank, third-order outer quadrature gives interior **nodal** velocity
 errors of 6.16%/0.518% for the axial mode and 14.0%/1.32% for the oblique mode.
