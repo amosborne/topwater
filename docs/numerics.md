@@ -66,6 +66,16 @@ verification and must retain its separate constraint and compatibility residuals
 
 ## First operator and boundary solve
 
+Implementation status: `HullMesh` owns validated physical arrays;
+`TrianglePanels` caches O(N) numerical geometry; one fused, serial Numba kernel
+fills final S/K buffers directly. `LaplaceOperators` owns those arrays and their
+measured diagnostics. Independent quadrature remains a separate verification
+method, not a second analytic backend. Boundary factorization is the next layer:
+it must own its operators, boundary assignments and scaling, reuse factors for
+unchanged systems, and avoid keeping a redundant unfactored mixed matrix just
+for residuals. Geometry changes require rebuilding the system. No global cache
+or extensible backend framework is planned.
+
 Choose a **direct Rankine-kernel BEM**, whose unknowns are physical potential or
 normal velocity, rather than an indirect source-strength formulation. The initial
 correctness prototype uses constant values on flat triangular numerical panels,
@@ -79,15 +89,16 @@ bounded fallback when numerical cancellation defeats the fast path. A Duffy
 transformation removes the self single-layer singularity. For a flat self panel,
 `K_ii=0` as a principal value; the jump is added exactly once in `H`.
 Never force diagonal row sums, insert a distance epsilon or return a failed
-quadrature as a successful evaluation. Actual edge/vertex targets and intersecting
-panels are rejected by this first API; their trace coefficients are not always
-one half. Centroid self targets are supported explicitly.
+quadrature as a successful evaluation. Actual edge/vertex targets are rejected;
+their trace coefficients are not always one half. Centroid self targets are
+supported explicitly. Panels must form a nonintersecting boundary; global
+intersection detection is not implemented by the panel cache or assembler.
 
 Measure both kernels on the same physical length scale. A pair estimate must
 satisfy `error <= atol + rtol*abs(reference)` for `S/panel_diameter` and `K`.
 These are requested tolerances, not certified error bounds; independent checks
 below establish their adequacy. Defaults are `rtol=1e-8`, `atol=1e-10` and at
-most eight fallback subdivisions. An exhausted depth budget is an explicit error.
+most eight fallback order increases. An exhausted work budget is an explicit error.
 
 Scale the mixed system with a declared positive length `L` and potential scale
 `Phi`: `phi_hat=phi/Phi`, `q_hat=L*q/Phi`, `S_hat=S/L`. On a Neumann panel the
@@ -157,6 +168,32 @@ host default where it affects the measured operation. Do not invent a universal
 runtime threshold before obtaining a baseline; explain regressions on comparable
 hardware, including any accuracy benefit. Benchmark data go under `artifacts/`,
 with concise accuracy/time/memory evidence in the PR.
+
+### Initial kernel measurements (2026-10-21)
+
+Windows 11, Intel family 6 model 170 (22 logical CPUs), Python 3.12.8,
+NumPy 2.5.4, SciPy 1.18.1, Numba 0.68.0; serial kernel, one BLAS thread,
+128-row blocks. Medians of five warm runs, each case in its own process and
+with its own empty compilation cache:
+
+| Canonical panels | Assembly | 128 bulk targets, with gradients | Assembly peak RSS |
+| ---: | ---: | ---: | ---: |
+| 128 | 1.6 ms | 3.8 ms | 153 MiB |
+| 512 | 29 ms | 9.0 ms | 157 MiB |
+| 2048 | 468 ms | 44 ms | 217 MiB |
+
+Cold first calls, including compilation, took 2.3–2.9 s. RSS includes imports,
+compiler and scratch allocations; the 2048-panel operators alone occupy 64 MiB.
+The bounded-domain constant-potential identity had maximum error `6.5e-15`;
+all measured cases used zero quadrature fallbacks. Independent kernel/gradient
+accuracy tests are separate from that identity.
+
+The checked NumPy prototype took 2.82 s with 236 MiB peak RSS at 2048 panels and
+128-row blocks. The fused kernel is about six times faster in this comparison;
+the duplicate NumPy formula was removed. Smaller cases pay a larger relative
+compiler-memory cost. Block sweeps from 16 to 128 rows did not establish a
+consistent runtime winner, so the default remains 128. These are panel costs,
+not boundary-solve, timestep or Capytaine-correlation results.
 
 ## Verification gates and implementation order
 

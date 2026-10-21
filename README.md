@@ -4,13 +4,15 @@
 
 Topwater is a planned open-source, three-dimensional time-domain potential-flow solver for freely floating bodies in directional waves. The initial target is one rigid boat with six free motions, an evolving free surface and changing wetted hull geometry, explicit viscous damping, and an external force and torque interface.
 
-**Status: planning and numerical verification infrastructure. No solver is implemented yet.**
+**Status: verified Laplace panel kernels and operator assembly. Boundary solves,
+wave evolution and body dynamics are not implemented yet.**
 
 ## Approach
 
 Solve incompressible, inviscid, irrotational water flow using boundary elements on the wetted hull and surrounding free surface. Couple pressure and body acceleration consistently, so buoyancy, wave excitation, diffraction, radiation and added-mass effects emerge from the fluid solution rather than being added from fixed coefficient tables.
 
-Use Python with NumPy/SciPy, then optimize measured bottlenecks with compiled kernels. Existing Capytaine results can supply independent linear benchmarks.
+Use NumPy/SciPy arrays and linear algebra, with a compiled Numba panel kernel.
+Existing Capytaine results will supply independent linear benchmarks.
 
 The initial scope is a single rigid body in deep water, with reproducible directional wave realizations and no anchor or mooring forces. Viscous damping remains an explicit model requiring sensitivity analysis or calibration. Breaking/overturning waves, resolved slamming jets, flooding, propulsion and multiple bodies are outside the initial scope. Free yaw does not guarantee a settled heading.
 
@@ -92,8 +94,8 @@ and unknown placement remain a separate Stage 1 choice.
 Mesh validation checks edge closure, connectedness, winding, degeneracy and
 positive enclosed volume. It does not detect self-intersections or guarantee
 suitability for a moving waterline. Geometry-stage checks will handle those
-limits. Body-outward normals are a geometry convention; the BEM fluid-domain
-normal and pressure-gauge conventions remain to be specified before Stage 1.
+limits. Body-outward normals are a geometry convention; the numerical contract
+defines fluid-domain normals and the pressure gauge separately.
 
 `SimulationInputs.to_json()` and `SimulationInputs.from_json(text)` round-trip
 the physical inputs using `format_version: 1` and revalidate on import. For a
@@ -109,8 +111,22 @@ and revalidate every panel transformation.
 
 The [numerical contract and verification gates](docs/numerics.md) define the
 initial direct Rankine-kernel BEM, sign/gauge conventions, planned accuracy
-checks and cost measurements. `topwater.numerics` currently implements controls
-and dense-storage preflight only; numerical solver gates are not yet passed.
+checks and cost measurements. `TrianglePanels` in `topwater.rankine` caches
+flat-panel geometry; `panel_influence` returns the positive Rankine single layer,
+principal-value double layer and optional bulk gradients. `assemble_laplace` in
+`topwater.bem` fills dense operators directly, with preallocation budget checks,
+measured diagnostics and NPZ serialization. Hull fluid normals use
+`TrianglePanels.from_mesh(hull, normal_sign=-1)`. The artificial cap is only a
+mathematical test boundary, never a physical wetted deck.
+
+Independent quadrature checks self, near and far interactions. Unresolved close
+pairs fail explicitly; global panel-intersection detection is not implemented.
+The compiled kernel replaces the measured NumPy bottleneck without maintaining
+a second production formula. Benchmark assembly with
+`uv run --locked python -m tests.benchmark_rankine`, or add `--operation field`
+for 128 fixed bulk targets and gradients. Reports record five warm timings,
+isolated cold compilation, actual BLAS threads, numerical errors and fresh-process
+peak RSS. These are kernel costs, not timestep or Capytaine validation results.
 
 Requirements, implementation stages and acceptance criteria live in [GitHub issues](https://github.com/amosborne/topwater/issues/1). Each stage requires verification evidence and measured execution time before later stages rely on it.
 
