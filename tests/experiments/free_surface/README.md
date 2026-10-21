@@ -219,10 +219,18 @@ These manufactured problems prescribe the required outer-wall flux: they do
 not establish a wave solution with impermeable stationary walls.
 
 Fresh-worker canoe-path warm medians at 864/1820 complete fluid faces are
-0.772/3.47 s, with 220/287 MiB peak RSS on the host described above. Empty-cache
-first calls are 6.93/9.72 s. These include all four coupling-field diagnostics;
+0.772/3.53 s, with 220/287 MiB peak RSS on the host described above. Empty-cache
+first calls are 7.38/10.30 s. These include all four coupling-field diagnostics;
 they are static auxiliary solves, not coupled timestep throughput. The dense
 method has not demonstrated the cost or accuracy required for production.
+
+The source first-moment vector is computed once per target point/source face
+and reused for all three P1 corners. Two warmed, interleaved old/new comparisons
+on those canoe domains gave complete-path medians of `0.779 -> 0.688 s` and
+`3.140 -> 2.898 s`, then `0.931 -> 0.807 s` and `3.813 -> 3.526 s`. Raw single-
+and double-layer matrices, inertia and affine outputs were bit-identical.
+These paired warm results support the arithmetic change; separate fresh-run
+times vary, and no cold-start or memory improvement is established.
 
 On the 320/1280-panel tank, third-order outer quadrature gives interior **nodal** velocity
 errors of 6.16%/0.518% for the axial mode and 14.0%/1.32% for the oblique mode.

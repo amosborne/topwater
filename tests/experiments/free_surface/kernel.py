@@ -71,14 +71,21 @@ def assemble_pairs(triangles,normals,outward,tangents,lengths,areas,centroids,si
                 double=angle*signs[source_face]/(4*pi)
                 weight=areas[target_face]*weights[point]
                 v[target_face,source_face]+=weight*single
-                for corner in range(3):
-                    linear=double/3
-                    if not self_pair:
-                        for axis in range(3):
-                            offset=x[axis]-centroids[source_face,axis]-height*normals[source_face,axis]
-                            moment=offset*double-height*edge_gradient[axis]*signs[source_face]/(4*pi)
-                            linear+=moment*gradient[source_face,corner,axis]
-                    hmat[target_face,faces[source_face,corner]]+=weight*linear
+                if not self_pair:
+                    # One source first-moment vector serves all three P1
+                    # corners. Recomputing it per corner repeats the same work.
+                    m0=((x[0]-centroids[source_face,0]-height*normals[source_face,0])*double
+                        -height*edge_gradient[0]*signs[source_face]/(4*pi))
+                    m1=((x[1]-centroids[source_face,1]-height*normals[source_face,1])*double
+                        -height*edge_gradient[1]*signs[source_face]/(4*pi))
+                    m2=((x[2]-centroids[source_face,2]-height*normals[source_face,2])*double
+                        -height*edge_gradient[2]*signs[source_face]/(4*pi))
+                    for corner in range(3):
+                        linear=double/3
+                        linear+=m0*gradient[source_face,corner,0]
+                        linear+=m1*gradient[source_face,corner,1]
+                        linear+=m2*gradient[source_face,corner,2]
+                        hmat[target_face,faces[source_face,corner]]+=weight*linear
         for corner in range(3):
             hmat[target_face,faces[target_face,corner]]+=areas[target_face]/6
     return v,hmat
