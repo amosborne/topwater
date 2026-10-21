@@ -10,7 +10,7 @@ from topwater.bem import LaplaceOperators, assemble_laplace
 from topwater.boundary import BoundarySystem
 from topwater.frames import rotation_matrix
 from topwater.rankine import TrianglePanels, panel_influence
-from .laplace_reference import harmonic_field, point_source
+from .laplace_reference import harmonic_field, point_source, triangle_samples
 from .reference_hull import mesh_arrays
 
 
@@ -96,6 +96,65 @@ def test_neumann_compatibility_zero_problem_and_validation(canonical):
     assert_allclose(solution.potential, 0, atol=0)
     assert solution.diagnostics['backward_error'] == [0]
     assert solution.diagnostics['original_bie_residual'] == [0]
+
+
+def test_external_source_neumann_uses_converged_flux_integrals_without_projection(canonical):
+    panels, operators = canonical
+    source = [3.5, 1., .7]
+    averages = []
+    for order in (8, 12):
+        points, weights = triangle_samples(panels.triangles, order)
+        _, gradient = point_source(points.reshape(-1, 3), source)
+        q = np.einsum('fqrj,fj->fqr', gradient.reshape(len(panels), len(weights), -1, 3),
+                      panels.normals)
+        averages.append(np.einsum('q,fqr->fr', weights, q))
+    assert_allclose(averages[0], averages[1], atol=1e-14, rtol=1e-12)
+    assert_allclose(panels.areas@averages[1], 0, atol=1e-14)
+    _, gradient = point_source(panels.centroids, source)
+    centroid_q = np.einsum('frj,fj->fr', gradient, panels.normals)
+    assert abs((panels.areas@centroid_q)[0]) > 1e-7
+    system = BoundarySystem(operators, dirichlet=np.zeros(len(panels), bool),
+                            areas=panels.areas, length_scale=3.5, bounded=True)
+    result = system.solve(normal_velocity=averages[1])
+    assert max(result.diagnostics['compatibility_residual']) < 1e-12
+    assert max(result.diagnostics['backward_error']) < 1e-12
+    # The bordered solve is accurate. Its original BIE defect remains a
+    # discretization error, reported separately rather than called roundoff.
+    assert np.all(np.isfinite(result.diagnostics['original_bie_residual']))
+
+
+def test_surface_quadrature_exposes_constant_panel_interpolation_error(canonical):
+    panels, _ = canonical
+    points, weights = triangle_samples(panels.triangles)
+    phi, _ = harmonic_field(panels.centroids)
+    exact, _ = harmonic_field(points.reshape(-1, 3))
+    error = phi[:, None]-exact.reshape(len(panels), len(weights), -1)
+    surface_mse = np.einsum('q,fqr->fr', weights, error**2)
+    # A linear field's exact triangle variance is the mean squared vertex
+    # deviation divided by four; its value at the centroid alone has zero error.
+    vertex_deviation = (panels.triangles[:, :, 0]-panels.centroids[:, None, 0])/3.5
+    expected = np.sum(vertex_deviation**2, axis=1)/12
+    assert_allclose(surface_mse[:, 0], expected, atol=1e-16, rtol=1e-12)
+    assert np.all(surface_mse[:, 0] > 0)
+
+
+def test_surface_error_quadrature_resolves_the_near_internal_source(canonical):
+    panels, _ = canonical
+    source = [0, 0, -.175]
+    phi, gradient = point_source(panels.centroids, source)
+    q = np.einsum('frj,fj->fr', gradient, panels.normals)
+    errors = []
+    for order in (16, 24):
+        points, weights = triangle_samples(panels.triangles, order)
+        exact, gradient = point_source(points.reshape(-1, 3), source)
+        exact_q = np.einsum('fqrj,fj->fqr',
+            gradient.reshape(len(panels), len(weights), -1, 3), panels.normals)
+        metrics = []
+        for value, reference in ((phi, exact.reshape(exact_q.shape)), (q, exact_q)):
+            metrics.append(np.sqrt(np.einsum('f,q,fqr->r', panels.areas, weights,
+                (value[:, None]-reference)**2)/panels.areas.sum()))
+        errors.append(metrics)
+    assert_allclose(errors[0], errors[1], atol=1e-8, rtol=1e-9)
 
 
 def test_factorization_limits_are_scoped_and_explicit(canonical):

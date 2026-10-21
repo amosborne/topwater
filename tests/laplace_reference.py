@@ -1,6 +1,20 @@
 """Analytic physical fields; independent of panel integration and solves."""
 
 import numpy as np
+from numpy.polynomial.legendre import leggauss
+
+
+def triangle_samples(triangles, order=16):
+    """Independent tensor Gauss-Duffy points and normalized area weights.
+
+    This samples the full triangle interiors rather than reusing a numerical
+    element's unknown/collocation nodes. Weights sum to one for each triangle.
+    """
+    nodes, weights = leggauss(order)
+    unit, weights = (nodes+1)/2, weights/2
+    u, v = np.meshgrid(unit, unit, indexing='ij')
+    barycentric = np.column_stack(((1-u).ravel(), (u*(1-v)).ravel(), (u*v).ravel()))
+    return barycentric@triangles, (2*np.outer(weights, weights)*u).ravel()
 
 
 def harmonic_field(points):

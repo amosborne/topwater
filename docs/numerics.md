@@ -270,6 +270,30 @@ quadrature must isolate integration error from panel-discretization error.
 | Capytaine correlation | Match actual immersed geometry, CG/rotation centre, loading, water depth, gravity/density, frequency, heading, units and complex time convention. Normalize added mass as `D^-1 A D^-1/(rho*L^3)` and damping as `D^-1 B D^-1/(rho*omega*L^3)`, with `D=diag(1,1,1,L,L,L)`. Normalize excitation by `D^-1 F/(rho*g*amplitude*L^2)`. Each family is the complete nondimensional added-mass matrix, damping matrix or excitation vector over the predeclared frequency/heading/mode set. Use `abs(z-z_ref) <= 0.05*abs(z_ref) + max(1e-10, 0.005*max(abs(z_ref)))`; the floor covers an entirely zero family. Converge both solvers and report phase/couplings, not merely correlation coefficients. |
 | Cost | Publish wall time first, peak memory second, and numerical error together. Initial operator cases use canonical 128/512/2048 numerical panels. A kernel-only agreement or small linear residual never qualifies a wave-body solver. |
 
+Boundary verification samples full triangle interiors using independent
+Gauss-Duffy quadrature, in addition to reporting collocation errors. A prescribed
+field can match at every collocation node while its panel representation varies
+incorrectly between them. The report retains the original `Phi=1`, `L=3.5 m`
+scales and adds relative surface-potential, normal-velocity and bulk-velocity
+RMS errors; changing scales is not a substitute for reducing physical error.
+The qualification gate includes both sampled and full-surface errors. A bounded
+pure-Neumann reference uses the continuous area-mean potential gauge.
+
+The bounded point-source Neumann case now supplies independently integrated
+panel-average flux. Two quadrature orders agree and the integral has zero net
+flux without subtraction/projection. The Neumann compatibility tolerance remains
+`1e-12`. At 128/512/2048 faces its potential error decreases
+`0.01792 → 0.006868 → 0.002198`; its original BIE defect decreases
+`0.002757 → 0.0008668 → 0.0002638`. The bordered algebraic solve reaches roundoff;
+the original equation defect remains a separate discretization error.
+
+Contained higher-order and auxiliary-source probes have not earned a runtime
+API. Independent full-surface checks show that interpolation of the prescribed
+fields can dominate their error, while auxiliary-source placement introduces
+conditioning and between-node accuracy problems. They do not qualify the current
+constant-panel method or justify building a general discretization framework.
+Surface-velocity recovery and the full boundary accuracy gate remain unfinished.
+
 Later free-surface stepping uses graph elevation and surface potential with
 the [Bogacki-Shampine RK3(2) pair](https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.RK23.html):
 third-order accepted updates, an embedded second-order estimate and adaptive
