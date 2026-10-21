@@ -37,7 +37,7 @@ def main():
             mesh_bytes=vertices.nbytes + faces.nbytes,
         ))
     print(json.dumps(dict(
-        case="canonical ellipsoid; initial geometry validation only",
+        case="canonical truncated ellipsoid; initial geometry validation only",
         python=platform.python_version(), numpy=np.__version__, scipy=scipy.__version__,
         platform=platform.platform(), processor=platform.processor(),
         results=results,

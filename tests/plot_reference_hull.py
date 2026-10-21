@@ -10,11 +10,14 @@ import matplotlib.pyplot as plt
 from matplotlib.collections import PolyCollection
 import numpy as np
 
-from .reference_hull import mesh_arrays
+from .reference_hull import mesh_arrays, opening_boundaries
 
 
 def main():
     vertices, faces = mesh_arrays(refinement=3)
+    rim, cap = opening_boundaries(vertices, faces)
+    # Omit the explicitly artificial closure so the physical opening is visible.
+    faces = np.delete(faces, cap, axis=0)
     triangles = vertices[faces]
     normals = np.cross(triangles[:, 1] - triangles[:, 0],
                        triangles[:, 2] - triangles[:, 0])
@@ -25,7 +28,7 @@ def main():
     colors = intensity[:, None] * np.array([0.70, 0.84, 0.88])
     # An orthographic view drawn in 2-D avoids distorted axes and preserves
     # physical proportions. Sort triangles from back to front for occlusion.
-    view = np.array([0.34, -0.94, 0.36])
+    view = np.array([0.34, -0.94, 0.70])
     view /= np.linalg.norm(view)
     right = np.cross([0, 0, 1], view)
     right /= np.linalg.norm(right)
@@ -37,11 +40,13 @@ def main():
     ax.add_collection(PolyCollection(
         projected[order], facecolors=colors[order], edgecolors="#35576a", linewidths=0.4,
     ))
+    outline = vertices[np.r_[rim, rim[0]]] @ np.column_stack([right, up])
+    ax.plot(outline[:, 0], outline[:, 1], color="#173b50", linewidth=1.2)
     ax.autoscale_view()
     ax.set_aspect("equal")
     ax.axis("off")
     fig.suptitle("Reference hull mesh", fontsize=17, color="#173b50", y=0.98)
-    fig.text(0.5, 0.84, "Triaxial ellipsoid · 6 m × 2 m × 1 m · 512 triangles",
+    fig.text(0.5, 0.84, "Canoe reference · 6 m × 2 m × 0.75 m · artificial cap omitted",
              ha="center", color="#526573", fontsize=11)
     destination = Path(__file__).resolve().parents[1] / "docs/images/reference-hull.png"
     destination.parent.mkdir(parents=True, exist_ok=True)

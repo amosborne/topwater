@@ -16,13 +16,31 @@ The initial scope is a single rigid body in deep water, with reproducible direct
 
 ## Reference hull
 
-![Triangular mesh of the canonical ellipsoid, 6 metres long, 2 metres wide and 1 metre high](docs/images/reference-hull.png)
+![Triangular mesh of a canoe-like truncated ellipsoid, with its open rim visible](docs/images/reference-hull.png)
 
-One canonical ellipsoid, 6 m long, 2 m wide and 1 m high, supplies the shared
-geometry and loading for tests and future Capytaine comparisons. The image
-shows geometry only. Buoyancy and floating equilibrium are not implemented.
+One canonical canoe-like hull supplies the shared geometry and loading for tests
+and future Capytaine comparisons. It is a 6 m × 2 m × 1 m ellipsoid cut at
+`z = 0.25 m`, giving an overall height of 0.75 m. The rim has 0.25 m of freeboard
+at the reference waterline `z = 0`. An explicitly marked artificial cap closes
+the test mesh; the image omits it to show the opening. That cap is not a
+watertight deck. The image shows geometry only; buoyancy and floating
+equilibrium are not implemented.
 Refinements approximate the same exact surface; they are not different hulls.
 The smooth reference does not exercise chines or transoms.
+
+The reference specifies mass, CG and the full inertia tensor about CG in body
+axes. Its loading is uniform over the truncated envelope, with mass chosen to
+balance the exact reference displacement in water of density 1000 kg/m³.
+This is a synthetic loading assumption, not water carried inside the canoe.
+The finite mesh approximates that exact geometry, so it slightly under-displaces.
+The exact reference mass is `1000π kg`, CG is `(0, 0, -1/16) m`, and inertia
+about CG is `mass × diag(63/256, 2491/1280, 17/8) m²` with zero off-diagonal terms.
+
+Future moving-geometry checks must stop at **rim immersion** (flooding onset) or
+**complete loss of hull–water contact**, including invalid initial states.
+Rim clearance must use the local evolving free surface. An artificial closure
+must never hide flooding by supporting deck pressure. These failure detectors
+belong to the moving-waterline stage and are not implemented yet.
 
 The definition, generator and analytical reference values live together in
 [tests/reference_hull.py](tests/reference_hull.py). Run the geometry checks with
