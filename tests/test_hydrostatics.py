@@ -8,7 +8,7 @@ from numpy.testing import assert_allclose
 import pytest
 from scipy.spatial.transform import Rotation
 
-from topwater import InitialState, SimulationInputs
+from topwater import HullMesh, InitialState, SimulationInputs
 from topwater.hydrostatics import (
     FloodingError, LossOfContactError, NoEquilibriumError,
     equilibrate_heave, hydrostatics,
@@ -130,3 +130,35 @@ def test_waterline_crossing_mesh_vertices_preserves_volume_derivative():
     above = hydrostatics(data.body, replace(state, position=state.position+[0, 0, step]))
     assert_allclose((below.displaced_volume-above.displaced_volume)/(2*step),
                     center.waterplane_area, rtol=1e-6)
+
+
+@pytest.mark.parametrize('refinement', [3, 4])
+@pytest.mark.parametrize('pose', ['equilibrium', 'heeled', 'vertex_row'])
+def test_wetted_hull_and_waterline_join_exactly(refinement, pose):
+    from .reference_hull import surface_integrals
+
+    data = reference(refinement)
+    if pose == 'equilibrium':
+        _, result = equilibrate_heave(data.body, data.initial_state)
+    elif pose == 'heeled':
+        state = InitialState(data.initial_state.position+[1.2, -.7, .01],
+                             orientation([.08, .025, .4]))
+        result = hydrostatics(data.body, state)
+    else:
+        levels = np.unique(data.body.mesh.vertices[:, 2])
+        state = InitialState([0, 0, data.body.cg[2]-levels[len(levels)//2]])
+        result = hydrostatics(data.body, state)
+
+    # A mathematical waterplane cap must join the physical wet shell by exact
+    # coordinates: each original cut edge has one intersection, independent of
+    # which incident face evaluates it. No rounded weld/tolerance is applied.
+    lines = result.waterline_segments
+    center = lines.reshape(-1, 3).mean(axis=0)
+    cap = np.stack((lines[:, 1], lines[:, 0],
+                    np.broadcast_to(center, (len(lines), 3))), axis=1)
+    triangles = np.concatenate((result.wetted_triangles, cap))
+    vertices, indices = np.unique(triangles.reshape(-1, 3), axis=0, return_inverse=True)
+    closed = HullMesh(vertices, indices.reshape(-1, 3))
+    volume, centroid = surface_integrals(closed.vertices, closed.faces)
+    assert_allclose(volume, result.displaced_volume, rtol=1e-12, atol=1e-14)
+    assert_allclose(centroid, result.center_of_buoyancy, rtol=1e-12, atol=1e-13)

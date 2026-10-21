@@ -23,11 +23,18 @@ def clip_flat_water(vertices, faces, physical_faces, level, save_geometry):
             current = faces[face, corner]
             current_inside = vertices[current, 2] < level
             if current_inside != previous_inside:
-                fraction = ((level-vertices[previous, 2])
-                            / (vertices[current, 2]-vertices[previous, 2]))
-                for axis in range(3):
-                    polygon[size, axis] = (vertices[previous, axis]
-                        + fraction*(vertices[current, axis]-vertices[previous, axis]))
+                # Incident faces traverse a shared edge in opposite directions.
+                # Always interpolate from wet to dry so the result is identical.
+                wet_vertex = current if current_inside else previous
+                dry_vertex = previous if current_inside else current
+                if vertices[dry_vertex, 2] == level:
+                    polygon[size] = vertices[dry_vertex]
+                else:
+                    fraction = ((level-vertices[wet_vertex, 2])
+                                / (vertices[dry_vertex, 2]-vertices[wet_vertex, 2]))
+                    for axis in range(3):
+                        polygon[size, axis] = (vertices[wet_vertex, axis]
+                            + fraction*(vertices[dry_vertex, axis]-vertices[wet_vertex, axis]))
                 polygon[size, 2] = level
                 size += 1
             if current_inside:
