@@ -18,23 +18,29 @@ The initial scope is a single rigid body in deep water, with reproducible direct
 
 ![Triangular mesh of a canoe-like truncated ellipsoid, with its open rim visible](docs/images/reference-hull.png)
 
-One canonical canoe-like hull supplies the shared geometry and loading for tests
-and future Capytaine comparisons. It is a 6 m × 2 m × 1 m ellipsoid cut at
-`z = 0.25 m`, giving an overall height of 0.75 m. The rim has 0.25 m of freeboard
-at the reference waterline `z = 0`. An explicitly marked artificial cap closes
-the test mesh; the image omits it to show the opening. That cap is not a
-watertight deck. The image shows geometry only; buoyancy and floating
-equilibrium are not implemented.
+One canonical single-person canoe supplies the shared geometry and loading for
+tests and future Capytaine comparisons. It is an open lower half-ellipsoid,
+**3.5 m long, 0.9 m wide and 0.35 m deep**, with its rim at body `z = 0`.
+An explicitly marked artificial cap closes the test mesh; the image omits it
+to show the opening. That cap is not a watertight deck. The image shows geometry
+and the payload's specified CG; no fluid simulation is implemented.
 Refinements approximate the same exact surface; they are not different hulls.
 The smooth reference does not exercise chines or transoms.
 
-The reference specifies mass, CG and the full inertia tensor about CG in body
-axes. Its loading is uniform over the truncated envelope, with mass chosen to
-balance the exact reference displacement in water of density 1000 kg/m³.
-This is a synthetic loading assumption, not water carried inside the canoe.
-The finite mesh approximates that exact geometry, so it slightly under-displaces.
-The exact reference mass is `1000π kg`, CG is `(0, 0, -1/16) m`, and inertia
-about CG is `mass × diag(63/256, 2491/1280, 17/8) m²` with zero off-diagonal terms.
+Loading uses round, illustrative inputs: a **3 mm thin shell**, assumed
+fiberglass/resin laminate density **1800 kg/m³**, and an **80 kg adult payload**
+on the centreline, with its CG **0.1 m above the rim**. The payload is a point
+mass with no intrinsic body inertia. Shell loading uses surface area times
+thickness and density; the artificial cap has no mass. The model omits shell
+through-thickness inertia and separate seat/equipment mass. It is a declared
+reference case, not a laminate specification or a model of a manufactured canoe.
+
+Mass, CG and the full inertia tensor about combined CG are integrated from that
+loading. Independent surface quadrature supplies the reference; triangle
+integration must converge toward it. A scalar root of the exact shape's
+displacement sets the initial draft in water of density 1000 kg/m³, placing the
+world waterline at `z = 0`. The finite mesh approximates that pose. This is a
+shape-specific initialization, not a general hydrostatic or fluid solver.
 
 Future moving-geometry checks must stop at **rim immersion** (flooding onset) or
 **complete loss of hull–water contact**, including invalid initial states.

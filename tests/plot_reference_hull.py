@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from matplotlib.collections import PolyCollection
 import numpy as np
 
-from .reference_hull import mesh_arrays, opening_boundaries
+from .reference_hull import PAYLOAD_MASS, PAYLOAD_POSITION, SEMI_AXES, mesh_arrays, opening_boundaries
 
 
 def main():
@@ -42,11 +42,17 @@ def main():
     ))
     outline = vertices[np.r_[rim, rim[0]]] @ np.column_stack([right, up])
     ax.plot(outline[:, 0], outline[:, 1], color="#173b50", linewidth=1.2)
+    payload = PAYLOAD_POSITION @ np.column_stack([right, up])
+    ax.plot(*payload, marker="o", markersize=7, color="#d47924", markeredgecolor="white")
+    ax.annotate(f"{PAYLOAD_MASS:g} kg payload CG", payload, xytext=(20, 25),
+                textcoords="offset points", color="#87450d", fontsize=10,
+                arrowprops=dict(arrowstyle="-", color="#87450d"))
     ax.autoscale_view()
     ax.set_aspect("equal")
     ax.axis("off")
     fig.suptitle("Reference hull mesh", fontsize=17, color="#173b50", y=0.98)
-    fig.text(0.5, 0.84, "Canoe reference · 6 m × 2 m × 0.75 m · artificial cap omitted",
+    a, b, c = SEMI_AXES
+    fig.text(0.5, 0.84, f"Single-person reference · {2*a:g} m × {2*b:g} m × {c:g} m · artificial cap omitted",
              ha="center", color="#526573", fontsize=11)
     destination = Path(__file__).resolve().parents[1] / "docs/images/reference-hull.png"
     destination.parent.mkdir(parents=True, exist_ok=True)

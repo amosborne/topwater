@@ -1,60 +1,100 @@
 """One canonical numerical hull, shared by tests, timings and figures.
 
-The reference is an ellipsoid truncated above z=0, not a measured boat.
-The opening rim is at z=0.25 m. A marked artificial cap closes the geometry;
-it is not an impermeable deck. Refinement preserves that rim and the equator.
+The reference is an open lower half-ellipsoid, not a measured boat.
+The opening rim is at body z=0. A marked artificial cap closes the geometry;
+it is not an impermeable deck. Loading is a thin shell plus one point payload.
 This is test infrastructure, not a production mesh generator or hydrostatics API.
 """
 
 import numpy as np
+from numpy.polynomial.legendre import leggauss
+from scipy.optimize import brentq
 
 
-SEMI_AXES = np.array([3.0, 1.0, 0.5])  # metres; bow/port/up
-RIM_HEIGHT = 0.25  # metres above the reference waterline, in body coordinates
+SEMI_AXES = np.array([1.75, 0.45, 0.35])  # 3.5 m long, 0.9 m wide, 0.35 m deep
+RIM_HEIGHT = 0.0  # body coordinates, not the loaded waterline
 WATER_DENSITY = 1000.0  # kg/m^3 for this reference case only
-# Integrate elliptical cross sections A(z)=pi*a*b*(1-z^2/c^2) from -c to h.
-# The second-moment integrals below follow the same independent exact domain.
-a, b, c = SEMI_AXES
-u = RIM_HEIGHT / c
-f0 = u - u**3 / 3 + 2 / 3
-f1 = u**2 / 2 - u**4 / 4 - 1 / 4
-f2 = u - 2 * u**3 / 3 + u**5 / 5 + 8 / 15
-fz2 = u**3 / 3 - u**5 / 5 + 2 / 15
-FULL_VOLUME = np.pi * a * b * c * f0
-CG = np.array([0.0, 0.0, c * f1 / f0])
-DISPLACEMENT = 2 * np.pi * a * b * c / 3
-MASS = WATER_DENSITY * DISPLACEMENT
-BODY_DENSITY = MASS / FULL_VOLUME  # Synthetic uniform loading, not water inside.
-mean_squared = np.array([a*a*f2/(4*f0), b*b*f2/(4*f0), c*c*fz2/f0]) - CG**2
-INERTIA = MASS * (np.sum(mean_squared) - mean_squared)
+SHELL_THICKNESS = 0.003  # m; thin-shell area model, no through-thickness inertia
+LAMINATE_DENSITY = 1800.0  # kg/m^3; illustrative fiberglass/resin assumption
+AREAL_DENSITY = SHELL_THICKNESS * LAMINATE_DENSITY
+PAYLOAD_MASS = 80.0  # kg; a single adult represented as a point mass
+PAYLOAD_POSITION = np.array([0.0, 0.0, 0.1])  # m; CG 0.1 m above rim at centre
+FULL_VOLUME = 2 * np.pi * np.prod(SEMI_AXES) / 3
+
+
+def _combine_loading(shell_mass, shell_first, shell_second):
+    """Combine shell raw moments with the point payload, then shift to total CG."""
+    mass = shell_mass + PAYLOAD_MASS
+    cg = (shell_first + PAYLOAD_MASS * PAYLOAD_POSITION) / mass
+    second = shell_second + PAYLOAD_MASS * np.outer(PAYLOAD_POSITION, PAYLOAD_POSITION)
+    inertia_origin = np.trace(second) * np.eye(3) - second
+    inertia_cg = inertia_origin - mass * (np.dot(cg, cg) * np.eye(3) - np.outer(cg, cg))
+    return dict(shell_mass=shell_mass, shell_cg=shell_first / shell_mass,
+                mass=mass, cg=cg, inertia_cg=inertia_cg)
+
+
+def reference_loading(order=64):
+    """Independent parametric surface quadrature; includes no mesh triangles.
+
+    Integrate one azimuth quadrant and reflect its even moments over all four.
+    Symmetry makes the other first moments and all mixed second moments zero.
+    """
+    nodes, weights = leggauss(order)
+    angles = (nodes + 1) * np.pi / 4
+    theta, phi = np.meshgrid(angles, angles, indexing="ij")
+    a, b, c = SEMI_AXES
+    st, ct = np.sin(theta), np.cos(theta)
+    sp, cp = np.sin(phi), np.cos(phi)
+    points = np.stack([a*st*cp, b*st*sp, -c*ct], axis=-1)
+    jacobian = st * np.sqrt((b*c*st*cp)**2 + (a*c*st*sp)**2 + (a*b*ct)**2)
+    dm = 4 * np.outer(weights, weights) * (np.pi / 4)**2 * jacobian * AREAL_DENSITY
+    shell_mass = float(np.sum(dm))
+    first = np.array([0.0, 0.0, np.sum(dm * points[:, :, 2])])
+    second = np.diag(np.sum(dm[:, :, None] * points**2, axis=(0, 1)))
+    return _combine_loading(shell_mass, first, second)
+
+
+LOADING = reference_loading()
+SHELL_MASS = LOADING["shell_mass"]
+MASS = LOADING["mass"]
+CG = LOADING["cg"]
+INERTIA = np.diag(LOADING["inertia_cg"])
+DISPLACEMENT = MASS / WATER_DENSITY
+
+
+def displaced_volume(level):
+    """Exact lower-ellipsoid volume below a body-coordinate level in [-c, 0]."""
+    a, b, c = SEMI_AXES
+    return np.pi * a * b * (level - level**3 / (3*c*c) + 2*c/3)
+
+
+# An analytical shape-specific draft estimate, not a production buoyancy solve.
+WATERLINE_HEIGHT = brentq(
+    lambda level: displaced_volume(level) - DISPLACEMENT,
+    -SEMI_AXES[2], RIM_HEIGHT, xtol=1e-14,
+)
 
 
 def mesh_arrays(refinement=2):
-    """Return contiguous vertices/faces; there are 16*4**refinement panels."""
+    """Return contiguous vertices/faces; there are 8*4**refinement panels."""
     if isinstance(refinement, bool) or not isinstance(refinement, int) or refinement < 0:
         raise ValueError("refinement must be a nonnegative integer")
-    radius = np.sqrt(1 - u*u)
     vertices = np.array([
         [1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, -1],
-        [radius, 0, u], [-radius, 0, u], [0, radius, u], [0, -radius, u], [0, 0, u],
-    ])
+        [0, 0, 0],
+    ], dtype=float)
     faces = np.array([
         [2, 0, 4], [1, 2, 4], [3, 1, 4], [0, 3, 4],
-        [0, 2, 7], [0, 7, 5], [2, 1, 6], [2, 6, 7],
-        [1, 3, 8], [1, 8, 6], [3, 0, 5], [3, 5, 8],
-        [9, 5, 7], [9, 7, 6], [9, 6, 8], [9, 8, 5],
+        [5, 0, 2], [5, 2, 1], [5, 1, 3], [5, 3, 0],
     ], dtype=np.int64)
-    cap_faces = np.all(vertices[faces, 2] == u, axis=1)
+    cap_faces = np.all(vertices[faces, 2] == 0, axis=1)
     for _ in range(refinement):
         edges = np.concatenate([faces[:, [0, 1]], faces[:, [1, 2]], faces[:, [2, 0]]])
         unique, inverse = np.unique(np.sort(edges, axis=1), axis=0, return_inverse=True)
         midpoints = vertices[unique].mean(axis=1)
         curved = np.zeros(len(unique), dtype=bool)
         np.logical_or.at(curved, inverse, np.tile(~cap_faces, 3))
-        rim = curved & np.all(vertices[unique, 2] == u, axis=1)
         midpoints[curved] /= np.linalg.norm(midpoints[curved], axis=1)[:, None]
-        midpoints[rim, :2] *= radius / np.linalg.norm(midpoints[rim, :2], axis=1)[:, None]
-        midpoints[rim, 2] = u
         ab, bc, ca = (inverse + len(vertices)).reshape(3, -1)
         a, b, c = faces.T
         faces = np.vstack([
@@ -82,12 +122,11 @@ def opening_boundaries(vertices, faces):
 def input_data(refinement=2):
     """Analytical calm-water reference pose plus explicit synthetic wave inputs.
 
-    A uniform synthetic loading of the truncated envelope supplies the declared
-    mass, CG and inertia. It does not represent flood water or a real canoe's
-    mass distribution. Mass balances the exact lower half-ellipsoid's
-    displacement; the finite mesh slightly under-displaces. No equilibrium
-    has been solved. Initial velocities are zero. No random phases are generated
-    here; the seed is illustrative provenance metadata.
+    Integrated thin-shell mass plus one centred point payload supplies mass, CG
+    and inertia. The artificial cap has no mass. The exact ellipsoid's displaced
+    volume gives a shape-specific reference draft; a finite mesh only approximates
+    that pose. No fluid solver exists. Initial velocities are zero. No random
+    phases are generated here; the seed is illustrative provenance metadata.
     """
     vertices, faces = mesh_arrays(refinement)
     return {
@@ -104,7 +143,8 @@ def input_data(refinement=2):
                            "phase_generation": "explicit; seed is illustrative metadata"},
         },
         "initial_state": {
-            "position": CG.tolist(), "orientation": [1, 0, 0, 0],
+            "position": (CG - [0, 0, WATERLINE_HEIGHT]).tolist(),
+            "orientation": [1, 0, 0, 0],
             "linear_velocity": [0, 0, 0], "angular_velocity": [0, 0, 0],
         },
     }
@@ -114,8 +154,7 @@ def surface_integrals(vertices, faces):
     """Independent divergence-theorem reference integrals of planar triangles.
 
     Uses z*n_z for volume (the input validator uses tetrahedral determinants).
-    First and diagonal second moments use exact triangle polynomial averages.
-    The lower half may omit its z=0 cap, whose contributions here are zero.
+    First moments use exact triangle polynomial averages.
     """
     triangles = vertices[faces]
     p, q, r = triangles.transpose(1, 0, 2)
@@ -123,24 +162,24 @@ def surface_integrals(vertices, faces):
     volume = np.sum(normal_area[:, 2] * triangles[:, :, 2].mean(axis=1))
     average_squared = (p*p + q*q + r*r + p*q + p*r + q*r) / 6
     first_moments = np.sum(normal_area * average_squared, axis=0) / 2
-    average_cubed = (
-        p**3 + q**3 + r**3 + p*q*(p+q) + p*r*(p+r) + q*r*(q+r) + p*q*r
-    ) / 10
-    second_moments = np.sum(normal_area * average_cubed, axis=0) / 3
-    return volume, first_moments / volume, second_moments
+    return volume, first_moments / volume
 
 
 def geometry_metrics(vertices, faces):
-    """Evaluate full/half geometry and waterplane for the canonical pose."""
-    volume, centroid, second = surface_integrals(vertices, faces)
-    lower = faces[np.all(vertices[faces, 2] <= 0, axis=1)]
-    displacement, buoyancy_centroid, _ = surface_integrals(vertices, lower)
-    equator = vertices[vertices[:, 2] == 0]
-    angles = np.arctan2(equator[:, 1], equator[:, 0])
-    x, y = equator[np.argsort(angles), :2].T
-    waterplane_area = np.sum(x * np.roll(y, -1) - y * np.roll(x, -1)) / 2
-    about_cg = second - 2 * CG * centroid * volume + CG**2 * volume
-    inertia = BODY_DENSITY * (np.sum(about_cg) - about_cg)
-    return dict(volume=volume, centroid=centroid, displacement=displacement,
-                buoyancy_centroid=buoyancy_centroid, waterplane_area=waterplane_area,
-                inertia_diagonal=inertia)
+    """Full-envelope volume/centroid; no submerged clipping is implemented."""
+    volume, centroid = surface_integrals(vertices, faces)
+    return dict(volume=volume, centroid=centroid)
+
+
+def mesh_loading(vertices, faces):
+    """Integrate thin-shell triangle mass, CG and full inertia; cap has no mass."""
+    _, cap = opening_boundaries(vertices, faces)
+    triangles = vertices[np.delete(faces, cap, axis=0)]
+    p, q, r = triangles.transpose(1, 0, 2)
+    dm = AREAL_DENSITY * np.linalg.norm(np.cross(q-p, r-p), axis=1) / 2
+    summed = p + q + r
+    # Exact average r*r^T on each planar triangle, not a centroid point lump.
+    quadratic = (np.einsum("ni,nj->nij", summed, summed)
+                 + np.einsum("nki,nkj->nij", triangles, triangles)) / 12
+    return _combine_loading(float(np.sum(dm)), np.sum(dm[:, None] * summed / 3, axis=0),
+                            np.sum(dm[:, None, None] * quadratic, axis=0))
