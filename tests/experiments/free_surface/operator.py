@@ -8,7 +8,7 @@ import numpy as np
 from scipy.linalg import solve
 from scipy.sparse import coo_matrix
 from tests.laplace_reference import triangle_samples
-from .kernel import assemble_pairs
+from .kernel import assemble_pairs, symmetrize_single_layer
 
 
 def assemble_energy(faces, panels, order=3):
@@ -23,10 +23,9 @@ def assemble_energy(faces, panels, order=3):
         panels.tangents, panels.edge_lengths, panels.areas, panels.centroids,
         panels.normal_sign, faces, gradient, points, weights, nv,
     )
-    asymmetry = float(np.max(np.abs(v-v.T))/np.max(np.abs(v)))
     # Average the two quadratures of the mathematically symmetric integral V.
     # Report their discrepancy first; this does not certify integration accuracy.
-    v = (v+v.T)/2
+    asymmetry = float(symmetrize_single_layer(v))
     curl = np.cross(panels.geometric_normals[:, None], gradient)
     w = np.zeros((nv, nv))
     for axis in range(3):
@@ -34,10 +33,13 @@ def assemble_energy(faces, panels, order=3):
                         (np.repeat(np.arange(nf), 3), faces.ravel())),
                        shape=(nf, nv)).tocsr()
         w += b.T@(v@b)
-    energy = w+h.T@solve(v, h, assume_a='pos')
-    return energy, dict(
+    # V is no longer needed after W. Its transpose is a Fortran-contiguous
+    # view of the same owned symmetric buffer, so LAPACK can consume it.
+    auxiliary = solve(v.T, h, assume_a='pos', overwrite_a=True, overwrite_b=False)
+    w += h.T@auxiliary
+    return w, dict(
         v_quadrature_asymmetry=asymmetry,
         h_constant_norm=float(np.max(np.abs(h@np.ones(nv)))),
-        operator_bytes=dict(single_layer=v.nbytes, mixed_trace=h.nbytes,
-                            hypersingular=w.nbytes, energy=energy.nbytes),
+        operator_bytes=dict(single_layer_factor=v.nbytes, mixed_trace=h.nbytes,
+                            energy=w.nbytes),
     )

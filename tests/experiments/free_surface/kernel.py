@@ -10,6 +10,21 @@ from numba import njit
 
 
 @njit(cache=True)
+def symmetrize_single_layer(v):
+    """Measure raw quadrature disagreement and average in the owned buffer."""
+    largest, disagreement = 0., 0.
+    for i in range(len(v)):
+        largest = max(largest, abs(v[i, i]))
+        for j in range(i):
+            left, right = v[i, j], v[j, i]
+            largest = max(largest, abs(left), abs(right))
+            disagreement = max(disagreement, abs(left-right))
+            average = (left+right)/2
+            v[i, j], v[j, i] = average, average
+    return disagreement/largest
+
+
+@njit(cache=True)
 def assemble_pairs(triangles,normals,outward,tangents,lengths,areas,centroids,signs,
                    faces,gradient,points,weights,nv):
     nf=len(triangles);v=np.zeros((nf,nf));hmat=np.zeros((nf,nv))

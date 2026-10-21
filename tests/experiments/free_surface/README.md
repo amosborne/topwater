@@ -113,6 +113,16 @@ The report retains individual samples, hardware/thread information and explicit
 matrix-buffer byte counts. These timings include independent diagnostic work;
 they are not a simulation throughput or accuracy-qualified performance claim.
 
+The subsequent ownership change averages `V` in place, consumes its buffer for
+the factorization after forming `W`, and accumulates the final energy into `W`.
+The mixed trace `H` survives for its left multiplication. In four fresh workers
+at 1280 panels, old/new/new/old peak RSS was 212.6/194.7/193.9/212.6 MiB.
+Corresponding five-run warm medians were 1.73/1.71/1.67/1.80 s. Alternating
+same-process measurements overlap, so this establishes a memory reduction without
+a claimed runtime speedup. The compared energy matrices are bit-for-bit identical.
+The buffer byte report describes `V` after factorization and the final energy
+buffer; hypersingular and energy storage are no longer distinct allocations.
+
 ## Evidence and limits
 
 On the 320/1280-panel tank, third-order outer quadrature gives interior **nodal** velocity
