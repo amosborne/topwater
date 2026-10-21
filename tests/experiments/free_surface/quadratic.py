@@ -119,16 +119,17 @@ def run(resolution=(8, 4, 4), order=3, degree=2):
     )
     lookup = np.full(len(coords), -1, dtype=int)
     lookup[fs] = np.arange(len(fs))
+    surface_faces = lookup[dofs[free]]
     samples, weights = triangle_samples(panels.triangles[free], 16)
     bary, _ = triangle_samples(np.eye(3)[None], 16)
     shape = p2_shape(bary[0]) if degree == 2 else bary[0]
     mass = np.zeros_like(st)
-    for face, area in zip(lookup[dofs[free]], panels.areas[free]):
+    for face, area in zip(surface_faces, panels.areas[free]):
         mass[np.ix_(face, face)] += area * shape.T @ (weights[:, None] * shape)
     potential = trace(coords[fs])
     q = solve(mass, st @ potential, assume_a="pos")
     lam = np.array([0.0, np.tanh(4.0), np.sqrt(1.25) * np.tanh(4 * np.sqrt(1.25))])
-    values = shape @ q[lookup[dofs[free]]]
+    values = shape @ q[surface_faces]
     exact = (trace(samples.reshape(-1, 3)) * lam).reshape(values.shape)
     error = np.sqrt(
         np.einsum(
@@ -195,8 +196,7 @@ def run(resolution=(8, 4, 4), order=3, degree=2):
     )
     return result, (
         coords[fs],
-        dofs[free],
-        lookup,
+        surface_faces,
         mass,
         st,
         panels.areas[free],
@@ -209,7 +209,7 @@ def run(resolution=(8, 4, 4), order=3, degree=2):
 def wave(resolution=(8, 4, 4), order=3, degree=2):
     start = perf_counter()
     check, data = run(resolution, order, degree)
-    coords, dofs, lookup, mass, s, areas, points, weights, shape = data
+    coords, surface_faces, mass, s, areas, points, weights, shape = data
     dtn = solve(mass, s, assume_a="pos")
     n = len(coords)
     g = 9.81
@@ -237,7 +237,7 @@ def wave(resolution=(8, 4, 4), order=3, degree=2):
     b = np.zeros(n)
     for j in range(shape.shape[1]):
         load = np.einsum("f,q,q,fq->f", areas, weights, shape[:, j], exact)
-        np.add.at(b, lookup[dofs[:, j]], load)
+        np.add.at(b, surface_faces[:, j], load)
     cosine = np.cos(omega * times)
     error = np.sum(eta * (mass @ eta), axis=0) - 2 * cosine * (b @ eta) + cosine**2 * c
     continuous = float(
