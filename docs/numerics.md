@@ -20,10 +20,13 @@ Real time is preferred; the user accepts 10--20 wall seconds per simulated secon
 for the complete validated case. The current implementation priority is full
 nonlinear six-DOF motion and Capytaine validation, followed by speed optimization.
 Body-free, static and kernel timings are component diagnostics only.
+Topwater's solver architecture is time-domain. Interpret Capytaine's frequency
+results as time-domain reference forces in the validation tools; they are not
+a replacement runtime fluid model or a second Topwater solver path.
 
 Dense global free-surface BEM is a verification choice, not a user requirement.
-The next architecture candidate is a small detailed near-body potential-flow
-domain coupled to efficient nonlinear far-field wave propagation. Do not build a
+One post-validation candidate is a small detailed near-body potential-flow
+domain coupled to far-field wave propagation. Do not build a
 general backend framework before the coupling earns its accuracy and cost.
 Both incoming waves and outgoing radiation/scattering must cross the artificial
 interface. Nonlinear incident/disturbed cross terms remain part of the total
@@ -67,6 +70,26 @@ formulation neglects the local residual potential outside its BEM region.
 That approximation must be measured; a smooth transition is not a substitute
 for satisfying the global boundary-value problem. Fixed-body diffraction in
 that study does not qualify a moving canoe or this machine's runtime.
+
+## Investigations after time-domain Capytaine validation
+
+The user requested these comparisons after the current nonlinear time solver
+has been validated against the Capytaine time-domain reference:
+
+- FEM versus BEM for the complete coupled case.
+- A near/far split with an adaptive interface, including which method belongs
+  on each side. BEM near the hull and FEM farther away is a candidate, not a
+  decision. Compare a fixed interface first; account for movement, state transfer,
+  conservation and artificial reflection when evaluating adaptation.
+- Quadrilateral versus triangular surface meshes. For volume FEM, assess the
+  corresponding hexahedral/prismatic versus tetrahedral discretizations
+  separately; surface element shape alone does not specify the volume mesh.
+
+Use the same canonical canoe, loading and time-domain physical cases. Compare
+at matched demonstrated force, motion and wave accuracy rather than equal
+element counts. Measure full-case wall time first and peak memory second,
+including assembly, operator updates, factorization/solves and rejected steps.
+These are queued investigations, not additions to the current implementation.
 
 ## Mathematical signs and physical ownership
 
