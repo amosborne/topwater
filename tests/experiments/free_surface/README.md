@@ -18,7 +18,14 @@ refinement. Agreement with its trajectories is therefore insufficient.
 The variational candidate instead matches independent fixed-momentum energy
 differences, preserves constant-potential gauge invariance, and balances an
 independently evaluated physical energy derivative. Its complete nonlinear
-trajectory and timestep convergence remain under validation.
+one-second n=12/wet2/initial-scale10 trajectory completes with 201 accepted
+steps and 605 RHS evaluations. All six body velocities evolve. Maximum energy
+change is 1.55e-5 J, or 0.00455% of the 0.341 J initial disturbance energy;
+water volume changes by at most 2.70e-9 m3. Minimum rim clearance is 0.199 m.
+The same full case with halved maximum timestep and tighter tolerance is
+running; temporal convergence remains unqualified. The diagnostic run took
+2478 s during concurrent validation work. This is a major performance limitation;
+full-case throughput benchmarking and optimization follow correctness validation.
 
 `linear_canoe_radiation` solves the exact rest linearization of that action for
 all six radiation modes. It retains the full contact-node hull flux loads,
