@@ -228,6 +228,24 @@ prescribed world twist, not six new response columns each. Verify temporal-step
 and spatial convergence before adopting this simplification. Operator caching
 and adaptive updates remain candidates after profiling that physical stage.
 
+The current nonflat pressure audit now runs on the actual seed-42 geometry.
+It found and corrected a vertex-count-dependent polygon fan-center jump, then
+removed artificial submerged parent cuts while preserving exact physical facet
+areas and first moments. Body triangles fall from 110 to 46. This avoids the
+coalescing independent unknowns introduced by those bookkeeping cuts; the
+corrected mixed blocks have condition numbers around 43 rather than 1e7.
+
+Pressure integration itself costs less than 1 ms in the bounded audit, with
+offset field assembly/solve approximately 10-13/13-17 ms. Fraction reference
+geometry remains 1.7-1.8 s per offset, so these are component observations, not
+a fast coupled simulation. A four-step directional check exposes a noise floor:
+1e-3/5e-4 s passes the weight-scaled numerical budget, but yaw torque still
+differs by 5.8% of its response. Neither target-quadrature refinement nor gauge
+correction cures the remaining contact sensitivity. Coarse parent rates omit
+38% of the fine flux norm. The pressure formulation therefore remains a
+candidate: physical/state/quadrature convergence, production geometry,
+near/far coupling and actual six-DOF trajectory validation are still required.
+
 The nonlinear graph HOS reference (`hos_graph.py`) separately passed independent
 harmonic-field checks, including direct continuation, grid and product-padding
 controls. It is a prospective far-field component, not an implemented near/far
