@@ -17,7 +17,7 @@ from threadpoolctl import threadpool_limits
 from .quarter_canoe import POCKET, make_plc, make_quarter
 
 
-WIDTH = 7.87758040957
+WIDTH = 7.877580409572782
 BUFFER = .5
 DEPTH_LEVELS = np.array([-4., -2.25, -1., -.25, 0.])
 

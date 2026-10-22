@@ -331,6 +331,15 @@ without a fluid factor. These deliberately coarse cells do not resolve the
 outgoing-wave family. This establishes the discrete symmetry reduction only;
 the wave-resolved mesh and Capytaine coefficients remain unqualified.
 
+`quarter_canoe_preflight --envelope 16 --reference <pinned-report.json>`
+now builds the actual uncompressed candidate: 110435 P4 nodes, 9482 tetrahedra
+and 6485 surface nodes. It retains the tested depth levels, pocket/absorber
+planes and maximum spacing envelope. The 44 quarter hull triangles cover the
+same physical facets as the pinned full reference after reflection. The
+conceptual full mesh has 435913 nodes; this preflight does not allocate it.
+No fluid operator or factor is built. Mesh counts do not bound LU fill or
+establish wave/Capytaine accuracy; a memory-bounded frequency solve is next.
+
 The prescribed nonlinear controller also passes an independent physical-work
 check on the moving canonical canoe with nonflat surface, all six velocities
 and imposed accelerations. Without damping, its controller supplies 1.15926 W;
