@@ -172,10 +172,13 @@ basis cannot represent the supplied traces, report the projection error, compare
 both force paths at the SAME represented trace and use nested enrichment to
 assess the approximation. Do not call unlike states a matched comparison.
 
-First derive the full variational stage, including `δS`, hole derivatives and
-the momentum-map derivative. Then compare its **six world accelerations and
-six integrated hydrodynamic pressure loads** with a separately evaluated
-Bernoulli/acceleration-potential result on the *same* current physical boundary:
+If retaining the variational formulation, derive its full stage, including `δS`,
+hole derivatives and the momentum-map derivative. Exact discrete Hamiltonian
+structure is not a user requirement or a prerequisite for testing the cheaper
+primitive-pressure formulation. Compare **six world accelerations and six
+integrated hydrodynamic pressure loads** on the *same* current physical boundary;
+physical convergence, rather than bitwise agreement between discretizations,
+decides whether a formulation is usable:
 
 1. Reuse one current factor for the six unit-world-velocity potential responses.
 2. At two directional step sizes `h,h/2`, reconstruct and solve at the four
@@ -202,6 +205,34 @@ finite difference is a useful implementation check, but cannot replace this
 physical load comparison. Neither symmetry, scalar work cancellation nor the
 old zero-`ψ` body-force smoke test is adequate. Later adoption still requires
 world-state enrichment and an actual nonlinear trajectory/force comparison.
+
+## Optimization checkpoint: application-specific cost
+
+The development target is the 24 ft, 2500 kg boat and observed SoCal spectrum,
+with phase variation retained. Substantially different boat scales, wave-energy
+levels and frequency regimes are outside scope. Do not build general backend
+selection or extensibility to accommodate them.
+
+On the actual boat's 492-panel flat-water diagnostic boundary, a warmed current
+BEM energy assembly costs about 16 ms. Reusing its exact current factor in the
+shape force gives agreement with fresh assembly to about 1.3e-13 relative error,
+but the force still costs about 445 ms. One profiled force attributes 402 ms to
+the 18-lane CUDA coordinate derivative and approximately 44 ms to host geometry
+Jacobians (`artifacts/boat-current-force-profile.json`). This diagnostic has a
+2 m-deep finite box; it is not an open-ocean simulation timing.
+
+The next force candidate therefore uses Bernoulli pressure and acceleration
+potentials, avoiding the full coordinate gradient. Compute the six acceleration
+responses only at the current geometry; directional offset fields need the one
+prescribed world twist, not six new response columns each. Verify temporal-step
+and spatial convergence before adopting this simplification. Operator caching
+and adaptive updates remain candidates after profiling that physical stage.
+
+The nonlinear graph HOS reference (`hos_graph.py`) separately passed independent
+harmonic-field checks, including direct continuation, grid and product-padding
+controls. It is a prospective far-field component, not an implemented near/far
+coupling. Incoming analytical waves, outgoing body radiation, interface pressure
+continuity and long-time periodic-boundary return still need separate checks.
 
 ## Primary context
 
