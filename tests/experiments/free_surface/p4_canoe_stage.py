@@ -175,8 +175,8 @@ def run(*, calm=False):
         full_weak_normal_velocity_relative_residual=result['full_weak_normal_velocity_relative_residual'],
         fluid_work_identity_absolute_residual=result['fluid_work_identity_absolute_residual'],
         action_directional_differences=differences, diagnostic_seconds=perf_counter()-start,
-        scope='One current nonlinear stage with all six velocities, finite pose and nonflat '
-              'surface including independent high contact heights/potentials. Scalar action '
+        scope='One current nonlinear stage with all six velocities and finite pose. '
+              'The initial_case and its description identify the surface excitation. Scalar action '
               'differences hold phi and coordinate qdot fixed; no perturbed fluid solve. '
               'Not independent physical Hamiltonian work along the full RHS, temporal/spatial '
               'accuracy, P4 rim/failure coverage, trajectory, Capytaine or throughput qualification.')
