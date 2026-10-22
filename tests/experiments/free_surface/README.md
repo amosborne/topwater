@@ -105,6 +105,16 @@ surface-height and potential perturbation tenfold. Use the same initial scale
 when comparing timestep or spatial refinements. These are unforced release
 cases; they do not replace wave-excitation validation.
 
+The physical-facet n=12/wet2 release at initial scale 10 completes one second,
+with maximum volume change `1.04e-8 m³` and energy change `0.00397 J`, or
+`1.16%` of its `0.341 J` initial disturbance energy. The separate
+`audit_canoe_energy` command differentiates total energy in the actual nonlinear
+RHS direction, independently of time integration. At that initial state it finds
+approximately `+0.00993 W` over three derivative steps: a resolved spatial/work
+consistency error requiring refinement. A successful trajectory does not yet
+qualify nonlinear conservation. The large negative tank gravity baseline is
+excluded from the drift normalization.
+
 After producing six fitted radiation reports per frequency,
 `validate_radiation <reports...> --output artifacts/radiation-family.json`
 compares all 36 added-mass and damping entries using the formal nondimensional

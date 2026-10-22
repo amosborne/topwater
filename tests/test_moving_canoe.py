@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 from threadpoolctl import threadpool_limits
 from topwater import HullMesh
-from .experiments.free_surface.moving_canoe import make_domain,initial_state,rhs
+from .experiments.free_surface.moving_canoe import make_domain,initial_state,rhs,equilibrium_invariants
 from .experiments.free_surface.pocket import boundary
 
 
@@ -21,6 +21,9 @@ def test_coupled_canoe_retains_independent_hydrostatic_equilibrium(domain):
     assert np.max(np.abs(value))<1e-10
     np.testing.assert_allclose(diagnostics['fluid_volume'],
         32*np.pi**2-domain.body.mass/1000,rtol=0,atol=1e-12)
+    rest_energy,rest_volume=equilibrium_invariants(domain)
+    np.testing.assert_allclose(diagnostics['mechanical_energy'],rest_energy,rtol=0,atol=2e-9)
+    np.testing.assert_allclose(diagnostics['fluid_volume'],rest_volume,rtol=0,atol=1e-12)
 
 
 def test_nonlinear_six_dof_pressure_derivative_is_step_resolved(domain):

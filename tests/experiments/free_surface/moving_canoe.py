@@ -7,7 +7,7 @@ from scipy.sparse import coo_matrix
 from scipy.sparse.linalg import splu
 from scipy.spatial.transform import Rotation
 from topwater import SimulationInputs,RigidBody,InitialState
-from topwater.hydrostatics import equilibrate_heave
+from topwater.hydrostatics import equilibrate_heave,hydrostatics
 from topwater.rankine import TrianglePanels
 from tests.reference_hull import input_data
 from .canoe import body_load
@@ -224,6 +224,17 @@ def initial_state(domain,perturbed=True,scale=1.):
     return np.r_[position,orientation,velocity,eta,psi]
 
 
+def equilibrium_invariants(domain):
+    """Exact tank gravity baseline minus independently clipped displacement."""
+    water=domain.reference_points[:domain.volume_nodes]
+    widths=np.ptp(water,axis=0)
+    tank_first_moment=widths[0]*widths[1]*(water[:,2].max()**2-water[:,2].min()**2)/2
+    rest_hydro=hydrostatics(domain.body,domain.rest)
+    energy=9810*(tank_first_moment-rest_hydro.displaced_volume*rest_hydro.center_of_buoyancy[2])
+    energy+=domain.body.mass*9.81*domain.rest.position[2]
+    return float(energy),float(np.prod(widths)-rest_hydro.displaced_volume)
+
+
 def run(n=12,duration=.02,rtol=1e-4,gpu=True,derivative_step=1e-4,max_step=.005,
         wet_subdivisions=2,exterior_scale=1.,initial_scale=1.):
     from time import perf_counter
@@ -251,6 +262,12 @@ def run(n=12,duration=.02,rtol=1e-4,gpu=True,derivative_step=1e-4,max_step=.005,
         energies.append(last['mechanical_energy']);volumes.append(last['fluid_volume'])
     states=np.asarray(states)
     diagnostics={};rhs(domain,states[-1],derivative_step,diagnostics=diagnostics)
+    # Normalize drift by the disturbance energy, not the much larger, arbitrary
+    # negative gravitational energy of the entire tank. Rest displacement comes
+    # from independent physical-hull clipping rather than the dynamic mesh.
+    rest_energy,_=equilibrium_invariants(domain)
+    excitation_energy=energies[0]-rest_energy
+    energy_change=float(np.max(np.abs(np.asarray(energies)-energies[0])))
     report=dict(qualified=False,case='nonlinear six-DOF canoe with moving contact',
         simulated_seconds=solver.t,n=n,gpu=gpu,rtol=rtol,derivative_step=derivative_step,max_step=max_step,
         initial_scale=initial_scale,
@@ -261,7 +278,9 @@ def run(n=12,duration=.02,rtol=1e-4,gpu=True,derivative_step=1e-4,max_step=.005,
         maximum_velocity_change=np.max(np.abs(states[:,7:13]-states[0,7:13]),axis=0).tolist(),
         quaternion_norm_error=float(np.max(np.abs(np.linalg.norm(states[:,3:7],axis=1)-1))),
         maximum_fluid_volume_change=float(np.max(np.abs(np.asarray(volumes)-volumes[0]))),
-        maximum_mechanical_energy_change=float(np.max(np.abs(np.asarray(energies)-energies[0]))),
+        equilibrium_energy=float(rest_energy),initial_excitation_energy=float(excitation_energy),
+        maximum_mechanical_energy_change=energy_change,
+        maximum_energy_change_over_excitation=energy_change/excitation_energy if excitation_energy>0 else None,
         final=diagnostics,
         scope='Current nonlinear geometry, free surface, pressure and six-DOF acceleration. '
             'Fixed contact topology and reflecting finite tank; no remeshing, outgoing '

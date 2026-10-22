@@ -13,20 +13,7 @@ import numpy as np
 from threadpoolctl import threadpool_limits
 
 from topwater.frames import rotation_matrix
-from topwater.hydrostatics import hydrostatics
-from .moving_canoe import make_domain, initial_state, rhs, field
-
-
-def equilibrium_energy(domain):
-    """Independent physical hydrostatics and exact rectangular tank moment."""
-    wet = hydrostatics(domain.body, domain.rest)
-    tank = domain.reference_points[:domain.volume_nodes]
-    lower, upper = tank.min(axis=0), tank.max(axis=0)
-    volume = float(np.prod(upper-lower))
-    tank_first_z = volume*(lower[2]+upper[2])/2
-    fluid_first_z = tank_first_z-wet.displaced_volume*wet.center_of_buoyancy[2]
-    energy = 9810*fluid_first_z+domain.body.mass*9.81*domain.rest.position[2]
-    return float(energy), volume-wet.displaced_volume
+from .moving_canoe import make_domain, initial_state, rhs, field, equilibrium_invariants
 
 
 def invariants(domain, state):
@@ -47,7 +34,7 @@ def run(n=12, wet_subdivisions=2, initial_scale=10., gpu=True):
     state = initial_state(domain, scale=initial_scale)
     diagnostics = {}
     direction = rhs(domain, state, diagnostics=diagnostics)
-    rest_energy, rest_volume = equilibrium_energy(domain)
+    rest_energy, rest_volume = equilibrium_invariants(domain)
     energy = diagnostics['mechanical_energy']
     excitation = energy-rest_energy
     if excitation <= 0:
