@@ -282,6 +282,7 @@ def construct(output, *, body=None, pose=None, parent_xy=None, parents=None,
             volume_error=volume_error, first_moment_max_error=first_error,
             affine_rigid_work_error=work_error, parent_height_and_state_inheritance_exact=True,
             geometry_roundoff_checks_passed=True,
+            body_polygon_merge=meta['body_merge'],
             geometry_check_absolute_tolerances=dict(volume_m3=1e-10, first_moment_m4=1e-9, affine_rigid_work=1e-10))
     except BaseException as error:
         report['failure'] = dict(type=type(error).__name__, message=str(error))

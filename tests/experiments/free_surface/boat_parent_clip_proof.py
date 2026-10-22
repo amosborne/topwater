@@ -6,6 +6,7 @@ sets, never proximity welds. No volume mesh, fluid solve or evolved state.
 """
 from fractions import Fraction as F
 from itertools import combinations
+from collections import Counter, defaultdict
 import argparse
 from hashlib import sha256
 import json
@@ -241,6 +242,91 @@ def polygon_centroid(points, polygon):
                  /(3*measure) for j in range(3))
 
 
+def merge_body_polygons(registry, polygons):
+    """Remove artificial submerged column cuts, retaining the exact wet hull.
+
+    Only one star-shaped boundary loop per authored physical group is supported
+    here. Nonbody-required cutpoints and original hull corners remain shared;
+    no proximity merge, convex hull replacement or change of physical coverage.
+    """
+    required = {i for p, _, _, kind, _ in polygons if kind != 'body' for i in p}
+    hull_planes = {i for i, labels in enumerate(registry.labels)
+                   if any(label[0] == 'hull' for label in labels)}
+    points = registry.points
+    pieces = defaultdict(list)
+    other = []
+    for item in polygons:
+        (pieces[item[4]] if item[3] == 'body' else other).append(item)
+    removed, merged = 0, []
+
+    def moments(p):
+        normal = tuple(sum(cross(points[a], points[b])[j]
+                           for a, b in zip(p, p[1:]+p[:1])) for j in range(3))
+        center = polygon_centroid(points, p)
+        return normal, center
+
+    for group, fragments in sorted(pieces.items()):
+        plane, sign = fragments[0][1:3]
+        edges = Counter()
+        before = [F(0)]*4
+        normal, _ = moments(fragments[0][0])
+        axis = max(range(3), key=lambda j: abs(normal[j]))
+        for polygon, p, s, _, _ in fragments:
+            if (p, s) != (plane, sign):
+                raise ValueError('original body group has inconsistent physical planes')
+            n, c = moments(polygon)
+            before[0] += n[axis]
+            for j in range(3):
+                before[j+1] += n[axis]*c[j]
+            edges.update(zip(polygon, polygon[1:]+polygon[:1]))
+        boundary = []
+        for (a, b), count in edges.items():
+            remaining = count-edges[b, a]
+            if remaining > 1:
+                raise ValueError('overlapping original-body polygon pieces')
+            if remaining == 1:
+                boundary.append((a, b))
+        outgoing, incoming = {}, {}
+        for a, b in boundary:
+            if a in outgoing or b in incoming:
+                raise ValueError('unsupported branching wet-facet boundary')
+            outgoing[a], incoming[b] = b, a
+        if set(outgoing) != set(incoming) or not outgoing:
+            raise ValueError('open original-body facet boundary')
+        loop = [min(outgoing)]
+        while outgoing[loop[-1]] != loop[0]:
+            successor = outgoing[loop[-1]]
+            if successor in loop:
+                raise ValueError('unsupported repeated wet-facet boundary vertex')
+            loop.append(successor)
+        if len(loop) != len(outgoing):
+            raise ValueError('unsupported multiple wet-facet boundary loops')
+        # All incident physical groups simplify a straight shared chine the
+        # same way. Actual physical corners carry at least three hull planes.
+        changed = True
+        while changed:
+            changed = False
+            for k, vertex in enumerate(loop):
+                if vertex in required or len(registry.incidence[vertex]&hull_planes) >= 3:
+                    continue
+                previous, following = points[loop[k-1]], points[loop[(k+1)%len(loop)]]
+                a, b = sub(previous, points[vertex]), sub(following, points[vertex])
+                if not any(cross(a, b)) and dot(a, b) < 0:
+                    del loop[k]; removed += 1; changed = True
+                    break
+        n, center = moments(loop)
+        after = [n[axis], *(n[axis]*c for c in center)]
+        if before != after:
+            raise ValueError('body union changed exact physical area or first moment')
+        for a, b in zip(loop, loop[1:]+loop[:1]):
+            if dot(cross(sub(points[a], center), sub(points[b], center)), n) <= 0:
+                raise ValueError('wet-facet loop is not star-shaped about its area centroid')
+        merged.append((loop, plane, sign, 'body', group))
+    return other+merged, dict(body_polygons_before=sum(map(len, pieces.values())),
+        body_polygons_after=len(merged), removed_collinear_body_points=removed,
+        group_area_and_first_moment_preserved_exactly=True)
+
+
 def triangulate(registry, polygons):
     # Every ACTUAL boundary cutpoint is propagated globally, including points
     # introduced by neighboring parents. Unused infinite-plane intersections
@@ -248,6 +334,7 @@ def triangulate(registry, polygons):
     candidates = sorted({v for polygon, *_ in polygons for v in polygon})
     polygons = [(registry.split_edges(p, candidates), plane, sign, kind, parent)
                 for p, plane, sign, kind, parent in polygons]
+    polygons, body_merge = merge_body_polygons(registry, polygons)
     points = [tuple(p) for p in registry.points]
     faces, kinds, source, planes = [], [], [], []
     for polygon, plane, sign, kind, parent in polygons:
@@ -258,7 +345,8 @@ def triangulate(registry, polygons):
     active, inverse = np.unique(faces, return_inverse=True)
     mesh = HullMesh(np.array([points[i] for i in active], dtype=float), inverse.reshape(-1, 3))
     return mesh, dict(active=active, polygons=polygons, points=points,
-                      kinds=np.array(kinds), source=np.array(source), planes=np.array(planes))
+                      kinds=np.array(kinds), source=np.array(source), planes=np.array(planes),
+                      body_merge=body_merge)
 
 
 def build(heights=(0., 0., 0., 0.)):
@@ -317,6 +405,7 @@ def build(heights=(0., 0., 0., 0.)):
     shared_points = sum(shared_roof.issubset(registry.incidence[i])
                         for i in active if i < len(registry.points))
     return mesh, dict(qualified=False, seconds=perf_counter()-started, nodes=len(xyz), triangles=len(faces),
+        body_polygon_merge=meta['body_merge'],
         exact_affine_pose_roundoff_difference=float(np.max(abs(np.asarray(vertices, dtype=float)
             -(body.mesh.vertices+np.array(translation, dtype=float))))),
         exact_vertex_owners=len(registry.vertex_by_owner), duplicate_coincident_body_faces_removed=duplicate_body_faces,

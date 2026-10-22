@@ -3,7 +3,9 @@ import numpy as np
 import pytest
 from fractions import Fraction
 
-from .experiments.free_surface.boat_parent_clip_proof import build, hull_planes, PlanePoints, polygon_centroid
+from .experiments.free_surface.boat_parent_clip_proof import (
+    build, hull_planes, PlanePoints, polygon_centroid, merge_body_polygons,
+)
 from .reference_boat import reference_body
 
 
@@ -52,3 +54,26 @@ def test_fan_center_is_invariant_to_collinear_vertex_insertion_and_has_continuou
     # whereas the old vertex mean tends to (.4,.4), an O(1) displacement.
     cut = polygon_centroid(points, [4, 1, 2, 3, 5])
     assert max(abs(a-b) for a, b in zip(cut, center)) < 3*epsilon**2
+
+
+def test_body_union_removes_artificial_seam_but_preserves_shared_nonbody_cutpoint():
+    registry = PlanePoints()
+    registry.points = [(Fraction(x), Fraction(y), Fraction(0))
+                       for x, y in [(0, 0), (1, 0), (2, 0), (0, 1), (1, 1), (2, 1), (1, -1)]]
+    registry.labels = [[('hull', (0,))]]
+    registry.incidence = [frozenset({0}) for _ in registry.points]
+    polygons = [([0, 1, 4, 3], 0, 1, 'body', 0), ([1, 2, 5, 4], 0, 1, 'body', 0),
+                ([0, 6, 1], 1, 1, 'column', 0)]
+    merged, report = merge_body_polygons(registry, polygons)
+    body = [p for p, _, _, kind, _ in merged if kind == 'body']
+    assert len(body) == 1
+    assert set(body[0]) == {0, 1, 2, 3, 5}  # Required1 retained; artificial4 removed.
+    assert report['body_polygons_before'] == 2
+    assert report['body_polygons_after'] == 1
+    assert report['group_area_and_first_moment_preserved_exactly']
+    # A disjoint wet region must fail explicitly, never be bridged by convex hull.
+    registry.points[2] = (Fraction(4), Fraction(0), Fraction(0))
+    registry.points[5] = (Fraction(4), Fraction(1), Fraction(0))
+    polygons[1] = ([2, 5, 4], 0, 1, 'body', 0)
+    with pytest.raises(ValueError, match='multiple|branching'):
+        merge_body_polygons(registry, polygons[:2])
