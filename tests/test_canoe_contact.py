@@ -13,8 +13,8 @@ from tests.experiments.free_surface.canoe_contact import CanoeContact, ContactTo
 from tests.experiments.free_surface.pocket import grid, boundary
 
 
-@pytest.fixture(scope='module')
-def canoe():
+@pytest.fixture(scope='module', params=[2, 3], ids=['material-2', 'material-3'])
+def canoe(request):
     data = SimulationInputs.from_json(json.dumps(input_data(2)))
     rest, wet = equilibrate_heave(data.body, data.initial_state)
     points, tets, near, _ = grid(12, 0., 0)
@@ -22,7 +22,7 @@ def canoe():
     faces = boundary(points, tets[near])
     top = np.all(points[faces, 2] == 0, axis=1)
     contact = CanoeContact.make(data.body, rest, points[faces[~top]],
-                               points[np.unique(faces[top])])
+                               points[np.unique(faces[top])], subdivisions=request.param)
     return data, rest, wet, contact
 
 

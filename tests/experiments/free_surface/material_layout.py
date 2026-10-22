@@ -19,15 +19,18 @@ from tests.experiments.capytaine_mesh_cost import subdivide
 from .pocket_canoe import run_hull
 
 
-def material_mesh(body,transverse=False):
+def material_mesh(body,transverse=False,*,subdivisions=2):
     """Fixed numerical subdivision of the canonical hull's physical faces.
 
     The optional bisection adds cross-sectional potential resolution. Shared
     edges make the same geometric decision on both incident faces. This uses
     the reference hull's longitudinal x axis, not a general adaptive mesher.
     """
+    if isinstance(subdivisions,(bool,np.bool_)) or not isinstance(subdivisions,(int,np.integer)) or subdivisions<0:
+        raise ValueError('subdivisions must be a nonnegative integer')
     triangles=body.mesh.vertices[body.mesh.faces[body.mesh.physical_faces]]
-    triangles=subdivide(subdivide(triangles))
+    for _ in range(subdivisions):
+        triangles=subdivide(triangles)
     if transverse:
         children=[]
         for triangle in triangles:

@@ -57,14 +57,14 @@ class CanoeContact:
     cg: np.ndarray
 
     @classmethod
-    def make(cls, body, state, walls, surface_grid, *, transverse=False):
+    def make(cls, body, state, walls, surface_grid, *, transverse=False, subdivisions=2):
         """Initialize at flat z=0 using a rigid canonical hull inside the pocket.
 
         ``walls`` are fluid-outward triangles, ``surface_grid`` supplies the top
         of that box. The returned face winding is fluid-outward everywhere.
         ``eta`` in evaluate is indexed by ``free_nodes``, including contact.
         """
-        vertices, faces = material_mesh(body, transverse)
+        vertices, faces = material_mesh(body, transverse, subdivisions=subdivisions)
         world = (vertices-body.cg)@rotation_matrix(state.orientation).T+state.position
         if np.any(world[:, 2] == 0):
             raise ContactTopologyError('initial waterline passes through a material vertex')
