@@ -9,6 +9,11 @@ time-dependent reference forces, including instantaneous added mass and causal
 fluid memory. This reference must not replace Topwater's nonlinear fluid solve.
 The three existing frequencies alone do not establish a broadband transient
 reference; frequency sampling, tails and memory truncation require checks.
+`tests.capytaine_time_reference` now supplies a test-only finite-band kernel,
+causal six-mode force convolution and coefficient back-check. Four analytic
+coupled-memory tests pass, including startup, causality and time refinement.
+No suitable broadband canoe dataset has yet been supplied to this adapter;
+the analytic checks do not establish Capytaine correlation.
 
 The active P4 time candidate is `p4_canoe_release`. Its 1.6 s finite-pose,
 six-velocity release is being retried with reviewed geometry-trial rejection;
