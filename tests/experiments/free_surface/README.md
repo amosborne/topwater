@@ -241,9 +241,20 @@ matches the predicted finite-wall return. Maximum quiet-region physical
 velocity L2 error is 0.0446%, and independently integrated transformed-form
 power balances within 1.40e-13. Two spatial levels and selected rational-metric
 quadrature controls are retained; three focused tests pass. These are
-frequency-domain propagating-wave controls only. Evanescent wall return,
-whole-canoe radiation and a causal nonlinear time-domain boundary remain
-required before adopting this candidate.
+frequency-domain propagating-wave controls only.
+
+`pml_evanescent_strip` also checks the lowest evanescent depth mode against
+its independent full analytic field. Across the same frequency family, two
+transverse wavenumbers, two widths and two spatial levels, maximum fine-grid
+complex-reflection error is 6.72e-9; spurious propagating amplitude is below
+2.51e-9. Three focused tests pass. The near-field return decays with physical
+layer length, not imaginary stretch strength: at zero transverse wavenumber,
+the 1.594 m wall returns 12.8%/22.9%/26.1% amplitude at omega=2/4/6, while
+7.878 m gives 0.00390%/0.0694%/0.131%. Strength-zero/four/eight controls retain
+those amplitudes and change phase. An evanescent incident mode carries zero
+power, so this diagnostic uses field/reflection errors without a power ratio.
+Whole-canoe radiation, domain convergence and a causal nonlinear time-domain
+boundary remain required before adopting this candidate.
 
 The prescribed nonlinear controller also passes an independent physical-work
 check on the moving canonical canoe with nonflat surface, all six velocities
