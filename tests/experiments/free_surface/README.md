@@ -181,6 +181,35 @@ interpolant, so the comparison does not isolate potential order alone.
 The largest exposed LU arrays occupy 3.55 GB, with 7.21 GB cumulative process
 peak working set; these static resource diagnostics are not simulation timings.
 
+`sponge_strip` isolates the absorber in the full finite-depth elliptic problem,
+including oblique waves, consistent P4 surface projection and both original
+sponge equations. Modal ports retain propagating and evanescent depth modes.
+Across omega=2,4,6 and incidence 0/45 degrees, fine-grid transparent controls
+have maximum reflected amplitude 1.24e-8 and transmission phase error 2.19e-6
+rad; the exact reflecting-wall complex-amplitude error is at most 4.40e-6.
+Independent oscillatory integration checks the port projection. Four focused
+tests pass, including physical transmission, reflection phase and geometry.
+
+Two widths and two strengths were fixed before measuring the absorber, with
+two spatial levels for every frequency/angle. At omega=2 rad/s (wavelength
+14.48 m), fine-grid reflected wave amplitudes are:
+
+| Absorber width (m) | Strength (1/s) | Normal incidence | 45 degrees |
+| ---: | ---: | ---: | ---: |
+| 1.594 | 2 | 0.314 | 0.335 |
+| 1.594 | 4 | 0.543 | 0.612 |
+| 7.878 | 2 | 0.206 | 0.400 |
+| 7.878 | 4 | 0.327 | 0.500 |
+
+The short, strength-four layer is the current P4 tank's transverse setting.
+Across the full fixed family, spatial refinement changes complex reflection
+by at most 1.13e-4, while independently integrated physical power balances
+within 6.11e-15 of incoming power. Selected port truncation/integration controls
+change complex reflection by 2.89e-10 / 1.69e-14. Thus large reflection is
+resolved in these body-free cases: dissipation alone did not make the sponge
+an accurate open boundary. This does not quantify canoe-load error, corner
+effects or damping of the hull's near field; no outgoing method is qualified.
+
 The prescribed nonlinear controller also passes an independent physical-work
 check on the moving canonical canoe with nonflat surface, all six velocities
 and imposed accelerations. Without damping, its controller supplies 1.15926 W;
