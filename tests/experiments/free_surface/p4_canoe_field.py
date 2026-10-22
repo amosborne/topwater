@@ -76,8 +76,8 @@ def surface_maps(geometry, state, *, order=9):
     return eta_map, transport, mass
 
 
-def prepare(geometry, q, *, volume_order=8, boundary_order=9):
-    """Assemble the current physical system once for canonical decoding.
+def assemble(geometry, q, *, volume_order=8, boundary_order=9):
+    """Assemble current physical blocks without choosing a fluid solve method.
 
     q=(CG position, local rotation vector from rest, all surface heights).
     Density/gravity follow the existing canonical-canoe reference.
@@ -99,12 +99,8 @@ def prepare(geometry, q, *, volume_order=8, boundary_order=9):
     active = np.unique(geometry.mesh.elements)
     free = geometry.free_nodes
     inside = np.setdiff1d(active, free)
-    factor = splu(energy[inside][:, inside].tocsc())
-    response = factor.solve(load[inside])
-    added = 1000*load[inside].T@response
     eta_map, body_transport, mass = surface_maps(geometry, state, order=boundary_order)
     eta_factor = splu(eta_map)
-    coupling = load[free]-energy[free][:, inside]@response+body_transport
     rotation = rotation_matrix(orientation)
     rigid = np.zeros((6, 6))
     rigid[:3, :3] = domain.body.mass*np.eye(3)
@@ -115,13 +111,25 @@ def prepare(geometry, q, *, volume_order=8, boundary_order=9):
     gravity_relative = float(np.sum(gravity-reference_gravity)
                              +domain.body.mass*9.81*(q[2]-domain.rest.position[2]))
     return dict(q=q, orientation=orientation, state=state, energy=energy, load=load,
-        free=free, inside=inside, factor=factor, response=response,
-        added_mass=added, rigid_mass=rigid, effective_mass=rigid+added,
+        free=free, inside=inside, rigid_mass=rigid,
         eta_map=eta_map, eta_factor=eta_factor, body_transport=body_transport,
-        coupling=coupling, mass=mass, gravity=gravity_relative,
+        mass=mass, gravity=gravity_relative,
         fluid_volume=float(volume.sum()), body_map=body_map(q[3:6]),
         volume_order=volume_order, boundary_order=boundary_order,
         physical_boundary_moments=physical_moments)
+
+
+def prepare(geometry, q, *, volume_order=8, boundary_order=9):
+    """Current physical blocks and the original six-response direct solve."""
+    data = assemble(geometry, q, volume_order=volume_order, boundary_order=boundary_order)
+    energy, inside, free, load = (data[name] for name in ('energy', 'inside', 'free', 'load'))
+    factor = splu(energy[inside][:, inside].tocsc())
+    response = factor.solve(load[inside])
+    added = 1000*load[inside].T@response
+    data.update(factor=factor, response=response, added_mass=added,
+                effective_mass=data['rigid_mass']+added,
+                coupling=load[free]-energy[free][:, inside]@response+data['body_transport'])
+    return data
 
 
 def solve(data, psi, velocity):

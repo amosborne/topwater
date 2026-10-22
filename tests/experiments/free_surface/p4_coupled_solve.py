@@ -11,6 +11,21 @@ from scipy.linalg import cho_factor, cho_solve
 from scipy.sparse.linalg import LinearOperator, cg
 
 
+def body_preconditioner(fluid_inverse, response, effective_mass):
+    """Woodbury inverse of a cached fluid/body system in unchanged master IDs.
+
+    ``response`` is cached K^-1*B and ``effective_mass`` is its matching
+    M+rho*B.T*K^-1*B. These are setup data, not current-field approximations;
+    ``solve`` still applies and checks the current coupled operator.
+    """
+    mass_factor = cho_factor(effective_mass)
+
+    def inverse(value):
+        return fluid_inverse(value)-1000*response@cho_solve(mass_factor, response.T@value)
+
+    return inverse
+
+
 def solve(matrix, load, rigid_mass, effective_momentum, surface_rhs,
           preconditioner, *, initial=None, rtol=1e-11, maxiter=100):
     """Solve K*phi-B*V=f and M*V+rho*B.T*phi=p, with rho=1000.
