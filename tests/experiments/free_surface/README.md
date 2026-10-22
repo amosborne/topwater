@@ -15,12 +15,46 @@ coupled-memory tests pass, including startup, causality and time refinement.
 No suitable broadband canoe dataset has yet been supplied to this adapter;
 the analytic checks do not establish Capytaine correlation.
 
-The active P4 time candidate is `p4_canoe_release`. Its 1.6 s finite-pose,
-six-velocity release is being retried with reviewed geometry-trial rejection;
-the completed P4 trajectory remains only the earlier 1 ms smoke case. The
+The P4 time candidate is `p4_canoe_release`. Its 1.6 s finite-pose,
+six-velocity release was stopped after about 46 minutes for approximately
+1.65 ms of inferred accepted motion. The Windows interruption did not save
+accepted trajectory arrays. This runtime is unusable; another long integration
+must wait for a measured reduction in stage cost and an explanation of the
+small timesteps. The completed P4 trajectory remains the earlier 1 ms smoke case. The
 prescribed-heave time runner and matched closed-tank linear control are ready
 but not yet exercised. The closed tank still needs a validated time-domain
 outgoing boundary before open-water comparison.
+
+### Measured P4 stage cost
+
+`profile_p4_canoe_stage` executes one unchanged `prepare/evaluate` pair at the
+saved flat-surface, finite-pose, six-velocity canoe state. On this machine,
+with one BLAS thread, the cold cProfile diagnostic measured 19.67 s of geometry
+startup, then 63.53 s of preparation and 52.77 s of nonlinear evaluation.
+Both the physical state and complete canonical RHS matched the saved values
+bit for bit. The recurring 116.29 s divides into:
+
+| Work | Wall seconds |
+| --- | ---: |
+| Current fluid stiffness assembly | 23.60 |
+| Current fluid and surface sparse factorizations | 37.46 |
+| Remaining preparation | 2.46 |
+| Full nonlinear force/rate evaluation | 52.77 |
+
+Cell integrals account for 49.60 s within force evaluation. Cell metrics are
+computed twice per cell, once during assembly and once during force evaluation;
+their 49.54 s cumulative time overlaps those rows and must not be added again.
+The separate startup geometry factors cost 12.50 s, included in startup only.
+Raw evidence is `artifacts/p4-calm-rhs-profile-20261022.{json,npz,prof}`;
+these are local artifacts. This is a profiled single-state cost diagnostic,
+including instrumentation overhead, not qualified trajectory throughput.
+
+The complete simulation must cost at most 20 wall seconds per simulated second;
+real time is preferred. With three fresh RHS evaluations per accepted RK23
+step, even zero rejections would require `3 * RHS_seconds / step_seconds <= 20`.
+This candidate needs substantial reductions in recurring work as well as an
+independent timestep diagnosis. Neither a factorization-only speedup nor a
+tolerance change alone is justified by this measurement.
 
 The frequency-only experiments below are supporting diagnostics, not a second
 Topwater solver architecture. The long quarter-PML experiment was stopped after

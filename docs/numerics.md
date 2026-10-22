@@ -16,9 +16,11 @@ and declared result output. A wave-only or fixed-coefficient load benchmark does
 not qualify the coupled solver. Timestep and resolution must earn their accuracy;
 they cannot be enlarged merely to meet the clock.
 
-Real time is preferred; the user accepts 10--20 wall seconds per simulated second
-for the complete validated case. The current implementation priority is full
-nonlinear six-DOF motion and Capytaine validation, followed by speed optimization.
+Real time is preferred; 20 wall seconds per simulated second is the user's hard
+usability ceiling for the complete validated case. The intended deliverable is
+full nonlinear six-DOF motion with Capytaine validation. A candidate whose
+measured cost makes that validation impractical must first have its cost reduced;
+continuing an unaffordable trajectory does not establish a useful baseline.
 Body-free, static and kernel timings are component diagnostics only.
 Topwater's solver architecture is time-domain. Interpret Capytaine's frequency
 results as time-domain reference forces in the validation tools; they are not
