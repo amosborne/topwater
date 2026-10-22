@@ -14,6 +14,7 @@ import subprocess
 import sys
 
 import numpy as np
+from scipy.sparse import csc_matrix
 from scipy.sparse.linalg import splu
 from threadpoolctl import threadpool_limits
 
@@ -114,11 +115,74 @@ def storage(matrix):
     return int(matrix.data.nbytes+matrix.indices.nbytes+matrix.indptr.nbytes)
 
 
-def run(mesh_path, reference_path, output, budget):
+def _input_contract(report):
+    """Exact fixed-case and source identity; no approximate reuse criterion."""
+    contract = {key: report[key] for key in ('mesh_report_sha256', 'mesh_npz_sha256',
+        'capytaine_report_sha256', 'omega', 'density', 'gravity', 'parity', 'computed_modes',
+        'pml_width', 'pml_strength', 'pml_onset', 'volume_quadrature_order', 'surface_quadrature_order')}
+    # Writer/logging/ordering changes do not alter an already assembled matrix.
+    # Numerical helpers and every argument supplied to scalar_operator remain
+    # exact identities. The original worker hash is retained as provenance.
+    contract['assembly_source_sha256'] = {name: value for name, value in report['source_sha256'].items()
+                                         if name != 'quarter_canoe_frequency.py'}
+    return contract
+
+
+def _array_hash(array):
+    array = np.ascontiguousarray(array)
+    value = sha256(str(array.shape).encode()+array.dtype.str.encode())
+    value.update(array.tobytes())
+    return value.hexdigest()
+
+
+def save_input(path, system, load, rhs, report):
+    """One plain failed-factor retry artifact, not a general operator cache."""
+    if path.exists() or path.with_suffix('.json').exists():
+        raise FileExistsError('persisted input already exists; choose a new output or explicitly reuse it')
+    arrays = dict(data=system.data, indices=system.indices, indptr=system.indptr,
+                  shape=np.asarray(system.shape, dtype=np.int64), body_load=load, rhs=rhs)
+    np.savez(path, **arrays)
+    manifest = dict(contract=_input_contract(report),
+        writer_source_sha256=report['source_sha256']['quarter_canoe_frequency.py'],
+        array_sha256={name: _array_hash(value) for name, value in arrays.items()},
+        npz_sha256=sha256(path.read_bytes()).hexdigest())
+    path.with_suffix('.json').write_text(json.dumps(manifest, indent=2)+'\n')
+    return manifest
+
+
+def reuse_input(path, report, expected_load):
+    manifest = json.loads(path.with_suffix('.json').read_text())
+    if manifest['contract'] != _input_contract(report):
+        raise ValueError('retry input source, mesh, reference or fixed physical case differs')
+    if sha256(path.read_bytes()).hexdigest() != manifest['npz_sha256']:
+        raise ValueError('retry scalar input file hash differs')
+    with np.load(path) as saved:
+        arrays = {name: saved[name].copy() for name in
+                  ('data', 'indices', 'indptr', 'shape', 'body_load', 'rhs')}
+    for name, array in arrays.items():
+        if _array_hash(array) != manifest['array_sha256'][name]:
+            raise ValueError(f'retry scalar input {name} hash differs')
+    if not np.array_equal(arrays['body_load'], expected_load):
+        raise ValueError('retry input body load differs from fresh physical quadrature')
+    if not np.array_equal(arrays['rhs'], expected_load[:, 2].astype(complex)):
+        raise ValueError('retry input heave RHS differs from the fixed physical load')
+    system = csc_matrix((arrays['data'], arrays['indices'], arrays['indptr']),
+                        shape=tuple(arrays['shape']))
+    system.check_format(full_check=True)
+    if system.shape != (len(expected_load),)*2 or not np.all(np.isfinite(system.data)):
+        raise ValueError('invalid retry scalar matrix')
+    return system, arrays['rhs'], manifest
+
+
+def run(mesh_path, reference_path, output, budget, *, input_path=None):
     from .canoe_wet_reference import pinned_reference, verify_coverage
     from .quarter_canoe_preflight import reflected_body
     from .quarter_canoe import make_plc
 
+    if input_path is None:
+        proposed = output.with_suffix('.input.npz')
+        if proposed.exists() or proposed.with_suffix('.json').exists():
+            raise FileExistsError('persisted input already exists; choose a new output or explicitly reuse it')
     meta = json.loads(mesh_path.with_suffix('.json').read_text())
     if (not meta.get('mesh_only') or meta['spacing_envelope'] != 16 or meta['wet_subdivisions'] != 1
             or meta['pml_width'] != [WIDTH, WIDTH] or meta['pml_strength'] != 8. or meta['real_terminal'] != 1.
@@ -155,7 +219,7 @@ def run(mesh_path, reference_path, output, budget):
         reference=provenance, physical_coverage=coverage, memory=budget.metrics(),
         omega=2., density=1000., gravity=9.81, parity='EE', computed_modes=['heave'],
         pml_width=[WIDTH, WIDTH], pml_strength=8., pml_onset=(POCKET+BUFFER).tolist(),
-        volume_quadrature_order=12, surface_quadrature_order=12,
+        volume_quadrature_order=12, surface_quadrature_order=12, lu_ordering='MMD_AT_PLUS_A',
         scope='One omega2 EE/heave coefficient from the fixed uncompressed PML candidate. '
               'No uncomputed matrix entries, full-family gate, convergence or nonlinear qualification.')
 
@@ -164,23 +228,45 @@ def run(mesh_path, reference_path, output, budget):
         output.write_text(json.dumps(report, indent=2)+'\n')
         print(json.dumps(dict(stage=stage, memory=report['memory'])), flush=True)
 
-    checkpoint('before scalar operator assembly')
-    matrix = scalar_operator(mesh, 2., POCKET+BUFFER, [WIDTH, WIDTH], 8., order=12, max_nodes=120000)
     load, _ = loads(mesh, body, center)
-    # EE needs no plane Dirichlet constraints. This is exactly the all-unknown
-    # scalar PML problem; the complex FS Robin term fixes the potential gauge.
-    system = matrix.tocsc(); del matrix
-    rhs = np.asarray(load[:, 2], complex)
+    if input_path is None:
+        checkpoint('before scalar operator assembly')
+        if report['volume_quadrature_order'] != report['surface_quadrature_order']:
+            raise ValueError('the shared scalar assembler uses the same surface/volume quadrature order')
+        matrix = scalar_operator(mesh, report['omega'], report['pml_onset'], report['pml_width'],
+            report['pml_strength'], order=report['volume_quadrature_order'], max_nodes=120000)
+        # EE needs no plane Dirichlet constraints. The complex FS Robin term
+        # fixes the potential gauge. No physical matrix values change below.
+        system = matrix.tocsc(); del matrix
+        rhs = np.asarray(load[:, 2], complex)
+    else:
+        checkpoint('validating persisted scalar input; no operator assembly')
+        system, rhs, _ = reuse_input(input_path, report, load)
     report['input'] = dict(rows=system.shape[0], nonzeros=system.nnz, sparse_array_bytes=storage(system),
                           rhs_array_bytes=rhs.nbytes, storage_is_not_lu_fill_bound=True)
     if system.shape[0] > 120000 or system.nnz > 16000000 or storage(system) > 400000000:
         checkpoint('input preflight rejected before LU')
         raise RuntimeError('actual sparse input exceeds the declared pre-LU cap')
+    if input_path is None:
+        input_path = output.with_suffix('.input.npz')
+        manifest = save_input(input_path, system, load, rhs, report)
+    else:
+        manifest = json.loads(input_path.with_suffix('.json').read_text())
+    report['persisted_input'] = dict(path=str(input_path.resolve()), npz_sha256=manifest['npz_sha256'],
+        manifest_sha256=sha256(input_path.with_suffix('.json').read_bytes()).hexdigest())
     checkpoint('actual sparse input measured; before LU')
-    factor = splu(system)
-    phi = factor.solve(rhs)
+    factor = None
+    try:
+        factor = splu(system, permc_spec='MMD_AT_PLUS_A')
+        phi = factor.solve(rhs)
+    except MemoryError as error:
+        factor = None
+        report['factor_failure'] = dict(type=type(error).__name__, message=str(error))
+        checkpoint('LU MemoryError under the unchanged process commit cap')
+        raise
     response = 4*load[:, 2]@phi
-    added = 1000*response.real; damping = 2000*response.imag
+    added = report['density']*response.real
+    damping = report['density']*report['omega']*response.imag
     exact_added = float(capytaine[0]['added_mass'][2][2])
     exact_damping = float(capytaine[0]['radiation_damping'][2][2])
     report['computed_heave'] = dict(raw_response_real=float(response.real), raw_response_imag=float(response.imag),
@@ -209,12 +295,13 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--mesh', type=Path, required=True, help='actual n16 preflight NPZ, with sibling JSON')
     parser.add_argument('--reference', type=Path, required=True)
-    parser.add_argument('--output', type=Path, default=Path('artifacts/quarter-canoe-omega2-heave.json'))
+    parser.add_argument('--output', type=Path, default=Path('artifacts/quarter-canoe-omega2-heave-mmd.json'))
+    parser.add_argument('--reuse-input', type=Path, help='exact .input.npz plus sibling .input.json from this source/case')
     args = parser.parse_args()
     args.output.parent.mkdir(parents=True, exist_ok=True)
     budget = ProcessMemoryLimit()  # Mandatory and queried back before rebuilding the mesh.
     try:
         with threadpool_limits(1):
-            run(args.mesh, args.reference, args.output, budget)
+            run(args.mesh, args.reference, args.output, budget, input_path=args.reuse_input)
     finally:
         budget.close()
