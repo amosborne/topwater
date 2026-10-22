@@ -103,7 +103,7 @@ def encode(domain, state):
     return np.r_[q, py, pi]
 
 
-def decode(domain, canonical):
+def decode(domain, canonical, *, diagnostics=None):
     """Return physical state, Hamiltonian and configuration rate dH/dp."""
     size = 6+len(domain.free_nodes)
     q, momentum = canonical[:size], canonical[size:]
@@ -116,6 +116,12 @@ def decode(domain, canonical):
     hamiltonian = (.5*velocity@data['effective_mass']@velocity
         +data['solution']['kinetic_energy']+data['gravity'])
     state = np.r_[q[:3], data['orientation'], velocity, q[6:], psi]
+    if diagnostics is not None:
+        solved=data['solution']
+        diagnostics.update(points=solved['points'],
+            potential=solved['potential']+solved['acceleration_potentials']@velocity,
+            height_jacobians=solved['height_jacobians'],
+            body_jacobian=solved['body_jacobian'],fluid_volume=solved['fluid_volume'])
     return state, float(hamiltonian), qdot
 
 

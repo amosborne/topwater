@@ -32,6 +32,7 @@ class CanoeDomain:
     column_index: np.ndarray
     wall_mapping: np.ndarray
     gpu: bool
+    exterior_orientation: np.ndarray
 
 
 def make_domain(n=12,gpu=True,wet_subdivisions=2,exterior_scale=1.):
@@ -60,10 +61,13 @@ def make_domain(n=12,gpu=True,wet_subdivisions=2,exterior_scale=1.):
     free_nodes=np.unique(free_faces)
     free_lookup=np.full(len(points)+len(additional),-1,dtype=int)
     free_lookup[free_nodes]=np.arange(len(free_nodes))
+    exterior=tets[~near]
+    coordinates=points[exterior]
+    orientation=np.sign(np.linalg.det(coordinates[:,1:]-coordinates[:,:1])).astype(np.int8)
     return CanoeDomain(data.body,rest,contact,np.vstack((points,additional)),tets[~near],
         mapping,free_nodes,free_faces,free_lookup[mapping[contact.free_nodes]],
         free_lookup[top_nodes],len(points),np.repeat(np.arange(len(top_nodes)),n//3+1),
-        mapping[contact.wall_nodes],gpu)
+        mapping[contact.wall_nodes],gpu,orientation)
 
 
 def geometry(domain,position,orientation,eta):
@@ -79,6 +83,10 @@ def geometry(domain,position,orientation,eta):
     wall_points=points[domain.wall_mapping].copy()
     points[domain.local_mapping]=local.points
     points[domain.wall_mapping]=wall_points
+    coordinates=points[domain.exterior_tets]
+    determinant=np.linalg.det(coordinates[:,1:]-coordinates[:,:1])
+    if np.any(determinant*domain.exterior_orientation<=0):
+        raise ValueError('exterior fluid mesh is inverted or degenerate')
     # The local hull map owns its interior/free nodes. Shared side/bottom
     # walls retain the same column deformation as the exterior volume mesh.
     local_rows=np.ones(len(local.points),dtype=bool)

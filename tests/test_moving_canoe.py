@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 from threadpoolctl import threadpool_limits
 from topwater import HullMesh
-from .experiments.free_surface.moving_canoe import make_domain,initial_state,rhs,equilibrium_invariants
+from .experiments.free_surface.moving_canoe import make_domain,initial_state,rhs,equilibrium_invariants,geometry
 from .experiments.free_surface.pocket import boundary
 
 
@@ -59,3 +59,13 @@ def test_extended_water_domain_keeps_a_closed_canoe_fluid_boundary(domain):
         np.cross(triangle[:,1],triangle[:,2])).sum()/6
     box_volume=np.prod(np.ptp(points[:extended.volume_nodes],axis=0))
     np.testing.assert_allclose(volume,box_volume-extended.body.mass/1000,atol=2e-12,rtol=0)
+
+
+def test_exterior_water_mesh_rejects_folded_elements(domain):
+    # A distant free corner crosses the fixed pocket-depth layer. The canoe's
+    # local mesh stays valid, so only the exterior orientation check detects it.
+    eta=np.zeros(len(domain.free_nodes))
+    outer=np.argmax(domain.reference_points[domain.free_nodes,:2].sum(axis=1))
+    eta[outer]=-1.1
+    with pytest.raises(ValueError,match='exterior fluid mesh is inverted'):
+        geometry(domain,domain.rest.position,domain.rest.orientation,eta)
