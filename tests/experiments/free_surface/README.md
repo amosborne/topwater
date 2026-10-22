@@ -67,6 +67,19 @@ integration discrepancies from finite-domain errors in the Capytaine comparison.
 their identical endpoint, including world rotation and reference-domain surface
 L2 errors. Two levels measure a difference and do not establish temporal order.
 
+The variational heave case now completes six periods (9.425 s), with 474
+accepted steps and 1425 RHS evaluations at amplitude 1e-4 m. Compared with its
+identical zero-start linear tank transient, heave-load time RMS differs by
+0.0271% of the dynamic load; mass/time L2 elevation and potential differences
+are 0.0333% and 0.0203%. Identical-window fits give added mass/damping
+325.629 kg / 1206.766 kg/s in the nonlinear run versus
+325.644 kg / 1206.770 kg/s in the linear transient. The same tank's steady
+harmonic values are 330.660 kg / 1243.511 kg/s, while matched Capytaine gives
+352.732 kg / 1200.774 kg/s. Thus transient and finite-domain errors remain;
+the close damping fit alone does not qualify the method. Successive-period
+force changes are still 2.62% and 0.629%. Amplitude/timestep refinement and
+completed all-six-mode correlation remain required.
+
 The current P1 tetrahedral exterior also fails the declared wave-phase gate:
 
 ```text
@@ -131,10 +144,23 @@ physical planar facets. Current-pose finite differences verify all six body
 Jacobians, while off-grid checks verify facet tangency and a shared curved
 waterline trace. The sampled chart guard stops excessive contact modes.
 `p4_surface` integrates the physical surface one-form from those geometry
-Jacobians. `p4_volume_map` supplies a fixed reference graph extension of
-boundary motion and its exact force pullback; it does not freeze the fluid
-operator. Their individual tests do not establish a complete nonlinear P4
-canoe stage, flooding detection, remeshing or trajectory qualification.
+Jacobians. Extending all motion through a distance-based P4 graph inverted
+thin cells even under 5 mm heave. A reference P1 FEM extension keeps the
+corners valid on the same mesh and pose; `p4_volume_map` now lifts that corner
+motion and extends only the genuine high-order boundary residual. The exact
+transpose supplies geometry-force pullback. `p4_whole_geometry` passes the
+unchanged finite-pose volume guards, closed boundary/cell moment comparisons
+and six-motion derivative checks. Its fixed maps move coordinates; they do
+not freeze the current fluid operator.
+
+`p4_canoe_field` and `p4_variational_canoe` compose a current curved operator
+with the full boundary velocity action. One actual stage with all six body
+velocities and independently moving high contact modes has relative weak
+normal-flow residual 1.12e-13 and fluid work-identity error 4.44e-16 J.
+Independent fixed-potential/rate action differences reduce the tested force
+direction error from 4.67e-8 to 1.15e-8 when halving the difference step.
+This does not yet establish independent physical Hamiltonian work along the
+full RHS, a P4 trajectory, rim/failure coverage or Capytaine qualification.
 
 `p4_radiation` completes the n=12/extent1/sponge4 rest-candidate family at
 omega=2,4,6 rad/s against the same immersed-geometry/CG/depth4 Capytaine reference.
