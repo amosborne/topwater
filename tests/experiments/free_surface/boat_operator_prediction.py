@@ -2,8 +2,9 @@
 
 Two accepted states train a rank-one geometry map. Optional two-direction models
 use the .15 s geometry to choose training directions; .20 s is a later holdout.
-All current geometry, loads,
-incident forcing and prescribed surface direction are shared between models.
+The separate past-only fit uses only .05/.10 geometry and pressure stencils.
+All current geometry, loads, incident forcing and prescribed surface direction
+are shared between models.
 Fresh operators/residuals are OFFLINE references, not an online refresh rule.
 """
 import argparse
@@ -16,13 +17,11 @@ import numpy as np
 from scipy.spatial.transform import Rotation
 
 from topwater import InitialState, sea_states
-from topwater.frames import rotation_matrix
 from topwater.rankine import TrianglePanels
-from tests.reference_boat import WATER_DENSITY, GRAVITY, reference_body
+from tests.reference_boat import reference_body
 from .boat_geometry_template import evaluate_template, InvalidTemplate
-from .boat_world_boundary import body_material_samples, interpolate_body_trace
 from .boat_world_field import current_field, surface_rates, refine_boundary
-from .body_pressure import evaluate_body_pressure, quadrature
+from .boat_pressure_stencil import evaluate as evaluate_stencil
 from .incident_baseline_benchmark import coefficients
 from .p4_fluid_ordering import fresh
 
@@ -54,11 +53,14 @@ def _local_models(origin, energy, weight, directions, gram, derivatives, quadrat
 
 
 def run(pilot, output, operator_from=None, two_directions=False, target_time=.15, tangent_from=None,
-        mixed_curvature=False):
+        mixed_curvature=False, past_directions=False, past_from=None):
     if target_time not in (.15, .20):
         raise ValueError('bounded target time must be .15 or .20 s')
     if mixed_curvature and tangent_from is None:
         raise ValueError('mixed-curvature extension requires the saved four-sample local model')
+    past_enabled = past_directions or past_from is not None
+    if past_enabled and (two_directions or tangent_from is not None or mixed_curvature):
+        raise ValueError('past-only and geometry-informed models are separate experiments')
     pilot, output = Path(pilot), fresh(output)
     output.parent.mkdir(parents=True, exist_ok=True)
     recorded = json.loads(pilot.read_text())
@@ -84,8 +86,11 @@ def run(pilot, output, operator_from=None, two_directions=False, target_time=.15
             for name in ('boat_operator_prediction.py', 'boat_geometry_template.py',
                          'boat_world_field.py', 'boat_world_boundary.py', 'body_pressure.py',
                          'canoe.py', 'incident_baseline_benchmark.py',
-                         'cuda_operator.py', 'cuda_energy.cu', 'cuda_pair.cuh')},
+                         'cuda_operator.py', 'cuda_energy.cu', 'cuda_pair.cuh', 'boat_pressure_stencil.py')},
         phases=[], models=[])
+    if past_enabled:
+        for name in ('boat_past_operator.py', 'boat_operator_reuse.py'):
+            report['source_sha256'][name] = sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
     previous = None
     if operator_from is not None:
         operator_from = Path(operator_from)
@@ -124,14 +129,25 @@ def run(pilot, output, operator_from=None, two_directions=False, target_time=.15
                 raise ValueError('saved geometry differs from pilot manifest')
             with np.load(path, allow_pickle=False) as data:
                 charts.append((path, dict(data)))
+        if past_enabled:
+            startup = recorded['rhs'][0]
+            if startup['time'] != 0. or not startup['complete']:
+                raise ValueError('past-only diagnostic requires completed startup chart provenance')
+            count = 1+sum(g['mode'] == 'exact chart refresh' for g in startup['geometry'])
+            charts = charts[:count]
+            report['training_chart_scope'] = 'Only charts available from startup RHS, before both past anchors'
         for chart_path, chart in charts:
             try:
-                base = [evaluate_template(chart, **inputs(y))[0] for y in states]
+                base = [evaluate_template(chart, **inputs(y))[0] for y in (states[:2] if past_enabled else states)]
             except InvalidTemplate:
                 continue
             break
         else:
             raise ValueError('no common guarded geometry chart for the selected states')
+        if past_enabled:
+            # A future chart failure invalidates the prediction; never select a
+            # different training chart using held-out geometry.
+            base += [evaluate_template(chart, **inputs(y))[0] for y in states[2:]]
         report['chart'] = dict(path=str(chart_path), sha256=sha256(chart_path.read_bytes()).hexdigest())
         body = reference_body()
         if (not np.array_equal(chart['source_body_vertices'], body.mesh.vertices)
@@ -435,11 +451,88 @@ def run(pilot, output, operator_from=None, two_directions=False, target_time=.15
             training['pressure_direction_out_of_subspace_fraction'] = float(np.sqrt(
                 inner(rate_residual, rate_residual)/inner(geometry_rate, geometry_rate)))
             training['seconds_this_run'] = perf_counter()-reuse_started
-        samples, groups = body_material_samples(target, quadrature()[0])
-        hints = np.broadcast_to(np.arange(len(target['body_faces']))[:, None], groups.shape)
-        rotation = rotation_matrix(pose.orientation)
-        mesh_velocity = twist[:3]+np.cross(twist[3:], target['points']-pose.position)
+        past_models = {}
+        if past_enabled:
+            from .boat_past_operator import fit, predict, direction_diagnostics
+            training_started = perf_counter()
+            past_data, past_source = None, None
+            if past_from is not None:
+                past_from = Path(past_from)
+                trained = json.loads(past_from.read_text())
+                if (not trained.get('complete') or not trained.get('past_training', {}).get('complete')
+                        or trained['input_sha256'] != report['input_sha256'] or trained['chart'] != report['chart']):
+                    raise ValueError('past model requires a complete matching training audit/chart')
+                for name, expected in trained['source_sha256'].items():
+                    if name != Path(__file__).name and report['source_sha256'][name] != expected:
+                        raise ValueError(f'past model helper changed: {name}')
+                with np.load(past_from.with_suffix('.npz'), allow_pickle=False) as data:
+                    past_source = dict(data)
+                if (not np.array_equal(past_source['selected_states'][:2], states[:2])
+                        or any(not np.allclose(past_source[key], arrays['points'], rtol=0, atol=1e-12)
+                            for key, arrays in zip(('anchor0_points', 'anchor1_points'), base[:2]))):
+                    raise ValueError('past model anchor states/points differ')
+                past_data = {key: value for key, value in past_source.items() if key.startswith('past_')}
+                report['past_training'] = dict(trained['past_training'], reused_unchanged=True,
+                    new_training_assemblies=0, new_anchor_check_assemblies=0,
+                    source_path=str(past_from), source_sha256=sha256(past_from.read_bytes()).hexdigest(),
+                    source_arrays_sha256=sha256(past_from.with_suffix('.npz').read_bytes()).hexdigest())
 
+            records, record_energies, current_offsets, current_offset_energies = [], [], {}, {}
+            new_training, new_checks = 0, 0
+            for index, (arrays, state, time) in enumerate(zip(base[:2], states[:2], (.05, .10))):
+                center_field = current_field(arrays, energies[index], values, state[7:13],
+                                             acceleration_columns=False, time=time)
+                er, pr, _ = surface_rates(arrays['points'], arrays['faces'][arrays['free_faces']],
+                    arrays['free_nodes'], center_field['parent_map'], arrays['parent_psi'], center_field['flux'])
+                records.append(arrays); record_energies.append(energies[index])
+                pose_at_anchor = inputs(state)['pose']
+                for h in ((.001,) if index == 0 else (.001, .0005)):
+                    for sign in (1, -1):
+                        dt = sign*h
+                        orientation = (Rotation.from_rotvec(dt*state[10:13])
+                            *Rotation.from_quat(pose_at_anchor.orientation, scalar_first=True)).as_quat(scalar_first=True)
+                        moved = refine(evaluate_template(chart,
+                            pose=InitialState(pose_at_anchor.position+dt*state[7:10], orientation),
+                            parent_eta=state[13:13+size]+dt*er, parent_psi=state[13+size:]+dt*pr)[0])
+                        same_basis(moved)
+                        key = f'past_anchor{index}_offset_{dt}'
+                        if past_source is None:
+                            from .cuda_operator import prepare_energy
+                            energy = timed(key+'-energy', lambda: prepare_energy(moved['faces'],
+                                TrianglePanels(moved['points'][moved['faces']], 1), order=12).energy)
+                            if h == .001:
+                                new_training += 1
+                            else:
+                                new_checks += 1
+                        else:
+                            if not np.allclose(past_source[key+'_points'], moved['points'], rtol=0, atol=1e-12):
+                                raise ValueError('past pressure-offset geometry differs from training audit')
+                            energy = past_source[key+'_energy']
+                        saved[key+'_points'], saved[key+'_energy'] = moved['points'], energy
+                        if h == .001:
+                            records.append(moved); record_energies.append(energy)
+                        if index == 1:
+                            current_offsets[dt], current_offset_energies[dt] = moved, energy
+            if past_data is None:
+                past_data, description = fit(records, record_energies)
+                report['past_training'] = dict(description, new_training_assemblies=new_training,
+                    new_anchor_check_assemblies=new_checks, reused_unchanged=False,
+                    historical_records=6, historical_training_assemblies=6,
+                    additional_half_step_reference_assemblies=2)
+            saved.update(past_data)
+            past_models = dict(past_constrained=lambda arrays: predict(past_data, arrays),
+                               past_ordinary=lambda arrays: predict(past_data, arrays, ordinary=True))
+            report['past_anchor_check'] = []
+            for name in ('fresh', *past_models):
+                energy = energies[1] if name == 'fresh' else past_models[name](base[1])[0]
+                moved_energies = (current_offset_energies if name == 'fresh' else
+                    {dt: past_models[name](arrays)[0] for dt, arrays in current_offsets.items()})
+                _, _, _, pressures = evaluate_stencil(body, base[1], states[1], values, .10,
+                    energy, current_offsets, moved_energies)
+                report['past_anchor_check'].append(dict(name=name, pressure=pressures))
+            report['past_training']['pressure_direction'] = direction_diagnostics(past_data,
+                offsets[.0005], offsets[-.0005])
+            report['past_training']['seconds_this_run'] = perf_counter()-training_started
         def surface_rms(delta_parent):
             faces = target['faces'][target['free_faces']]
             triangles = target['points'][faces]
@@ -459,6 +552,8 @@ def run(pilot, output, operator_from=None, two_directions=False, target_time=.15
             names += list(local_models)
         else:
             local_models = {}
+        local_models.update(past_models)
+        names += list(past_models)
         predicted_target, predicted_description = prediction(target)
         for name in names:
             row = dict(name=name, complete=False, pressure=[])
@@ -473,21 +568,8 @@ def run(pilot, output, operator_from=None, two_directions=False, target_time=.15
                     energy, description = local_models[name](target)
                 else:
                     energy, description = predicted_target, predicted_description
-                if (not np.isfinite(energy).all()
-                        or np.linalg.norm(energy-energy.T) > 1e-10*np.linalg.norm(energy)):
-                    raise ValueError('nonfinite or asymmetric predicted energy')
-                field = current_field(target, energy, values, twist, time=target_time)
-                defect = (target_energy@field['potential']-field['right'])
-                unknown = np.setdiff1d(np.arange(len(energy)), target['free_nodes'])
-                eta, psi, _ = surface_rates(target['points'], target['faces'][target['free_faces']],
-                    target['free_nodes'], field['parent_map'], target['parent_psi'], field['flux'])
-                row.update(geometry_prediction=description,
-                    true_current_interior_relative_defect=float(np.linalg.norm(defect[unknown])
-                        /max(np.linalg.norm(field['right'][unknown]), 1e-30)),
-                    parent_height_rate_error_surface_rms_m_per_s=surface_rms(eta-eta_rate),
-                    parent_potential_rate_error_surface_rms_m2_per_s2=surface_rms(psi-psi_rate))
+                model_offsets = {}
                 for h in (.001, .0005):
-                    traces = []
                     for dt in (h, -h):
                         arrays = offsets[dt]
                         if name == 'fresh':
@@ -504,18 +586,18 @@ def run(pilot, output, operator_from=None, two_directions=False, target_time=.15
                             offset_energy, offset_description = energy+dt*exact_slope, {}
                         else:
                             offset_energy, offset_description = prediction(arrays)
-                        offset_field = current_field(arrays, offset_energy, values, twist,
-                                                     acceleration_columns=False, time=target_time+dt)
-                        traces.append(interpolate_body_trace(arrays, offset_field['potential'], samples,
-                                                             groups, face_hints=hints))
+                        model_offsets[dt] = offset_energy
                         if offset_description:
                             row.setdefault('offset_predictions', {})[str(dt)] = offset_description
-                    pressure = evaluate_body_pressure(target['points'], target['faces'], target['body_faces'],
-                        pose.position, body.mass, rotation@body.inertia_cg@rotation.T, twist,
-                        field['potential'], (traces[0]-traces[1])/(2*h), mesh_velocity,
-                        field['acceleration_potentials'], density=WATER_DENSITY, gravity=GRAVITY)
-                    row['pressure'].append(dict(step=h, load_world=pressure.hydrodynamic_load.tolist(),
-                        acceleration_world=pressure.acceleration.tolist(), added_mass=pressure.added_mass.tolist()))
+                field, eta, psi, pressures = evaluate_stencil(body, target, y, values,
+                    target_time, energy, offsets, model_offsets)
+                defect = target_energy@field['potential']-field['right']
+                unknown = np.setdiff1d(np.arange(len(energy)), target['free_nodes'])
+                row.update(geometry_prediction=description, pressure=pressures,
+                    true_current_interior_relative_defect=float(np.linalg.norm(defect[unknown])
+                        /max(np.linalg.norm(field['right'][unknown]), 1e-30)),
+                    parent_height_rate_error_surface_rms_m_per_s=surface_rms(eta-eta_rate),
+                    parent_potential_rate_error_surface_rms_m2_per_s2=surface_rms(psi-psi_rate))
                 row.update(complete=True, seconds=perf_counter()-before)
                 saved[name+'_potential'] = field['potential']
             except Exception as error:
@@ -548,4 +630,6 @@ if __name__ == '__main__':
     parser.add_argument('--target-time', type=float, choices=(.15, .20), default=.15)
     parser.add_argument('--tangent-from', help='Reuse one completed local model without retraining')
     parser.add_argument('--mixed-curvature', action='store_true')
+    parser.add_argument('--past-directions', action='store_true')
+    parser.add_argument('--past-from', help='Reuse one past-only model without retraining')
     run(**vars(parser.parse_args()))

@@ -24,16 +24,20 @@ from .boat_world_boundary import construct, body_material_samples, interpolate_b
 from .boat_world_field import current_field, surface_rates, refine_boundary
 from .body_pressure import evaluate_body_pressure, quadrature
 from .boat_operator_reuse import LocalOperator, InvalidReuse, LIMITS
+from .boat_past_operator import PastLocalOperator, LIMITS as PAST_LIMITS
 from .incident_baseline_benchmark import coefficients
 from .p4_fluid_ordering import fresh
 
 
 def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_step=.01,
-        quadrature_order=3, operator_reuse=False):
+        quadrature_order=3, operator_reuse=None):
     from .cuda_operator import prepare_energy, cp
+    if isinstance(operator_reuse, bool):
+        operator_reuse = 'one-direction' if operator_reuse else None
     if (not np.isfinite(duration) or duration <= 0 or refinement not in (0, 1, 2)
             or max_rhs < 4 or not np.isfinite(budget_seconds) or budget_seconds <= 0
-            or not np.isfinite(max_step) or max_step <= 0 or quadrature_order not in (3, 6, 12)):
+            or not np.isfinite(max_step) or max_step <= 0 or quadrature_order not in (3, 6, 12)
+            or operator_reuse not in (None, 'one-direction', 'past-linear')):
         raise ValueError('positive bounded duration/budget, >=4 RHS and refinement 0..2 required')
     output = fresh(output)
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -44,9 +48,9 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
             'velocity_world_m_per_s[3]', 'angular_velocity_world_rad_per_s[3]',
             'parent_eta_m[N]', 'parent_psi_m2_per_s[N]'],
         boundary_refinement=dict(region='body', levels=refinement), rhs=[], geometry=[],
-        operator_policy=dict(enabled=operator_reuse, quadrature_order=quadrature_order,
-            limits=LIMITS if operator_reuse else None,
-            scope='Past-only one-direction quadratic; atomic whole-RHS fallback. Geometry limits are heuristics, not force-error bounds. Stage history can affect refresh decisions.'),
+        operator_policy=dict(enabled=operator_reuse is not None, kind=operator_reuse, quadrature_order=quadrature_order,
+            limits=(PAST_LIMITS if operator_reuse == 'past-linear' else LIMITS) if operator_reuse else None,
+            scope='Past-only local model; atomic whole-RHS fallback. Geometry limits are heuristics, not force-error bounds. Stage history can affect refresh decisions.'),
         controls=dict(max_rhs=max_rhs, soft_elapsed_budget_seconds=budget_seconds,
             derivative_step_seconds=.001, rtol=.001, first_step_seconds=min(max_step, duration),
             max_step_seconds=max_step, topology_templates_retained=4),
@@ -54,10 +58,12 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
             for name in ('boat_moving.py', 'boat_geometry_template.py', 'boat_world_boundary.py',
                          'boat_parent_clip_proof.py', 'boat_world_field.py', 'body_pressure.py',
                          'canoe.py', 'incident_baseline_benchmark.py',
-                         'cuda_operator.py', 'cuda_energy.cu', 'cuda_pair.cuh', 'boat_operator_reuse.py')})
+                         'cuda_operator.py', 'cuda_energy.cu', 'cuda_pair.cuh', 'boat_operator_reuse.py',
+                         'boat_past_operator.py')})
     started = perf_counter()
     times, states, solver = [], [], None
     templates, cold_count, operator_model = [], 0, None
+    previous_stencil = None
     saved = {}
     body = reference_body()
 
@@ -129,7 +135,7 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
         return value, energy
 
     def rhs(time, state):
-        nonlocal row, operator_model
+        nonlocal row, operator_model, previous_stencil
         elapsed_check()
         if len(report['rhs']) >= max_rhs:
             raise RuntimeError('bounded moving-case RHS count exhausted')
@@ -179,20 +185,35 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
                 current['acceleration_potentials'], density=WATER_DENSITY, gravity=GRAVITY)
             return pressure, eta_rate, psi_rate, surface, [arrays, *moved], energies
 
-        result = None
+        result, audit_candidate = None, None
+        refresh = (operator_reuse == 'past-linear' and operator_model is not None
+                   and abs(time-operator_model.time) >= PAST_LIMITS['refresh_age_seconds']-1e-14)
         if operator_model is not None:
             try:
-                result = stencil(operator_model)
-                row['operator_mode'] = 'reused'
-                row['operator_anchor_rhs_index'] = operator_model.rhs_index
+                candidate = stencil(operator_model)
+                if refresh:
+                    audit_candidate = candidate
+                    row['refresh_reason'] = 'scheduled age refresh; valid old model audited'
+                else:
+                    result = candidate
+                    row['operator_mode'] = 'reused'
+                    row['operator_anchor_rhs_index'] = operator_model.rhs_index
             except (InvalidReuse, np.linalg.LinAlgError, FloatingPointError) as error:
                 row['reuse_rejection'] = str(error)
+                row['refresh_audit'] = dict(available=False, reason=str(error))
                 # Discard ALL candidate values, including their surface direction.
                 # A fresh base determines both fresh pressure-offset geometries.
         if result is None:
             result = stencil(None)
             row['operator_mode'] = 'fresh'
         pressure, eta_rate, psi_rate, surface, stencil_arrays, stencil_energies = result
+        if audit_candidate is not None:
+            old_pressure, old_eta, old_psi = audit_candidate[:3]
+            row['refresh_audit'] = dict(available=True, anchor_rhs_index=operator_model.rhs_index,
+                hydrodynamic_load_error_world=(old_pressure.hydrodynamic_load-pressure.hydrodynamic_load).tolist(),
+                acceleration_error_world=(old_pressure.acceleration-pressure.acceleration).tolist(),
+                parent_height_rate_error_m_per_s=(old_eta-eta_rate).tolist(),
+                parent_potential_rate_error_m2_per_s2=(old_psi-psi_rate).tolist())
         raw_quaternion = state[3:7]
         quaternion_rate = .5*np.r_[-twist[3:]@raw_quaternion[1:],
             raw_quaternion[0]*twist[3:]+np.cross(twist[3:], raw_quaternion[1:])]
@@ -203,12 +224,20 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
         # stages may train later predictions; events retain that computational history.
         if operator_reuse and row['operator_mode'] == 'fresh':
             training_started = perf_counter()
+            current_stencil = (stencil_arrays, stencil_energies, float(time), len(report['rhs']))
             try:
-                operator_model = LocalOperator(stencil_arrays, stencil_energies, time, len(report['rhs']))
+                if operator_reuse == 'one-direction':
+                    operator_model = LocalOperator(stencil_arrays, stencil_energies, time, len(report['rhs']))
+                elif previous_stencil is not None:
+                    operator_model = PastLocalOperator(previous_stencil, current_stencil, time, len(report['rhs']))
+                else:
+                    raise InvalidReuse('no previous completed fresh stencil')
                 row['operator_training'] = operator_model.diagnostics
-            except (InvalidReuse, np.linalg.LinAlgError, FloatingPointError) as error:
+            except (ValueError, np.linalg.LinAlgError, FloatingPointError) as error:
                 operator_model = None
                 row['operator_training_rejection'] = str(error)
+            if operator_reuse == 'past-linear':
+                previous_stencil = current_stencil
             row['operator_training_seconds'] = perf_counter()-training_started
         row.update(complete=True, seconds=perf_counter()-before, surface=surface,
             acceleration_world=pressure.acceleration.tolist(),
@@ -280,7 +309,7 @@ if __name__ == '__main__':
     parser.add_argument('--budget-seconds', type=float, default=90.)
     parser.add_argument('--max-step', type=float, default=.01)
     parser.add_argument('--quadrature-order', type=int, default=3, choices=(3, 6, 12))
-    parser.add_argument('--operator-reuse', action='store_true')
+    parser.add_argument('--operator-reuse', nargs='?', const='one-direction', choices=('one-direction', 'past-linear'))
     result = run(**vars(parser.parse_args()))
     print(json.dumps({key: result[key] for key in
         ('complete', 'seconds', 'accepted_simulated_seconds', 'accepted_steps', 'cold_geometry_count')}))

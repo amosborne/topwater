@@ -20,6 +20,18 @@ _BASIS = ('faces', 'body_faces', 'free_faces', 'free_nodes', 'body_source_group'
           'free_source_parent', 'free_parent_indices')
 
 
+def area_weights(arrays):
+    """Separate normalized body/free lumped-area metrics at one fixed geometry."""
+    result = {}
+    for label in ('body', 'free'):
+        faces = arrays['faces'][arrays[label+'_faces']]
+        area = TrianglePanels(arrays['points'][faces], 1).areas
+        weight = np.bincount(faces.ravel(), weights=np.repeat(area/3, 3),
+                             minlength=len(arrays['points']))
+        result[label] = weight/weight.sum()
+    return result
+
+
 class LocalOperator:
     def __init__(self, arrays, energies, time, rhs_index):
         """Train from fresh [base, plus, minus] of one completed physical stencil."""
@@ -27,13 +39,7 @@ class LocalOperator:
         self.basis = {key: base[key].copy() for key in _BASIS}
         self.origin = base['points'].copy()
         self.time, self.rhs_index = float(time), rhs_index
-        self.weight = {}
-        for label, faces in (('body', base['faces'][base['body_faces']]),
-                             ('free', base['faces'][base['free_faces']])):
-            area = TrianglePanels(self.origin[faces], 1).areas
-            weight = np.bincount(faces.ravel(), weights=np.repeat(area/3, 3),
-                                 minlength=len(self.origin))
-            self.weight[label] = weight/weight.sum()
+        self.weight = area_weights(base)
         # Equal body/free weights prevent a large outer surface hiding hull error.
         self.metric = .5*(self.weight['body']+self.weight['free'])
         for value in (plus, minus):

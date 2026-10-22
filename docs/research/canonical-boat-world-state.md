@@ -441,11 +441,56 @@ fallback agreement. The small steps were chosen to give conservative reuse a
 chance, not to claim simulation throughput. Geometry limits remain unchanged;
 reuse stays opt-in and experimental. Full evidence: `boat-operator-reuse.json`.
 
-Next investigate a current-anchored, past-only two-direction linear model
-offline. Preserve the current pressure chord and estimate transverse response
-from older fresh operators. Passive samples along a curved trajectory may not
-identify transverse and quadratic response separately; avoid a poorly
-identified full quadratic fit merely to pass the geometry guard.
+A current-anchored, past-only two-direction linear model now preserves the
+current center/odd pressure chord and fits transverse response from older fresh
+operators. At .15/.20 s, heave errors are -16.1/-87.7 N and pitch errors
+-9.0/-38.7 Nm. The training-anchor pressure mismatch is below 1e-4 N/Nm, but
+matching an odd operator chord alone does not reproduce individual offsets.
+The ordinary same-data LS control loses 5.3% of that current odd chord.
+
+One matched .2 s nonlinear six-DOF/evolving-surface pair with uniform order-six
+integration accepts seven reused RHS and cuts assemblies 39 to 18. Total time
+is 21.89 s fresh versus 18.16 s cached; a single pair does not establish a timing
+distribution or sustained throughput. All guards, fallback, fitting and refresh
+audits count. Maximum accepted position-component/orientation differences are
+4.95 micrometers/5.81 microradians, while angular-velocity difference reaches
+1.031e-4 rad/s, approximately the exploratory component atol. Keep opt-in.
+
+A fresh full RHS at the cached run's exact endpoint isolates remaining policy
+error: -26.63 N heave and -11.87 Nm pitch, with no trajectory-state difference.
+The new linear model can also differ from the returned fresh anchor RHS, so
+this history-dependent policy has no established RK/FSAL consistency or temporal
+order. Full results, costs and measured producer provenance:
+`boat-past-operator.json`.
+
+Next test only the longitudinal curvature already observed in current E0/E+/-:
+use features `[a1, a2, .5*a1^2]`, enforce both current offset matrices exactly,
+then fit the one remaining coefficient to past records. Guard observability
+after eliminating current constraints, and verify all three anchor matrices.
+Keep h/2 independent. This could restore default-h anchor consistency without
+new assemblies, but is neither a full Hessian nor a force certificate. Passive
+trajectory data can still mix transverse response with other curvature. A
+longer controlled window is needed before combining adaptive quadrature.
+
+The larger-cost avenue remains reduction before geometry approximation. At a
+fixed geometry, six rigid modes plus fifteen parent potential modes give only
+the homogeneous response space: the observed sea also drives time-dependent
+wall/bed Neumann loads. An exact decomposition is `phi=R(Q)*[V,psi]+p(Q,t)`;
+the reduced stationary functional is affine-quadratic, with time-dependent
+linear and constant terms. Dropping the particular field or the discrete defect
+of an analytic incident lifting changes the current equations. The 384
+components generally have distinct stratified frequencies, so 48 measured bands
+do not imply 96 exact harmonic forcing columns.
+
+Before building a reduced geometry expansion, reconstruct full fields and fine
+reactions from homogeneous columns plus the exact current particular, checking
+nonlinear fine-flux Bernoulli rates and six pressures at correct offset times.
+A small reduced matrix alone cannot replace the fine velocity-squared terms.
+Existing P4 restricted-spectrum/rank-six experiments do not qualify this moving
+boat affine action. A nonlinear spectral exterior coupled to a local hull BEM
+is another larger avenue, but earlier FFT/image coupling failed; domain/interface
+flux, work and pressure must pass before another trajectory. Neither avenue has
+earned a speed claim.
 
 ## Primary context
 

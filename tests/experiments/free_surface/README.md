@@ -1595,3 +1595,34 @@ baseline change. The small step was a deliberate opportunity to reuse, not an
 optimal timestep or a throughput benchmark. Costs, guard rejection counts,
 physical state differences and archived producers:
 `docs/research/boat-operator-reuse.json`.
+
+`boat_operator_prediction --past-directions --operator-from <matching-audit>`
+fits a separate past-only two-direction linear model at .10 s. It preserves the
+current center and odd pressure chord, fitting transverse response from .05 s.
+Completing the historical stencils requires four additional operators; two
+independent half-step anchor references check pressure. `--past-from <model>`
+reuses the model unchanged at .20 s. Chart choice uses startup/past data only;
+future chart invalidity fails rather than changing the training basis.
+
+Pressure comparisons share `boat_pressure_stencil.py`. The constrained fit and
+ordinary LS control use the same records; a training-anchor pressure check
+prevents assuming that an exact odd operator chord implies exact pressure.
+The current linear model does not exactly match individual anchor offsets.
+
+`boat_moving --operator-reuse past-linear` selects the distinct two-direction
+coupled falsifier. A bare `--operator-reuse` still selects the failed 1D policy.
+Storage is bounded to one previous fresh stencil and one active model. The
+40 ms scheduled refresh audits a valid old stencil against a fresh one; invalid
+candidates report unavailable audits and fall back atomically. Neither policy
+is enabled by default. The model/RK history and anchor mismatch remain explicit
+limitations, so no temporal order or long-run stability is claimed.
+
+The matched `.2 s / --max-step .05 / --quadrature-order 6 / --refinement 2`
+pair reduced assemblies 39 to 18 (seven reused RHS), with total time 21.89 to
+18.16 s. Maximum accepted position-component difference was 4.95 micrometers;
+angular-velocity difference reached approximately the exploratory component
+atol. `boat_endpoint_audit --pilot <cached-pilot> --output <audit>` evaluates
+three fresh operators at that exact cached endpoint, separating policy error
+from different advanced states. It found -26.63 N heave and -11.87 Nm pitch
+errors. These results do not earn baseline adoption. Full evidence and measured
+producer archives: `docs/research/boat-past-operator.json`.
