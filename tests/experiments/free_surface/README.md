@@ -1719,3 +1719,14 @@ are amplified by strong mass recovery on tiny free supports. Fixed physical
 probes are essential when comparing these meshes: sampled maxima move. This
 motivates a restricted-energy surface-rate check; it does not establish a
 physical flux replacement or permit residual subtraction.
+
+`boat_surface_action_audit --audit <owned-contact-report> --output <report>
+--order 12` (or 24) compares the current Bernoulli weak loads with complete
+stationary-action finite differences in interior directions 7/10. Both vanish
+on the outer free/wall seam. Moving trace interpolation, physical incident/body
+loads, gravity and exposed-water mass transport are retained. The two methods
+disagree repeatably despite stable h/h2 differences; q12/q24 comparisons do not
+yet establish quadrature convergence. Evidence: `docs/research/boat-surface-action.json`.
+The shared snapshot loader preserves all previous reaction/probe numerical
+results exactly. Next match an order-owned shape derivative to these scalar
+controls; no action-derived rates are enabled in moving runs yet.

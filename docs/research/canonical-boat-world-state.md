@@ -724,18 +724,34 @@ declare the auxiliary flux exact, clip velocities, or project away residuals.
 Contact-distance bins in the diagnostic use sampled indicators, not exact
 geometric strip clipping; global polynomial integrals have the stronger claim.
 
-The bounded next falsifier needs only two parent-height directions: one away
-from contact and one at the affected parent. With `b=B*V+b_inc`, define
+The scalar falsifier is now implemented in `boat_surface_action_audit`;
+evidence is `boat-surface-action.json`. With `b=B*V+b_inc`, define
 `F=rho*(phi.T*E*phi/2-phi.T*b)` at the stationary mixed field. Its derivative
 must include `rho*rF.T*dS*psi` in addition to the fixed-trace energy shape
-derivative and `-rho*phi.T*db`. Verify this against h/h2 scalar finite
-differences with re-solved fields before extending to all directions.
+derivative and `-rho*phi.T*db`. Complete h/h2 scalar finite differences re-solve
+the mixed field. The next analytic implementation must match these controls
+before extending to all directions.
 The surface one-form is `rho*psi.T*C*eta_dot`, where
 `C=S.T*Mxy*S` depends on the moving exposed-water hole. Consequently
 `rho*C.T*psi_dot = -F_eta-U_eta + rho*((psi.T*C_eta[k]*eta_dot)_k-C_dot.T*psi)`.
 `C_dot` includes both body and surface motion. Compare these WEAK parent loads
 with the existing Bernoulli rate, including incident-load and gravity
 derivatives; do not compare only the kinetic energy derivative.
+
+Primary directions are interior parent coefficients 7 and 10, explicitly zero
+on every free/wall shared node. Both have contact support on this coarse grid;
+there is no claimed pure interior direction away from contact. The initial
+parent-0 control changes the external-wall top and forcing domain and is kept
+as a boundary-work diagnostic, not primary evidence of the interior mismatch.
+For parent 7 the action/Bernoulli weak-load discrepancy is 550.23 N at q12 and
+554.49 N at q24. Parent 10 gives 396.70/396.76 N. At q24, halving the height
+stencil from 10 to 5 micrometers changes these differences by less than
+0.0005 N. Independently integrated gravity derivatives `rho*g*C*eta` agree
+with volume-first-moment differences within 0.0003 N. Parent-mass construction
+also agrees with the existing fine-mass restriction. These checks establish a
+repeatable discrete-action/current-Bernoulli mismatch at this actual state;
+they do not establish quadrature convergence, physical accuracy, or replacement
+rates. In particular the parent-7 mismatch still changes 4.26 N from q12 to q24.
 
 If this control passes, use one order-matched `cuda_shape_gradient.vertex_gradient`
 pass and cheap same-chart geometry derivatives for all 15 directions, rather

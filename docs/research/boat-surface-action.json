@@ -1,0 +1,537 @@
+{
+  "qualified": false,
+  "scope": "Frozen nonlinear state, complete stationary mixed-functional finite differences including moving surface one-form; no replacement-rate adoption or trajectory.",
+  "limitations": [
+    "Initial parent0 direction changes the external wall top and forcing domain; it is not an interior comparison.",
+    "Primary directions7/10 vanish at all free/wall seam nodes. Both have contact support on the current coarse parent grid.",
+    "h/h2 consistency does not prove physical or spatial accuracy, and higher quadrature does not validate the entire restricted-action formulation."
+  ],
+  "reports": {
+    "boat-surface-action-q6-964ms": {
+      "path": "artifacts\\boat-surface-action-q6-964ms.json",
+      "sha256": "084846d1415f6e22d61d5541c6aba3a48f23dfa2276a81d3bc8817207a914429",
+      "report": {
+        "complete": true,
+        "qualified": false,
+        "order": 6,
+        "scope": "Finite differences of complete stationary mixed functional and moving surface one-form in two parent directions; no trajectory or implementation of replacement rates.",
+        "input_sha256": {
+          "artifacts\\boat-contact-localbody2-964ms.json": "3191a1d3d72cf23a97e8bd76daecbe45538a2f6b4e60cfd5817adf1d41eb5bb8",
+          "artifacts\\boat-contact-localbody2-964ms.npz": "3353e1d291a566bce30f85921d0c97b7cb745dbf86149b7909497a7847e2f009"
+        },
+        "source_sha256": {
+          "boat_surface_action_audit.py": "e288a02d2c6c00303e759dbcb75cb622e272a21dc6e913efd7c418782d3955de",
+          "boat_contact_reaction.py": "e07098220e9a2c0e136d0cc2f6b1857247b2e9a391a1382ed1772d67b33648d4",
+          "boat_geometry_template.py": "4bd82128a54120432af7e258bfeb14bb5db31ab599c10eb0463fc164988b6172",
+          "boat_world_field.py": "f2b8fda37564d86ef3c820e7c5a75315687824eb64f17236d0470b45b1b62a49",
+          "boat_world_boundary.py": "e5b69c97f3087d15c4543c0d7041559fd7fbe67e2fa8422855ea27612bc52a98",
+          "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+          "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+          "cuda_operator.py": "497e47a88cf187d6979736cab8a4da9a3b4e5cc54209582bf85f004905e466eb",
+          "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+          "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20"
+        },
+        "directions": [
+          {
+            "parent_index": 0,
+            "label": "outer exposed parent",
+            "step_m": 1e-05,
+            "current_bernoulli_weak_load_newtons": -2238.82822210255,
+            "derivatives": [
+              {
+                "step_m": 1e-05,
+                "functional_derivative_newtons": -5436.025585549942,
+                "gravity_derivative_newtons": 2105.6574885733426,
+                "independently_integrated_gravity_derivative_newtons": 2105.6574936599277,
+                "mass_transport_newtons": -2.219770315805166e-08,
+                "variational_weak_load_newtons": 3330.3680969544016,
+                "discrepancy_newtons": 5569.196319056951
+              },
+              {
+                "step_m": 5e-06,
+                "functional_derivative_newtons": -5436.025578819681,
+                "gravity_derivative_newtons": 2105.6575002148747,
+                "independently_integrated_gravity_derivative_newtons": 2105.6574936599277,
+                "mass_transport_newtons": 3.6008965508363467e-07,
+                "variational_weak_load_newtons": 3330.368078964896,
+                "discrepancy_newtons": 5569.196301067446
+              }
+            ]
+          },
+          {
+            "parent_index": 7,
+            "label": "contact parent",
+            "step_m": 1e-05,
+            "current_bernoulli_weak_load_newtons": -2547.6805101985624,
+            "derivatives": [
+              {
+                "step_m": 1e-05,
+                "functional_derivative_newtons": -30230.443298023598,
+                "gravity_derivative_newtons": 4142.913070973009,
+                "independently_integrated_gravity_derivative_newtons": 4142.913341489237,
+                "mass_transport_newtons": -28102.587434095025,
+                "variational_weak_load_newtons": -2015.057207044436,
+                "discrepancy_newtons": 532.6233031541265
+              },
+              {
+                "step_m": 5e-06,
+                "functional_derivative_newtons": -30230.44339533953,
+                "gravity_derivative_newtons": 4142.913571558893,
+                "independently_integrated_gravity_derivative_newtons": 4142.913341489237,
+                "mass_transport_newtons": -28102.587093884442,
+                "variational_weak_load_newtons": -2015.0572701038036,
+                "discrepancy_newtons": 532.6232400947588
+              }
+            ]
+          }
+        ],
+        "operations": [
+          {
+            "label": "base",
+            "seconds": 3.0806774999946356,
+            "functional_joules": 27142.82594146311,
+            "gravity_joules": -1443997.182964799,
+            "field_relative_residual": 1.502901001929769e-14
+          },
+          {
+            "label": "eta0:1e-05",
+            "seconds": 0.23269730000174604,
+            "functional_joules": 27142.771581138044,
+            "gravity_joules": -1443997.1619074699,
+            "field_relative_residual": 1.72618898239001e-14
+          },
+          {
+            "label": "eta0:-1e-05",
+            "seconds": 0.24023620001389645,
+            "functional_joules": 27142.880301649755,
+            "gravity_joules": -1443997.2040206196,
+            "field_relative_residual": 1.2985329337251347e-14
+          },
+          {
+            "label": "eta0:5e-06",
+            "seconds": 0.24095669999951497,
+            "functional_joules": 27142.7987613182,
+            "gravity_joules": -1443997.1724363228,
+            "field_relative_residual": 1.3462497150975553e-14
+          },
+          {
+            "label": "eta0:-5e-06",
+            "seconds": 0.23799949997919612,
+            "functional_joules": 27142.85312157399,
+            "gravity_joules": -1443997.1934928978,
+            "field_relative_residual": 1.9019189842988566e-14
+          },
+          {
+            "label": "eta7:1e-05",
+            "seconds": 0.23572740002418868,
+            "functional_joules": 27142.523645400997,
+            "gravity_joules": -1443997.1415352742,
+            "field_relative_residual": 1.91611392557434e-14
+          },
+          {
+            "label": "eta7:-1e-05",
+            "seconds": 0.24113819998456165,
+            "functional_joules": 27143.128254266958,
+            "gravity_joules": -1443997.2243935356,
+            "field_relative_residual": 1.718838379947094e-14
+          },
+          {
+            "label": "eta7:5e-06",
+            "seconds": 0.23325439999462105,
+            "functional_joules": 27142.674791338864,
+            "gravity_joules": -1443997.1622501318,
+            "field_relative_residual": 1.3987668329537006e-14
+          },
+          {
+            "label": "eta7:-5e-06",
+            "seconds": 0.24035199999343604,
+            "functional_joules": 27142.977095772818,
+            "gravity_joules": -1443997.2036792675,
+            "field_relative_residual": 1.3197225634285191e-14
+          }
+        ],
+        "mass_transport": {
+          "step_seconds": 1e-05,
+          "h_h2_matrix_maximum_difference": 4.6906922790412864e-08
+        },
+        "base_surface": {
+          "fine_mass_condition": 7.43585900635939,
+          "parent_mass_condition": 6.9674092777678736,
+          "conditioning_roundoff_budget": 1e-08,
+          "condition_measure": "LAPACK one-norm estimate of diagonally equilibrated mass from Cholesky factor",
+          "maximum_fine_normal_flux_density": 1066.6179778512858,
+          "maximum_fine_vertical_velocity_at_quadrature": 938.9111148550408,
+          "maximum_bernoulli_rate_at_quadrature": 444395.8069407086,
+          "unresolved_kinematic_mass_relative": 0.6592057195840065,
+          "maximum_parent_height_rate": 1.7969406514065138,
+          "maximum_parent_potential_rate": 2.208020067785687,
+          "peak_vertical_free_face_local": 211,
+          "peak_vertical_location_world": [
+            1.149031641801497,
+            1.13432275429531,
+            0.23248084146778836
+          ],
+          "peak_vertical_projected_face_area_m2": 8.937235929213943e-07,
+          "minimum_projected_free_face_area_m2": 4.4686179646069637e-07,
+          "graph_flux_square_surface_integral_m4_per_s2": 12.066101530474146,
+          "vertical_square_surface_integral_m4_per_s2": 11.78751962220781,
+          "peak_face_vertical_square_fraction": 0.014150336003329489,
+          "bernoulli_absolute_surface_integral_m4_per_s2": 54.7236486990174
+        },
+        "seconds": 5.614808099984657
+      }
+    },
+    "boat-surface-action-interior-q12-964ms": {
+      "path": "artifacts\\boat-surface-action-interior-q12-964ms.json",
+      "sha256": "46c4018153cb0e9668a363ad6800464f9a5f79f5d475996219548b359404aff8",
+      "report": {
+        "complete": true,
+        "qualified": false,
+        "order": 12,
+        "scope": "Finite differences of complete stationary mixed functional and moving surface one-form in two parent directions; no trajectory or implementation of replacement rates.",
+        "input_sha256": {
+          "artifacts\\boat-contact-localbody2-964ms.json": "3191a1d3d72cf23a97e8bd76daecbe45538a2f6b4e60cfd5817adf1d41eb5bb8",
+          "artifacts\\boat-contact-localbody2-964ms.npz": "3353e1d291a566bce30f85921d0c97b7cb745dbf86149b7909497a7847e2f009"
+        },
+        "source_sha256": {
+          "boat_surface_action_audit.py": "894824e522f9cd7facf79b04373c4f1b7f469e67bc3460a6bf449fafac586359",
+          "boat_contact_reaction.py": "e07098220e9a2c0e136d0cc2f6b1857247b2e9a391a1382ed1772d67b33648d4",
+          "boat_geometry_template.py": "4bd82128a54120432af7e258bfeb14bb5db31ab599c10eb0463fc164988b6172",
+          "boat_world_field.py": "f2b8fda37564d86ef3c820e7c5a75315687824eb64f17236d0470b45b1b62a49",
+          "boat_world_boundary.py": "e5b69c97f3087d15c4543c0d7041559fd7fbe67e2fa8422855ea27612bc52a98",
+          "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+          "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+          "cuda_operator.py": "497e47a88cf187d6979736cab8a4da9a3b4e5cc54209582bf85f004905e466eb",
+          "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+          "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20"
+        },
+        "directions": [
+          {
+            "parent_index": 7,
+            "label": "central interior contact parent",
+            "step_m": 1e-05,
+            "external_wall_trace_maximum": 0.0,
+            "current_bernoulli_weak_load_newtons": -2564.4483521491898,
+            "derivatives": [
+              {
+                "step_m": 1e-05,
+                "functional_derivative_newtons": -30231.286471098425,
+                "gravity_derivative_newtons": 4142.913070973009,
+                "independently_integrated_gravity_derivative_newtons": 4142.913341489237,
+                "mass_transport_newtons": -28102.587434357276,
+                "variational_weak_load_newtons": -2014.2140342318598,
+                "discrepancy_newtons": 550.2343179173299
+              },
+              {
+                "step_m": 5e-06,
+                "functional_derivative_newtons": -30231.2864925625,
+                "gravity_derivative_newtons": 4142.913571558893,
+                "independently_integrated_gravity_derivative_newtons": 4142.913341489237,
+                "mass_transport_newtons": -28102.58709412501,
+                "variational_weak_load_newtons": -2014.2141731214033,
+                "discrepancy_newtons": 550.2341790277865
+              }
+            ]
+          },
+          {
+            "parent_index": 10,
+            "label": "bow interior contact parent",
+            "step_m": 1e-05,
+            "external_wall_trace_maximum": 0.0,
+            "current_bernoulli_weak_load_newtons": -8756.65167134871,
+            "derivatives": [
+              {
+                "step_m": 1e-05,
+                "functional_derivative_newtons": -22857.02983554074,
+                "gravity_derivative_newtons": 9166.097058914602,
+                "independently_integrated_gravity_derivative_newtons": 9166.096911288569,
+                "mass_transport_newtons": -22050.879622210286,
+                "variational_weak_load_newtons": -8359.946845584149,
+                "discrepancy_newtons": 396.704825764562
+              },
+              {
+                "step_m": 5e-06,
+                "functional_derivative_newtons": -22857.029816077553,
+                "gravity_derivative_newtons": 9166.096663102508,
+                "independently_integrated_gravity_derivative_newtons": 9166.096911288569,
+                "mass_transport_newtons": -22050.87963546311,
+                "variational_weak_load_newtons": -8359.946482488063,
+                "discrepancy_newtons": 396.70518886064747
+              }
+            ]
+          }
+        ],
+        "operations": [
+          {
+            "label": "base",
+            "seconds": 3.54250830001547,
+            "functional_joules": 27142.443693521313,
+            "gravity_joules": -1443997.182964799,
+            "field_relative_residual": 1.7233490518538928e-14
+          },
+          {
+            "label": "eta7:1e-05",
+            "seconds": 0.8148397000040859,
+            "functional_joules": 27142.141389007695,
+            "gravity_joules": -1443997.1415352742,
+            "field_relative_residual": 1.4043592751030144e-14
+          },
+          {
+            "label": "eta7:-1e-05",
+            "seconds": 0.8085712000029162,
+            "functional_joules": 27142.746014737117,
+            "gravity_joules": -1443997.2243935356,
+            "field_relative_residual": 1.7978140373753184e-14
+          },
+          {
+            "label": "eta7:5e-06",
+            "seconds": 0.9593904999783263,
+            "functional_joules": 27142.292539177022,
+            "gravity_joules": -1443997.1622501318,
+            "field_relative_residual": 1.5535653005530902e-14
+          },
+          {
+            "label": "eta7:-5e-06",
+            "seconds": 1.208248899987666,
+            "functional_joules": 27142.594852041948,
+            "gravity_joules": -1443997.2036792675,
+            "field_relative_residual": 1.698887533045189e-14
+          },
+          {
+            "label": "eta10:1e-05",
+            "seconds": 0.872484000021359,
+            "functional_joules": 27142.215122633763,
+            "gravity_joules": -1443997.0913023818,
+            "field_relative_residual": 1.6609759444786644e-14
+          },
+          {
+            "label": "eta10:-1e-05",
+            "seconds": 0.8043681000126526,
+            "functional_joules": 27142.672263230474,
+            "gravity_joules": -1443997.274624323,
+            "field_relative_residual": 1.469206146289774e-14
+          },
+          {
+            "label": "eta10:5e-06",
+            "seconds": 0.8059710999950767,
+            "functional_joules": 27142.32940822499,
+            "gravity_joules": -1443997.137133955,
+            "field_relative_residual": 1.48332640775188e-14
+          },
+          {
+            "label": "eta10:-5e-06",
+            "seconds": 1.0794322000001557,
+            "functional_joules": 27142.55797852315,
+            "gravity_joules": -1443997.2287949217,
+            "field_relative_residual": 1.5564664524371793e-14
+          }
+        ],
+        "mass_transport": {
+          "step_seconds": 1e-05,
+          "h_h2_matrix_maximum_difference": 4.6906922790412864e-08
+        },
+        "base_surface": {
+          "fine_mass_condition": 7.43585900635939,
+          "parent_mass_condition": 6.9674092777678736,
+          "conditioning_roundoff_budget": 1e-08,
+          "condition_measure": "LAPACK one-norm estimate of diagonally equilibrated mass from Cholesky factor",
+          "maximum_fine_normal_flux_density": 1010.3838934767523,
+          "maximum_fine_vertical_velocity_at_quadrature": 889.1486560153387,
+          "maximum_bernoulli_rate_at_quadrature": 398537.77094016585,
+          "unresolved_kinematic_mass_relative": 0.6573606767944603,
+          "maximum_parent_height_rate": 1.796615555509974,
+          "maximum_parent_potential_rate": 2.2238680915032107,
+          "peak_vertical_free_face_local": 211,
+          "peak_vertical_location_world": [
+            1.149031641801497,
+            1.13432275429531,
+            0.23248084146778836
+          ],
+          "peak_vertical_projected_face_area_m2": 8.937235929213943e-07,
+          "minimum_projected_free_face_area_m2": 4.4686179646069637e-07,
+          "graph_flux_square_surface_integral_m4_per_s2": 12.01195844484253,
+          "vertical_square_surface_integral_m4_per_s2": 11.734278964062955,
+          "peak_face_vertical_square_fraction": 0.012488807457692765,
+          "bernoulli_absolute_surface_integral_m4_per_s2": 54.69771674431596
+        },
+        "seconds": 11.539502899977379
+      }
+    },
+    "boat-surface-action-interior-q24-964ms": {
+      "path": "artifacts\\boat-surface-action-interior-q24-964ms.json",
+      "sha256": "1e4f95faed489eaf26c102efbd2ba4edb423880874d1dac46ccf9f3cd7bf54ab",
+      "report": {
+        "complete": true,
+        "qualified": false,
+        "order": 24,
+        "scope": "Finite differences of complete stationary mixed functional and moving surface one-form in two parent directions; no trajectory or implementation of replacement rates.",
+        "input_sha256": {
+          "artifacts\\boat-contact-localbody2-964ms.json": "3191a1d3d72cf23a97e8bd76daecbe45538a2f6b4e60cfd5817adf1d41eb5bb8",
+          "artifacts\\boat-contact-localbody2-964ms.npz": "3353e1d291a566bce30f85921d0c97b7cb745dbf86149b7909497a7847e2f009"
+        },
+        "source_sha256": {
+          "boat_surface_action_audit.py": "894824e522f9cd7facf79b04373c4f1b7f469e67bc3460a6bf449fafac586359",
+          "boat_contact_reaction.py": "e07098220e9a2c0e136d0cc2f6b1857247b2e9a391a1382ed1772d67b33648d4",
+          "boat_geometry_template.py": "4bd82128a54120432af7e258bfeb14bb5db31ab599c10eb0463fc164988b6172",
+          "boat_world_field.py": "f2b8fda37564d86ef3c820e7c5a75315687824eb64f17236d0470b45b1b62a49",
+          "boat_world_boundary.py": "e5b69c97f3087d15c4543c0d7041559fd7fbe67e2fa8422855ea27612bc52a98",
+          "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+          "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+          "cuda_operator.py": "497e47a88cf187d6979736cab8a4da9a3b4e5cc54209582bf85f004905e466eb",
+          "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+          "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20"
+        },
+        "directions": [
+          {
+            "parent_index": 7,
+            "label": "central interior contact parent",
+            "step_m": 1e-05,
+            "external_wall_trace_maximum": 0.0,
+            "current_bernoulli_weak_load_newtons": -2568.7930030511443,
+            "derivatives": [
+              {
+                "step_m": 1e-05,
+                "functional_derivative_newtons": -30231.19900408346,
+                "gravity_derivative_newtons": 4142.913070973009,
+                "independently_integrated_gravity_derivative_newtons": 4142.913341489237,
+                "mass_transport_newtons": -28102.5874341055,
+                "variational_weak_load_newtons": -2014.3015009950468,
+                "discrepancy_newtons": 554.4915020560975
+              },
+              {
+                "step_m": 5e-06,
+                "functional_derivative_newtons": -30231.19911413232,
+                "gravity_derivative_newtons": 4142.913571558893,
+                "independently_integrated_gravity_derivative_newtons": 4142.913341489237,
+                "mass_transport_newtons": -28102.587094239134,
+                "variational_weak_load_newtons": -2014.301551665707,
+                "discrepancy_newtons": 554.4914513854374
+              }
+            ]
+          },
+          {
+            "parent_index": 10,
+            "label": "bow interior contact parent",
+            "step_m": 1e-05,
+            "external_wall_trace_maximum": 0.0,
+            "current_bernoulli_weak_load_newtons": -8756.696991249575,
+            "derivatives": [
+              {
+                "step_m": 1e-05,
+                "functional_derivative_newtons": -22857.03966826986,
+                "gravity_derivative_newtons": 9166.097058914602,
+                "independently_integrated_gravity_derivative_newtons": 9166.096911288569,
+                "mass_transport_newtons": -22050.879621905675,
+                "variational_weak_load_newtons": -8359.937012550417,
+                "discrepancy_newtons": 396.7599786991577
+              },
+              {
+                "step_m": 5e-06,
+                "functional_derivative_newtons": -22857.039696464195,
+                "gravity_derivative_newtons": 9166.096663102508,
+                "independently_integrated_gravity_derivative_newtons": 9166.096911288569,
+                "mass_transport_newtons": -22050.879635466543,
+                "variational_weak_load_newtons": -8359.936602104855,
+                "discrepancy_newtons": 396.76038914471974
+              }
+            ]
+          }
+        ],
+        "operations": [
+          {
+            "label": "base",
+            "seconds": 6.679034700006014,
+            "functional_joules": 27142.414905773556,
+            "gravity_joules": -1443997.182964799,
+            "field_relative_residual": 1.3954459718919125e-14
+          },
+          {
+            "label": "eta7:1e-05",
+            "seconds": 4.460444099997403,
+            "functional_joules": 27142.112602168316,
+            "gravity_joules": -1443997.1415352742,
+            "field_relative_residual": 1.6843187979627526e-14
+          },
+          {
+            "label": "eta7:-1e-05",
+            "seconds": 3.8551712000044063,
+            "functional_joules": 27142.717226148397,
+            "gravity_joules": -1443997.2243935356,
+            "field_relative_residual": 1.6689167576315904e-14
+          },
+          {
+            "label": "eta7:5e-06",
+            "seconds": 4.1066460000001825,
+            "functional_joules": 27142.26375187401,
+            "gravity_joules": -1443997.1622501318,
+            "field_relative_residual": 1.6583150649917393e-14
+          },
+          {
+            "label": "eta7:-5e-06",
+            "seconds": 4.207841199997347,
+            "functional_joules": 27142.56606386515,
+            "gravity_joules": -1443997.2036792675,
+            "field_relative_residual": 1.681236560949945e-14
+          },
+          {
+            "label": "eta10:1e-05",
+            "seconds": 3.8435328000050504,
+            "functional_joules": 27142.186334786184,
+            "gravity_joules": -1443997.0913023818,
+            "field_relative_residual": 1.6461518554089066e-14
+          },
+          {
+            "label": "eta10:-1e-05",
+            "seconds": 5.602037599979667,
+            "functional_joules": 27142.64347557955,
+            "gravity_joules": -1443997.274624323,
+            "field_relative_residual": 1.8901617528033358e-14
+          },
+          {
+            "label": "eta10:5e-06",
+            "seconds": 4.141291700012516,
+            "functional_joules": 27142.30062042737,
+            "gravity_joules": -1443997.137133955,
+            "field_relative_residual": 1.6460969015702152e-14
+          },
+          {
+            "label": "eta10:-5e-06",
+            "seconds": 4.4163012000208255,
+            "functional_joules": 27142.529190824334,
+            "gravity_joules": -1443997.2287949217,
+            "field_relative_residual": 1.7599610367888438e-14
+          }
+        ],
+        "mass_transport": {
+          "step_seconds": 1e-05,
+          "h_h2_matrix_maximum_difference": 4.689582056016661e-08
+        },
+        "base_surface": {
+          "fine_mass_condition": 7.43585900635939,
+          "parent_mass_condition": 6.9674092777678736,
+          "conditioning_roundoff_budget": 1e-08,
+          "condition_measure": "LAPACK one-norm estimate of diagonally equilibrated mass from Cholesky factor",
+          "maximum_fine_normal_flux_density": 957.1248861433361,
+          "maximum_fine_vertical_velocity_at_quadrature": 842.3418055951744,
+          "maximum_bernoulli_rate_at_quadrature": 357682.06204228994,
+          "unresolved_kinematic_mass_relative": 0.6568664959760803,
+          "maximum_parent_height_rate": 1.7965895246541588,
+          "maximum_parent_potential_rate": 2.2279811337665487,
+          "peak_vertical_free_face_local": 211,
+          "peak_vertical_location_world": [
+            1.149031641801497,
+            1.13432275429531,
+            0.23248084146778836
+          ],
+          "peak_vertical_projected_face_area_m2": 8.937235929213943e-07,
+          "minimum_projected_free_face_area_m2": 4.4686179646069637e-07,
+          "graph_flux_square_surface_integral_m4_per_s2": 11.998038992942732,
+          "vertical_square_surface_integral_m4_per_s2": 11.720542427048503,
+          "peak_face_vertical_square_fraction": 0.011266269844974692,
+          "bernoulli_absolute_surface_integral_m4_per_s2": 54.69088015269074
+        },
+        "seconds": 41.97250000000349
+      }
+    }
+  }
+}

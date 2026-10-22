@@ -17,16 +17,31 @@ from topwater import HullMesh
 from .p4_fluid_ordering import fresh
 
 
-def run(audit, output, order=48, probe_point=None):
-    audit, output = Path(audit), fresh(output)
+DEPENDENCIES = ('boat_geometry_template.py', 'boat_world_field.py', 'boat_world_boundary.py', 'canoe.py')
+
+
+def refine_snapshot(arrays, report, pilot_report):
+    for _ in range(pilot_report['boundary_refinement']['levels']):
+        arrays = refine_boundary(arrays, region='body')
+    for _ in range(report.get('extra_free_refinement', 0)):
+        arrays = refine_boundary(arrays, region='free')
+    local_refinement = report.get('local_body_refinement', {})
+    for _ in range(local_refinement.get('levels', 0)):
+        node = local_refinement['contact_node']
+        selected = arrays['body_faces'][np.any(arrays['faces'][arrays['body_faces']] == node, axis=1)]
+        arrays = refine_boundary(arrays, region='body', marked_faces=selected)
+    return arrays
+
+
+def load_snapshot(audit):
+    audit = Path(audit)
     report = json.loads(audit.read_text())
     if not report['complete']:
         raise ValueError('complete owned contact audit required')
     for path, digest in report['input_sha256'].items():
         if sha256(Path(path).read_bytes()).hexdigest() != digest:
             raise ValueError('contact audit input changed: '+path)
-    dependencies = ('boat_geometry_template.py', 'boat_world_field.py', 'boat_world_boundary.py', 'canoe.py')
-    for name in dependencies:
+    for name in DEPENDENCIES:
         if sha256(Path(__file__).with_name(name).read_bytes()).hexdigest() != report['source_sha256'][name]:
             raise ValueError('physical helper changed: '+name)
     data = dict(np.load(audit.with_suffix('.npz'), allow_pickle=False))
@@ -42,18 +57,18 @@ def run(audit, output, order=48, probe_point=None):
     pilot = next(Path(path) for path in report['input_sha256']
                  if path.endswith('.json') and '-geometry-' not in path)
     pilot_report = json.loads(pilot.read_text())
-    for _ in range(pilot_report['boundary_refinement']['levels']):
-        arrays = refine_boundary(arrays, region='body')
-    for _ in range(report.get('extra_free_refinement', 0)):
-        arrays = refine_boundary(arrays, region='free')
-    local_refinement = report.get('local_body_refinement', {})
-    for _ in range(local_refinement.get('levels', 0)):
-        node = local_refinement['contact_node']
-        selected = arrays['body_faces'][np.any(arrays['faces'][arrays['body_faces']] == node, axis=1)]
-        arrays = refine_boundary(arrays, region='body', marked_faces=selected)
+    arrays = refine_snapshot(arrays, report, pilot_report)
     for name in ('points', 'faces', 'free_nodes'):
         if not np.array_equal(arrays[name], data[name]):
             raise ValueError('reconstructed saved geometry differs: '+name)
+    return report, data, arrays, pilot_report, chart
+
+
+def run(audit, output, order=48, probe_point=None):
+    audit, output = Path(audit), fresh(output)
+    report, data, arrays, pilot_report, chart = load_snapshot(audit)
+    state = data['state']
+    local_refinement = report.get('local_body_refinement', {})
     prefixes = [prefix for prefix in (f'q{order}_sub0_edge0_', f'q{order}_sub0_')
                 if prefix+'energy' in data]
     if len(prefixes) != 1:
@@ -123,7 +138,7 @@ def run(audit, output, order=48, probe_point=None):
         scope='Exact algebraic decomposition of saved discrete reaction; no component is declared physical truth.',
         input_sha256={str(p): sha256(p.read_bytes()).hexdigest() for p in (audit, audit.with_suffix('.npz'))},
         source_sha256=sha256(Path(__file__).read_bytes()).hexdigest(), order=order,
-        dependency_sha256={name: report['source_sha256'][name] for name in dependencies},
+        dependency_sha256={name: report['source_sha256'][name] for name in DEPENDENCIES},
         extra_free_refinement=report.get('extra_free_refinement', 0),
         local_body_refinement=local_refinement,
         maximum_weak_closure_error=float(np.max(abs(closure))),
