@@ -189,8 +189,18 @@ Hessian approaches independently clipped-hull hydrostatics: halving the
 difference step reduces its largest error fourfold, to 0.00169 N m/rad in
 pitch against 5478.914 N m/rad. Selected far-surface and high-contact gravity
 actions agree with rho*g*M to roundoff; their tiny errors do not show an
-asymptotic convergence order. These geometry identities precede the still
-required nonlinear dynamic first-variation and prescribed-motion checks.
+asymptotic convergence order.
+
+`p4_first_variation` now checks one mixed physical disturbance with all six
+body components, surface heights and potentials. Four signed current-geometry
+nonlinear stages approach the independently written undamped rest equations;
+the canonical momentum prediction retains fluid/body coupling and the
+independent hydrostatic stiffness. Halving amplitude reduces all resolved rate
+and momentum errors approximately fourfold. At the smaller amplitude, linear
+and angular body momentum-rate vector errors are 4.51e-8 and 8.83e-8 relative;
+surface height-rate rest-mass L2 error is 5.99e-7 relative. Translation-rate
+errors are already at roundoff. This is one mixed direction, not six
+independent columns, prescribed-motion reaction or Capytaine qualification.
 
 `p4_radiation` completes the n=12/extent1/sponge4 rest-candidate family at
 omega=2,4,6 rad/s against the same immersed-geometry/CG/depth4 Capytaine reference.
