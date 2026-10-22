@@ -17,6 +17,7 @@ import numpy as np
 import scipy
 from threadpoolctl import threadpool_limits, threadpool_info
 
+from topwater.frames import rotation_matrix
 from .p4_canoe_field import prepare
 from .p4_canoe_stage import verify_master_identity
 from .p4_variational_canoe import evaluate
@@ -35,16 +36,28 @@ def run(stage, output, *, derivative_step=1e-4):
         saved_rate = saved['canonical_rate'].copy()
     if canonical.ndim != 1 or len(canonical) % 2 or not np.all(np.isfinite(canonical)):
         raise ValueError('finite saved canonical state required')
+    metadata_path = stage.with_suffix('.json')
+    metadata = json.loads(metadata_path.read_text())
+    heights = len(canonical)//2-6
+    if (physical.shape != (13+2*heights,) or not np.all(np.isfinite(physical))
+            or saved_rate.shape != canonical.shape or not np.all(np.isfinite(saved_rate))
+            or metadata['case'] != 'actual nonlinear P4 canonical-canoe stage'
+            or metadata['eta_modes'] != heights):
+        raise ValueError('finite matching actual-stage physical/rate/metadata required')
     report = dict(scope='One fresh full nonlinear saved-state RHS; no trajectory/timing qualification',
                   complete=False, stage_path=str(stage), stage_sha256=sha256(stage.read_bytes()).hexdigest(),
+                  stage_metadata_sha256=sha256(metadata_path.read_bytes()).hexdigest(),
                   derivative_step=derivative_step, phase_wall_seconds={},
                   profiling_overhead='Cold cProfile-instrumented diagnostic; Python call costs include profiler overhead',
                   runtime=dict(python=platform.python_version(), numpy=np.__version__, scipy=scipy.__version__,
                                native_threadpools=threadpool_info()))
     paths = ['profile_p4_canoe_stage.py', 'p4_canoe_field.py', 'p4_variational_canoe.py',
              'p4_geometry.py', 'p4_boundary_action.py', 'p4_surface.py',
-             'p4_whole_geometry.py', 'p4_volume_map.py', 'p4_canoe_contact.py']
+             'p4_whole_geometry.py', 'p4_volume_map.py', 'p4_canoe_contact.py', 'p4_tetra.py',
+             'canoe_contact.py', 'canonical_canoe.py', 'moving_canoe.py', 'pocket.py',
+             'p4_whole_canoe.py', 'p4_canoe.py', 'p4_canoe_stage.py']
     report['source_sha256'] = {name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest() for name in paths}
+    report['source_sha256']['topwater/frames.py'] = sha256(Path(rotation_matrix.__code__.co_filename).read_bytes()).hexdigest()
     profiler = cProfile.Profile();result = None;failure = None;started = perf_counter()
 
     def phase(name, function):
@@ -69,6 +82,8 @@ def run(stage, output, *, derivative_step=1e-4):
         result = phase('evaluate', lambda: evaluate(owner, data, canonical[size:], derivative_step=derivative_step))
         error = float(np.max(abs(result['physical_state']-physical)))
         report['saved_physical_state_max_error'] = error
+        report['saved_physical_state_bitwise_equal'] = bool(np.array_equal(result['physical_state'], physical))
+        report['saved_canonical_rate_bitwise_equal'] = bool(np.array_equal(result['rate'], saved_rate))
         if saved_rate.shape != result['rate'].shape or not np.all(np.isfinite(saved_rate)):
             raise ValueError('finite saved canonical_rate matching current master space required')
         report['saved_canonical_rate_max_error'] = float(np.max(abs(result['rate']-saved_rate)))
