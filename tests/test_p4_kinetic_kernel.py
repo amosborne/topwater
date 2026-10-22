@@ -3,9 +3,8 @@ import numpy as np
 import pytest
 
 from .test_p4_geometry import curved_cell
-from .experiments.free_surface.p4_geometry import (integrals as reference, InvalidGeometryError,
-                                                  element_stiffness as reference_stiffness)
-from .experiments.free_surface.p4_kinetic_kernel import integrals, metrics, element_stiffness
+from .experiments.free_surface.p4_geometry import (integrals as reference,
+    InvalidGeometryError, kinetic_integrals as integrals, metrics)
 
 
 def test_curved_nonuniform_flow_keeps_energy_and_full_shape_force():
@@ -15,7 +14,6 @@ def test_curved_nonuniform_flow_keeps_energy_and_full_shape_force():
     old = reference(x, phi);new = integrals(x, phi)
     np.testing.assert_allclose(new['kinetic_energy'], old['kinetic_energy'], rtol=3e-14)
     np.testing.assert_allclose(new['kinetic_gradient'], old['kinetic_gradient'], rtol=2e-12, atol=2e-11)
-    np.testing.assert_allclose(element_stiffness(x), reference_stiffness(x), rtol=2e-12, atol=2e-12)
     direction = np.column_stack((x[:, 0]*x[:, 1], x[:, 1]*x[:, 2], x[:, 0]*x[:, 2]))
     expected = np.sum(new['kinetic_gradient']*direction)
     errors = []

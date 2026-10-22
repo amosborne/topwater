@@ -11,7 +11,7 @@ from scipy.spatial.transform import Rotation
 from topwater.frames import rotation_matrix
 from .canonical_canoe import body_map
 from .p4_canoe_field import prepare, solve
-from .p4_geometry import integrals as cell_integrals
+from .p4_geometry import kinetic_integrals as cell_integrals
 from .p4_boundary_action import integrals as boundary_integrals
 from .p4_tetra import face_nodes
 

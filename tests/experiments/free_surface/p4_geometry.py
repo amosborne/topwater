@@ -36,11 +36,11 @@ def metrics(coordinates, order):
         raise ValueError('finite P4 geometry(35,3) required')
     values, derivative, weights = quadrature(order)
     # J[reference_axis, physical_axis]; grad_x = J^-1 grad_reference.
-    jacobian = np.einsum('qaj,ai->qji', derivative, coordinates)
+    jacobian = derivative.transpose(0, 2, 1)@coordinates
     determinant = np.linalg.det(jacobian)
     if np.any(determinant <= 0) or not np.all(np.isfinite(determinant)):
         raise InvalidGeometryError('nonpositive or invalid sampled P4 geometry Jacobian')
-    gradient = np.einsum('qaj,qij->qai', derivative, np.linalg.inv(jacobian))
+    gradient = derivative@np.linalg.inv(jacobian).transpose(0, 2, 1)
     return values, gradient, weights*determinant, float(determinant.min())
 
 
@@ -91,3 +91,22 @@ def integrals(coordinates, potential, *, order=8):
         kinetic_gradient=kinetic_gradient, volume_gradient=volume_gradient,
         gravity_gradient=9810*gravity_gradient,
         minimum_sampled_jacobian=minimum)
+
+
+def kinetic_integrals(coordinates, potential, *, order=8):
+    """Kinetic action and shape force, without unused volume/gravity terms.
+
+    Same physical metrics and quadrature as ``integrals``. Direct stress action
+    avoids constructing and contracting a q-by-3-by-3 tensor.
+    """
+    potential = np.asarray(potential)
+    if potential.shape != (35,) or not np.all(np.isfinite(potential)):
+        raise ValueError('finite P4 potential(35) required')
+    _, gradient, measure, minimum = metrics(coordinates, order)
+    velocity = np.einsum('a,qai->qi', potential, gradient)
+    squared = np.einsum('qi,qi->q', velocity, velocity)
+    directional = np.einsum('qai,qi->qa', gradient, velocity)
+    force = (gradient.reshape(len(measure), -1).T@(.5*measure*squared)).reshape(35, 3)
+    force -= (directional*measure[:, None]).T@velocity
+    return dict(kinetic_energy=float(500*measure@squared),
+                kinetic_gradient=1000*force, minimum_sampled_jacobian=minimum)
