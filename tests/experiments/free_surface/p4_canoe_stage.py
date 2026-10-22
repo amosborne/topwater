@@ -1,7 +1,8 @@
 """Reproducible actual nonlinear P4 canoe seed and scalar-action falsifier.
 
-Numerical initialization and action differences are the verified original
-stage experiment. This is an experimental case driver, not a public solver API
+Default initialization and action differences are the verified original stage
+experiment; --calm selects a separate initially flat-surface physical case.
+This is an experimental case driver, not a public solver API
 or trajectory/Capytaine qualification.
 """
 import argparse
@@ -67,6 +68,20 @@ def initial_state(geometry):
     return q, psi, velocity
 
 
+def calm_state(geometry):
+    """Same finite pose/world twist, initially flat surface and zero trace psi.
+
+    The interior potential still solves the moving-body normal flux; this is
+    not initially motionless water. Nonflat water develops under the full RHS.
+    The original high-contact-mode case remains the default derivative audit.
+    """
+    q, psi, velocity = initial_state(geometry)
+    q, psi = q.copy(), psi.copy()
+    q[6:] = 0.
+    psi[:] = 0.
+    return q, psi, velocity
+
+
 def fixed_action(geometry, phi, qdot):
     """Physical scalar L(q; fixed nodal phi, canonical qdot), orders8/9.
 
@@ -97,14 +112,14 @@ def fixed_action(geometry, phi, qdot):
     return scalar_action
 
 
-def run():
+def run(*, calm=False):
     """One owner/current solve and the verified fixed-phi action differences."""
     start = perf_counter()
     progress('build actual whole-canoe geometry')
     geometry = P4WholeCanoeGeometry.make()
     progress('geometry ready', active_nodes=len(np.unique(geometry.mesh.elements)),
              surface_nodes=len(geometry.free_nodes), geometry_preflight=geometry.preflight)
-    q, psi, velocity = initial_state(geometry)
+    q, psi, velocity = calm_state(geometry) if calm else initial_state(geometry)
     eta = q[6:]
     progress('prepare fresh current curved fluid operator')
     data = prepare(geometry, q)
@@ -140,6 +155,12 @@ def run():
         free_nodes_sha256=_array_hash(geometry.free_nodes, '<i8'),
         active_nodes_sha256=_array_hash(np.unique(geometry.mesh.elements), '<i8'))
     report = dict(qualified=False, case='actual nonlinear P4 canonical-canoe stage',
+        initial_case='flat-surface-release' if calm else 'nonflat-high-contact-audit',
+        initial_case_description=('Original finite pose and all six world velocities; eta=psi=0. '
+            'Compatible interior potential follows the moving-body flux, not globally still water. '
+            'All nonlinear dynamics remain active; no deliberate high-contact-mode excitation.'
+            if calm else 'Original verified nonflat eta/psi including deliberate independent '
+            'high-contact modes, finite pose and all six world velocities.'),
         source_revision=subprocess.check_output(['git', 'rev-parse', 'HEAD'],
             cwd=Path(__file__).resolve().parents[3], text=True).strip(),
         source_sha256=file_hashes, master_hashes=mesh_hashes,
@@ -164,6 +185,7 @@ def run():
         active_nodes=np.unique(geometry.mesh.elements), mesh_elements=geometry.mesh.elements,
         reference_points=geometry.mesh.points,
         action_direction=direction, source_revision=np.asarray(report['source_revision']),
+        initial_case=np.asarray(report['initial_case']),
         source_sha256_json=np.asarray(json.dumps(file_hashes, sort_keys=True)),
         master_hashes_json=np.asarray(json.dumps(mesh_hashes, sort_keys=True)))
     return report, arrays
@@ -171,11 +193,16 @@ def run():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--output', type=Path, default=Path('artifacts/p4-current-stage.json'))
+    parser.add_argument('--calm', action='store_true',
+                        help='same finite pose/all-six twist with initial eta=psi=0')
+    parser.add_argument('--output', type=Path,
+                        help='default p4-calm-stage.json with --calm, p4-current-stage.json otherwise')
     args = parser.parse_args()
+    output = args.output or Path('artifacts/p4-calm-stage.json' if args.calm
+                                else 'artifacts/p4-current-stage.json')
     with threadpool_limits(1):
-        report, arrays = run()
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    np.savez(args.output.with_suffix('.npz'), **arrays)
-    args.output.write_text(json.dumps(report, indent=2)+'\n')
+        report, arrays = run(calm=args.calm)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    np.savez(output.with_suffix('.npz'), **arrays)
+    output.write_text(json.dumps(report, indent=2)+'\n')
     progress('completed', **report)
