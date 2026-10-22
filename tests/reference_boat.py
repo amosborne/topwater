@@ -85,16 +85,29 @@ def shell_loading(vertices, physical_faces):
     sums = triangles.sum(axis=1)
     second = (np.einsum('fi,fj->fij', sums, sums)
               +np.einsum('fai,faj->fij', triangles, triangles))/12
-    first = (dm[:, None]*sums/3).sum(axis=0)
+    shell_first = (dm[:, None]*sums/3).sum(axis=0)
+    first = shell_first.copy()
     raw_second = (dm[:, None, None]*second).sum(axis=0)
     mass = SHELL_MASS+PAYLOAD_MASS+MOTOR_MASS
     for m, p in ((PAYLOAD_MASS, PAYLOAD_POSITION), (MOTOR_MASS, MOTOR_POSITION)):
         first += m*p
         raw_second += m*np.outer(p, p)
+    # Authored port/starboard symmetry makes these odd moments exactly zero.
+    # Check the integrated residual against floating summation roundoff before
+    # enforcing that identity; sub-ulp offsets otherwise create spurious cuts
+    # when the centerline coincides with a fixed free-surface parent edge.
+    length = np.max(abs(vertices))
+    roundoff = 64*np.finfo(float).eps
+    assert abs(first[1]) <= roundoff*mass*length
+    assert abs(shell_first[1]) <= roundoff*SHELL_MASS*length
+    assert np.max(abs(raw_second[[0, 1], [1, 2]])) <= roundoff*mass*length**2
+    first[1] = shell_first[1] = 0.
+    raw_second[0, 1] = raw_second[1, 0] = 0.
+    raw_second[1, 2] = raw_second[2, 1] = 0.
     cg = first/mass
     central = raw_second-mass*np.outer(cg, cg)
     return dict(mass=mass, cg=cg, inertia_cg=np.trace(central)*np.eye(3)-central,
-                shell_area=float(area.sum()), shell_cg=(dm[:, None]*sums/3).sum(axis=0)/SHELL_MASS)
+                shell_area=float(area.sum()), shell_cg=shell_first/SHELL_MASS)
 
 
 def reference_body(refinement=0):
