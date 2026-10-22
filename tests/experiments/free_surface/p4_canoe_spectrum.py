@@ -1,22 +1,28 @@
 """Bounded frozen-body wave spectrum on the actual saved calm canoe.
 
-One current assembly, one fluid MMD factor, no dense surface Schur matrix.
+Only surface-touching cell blocks are assembled; the exact saved interior
+matrix is reused. One fluid MMD factor, no dense surface Schur matrix.
 This is not the linearization of the moving six-DOF nonlinear trajectory.
 No numerical work runs on import.
 """
 import argparse
 from hashlib import sha256
+from importlib.metadata import version
 import json
 from pathlib import Path
+import platform
 from time import perf_counter
 
 import numpy as np
+import scipy
+from scipy.sparse import coo_matrix
 from scipy.sparse.linalg import ArpackNoConvergence, LinearOperator, eigsh, norm, splu
-from threadpoolctl import threadpool_limits
+from threadpoolctl import threadpool_info, threadpool_limits
 
 from tests.benchmark_rankine import peak_rss_bytes
-from .p4_canoe_field import assemble
+from .p4_canoe_field import geometry_data
 from .p4_fluid_ordering import load_input
+from .p4_geometry import metrics
 from .p4_surface import quadrature
 from .p4_tetra import face_nodes
 from .p4_whole_geometry import P4WholeCanoeGeometry
@@ -24,6 +30,33 @@ from .p4_whole_geometry import P4WholeCanoeGeometry
 
 class SpectrumBudget(RuntimeError):
     """The declared diagnostic budget ended; no convergence is inferred."""
+
+
+def surface_blocks(owner, points, inside, free, *, order=8):
+    """Assemble K_IF/K_FF only; cells without a free node cannot contribute."""
+    interior = np.full(len(points), -1, dtype=int)
+    exterior = interior.copy()
+    interior[inside] = np.arange(len(inside))
+    exterior[free] = np.arange(len(free))
+    elements = owner.mesh.elements
+    selected = np.flatnonzero(np.any(exterior[elements] >= 0, axis=1))
+    entries = [([], [], []), ([], [], [])]
+    for element in selected:
+        nodes = elements[element]
+        on_free = exterior[nodes] >= 0
+        _, gradient, measure, _ = metrics(points[nodes], order)
+        gfree = gradient[:, on_free]
+        for (rows, columns, values), mask, lookup in zip(entries,
+                (~on_free, on_free), (interior, exterior)):
+            local = np.einsum('qai,qbi,q->ab', gradient[:, mask], gfree, measure, optimize=True)
+            rows.append(np.repeat(lookup[nodes[mask]], on_free.sum()))
+            columns.append(np.tile(exterior[nodes[on_free]], mask.sum()))
+            values.append(local.ravel())
+    blocks = []
+    for (rows, columns, values), count in zip(entries, (len(inside), len(free))):
+        blocks.append(coo_matrix((np.concatenate(values),
+            (np.concatenate(rows), np.concatenate(columns))), shape=(count, len(free))).tocsr())
+    return *blocks, len(selected)
 
 
 def localization(owner, points, mode, initial_eta_rate, mass):
@@ -73,12 +106,14 @@ def localization(owner, points, mode, initial_eta_rate, mass):
         initial_eta_rate_modal_fraction=projection**2/(expected*eta_norm) if eta_norm else None), face_mass
 
 
-def run(stage_path, matrix_path, output, *, max_actions=80, wall_seconds=120., modes=4):
+def run(stage_path, matrix_path, output, *, max_actions=80, setup_seconds=120., eigen_seconds=60., modes=4):
     """Capture one actual configuration and preserve partial/failure evidence."""
-    if not 20 <= max_actions <= 100 or modes not in (1, 2, 4) or wall_seconds <= 0:
+    if (not 20 <= max_actions <= 100 or modes not in (1, 2, 4)
+            or setup_seconds <= 0 or eigen_seconds <= 0):
         raise ValueError('20..100 actions, 1/2/4 modes and positive wall budget required')
     output = Path(output).with_suffix('.json')
-    if output.exists() or output.with_suffix('.npz').exists():
+    block_path = output.with_suffix('.blocks.npz')
+    if output.exists() or output.with_suffix('.npz').exists() or block_path.exists():
         raise FileExistsError('preserve diagnostic evidence; choose a fresh output stem')
     output.parent.mkdir(parents=True, exist_ok=True)
     start = perf_counter()
@@ -86,14 +121,19 @@ def run(stage_path, matrix_path, output, *, max_actions=80, wall_seconds=120., m
         scope='Frozen-body current-geometry flat-surface gravity-wave diagnostic; '
             'omits actual body twist, evolving contact, full free-body restoring coupling '
             'and nonlinear terms. Not a coupled stability or throughput qualification.',
-        max_schur_actions=max_actions, wall_budget_seconds=wall_seconds,
+        max_schur_actions=max_actions, setup_budget_seconds=setup_seconds,
+        eigen_budget_seconds=eigen_seconds,
         wall_budget_scope='Checked between operations; an individual assembly/factor/action is not preempted.',
         requested_modes=modes, source_sha256=sha256(Path(__file__).read_bytes()).hexdigest(),
-        stage_path=str(stage_path), matrix_path=str(matrix_path))
+        stage_path=str(stage_path), matrix_path=str(matrix_path), phase_seconds={},
+        runtime=dict(python=platform.python_version(), numpy=np.__version__, scipy=scipy.__version__,
+                     meshpy=version('meshpy'),
+                     native_threadpools=threadpool_info()))
     arrays = {}
     calls = 0
     best = {}
     phase = 'capture'
+    eigen_start = None
 
     def checkpoint():
         report.update(elapsed_seconds=perf_counter()-start, schur_actions=calls,
@@ -101,50 +141,80 @@ def run(stage_path, matrix_path, output, *, max_actions=80, wall_seconds=120., m
         output.write_text(json.dumps(report, indent=2, allow_nan=False)+'\n', encoding='utf-8')
 
     def clock_check():
-        if perf_counter()-start > wall_seconds:
-            raise SpectrumBudget('wall budget exhausted between operations')
+        elapsed = perf_counter()-(start if eigen_start is None else eigen_start)
+        if elapsed > (setup_seconds if eigen_start is None else eigen_seconds):
+            raise SpectrumBudget(('setup' if eigen_start is None else 'eigen')+' budget exhausted between operations')
+
+    def timed(name, function):
+        print(json.dumps(dict(phase=name, event='start')), flush=True)
+        before = perf_counter()
+        try:
+            return function()
+        finally:
+            report['phase_seconds'][name] = perf_counter()-before
+            print(json.dumps(dict(phase=name, seconds=report['phase_seconds'][name])), flush=True)
 
     try:
+        before = perf_counter()
         stage_path = Path(stage_path)
         report['stage_sha256'] = sha256(stage_path.read_bytes()).hexdigest()
         with np.load(stage_path, allow_pickle=False) as saved:
             q, rate = saved['q'], saved['canonical_rate']
             reference = {name: saved[name] for name in ('reference_points', 'mesh_elements', 'free_nodes')}
-        old, captured, manifest = load_input(matrix_path)
+        report['phase_seconds']['read_saved_stage'] = perf_counter()-before
+        kii, captured, manifest = timed('load_verified_interior_capture', lambda: load_input(matrix_path))
         report['matrix_manifest_npz_sha256'] = manifest['npz_sha256']
         if not np.array_equal(q, captured['q']) or not np.all(q[6:] == 0):
             raise ValueError('exact saved calm configuration and cached-matrix q must match')
-        owner = P4WholeCanoeGeometry.make()
+        provenance = manifest['provenance']
+        if (provenance['stage_sha256'] != report['stage_sha256']
+                or (provenance['volume_order'], provenance['boundary_order']) != (8, 9)):
+            raise ValueError('cached interior must identify the same stage and primal quadrature8/9')
+        owner = timed('geometry_make', P4WholeCanoeGeometry.make)
         for name, actual in (('reference_points', owner.mesh.points),
                              ('mesh_elements', owner.mesh.elements), ('free_nodes', owner.free_nodes)):
             if not np.array_equal(reference[name], actual):
                 raise ValueError('saved/regenerated master identity differs: '+name)
         clock_check()
-        stage = perf_counter()
-        data = assemble(owner, q)
-        report['assembly_seconds'] = perf_counter()-stage
-        inside, free, energy, mass = [data[name] for name in ('inside', 'free', 'energy', 'mass')]
+        data = timed('current_boundary_geometry', lambda: geometry_data(owner, q))
+        inside, free, mass = [data[name] for name in ('inside', 'free', 'mass')]
         if not np.array_equal(inside, captured['inside']) or not np.array_equal(free, captured['free']):
             raise ValueError('current/cached matrix master ordering differs')
-        kii = energy[inside][:, inside].tocsc()
-        kif = energy[inside][:, free].tocsr()
-        kff = energy[free][:, free].tocsr()
+        kif, kff, touched = timed('surface_touching_blocks',
+            lambda: surface_blocks(owner, data['state'].points, inside, free, order=data['volume_order']))
+        report.update(surface_touching_cells=touched, total_cells=len(owner.mesh.elements),
+            interior_matrix_scope='Exact saved calm K_II reused; no current interior or whole-volume assembly.',
+            volume_order=data['volume_order'], boundary_order=data['boundary_order'])
         kfi = kif.T.tocsr()
-        same = float(norm(kii-old)/norm(old))
+        stage = perf_counter()
         flat = float(np.max(abs(data['state'].points[free, 2])))
         mass_difference = float(norm(data['eta_map']-mass)/norm(mass))
         symmetry = float(norm(kii-kii.T)/norm(kii))
         mass_symmetry = float(norm(mass-mass.T)/norm(mass))
-        report['capture_checks'] = dict(cached_matrix_relative_difference=same,
+        report['capture_checks'] = dict(
             maximum_free_surface_height=flat, eta_map_mass_relative_difference=mass_difference,
             fluid_matrix_relative_asymmetry=symmetry, mass_relative_asymmetry=mass_symmetry)
-        if max(same, flat, mass_difference, symmetry, mass_symmetry) > 1e-11:
+        if max(flat, mass_difference, symmetry, mass_symmetry) > 1e-11:
             raise ValueError('flat, consistent-mass, symmetry or cached-matrix identity check failed')
+        report['phase_seconds']['capture_checks'] = perf_counter()-stage
+        # Preserve the expensive missing blocks BEFORE any factor/eigen budget.
+        surface_nodes = face_nodes(owner.mesh, owner.free_faces)
+        contact_nodes = owner.chart_to_global[owner.chart.contact_nodes]
+        block_arrays = dict(q=q, inside=inside, free=free, current_points=data['state'].points,
+            free_faces=owner.free_faces, surface_nodes=surface_nodes, contact_nodes=contact_nodes,
+            stage_sha256=np.asarray(report['stage_sha256']),
+            interior_archive_sha256=np.asarray(manifest['npz_sha256']))
+        for name, block in (('kif', kif), ('kff', kff), ('mass', mass)):
+            block_arrays.update({name+'_data': block.data, name+'_indices': block.indices,
+                name+'_indptr': block.indptr, name+'_shape': np.asarray(block.shape)})
+        timed('save_surface_blocks', lambda: np.savez(block_path, **block_arrays))
+        report.update(surface_blocks_path=str(block_path),
+                      surface_blocks_sha256=sha256(block_path.read_bytes()).hexdigest())
+        checkpoint()
         clock_check()
+        fluid_factor = timed('interior_mmd_factor', lambda: splu(kii, permc_spec='MMD_AT_PLUS_A'))
+        mass_factor = timed('consistent_mass_factor', lambda: splu(mass.tocsc(), permc_spec='MMD_AT_PLUS_A'))
         stage = perf_counter()
-        fluid_factor = splu(kii, permc_spec='MMD_AT_PLUS_A')
-        mass_factor = splu(mass.tocsc(), permc_spec='MMD_AT_PLUS_A')
-        report['factor_seconds'] = perf_counter()-stage
         initial_eta_rate = rate[6:len(q)]
         if initial_eta_rate.shape != (len(free),):
             raise ValueError('saved canonical rate has no matching physical eta-rate block')
@@ -164,7 +234,10 @@ def run(stage_path, matrix_path, output, *, max_actions=80, wall_seconds=120., m
             raise ValueError('saved actual seed field or elevation rate differs from current blocks')
         arrays.update(free_points=data['state'].points[free], free_nodes=free,
                       initial_eta_rate=initial_eta_rate, q=q)
-        del old, energy
+        report['phase_seconds']['initial_rate_checks'] = perf_counter()-stage
+        clock_check()
+        report['setup_seconds'] = perf_counter()-start
+        eigen_start = perf_counter()
 
         def schur(vector):
             nonlocal calls
@@ -248,6 +321,8 @@ def run(stage_path, matrix_path, output, *, max_actions=80, wall_seconds=120., m
         report.update(status='failed', failure=dict(type=type(error).__name__, message=str(error)))
         raise
     finally:
+        if eigen_start is not None:
+            report['eigen_seconds'] = perf_counter()-eigen_start
         if best:
             report['maximum_observed_rayleigh_quotient'] = best['lambda']
             report['rayleigh_scope'] = 'Lower bound on lambda_max of the frozen discrete map; not a converged eigenpair.'
@@ -264,11 +339,12 @@ if __name__ == '__main__':
     parser.add_argument('--matrix', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--max-actions', type=int, default=80)
-    parser.add_argument('--wall-seconds', type=float, default=120.)
+    parser.add_argument('--setup-seconds', type=float, default=120.)
+    parser.add_argument('--eigen-seconds', type=float, default=60.)
     parser.add_argument('--modes', type=int, choices=(1, 2, 4), default=4)
     args = parser.parse_args()
     with threadpool_limits(1):
         result = run(args.stage, args.matrix, args.output, max_actions=args.max_actions,
-                     wall_seconds=args.wall_seconds, modes=args.modes)
+                     setup_seconds=args.setup_seconds, eigen_seconds=args.eigen_seconds, modes=args.modes)
     print(json.dumps(result, indent=2), flush=True)
     raise SystemExit(0 if result['complete'] else 2)
