@@ -298,6 +298,15 @@ solve; discrete propagation and full six-mode canoe correlation remain open.
 Compact-layer refinement and speed work are deferred while those correctness
 checks and finite nonlinear motion are completed.
 
+`canoe_wet_reference` retains the original 704-panel Capytaine hash, CG, depth
+and frequency-family checks. The pinned geometry regenerates exactly without
+TetGen or a fluid solve. Different numerical hull subdivisions additionally
+require coverage of every original clipped planar facet: containment, winding,
+area and explicit pairwise overlap checks. Two focused tests pass on the
+canonical canoe, including a missing panel, reversed panel and an equal-area
+hole/duplicate counterexample. Identical physical coverage does not establish
+the accuracy of the field computed on a coarser mesh.
+
 The prescribed nonlinear controller also passes an independent physical-work
 check on the moving canonical canoe with nonflat surface, all six velocities
 and imposed accelerations. Without damping, its controller supplies 1.15926 W;
