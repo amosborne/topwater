@@ -251,8 +251,19 @@ def solve_case(strip, strength=4., *, right='wall', modes=64,
     if right == 'outgoing':
         rp = ports['right'];transmission = rp['projection'][:, 0]@potential[rp['nodes']]/rp['norm'][0]
     dissipation = float((2*strip.omega/GRAVITY*np.vdot(potential[free], weighted@potential[free])).real)
+    # Independently integrate the physical continuum power density; do not
+    # derive this diagnostic from the assembled Q matrix or eliminate eta.
+    sample, weights, shape = _line(20)
+    lengths = np.diff(strip.xlevels)
+    x = strip.xlevels[:-1, None]+lengths[:, None]*sample
+    s = np.clip(x/strip.xlevels[-1], 0., 1.)
+    sigma = strength*s**3*(10-15*s+6*s*s)
+    trace = np.einsum('qa,fa->fq', shape, potential[strip.top])
+    continuum_dissipation = float(2*strip.omega/GRAVITY*np.einsum(
+        'f,q,fq,fq->', lengths, weights, sigma, abs(trace)**2))
     incoming_flux = strip.kappa*left['norm'][0]
     balance = 1-abs(port_reflection)**2-abs(transmission)**2-dissipation/incoming_flux
+    continuum_balance = 1-abs(port_reflection)**2-abs(transmission)**2-continuum_dissipation/incoming_flux
     # Fixed stations and a narrower alternate window expose contamination and
     # phase/mesh errors. No correction or subtraction of control reflection.
     fits = []
@@ -266,11 +277,13 @@ def solve_case(strip, strength=4., *, right='wall', modes=64,
         design = np.column_stack((np.exp(1j*strip.kappa*station), np.exp(-1j*strip.kappa*station)))
         coefficient = np.linalg.lstsq(design, measured, rcond=None)[0]
         scale = np.linalg.norm(coefficient)
-        if abs(coefficient[0]) < 1e-8*scale:
+        if not np.all(np.isfinite(coefficient)) or abs(coefficient[0]) < 1e-8*max(1., scale):
             raise FloatingPointError('reflection fit has unresolved incident amplitude')
         reflection = coefficient[1]/coefficient[0]
         fits.append(dict(reflection=[float(reflection.real), float(reflection.imag)],
             reflection_amplitude=float(abs(reflection)), reflected_power=float(abs(reflection)**2),
+            incident_coefficient=[float(coefficient[0].real), float(coefficient[0].imag)],
+            reflected_coefficient=[float(coefficient[1].real), float(coefficient[1].imag)],
             incident_amplitude=float(abs(coefficient[0])), design_condition=float(np.linalg.cond(design)),
             relative_fit_residual=float(np.linalg.norm(design@coefficient-measured)/np.linalg.norm(measured))))
     reference_reflection = port_reflection*np.exp(2j*strip.kappa*strip.xlevels[0])
@@ -290,6 +303,10 @@ def solve_case(strip, strength=4., *, right='wall', modes=64,
         transmission_amplitude=float(abs(transmission)),
         transmission_phase_error_radians=float(np.angle(transmission/expected_transmission)) if right=='outgoing' else None,
         relative_flux_balance_error=float(abs(balance)), dissipated_incoming_power_fraction=dissipation/incoming_flux,
+        relative_continuum_flux_balance_error=float(abs(continuum_balance)),
+        independently_integrated_dissipated_power_fraction=continuum_dissipation/incoming_flux,
+        continuum_power_quadrature_order=20,
+        continuum_minus_discrete_power_fraction=(continuum_dissipation-dissipation)/incoming_flux,
         quiet_region_fits=fits,
         depth_mode_q12_q16_maximum_relative_difference=max(extraction_errors),
         scope='Body-free finite-depth strip only. Modal truncation, port integration and spatial convergence '
