@@ -130,6 +130,11 @@ def field(domain,position,orientation,eta,psi,velocity):
     flux=(energy@potential-load@velocity)[domain.free_nodes]
     acceleration_potentials=np.zeros((len(points),6))
     acceleration_potentials[unknown]=factor.solve(load[unknown])
+    # Reactions of the same solved weak operator. The surface columns are
+    # needed to distinguish body/surface coupling from the auxiliary P0 flux.
+    body_surface_flux=(energy@acceleration_potentials-load)[domain.free_nodes]
+    added_mass=1000*load.T@acceleration_potentials
+    kinetic_energy=float(500*potential@energy@potential)
     coordinates=points[domain.exterior_tets]
     tet_volume=np.abs(np.linalg.det(coordinates[:,1:]-coordinates[:,:1]))/6
     local_volume=np.sum(panels.areas*np.einsum('fi,fi->f',panels.centroids,panels.normals))/3
@@ -138,8 +143,9 @@ def field(domain,position,orientation,eta,psi,velocity):
         (z.sum(axis=1)**2+(z*z).sum(axis=1)))/24
     return dict(points=points,height_jacobians=height_jacobians,body_jacobian=body_jacobian,
         potential=potential,flux=flux,acceleration_potentials=acceleration_potentials,
+        body_surface_flux=body_surface_flux,added_mass=added_mass,kinetic_energy=kinetic_energy,
         fluid_volume=float(local_volume+tet_volume.sum()),
-        fluid_energy=float(500*potential@energy@potential+9810*(local_first_moment+
+        fluid_energy=float(kinetic_energy+9810*(local_first_moment+
             tet_volume@coordinates[:,:,2].mean(axis=1))))
 
 
