@@ -27,7 +27,7 @@ results as time-domain reference forces in the validation tools; they are not
 a replacement runtime fluid model or a second Topwater solver path.
 
 Dense global free-surface BEM is a verification choice, not a user requirement.
-One post-validation candidate is a small detailed near-body potential-flow
+One candidate is a small detailed near-body potential-flow
 domain coupled to far-field wave propagation. Do not build a
 general backend framework before the coupling earns its accuracy and cost.
 Both incoming waves and outgoing radiation/scattering must cross the artificial
@@ -73,10 +73,10 @@ That approximation must be measured; a smooth transition is not a substitute
 for satisfying the global boundary-value problem. Fixed-body diffraction in
 that study does not qualify a moving canoe or this machine's runtime.
 
-## Investigations after time-domain Capytaine validation
+## Architecture investigations needed to make validation affordable
 
-The user requested these comparisons after the current nonlinear time solver
-has been validated against the Capytaine time-domain reference:
+The unusable measured nonlinear runtime moves these comparisons ahead of further
+expensive validation. Keep the existing physical reference to check candidates:
 
 - FEM versus BEM for the complete coupled case.
 - A near/far split with an adaptive interface, including which method belongs
@@ -86,12 +86,20 @@ has been validated against the Capytaine time-domain reference:
 - Quadrilateral versus triangular surface meshes. For volume FEM, assess the
   corresponding hexahedral/prismatic versus tetrahedral discretizations
   separately; surface element shape alone does not specify the volume mesh.
+- Matrix-free current-geometry actions and reusable low-order or p-coarse
+  preconditioners, rather than complete volume assembly and fresh sparse LU.
+- Cached/linearized operator pieces with force/work audits and controlled
+  refreshes. A stale preconditioner and a stale physical operator have different
+  error consequences; measure both separately.
+- The reason for sub-millisecond accepted steps, followed by an appropriate
+  implicit, exponential or split integrator if accurate wave dynamics warrant it.
 
 Use the same canonical canoe, loading and time-domain physical cases. Compare
 at matched demonstrated force, motion and wave accuracy rather than equal
 element counts. Measure full-case wall time first and peak memory second,
 including assembly, operator updates, factorization/solves and rejected steps.
-These are queued investigations, not additions to the current implementation.
+These are experiments to choose a simpler feasible architecture, not a requirement
+to implement every method or a generic backend framework.
 
 ## Mathematical signs and physical ownership
 

@@ -82,6 +82,32 @@ iterations and 0.68--1.34 s with an exact-current fluid preconditioner; its
 not reuse after motion, nonzero-surface-potential mapping or coupled throughput.
 Those remain required before adopting this solve path.
 
+The next bounded probe assembles one actual nonlinear Euler-predicted state at
+delta=1e-4 s, including nonzero surface potential (L2 norm 2.15e-5). Its fluid
+matrix differs from the saved one by 0.111% in Frobenius norm. Holding only the
+old solver setup fixed, a coupled Woodbury preconditioner takes four iterations
+and 1.09 s to solve the **current** equations; field relative difference from
+fresh direct elimination is 9.11e-15 and maximum body velocity difference is
+2.78e-17. Current assembly still costs 10.36 s. Setup took roughly 24 s and is
+separate from the reused solve. Evidence is
+`artifacts/p4-calm-predictor-operator-reuse.{json,npz}`. This proves one nonzero-psi
+mapping and lagged-setup comparison, not an operator-refresh policy or trajectory.
+Approximation/caching of the physical operator remains a separate experiment.
+
+`p4_metric_action.MetricAction` is the next exact-current candidate: retain six
+weighted contravariant metric coefficients per cell/quadrature point, then
+apply reference derivatives, metrics and their transpose without assembling
+element/global stiffness matrices. On all 7,076 actual nonlinear canoe cells,
+FP64 actions take 42--50 ms warm including host/device transfers; the maximum
+recorded whole-batch sample was 57.6 ms. Actual-field, smooth and contact-supported
+actions agree with independently formed CPU stiffness actions within 2.5e-13
+relative. Physical curved-cell work, reciprocity and invalid-Jacobian checks pass.
+The current-geometry cache occupies 175.32 MB and setup took 2.95 s, including
+0.99 s of metric calculation. Evidence is `artifacts/metric-action-full.json`.
+This cache currently describes one geometry; it is not a refresh controller,
+coupled iterative solve or full nonlinear RHS timing. Force evaluation and
+geometric updates still need integration and measurement.
+
 The frequency-only experiments below are supporting diagnostics, not a second
 Topwater solver architecture. The long quarter-PML experiment was stopped after
 saving complete six-mode matrices at 2 and 4 rad/s so the actual nonlinear time
@@ -121,7 +147,7 @@ this free-evolution path extracts the unchanged operator assembly into a helper.
 Two time levels show consistency; they do not establish convergence order or
 spatial/open-water accuracy. Diagnostic coarse/fine wall times were 2478/6966 s
 during concurrent validation work. This remains a major performance limitation;
-full-case throughput benchmarking and optimization follow correctness validation.
+its cost must be reduced before further expensive trajectory validation.
 
 `linear_canoe_radiation` solves the exact rest linearization of that action for
 all six radiation modes. It retains the full contact-node hull flux loads,
@@ -130,8 +156,8 @@ An actual nonlinear-stage amplitude-refinement test checks the fluid and all
 six body acceleration first variations. This provides a complete matrix diagnostic against Capytaine; it
 does not establish nonlinear force accuracy, outgoing-boundary convergence,
 long-run stability or full-case performance. Current coarse tank comparisons
-do not pass every coefficient gate. Nonlinear six-DOF and Capytaine validation
-take priority over speed optimization.
+do not pass every coefficient gate. Optimization now takes priority so that
+nonlinear six-DOF and Capytaine validation become affordable.
 
 `canoe_radiation --variational` integrates surface heights and their conjugate
 momenta while prescribing one body motion. Its controller reaction comes from
@@ -547,10 +573,11 @@ that timer. Memory includes sparse storage/fill and lifetime process peak RSS,
 which can include earlier cases and the reference solver.
 
 Both static reports remain `qualified=false`; they do not establish moving-canoe
-time evolution, outgoing-wave behavior or real-time performance. The immediate
-priority is full nonlinear six-DOF evolution and Capytaine validation. Speed
-optimization follows that baseline; adaptive and partial updates must preserve
-accuracy and count estimator, refresh and rejection costs.
+time evolution, outgoing-wave behavior or real-time performance. The intended
+deliverable remains full nonlinear six-DOF evolution and Capytaine validation.
+The unusable measured runtime makes optimization the immediate priority;
+adaptive and partial updates must preserve accuracy and count estimator,
+refresh and rejection costs.
 
 ## Nonlinear moving canoe
 
