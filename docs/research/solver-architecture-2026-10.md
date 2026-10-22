@@ -138,11 +138,12 @@ This policy might combine known tools in a useful way for this canoe, but the se
 
 The exact 7,076-cell matrix-free stage and matching force audit now pass; its
 warm full-stage cost and frozen contact spectrum are recorded below. The next
-decision uses **one actual adaptive-step error audit**, with the same full
-nonlinear equations and existing tolerances. Identify the physical state blocks
-and contact coordinates responsible for the error norm before choosing implicit
-integration, revised scaling or contact-mesh changes. The fastest frozen mode
-alone cannot choose among them. Tensor/prism exterior and high-order BEM remain
+decision uses **physical endpoint refinement of the actual adaptive-step audit**,
+with the same full nonlinear equations and existing tolerances. Compare the
+saved accepted endpoint with two half steps, including body, surface potential,
+surface height and work errors, before choosing implicit integration, revised
+scaling or contact-mesh changes. The fastest frozen mode and canonical error
+norm alone cannot choose among them. Tensor/prism exterior and high-order BEM remain
 substantive alternatives if the resulting stage/timestep budget is unreachable;
 compare bounded actual-canoe probes before committing to another implementation.
 Keep the P4 reference to falsify candidates, not to justify another unusable long
@@ -264,6 +265,35 @@ contact mesh quality and an implicit comparison are the next discriminators.
 The first setup-budget-only spectrum attempt remains preserved as incomplete,
 with zero eigen actions. Fresh complete evidence and reusable surface blocks:
 `artifacts/calm-canoe-frozen-spectrum-surface-blocks.{json,npz,blocks.npz}`.
+
+One actual full nonlinear adaptive step now uses this shared exact-current
+stage. At the existing `rtol=1e-4, atol=1e-10`, the 1 ms proposal is rejected
+with scaled RMS error 65.80; 99.16% of its squared norm comes from surface
+height. Its maximum embedded height error is 2.96 micrometres, whereas body
+position/rotation errors are at most `1.31e-11 m` / `1.26e-10 rad`. No sampled
+geometry trial is rejected. RK23 accepts `h=0.00022293344026985202 s`, scaled
+norm 0.4352; 95.11% of that squared norm is height and 4.89% surface canonical
+momentum. Its maximum estimated height error is 13.46 nm. This establishes
+what rejected this proposal; it is not a physical accuracy target or proof
+that all future steps behave similarly.
+
+Seven complete RHS calls take 38.41 s, excluding 36.27 s geometry/factor startup;
+noninitial calls cost 4.78–5.77 s. All six world velocity components change.
+The accepted endpoint has `delta H=-8.34e-11 J`, zero recorded volume change
+and unit quaternion norm. Process peak RSS is 3.29 GB, with 471 MB persistent
+GPU metric/shape arrays (not GPU peak allocation). An independent raw-archive
+review reproduces the accepted error norm and height/momentum fractions, and
+its componentwise error scale matches `atol+rtol*max(abs(y0),abs(y1))` bitwise.
+The first report retains only aggregate rejected-trial diagnostics, so its
+rejected norm cannot be independently reconstructed from that NPZ.
+
+Evidence: `artifacts/p4-calm-exact-matrixfree-adaptive-step.{json,npz}`, source
+revision `98ecb41`. Small one-step energy change does not establish temporal
+accuracy. Even the frozen explicit stability ceiling at current RHS cost
+remains thousands of times slower than real time; tolerance scaling alone is
+not the runtime solution. Physical endpoint refinement is a bounded decision
+check before a larger time-integration/discretization change, not another
+long unaffordable trajectory.
 
 The independent 80-cell actual nonlinear predictor audit also falsifies an
 operator-only reuse gate: halving the predictor interval from `1e-4` to
