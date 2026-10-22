@@ -47,6 +47,17 @@ force fits, amplitude/time refinement and all-six-mode correlation remain
 required. Reports label the formulation so the older pressure controls cannot
 be combined with variational results in a coefficient family.
 
+`linear_canoe_transient <radiation-report.json>` compares a saved variational
+trajectory to the identical rest-linearized tank, including zero initial fluid
+state, quintic motion startup, all six reaction components and the same weak
+sponge. Its independent forced-mode check retains the natural startup response;
+a steady harmonic response would miss it. Surface differences use the constant
+rest consistent mass and trapezoidal time weights. This separates transient
+integration discrepancies from finite-domain errors in the Capytaine comparison.
+`release_refinement <coarse.json> <fine.json>` compares completed releases at
+their identical endpoint, including world rotation and reference-domain surface
+L2 errors. Two levels measure a difference and do not establish temporal order.
+
 The current P1 tetrahedral exterior also fails the declared wave-phase gate:
 
 ```text
@@ -72,6 +83,9 @@ weak-flux balance residuals below 3e-14. The mixed error includes local P1
 surface approximation and interface trace restriction; it is not a measured
 wave-reflection coefficient. These static tests do not select a new nonlinear
 solver or establish canoe, outgoing-wave or performance accuracy.
+The additional P1-interface control retains P4 elements on both sides of
+the same P1 trace restriction: flux errors are 55.5% and 19.4%. Thus accurate
+individual element spaces and algebraic interface continuity are insufficient.
 
 The prescribed nonlinear controller also passes an independent physical-work
 check on the moving canonical canoe with nonflat surface, all six velocities
