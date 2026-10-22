@@ -54,3 +54,12 @@ def test_unresolved_local_flux_is_not_hidden_from_bernoulli():
     # Integral of Bernoulli over the parent is positive. Its nodal projection
     # may have negative entries; the equal parent basis integrals give the mean.
     assert psi_rate.sum() > 0
+
+
+def test_unobservable_surface_coefficient_is_rejected_instead_of_inventing_a_rate():
+    points = np.array([[0., 0., 0.], [2., 0., 0.], [0., 2., 0.]])
+    # A coefficient with support entirely hidden under the hull has no visible
+    # trace and no evolution equation. It must not receive a fabricated zero rate.
+    mapping = np.column_stack((np.eye(3), np.zeros(3)))
+    with pytest.raises(ValueError, match='unsupported coefficients'):
+        surface_rates(points, np.array([[0, 1, 2]]), np.arange(3), mapping, np.zeros(4), np.zeros(3))

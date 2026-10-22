@@ -11,6 +11,7 @@ from time import perf_counter
 
 import numpy as np
 from scipy.linalg import cho_factor, cho_solve
+from scipy.linalg.lapack import dpocon
 
 from topwater import HullMesh, sea_states
 from topwater.rankine import TrianglePanels
@@ -109,15 +110,22 @@ def surface_rates(points, free_faces, free_nodes, parent_map, parent_psi, flux, 
         for j in range(3):
             np.add.at(mass, (faces[:, i], faces[:, j]), area*unit[i, j])
     reduced_mass = parent_map.T@mass@parent_map
-    fine_condition = float(np.linalg.cond(mass))
-    parent_condition = float(np.linalg.cond(reduced_mass))
+    try:
+        fine_factor, parent_factor = cho_factor(mass), cho_factor(reduced_mass)
+    except np.linalg.LinAlgError as error:
+        raise ValueError('singular exposed mass; parent state may have unsupported coefficients') from error
+    conditions = []
+    for matrix, factor in ((mass, fine_factor), (reduced_mass, parent_factor)):
+        reciprocal, info = dpocon(factor[0], float(np.linalg.norm(matrix, 1)), uplo='U')
+        if info or not np.isfinite(reciprocal) or reciprocal <= 0:
+            raise ValueError('cannot estimate exposed surface mass conditioning')
+        conditions.append(1/reciprocal)
+    fine_condition, parent_condition = conditions
     # Algebraic roundoff budget, not a physical discretization-error tolerance.
     if (not np.isfinite([fine_condition, parent_condition]).all()
             or max(fine_condition, parent_condition)*np.finfo(float).eps > 1e-8):
         raise ValueError('exposed surface mass exceeds 1e-8 conditioning/roundoff budget')
-    fine_factor = cho_factor(mass)
     physical_flux = cho_solve(fine_factor, flux)
-    parent_factor = cho_factor(reduced_mass)
     eta_rate = cho_solve(parent_factor, parent_map.T@flux)
     unresolved = physical_flux-parent_map@eta_rate
     shape, weights = triangle_samples(np.eye(3)[None], 3)
@@ -136,6 +144,7 @@ def surface_rates(points, free_faces, free_nodes, parent_map, parent_psi, flux, 
         raise FloatingPointError('nonfinite fixed-world surface rates')
     diagnostics = dict(fine_mass_condition=fine_condition,
         parent_mass_condition=parent_condition, conditioning_roundoff_budget=1e-8,
+        condition_measure='LAPACK one-norm estimate from existing Cholesky factor',
         unresolved_kinematic_mass_relative=float(np.sqrt(max(0., unresolved@mass@unresolved)/flux_norm)) if flux_norm else 0.,
         maximum_parent_height_rate=float(np.max(abs(eta_rate))),
         maximum_parent_potential_rate=float(np.max(abs(psi_rate))))

@@ -1334,11 +1334,11 @@ are compared by `boat_pressure_convergence`, which verifies physical input
 identity before tabulating all six loads/accelerations and derivative sensitivity.
 Summary: `artifacts/boat-pressure-spatial-convergence.json`.
 
-| Faces | Surge N | Heave N | Roll Nm | Pitch Nm | Yaw Nm |
-| ---: | ---: | ---: | ---: | ---: | ---: |
-| 302 | 607 | 30123 | -308 | 250 | 507 |
-| 1208 | 686 | 29989 | -303 | 86 | 404 |
-| 4832 | 736 | 29946 | -301 | -2 | 427 |
+| Faces | Surge N | Sway N | Heave N | Roll Nm | Pitch Nm | Yaw Nm |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 302 | 607 | 323 | 30123 | -308 | 250 | 507 |
+| 1208 | 686 | 365 | 29989 | -303 | 86 | 404 |
+| 4832 | 736 | 363 | 29946 | -301 | -2 | 427 |
 
 The finer differences contract, but pitch crosses zero and surge/yaw are not
 settled. No six-mode physical pass is claimed. The 4832-face audit costs 25.5 s
@@ -1346,6 +1346,15 @@ including both derivative steps, peaks at 723 MB process RSS/1.43 GB reserved
 CuPy pool, and takes about 1.9-2.7 s per offset operator assembly. Increasing
 uniform resolution is a reference tool, not a practical runtime solution.
 The 15-coefficient parent state still omits approximately 37% of fine flux.
+
+Profiling that actual refined state exposed avoidable diagnostic cost: repeated
+SVD condition numbers consumed most of the surface-rate time. LAPACK `dpocon`
+now estimates the one-norm condition from the existing Cholesky factors, with
+the same rank/finite and estimated-roundoff screening. Three warm observations
+decrease from 0.281-0.313 s to 0.038-0.044 s, with bit-identical physical rates.
+The condition measure is explicitly labeled; it is not the previous two-norm
+SVD value or a certified error bound. Original/new source and actual field
+replay are preserved in `artifacts/boat-surface-condition-benchmark.*`.
 
 An independent 45-coefficient state preflight samples the SAME explicit sea at
 a finer 8-by-4 background grid; this intentionally changes its P1 approximation
