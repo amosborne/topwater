@@ -43,6 +43,36 @@ def test_canonical_momentum_round_trip_and_physical_energy(canoe):
     np.testing.assert_allclose(hamiltonian, physical.sum(), atol=2e-12, rtol=2e-11)
 
 
+def test_free_canoe_inertia_recovers_world_gyroscopic_acceleration(canoe):
+    domain= canoe[0]
+    rotvec=np.array([.3,-.2,.4])
+    omega=np.array([.4,-.2,.3])
+    rest=Rotation.from_quat(domain.rest.orientation,scalar_first=True)
+    def decode_rotor(coordinates,momentum):
+        rotation=(Rotation.from_rotvec(coordinates)*rest).as_matrix()
+        inertia=rotation@domain.body.inertia_cg@rotation.T
+        angular_momentum=np.linalg.solve(body_map(coordinates)[3:,3:].T,momentum)
+        velocity=np.linalg.solve(inertia,angular_momentum)
+        return .5*velocity@angular_momentum,velocity,inertia,angular_momentum
+    rotation=(Rotation.from_rotvec(rotvec)*rest).as_matrix()
+    inertia=rotation@domain.body.inertia_cg@rotation.T
+    momentum=body_map(rotvec)[3:,3:].T@inertia@omega
+    step=1e-5
+    momentum_rate=np.empty(3)
+    for i in range(3):
+        direction=np.eye(3)[i]*step
+        momentum_rate[i]=-(decode_rotor(rotvec+direction,momentum)[0]
+            -decode_rotor(rotvec-direction,momentum)[0])/(2*step)
+    coordinate_rate=np.linalg.solve(body_map(rotvec)[3:,3:],omega)
+    plus=decode_rotor(rotvec+step*coordinate_rate,momentum+step*momentum_rate)
+    minus=decode_rotor(rotvec-step*coordinate_rate,momentum-step*momentum_rate)
+    acceleration=(plus[1]-minus[1])/(2*step)
+    expected=-np.linalg.solve(inertia,np.cross(omega,inertia@omega))
+    assert np.linalg.norm(expected)>1e-3
+    np.testing.assert_allclose(acceleration,expected,atol=2e-9,rtol=2e-7)
+    np.testing.assert_allclose((plus[3]-minus[3])/(2*step),0.,atol=2e-8)
+
+
 def test_canonical_kinematics_match_actual_moving_surface(canoe):
     domain, state, canonical, _, _, qdot = canoe
     size = len(domain.free_nodes)

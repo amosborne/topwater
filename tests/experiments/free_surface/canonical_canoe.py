@@ -104,7 +104,7 @@ def encode(domain, state):
 
 
 def decode(domain, canonical):
-    """Return physical state, physical Hamiltonian and its analytic momentum rate."""
+    """Return physical state, Hamiltonian and configuration rate dH/dp."""
     size = 6+len(domain.free_nodes)
     q, momentum = canonical[:size], canonical[size:]
     data = _prepare(domain, q, pi=momentum[6:])
@@ -121,6 +121,8 @@ def decode(domain, canonical):
 
 def canonical_rhs(domain, canonical, config_step=1e-5, *, progress=False):
     """Hamilton's equations; configuration derivative holds all momenta fixed."""
+    if not np.isfinite(config_step) or config_step<=0:
+        raise ValueError('configuration difference step must be finite and positive')
     size = len(canonical)//2
     _, _, qdot = decode(domain, canonical)
     gradient = np.empty(size)
@@ -138,6 +140,8 @@ def canonical_rhs(domain, canonical, config_step=1e-5, *, progress=False):
 
 def physical_rate(domain, canonical, canonical_rate, step=1e-5):
     """Differentiate the inverse canonical map along an actual canonical RHS."""
+    if not np.isfinite(step) or step<=0:
+        raise ValueError('inverse-map difference step must be finite and positive')
     base = decode(domain, canonical)[0]
     plus = decode(domain, canonical+step*canonical_rate)[0]
     minus = decode(domain, canonical-step*canonical_rate)[0]
