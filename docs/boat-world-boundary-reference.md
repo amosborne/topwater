@@ -37,3 +37,17 @@ summation roundoff. No mesh vertices were welded and no closure guard was relaxe
 Fraction arithmetic supplies an ownership reference, not a production mesher.
 The next physical test requires the current elliptic field and nonlinear pressure
 on this boundary; this geometry result alone provides neither.
+
+For directional pressure audits, `construct(output, *, body=None, pose=None,
+parent_xy=None, parents=None, parent_eta=None, parent_psi=None)` returns the mesh,
+saved arrays and report. Explicit coefficients remain attached to the fixed
+world parents. Every construction retains its own fresh checkpoint stem.
+
+`body_material_samples(arrays, barycentric)` returns original material XYZ and
+facet-group IDs with shapes `(body faces, quadrature points, 3)` and `(body faces,
+quadrature points)`. `interpolate_body_trace(offset_arrays, offset_phi, points,
+groups)` evaluates the offset P1 trace at these same material points. It searches
+only matching-group wet triangles and rejects absent coverage; it does not align
+gauges or assume offset node correspondence. Interior quadrature samples should
+be used for material derivatives: current waterline vertices generally become
+dry in one directional offset.

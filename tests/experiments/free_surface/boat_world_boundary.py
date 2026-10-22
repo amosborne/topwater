@@ -22,7 +22,7 @@ from topwater.frames import rotation_matrix
 from topwater.hydrostatics import FloodingError, LossOfContactError
 from tests.reference_boat import BEAM, GRAVITY, equilibrium, reference_body
 from .boat_chart_rebuild import affine, normal_work
-from .boat_parent_clip_proof import PlanePoints, GROUPS, columns, hull_planes, cell_polygons, triangulate, sub
+from .boat_parent_clip_proof import PlanePoints, GROUPS, columns, hull_planes, cell_polygons, triangulate, sub, cross, dot
 from .p4_fluid_ordering import fresh
 
 
@@ -72,7 +72,36 @@ def parent_weights(point, triangle):
     return 1-u-v, u, v
 
 
-def run(output):
+def source_weights(point, triangle):
+    """Exact original-facet barycentrics; no off-plane projection permitted."""
+    a, b, d = sub(triangle[1], triangle[0]), sub(triangle[2], triangle[0]), sub(point, triangle[0])
+    normal = cross(a, b)
+    if dot(normal, d):
+        raise ValueError('material point is not on its original physical facet')
+    drop = max(range(3), key=lambda j: abs(normal[j]))
+    axes = [j for j in range(3) if j != drop]
+    i, j = axes
+    determinant = a[i]*b[j]-a[j]*b[i]
+    u, v = (d[i]*b[j]-d[j]*b[i])/determinant, (a[i]*d[j]-a[j]*d[i])/determinant
+    return 1-u-v, u, v
+
+
+def material_coordinates(registry_points, rr, cg, position):
+    """Invert the SAME rational affine pose, not rounded R.T as an inverse."""
+    vectors = cross(rr[1], rr[2]), cross(rr[2], rr[0]), cross(rr[0], rr[1])
+    determinant = dot(rr[0], vectors[0])
+    return [tuple(cg[j]+sum(vectors[i][j]*(point[i]-position[i]) for i in range(3))/determinant
+                  for j in range(3)) for point in registry_points]
+
+
+def construct(output, *, body=None, pose=None, parent_xy=None, parents=None,
+              parent_eta=None, parent_psi=None):
+    """Construct one checkpointed snapshot; coefficients stay on WORLD parents.
+
+    Returns ``(mesh, arrays, report)``. Pose translations locate the body's CG;
+    orientations use the existing world quaternion convention. Supplied bodies
+    must retain the canonical boat's authored 18-triangle physical groups.
+    """
     output = fresh(output)
     output.parent.mkdir(parents=True, exist_ok=True)
     start = perf_counter()
@@ -87,8 +116,11 @@ def run(output):
     arrays, polygons = {}, []
     registry = None
     try:
-        body = reference_body()
-        rest, _ = equilibrium()
+        supplied_body = body is not None
+        body = reference_body() if body is None else body
+        rest = equilibrium()[0] if pose is None else pose
+        if body.mesh.faces.shape != (18, 3):
+            raise ValueError('this reference requires the authored base boat facets')
         rotation = rotation_matrix(rest.orientation)
         source = [[F(float(x)) for x in p] for p in body.mesh.vertices]
         cg = [F(float(x)) for x in body.cg]
@@ -96,27 +128,49 @@ def run(output):
         rr = [[F(float(x)) for x in row] for row in rotation]
         world = np.array([tuple(sum(rr[j][k]*(p[k]-cg[k]) for k in range(3))+position[j]
                                  for j in range(3)) for p in source], dtype=object)
-        x, y = np.meshgrid(np.linspace(-6, 6, 5), np.linspace(-3, 3, 3), indexing='ij')
-        xy = np.column_stack((x.ravel(), y.ravel()))
-        parents = []
-        for i in range(4):
-            for j in range(2):
-                a = i*3+j
-                parents.extend(((a, a+3, a+4), (a, a+4, a+1)))
+        if parent_xy is None:
+            x, y = np.meshgrid(np.linspace(-6, 6, 5), np.linspace(-3, 3, 3), indexing='ij')
+            xy = np.column_stack((x.ravel(), y.ravel()))
+        else:
+            xy = np.asarray(parent_xy, dtype=float)
+        if parents is None:
+            if parent_xy is not None:
+                raise ValueError('supplied parent nodes require triangle connectivity')
+            parents = []
+            for i in range(4):
+                for j in range(2):
+                    a = i*3+j
+                    parents.extend(((a, a+3, a+4), (a, a+4, a+1)))
+        parents = np.asarray(parents, dtype=np.int64)
+        if (xy.ndim != 2 or xy.shape[1] != 2 or not np.isfinite(xy).all()
+                or parents.ndim != 2 or parents.shape[1] != 3
+                or np.any(parents < 0) or np.any(parents >= len(xy))):
+            raise ValueError('invalid fixed parent nodes/connectivity')
+        parents = [tuple(row) for row in parents]
         waves = sea_states.realize(beam_m=BEAM, gravity=GRAVITY, seed=42)
         k = waves.angular_frequencies**2/GRAVITY
         phase = (xy[:, :1]*np.cos(waves.directions)+xy[:, 1:]*np.sin(waves.directions))*k+waves.phases
-        eta = np.cos(phase)@waves.amplitudes
+        eta = np.cos(phase)@waves.amplitudes if parent_eta is None else np.asarray(parent_eta, dtype=float)
+        if eta.shape != (len(xy),) or not np.isfinite(eta).all():
+            raise ValueError('parent_eta must contain one finite height per parent node')
         # A prescribed trace control, not a claim of nonlinear field preparation.
         psi_mean = np.sin(phase)@(GRAVITY/waves.angular_frequencies*waves.amplitudes)
-        psi = (np.sin(phase)*np.exp(eta[:, None]*k))@(GRAVITY/waves.angular_frequencies*waves.amplitudes)
+        psi = ((np.sin(phase)*np.exp(eta[:, None]*k))@(GRAVITY/waves.angular_frequencies*waves.amplitudes)
+               if parent_psi is None else np.asarray(parent_psi, dtype=float))
+        if psi.shape != (len(xy),) or not np.isfinite(psi).all():
+            raise ValueError('parent_psi must contain one finite potential per parent node')
         roof = np.array([[F(float(v)) for v in row] for row in np.column_stack((xy, eta))], dtype=object)
         arrays.update(parent_nodes=np.asarray(roof, dtype=float), parents=np.array(parents), parent_psi=psi,
             parent_psi_mean_water=psi_mean,
-            body_vertices=np.asarray(world, dtype=float), body_faces=body.mesh.faces,
+            body_vertices=np.asarray(world, dtype=float), source_body_vertices=body.mesh.vertices,
+            source_body_faces=body.mesh.faces,
             pose_position=rest.position, pose_orientation=rest.orientation)
         report.update(body_mass=body.mass, actual_sea_realization=json.loads(sea_states.dumps_realization(waves)),
-            pose='actual mean-water equilibrium, unchanged by the selected wave snapshot',
+            pose=('actual mean-water equilibrium, unchanged by the selected wave snapshot'
+                  if pose is None else 'supplied physical CG position and world quaternion'),
+            supplied_inputs=dict(body=supplied_body, pose=pose is not None,
+                                 parent_xy=parent_xy is not None, parent_eta=parent_eta is not None,
+                                 parent_psi=parent_psi is not None),
             potential_trace_control='P1 nodal trace of incident Airy potential at actual graph height; mean-water values saved separately; no nonlinear field initialization claim',
             affine_pose_roundoff_max=float(np.max(abs(np.asarray(world, dtype=float)
                 -((body.mesh.vertices-body.cg)@rotation.T+rest.position)))))
@@ -203,6 +257,25 @@ def run(output):
             wall_faces=walls, bottom_faces=bottom, body_source_group=meta['source'][body_faces],
             free_source_parent=meta['source'][free], free_nodes=free_nodes,
             free_parent_indices=indices, free_parent_weights=weights)
+        # Material labels survive independent offset triangulations. Each child
+        # corner additionally retains one containing ORIGINAL source triangle.
+        material = material_coordinates([meta['points'][i] for i in meta['active']], rr, cg, position)
+        source_ids, source_bary = [], []
+        for face in body_faces:
+            ids, bary = [], []
+            for node in mesh.faces[face]:
+                for source_id in GROUPS[meta['source'][face]]:
+                    weights = source_weights(material[node], [source[i] for i in body.mesh.faces[source_id]])
+                    if min(weights) >= 0:
+                        ids.append(source_id); bary.append(weights)
+                        break
+                else:
+                    raise ValueError('wet child vertex leaves its original physical facet group')
+            source_ids.append(ids); source_bary.append(bary)
+        arrays.update(body_material_vertices=np.array([[material[node] for node in mesh.faces[f]]
+                                                      for f in body_faces], dtype=float),
+                      body_vertex_source_triangle=np.asarray(source_ids, dtype=np.int64),
+                      body_vertex_source_barycentric=np.asarray(source_bary, dtype=float))
         report.update(complete=True, seconds=perf_counter()-start, nodes=len(mesh.vertices), triangles=len(mesh.faces),
             body_triangles=len(body_faces), free_triangles=len(free), wall_triangles=len(walls), bottom_triangles=len(bottom),
             source_physical_triangle_groups=[list(group) for group in GROUPS[:-1]],
@@ -222,7 +295,79 @@ def run(output):
             report['intersection_cache'] = len(registry.cache)
         np.savez(output.with_suffix('.npz'), **arrays)
         output.write_text(json.dumps(report, indent=2, allow_nan=False)+'\n')
-    return report
+    return mesh, arrays, report
+
+
+def run(output):
+    return construct(output)[2]
+
+
+def body_material_samples(arrays, barycentric):
+    """Material XYZ and original group for the chosen hull quadrature rule.
+
+    The returned shapes are (body faces, samples, 3) and (body faces, samples).
+    Use these SAME material samples on every offset snapshot, even if its wet
+    triangulation differs. No identity between offset nodes is assumed.
+    """
+    barycentric = np.asarray(barycentric, dtype=float)
+    if (barycentric.ndim != 2 or barycentric.shape[1] != 3
+            or not np.isfinite(barycentric).all() or np.any(barycentric < 0)
+            or not np.allclose(barycentric.sum(axis=1), 1., rtol=0, atol=4*np.finfo(float).eps)):
+        raise ValueError('invalid hull quadrature barycentrics')
+    points = np.einsum('qa,fai->fqi', barycentric, arrays['body_material_vertices'])
+    groups = np.broadcast_to(arrays['body_source_group'][:, None], points.shape[:-1])
+    return points, groups
+
+
+def interpolate_body_trace(arrays, potential, material_points, groups):
+    """P1 trace at matching material samples, rejecting missing wet coverage.
+
+    Only same-original-facet-group wet triangles may contain a sample. Boundary
+    classification allows coordinate summation roundoff, never extrapolation
+    over a physically dry patch. Gauge alignment is the caller's responsibility.
+    """
+    potential = np.asarray(potential, dtype=float)
+    points = np.asarray(material_points, dtype=float)
+    groups = np.asarray(groups)
+    if (potential.shape != (len(arrays['points']),) or not np.isfinite(potential).all()
+            or points.shape[-1:] != (3,) or groups.shape != points.shape[:-1]
+            or not np.isfinite(points).all()):
+        raise ValueError('invalid material trace samples or nodal potential')
+    result = np.full(points.shape[:-1], np.nan)
+    flat, labels, values = points.reshape(-1, 3), groups.ravel(), result.ravel()
+    triangles = arrays['body_material_vertices']
+    face_values = potential[arrays['faces'][arrays['body_faces']]]
+    scale = max(1., np.max(abs(arrays['source_body_vertices'])))
+    coordinate_roundoff = 64*np.finfo(float).eps*scale
+    for group in np.unique(labels):
+        if group not in range(len(GROUPS)-1):
+            raise ValueError('unknown original physical facet group')
+        rows = np.flatnonzero(labels == group)
+        source_face = arrays['source_body_faces'][GROUPS[int(group)][0]]
+        original = arrays['source_body_vertices'][source_face]
+        normal = np.cross(original[1]-original[0], original[2]-original[0])
+        normal /= np.linalg.norm(normal)
+        if np.any(abs((flat[rows]-original[0])@normal) > coordinate_roundoff):
+            raise ValueError('material trace query leaves its original facet plane')
+        axes = np.flatnonzero(np.arange(3) != np.argmax(abs(normal)))
+        best = np.full(len(rows), -np.inf)
+        for face in np.flatnonzero(arrays['body_source_group'] == group):
+            projected = triangles[face][:, axes]
+            transform = (projected[1:]-projected[0]).T
+            inverse = np.linalg.inv(transform)
+            uv = (flat[rows][:, axes]-projected[0])@inverse.T
+            bary = np.column_stack((1-uv.sum(axis=1), uv))
+            # Conditioning scales a COORDINATE roundoff bound into weights;
+            # it does not introduce a fixed geometric containment tolerance.
+            tolerance = coordinate_roundoff*np.linalg.norm(inverse, ord=np.inf)*2
+            minimum = bary.min(axis=1)
+            use = (minimum >= -tolerance)&(minimum > best)
+            values[rows[use]] = bary[use]@face_values[face]
+            best[use] = minimum[use]
+    if not np.isfinite(result).all():
+        missing = np.flatnonzero(~np.isfinite(values))
+        raise ValueError(f'material samples lack wet original-facet coverage: {missing[:8].tolist()}')
+    return result
 
 
 if __name__ == '__main__':
