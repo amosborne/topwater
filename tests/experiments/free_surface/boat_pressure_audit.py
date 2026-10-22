@@ -18,25 +18,27 @@ from topwater.rankine import TrianglePanels
 from tests.reference_boat import BEAM, LENGTH, GRAVITY, WATER_DENSITY, reference_body
 from tests.benchmark_rankine import peak_rss_bytes
 from .boat_world_boundary import construct, body_material_samples, interpolate_body_trace
-from .boat_world_field import current_field, surface_rates
+from .boat_world_field import current_field, surface_rates, refine_boundary
 from .body_pressure import evaluate_body_pressure, quadrature
 from .incident_baseline_benchmark import coefficients
 from .p4_fluid_ordering import fresh
 
 
-def run(output, step=1e-4):
+def run(output, step=1e-4, refinement=0):
     from .cuda_operator import prepare_energy, cp
     if not np.isfinite(step) or step <= 0:
         raise ValueError('positive finite directional step required')
+    if isinstance(refinement, bool) or not isinstance(refinement, int) or not 0 <= refinement <= 2:
+        raise ValueError('bounded audit supports refinement levels zero through two')
     output = fresh(output)
     output.parent.mkdir(parents=True, exist_ok=True)
-    report = dict(complete=False, qualified=False, timings=[], derivatives=[], mixed_residuals=[],
+    report = dict(complete=False, qualified=False, timings=[], derivatives=[], mixed_residuals=[], geometry_checkpoints=[],
         scope='Actual nonflat boat snapshot: pressure directional-step audit in diagnostic finite tank; no spatial/ocean/trajectory qualification',
         source_sha256={name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
             for name in ('boat_pressure_audit.py', 'boat_world_field.py', 'boat_world_boundary.py',
                          'boat_parent_clip_proof.py', 'body_pressure.py', 'canoe.py',
                          'cuda_operator.py', 'cuda_energy.cu', 'cuda_pair.cuh')},
-        gpu_pool_reserved_peak_bytes=0)
+        gpu_pool_reserved_peak_bytes=0, boundary_refinement=refinement)
     start = perf_counter()
     saved = {}
 
@@ -60,9 +62,28 @@ def run(output, step=1e-4):
         if not np.isfinite(residual) or residual > 1e-9:
             raise ValueError('mixed field residual exceeds 1e-9 algebraic budget')
 
+    def geometry(label, **inputs):
+        _, arrays, geometry_report = construct(checkpoint(label), **inputs)
+        for level in range(refinement):
+            arrays = refine_boundary(arrays)
+            path = fresh(checkpoint(label+f'-refined{level+1}'))
+            np.savez(path.with_suffix('.npz'), **arrays)
+            path.write_text(json.dumps(dict(complete=True, qualified=False,
+                scope='Uniform subdivision of the checkpointed physical boundary; not an evolved state',
+                source_checkpoint=str(checkpoint(label)), boundary_refinement=level+1,
+                geometry_roundoff_checks_passed=True,
+                refinement_moment_errors=arrays['refinement_moment_errors'].tolist(),
+                actual_sea_realization=geometry_report['actual_sea_realization'],
+                nodes=len(arrays['points']), faces=len(arrays['faces'])), indent=2)+'\n')
+        used = checkpoint(label+f'-refined{refinement}') if refinement else checkpoint(label)
+        report['geometry_checkpoints'].append(dict(label=label, path=str(used),
+            arrays_sha256=sha256(used.with_suffix('.npz').read_bytes()).hexdigest(),
+            nodes=len(arrays['points']), faces=len(arrays['faces'])))
+        return arrays
+
     try:
         body = reference_body()
-        _, arrays, _ = timed('base_geometry', lambda: construct(checkpoint('base')))
+        arrays = timed('base_geometry', lambda: geometry('base'))
         points, faces = arrays['points'], arrays['faces']
         energy = timed('base_energy', lambda: prepare_energy(faces, TrianglePanels(points[faces], 1))).energy
         values = coefficients(sea_states.realize(beam_m=BEAM, gravity=GRAVITY, seed=42))
@@ -84,7 +105,7 @@ def run(output, step=1e-4):
                     *Rotation.from_quat(arrays['pose_orientation'], scalar_first=True)).as_quat(scalar_first=True)
                 pose = InitialState(arrays['pose_position']+dt*twist[:3], orientation)
                 label = f'level{level}-sign{sign}'
-                _, moved, _ = timed(label+'-geometry', lambda: construct(checkpoint(label), body=body, pose=pose,
+                moved = timed(label+'-geometry', lambda: geometry(label, body=body, pose=pose,
                     parent_xy=arrays['parent_nodes'][:, :2], parents=arrays['parents'],
                     parent_eta=arrays['parent_nodes'][:, 2]+dt*eta_rate, parent_psi=arrays['parent_psi']+dt*psi_rate))
                 moved_energy = timed(label+'-energy', lambda: prepare_energy(moved['faces'],
@@ -134,4 +155,5 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', required=True)
     parser.add_argument('--step', type=float, default=1e-4)
+    parser.add_argument('--refinement', type=int, default=0)
     print(json.dumps(run(**vars(parser.parse_args())), indent=2))

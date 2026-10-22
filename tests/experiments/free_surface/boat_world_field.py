@@ -16,9 +16,67 @@ from topwater import HullMesh, sea_states
 from topwater.rankine import TrianglePanels
 from tests.laplace_reference import triangle_samples
 from tests.reference_boat import GRAVITY, WATER_DENSITY
+from tests.reference_hull import surface_integrals
 from .canoe import body_load
 from .incident_baseline_benchmark import coefficients, fused_cpu
 from .p4_fluid_ordering import fresh
+
+
+def refine_boundary(arrays):
+    """Subdivide the same physical boundary and inherit fixed parent traces.
+
+    This enriches the fluid discretization, not the boat geometry or evolved
+    parent state. Original material coordinates are interpolated on body edges.
+    """
+    points, faces = arrays['points'], arrays['faces']
+    edges, inverse = np.unique(np.sort(np.concatenate((faces[:, [0, 1]],
+        faces[:, [1, 2]], faces[:, [2, 0]])), axis=1), axis=0, return_inverse=True)
+    ab, bc, ca = (inverse+len(points)).reshape(3, -1)
+    a, b, c = faces.T
+    refined = np.vstack([np.column_stack(triangle) for triangle in
+        ((a, ab, ca), (ab, b, bc), (ca, bc, c), (ab, bc, ca))])
+    source = np.tile(np.arange(len(faces)), 4)
+    result = dict(arrays)
+    result.update(points=np.vstack((points, points[edges].mean(axis=1))), faces=refined,
+                  refinement_parent_face=source)
+    for kind in ('body', 'free', 'wall', 'bottom'):
+        result[kind+'_faces'] = np.flatnonzero(np.isin(source, arrays[kind+'_faces']))
+    for kind, label in (('body', 'body_source_group'), ('free', 'free_source_parent')):
+        lookup = np.full(len(faces), -1, dtype=int)
+        lookup[arrays[kind+'_faces']] = arrays[label]
+        result[label] = lookup[source[result[kind+'_faces']]]
+    material = np.full((len(points), 3), np.nan)
+    material[faces[arrays['body_faces']].ravel()] = arrays['body_material_vertices'].reshape(-1, 3)
+    material = np.vstack((material, material[edges].mean(axis=1)))
+    result['body_material_vertices'] = material[refined[result['body_faces']]]
+    if not np.isfinite(result['body_material_vertices']).all():
+        raise ValueError('refined body loses original material ownership')
+    # These optional original-corner labels describe the pre-refinement mesh;
+    # material XYZ and physical-group IDs supply the pressure sample contract.
+    result.pop('body_vertex_source_triangle', None)
+    result.pop('body_vertex_source_barycentric', None)
+    mapping = np.zeros((len(points), len(arrays['parent_nodes'])))
+    for column in range(3):
+        ids = arrays['free_parent_indices'][:, column]
+        valid = ids >= 0
+        mapping[arrays['free_nodes'][valid], ids[valid]] += arrays['free_parent_weights'][valid, column]
+    mapping = np.vstack((mapping, mapping[edges].mean(axis=1)))
+    free_nodes = np.unique(refined[result['free_faces']])
+    indices, weights = np.full((len(free_nodes), 3), -1, dtype=int), np.zeros((len(free_nodes), 3))
+    for row, node in enumerate(free_nodes):
+        support = np.flatnonzero(mapping[node])
+        if len(support) > 3 or abs(mapping[node].sum()-1) > 1e-14:
+            raise ValueError('refined free trace leaves its original parent')
+        indices[row, :len(support)], weights[row, :len(support)] = support, mapping[node, support]
+    result.update(free_nodes=free_nodes, free_parent_indices=indices, free_parent_weights=weights)
+    HullMesh(result['points'], refined)
+    coarse_volume, coarse_center = surface_integrals(points, faces)
+    volume, center = surface_integrals(result['points'], refined)
+    errors = np.r_[volume-coarse_volume, volume*center-coarse_volume*coarse_center]
+    if not np.isfinite(errors).all() or np.any(abs(errors) > [1e-10, 1e-9, 1e-9, 1e-9]):
+        raise ValueError('subdivision changed physical fluid volume or first moment')
+    result['refinement_moment_errors'] = errors
+    return result
 
 
 def surface_rates(points, free_faces, free_nodes, parent_map, parent_psi, flux, *, gravity=GRAVITY):
