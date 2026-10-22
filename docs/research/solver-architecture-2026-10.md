@@ -332,6 +332,65 @@ tangent tensors remain positive. The tangent energy has its matching base
 shape derivative; it is a separate approximation and is not used in the exact
 full-stage result. See `artifacts/metric-shape-tangent-cohort.json`.
 
+## Targeted 24 ft boat and observed Southern California sea
+
+The application baseline now uses `tests/reference_case.py`: an authored planar
+24 ft x 9 ft V hull, 2500 kg total, and NDBC 46086's observed directional spectrum
+at 2025-07-05 20:40 UTC. Round mass inputs are 1600 kg distributed structure,
+600 kg amidships and 300 kg at the transom. This replaces the 1250 kg placeholder:
+the collected marine-gyro catalog's 33 center consoles from 23–25 ft have an
+approximately 2700 kg median standard operating mass. The new reference keeps
+the simple geometry and two point loads; it does not import the advanced
+marine-gyro loading/geometry model. Density is 1025 kg/m3 and gravity 9.81 m/s2.
+
+The sea catalog preserves nine actual joint energy/direction observations, not
+independently sampled frequency-band distributions. The canonical observation
+has Hm0 about 1.4 m and Tm02 about 6.9 s. Baseline seed 42 generates explicit
+phases, frequencies and directional samples; omitted seeds produce a fresh
+recorded realization. Native NOAA row controls verify variance and all four
+directional harmonics. This is spectral reconstruction, not a measured
+phase-resolved elevation trace. Different boat sizes, sea energies and wave
+timescales substantially outside this case are not optimization obligations.
+
+Two bounded probes now discriminate the next work:
+
+- `incident_baseline_benchmark.py`: all 384 components and nine analytic linear
+  incident outputs at 4096 query points cost a warmed median 2.58 ms including
+  GPU transfers (57.31 ms fused CPU). Independent potential-gradient and linear
+  free-surface identities pass. GPU/reference maximum absolute difference is
+  2.04e-14. These are component costs, not nonlinear solve throughput. Retain
+  the full measured incident spectrum: central 99% elevation variance ends near
+  0.414 Hz, but central 99% slope variance extends near 0.478 Hz. The reconstructed
+  direction distribution is broad; a single wave direction is unsupported.
+- `boat_contact_preflight.py`: the existing physical-facet contact implementation
+  already accepts the new hull. In a geometry-only 12 m x 6 m x 2 m box, its P1
+  chart has 248 nodes/97 free nodes; its P4 enrichment has 3938/1204. Both require
+  a topology change at +0.001 rad pitch (about 0.06 degrees), reaching a real
+  chine vertex. Seven of 19 finite controls fail their chart guards. A passing
+  1 mm heave moves a contact mesh node about 0.35 m along a nearly horizontal
+  chine edge. Two-step finite differences converge correctly, with the largest
+  pitch relative error decreasing from 1.2e-7 to 3.0e-8. The actual unscaled sea
+  snapshot also exceeds this mean-water chart; that snapshot is not a consistent
+  wave/body initialization and is not a physical flooding claim.
+
+The fixed-chart limitation must be addressed before porting the old nonlinear
+P4 trajectory. Near-horizontal contact edges amplify coordinate motion even
+when the physical body hardly moves; those coordinate changes can force large
+operator refreshes. Replacing the canoe constructor and optimizing more P4
+kernels alone would inherit this limitation. The next bounded candidate is
+local wet-boundary reconstruction with surface state coordinates independent
+of its current triangulation. First measure geometry correctness/cost across
+the recorded chine transitions, then field/force transfer and work consistency.
+Retain existing clipping, frame and potential-flow kernels; no generic backend
+or new clipping framework has been earned. The existing fixed surface-space
+experiment is relevant, but its force/motion adequacy remains unverified.
+
+Preserved local evidence: `artifacts/canonical-sea-incident-benchmark.json` and
+`artifacts/boat-contact-preflight.{json,npz}`. The committed diagnostic sources
+reproduce these probes; Windows checkout line-ending conversion can change raw
+source hashes, while the saved source copies retain the measured bytes.
+No new full nonlinear boat trajectory or Capytaine qualification is claimed.
+
 ## MATLAB's established solvers: transferable architecture rather than a language migration
 
 The [MATLAB ODE Suite paper](https://www.mathworks.com/help/pdf_doc/otherdocs/ode_suite.pdf), Shampine/Reichelt1997, documents simplified Newton/chord iteration, quasi-constant-step multistep organization and Jacobian reuse. Its performance comparisons count function evaluations, derivative evaluations, LU factorizations and solves separately; fewer Jacobians alone do not establish less total work. Reuse of derivative/setup data is standard numerical practice, not something Topwater should reinvent under a new name.
