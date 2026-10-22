@@ -369,6 +369,14 @@ drivers have not yet been numerically exercised. Prescribed heave complements
 the separate free six-DOF release; it does not establish a six-axis trajectory
 or an outgoing-water Capytaine comparison.
 
+The archived Capytaine reference itself passes the existing whole-family
+stability gate when refined from 704 to 2816 panels at omega=2,4,6. The maximum
+added-mass/damping tolerance ratios are 0.08354/0.07549. The fine panels match
+ordered four-child subdivisions of the coarse panels to 2.22e-16 m, with the
+same Green-function settings. `capytaine_reference_stability` checks these
+existing files offline; its six integrity tests pass. This establishes
+reference stability across two resolutions, not Topwater agreement.
+
 The prescribed nonlinear controller also passes an independent physical-work
 check on the moving canonical canoe with nonflat surface, all six velocities
 and imposed accelerations. Without damping, its controller supplies 1.15926 W;
