@@ -171,6 +171,27 @@ IDs; rebuilding assumes deterministic ordering and verifies an exact fresh
 physical-state match. This remains one stage, not a P4 trajectory, general
 rim/failure coverage, spatial accuracy or Capytaine qualification.
 
+`p4_canoe_release` now completes a 1 ms integration smoke check from that actual
+state: three accepted adaptive RK23 steps and 13 fresh nonlinear RHS calls,
+including a rejected initial trial. All six velocities evolve. Maximum accepted
+Hamiltonian change is 1.21e-9 J and fluid-volume change is 1.14e-12 m3.
+The conservative minimum rim-clearance bound remains above 0.203 m; it uses
+all P4 Bernstein height coefficients, rather than nodal maxima. A physical
+polynomial test catches an interior peak missed by every nodal sample.
+This very short run establishes execution through the coupled integrator,
+not temporal accuracy, representative motion or qualified throughput.
+
+`p4_rest_geometry_checks` separately checks the actual canoe without assembling
+another fluid operator. At rest, Ceta agrees with the surface mass within
+2.09e-17, Cv is zero, and all six normal-flux loads agree with independent
+affine integration within 1.46e-14 relatively. The full six-coordinate gravity
+Hessian approaches independently clipped-hull hydrostatics: halving the
+difference step reduces its largest error fourfold, to 0.00169 N m/rad in
+pitch against 5478.914 N m/rad. Selected far-surface and high-contact gravity
+actions agree with rho*g*M to roundoff; their tiny errors do not show an
+asymptotic convergence order. These geometry identities precede the still
+required nonlinear dynamic first-variation and prescribed-motion checks.
+
 `p4_radiation` completes the n=12/extent1/sponge4 rest-candidate family at
 omega=2,4,6 rad/s against the same immersed-geometry/CG/depth4 Capytaine reference.
 The full-family gates fail: maximum added-mass/damping tolerance ratios are
