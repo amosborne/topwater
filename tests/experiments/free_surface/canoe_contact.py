@@ -1,23 +1,24 @@
-"""Body-fitted ALE waterline for the canonical canoe, with fixed connectivity.
+"""Physical-facet ALE mesh for the canonical canoe's moving waterline.
 
-This is the geometry of a moving case, not a remesher. Contact nodes slide on
-their original material edges. A material vertex crossing the waterline ends
-the admissible topology; the caller must reject the step or remesh explicitly.
-Interface/wall deformation belongs to the coupled fluid mesh and is not inferred
-here. All twists and the body Jacobian use world translation/rotation axes.
+Fine contact heights remain independent. Contact on physical edges slides on
+those edges; contact inside a facet follows a body-fixed tangent. The wet mesh
+redistributes within each planar facet by a precomputed harmonic extension of
+boundary displacement. Numerical subdivision vertices do not pin the chart.
 """
 from dataclasses import dataclass
 
 import numpy as np
+from scipy.sparse import csr_matrix
 
+from topwater._clipping import clip_flat_water
 from topwater.frames import rotation_matrix
 from topwater.hydrostatics import FloodingError
+from tests.experiments.capytaine_mesh_cost import subdivide
 from .canoe import join_wetted_hull
-from .material_layout import material_mesh
 
 
 class ContactTopologyError(ValueError):
-    """The waterline has reached a material vertex or inverted a surface face."""
+    """A physical facet transition or folded mesh requires a new contact chart."""
 
 
 class RimCoverageError(ContactTopologyError):
@@ -27,7 +28,6 @@ class RimCoverageError(ContactTopologyError):
 def _rigid_jacobian(offset):
     out = np.zeros((len(offset), 3, 6))
     out[:, :, :3] = np.eye(3)
-    # Each column is e_axis cross offset.
     out[:, :, 3:] = np.cross(np.eye(3)[None], offset[:, None]).transpose(0, 2, 1)
     return out
 
@@ -35,14 +35,13 @@ def _rigid_jacobian(offset):
 @dataclass(frozen=True)
 class ContactGeometry:
     points: np.ndarray
-    eta_jacobian: np.ndarray
+    height_jacobians: tuple[csr_matrix, csr_matrix, csr_matrix]
     body_jacobian: np.ndarray
 
     def velocity(self, free_nodes, eta_rate, twist):
-        """Nodal ALE velocity at this geometry, excluding exterior wall motion."""
+        """Nodal ALE velocity, excluding separately owned exterior wall motion."""
         rate = np.einsum('nij,j->ni', self.body_jacobian, twist)
-        rate[free_nodes] += self.eta_jacobian[free_nodes]*np.asarray(eta_rate)[:, None]
-        return rate
+        return rate+np.column_stack([matrix@eta_rate for matrix in self.height_jacobians])
 
 
 @dataclass(frozen=True)
@@ -55,85 +54,225 @@ class CanoeContact:
     free_nodes: np.ndarray
     contact_nodes: np.ndarray
     wall_nodes: np.ndarray
-    material_vertices: np.ndarray
-    material_nodes: np.ndarray
-    material_ids: np.ndarray
+    physical_vertices: np.ndarray
+    physical_faces: np.ndarray
+    body_source_faces: np.ndarray
+    body_nodes: np.ndarray
+    body_reference: np.ndarray
+    coarse_nodes: np.ndarray
     contact_edges: np.ndarray
+    contact_blend: np.ndarray
+    contact_tangents: np.ndarray
+    displacement_weights: csr_matrix
     cg: np.ndarray
     rim_vertices: np.ndarray
 
     @classmethod
-    def make(cls, body, state, walls, surface_grid, *, transverse=False, subdivisions=2):
-        """Initialize at flat z=0 using a rigid canonical hull inside the pocket.
+    def make(cls, body, state, walls, surface_grid, *, subdivisions=2):
+        """Clip physical facets at flat water, then subdivide the wet mesh.
 
-        ``walls`` are fluid-outward triangles, ``surface_grid`` supplies the top
-        of that box. The returned face winding is fluid-outward everywhere.
-        ``eta`` in evaluate is indexed by ``free_nodes``, including contact.
+        ``walls`` wind out of the fluid. ``eta`` is absolute world height indexed
+        by sorted ``free_nodes``. Wall deformation belongs to the exterior mesh.
+        Subdivision changes resolution, not the chart's original physical edges.
         """
-        vertices, faces = material_mesh(body, transverse, subdivisions=subdivisions)
-        world = (vertices-body.cg)@rotation_matrix(state.orientation).T+state.position
+        if isinstance(subdivisions, (bool, np.bool_)) or not isinstance(
+                subdivisions, (int, np.integer)) or subdivisions < 0:
+            raise ValueError('subdivisions must be a nonnegative integer')
+        rotation = rotation_matrix(state.orientation)
+        world = (body.mesh.vertices-body.cg)@rotation.T+state.position
         if np.any(world[:, 2] == 0):
-            raise ContactTopologyError('initial waterline passes through a material vertex')
-        coordinates = {}
-        records = {}
-        triangles = []
-        segments = []
-
-        def vertex(i):
-            key = ('v', int(i))
-            coordinates[key] = world[i]
-            records[key] = (int(i),)
-            return key
-
-        def crossing(i, j):
-            # Same wet-to-dry arithmetic as physical clipping; incident faces
-            # must share the identical coordinate, not tolerance-welded copies.
-            wet, dry = (i, j) if world[i, 2] < 0 else (j, i)
-            key = ('e', int(wet), int(dry))
-            t = -world[wet, 2]/(world[dry, 2]-world[wet, 2])
-            p = world[wet]+t*(world[dry]-world[wet])
-            p[2] = 0.
-            coordinates[key] = p
-            records[key] = (int(wet), int(dry))
-            return key
-
-        for face in faces:
-            polygon = []
-            previous = face[-1]
-            for current in face:
-                inside = world[current, 2] < 0
-                if inside != (world[previous, 2] < 0):
-                    polygon.append(crossing(previous, current))
-                if inside:
-                    polygon.append(vertex(current))
-                previous = current
-            for j in range(1, len(polygon)-1):
-                triangles.append([coordinates[k] for k in (polygon[0], polygon[j], polygon[j+1])])
-            for a, b in zip(polygon, polygon[1:]+polygon[:1]):
-                if a[0] == b[0] == 'e':
-                    segments.append([coordinates[a], coordinates[b]])
-        if not triangles or not segments:
+            raise ContactTopologyError('initial waterline passes through a physical vertex')
+        wet, source, segments, *_ = clip_flat_water(world, body.mesh.faces,
+            body.mesh.physical_faces, 0., True)
+        if not len(wet) or not len(segments):
             raise ContactTopologyError('initial canoe requires a closed waterline')
-        mesh, body_faces, free_faces = join_wetted_hull(
-            np.asarray(triangles), np.asarray(segments), walls, surface_grid)
+        coarse_line = np.unique(segments.reshape(-1, 3), axis=0)
+        for _ in range(subdivisions):
+            wet = subdivide(wet)
+            source = np.tile(source, 4)
+        fine_edges = np.stack((wet, np.roll(wet, -1, axis=1)), axis=2).reshape(-1, 2, 3)
+        segments = fine_edges[np.all(fine_edges[:, :, 2] == 0, axis=1)]
+        mesh, body_faces, free_faces = join_wetted_hull(wet, segments, walls, surface_grid)
         lookup = {tuple(p): i for i, p in enumerate(mesh.vertices)}
-        material_nodes = []
-        material_ids = []
-        contact_nodes = []
-        contact_edges = []
-        for key, point in coordinates.items():
-            if key[0] == 'v':
-                material_nodes.append(lookup[tuple(point)])
-                material_ids.append(records[key][0])
-            else:
-                contact_nodes.append(lookup[tuple(point)])
-                contact_edges.append(records[key])
+        body_nodes = np.unique(mesh.faces[body_faces])
+        free_nodes = np.unique(mesh.faces[free_faces])
+        contact_nodes = np.intersect1d(body_nodes, free_nodes)
+        coarse_nodes = np.array([lookup[tuple(p)] for p in coarse_line])
+        physical = body.mesh.faces[body.mesh.physical_faces]
+        edges = np.unique(np.sort(np.concatenate((physical[:, [0, 1]],
+            physical[:, [1, 2]], physical[:, [2, 0]])), axis=1), axis=0)
+        edge_lookup = {}
+        for i, j in edges:
+            if (world[i, 2] < 0) == (world[j, 2] < 0):
+                continue
+            a, b = (i, j) if world[i, 2] < 0 else (j, i)
+            p = world[a]-world[a, 2]/(world[b, 2]-world[a, 2])*(world[b]-world[a])
+            p[2] = 0.
+            edge_lookup[tuple(p)] = (a, b)
+        contact_edges = np.array([edge_lookup[tuple(p)] for p in coarse_line])
+        blend = np.zeros((len(contact_nodes), len(coarse_nodes)))
+        tangents = np.zeros((len(contact_nodes), 3))
+        coarse_index = {node: i for i, node in enumerate(coarse_nodes)}
+        contact_index = {node: i for i, node in enumerate(contact_nodes)}
+        normals = np.cross(world[body.mesh.faces[:, 1]]-world[body.mesh.faces[:, 0]],
+                           world[body.mesh.faces[:, 2]]-world[body.mesh.faces[:, 0]])
+        normals /= np.linalg.norm(normals, axis=1)[:, None]
+        for i, node in enumerate(contact_nodes):
+            if node in coarse_index:
+                blend[i, coarse_index[node]] = 1.
+                continue
+            parent = np.unique(source[np.any(mesh.faces[body_faces] == node, axis=1)])
+            if len(parent) != 1:
+                raise ValueError('fine contact must belong to one physical facet')
+            face = body.mesh.faces[parent[0]]
+            controls = [j for j, edge in enumerate(contact_edges) if np.all(np.isin(edge, face))]
+            if len(controls) != 2:
+                raise ValueError('a cut physical facet must have two edge contacts')
+            a, b = coarse_line[controls]
+            delta = b-a
+            fraction = (mesh.vertices[node]-a)@delta/(delta@delta)
+            blend[i, controls] = [1-fraction, fraction]
+            n = normals[parent[0]]
+            tangent = np.array([0., 0., 1.])-n[2]*n
+            tangents[i] = tangent@rotation
+
+        weights = np.zeros((len(mesh.vertices), len(contact_nodes)))
+        weights[contact_nodes] = np.eye(len(contact_nodes))
+        coarse_contact_indices = np.array([contact_index[node] for node in coarse_nodes])
+        for parent in np.unique(source):
+            faces = mesh.faces[body_faces[source == parent]]
+            patch_nodes = np.unique(faces)
+            patch_edges, counts = np.unique(np.sort(np.concatenate((faces[:, [0, 1]],
+                faces[:, [1, 2]], faces[:, [2, 0]])), axis=1), axis=0, return_counts=True)
+            boundary = np.unique(patch_edges[counts == 1])
+            corners = body.mesh.faces[parent]
+            triangle = world[corners]
+            edge_vectors = triangle[1:]-triangle[:1]
+            inverse_gram = np.linalg.inv(edge_vectors@edge_vectors.T)
+            for node in np.setdiff1d(boundary, contact_nodes):
+                uv = (mesh.vertices[node]-triangle[0])@edge_vectors.T@inverse_gram
+                bary = np.r_[1-uv.sum(), uv]
+                opposite = int(np.argmin(np.abs(bary)))
+                edge = corners[[j for j in range(3) if j != opposite]]
+                if (world[edge[0], 2] < 0) != (world[edge[1], 2] < 0):
+                    a, b = edge if world[edge[0], 2] < 0 else edge[::-1]
+                    control = np.flatnonzero(np.all(contact_edges == [a, b], axis=1))[0]
+                    delta = coarse_line[control]-world[a]
+                    fraction = (mesh.vertices[node]-world[a])@delta/(delta@delta)
+                    weights[node, coarse_contact_indices[control]] = fraction
+            interior = np.setdiff1d(patch_nodes, boundary)
+            if len(interior):
+                numbering = {node: i for i, node in enumerate(patch_nodes)}
+                laplacian = np.zeros((len(patch_nodes), len(patch_nodes)))
+                for a, b in patch_edges:
+                    i, j = numbering[a], numbering[b]
+                    laplacian[i, i] += 1
+                    laplacian[j, j] += 1
+                    laplacian[i, j] -= 1
+                    laplacian[j, i] -= 1
+                ii = np.array([numbering[node] for node in interior])
+                bb = np.array([numbering[node] for node in boundary])
+                weights[interior] = np.linalg.solve(laplacian[np.ix_(ii, ii)],
+                    -laplacian[np.ix_(ii, bb)]@weights[boundary])
         wall_faces = np.arange(len(walls))
+        body_reference = (mesh.vertices[body_nodes]-state.position)@rotation+body.cg
         return cls(mesh.vertices, mesh.faces, body_faces, free_faces, wall_faces,
-            np.unique(mesh.faces[free_faces]), np.asarray(contact_nodes),
-            np.unique(mesh.faces[wall_faces]), vertices, np.asarray(material_nodes),
-            np.asarray(material_ids), np.asarray(contact_edges), np.array(body.cg),
+            free_nodes, contact_nodes, np.unique(mesh.faces[wall_faces]),
+            np.array(body.mesh.vertices), np.array(body.mesh.faces), source,
+            body_nodes, body_reference, coarse_nodes, contact_edges, blend, tangents,
+            csr_matrix(weights), np.array(body.cg),
             np.array(body.mesh.vertices[body.mesh.opening_rim]))
+
+    def evaluate(self, position, orientation, eta):
+        eta = np.asarray(eta)
+        if eta.shape != (len(self.free_nodes),) or not np.all(np.isfinite(eta)):
+            raise ValueError('eta must be finite and indexed by free_nodes')
+        rotation = rotation_matrix(orientation)
+        world = (self.physical_vertices-self.cg)@rotation.T+position
+        coarse_eta = eta[np.searchsorted(self.free_nodes, self.coarse_nodes)]
+        a, b = world[self.contact_edges[:, 0]], world[self.contact_edges[:, 1]]
+        edge = b-a
+        if np.any(edge[:, 2] <= 0):
+            raise ContactTopologyError('physical contact edge no longer crosses upward')
+        fraction = (coarse_eta-a[:, 2])/edge[:, 2]
+        if np.any((fraction <= 0) | (fraction >= 1)):
+            i = np.flatnonzero((fraction <= 0) | (fraction >= 1))[0]
+            endpoint = self.contact_edges[i, 0 if fraction[i] <= 0 else 1]
+            raise ContactTopologyError(f'waterline reached physical vertex {endpoint} '
+                f'on contact edge {tuple(self.contact_edges[i])}; remeshing required')
+        coarse = a+fraction[:, None]*edge
+        coarse[:, 2] = coarse_eta
+        slope = edge/edge[:, 2, None]
+        coarse_body = _rigid_jacobian(coarse-position)
+        coarse_body -= slope[:, :, None]*coarse_body[:, 2:3, :]
+        coarse_height = np.zeros((len(coarse), 3, len(self.free_nodes)))
+        for i, column in enumerate(np.searchsorted(self.free_nodes, self.coarse_nodes)):
+            coarse_height[i, :, column] = slope[i]
+        contact = self.contact_blend@coarse
+        contact_body = np.einsum('ic,cjk->ijk', self.contact_blend, coarse_body)
+        contact_height = np.einsum('ic,cjk->ijk', self.contact_blend, coarse_height)
+        fine = ~np.isin(self.contact_nodes, self.coarse_nodes)
+        tangent = self.contact_tangents[fine]@rotation.T
+        if np.any(np.abs(tangent[:, 2]) <= np.finfo(float).eps):
+            raise ContactTopologyError('facet contact tangent is horizontal')
+        tangent /= tangent[:, 2, None]
+        heights = eta[np.searchsorted(self.free_nodes, self.contact_nodes)]
+        mismatch = heights[fine]-contact[fine, 2]
+        contact[fine] += mismatch[:, None]*tangent
+        derivative = _rigid_jacobian(tangent)
+        derivative[:, :, :3] = 0.
+        derivative -= tangent[:, :, None]*derivative[:, 2:3, :]
+        contact_body[fine] -= tangent[:, :, None]*contact_body[fine, 2:3, :]
+        contact_body[fine] += mismatch[:, None, None]*derivative
+        contact_height[fine] -= tangent[:, :, None]*contact_height[fine, 2:3, :]
+        for row, v in zip(np.flatnonzero(fine), tangent):
+            contact_height[row, :, np.searchsorted(self.free_nodes, self.contact_nodes[row])] += v
+        contact[:, 2] = heights
+        contact_body[:, 2] = 0.
+        contact_height[:, 2] = 0.
+        contact_height[np.arange(len(contact)), 2,
+            np.searchsorted(self.free_nodes, self.contact_nodes)] = 1.
+        points = self.reference_points.copy()
+        rigid = (self.body_reference-self.cg)@rotation.T+position
+        points[self.body_nodes] = rigid
+        rigid_contact = points[self.contact_nodes].copy()
+        rigid_body = np.zeros((len(points), 3, 6))
+        rigid_body[self.body_nodes] = _rigid_jacobian(rigid-position)
+        points += self.displacement_weights@(contact-rigid_contact)
+        correction = self.displacement_weights@(
+            contact_body-rigid_body[self.contact_nodes]).reshape(len(contact), 18)
+        body_jacobian = rigid_body+correction.reshape(len(points), 3, 6)
+        height_jacobians = [self.displacement_weights@csr_matrix(contact_height[:, axis])
+                            for axis in range(3)]
+        ordinary = np.setdiff1d(self.free_nodes, self.contact_nodes)
+        height_jacobians[2] += csr_matrix((np.ones(len(ordinary)),
+            (ordinary, np.searchsorted(self.free_nodes, ordinary))),
+            shape=(len(points), len(self.free_nodes)))
+        points[self.free_nodes, 2] = eta
+        self._check_patch(points, world)
+        return ContactGeometry(points, tuple(height_jacobians), body_jacobian)
+
+    def _check_patch(self, points, world):
+        triangles = points[self.faces[self.body_faces]]
+        parent = world[self.physical_faces[self.body_source_faces]]
+        edges = parent[:, 1:]-parent[:, :1]
+        normal = np.cross(edges[:, 0], edges[:, 1])
+        area = np.einsum('fi,fi->f', normal,
+            np.cross(triangles[:, 1]-triangles[:, 0], triangles[:, 2]-triangles[:, 0]))
+        if np.any(area >= 0):  # Boundary winds into body, opposite physical hull.
+            raise ContactTopologyError('wet physical-facet ALE patch folded')
+        gram = np.einsum('fji,fki->fjk', edges, edges)
+        uv = np.einsum('fci,fji->fcj', triangles-parent[:, :1], edges)
+        uv = np.einsum('fcj,fjk->fck', uv, np.linalg.inv(gram))
+        tolerance = 2048*np.finfo(float).eps
+        if np.any(uv < -tolerance) or np.any(uv.sum(axis=2) > 1+tolerance):
+            raise ContactTopologyError('waterline or wet mesh left its physical facet')
+        distance = np.einsum('fci,fi->fc', triangles-parent[:, :1], normal)
+        if np.any(np.abs(distance) > tolerance*np.linalg.norm(normal, axis=1)[:, None]):
+            raise ContactTopologyError('wet mesh left its physical facet plane')
+        p = points[self.faces[self.free_faces]]
+        if np.any(np.cross(p[:, 1]-p[:, 0], p[:, 2]-p[:, 0])[:, 2] <= 0):
+            raise ContactTopologyError('free-surface projected triangle inverted')
 
     def rim_clearance(self, points, position, orientation):
         """Exact minimum clearance over rim segments on the current P1 graph.
@@ -189,38 +328,3 @@ class CanoeContact:
         if minimum <= 0:
             raise FloodingError(f'opening rim reaches the water surface (clearance {minimum:g} m)')
         return float(minimum)
-
-    def evaluate(self, position, orientation, eta):
-        eta = np.asarray(eta)
-        if eta.shape != (len(self.free_nodes),) or not np.all(np.isfinite(eta)):
-            raise ValueError('eta must be finite and indexed by free_nodes')
-        world = (self.material_vertices-self.cg)@rotation_matrix(orientation).T+position
-        points = self.reference_points.copy()
-        points[self.material_nodes] = world[self.material_ids]
-        points[self.free_nodes, 2] = eta
-        eta_jacobian = np.zeros_like(points)
-        eta_jacobian[self.free_nodes, 2] = 1.
-        body_jacobian = np.zeros((len(points), 3, 6))
-        body_jacobian[self.material_nodes] = _rigid_jacobian(
-            points[self.material_nodes]-position)
-        a, b = world[self.contact_edges[:, 0]], world[self.contact_edges[:, 1]]
-        d = b-a
-        heights = points[self.contact_nodes, 2]
-        if np.any(d[:, 2] <= 0):
-            raise ContactTopologyError('contact material edge no longer crosses upward')
-        fraction = (heights-a[:, 2])/d[:, 2]
-        if np.any((fraction <= 0) | (fraction >= 1)):
-            i = np.flatnonzero((fraction <= 0) | (fraction >= 1))[0]
-            endpoint = self.contact_edges[i, 0 if fraction[i] <= 0 else 1]
-            raise ContactTopologyError(f'waterline reached material vertex {endpoint} '
-                f'on contact edge {tuple(self.contact_edges[i])}; remeshing required')
-        points[self.contact_nodes] = a+fraction[:, None]*d
-        points[self.contact_nodes, 2] = heights
-        slope = d/d[:, 2, None]
-        eta_jacobian[self.contact_nodes] = slope
-        rigid = _rigid_jacobian(points[self.contact_nodes]-position)
-        body_jacobian[self.contact_nodes] = rigid-slope[:, :, None]*rigid[:, 2:3, :]
-        p = points[self.faces[self.free_faces]]
-        if np.any(np.cross(p[:, 1]-p[:, 0], p[:, 2]-p[:, 0])[:, 2] <= 0):
-            raise ContactTopologyError('free-surface projected triangle inverted')
-        return ContactGeometry(points, eta_jacobian, body_jacobian)
