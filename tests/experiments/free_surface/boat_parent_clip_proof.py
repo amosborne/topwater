@@ -224,6 +224,23 @@ def cell_polygons(registry, hull, constraints, exposed, parent_id, body_seen, *,
     return polygons, volume, first, duplicates
 
 
+def polygon_centroid(points, polygon):
+    """Exact area centroid, invariant to extra collinear boundary cutpoints.
+
+    Signed projected triangle areas share one fixed plane scale, so no square
+    roots are needed. A vertex average would jump when a vanishing edge adds
+    another vertex, changing finite fan triangles at an infinitesimal motion.
+    """
+    origin = points[polygon[0]]
+    triangles = [(points[a], points[b]) for a, b in zip(polygon[1:-1], polygon[2:])]
+    normals = [cross(sub(a, origin), sub(b, origin)) for a, b in triangles]
+    normal = next(n for n in normals if any(n))
+    axis = max(range(3), key=lambda j: abs(normal[j]))
+    measure = sum(n[axis] for n in normals)
+    return tuple(sum(n[axis]*(origin[j]+a[j]+b[j]) for n, (a, b) in zip(normals, triangles))
+                 /(3*measure) for j in range(3))
+
+
 def triangulate(registry, polygons):
     # Every ACTUAL boundary cutpoint is propagated globally, including points
     # introduced by neighboring parents. Unused infinite-plane intersections
@@ -234,7 +251,7 @@ def triangulate(registry, polygons):
     points = [tuple(p) for p in registry.points]
     faces, kinds, source, planes = [], [], [], []
     for polygon, plane, sign, kind, parent in polygons:
-        center = tuple(sum(points[i][j] for i in polygon)/len(polygon) for j in range(3))
+        center = polygon_centroid(points, polygon)
         ci = len(points); points.append(center)
         for a, b in zip(polygon, polygon[1:]+polygon[:1]):
             faces.append([ci, a, b]); kinds.append(kind); source.append(parent); planes.append(plane)
