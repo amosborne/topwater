@@ -46,4 +46,5 @@ def integrals(coordinates, potential, velocity, *, order=9):
                                    np.cross(current_velocity, tangent[:, 0]))
     return dict(action=float(np.einsum('q,qi,qi->', measure, current_velocity, normal_area)),
         position_gradient=position_gradient, velocity_gradient=velocity_gradient,
+        potential_gradient=np.einsum('q,qa,qi,qi->a', weights, values, current_velocity, normal_area),
         minimum_sampled_jacobian_norm=float(norm.min()))

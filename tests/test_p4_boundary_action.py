@@ -52,6 +52,10 @@ def test_curved_independent_geometry_velocity_partials_and_rigid_objectivity():
         actual = (integrals(coordinates, potential, velocity+step*direction)['action']
                   -integrals(coordinates, potential, velocity-step*direction)['action'])/(2*step)
         assert abs(actual-expected_velocity) < 2e-12
+    phi_direction = np.cos(np.arange(15)*.4)
+    actual_phi = (integrals(coordinates, potential+1e-3*phi_direction, velocity)['action']
+                  -integrals(coordinates, potential-1e-3*phi_direction, velocity)['action'])/(2e-3)
+    assert abs(actual_phi-result['potential_gradient']@phi_direction) < 2e-12
     rotation = Rotation.from_rotvec([.3, -.4, .2]).as_matrix()
     transformed = integrals(coordinates@rotation.T+[.1, .2, -.3], potential, velocity@rotation.T)
     assert transformed['action'] == pytest.approx(result['action'], abs=2e-14)
