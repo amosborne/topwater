@@ -47,11 +47,44 @@ factorization and the repeated solves; independent Capytaine work is outside
 that timer. Memory includes sparse storage/fill and lifetime process peak RSS,
 which can include earlier cases and the reference solver.
 
-Both reports remain `qualified=false`. No moving-canoe time evolution,
-outgoing-wave condition or real-time result is established. The immediate
+Both static reports remain `qualified=false`; they do not establish moving-canoe
+time evolution, outgoing-wave behavior or real-time performance. The immediate
 priority is full nonlinear six-DOF evolution and Capytaine validation. Speed
 optimization follows that baseline; adaptive and partial updates must preserve
 accuracy and count estimator, refresh and rejection costs.
+
+## Nonlinear moving canoe
+
+```text
+uv run --locked --with "cupy-cuda12x[ctk]==14.2.0" python -m tests.experiments.free_surface.moving_canoe --duration 1
+uv run --locked --group correlation --with "cupy-cuda12x[ctk]==14.2.0" python -m tests.experiments.free_surface.validate_moving_canoe --capytaine
+```
+
+The coupled experiment advances all six body velocities, world position and
+quaternion, free-surface heights and potentials. Hull/free-surface contact nodes
+slide on material edges with exact shared coordinates. ALE graph kinematics
+and Bernoulli transport use the current surface geometry. Every stage rebuilds
+the current BEM/FEM operator, integrates total nonlinear pressure, and solves
+body acceleration with the current six acceleration-potential columns. Two
+offset field solves differentiate the known moving-node potential; no frozen
+added-mass or hydrostatic force is added to the pressure calculation.
+
+A one-second GPU trajectory with nonflat initial water, nonzero potential and
+all six initial body velocities completes on the n=12 mesh. Independent tests
+check moving-edge contact, exact uniform flow on tilted water, clipped
+hydrostatics, pressure transport and world/body mechanics. The complete stage
+retains hydrostatic equilibrium to about 1e-11 in its rates; halving its
+directional derivative step changes acceleration by less than 2e-11 relative.
+Accepted states, water volume and mechanical energy are saved by the runner.
+
+This remains an unfinished validation baseline. Contact topology is fixed;
+reaching a material vertex raises rather than silently changing or clamping the
+waterline. The tank is finite and reflecting. Remeshing, physical failure-event
+coverage, outgoing waves, space/time/energy convergence and finite-frequency
+Capytaine comparisons remain required. The same-hull instantaneous Capytaine
+comparison has up to 5.94% diagonal error on n=12; finite-domain and spatial
+effects are not separated. Component and short-run timings do not qualify
+complete nonlinear performance. Optimization is deferred until validation.
 
 ## Nonlinear fluid prerequisite
 
