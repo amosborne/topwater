@@ -193,6 +193,18 @@ IDs; rebuilding assumes deterministic ordering and verifies an exact fresh
 physical-state match. This remains one stage, not a P4 trajectory, general
 rim/failure coverage, spatial accuracy or Capytaine qualification.
 
+`p4_body_action_audit` additionally checks six separate body directions at the
+same finite-pose, nonflat-surface, all-six-velocity state. One current stage is
+compared with 24 geometry-only scalar-action evaluations, holding nodal
+potential and canonical rates fixed. Fine-step force errors are 4.40e-11,
+4.29e-10 and 1.37e-4 N; angular errors are 2.52e-8, 9.79e-6 and 2.46e-10 Nm.
+Vertical force, roll and pitch errors decrease about fourfold when the step is
+halved. The small yaw discrepancy does not decrease; its cause is not established
+by this check. Maximum fine relative error is 2.08e-6. These are generalized
+action forces with explicit world angular tangents, not raw pressure torques.
+This validates separate components of the discrete action derivative at the
+primal quadrature; spatial accuracy and finite-motion evolution remain separate.
+
 `p4_canoe_release` now completes a 1 ms integration smoke check from that actual
 state: three accepted adaptive RK23 steps and 13 fresh nonlinear RHS calls,
 including a rejected initial trial. All six velocities evolve. Maximum accepted
@@ -306,6 +318,18 @@ area and explicit pairwise overlap checks. Two focused tests pass on the
 canonical canoe, including a missing panel, reversed panel and an equal-area
 hole/duplicate counterexample. Identical physical coverage does not establish
 the accuracy of the field computed on a coarser mesh.
+
+`quarter_canoe_control --reference <pinned-report.json>` now executes a coarse
+canonical canoe on one quarter mesh and its exact four-copy full mesh. The
+1049/3761-node comparison independently assembles all six full body loads and
+the complex wave operators, including reflected volume/surface quadrature.
+Full versus quarter raw six-mode response differs by 1.69e-14 relative; the
+full residual is 1.32e-13 and four parity matrix/load restrictions agree within
+2.1e-16. The mirrored hull covers the pinned reference's 36 wet physical parent
+facets without overlap. `--mesh-only` runs the geometry and coverage checks
+without a fluid factor. These deliberately coarse cells do not resolve the
+outgoing-wave family. This establishes the discrete symmetry reduction only;
+the wave-resolved mesh and Capytaine coefficients remain unqualified.
 
 The prescribed nonlinear controller also passes an independent physical-work
 check on the moving canonical canoe with nonflat surface, all six velocities
