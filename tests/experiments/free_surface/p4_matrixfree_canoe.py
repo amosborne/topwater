@@ -76,6 +76,43 @@ def decode(data, momentum, cache, preconditioner, *, initial=None):
                 solver_relative_residual=field['coupled_relative_residual'])
 
 
+def evaluate_current(owner, canonical, preconditioner, *, initial=None):
+    """Full exact-current nonlinear stage; only solver setup may be reused.
+
+    The same stage owns the one-state diagnostic and bounded time-step probes.
+    Its GPU cache is local to this call, with no lagged physical operator.
+    """
+    size = 6+len(owner.free_nodes)
+    canonical = np.asarray(canonical)
+    if canonical.shape != (2*size,) or not np.all(np.isfinite(canonical)):
+        raise ValueError('matching finite body/surface canonical state required')
+    started = perf_counter()
+    timings = {}
+
+    def timed(name, function):
+        before = perf_counter()
+        try:
+            return function()
+        finally:
+            timings[name] = perf_counter()-before
+
+    data = timed('current_boundary_geometry', lambda: geometry_data(owner, canonical[:size]))
+    surface_nodes = face_nodes(owner.mesh, owner.free_faces)
+    outer = (owner.mesh.points[:, :2].min(axis=0), owner.mesh.points[:, :2].max(axis=0))
+    clearance = _rim_bound(owner, data['state'].points, data['q'][:3],
+                           data['orientation'], surface_nodes, outer)[0]
+    cache = timed('current_metric_cache', lambda: MetricAction(
+        data['state'].points[owner.mesh.elements], owner.mesh.elements, len(owner.mesh.points)))
+    current = timed('current_coupled_field', lambda: decode(data, canonical[size:], cache,
+                                                         preconditioner, initial=initial))
+    kinetic = timed('current_kinetic_energy_and_shape_force', lambda: cache.kinetic(current['potential']))
+    result = timed('full_nonlinear_action_rate', lambda: action_rate(owner, data, current,
+        kinetic=(kinetic['kinetic_energy'], kinetic['kinetic_gradient'])))
+    result.update(phase_wall_seconds=timings, rhs_wall_seconds=perf_counter()-started,
+                  rim_clearance_lower_bound=clearance, metric_persistent_bytes=cache.persistent_array_bytes)
+    return result
+
+
 def run(stage, old_matrix, output, *, warm_repetitions=0):
     """One actual saved nonlinear state; independently saved full RHS is oracle."""
     output = fresh(output)
@@ -125,32 +162,23 @@ def run(stage, old_matrix, output, *, warm_repetitions=0):
             raise ValueError('matching finite actual nonlinear seed/reference arrays required')
         factor = phase('old_fluid_setup', lambda: splu(matrix, permc_spec='MMD_AT_PLUS_A'))
         inverse = body_preconditioner(factor.solve, old['response'], old['rigid_mass']+old['added_mass'])
+        inside = np.setdiff1d(np.unique(owner.mesh.elements), owner.free_nodes)
+        if not np.array_equal(inside, old['inside']) or not np.array_equal(owner.free_nodes, old['free']):
+            raise ValueError('old preconditioner master ordering differs from current geometry')
         report['samples'] = []
         for repetition in range(warm_repetitions+1):
             phase_times = {}
-            rhs_started = perf_counter()
             profiler = cProfile.Profile() if repetition == warm_repetitions and repetition > 0 else None
             print(json.dumps(dict(repetition=repetition, profiled=profiler is not None)), flush=True)
             if profiler is not None:
                 profiler.enable()
-            data = phase('current_boundary_geometry', lambda: geometry_data(owner, canonical[:size]))
-            if not np.array_equal(data['inside'], old['inside']) or not np.array_equal(data['free'], old['free']):
-                raise ValueError('old preconditioner master ordering differs from the current geometry')
-            surface_nodes = face_nodes(owner.mesh, owner.free_faces)
-            outer = (owner.mesh.points[:, :2].min(axis=0), owner.mesh.points[:, :2].max(axis=0))
-            clearance = _rim_bound(owner, data['state'].points,
-                data['q'][:3], data['orientation'], surface_nodes, outer)[0]
-            cache = phase('current_metric_cache', lambda: MetricAction(
-                data['state'].points[owner.mesh.elements], owner.mesh.elements, len(owner.mesh.points)))
-            current = phase('current_coupled_field', lambda: decode(data, canonical[size:], cache,
-                inverse, initial=old['reference_potential']))
-            kinetic = phase('current_kinetic_energy_and_shape_force', lambda: cache.kinetic(current['potential']))
-            result = phase('full_nonlinear_action_rate', lambda: action_rate(owner, data, current,
-                kinetic=(kinetic['kinetic_energy'], kinetic['kinetic_gradient'])))
-            rhs_wall_seconds = perf_counter()-rhs_started
-            sample_report = dict(complete=True, rim_clearance_lower_bound=clearance, solver_iterations=current['solver_iterations'],
+            result = evaluate_current(owner, canonical, inverse, initial=old['reference_potential'])
+            current = result
+            phase_times = result['phase_wall_seconds']
+            rhs_wall_seconds = result['rhs_wall_seconds']
+            sample_report = dict(complete=True, rim_clearance_lower_bound=result['rim_clearance_lower_bound'], solver_iterations=current['solver_iterations'],
                 solver_relative_residual=current['solver_relative_residual'],
-                metric_persistent_bytes=cache.persistent_array_bytes,
+                metric_persistent_bytes=result['metric_persistent_bytes'],
                 operator_actions=len(current['operator_action_seconds']),
                 operator_action_total_seconds=float(sum(current['operator_action_seconds'])),
                 field_relative_difference=float(np.linalg.norm(result['potential']-reference_phi)/np.linalg.norm(reference_phi)),

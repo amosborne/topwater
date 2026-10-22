@@ -136,7 +136,17 @@ This policy might combine known tools in a useful way for this canoe, but the se
 
 ## Next decision, not another indefinite survey
 
-The single next architecture test is **the actual7,076-cell compact-metric cached/tangent action and matching force audit**, using the root's existing coupled solver and saved finite-pose/nonzero-psi state. Compare its complete current/predicted action, all six forces and update cost with the fresh assembled reference before changing the mesh. This directly tests the user's caching proposal and avoids implementing two speculative methods. The timestep discriminator is the independent necessary check for whether that speedup can possibly meet20x. If compact-metric updating cannot meet the resulting stage budget, tensor/prism exterior and high-order BEM remain substantive alternatives; compare their cheapest bounded actual-canoe probes, then choose one implementation. Keep the P4 reference to falsify candidates, not to justify another unusable long run. Do not build a backend registry.
+The exact 7,076-cell matrix-free stage and matching force audit now pass; its
+warm full-stage cost and frozen contact spectrum are recorded below. The next
+decision uses **one actual adaptive-step error audit**, with the same full
+nonlinear equations and existing tolerances. Identify the physical state blocks
+and contact coordinates responsible for the error norm before choosing implicit
+integration, revised scaling or contact-mesh changes. The fastest frozen mode
+alone cannot choose among them. Tensor/prism exterior and high-order BEM remain
+substantive alternatives if the resulting stage/timestep budget is unreachable;
+compare bounded actual-canoe probes before committing to another implementation.
+Keep the P4 reference to falsify candidates, not to justify another unusable long
+run. Do not build a backend registry.
 
 Promotion requires actual pressure/action consistency, all six body channels, moving wet contact, outgoing-wave behavior, and failure-event handling. It also requires complete accepted-time wall ratio<=20 on this machine, with error/refinement evidence. Rim immersion and complete loss of contact remain stop events. Capytaine frequency responses are external references transformed/compared in the time-domain Topwater workflow; they do not replace nonlinear physics. A fast static operator, an energy-conserving but wrong trajectory, or a huge implicit step is not the outcome.
 
@@ -224,6 +234,36 @@ accepted timestep. The exact metric cache is now only about seven percent of
 the unprofiled stage; improving it alone cannot make this discretization usable.
 Boundary work, actual temporal error/scaling and the frozen spectral diagnostic
 are therefore the next discriminators before another long trajectory.
+
+The boundary-only transport simplification subsequently passed a full actual
+force audit against immutable `8a91e9f` action code and the independently saved
+stage. Body momentum rates are bitwise identical; the maximum surface momentum
+rate change is `6.94e-18`. The new full momentum calculation differs from the
+independent saved stage by at most `7.11e-15`. Both use the same saved physical
+field and exact GPU kinetic tuple, so this audits the force path without another
+fluid factorization; the supplied configuration-rate half is identical by
+construction. One paired action measurement is 2.42 s old / 1.33 s new, not a
+throughput distribution. Evidence: `artifacts/p4-boundary-transport-full-action`.
+
+The bounded frozen-body spectrum now converges four largest modes in 41 Schur
+actions and 4.34 s eigen work, after 79.54 s setup. Reusing the hash-bound calm
+`K_II` and assembling only 1,459 surface-touching cells avoids another whole
+volume assembly. The fastest mode has `omega=805.58 rad/s`, period 7.80 ms and
+the **frozen linear** RK23 imaginary-axis ceiling 2.150 ms. It has 99.9993% of
+its consistent-mass norm on contact faces, with three faces containing 90%.
+Those faces have horizontal tangent condition numbers up to 136.24. The four
+verified eigen residuals are at most `4.63e-13`; an independent archive audit
+confirms mass orthonormality within `4.45e-16` and unit positive face-mass sums.
+
+These are actual spatially localized high-frequency modes, but the fastest
+mode's initial actual elevation-rate projection is only `2.22e-6` of its total
+mass norm. Their existence is neither the full free-body linearization nor
+proof that they caused the observed adaptive steps. Do not delete them solely
+from this diagnostic. Actual embedded error, physical-output sensitivity,
+contact mesh quality and an implicit comparison are the next discriminators.
+The first setup-budget-only spectrum attempt remains preserved as incomplete,
+with zero eigen actions. Fresh complete evidence and reusable surface blocks:
+`artifacts/calm-canoe-frozen-spectrum-surface-blocks.{json,npz,blocks.npz}`.
 
 The independent 80-cell actual nonlinear predictor audit also falsifies an
 operator-only reuse gate: halving the predictor interval from `1e-4` to
