@@ -1187,3 +1187,26 @@ BEM boat pressure path must earn force/work convergence. Neither route is
 qualified by this current kinetic-kernel check. Saved evidence:
 `artifacts/boat-current-factor-reuse.{json,npz}` and
 `artifacts/boat-current-force-profile.json`.
+
+### Full boat in the observed nonflat sea: geometry reference
+
+```powershell
+python -m tests.experiments.free_surface.boat_world_boundary --output artifacts/boat-world-boundary-seed42.json
+```
+
+This bounded exact-arithmetic reference constructs the complete closed fluid
+boundary around the 2500 kg boat at its mean-water equilibrium pose, using the
+unscaled seed-42 SoCal elevations on fixed world P1 parents. Child free faces
+inherit parent height and potential coefficients exactly; the saved potential
+trace samples the incident Airy potential at the actual graph height. It is a
+prescribed snapshot, not an initialized nonlinear wave/body field.
+
+The checked run (`artifacts/boat-world-boundary-seed42-checked.{json,npz}`)
+completed in 1.89 s with 185 vertices and 366 triangles. Rim clearance was
+0.272 m; independent volume, first-moment and affine rigid-work errors were
+below 2e-13 in their respective units. The driver checks numerical acceptance,
+rim immersion and loss of contact, and preserves partial failures. Exact
+transverse symmetry in the authored mass moments prevents roundoff from creating
+sub-ulp sliver intersections at the centerline. This Fraction-based mesher is a
+correctness reference; its time is not a production solver benchmark. The 2 m
+bed and finite walls remain diagnostic boundaries, not open-ocean physics.
