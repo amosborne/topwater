@@ -1,11 +1,78 @@
 """Validation-only Capytaine reference on exactly supplied wetted triangles."""
 from pathlib import Path
+from contextlib import contextmanager
+from copy import deepcopy
+from hashlib import sha256
+from numbers import Integral
+import platform
 import numpy as np
 from numpy.testing import assert_allclose
 from threadpoolctl import threadpool_limits
 
 
 MODES = ('Surge', 'Sway', 'Heave', 'Roll', 'Pitch', 'Yaw')
+
+
+@contextmanager
+def _prony_realization(green, seed):
+    """Isolate a sequential reference call, without altering Capytaine's fit.
+
+    Capytaine 3.0 uses a module-owned default_rng, not np.random's legacy RNG.
+    This temporarily replaces that RNG; concurrent Capytaine calls in the same
+    process are unsupported. No seed leaves the legacy path entirely unchanged.
+    """
+    if seed is None:
+        yield None
+        return
+    if isinstance(seed, bool) or not isinstance(seed, Integral) or seed < 0:
+        raise ValueError('Prony seed must be a nonnegative integer or None')
+    import capytaine as cpt
+    import scipy
+    from capytaine.tools import prony_decomposition as prony
+    from capytaine.green_functions import delhommeau
+
+    sources = dict(prony=Path(prony.__file__), delhommeau=Path(delhommeau.__file__),
+                   reference_helper=Path(__file__))
+    core_path = getattr(getattr(green, 'fortran_core', None), '__file__', None)
+    if core_path is not None:
+        sources['compiled_green_function'] = Path(core_path)
+    generator = np.random.default_rng(int(seed))
+    metadata = dict(seed=int(seed), initial_rng_state=deepcopy(generator.bit_generator.state),
+        fitted_decompositions=[], runtime=dict(python=platform.python_version(), capytaine=cpt.__version__, numpy=np.__version__,
+            scipy=scipy.__version__),
+        source_sha256={name: sha256(path.read_bytes()).hexdigest() for name, path in sources.items()},
+        fit_policy='Unmodified Capytaine backend and tolerance; actual returned rows are lambda,a. '
+            'Seed fixes this sequential call, not historical reference provenance.')
+    original_rng = prony.RNG
+    original_method = green.find_best_exponential_decomposition
+    had_override = 'find_best_exponential_decomposition' in green.__dict__
+    original_override = green.__dict__.get('find_best_exponential_decomposition')
+    seen = set()
+
+    def capture(kh, *, method=None):
+        values = original_method(kh, method=method)
+        key = (float(kh), method)
+        if key not in seen:
+            coefficients = np.asarray(values)
+            metadata['fitted_decompositions'].append(dict(
+                dimensionless_wavenumber='infinity' if np.isinf(kh) else float(kh),
+                method=green.finite_depth_prony_decomposition_method if method is None else method,
+                lambda_and_amplitude=coefficients.tolist(),
+                coefficients_sha256=sha256(np.asarray(coefficients, dtype='<f8').tobytes()).hexdigest()))
+            seen.add(key)
+        return values
+
+    try:
+        prony.RNG = generator
+        green.find_best_exponential_decomposition = capture
+        yield metadata
+    finally:
+        metadata['final_rng_state'] = deepcopy(generator.bit_generator.state)
+        prony.RNG = original_rng
+        if had_override:
+            green.find_best_exponential_decomposition = original_override
+        else:
+            green.__dict__.pop('find_best_exponential_decomposition', None)
 
 
 def body_from_triangles(triangles, center, mass):
@@ -43,11 +110,14 @@ def instantaneous_inertia(triangles, center, mass):
     return reference, damping
 
 
-def frequency_response(triangles, center, mass, frequencies, headings, *, water_depth=np.inf):
+def frequency_response(triangles, center, mass, frequencies, headings, *, water_depth=np.inf,
+                       prony_seed=None):
     """Finite-frequency reference only; excitation includes incident pressure.
 
     Unit wave elevation at the world origin, Re(amplitude*exp(-i*omega*t)),
     specified water depth (infinite by default), zero forward speed. Forces/moments use world axes about CG.
+    Optional prony_seed isolates and records the actual finite-depth approximation;
+    None retains the existing unseeded behavior. Seeded calls must be sequential.
     """
     import capytaine as cpt
     from capytaine.bem.airy_waves import froude_krylov_force
@@ -60,7 +130,7 @@ def frequency_response(triangles, center, mass, frequencies, headings, *, water_
     damping = np.empty_like(added_mass)
     diffraction = np.empty((len(frequencies), len(headings), 6), dtype=complex)
     incident = np.empty_like(diffraction)
-    with threadpool_limits(1):
+    with _prony_realization(green, prony_seed) as realization, threadpool_limits(1):
         solver = cpt.BEMSolver(green_function=green)
         for f, omega in enumerate(frequencies):
             common = dict(body=body, omega=omega, rho=1000., g=9.81, water_depth=water_depth)
@@ -74,7 +144,10 @@ def frequency_response(triangles, center, mass, frequencies, headings, *, water_
                 fk = froude_krylov_force(problem)
                 diffraction[f, h] = [result.forces[row] for row in MODES]
                 incident[f, h] = [fk[row] for row in MODES]
-    return dict(added_mass=added_mass, radiation_damping=damping,
+    output = dict(added_mass=added_mass, radiation_damping=damping,
                 green_function_settings=green.exportable_settings,
                 diffraction=diffraction, froude_krylov=incident,
                 excitation=diffraction+incident)
+    if realization is not None:
+        output['prony_realization'] = realization
+    return output
