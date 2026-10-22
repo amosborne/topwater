@@ -42,11 +42,11 @@ def instantaneous_inertia(triangles, center, mass):
     return reference, damping
 
 
-def frequency_response(triangles, center, mass, frequencies, headings):
+def frequency_response(triangles, center, mass, frequencies, headings, *, water_depth=np.inf):
     """Finite-frequency reference only; excitation includes incident pressure.
 
     Unit wave elevation at the world origin, Re(amplitude*exp(-i*omega*t)),
-    infinite depth, zero forward speed. Forces/moments use world axes about CG.
+    specified water depth (infinite by default), zero forward speed. Forces/moments use world axes about CG.
     """
     import capytaine as cpt
     from capytaine.bem.airy_waves import froude_krylov_force
@@ -60,7 +60,7 @@ def frequency_response(triangles, center, mass, frequencies, headings):
     with threadpool_limits(1):
         solver = cpt.BEMSolver(green_function=green)
         for f, omega in enumerate(frequencies):
-            common = dict(body=body, omega=omega, rho=1000., g=9.81, water_depth=np.inf)
+            common = dict(body=body, omega=omega, rho=1000., g=9.81, water_depth=water_depth)
             for column, name in enumerate(MODES):
                 result = solver.solve(cpt.RadiationProblem(**common, radiating_dof=name))
                 added_mass[f, :, column] = [result.added_mass[row] for row in MODES]
