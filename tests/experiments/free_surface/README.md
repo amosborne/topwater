@@ -1236,3 +1236,27 @@ warning requiring enrichment and force/motion convergence, not an accepted
 production resolution. Independent affine harmonic controls exercise sloping
 and partially exposed parents; an unresolved local-flux control ensures that
 projected-out motion still contributes to Bernoulli kinetic head.
+
+### Material-point pressure derivative audit
+
+```powershell
+uv run --locked --python 3.12 --with "cupy-cuda12x[ctk]==14.2.0" python -m tests.experiments.free_surface.boat_pressure_audit --output artifacts/boat-pressure-seed42.json
+```
+
+The audit reconstructs four independent offset boundaries at `+/-h` and
+`+/-h/2`, evolves the same fixed-world parent coefficients and incident boundary
+time, and samples identical original-hull interior quadrature points. Missing
+wet coverage fails explicitly. Only the base field computes six acceleration
+responses. Each field must pass its mixed residual check; all material traces
+and partial geometry checkpoints are preserved.
+
+The first run (`artifacts/boat-pressure-seed42-h1e4.*`) completed in 11.2 s but
+FAILED derivative stability. Halving h from 1e-4 to 5e-5 s changed the surge
+load by 6970 N, despite field residuals below 3e-14. The norm of the odd
+material trace difference stayed 0.0424 versus 0.0413 instead of halving.
+The one-sided meshes had different persistent triangulations (400 versus 396
+faces, with 366 at the base). This is evidence of a discrete mesh-limit jump;
+it does not qualify the pressure path. The initial driver source is frozen
+beside the report. Subsequent audits explicitly report a directional-load
+budget of 0.1% of weight and weight times length. Passing that numerical budget
+would still leave spatial, quadrature, surface-basis and ocean checks open.

@@ -50,8 +50,10 @@ def evaluate_body_pressure(points, faces, body_faces, center, mass, inertia_worl
 
     Interior body velocities are recovered from the P1 tangential potential
     gradient and exact rigid-body normal velocity, not a boundary kernel limit.
-    Four-point degree-three triangle quadrature integrates the resulting P1
-    pressure/load products exactly. This does not certify fluid spatial accuracy.
+    Four-point degree-three triangle quadrature integrates the resulting
+    pressure/load products exactly for nodal P1 rates. Directly sampled rates
+    across offset triangulations instead give a fixed quadrature estimate;
+    quadrature/spatial convergence remains to be checked in either case.
     """
     points = np.asarray(points, dtype=float)
     if points.ndim != 2 or points.shape[1] != 3 or not np.all(np.isfinite(points)):
