@@ -23,20 +23,49 @@ from .incident_baseline_benchmark import coefficients, fused_cpu
 from .p4_fluid_ordering import fresh
 
 
-def refine_boundary(arrays):
+def refine_boundary(arrays, *, region='all'):
     """Subdivide the same physical boundary and inherit fixed parent traces.
 
     This enriches the fluid discretization, not the boat geometry or evolved
     parent state. Original material coordinates are interpolated on body edges.
+    Selecting body/free marks every edge of those faces; adjacent faces receive
+    conforming green splits. Diagonals depend only on oriented connectivity.
     """
     points, faces = arrays['points'], arrays['faces']
     edges, inverse = np.unique(np.sort(np.concatenate((faces[:, [0, 1]],
         faces[:, [1, 2]], faces[:, [2, 0]])), axis=1), axis=0, return_inverse=True)
-    ab, bc, ca = (inverse+len(points)).reshape(3, -1)
-    a, b, c = faces.T
-    refined = np.vstack([np.column_stack(triangle) for triangle in
-        ((a, ab, ca), (ab, b, bc), (ca, bc, c), (ab, bc, ca))])
-    source = np.tile(np.arange(len(faces)), 4)
+    if region not in ('all', 'body', 'free'):
+        raise ValueError("refinement region must be 'all', 'body', or 'free'")
+    face_edges = inverse.reshape(3, -1).T
+    marked = np.ones(len(edges), dtype=bool) if region == 'all' else np.zeros(len(edges), dtype=bool)
+    if region != 'all':
+        marked[face_edges[arrays[region+'_faces']].ravel()] = True
+    midpoint = np.full(len(edges), -1, dtype=int)
+    midpoint[marked] = np.arange(marked.sum())+len(points)
+    edges = edges[marked]
+    # Child-slot ordering retains the original all-red face order exactly.
+    children, owners = [[] for _ in range(4)], [[] for _ in range(4)]
+    for face_id, (face, mids) in enumerate(zip(faces, midpoint[face_edges], strict=True)):
+        count = np.count_nonzero(mids >= 0)
+        if count == 0:
+            triangles = [face]
+        elif count == 3:
+            a, b, c = face
+            ab, bc, ca = mids
+            triangles = [(a, ab, ca), (ab, b, bc), (ca, bc, c), (ab, bc, ca)]
+        else:
+            # Rotate to marked AB (one edge), or marked AB and BC (two).
+            start = (np.flatnonzero(mids >= 0)[0] if count == 1
+                     else (np.flatnonzero(mids < 0)[0]+1) % 3)
+            a, b, c = np.roll(face, -start)
+            ab, bc, _ = np.roll(mids, -start)
+            triangles = ([(a, ab, c), (ab, b, c)] if count == 1 else
+                         [(ab, b, bc), (a, ab, c), (ab, bc, c)])
+        for slot, triangle in enumerate(triangles):
+            children[slot].append(triangle)
+            owners[slot].append(face_id)
+    refined = np.asarray([triangle for slot in children for triangle in slot], dtype=int)
+    source = np.asarray([face_id for slot in owners for face_id in slot], dtype=int)
     result = dict(arrays)
     result.update(points=np.vstack((points, points[edges].mean(axis=1))), faces=refined,
                   refinement_parent_face=source)
@@ -77,6 +106,8 @@ def refine_boundary(arrays):
     if not np.isfinite(errors).all() or np.any(abs(errors) > [1e-10, 1e-9, 1e-9, 1e-9]):
         raise ValueError('subdivision changed physical fluid volume or first moment')
     result['refinement_moment_errors'] = errors
+    result['refinement_region'] = region
+    result['refinement_marked_edges'] = len(edges)
     return result
 
 
