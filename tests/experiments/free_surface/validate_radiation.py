@@ -10,11 +10,11 @@ from pathlib import Path
 import numpy as np
 
 MODES = ('surge', 'sway', 'heave', 'roll', 'pitch', 'yaw')
-SETTINGS = ('n', 'gpu', 'material_subdivisions', 'exterior_scale', 'periods',
+SETTINGS = ('n', 'gpu', 'wet_subdivisions', 'contact_mesh', 'exterior_scale', 'periods',
             'ramp_periods', 'fit_periods', 'amplitude', 'rtol', 'derivative_step',
             'max_step', 'water_depth', 'sponge_strength', 'sponge_buffer',
             'domain_half_widths', 'sponge_widths', 'maximum_surface_edge')
-REFERENCE_SETTINGS = ('omega', 'n', 'material_subdivisions', 'water_depth')
+REFERENCE_SETTINGS = ('omega', 'n', 'wet_subdivisions', 'contact_mesh', 'water_depth')
 
 
 def _array(value, shape, label):

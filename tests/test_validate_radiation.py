@@ -16,7 +16,7 @@ def reports(omega=4.):
         row = {key: 1 for key in SETTINGS}
         row.update(mode=mode, mode_order=list(MODES), omega=omega,
             amplitude_unit='m' if column < 3 else 'rad', periods=6., ramp_periods=2., fit_periods=3,
-            n=24, material_subdivisions=2, water_depth=4.,
+            n=24, wet_subdivisions=2, contact_mesh='physical-facet ALE', water_depth=4.,
             column_harmonic_fits=[dict(added_mass=a[i, column], radiation_damping=b[i, column]) for i in range(6)],
             capytaine=dict(added_mass=a.tolist(), radiation_damping=b.tolist()))
         result.append(row)
@@ -53,7 +53,7 @@ def test_gross_off_diagonal_failure_is_not_hidden_by_matching_diagonals():
     assert gate['maximum_tolerance_ratio'] > 1
 
 
-@pytest.mark.parametrize('failure', ['missing', 'duplicate', 'settings', 'reference', 'fit'])
+@pytest.mark.parametrize('failure', ['missing', 'duplicate', 'settings', 'reference', 'fit', 'mesh'])
 def test_incomplete_or_inconsistent_runs_are_rejected(failure):
     inputs = reports()
     if failure == 'missing':
@@ -64,6 +64,8 @@ def test_incomplete_or_inconsistent_runs_are_rejected(failure):
         inputs[3]['sponge_strength'] = 9.
     elif failure == 'reference':
         inputs[2]['capytaine']['added_mass'][1][0] = 1.
+    elif failure == 'mesh':
+        inputs[2]['contact_mesh'] = 'old material-edge chart'
     else:
         inputs[5]['column_harmonic_fits'] = None
     with pytest.raises(ValueError):

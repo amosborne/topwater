@@ -100,6 +100,19 @@ geometry tests at subdivisions 2 and 3 cover ±1 cm heave and ±1° roll/pitch,
 matching clipped area and volume while retaining positive triangle areas.
 This establishes those finite poses, not arbitrary motion or remeshing.
 
+`moving_canoe --initial-scale 10` increases every initial pose, velocity,
+surface-height and potential perturbation tenfold. Use the same initial scale
+when comparing timestep or spatial refinements. These are unforced release
+cases; they do not replace wave-excitation validation.
+
+After producing six fitted radiation reports per frequency,
+`validate_radiation <reports...> --output artifacts/radiation-family.json`
+compares all 36 added-mass and damping entries using the formal nondimensional
+family tolerances. `--reference <report>` can reuse a matching Capytaine result
+from a short radiation run. Incomplete mode sets or inconsistent mesh/domain
+settings are rejected. Passing coefficient gates alone does not establish
+amplitude, timestep, spatial, domain, transient or reference convergence.
+
 The radiation runner uses this same nonlinear geometry and pressure path while
 prescribing one body motion for validation:
 
