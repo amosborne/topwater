@@ -1,8 +1,30 @@
-# Symmetric free-surface BEM experiment
+# Free-surface solver validation experiments
 
-## Current nonlinear validation candidate
+## Time-domain solver and validation
 
-The active candidate is `variational_canoe`, on `experiment/canonical-canoe`.
+Topwater's intended solver architecture is time-domain: advance the nonlinear
+fluid and all six body degrees of freedom. Capytaine belongs in the validation
+tools. Its frequency-dependent radiation coefficients must be interpreted as
+time-dependent reference forces, including instantaneous added mass and causal
+fluid memory. This reference must not replace Topwater's nonlinear fluid solve.
+The three existing frequencies alone do not establish a broadband transient
+reference; frequency sampling, tails and memory truncation require checks.
+
+The active P4 time candidate is `p4_canoe_release`. Its 1.6 s finite-pose,
+six-velocity release is being retried with reviewed geometry-trial rejection;
+the completed P4 trajectory remains only the earlier 1 ms smoke case. The
+prescribed-heave time runner and matched closed-tank linear control are ready
+but not yet exercised. The closed tank still needs a validated time-domain
+outgoing boundary before open-water comparison.
+
+The frequency-only experiments below are supporting diagnostics, not a second
+Topwater solver architecture. The long quarter-PML experiment was stopped after
+saving complete six-mode matrices at 2 and 4 rad/s so the actual nonlinear time
+simulation takes priority. The 6 rad/s matrix and full-family gate were not run.
+
+## Earlier P1 nonlinear validation candidate
+
+The earlier P1 candidate is `variational_canoe`, on `experiment/canonical-canoe`.
 It advances all six body coordinates and the nonlinear moving free surface
 using forces differentiated from the same discrete action as the fluid solve:
 
