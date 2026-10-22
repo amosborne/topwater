@@ -8,6 +8,11 @@ sigma8, prop+lowest-evanescent left trace, two time steps. No automatic family.
 """
 import argparse
 import json
+import hashlib
+import platform
+import subprocess
+
+import scipy
 from pathlib import Path
 
 import numpy as np
@@ -115,10 +120,14 @@ class MidpointStrip:
             raise FloatingPointError('nonfinite time PML solution')
         grad = np.einsum('tqai,ta->tqi', g, mid[strip.elements])
         field = np.einsum('qa,ta->tq', self.value, mid[strip.elements])
-        self.chi = 2*(self.chi+h*grad[..., 0])/(1+h*s)-self.chi
-        self.z += 2*h*grad[..., 1];self.q += 2*h*field
+        chi = 2*(self.chi+h*grad[..., 0])/(1+h*s)-self.chi
+        z = self.z+2*h*grad[..., 1];q = self.q+2*h*field
         vmid = (mid[self.free]-self.psi)/h
-        self.v = 2*vmid-self.v;self.psi = 2*mid[self.free]-self.psi
+        v = 2*vmid-self.v;psi = 2*mid[self.free]-self.psi
+        if not all(np.all(np.isfinite(a)) for a in (chi, z, q, vmid, v, psi)):
+            raise FloatingPointError('nonfinite time PML state; last valid state retained')
+        self.chi, self.z, self.q = chi, z, q
+        self.v, self.psi = v, psi
         self.potential = mid
         self.mid_v = vmid.copy()
         self.time = end
@@ -144,43 +153,98 @@ def run(dt, output):
     output = Path(output)
     if output.exists() or output.with_suffix('.npz').exists():
         raise FileExistsError('preserve existing strip outputs')
+    output.parent.mkdir(parents=True, exist_ok=True)
     strip = make_strip(2., np.pi/4, WIDTH, spacing=np.pi/6, layers=4, quiet_wavelengths=.25)
     period = 2*np.pi/strip.omega;duration = 12*period
     if not np.isfinite(dt) or dt <= 0 or duration/dt > 20000 or dt > period/20:
         raise ValueError('declared strip requires20..1666steps/period, bounded saved histories')
-    solver = MidpointStrip(strip, dt)
     count = int(np.ceil(duration/dt));times = [];fields = [];diagnostics = []
-    endpoint_times = [0.];surface_v = [solver.v.copy()];surface_psi = [solver.psi.copy()]
-    for _ in range(count):
-        fields.append(solver.step());times.append(solver.time-dt/2);diagnostics.append(solver.diagnostics())
-        endpoint_times.append(solver.time);surface_v.append(solver.v.copy());surface_psi.append(solver.psi.copy())
-    times = np.asarray(times);fields = np.asarray(fields)
-    fit = (times >= 3*period)&(times <= 5*period)
-    design = np.column_stack((np.cos(strip.omega*times[fit]), np.sin(strip.omega*times[fit]),
-                              np.ones(np.count_nonzero(fit))))
-    coefficients = np.linalg.lstsq(design, fields[fit], rcond=None)[0]
-    harmonic = coefficients[0]+1j*coefficients[1]
-    exact = stationary_field(strip, strip.points)
-    # A finite-duration fit can retain startup transients. Preserve rather than
-    # explain away that error; this is not a steady-reference qualification.
-    report = {'status': 'UNQUALIFIED time-domain strip falsifier', 'dt': dt,
-              'omega': strip.omega, 'angle': strip.angle, 'depth': DEPTH,
-              'width': WIDTH, 'sigma_terminal': 8., 'volume_quadrature': 12,
+    endpoint_times = [];surface_v = [];surface_psi = []
+    solver = None;last_aux = {}
+    def digest(array):
+        array = np.ascontiguousarray(array)
+        header = f'{array.dtype.str}:{array.shape}:'.encode()
+        return hashlib.sha256(header+array.tobytes()).hexdigest()
+    sources = [Path(__file__).with_name(name) for name in
+               ('time_pml_strip.py', 'pml_strip.py', 'sponge_strip.py', 'p4_tetra.py')]
+    revision = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=Path(__file__).parent,
+                              capture_output=True, text=True, check=True).stdout.strip()
+    report = {'status': 'UNQUALIFIED time-domain strip falsifier', 'complete': False,
+              'dt': dt, 'omega': strip.omega, 'angle': strip.angle, 'depth': DEPTH,
+              'k': strip.k, 'ky': strip.ky, 'kappa': strip.kappa,
+              'gravity': GRAVITY, 'width': WIDTH, 'sigma_terminal': 8.,
+              'volume_quadrature': 12, 'spacing': float(np.pi/6),
+              'graded_vertical_layers': 4, 'quiet_wavelengths': .25,
               'nodes': len(strip.points), 'triangles': len(strip.triangles),
               'pulse_ramp_periods': 1., 'pulse_plateau_periods': 4., 'pulse_dc': .2,
-              'duration_periods': 12., 'fit_period_range': [3., 5.],
-              'harmonic_nodal_error_including_transients': float(np.linalg.norm(harmonic-exact)/np.linalg.norm(exact)),
+              'duration_periods': 12., 'duration_requested': duration,
+              'fit_period_range': [3., 5.],
               'diagnostic_columns': ['quiet_energy_per_density', 'chi_max', 'z_max', 'q_max'],
               'zero_history': True, 'no_mean_or_history_reset': True,
               'potential_and_energy_location': 'actual midpoint solve',
               'surface_state_location': 'accepted fixed-step endpoints',
-              'boundary_v_checkerboard_is_retained': True}
-    np.savez(output.with_suffix('.npz'), times=times, potential=fields, diagnostics=diagnostics,
-             points=strip.points, triangles=strip.triangles, harmonic=harmonic, exact=exact,
-             endpoint_times=endpoint_times, surface_psi=surface_psi, surface_v=surface_v,
-             free_nodes=solver.free, left_nodes=solver.left,
-             final_chi=solver.chi, final_z=solver.z, final_q=solver.q)
-    output.write_text(json.dumps(report, indent=2)+'\n')
+              'boundary_v_checkerboard_is_retained': True,
+              'runtime': {'python': platform.python_version(), 'numpy': np.__version__,
+                          'scipy': scipy.__version__, 'git_revision': revision},
+              'source_sha256': {path.name: hashlib.sha256(path.read_bytes()).hexdigest() for path in sources},
+              'input_array_sha256': {name: digest(getattr(strip, name)) for name in
+                                    ('points', 'triangles', 'elements', 'top', 'left', 'right', 'xlevels', 'zlevels')}}
+
+    parameters = {name: report[name] for name in
+                  ('dt', 'omega', 'angle', 'depth', 'gravity', 'width', 'sigma_terminal',
+                   'volume_quadrature', 'spacing', 'graded_vertical_layers', 'quiet_wavelengths',
+                   'pulse_ramp_periods', 'pulse_plateau_periods', 'pulse_dc', 'duration_periods')}
+    report['parameters_sha256'] = hashlib.sha256(json.dumps(parameters, sort_keys=True).encode()).hexdigest()
+
+    def save(error=None):
+        # Shared success/failure assembly; only completed records are persisted.
+        n = min(len(times), len(fields), len(diagnostics))
+        ne = min(len(endpoint_times), len(surface_v), len(surface_psi))
+        sample_times = np.asarray(times[:n]);samples = np.asarray(fields[:n]).reshape(n, len(strip.points))
+        report.update(complete=error is None, valid_midpoints=n,
+                      last_valid_endpoint_time=float(endpoint_times[ne-1]) if ne else None)
+        if error is not None:
+            report['error'] = {'type': type(error).__name__, 'message': str(error)}
+        fit = (sample_times >= 3*period)&(sample_times <= 5*period)
+        harmonic = np.empty(0, complex);exact = np.empty(0, complex)
+        if np.count_nonzero(fit) >= 8 and np.ptp(sample_times[fit]) >= 1.5*period:
+            design = np.column_stack((np.cos(strip.omega*sample_times[fit]),
+                                      np.sin(strip.omega*sample_times[fit]), np.ones(np.count_nonzero(fit))))
+            coefficients = np.linalg.lstsq(design, samples[fit], rcond=None)[0]
+            harmonic = coefficients[0]+1j*coefficients[1]
+            exact = stationary_field(strip, strip.points)
+            report['harmonic_nodal_error_including_transients'] = float(np.linalg.norm(harmonic-exact)/np.linalg.norm(exact))
+        else:
+            report['harmonic_fit'] = 'not computed: insufficient valid fit-window coverage'
+        arrays = dict(times=sample_times, potential=samples, diagnostics=np.asarray(diagnostics[:n]).reshape(n, 4),
+                      points=strip.points, triangles=strip.triangles, harmonic=harmonic, exact=exact,
+                      endpoint_times=endpoint_times[:ne], surface_psi=np.asarray(surface_psi[:ne]),
+                      surface_v=np.asarray(surface_v[:ne]))
+        if solver is not None:
+            arrays.update(free_nodes=solver.free, left_nodes=solver.left,
+                          **last_aux)
+        np.savez(output.with_suffix('.npz'), **arrays)
+        output.write_text(json.dumps(report, indent=2)+'\n')
+
+    try:
+        solver = MidpointStrip(strip, dt)
+        endpoint_times.append(0.);surface_v.append(solver.v.copy());surface_psi.append(solver.psi.copy())
+        last_aux = dict(final_chi=solver.chi, final_z=solver.z, final_q=solver.q)
+        for _ in range(count):
+            field = solver.step();diagnostic = solver.diagnostics()
+            if not np.all(np.isfinite(diagnostic)):
+                raise FloatingPointError('nonfinite time PML diagnostic')
+            # Commit the complete record only after both solve and diagnostics.
+            fields.append(field);times.append(solver.time-dt/2);diagnostics.append(diagnostic)
+            endpoint_times.append(solver.time);surface_v.append(solver.v.copy());surface_psi.append(solver.psi.copy())
+            last_aux = dict(final_chi=solver.chi, final_z=solver.z, final_q=solver.q)
+    except BaseException as error:
+        try:
+            save(error)
+        except BaseException as save_error:
+            error.add_note(f'Partial strip output could not be saved: {save_error}')
+        raise
+    save()
     return report
 
 

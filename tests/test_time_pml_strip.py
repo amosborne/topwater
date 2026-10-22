@@ -1,5 +1,7 @@
 """Source-review controls; no time integration or factorization here."""
 import numpy as np
+import json
+import pytest
 
 from .experiments.free_surface.pml_strip import stretching
 from .experiments.free_surface.sponge_strip import make_strip
@@ -40,3 +42,44 @@ def test_same_dirichlet_stationary_field_satisfies_transformed_pde_and_wall():
     wall = np.array([[WIDTH, -1.1]])
     wall_gradient = (stationary_field(strip, wall+ex)-stationary_field(strip, wall-ex))/(2*delta)
     assert np.max(abs(wall_gradient)) < 2e-8
+
+
+def test_failed_run_preserves_only_completed_history_and_original_error(tmp_path, monkeypatch):
+    from .experiments.free_surface import time_pml_strip as module
+    strip = make_strip(2., np.pi/4, WIDTH, spacing=3., layers=4, quiet_wavelengths=.1)
+    output = tmp_path/'new'/'failed.json'
+    failure = FloatingPointError('synthetic failed midpoint')
+
+    class FakeMidpoint:
+        def __init__(self, supplied, dt):
+            assert output.parent.is_dir()  # Created before any numerical work.
+            self.dt = dt;self.time = 0.
+            self.free = np.unique(supplied.top);self.left = np.unique(supplied.left)
+            self.psi = np.zeros(len(self.free));self.v = self.psi.copy()
+            self.chi = np.zeros((1, 1));self.z = self.chi.copy();self.q = self.chi.copy()
+
+        def step(self):
+            if self.time:
+                raise failure
+            self.time += self.dt
+            self.chi = np.full((1, 1), .3)
+            return np.ones(len(strip.points))
+
+        def diagnostics(self):
+            return np.array([1., .3, 0., 0.])
+
+    monkeypatch.setattr(module, 'make_strip', lambda *args, **kwargs: strip)
+    monkeypatch.setattr(module, 'MidpointStrip', FakeMidpoint)
+    with pytest.raises(FloatingPointError) as caught:
+        module.run(np.pi/100, output)
+    assert caught.value is failure
+    report = json.loads(output.read_text())
+    assert report['complete'] is False and report['valid_midpoints'] == 1
+    assert report['error']['type'] == 'FloatingPointError'
+    assert 'insufficient' in report['harmonic_fit']
+    assert report['runtime']['git_revision'] and len(report['source_sha256']) == 4
+    assert len(report['parameters_sha256']) == 64
+    with np.load(output.with_suffix('.npz')) as arrays:
+        assert arrays['potential'].shape == (1, len(strip.points))
+        np.testing.assert_array_equal(arrays['endpoint_times'], [0., np.pi/100])
+        np.testing.assert_array_equal(arrays['final_chi'], [[.3]])
