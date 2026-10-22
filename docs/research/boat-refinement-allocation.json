@@ -1,0 +1,432 @@
+{
+  "qualified": false,
+  "scope": "Prescribed-direction boundary/pressure sensitivity on the canonical boat/sea finite tank; no coupled RHS, temporal, open-water or trajectory qualification",
+  "axes": [
+    "surge_N",
+    "sway_N",
+    "heave_N",
+    "roll_Nm",
+    "pitch_Nm",
+    "yaw_Nm"
+  ],
+  "world_twist": [
+    0.03,
+    -0.02,
+    0.01,
+    0.01,
+    -0.015,
+    0.02
+  ],
+  "derivative_steps_seconds": [
+    0.001,
+    0.0005
+  ],
+  "fixture_sha256": "5d4cd16a436f30afc39d96d062ab060e706dcb736716ee7e0be16351672850cf",
+  "sea_observation": "ndbc-46086-20250705T2040Z",
+  "legacy_producer_sha256": "edd609df40a3c5976c2c9de34f06a2e7eac15526f96a1e3817d164ec86e0acf6",
+  "rows": [
+    {
+      "name": "coarse-direction-v2",
+      "report_sha256": "a976832326101b96549ad7b2b721f11928c24f895d61ec41e570c553ebb62f18",
+      "geometry": {
+        "label": "base",
+        "path": "artifacts\\boat-allocation-coarse-direction-v2-base.json",
+        "arrays_sha256": "88bc5b5767ee4ca92393526985e7698b43fd60f39aaad3dd8d4db511b9b3c113",
+        "nodes": 153,
+        "faces": 302,
+        "face_counts": {
+          "body": 46,
+          "free": 130,
+          "wall": 78,
+          "bottom": 48
+        }
+      },
+      "direction_roundoff_difference": {
+        "eta_rate": 0.0,
+        "psi_rate": 0.0
+      },
+      "pressure_load_world_at_h_half": [
+        609.052588781118,
+        328.67967053381017,
+        30123.07400309749,
+        -313.74417230905885,
+        249.9960609171103,
+        536.0806266914867
+      ],
+      "acceleration_world_at_h_half": [
+        0.2436210355124472,
+        0.131471868213524,
+        2.239229601238994,
+        -0.22883508037232259,
+        0.026009020537944516,
+        0.04898607295967699
+      ],
+      "pressure_load_h_pair_change": [
+        1.645174748075192,
+        6.041545661032842,
+        -0.0107362183771329,
+        -5.282948453663153,
+        -0.4133580315647123,
+        29.414292849378057
+      ],
+      "warm_offset_energy_median_seconds": 0.012946250004461035,
+      "warm_offset_single_field_median_seconds": 0.020268049993319437,
+      "process_peak_rss_bytes": 552022016,
+      "reserved_gpu_pool_bytes": 5757952,
+      "computed_height_rate_difference_from_prescribed": 0.0,
+      "computed_potential_rate_difference_from_prescribed": 0.0,
+      "load_difference_from_uniform2_at_h_half": [
+        -129.8172580150374,
+        -34.19854764905392,
+        181.22501698980705,
+        -12.079485986787745,
+        246.27792322735786,
+        107.11504656917907
+      ],
+      "difference_no_larger_than_sum_of_h_pair_changes": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "name": "body1-fixed-direction",
+      "report_sha256": "6a7b22ded058abf3c647447de74f2f9fe8ec062385a4e4b791236566624bffa7",
+      "geometry": {
+        "label": "base",
+        "path": "artifacts\\boat-allocation-body1-fixed-direction-base-refined1.json",
+        "arrays_sha256": "577039fcf2b6a95b157edb90fbbdc10df976a418cc36975eaa2acb52bc0c53b6",
+        "nodes": 231,
+        "faces": 458,
+        "face_counts": {
+          "body": 184,
+          "free": 148,
+          "wall": 78,
+          "bottom": 48
+        }
+      },
+      "direction_roundoff_difference": {
+        "eta_rate": 2.3314683517128287e-15,
+        "psi_rate": 1.7763568394002505e-15
+      },
+      "pressure_load_world_at_h_half": [
+        685.3882078505629,
+        345.5797654030347,
+        29998.704671408286,
+        -295.2338995103248,
+        80.18943430954732,
+        409.0883181114775
+      ],
+      "acceleration_world_at_h_half": [
+        0.2741552831402252,
+        0.13823190616121386,
+        2.1894818685633175,
+        -0.21578521202661277,
+        0.008474482713751735,
+        0.037139164871614665
+      ],
+      "pressure_load_h_pair_change": [
+        -0.5303513972303335,
+        -3.1971503885401944,
+        0.4877481312651071,
+        -0.41832447914327986,
+        -4.099601154296579,
+        -12.739090695154687
+      ],
+      "warm_offset_energy_median_seconds": 0.019541450004908256,
+      "warm_offset_single_field_median_seconds": 0.02048330000252463,
+      "process_peak_rss_bytes": 552144896,
+      "reserved_gpu_pool_bytes": 13104128,
+      "computed_height_rate_difference_from_prescribed": 0.014789945689542172,
+      "computed_potential_rate_difference_from_prescribed": 0.011670835517142208,
+      "load_difference_from_uniform2_at_h_half": [
+        -53.48163894559241,
+        -17.298452779829404,
+        56.85568530060482,
+        6.430786811946291,
+        76.47129661979488,
+        -19.877262010830123
+      ],
+      "difference_no_larger_than_sum_of_h_pair_changes": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "name": "free1-fixed-direction",
+      "report_sha256": "30fdcc6789fdc9cf3fa0eaa69125b7ee0361702add8e3c7cdff82cc70e418123",
+      "geometry": {
+        "label": "base",
+        "path": "artifacts\\boat-allocation-free1-fixed-direction-base-refined1.json",
+        "arrays_sha256": "5d27e69a3eb395677c96e626f3151f8f6a17a9a8fbfd3db4e6b1c51b5ad29452",
+        "nodes": 364,
+        "faces": 724,
+        "face_counts": {
+          "body": 64,
+          "free": 520,
+          "wall": 92,
+          "bottom": 48
+        }
+      },
+      "direction_roundoff_difference": {
+        "eta_rate": 2.3314683517128287e-15,
+        "psi_rate": 1.7763568394002505e-15
+      },
+      "pressure_load_world_at_h_half": [
+        610.0432687850526,
+        341.9459254445251,
+        30147.965347024947,
+        -316.32065526812505,
+        263.9733818960567,
+        503.54140361747375
+      ],
+      "acceleration_world_at_h_half": [
+        0.24401730751402106,
+        0.13677837017781003,
+        2.249186138809978,
+        -0.23089551093846772,
+        0.027452343853898598,
+        0.045914977097044604
+      ],
+      "pressure_load_h_pair_change": [
+        0.743260232493526,
+        3.2877268354487796,
+        -0.5624458716883964,
+        -2.4741167305913905,
+        2.2243465122601265,
+        14.776930164236887
+      ],
+      "warm_offset_energy_median_seconds": 0.06804795000061858,
+      "warm_offset_single_field_median_seconds": 0.01701245000003837,
+      "process_peak_rss_bytes": 556081152,
+      "reserved_gpu_pool_bytes": 32688640,
+      "computed_height_rate_difference_from_prescribed": 0.010711437718132905,
+      "computed_potential_rate_difference_from_prescribed": 0.04713233717615717,
+      "load_difference_from_uniform2_at_h_half": [
+        -128.8265780111027,
+        -20.932292738339015,
+        206.1163609172654,
+        -14.655968945853942,
+        260.25524420630427,
+        74.5758234951661
+      ],
+      "difference_no_larger_than_sum_of_h_pair_changes": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "name": "all1-fixed-direction",
+      "report_sha256": "55478d4333e95ab20fe79358cbb587b8068c061b221dcff584f99e0b83614e84",
+      "geometry": {
+        "label": "base",
+        "path": "artifacts\\boat-allocation-all1-fixed-direction-base-refined1.json",
+        "arrays_sha256": "bc74e6eab0ea25b2842731b578e107d7c102d35f585b874b71bba2d51dae82b4",
+        "nodes": 606,
+        "faces": 1208,
+        "face_counts": {
+          "body": 184,
+          "free": 520,
+          "wall": 312,
+          "bottom": 192
+        }
+      },
+      "direction_roundoff_difference": {
+        "eta_rate": 2.3314683517128287e-15,
+        "psi_rate": 1.7763568394002505e-15
+      },
+      "pressure_load_world_at_h_half": [
+        688.457772750474,
+        362.8573382594401,
+        29985.48711102029,
+        -303.36076758769343,
+        89.37715974394632,
+        396.6182761608435
+      ],
+      "acceleration_world_at_h_half": [
+        0.2753831091001896,
+        0.14514293530377603,
+        2.1841948444081183,
+        -0.2218462108117296,
+        0.009423223775077476,
+        0.035927535403368585
+      ],
+      "pressure_load_h_pair_change": [
+        0.11952987320785269,
+        -2.8475047610970705,
+        0.146958973560686,
+        -0.318423593403395,
+        -1.7572693227057243,
+        -11.355339125628632
+      ],
+      "warm_offset_energy_median_seconds": 0.10721095000917558,
+      "warm_offset_single_field_median_seconds": 0.058776099991519004,
+      "process_peak_rss_bytes": 563175424,
+      "reserved_gpu_pool_bytes": 89726976,
+      "computed_height_rate_difference_from_prescribed": 0.040810986384362535,
+      "computed_potential_rate_difference_from_prescribed": 0.025829746117926433,
+      "load_difference_from_uniform2_at_h_half": [
+        -50.41207404568138,
+        -0.020879923423990476,
+        43.63812491260978,
+        -1.6960812654223218,
+        85.65902205419388,
+        -32.34730396146415
+      ],
+      "difference_no_larger_than_sum_of_h_pair_changes": [
+        false,
+        true,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "name": "body2-fixed-direction",
+      "report_sha256": "fcc066539edfb5a6705938808944ceba93567e71edcf543ed3b3248e83a3ae06",
+      "geometry": {
+        "label": "base",
+        "path": "artifacts\\boat-allocation-body2-fixed-direction-base-refined2.json",
+        "arrays_sha256": "353dfbf57c75a90a4d196e3bbfa757e33137d5f86ff4ba56f0a91b58e87be67c",
+        "nodes": 525,
+        "faces": 1046,
+        "face_counts": {
+          "body": 736,
+          "free": 184,
+          "wall": 78,
+          "bottom": 48
+        }
+      },
+      "direction_roundoff_difference": {
+        "eta_rate": 0.0,
+        "psi_rate": 0.0
+      },
+      "pressure_load_world_at_h_half": [
+        735.9595744685446,
+        338.7713108756635,
+        29956.683398477446,
+        -291.00755262598716,
+        3.4679133788640684,
+        441.7880096233211
+      ],
+      "acceleration_world_at_h_half": [
+        0.29438382978741784,
+        0.1355085243502654,
+        2.1726733593909793,
+        -0.21250583792718933,
+        0.0005520804049320659,
+        0.04023336075645248
+      ],
+      "pressure_load_h_pair_change": [
+        -0.5684588368573031,
+        -1.0006154801160392,
+        0.2558967806326109,
+        -0.18380006969812257,
+        -1.592897261152757,
+        -3.8692681968342413
+      ],
+      "warm_offset_energy_median_seconds": 0.11650899999949615,
+      "warm_offset_single_field_median_seconds": 0.025079549988731742,
+      "process_peak_rss_bytes": 577286144,
+      "reserved_gpu_pool_bytes": 67534848,
+      "computed_height_rate_difference_from_prescribed": 0.019701092724829034,
+      "computed_potential_rate_difference_from_prescribed": 0.013754173890070831,
+      "load_difference_from_uniform2_at_h_half": [
+        -2.9102723276107554,
+        -24.106907307200572,
+        14.834412369764323,
+        10.65713369628395,
+        -0.2502243108883704,
+        12.82242950101346
+      ],
+      "difference_no_larger_than_sum_of_h_pair_changes": [
+        false,
+        false,
+        false,
+        false,
+        true,
+        false
+      ]
+    },
+    {
+      "name": "all2-fixed-direction",
+      "report_sha256": "150b2ebfa07e5e5965da48ed315a6549c101885444ac9ad0ac8dad477074dc6c",
+      "geometry": {
+        "label": "base",
+        "path": "artifacts\\boat-allocation-all2-fixed-direction-base-refined2.json",
+        "arrays_sha256": "2c68421b204e9406f3bce319bfaf7ebd455819d1aa92b32820e71ca51d81cce0",
+        "nodes": 2418,
+        "faces": 4832,
+        "face_counts": {
+          "body": 736,
+          "free": 2080,
+          "wall": 1248,
+          "bottom": 768
+        }
+      },
+      "direction_roundoff_difference": {
+        "eta_rate": 0.0,
+        "psi_rate": 0.0
+      },
+      "pressure_load_world_at_h_half": [
+        738.8698467961553,
+        362.8782181828641,
+        29941.84898610768,
+        -301.6646863222711,
+        3.7181376897524387,
+        428.96558012230764
+      ],
+      "acceleration_world_at_h_half": [
+        0.2955479387184622,
+        0.14515128727314563,
+        2.166739594443071,
+        -0.2204367503106751,
+        0.0005779190175437353,
+        0.038976313730288474
+      ],
+      "pressure_load_h_pair_change": [
+        -0.10593479761200797,
+        -0.729716731928761,
+        0.04204938155817217,
+        -0.1336072912574764,
+        -0.3217399941668191,
+        -2.8091840317408696
+      ],
+      "warm_offset_energy_median_seconds": 2.142104250000557,
+      "warm_offset_single_field_median_seconds": 0.3753428000200074,
+      "process_peak_rss_bytes": 723853312,
+      "reserved_gpu_pool_bytes": 1426437632,
+      "computed_height_rate_difference_from_prescribed": 0.04658988217360682,
+      "computed_potential_rate_difference_from_prescribed": 0.031115625906294575,
+      "load_difference_from_uniform2_at_h_half": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "difference_no_larger_than_sum_of_h_pair_changes": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    }
+  ],
+  "interpretation": "Uniform2 is a finer comparison, not established truth. h-pair changes are sensitivity observations, not error bounds. Timings exclude cold geometry and are not simulation throughput."
+}

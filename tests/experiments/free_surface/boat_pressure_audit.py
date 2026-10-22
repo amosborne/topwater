@@ -24,12 +24,14 @@ from .incident_baseline_benchmark import coefficients
 from .p4_fluid_ordering import fresh
 
 
-def run(output, step=1e-4, refinement=0):
+def run(output, step=1e-4, refinement=0, refinement_region='all', direction_from=None):
     from .cuda_operator import prepare_energy, cp
     if not np.isfinite(step) or step <= 0:
         raise ValueError('positive finite directional step required')
     if isinstance(refinement, bool) or not isinstance(refinement, int) or not 0 <= refinement <= 2:
         raise ValueError('bounded audit supports refinement levels zero through two')
+    if refinement_region not in ('all', 'body', 'free'):
+        raise ValueError('refinement region must be all, body or free')
     output = fresh(output)
     output.parent.mkdir(parents=True, exist_ok=True)
     report = dict(complete=False, qualified=False, timings=[], derivatives=[], mixed_residuals=[], geometry_checkpoints=[],
@@ -38,7 +40,8 @@ def run(output, step=1e-4, refinement=0):
             for name in ('boat_pressure_audit.py', 'boat_world_field.py', 'boat_world_boundary.py',
                          'boat_parent_clip_proof.py', 'body_pressure.py', 'canoe.py',
                          'cuda_operator.py', 'cuda_energy.cu', 'cuda_pair.cuh')},
-        gpu_pool_reserved_peak_bytes=0, boundary_refinement=refinement)
+        gpu_pool_reserved_peak_bytes=0, boundary_refinement=refinement,
+        refinement_region=refinement_region)
     start = perf_counter()
     saved = {}
 
@@ -65,12 +68,13 @@ def run(output, step=1e-4, refinement=0):
     def geometry(label, **inputs):
         _, arrays, geometry_report = construct(checkpoint(label), **inputs)
         for level in range(refinement):
-            arrays = refine_boundary(arrays)
+            arrays = refine_boundary(arrays, region=refinement_region)
             path = fresh(checkpoint(label+f'-refined{level+1}'))
             np.savez(path.with_suffix('.npz'), **arrays)
             path.write_text(json.dumps(dict(complete=True, qualified=False,
-                scope='Uniform subdivision of the checkpointed physical boundary; not an evolved state',
+                scope='Conforming subdivision of the checkpointed physical boundary; not an evolved state',
                 source_checkpoint=str(checkpoint(label)), boundary_refinement=level+1,
+                refinement_region=refinement_region,
                 geometry_roundoff_checks_passed=True,
                 refinement_moment_errors=arrays['refinement_moment_errors'].tolist(),
                 actual_sea_realization=geometry_report['actual_sea_realization'],
@@ -78,7 +82,8 @@ def run(output, step=1e-4, refinement=0):
         used = checkpoint(label+f'-refined{refinement}') if refinement else checkpoint(label)
         report['geometry_checkpoints'].append(dict(label=label, path=str(used),
             arrays_sha256=sha256(used.with_suffix('.npz').read_bytes()).hexdigest(),
-            nodes=len(arrays['points']), faces=len(arrays['faces'])))
+            nodes=len(arrays['points']), faces=len(arrays['faces']),
+            face_counts={kind: len(arrays[kind+'_faces']) for kind in ('body', 'free', 'wall', 'bottom')}))
         return arrays
 
     try:
@@ -88,10 +93,46 @@ def run(output, step=1e-4, refinement=0):
         energy = timed('base_energy', lambda: prepare_energy(faces, TrianglePanels(points[faces], 1))).energy
         values = coefficients(sea_states.realize(beam_m=BEAM, gravity=GRAVITY, seed=42))
         twist = np.array([.03, -.02, .01, .01, -.015, .02])
+        report['world_twist'] = twist.tolist()
+        saved['world_twist'] = twist.copy()
         field = timed('base_field_and_six_responses', lambda: current_field(arrays, energy, values, twist))
         check_field(field, 'base')
         eta_rate, psi_rate, surface = timed('surface_rates', lambda: surface_rates(points,
             faces[arrays['free_faces']], arrays['free_nodes'], field['parent_map'], arrays['parent_psi'], field['flux']))
+        saved.update(computed_eta_rate=eta_rate.copy(), computed_psi_rate=psi_rate.copy())
+        report['surface_direction'] = dict(kind='self-consistent current discretization')
+        if direction_from is not None:
+            source_path = Path(direction_from)
+            source_report = json.loads(source_path.read_text())
+            source_arrays = source_path.with_name(source_path.stem+'-base.npz')
+            source_state = dict(np.load(source_arrays, allow_pickle=False))
+            source_geometry_path = source_arrays.with_suffix('.json')
+            source_geometry = json.loads(source_geometry_path.read_text())
+            own_geometry = json.loads(checkpoint('base').read_text())
+            source_rates = source_path.with_suffix('.npz')
+            if not source_report.get('complete'):
+                raise ValueError('prescribed direction requires a complete source audit')
+            if not np.array_equal(np.asarray(source_report.get('world_twist')), twist):
+                raise ValueError('prescribed direction requires a saved matching world twist; rerun legacy sources')
+            if any(source_geometry[key] != own_geometry[key] for key in
+                   ('actual_sea_realization', 'body_mass', 'fixture_sha256')):
+                raise ValueError('prescribed direction has a different sea or body fixture')
+            for key in ('parent_nodes', 'parents', 'parent_psi', 'pose_position', 'pose_orientation',
+                        'source_body_vertices', 'source_body_faces'):
+                if (arrays[key].shape != source_state[key].shape
+                        or not np.allclose(arrays[key], source_state[key], rtol=0, atol=1e-13)):
+                    raise ValueError(f'prescribed direction has a different physical state: {key}')
+            with np.load(source_rates, allow_pickle=False) as direction:
+                imposed_eta, imposed_psi = direction['eta_rate'], direction['psi_rate']
+            if (imposed_eta.shape != eta_rate.shape or imposed_psi.shape != psi_rate.shape
+                    or not np.isfinite(imposed_eta).all() or not np.isfinite(imposed_psi).all()):
+                raise ValueError('prescribed direction does not match finite parent coefficients')
+            report['surface_direction'] = dict(kind='prescribed matched-state direction; not a coupled RHS audit',
+                source_sha256={str(path): sha256(path.read_bytes()).hexdigest()
+                    for path in (source_path, source_arrays, source_rates, source_geometry_path)},
+                computed_height_rate_max_difference=float(np.max(abs(eta_rate-imposed_eta))),
+                computed_potential_rate_max_difference=float(np.max(abs(psi_rate-imposed_psi))))
+            eta_rate, psi_rate = imposed_eta, imposed_psi
         bary, _ = quadrature()
         samples, groups = body_material_samples(arrays, bary)
         rotation = rotation_matrix(arrays['pose_orientation'])
@@ -133,6 +174,7 @@ def run(output, step=1e-4, refinement=0):
         # this is a numerical audit budget, not a physical accuracy certificate.
         step_error = float(np.max(abs(load_difference)/scales))
         report.update(complete=True, seconds=perf_counter()-start, surface=surface,
+            surface_diagnostics_scope='Computed current-field projection and rates; prescribed offsets may use different saved rates',
             acceleration_step_difference_world=difference.tolist(),
             pressure_load_step_difference_world=load_difference.tolist(),
             directional_step_check=dict(normalized_load_max_difference=step_error,
@@ -156,4 +198,6 @@ if __name__ == '__main__':
     parser.add_argument('--output', required=True)
     parser.add_argument('--step', type=float, default=1e-4)
     parser.add_argument('--refinement', type=int, default=0)
+    parser.add_argument('--refinement-region', choices=('all', 'body', 'free'), default='all')
+    parser.add_argument('--direction-from', help='Complete audit JSON supplying the same prescribed parent rates')
     print(json.dumps(run(**vars(parser.parse_args())), indent=2))

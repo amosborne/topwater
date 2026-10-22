@@ -1412,3 +1412,49 @@ surface flux squared integral. Scaling solves the algebraic units problem,
 not this cut-cell/local-resolution problem. No arbitrary local-velocity clip
 or physical qualification is introduced. Raw localization evidence is saved in
 `artifacts/boat-template-fine-flux-localization.json`.
+
+Boundary-allocation controls now separate hull versus free-surface refinement.
+`refine_boundary(region='body'|'free')` marks all edges of the selected faces
+and conformingly splits neighboring faces, with fixed connectivity-based
+diagonals. No physical facets, material coordinates, parent fields or local
+motion are removed. The unchanged `all` default preserves red-refinement
+numbering. Closure, oriented facet areas/moments, affine traces, all split
+patterns and `allow_pickle=False` checkpoint replay have physical controls.
+
+For an isolated comparison, `boat_pressure_audit --direction-from` imposes one
+saved parent-height/potential direction after checking identical physical
+state, sea/fixture and serialized world twist. The candidate's computed rates
+are saved separately: these are prescribed-direction pressure comparisons,
+not full coupled RHS convergence. New sources must serialize the twist; old
+sources are rejected. The first four historical allocation runs used the
+identical hard-coded twist, independently verified against their exact saved
+producer and legacy git producer `65cef083` (source SHA in the summary).
+
+All values below use the finer derivative step **0.0005 s**, paired with 0.001 s.
+The same 24 ft, 2500 kg boat, seed-42 observed sea, parent state and direction
+are retained. The `body` and `free` labels include conforming neighbor splits.
+
+| Refinement | Faces | Surge N | Sway N | Heave N | Roll Nm | Pitch Nm | Yaw Nm | Warm energy ms |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Coarse | 302 | 609.1 | 328.7 | 30123.1 | -313.7 | 250.0 | 536.1 | 12.9 |
+| Body 1 | 458 | 685.4 | 345.6 | 29998.7 | -295.2 | 80.2 | 409.1 | 19.5 |
+| Free 1 | 724 | 610.0 | 341.9 | 30148.0 | -316.3 | 264.0 | 503.5 | 68.1 |
+| All 1 | 1208 | 688.5 | 362.9 | 29985.5 | -303.4 | 89.4 | 396.6 | 107.2 |
+| Body 2 | 1046 | 736.0 | 338.8 | 29956.7 | -291.0 | 3.5 | 441.8 | 116.5 |
+| All 2 | 4832 | 738.9 | 362.9 | 29941.8 | -301.7 | 3.7 | 429.0 | 2142.1 |
+
+Hull-targeted refinement captures most surge/pitch movement with far fewer
+panels. At level two, the warm current-energy component is 18.4 times faster
+than uniform refinement; single offset fields cost 25 versus 375 ms. These
+are medians of four actual offset operations, excluding cold geometry/JIT;
+they are not whole-stage or simulation throughput. Sway, roll and yaw still
+differ, and uniform level two is not established truth. The pitch difference
+is smaller than the sum of h-pair changes, not a certified error bound.
+The smaller boundary is a promising candidate, not a qualified adaptive policy
+or a replacement for parent-state enrichment and nonlinear 6DOF/open-water
+validation. Machine-readable six-axis loads, accelerations, differentiation
+sensitivity, actual class counts, timings, memory and provenance are in
+`docs/research/boat-refinement-allocation.json`; raw reports/checkpoints are
+`artifacts/boat-allocation-*-fixed-direction.*`. New runs can first create a
+coarse audit, then use its JSON with `--direction-from`, `--refinement 1|2`
+and `--refinement-region body|free|all`.
