@@ -40,11 +40,15 @@ def cross(a, b):
 
 class PlanePoints:
     """Tiny reference registry: all planes are frozen before intersections."""
-    def __init__(self):
+    def __init__(self, *, max_points=None, max_intersections=None):
         self.planes, self.labels, self.cache = [], [], {}
         self.points, self.incidence, self.vertex_by_owner = [], [], {}
+        self.registered_intersections = {}
+        self.max_points, self.max_intersections = max_points, max_intersections
 
     def plane(self, points, label):
+        if self.cache:
+            raise RuntimeError('freeze every plane before computing intersections')
         a, b, c = [tuple(x if isinstance(x, F) else F(float(x)) for x in p) for p in points]
         n = cross(sub(b, a), sub(c, a))
         first = next(x for x in n if x)
@@ -64,6 +68,8 @@ class PlanePoints:
         triple = tuple(sorted(triple))
         if triple in self.cache:
             return self.cache[triple]
+        if self.max_intersections is not None and len(self.cache) >= self.max_intersections:
+            raise RuntimeError('reference intersection cap reached')
         a, b, c = (self.planes[i] for i in triple)
         determinant = dot(a[:3], cross(b[:3], c[:3]))
         if not determinant:
@@ -72,25 +78,33 @@ class PlanePoints:
         vectors = cross(b[:3], c[:3]), cross(c[:3], a[:3]), cross(a[:3], b[:3])
         point = tuple(sum(plane[3]*v[j] for plane, v in zip((a, b, c), vectors))/determinant
                       for j in range(3))
-        # Complete incidence promotes roof-edge and hull-vertex degeneracies to
-        # ONE owner regardless of the starting parent or intersection triple.
+        self.cache[triple] = point
+        return point
+
+    def register(self, triple, point):
+        triple = tuple(sorted(triple))
+        if triple in self.registered_intersections:
+            return self.registered_intersections[triple]
+        # Only accepted polytope vertices need global incidence. Outside-plane
+        # intersections cannot be required by the subsequent boundary splitting.
         owner = tuple(i for i in range(len(self.planes)) if not self.value(i, point))
         if owner not in self.vertex_by_owner:
+            if self.max_points is not None and len(self.points) >= self.max_points:
+                raise RuntimeError('reference point cap reached')
             self.vertex_by_owner[owner] = len(self.points)
             self.points.append(point)
             self.incidence.append(frozenset(owner))
         index = self.vertex_by_owner[owner]
         assert self.points[index] == point
-        self.cache[triple] = index
+        self.registered_intersections[triple] = index
         return index
 
     def polytope(self, constraints):
         vertices = set()
         for triple in combinations(sorted({i for i, _ in constraints}), 3):
-            index = self.intersection(triple)
-            if index is not None and all(sign*self.value(i, self.points[index]) <= 0
-                                         for i, sign in constraints):
-                vertices.add(index)
+            point = self.intersection(triple)
+            if point is not None and all(sign*self.value(i, point) <= 0 for i, sign in constraints):
+                vertices.add(self.register(triple, point))
         return vertices
 
     def polygon(self, vertices, plane, sign):
@@ -112,14 +126,15 @@ class PlanePoints:
         order = np.argsort(np.arctan2((xyz-center)@v, (xyz-center)@u))
         return [ids[i] for i in order]
 
-    def split_edges(self, polygon):
+    def split_edges(self, polygon, candidates):
         out = []
         for a, b in zip(polygon, polygon[1:]+polygon[:1]):
             common = self.incidence[a]&self.incidence[b]
             direction = sub(self.points[b], self.points[a])
             length2 = dot(direction, direction)
             cuts = []
-            for c, point in enumerate(self.points):
+            for c in candidates:
+                point = self.points[c]
                 if common.issubset(self.incidence[c]):
                     t = dot(sub(point, self.points[a]), direction)/length2
                     if 0 <= t < 1:
@@ -148,6 +163,87 @@ def _solid_moments(registry, vertices):
     return hull.volume, (volume[:, None]*triangles.sum(axis=1)/4).sum(axis=0)
 
 
+def hull_planes(registry, vertices, faces):
+    """Validate authored planar groups AND convexity before using halfspaces."""
+    hull = [registry.plane(vertices[faces[group[0]]], ('hull', group)) for group in GROUPS]
+    for (plane, _), group in zip(hull, GROUPS):
+        assert all(not registry.value(plane, tuple(p)) for p in vertices[faces[list(group)]].reshape(-1, 3)), 'noncoplanar facet group'
+    assert all(sign*registry.value(i, tuple(p)) <= 0 for i, sign in hull for p in vertices), 'boat is not convex'
+    return hull
+
+
+def columns(registry, roof, parents, depth=2):
+    cells, roofs, outer = [], [], []
+    edge_counts = {}
+    for parent in parents:
+        for a, b in zip(parent, parent[1:]+parent[:1]):
+            key = tuple(sorted((a, b)))
+            edge_counts[key] = edge_counts.get(key, 0)+1
+    for parent_id, parent in enumerate(parents):
+        top = registry.plane(roof[list(parent)], ('roof', parent_id))
+        bottom_points = roof[list(parent)].copy(); bottom_points[:, 2] = -depth
+        bottom = registry.plane(bottom_points[::-1], ('bottom', parent_id))
+        sides, exposed = [], [top, bottom]
+        for a, b in zip(parent, parent[1:]+parent[:1]):
+            p = roof[[a, b, b]].copy(); p[2, 2] = -depth
+            side = registry.plane(p[[0, 2, 1]], ('background_edge', tuple(sorted((a, b)))))
+            sides.append(side)
+            if edge_counts[tuple(sorted((a, b)))] == 1:
+                exposed.append(side)
+        cells.append([top, bottom, *sides]); roofs.append(top); outer.append(exposed)
+    return cells, roofs, outer
+
+
+def cell_polygons(registry, hull, constraints, exposed, parent_id, body_seen, *, outside_bbox=False):
+    """One column's exposed boundary; physical hull groups retain their IDs."""
+    polygons, duplicates = [], 0
+    if outside_bbox:
+        outside = registry.polytope(constraints)
+        for boundary, direction in exposed:
+            polygon = registry.polygon(outside, boundary, direction)
+            if polygon:
+                polygons.append((polygon, boundary, direction, 'column', parent_id))
+        return polygons, 0., np.zeros(3), 0
+    for j, (plane, sign) in enumerate(hull):
+        outside = registry.polytope([*constraints, *hull[:j], (plane, -sign)])
+        for boundary, direction in exposed:
+            polygon = registry.polygon(outside, boundary, direction)
+            if polygon:
+                polygons.append((polygon, boundary, direction, 'column', parent_id))
+    solid = registry.polytope([*constraints, *hull])
+    volume, first = _solid_moments(registry, solid)
+    for group_id, (plane, sign) in enumerate(hull[:-1]):
+        polygon = registry.polygon(solid, plane, -sign)
+        if polygon:
+            key = plane, tuple(sorted(polygon))
+            if key in body_seen:
+                duplicates += 1
+                continue
+            body_seen.add(key)
+            polygons.append((polygon, plane, -sign, 'body', group_id))
+    return polygons, volume, first, duplicates
+
+
+def triangulate(registry, polygons):
+    # Every ACTUAL boundary cutpoint is propagated globally, including points
+    # introduced by neighboring parents. Unused infinite-plane intersections
+    # are not geometric boundary vertices and need not refine the output.
+    candidates = sorted({v for polygon, *_ in polygons for v in polygon})
+    polygons = [(registry.split_edges(p, candidates), plane, sign, kind, parent)
+                for p, plane, sign, kind, parent in polygons]
+    points = [tuple(p) for p in registry.points]
+    faces, kinds, source, planes = [], [], [], []
+    for polygon, plane, sign, kind, parent in polygons:
+        center = tuple(sum(points[i][j] for i in polygon)/len(polygon) for j in range(3))
+        ci = len(points); points.append(center)
+        for a, b in zip(polygon, polygon[1:]+polygon[:1]):
+            faces.append([ci, a, b]); kinds.append(kind); source.append(parent); planes.append(plane)
+    active, inverse = np.unique(faces, return_inverse=True)
+    mesh = HullMesh(np.array([points[i] for i in active], dtype=float), inverse.reshape(-1, 3))
+    return mesh, dict(active=active, polygons=polygons, points=points,
+                      kinds=np.array(kinds), source=np.array(source), planes=np.array(planes))
+
+
 def build(heights=(0., 0., 0., 0.)):
     """Closed fluid patch around the boat's actual transom/port-chine corner.
 
@@ -168,49 +264,17 @@ def build(heights=(0., 0., 0., 0.)):
     roof = np.column_stack((xy, [F(float(x)) for x in heights]))
     parents = ((0, 1, 2), (1, 3, 2))
     registry = PlanePoints()
-    hull = [registry.plane(vertices[body.mesh.faces[group[0]]], ('hull', group)) for group in GROUPS]
-    raw = list(map(tuple, vertices))
-    assert all(sign*registry.value(i, p) <= 0 for i, sign in hull for p in raw), 'boat is not convex'
-    cells, roofs, outer = [], [], []
-    edge_counts = {}
-    for parent in parents:
-        for a, b in zip(parent, parent[1:]+parent[:1]):
-            edge_counts[tuple(sorted((a, b)))] = edge_counts.get(tuple(sorted((a, b))), 0)+1
-    for parent_id, parent in enumerate(parents):
-        top = registry.plane(roof[list(parent)], ('roof', parent_id))
-        bottom_points = roof[list(parent)].copy(); bottom_points[:, 2] = -2
-        bottom = registry.plane(bottom_points[::-1], ('bottom', parent_id))
-        sides, exposed = [], [top, bottom]
-        for a, b in zip(parent, parent[1:]+parent[:1]):
-            p = roof[[a, b, b]].copy(); p[2, 2] = -2
-            side = registry.plane(p[[0, 2, 1]], ('background_edge', tuple(sorted((a, b)))))
-            sides.append(side)
-            if edge_counts[tuple(sorted((a, b)))] == 1:
-                exposed.append(side)
-        cells.append([top, bottom, *sides]); roofs.append(top); outer.append(exposed)
+    hull = hull_planes(registry, vertices, body.mesh.faces)
+    cells, roofs, outer = columns(registry, roof, parents)
     polygons, solid_volume, solid_first, column_volume, column_first = [], 0., np.zeros(3), 0., np.zeros(3)
     duplicate_body_faces = 0
     body_seen = set()
     for parent_id, constraints in enumerate(cells):
-        for j, (plane, sign) in enumerate(hull):
-            # First violated hull plane partitions the cell exterior disjointly.
-            outside = registry.polytope([*constraints, *hull[:j], (plane, -sign)])
-            for boundary, direction in outer[parent_id]:
-                polygon = registry.polygon(outside, boundary, direction)
-                if polygon:
-                    polygons.append((polygon, boundary, direction, 'column', parent_id))
-        solid = registry.polytope([*constraints, *hull])
-        volume, first = _solid_moments(registry, solid)
+        pieces, volume, first, duplicate = cell_polygons(registry, hull, constraints,
+                                                         outer[parent_id], parent_id, body_seen)
+        polygons.extend(pieces)
+        duplicate_body_faces += duplicate
         solid_volume += volume; solid_first += first
-        for group_id, (plane, sign) in enumerate(hull[:-1]):
-            polygon = registry.polygon(solid, plane, -sign)
-            if polygon:
-                key = plane, tuple(sorted(polygon))
-                if key in body_seen:
-                    duplicate_body_faces += 1
-                    continue  # Explicit one-parent ownership, same physical face.
-                body_seen.add(key)
-                polygons.append((polygon, plane, -sign, 'body', group_id))
         points = np.asarray(roof[list(parents[parent_id])], dtype=float)
         area = abs(np.linalg.det(points[1:, :2]-points[:1, :2]))/2
         bary = np.full((3, 3), 1/6); np.fill_diagonal(bary, 2/3)
@@ -218,20 +282,9 @@ def build(heights=(0., 0., 0., 0.)):
         column_volume += area*(sample[:, 2]+2).mean()
         column_first += area*np.r_[(sample[:, :2]*(sample[:, 2:]+2)).mean(axis=0),
                                    ((sample[:, 2]**2-4)/2).mean()]
-    # All global intersections exist BEFORE any edge subdivision/triangulation.
-    polygons = [(registry.split_edges(p), plane, sign, kind, parent)
-                for p, plane, sign, kind, parent in polygons]
-    points = [tuple(p) for p in registry.points]
-    faces, kinds, source = [], [], []
-    for polygon, plane, sign, kind, parent in polygons:
-        center = tuple(sum(points[i][j] for i in polygon)/len(polygon) for j in range(3))
-        ci = len(points); points.append(center)
-        for a, b in zip(polygon, polygon[1:]+polygon[:1]):
-            faces.append([ci, a, b]); kinds.append(kind); source.append(parent)
-    active, inverse = np.unique(faces, return_inverse=True)
-    xyz = np.array([points[i] for i in active], dtype=float)
-    faces = inverse.reshape(-1, 3)
-    mesh = HullMesh(xyz, faces)
+    mesh, meta = triangulate(registry, polygons)
+    active, polygons, points = meta['active'], meta['polygons'], meta['points']
+    xyz, faces = mesh.vertices, mesh.faces
     triangles = xyz[faces]
     tetra = np.einsum('fi,fi->f', triangles[:, 0], np.cross(triangles[:, 1], triangles[:, 2]))/6
     volume = tetra.sum()
