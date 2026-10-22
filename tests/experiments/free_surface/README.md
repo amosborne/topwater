@@ -1101,3 +1101,31 @@ checks; longer nonlinear space/time/energy studies; open deep-water generation,
 absorption and domain convergence; instantaneous wetted-body coupling and
 finite-frequency Capytaine validation. There is no breaking/flooding solver,
 checkpoint format or public simulation API in this experiment.
+
+## Canonical SoCal incident-field cost
+
+`incident_baseline_benchmark.py` evaluates the selected observed SoCal spectrum
+with seed 42 and the 24 ft by 9 ft boat's scale. It reports measured-band
+frequency/derivative quantiles, reconstructed directional spread, and nine
+analytic linear incident outputs at 256/1,024/4,096 query points. It compares
+48/96/192/384-component realizations with per-band variance retained. Different
+component counts have different phases/directional samples; they are not
+pointwise approximations of one fixed history.
+
+```powershell
+$env:OPENBLAS_NUM_THREADS='1'; $env:OMP_NUM_THREADS='1'; $env:MKL_NUM_THREADS='1'
+uv run --locked --python 3.12 --with "cupy-cuda12x[ctk]==14.2.0" python -m tests.experiments.free_surface.incident_baseline_benchmark
+```
+
+The bounded driver refuses to overwrite
+`artifacts/canonical-sea-incident-benchmark.json`. GPU timing is optional if its
+runtime is unavailable. Warmed device-resident and transfer-inclusive times are
+reported separately; compilation/import time is separate. On this machine,
+384 components at 4,096 points took about 2.6 ms including transfers, so reducing
+the incident spectrum is unnecessary for this component's cost. The independent
+CPU control checks potential gradients and linear free-surface identities.
+
+Query clouds are workload controls, not fluid/hull meshes. These timings exclude
+the fluid operator, total pressure, body motion and initialization. Neither the
+energy bandwidth nor this kernel benchmark establishes spatial resolution,
+force/motion accuracy, safe conditions or end-to-end simulation throughput.
