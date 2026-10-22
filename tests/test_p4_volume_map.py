@@ -2,10 +2,11 @@
 from itertools import permutations
 
 import numpy as np
+import pytest
 from scipy.sparse.linalg import splu
 
 from .experiments.free_surface.p4_tetra import make_mesh
-from .experiments.free_surface.p4_volume_map import make_map
+from .experiments.free_surface.p4_volume_map import make_map, make_hierarchical_map
 from .experiments.free_surface.p4_geometry import integrals, stiffness
 
 
@@ -21,10 +22,11 @@ def cube_mesh():
     return make_mesh(points, tets)
 
 
-def test_boundary_extension_translation_and_exact_transpose_work():
+@pytest.mark.parametrize("factory", [make_map, make_hierarchical_map])
+def test_boundary_extension_translation_and_exact_transpose_work(factory):
     mesh = cube_mesh()
-    mapping = make_map(mesh)
-    assert len(mapping.interior) > 0
+    mapping = factory(mesh)
+    assert len(mapping.graph.interior if hasattr(mapping, "graph") else mapping.interior) > 0
     shift = np.array([.03, -.02, .01])
     translated = mapping.lift(np.tile(shift, (len(mapping.boundary), 1)))
     np.testing.assert_allclose(translated, np.tile(shift, (len(mesh.points), 1)), atol=2e-16)
@@ -88,3 +90,21 @@ def test_curved_global_fluid_solve_recovers_physical_harmonic_flow():
     assert abs(500*solved@(matrix@solved)-expected) < 2e-9
     cell_energy = sum(integrals(coordinates[nodes], solved[nodes])['kinetic_energy'] for nodes in mesh.elements)
     assert abs(cell_energy-expected) < 2e-9
+
+
+def test_hierarchical_map_preserves_piecewise_affine_boundary_motion():
+    mesh = cube_mesh()
+    mapping = make_hierarchical_map(mesh)
+    corner_motion = np.column_stack((.03*mesh.points[:mesh.vertex_count, 1]**2,
+        .02*mesh.points[:mesh.vertex_count, 0]*mesh.points[:mesh.vertex_count, 2],
+        -.01*mesh.points[:mesh.vertex_count, 0]))
+    expected = mapping.barycentric_lift@corner_motion
+    actual = mapping.lift(expected[mapping.boundary])
+    np.testing.assert_allclose(actual, expected, atol=3e-17, rtol=1e-14)
+    # A genuine high-order boundary mode is retained exactly and reaches the
+    # interior; this is not a projection of all geometry onto the P1 space.
+    boundary_high = np.flatnonzero(mapping.boundary >= mesh.vertex_count)[0]
+    high = np.zeros((len(mapping.boundary), 3)); high[boundary_high, 2] = .001
+    changed = mapping.lift(high)
+    np.testing.assert_array_equal(changed[mapping.boundary], high)
+    assert np.linalg.norm(changed[mapping.graph.interior]) > 0
