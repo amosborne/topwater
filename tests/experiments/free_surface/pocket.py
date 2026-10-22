@@ -41,35 +41,31 @@ def grid(n,amplitude,shift):
     eta=amplitude*(np.cos(.4*xx+.7*yy+.2)+.4*np.sin(.8*xx-.3*yy))
     points=np.column_stack((xx.ravel(),yy.ravel(),(-4+(4+eta)*ss).ravel()))
     numbering=np.arange(len(points)).reshape(xx.shape)
-    tets=[];near=[]
-    for i in range(nx):
-        for j in range(ny):
-            pocket=(nx//3+shift<=i<2*nx//3+shift and ny//3<=j<2*ny//3)
-            for h in range(nz):
-                base=np.array([i,j,h])
-                for order in permutations(range(3)):
-                    corners=[base.copy()]; step=base.copy()
-                    for axis in order:
-                        step=step.copy();step[axis]+=1;corners.append(step)
-                    tets.append([numbering[tuple(v)] for v in corners]);near.append(pocket)
-    return points,np.asarray(tets),np.asarray(near),numbering[:,:,-1].ravel()
+    # Each monotone path from one cube corner to its opposite defines a tet.
+    steps=np.zeros((6,4,3),dtype=int)
+    steps[:,1:]=np.cumsum(np.eye(3,dtype=int)[list(permutations(range(3)))],axis=1)
+    offsets=steps@np.array([(ny+1)*(nz+1),nz+1,1])
+    tets=(numbering[:-1,:-1,:-1].ravel()[:,None,None]+offsets).reshape(-1,4)
+    i,j=np.indices((nx,ny))
+    pocket=(nx//3+shift<=i)&(i<2*nx//3+shift)&(ny//3<=j)&(j<2*ny//3)
+    near=np.repeat(pocket.ravel(),nz*6)
+    return points,tets,near,numbering[:,:,-1].ravel()
 
 
 def boundary(points,tets):
     """Exterior triangles of a tetrahedral union, each independently oriented."""
-    records={}
-    for tet in tets:
-        for opposite in range(4):
-            face=np.delete(tet,opposite)
-            key=tuple(sorted(face))
-            if key in records:
-                records[key]=None
-            else:
-                p=points[face]
-                if np.dot(np.cross(p[1]-p[0],p[2]-p[0]),points[tet[opposite]]-p[0])>0:
-                    face=face[::-1]
-                records[key]=face
-    return np.array([face for face in records.values() if face is not None])
+    faces=tets[:,[[1,2,3],[0,2,3],[0,1,3],[0,1,2]]].reshape(-1,3)
+    _,first,counts=np.unique(np.sort(faces,axis=1),axis=0,
+                             return_index=True,return_counts=True)
+    # Keep first-encounter order as well as the original tetrahedral vertices.
+    exterior=np.sort(first[counts==1])
+    faces=faces[exterior]
+    p=points[faces]
+    # Candidate faces and tets.ravel() share tet-major/opposite-corner order.
+    inward=np.einsum('ij,ij->i',np.cross(p[:,1]-p[:,0],p[:,2]-p[:,0]),
+                     points[tets.ravel()[exterior]]-p[:,0])>0
+    faces[inward]=faces[inward,::-1]
+    return faces
 
 
 def stiffness(points,tets):
