@@ -87,6 +87,18 @@ The additional P1-interface control retains P4 elements on both sides of
 the same P1 trace restriction: flux errors are 55.5% and 19.4%. Thus accurate
 individual element spaces and algebraic interface continuity are insufficient.
 
+`p4_canoe` uses an optional temporary `meshpy` installation to tetrahedralize
+the actual current canonical canoe's closed local fluid pocket, preserving
+every marked boundary triangle. The bounded depth-one-metre test gives 3716
+tetrahedra and 43057 P4 nodes. Its tetrahedral/boundary volumes agree within
+6e-15 relative error; an independent harmonic-quartic weak-form check has
+2.83e-14 relative residual. All six inertia diagonal differences from P1 BEM
+on the identical physical domain lie between -5.56% and -0.556%. This is a
+single-mesh comparison, with unresolved waterline singularity convergence;
+neither calculation is an exact reference. Its side walls and bed differ
+from Capytaine's unbounded depth-four-metre reference, so this result is not
+a Capytaine correlation or a nonlinear solver selection.
+
 The prescribed nonlinear controller also passes an independent physical-work
 check on the moving canonical canoe with nonflat surface, all six velocities
 and imposed accelerations. Without damping, its controller supplies 1.15926 W;
