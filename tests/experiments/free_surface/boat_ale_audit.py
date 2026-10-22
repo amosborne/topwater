@@ -18,7 +18,7 @@ from .incident_baseline_benchmark import coefficients
 from .p4_fluid_ordering import fresh
 
 
-def run(pilot, output, state_case=None, time=.2, step=.001):
+def run(pilot, output, state_case=None, time=.2, step=.001, chart_path=None):
     from .cuda_operator import prepare_energy
     pilot, output = Path(pilot), fresh(output)
     source = json.loads(pilot.read_text())
@@ -77,6 +77,8 @@ def run(pilot, output, state_case=None, time=.2, step=.001):
         pose = InitialState(state[:3], state[3:7]/np.linalg.norm(state[3:7]))
         for row in source['geometry']:
             path = Path(row['path']).with_suffix('.npz')
+            if chart_path and path.resolve() != Path(chart_path).with_suffix('.npz').resolve():
+                continue
             if sha256(path.read_bytes()).hexdigest() != row['sha256']:
                 raise ValueError('pilot chart hash changed')
             with np.load(path, allow_pickle=False) as data:
@@ -142,4 +144,5 @@ if __name__ == '__main__':
     parser.add_argument('--state-case')
     parser.add_argument('--time', type=float, default=.2)
     parser.add_argument('--step', type=float, default=.001)
+    parser.add_argument('--chart-path', help='Explicit chart owned by the saved pilot; no arbitrary replacement.')
     run(**vars(parser.parse_args()))

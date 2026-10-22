@@ -191,6 +191,18 @@ def surface_rates(points, free_faces, free_nodes, parent_map, parent_psi, flux, 
         unresolved_kinematic_mass_relative=float(np.sqrt(max(0., unresolved@mass@unresolved)/flux_norm)) if flux_norm else 0.,
         maximum_parent_height_rate=float(np.max(abs(eta_rate))),
         maximum_parent_potential_rate=float(np.max(abs(psi_rate))))
+    peak_face, peak_sample = np.unravel_index(np.argmax(abs(uz)), uz.shape)
+    vertical_square = area*(uz**2@weights)
+    diagnostics.update(
+        peak_vertical_free_face_local=int(peak_face),
+        peak_vertical_location_world=(shape[peak_sample]@triangles[peak_face]).tolist(),
+        peak_vertical_projected_face_area_m2=float(area[peak_face]),
+        minimum_projected_free_face_area_m2=float(area.min()),
+        graph_flux_square_surface_integral_m4_per_s2=flux_norm,
+        vertical_square_surface_integral_m4_per_s2=float(vertical_square.sum()),
+        peak_face_vertical_square_fraction=float(vertical_square[peak_face]/vertical_square.sum())
+            if vertical_square.sum() else 0.,
+        bernoulli_absolute_surface_integral_m4_per_s2=float(np.sum(area*(abs(bernoulli)@weights))))
     return eta_rate, psi_rate, diagnostics
 
 

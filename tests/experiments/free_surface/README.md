@@ -1687,3 +1687,21 @@ at360 degrees. These are convergence targets, not achieved accuracy or a
 human-safety determination. Extreme-motion continuation is outside scope.
 The larger-budget nonlinear control still fails near .925 s; its exact trial
 is saved in `tests/data/boat-state-925ms.json` for direct regression work.
+
+`boat_motion_compare --reference <pilot> --candidate <pilot> --output <report>`
+compares accepted RK23 body cubics over a common time interval and fixed heading.
+Both cheaper body-one/q3 and body-one/q6 candidates fail the requested motion
+agreement against the unqualified finer prefix. Common early knots alone miss
+the later divergence; neither candidate earns adoption.
+
+`boat_contact_flux_audit --pilot <pilot> --chart-path <owned-chart> --output
+<report> --composite` diagnoses the accepted 0.96446 s state using ordinary
+q6/q12/q24 and equal-count composite target rules. Explicit chart ownership,
+hashes and saved q6 surface replay guard the legacy pilot's missing chart key.
+The compatible affine flow exposes numerical integration error amplified on
+small contact supports. Raw Green consistency is near roundoff, while the
+symmetrized single-layer and weak-curl identities have integration defects.
+Composite red subdivision is inferior to equal-count ordinary rules and is
+not adopted. Evidence and the full defect decomposition are recorded in
+`docs/research/boat-contact-integration.json`; this is the current correction
+target, before further long trajectories or throughput claims.

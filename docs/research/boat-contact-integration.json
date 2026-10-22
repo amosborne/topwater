@@ -1,0 +1,1387 @@
+{
+  "qualified": false,
+  "scope": "Rejected cheaper mesh controls and actual-state integration diagnosis; no completed one-second moving control or qualified ocean trajectory.",
+  "reports": {
+    "boat-motion-body1-q3-vs-body2-q6-reviewed": {
+      "path": "artifacts\\boat-motion-body1-q3-vs-body2-q6-reviewed.json",
+      "sha256": "3347ea658f2f6907701a7f4459d1e9308c43b5c4d58f288fa71da74d577971af",
+      "report": {
+        "qualified": false,
+        "scope": "Shared accepted subsecond/prefix motion comparison; RK23 cubic reconstruction, not an independently converged or open-water reference.",
+        "inputs": [
+          {
+            "path": "artifacts\\boat-ale-fresh-1s-q6-baseline.json",
+            "sha256": "b825b5dfcb31974934f3d9f852fc29687fa55374d9470c8763b0767f1650a941",
+            "arrays_sha256": "d9cb8105751ef7a9d39bda77f019c7c6e317d85dd1a556d5a8b949a71e943070",
+            "initial_geometry_metadata_sha256": "6d6a29afdda5dd5ea5392024cf7ec801ebcb0efb6a2f2d03bde73d5f0a52e046",
+            "complete": false,
+            "accepted_seconds": 0.9249306328027712,
+            "seconds": 169.65938490000553,
+            "operator_counts": {
+              "fresh_rhs": 130,
+              "reused_rhs": 0,
+              "fresh_assemblies": 393,
+              "predicted_fields": 0,
+              "failed_reuse_attempts": 0
+            },
+            "refinement": {
+              "region": "body",
+              "levels": 2
+            },
+            "quadrature_order": 6
+          },
+          {
+            "path": "artifacts\\boat-motion-body1-q3-1s.json",
+            "sha256": "d03c204b50a5ead5e257e0dcfcb27d5eb10c305a18fead08ed19bd5a8fc4d0c9",
+            "arrays_sha256": "af485f1a8ae71736b7794437eb1ca954fa102a42382f017feeec7a46b978e77e",
+            "initial_geometry_metadata_sha256": "a6932cf6f07cf6877efbb987efedc046517e7e954024706d55a649ab05d25851",
+            "complete": false,
+            "accepted_seconds": 0.9730384610136597,
+            "seconds": 92.5760306000011,
+            "operator_counts": {
+              "fresh_rhs": 150,
+              "reused_rhs": 0,
+              "fresh_assemblies": 450,
+              "predicted_fields": 0,
+              "failed_reuse_attempts": 0
+            },
+            "refinement": {
+              "region": "body",
+              "levels": 1
+            },
+            "quadrature_order": 3
+          }
+        ],
+        "heading_frame": "Fixed shared initial boat heading; surge forward, sway port, heave world up.",
+        "heading_degrees": 0.0,
+        "overlap_seconds": 0.9249306328027712,
+        "driver_changed": true,
+        "reviewed_driver_change_note": "Reviewed archived driver differences: current driver adds motion requirements and final attitude diagnostics only; physical RHS and integration controls are unchanged.",
+        "source_sha256": {
+          "boat_motion_compare.py": "b8f6b35a5ef791cc7de9c0b775dd33e75b5a5eda67a2713856302d6a9eb1629a",
+          "boat_motion_metrics.py": "b6510e87b867b467250719c49eca9eabc512173f0c37c09efb92e36513a8cc83"
+        },
+        "samples": [
+          {
+            "kind": "exact_common_knots",
+            "count": 7,
+            "first_time_seconds": 0.0,
+            "last_time_seconds": 0.3,
+            "maximum_translation_error_m": [
+              0.0017985284425331392,
+              0.0006121532016249306,
+              0.0006285703683636124
+            ],
+            "maximum_roll_pitch_yaw_error_degrees": [
+              0.0169817710849145,
+              0.02434540194985857,
+              0.006609381000629355
+            ],
+            "within_translation_target": [
+              true,
+              true,
+              true
+            ],
+            "within_angular_target": [
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "kind": "dense_common_grid",
+            "count": 551,
+            "first_time_seconds": 0.0,
+            "last_time_seconds": 0.9249306328027712,
+            "maximum_translation_error_m": [
+              0.026879942114592728,
+              0.018549020575417085,
+              0.009689944590103916
+            ],
+            "maximum_roll_pitch_yaw_error_degrees": [
+              0.4312175513628631,
+              0.17311618250158745,
+              0.1899759852758791
+            ],
+            "within_translation_target": [
+              false,
+              false,
+              true
+            ],
+            "within_angular_target": [
+              false,
+              false,
+              false
+            ]
+          }
+        ],
+        "limitations": [
+          "Matching this unqualified finer run does not establish physical accuracy.",
+          "Short weakly excited motion cannot qualify behavior over representative wave/roll periods.",
+          "Reconstructed cubic is the integrator dense output, not extra temporal accuracy.",
+          "Sampling the cubic is a numerical comparison, not a rigorous continuous-time error bound.",
+          "Combined body/quadrature change does not isolate either source of sensitivity.",
+          "Failed-run totals and differently achieved horizons are not a matched full-run speedup."
+        ],
+        "reference_maximum_absolute_roll_degrees": 1.5320768686830744
+      }
+    },
+    "boat-motion-body1-q6-vs-body2-q6": {
+      "path": "artifacts\\boat-motion-body1-q6-vs-body2-q6.json",
+      "sha256": "c6c49f3e88aafe2b09beba92d4e3ca019b48ed0d0da16c88650b9db6a6a431b4",
+      "report": {
+        "qualified": false,
+        "scope": "Shared accepted subsecond/prefix motion comparison; RK23 cubic reconstruction, not an independently converged or open-water reference.",
+        "inputs": [
+          {
+            "path": "artifacts\\boat-ale-fresh-1s-q6-baseline.json",
+            "sha256": "b825b5dfcb31974934f3d9f852fc29687fa55374d9470c8763b0767f1650a941",
+            "arrays_sha256": "d9cb8105751ef7a9d39bda77f019c7c6e317d85dd1a556d5a8b949a71e943070",
+            "initial_geometry_metadata_sha256": "6d6a29afdda5dd5ea5392024cf7ec801ebcb0efb6a2f2d03bde73d5f0a52e046",
+            "complete": false,
+            "accepted_seconds": 0.9249306328027712,
+            "seconds": 169.65938490000553,
+            "operator_counts": {
+              "fresh_rhs": 130,
+              "reused_rhs": 0,
+              "fresh_assemblies": 393,
+              "predicted_fields": 0,
+              "failed_reuse_attempts": 0
+            },
+            "refinement": {
+              "region": "body",
+              "levels": 2
+            },
+            "quadrature_order": 6
+          },
+          {
+            "path": "artifacts\\boat-motion-body1-q6-1s.json",
+            "sha256": "c8bb3bc8b29ba5e04bc7ae2dea71215be6fb7e50d42c19a78563a54a76ea9d85",
+            "arrays_sha256": "d33bf67465ac7dcb410d05b1765561a78d28c82de0c352a6b9b6a7e2932a8888",
+            "initial_geometry_metadata_sha256": "a245582e32ff703deba6f1b3bbba665dcc2ae72034566bc0b8e7f87789b03bf9",
+            "complete": false,
+            "accepted_seconds": 0.9924158858307938,
+            "seconds": 120.0284053000214,
+            "operator_counts": {
+              "fresh_rhs": 135,
+              "reused_rhs": 0,
+              "fresh_assemblies": 406,
+              "predicted_fields": 0,
+              "failed_reuse_attempts": 0
+            },
+            "refinement": {
+              "region": "body",
+              "levels": 1
+            },
+            "quadrature_order": 6
+          }
+        ],
+        "heading_frame": "Fixed shared initial boat heading; surge forward, sway port, heave world up.",
+        "heading_degrees": 0.0,
+        "overlap_seconds": 0.9249306328027712,
+        "driver_changed": true,
+        "reviewed_driver_change_note": "Reviewed archived driver differences: current driver adds motion requirements and final attitude diagnostics only; physical RHS and integration controls are unchanged.",
+        "source_sha256": {
+          "boat_motion_compare.py": "b8f6b35a5ef791cc7de9c0b775dd33e75b5a5eda67a2713856302d6a9eb1629a",
+          "boat_motion_metrics.py": "b6510e87b867b467250719c49eca9eabc512173f0c37c09efb92e36513a8cc83"
+        },
+        "samples": [
+          {
+            "kind": "exact_common_knots",
+            "count": 7,
+            "first_time_seconds": 0.0,
+            "last_time_seconds": 0.3,
+            "maximum_translation_error_m": [
+              0.0016926648028868906,
+              0.0006149333389930256,
+              0.0006449411962459739
+            ],
+            "maximum_roll_pitch_yaw_error_degrees": [
+              0.01627737003002494,
+              0.02514495663422167,
+              0.007072737459424161
+            ],
+            "within_translation_target": [
+              true,
+              true,
+              true
+            ],
+            "within_angular_target": [
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "kind": "dense_common_grid",
+            "count": 546,
+            "first_time_seconds": 0.0,
+            "last_time_seconds": 0.9249306328027712,
+            "maximum_translation_error_m": [
+              0.02299924225543329,
+              0.014857966580162342,
+              0.007472893274276304
+            ],
+            "maximum_roll_pitch_yaw_error_degrees": [
+              0.45722743594532744,
+              0.14608596498672455,
+              0.053202551133665565
+            ],
+            "within_translation_target": [
+              false,
+              false,
+              true
+            ],
+            "within_angular_target": [
+              false,
+              false,
+              true
+            ]
+          }
+        ],
+        "limitations": [
+          "Matching this unqualified finer run does not establish physical accuracy.",
+          "Short weakly excited motion cannot qualify behavior over representative wave/roll periods.",
+          "Reconstructed cubic is the integrator dense output, not extra temporal accuracy.",
+          "Sampling the cubic is a numerical comparison, not a rigorous continuous-time error bound.",
+          "Combined body/quadrature change does not isolate either source of sensitivity.",
+          "Failed-run totals and differently achieved horizons are not a matched full-run speedup."
+        ],
+        "reference_maximum_absolute_roll_degrees": 1.5320768686830744
+      }
+    },
+    "boat-common-chart-925ms-q6": {
+      "path": "artifacts\\boat-common-chart-925ms-q6.json",
+      "sha256": "58ef9e1ae986b99b8ce48ac1973e8cd6a0411dfa79d43a8ee366b2c5f8037107",
+      "report": {
+        "complete": true,
+        "qualified": false,
+        "scope": "Prescribed nonlinear boat state, fresh same-chart h/h2 pressure; no trajectory or open-water qualification.",
+        "time_seconds": 0.9249424349052261,
+        "derivative_step_seconds": 0.001,
+        "fixture_sha256": "5d4cd16a436f30afc39d96d062ab060e706dcb736716ee7e0be16351672850cf",
+        "phases": [
+          {
+            "operation": "center_energy",
+            "seconds": 2.3890879999962635
+          },
+          {
+            "operation": "offset_0.001_energy",
+            "seconds": 0.38444940000772476
+          },
+          {
+            "operation": "offset_-0.001_energy",
+            "seconds": 0.38284479998401366
+          },
+          {
+            "operation": "offset_0.0005_energy",
+            "seconds": 0.38170259998878464
+          },
+          {
+            "operation": "offset_-0.0005_energy",
+            "seconds": 0.37922589998925105
+          }
+        ],
+        "comparisons": [
+          {
+            "representation": "material quadrature",
+            "pressures": [
+              {
+                "step": 0.001,
+                "load_world": [
+                  -853.1437751515907,
+                  234.3900203446979,
+                  25921.19371828914,
+                  799.2670408630744,
+                  3091.4532118815364,
+                  -1454.3106004186102
+                ],
+                "acceleration_world": [
+                  -0.34125751006063626,
+                  0.09375600813787918,
+                  0.5584774873156557,
+                  0.6160870310605536,
+                  0.33824478946638864,
+                  -0.11554318104181095
+                ],
+                "added_mass": [
+                  [
+                    44.502281984021806,
+                    -9.000472749344377,
+                    -189.9659744548961,
+                    -1.1785098145087596,
+                    83.08521457917658,
+                    8.042631631899026
+                  ],
+                  [
+                    -9.000472749344361,
+                    349.58431471068167,
+                    -24.230186517823274,
+                    -296.2889871250079,
+                    138.04819958312757,
+                    -99.75663179728195
+                  ],
+                  [
+                    -189.96597445489624,
+                    -24.23018651782301,
+                    5222.1902305528265,
+                    178.75964927923008,
+                    1076.2005567236645,
+                    -159.50259066022812
+                  ],
+                  [
+                    -1.1785098145087571,
+                    -296.2889871250089,
+                    178.75964927923005,
+                    364.533066597954,
+                    -437.9760270424434,
+                    99.9861525189684
+                  ],
+                  [
+                    83.08521457917664,
+                    138.04819958312785,
+                    1076.2005567236672,
+                    -437.97602704244304,
+                    9177.345411399358,
+                    13.268255611485364
+                  ],
+                  [
+                    8.042631631899036,
+                    -99.75663179728205,
+                    -159.50259066022775,
+                    99.98615251896818,
+                    13.26825561148534,
+                    715.8778836877605
+                  ]
+                ],
+                "derivative_representation": "material quadrature",
+                "derivative_diagnostics": {}
+              },
+              {
+                "step": 0.0005,
+                "load_world": [
+                  -853.2100225594363,
+                  234.43334443729754,
+                  25921.166466126233,
+                  799.2844209255279,
+                  3091.2719997846953,
+                  -1454.1185185276372
+                ],
+                "acceleration_world": [
+                  -0.3412840090237745,
+                  0.09377333777491903,
+                  0.5584665864504936,
+                  0.6161010136637305,
+                  0.3382264466190808,
+                  -0.11552457958129
+                ],
+                "added_mass": [
+                  [
+                    44.502281984021806,
+                    -9.000472749344377,
+                    -189.9659744548961,
+                    -1.1785098145087596,
+                    83.08521457917658,
+                    8.042631631899026
+                  ],
+                  [
+                    -9.000472749344361,
+                    349.58431471068167,
+                    -24.230186517823274,
+                    -296.2889871250079,
+                    138.04819958312757,
+                    -99.75663179728195
+                  ],
+                  [
+                    -189.96597445489624,
+                    -24.23018651782301,
+                    5222.1902305528265,
+                    178.75964927923008,
+                    1076.2005567236645,
+                    -159.50259066022812
+                  ],
+                  [
+                    -1.1785098145087571,
+                    -296.2889871250089,
+                    178.75964927923005,
+                    364.533066597954,
+                    -437.9760270424434,
+                    99.9861525189684
+                  ],
+                  [
+                    83.08521457917664,
+                    138.04819958312785,
+                    1076.2005567236672,
+                    -437.97602704244304,
+                    9177.345411399358,
+                    13.268255611485364
+                  ],
+                  [
+                    8.042631631899036,
+                    -99.75663179728205,
+                    -159.50259066022775,
+                    99.98615251896818,
+                    13.26825561148534,
+                    715.8778836877605
+                  ]
+                ],
+                "derivative_representation": "material quadrature",
+                "derivative_diagnostics": {}
+              }
+            ]
+          },
+          {
+            "representation": "charted nodal",
+            "pressures": [
+              {
+                "step": 0.001,
+                "load_world": [
+                  -853.2336165030995,
+                  234.44885421281043,
+                  25921.200180081043,
+                  799.2864826825084,
+                  3091.210666777301,
+                  -1454.0740897968558
+                ],
+                "acceleration_world": [
+                  -0.3412934466012398,
+                  0.09377954168512419,
+                  0.5584800720324173,
+                  0.6161023860074606,
+                  0.33822014222846386,
+                  -0.1155203417703543
+                ],
+                "added_mass": [
+                  [
+                    44.502281984021806,
+                    -9.000472749344377,
+                    -189.9659744548961,
+                    -1.1785098145087596,
+                    83.08521457917658,
+                    8.042631631899026
+                  ],
+                  [
+                    -9.000472749344361,
+                    349.58431471068167,
+                    -24.230186517823274,
+                    -296.2889871250079,
+                    138.04819958312757,
+                    -99.75663179728195
+                  ],
+                  [
+                    -189.96597445489624,
+                    -24.23018651782301,
+                    5222.1902305528265,
+                    178.75964927923008,
+                    1076.2005567236645,
+                    -159.50259066022812
+                  ],
+                  [
+                    -1.1785098145087571,
+                    -296.2889871250089,
+                    178.75964927923005,
+                    364.533066597954,
+                    -437.9760270424434,
+                    99.9861525189684
+                  ],
+                  [
+                    83.08521457917664,
+                    138.04819958312785,
+                    1076.2005567236672,
+                    -437.97602704244304,
+                    9177.345411399358,
+                    13.268255611485364
+                  ],
+                  [
+                    8.042631631899036,
+                    -99.75663179728205,
+                    -159.50259066022775,
+                    99.98615251896818,
+                    13.26825561148534,
+                    715.8778836877605
+                  ]
+                ],
+                "derivative_representation": "charted nodal",
+                "derivative_diagnostics": {
+                  "maximum_body_normal_velocity_error_m_per_s": 1.6075439068785613e-07,
+                  "rms_body_normal_velocity_error_m_per_s": 3.161926559280756e-08
+                }
+              },
+              {
+                "step": 0.0005,
+                "load_world": [
+                  -853.2288725959017,
+                  234.44261009612373,
+                  25921.16566059805,
+                  799.289963912411,
+                  3091.2224195364056,
+                  -1454.075780214935
+                ],
+                "acceleration_world": [
+                  -0.3412915490383607,
+                  0.09377704403844951,
+                  0.5584662642392201,
+                  0.6161051591395117,
+                  0.3382214385147978,
+                  -0.11552040237522485
+                ],
+                "added_mass": [
+                  [
+                    44.502281984021806,
+                    -9.000472749344377,
+                    -189.9659744548961,
+                    -1.1785098145087596,
+                    83.08521457917658,
+                    8.042631631899026
+                  ],
+                  [
+                    -9.000472749344361,
+                    349.58431471068167,
+                    -24.230186517823274,
+                    -296.2889871250079,
+                    138.04819958312757,
+                    -99.75663179728195
+                  ],
+                  [
+                    -189.96597445489624,
+                    -24.23018651782301,
+                    5222.1902305528265,
+                    178.75964927923008,
+                    1076.2005567236645,
+                    -159.50259066022812
+                  ],
+                  [
+                    -1.1785098145087571,
+                    -296.2889871250089,
+                    178.75964927923005,
+                    364.533066597954,
+                    -437.9760270424434,
+                    99.9861525189684
+                  ],
+                  [
+                    83.08521457917664,
+                    138.04819958312785,
+                    1076.2005567236672,
+                    -437.97602704244304,
+                    9177.345411399358,
+                    13.268255611485364
+                  ],
+                  [
+                    8.042631631899036,
+                    -99.75663179728205,
+                    -159.50259066022775,
+                    99.98615251896818,
+                    13.26825561148534,
+                    715.8778836877605
+                  ]
+                ],
+                "derivative_representation": "charted nodal",
+                "derivative_diagnostics": {
+                  "maximum_body_normal_velocity_error_m_per_s": 4.01885105194566e-08,
+                  "rms_body_normal_velocity_error_m_per_s": 7.904865672333266e-09
+                }
+              }
+            ]
+          }
+        ],
+        "input_sha256": {
+          "artifacts\\boat-ale-fresh-1s-q6-baseline.json": "b825b5dfcb31974934f3d9f852fc29687fa55374d9470c8763b0767f1650a941",
+          "artifacts\\boat-ale-fresh-1s-q6-baseline.npz": "d9cb8105751ef7a9d39bda77f019c7c6e317d85dd1a556d5a8b949a71e943070",
+          "tests\\data\\boat-state-925ms.json": "46e1bd290b3a8ca335337cc4eaa92ee96c6ca1e0a3edf6c245be5cad7115973b",
+          "artifacts\\boat-ale-fresh-1s-q6-baseline-geometry-34.npz": "0bde26dfbc0c7c16ad6180c4997c1e1b665854b840611b667d9a0419855ec648",
+          "artifacts\\boat-ale-fresh-1s-q6-baseline-geometry-34.json": "18e0ee4c21e77a23b8b47e4467594cd0c85981ca0073268a5fb309830f4610bd"
+        },
+        "source_sha256": {
+          "boat_ale_audit.py": "3a190c3c96ece600b4347a251a72dcb25603a537eda42c18042c3130b678e9ba",
+          "boat_ale_pressure.py": "76ceab24ef23c2a7d20359b15e15394d75df924f20b49eb61b0326da6c31c857",
+          "boat_geometry_template.py": "4bd82128a54120432af7e258bfeb14bb5db31ab599c10eb0463fc164988b6172",
+          "boat_pressure_stencil.py": "f2fb6d64f956304e4a2cfa8de0ebcf5a246cff97b80e17e6f86052b30b0c4577",
+          "boat_world_field.py": "cb976a016f8bcb01751b1cc8ac118902229cfffebb38fbfac562cb3826ed776e",
+          "boat_world_boundary.py": "e5b69c97f3087d15c4543c0d7041559fd7fbe67e2fa8422855ea27612bc52a98",
+          "body_pressure.py": "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+          "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+          "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+          "cuda_operator.py": "497e47a88cf187d6979736cab8a4da9a3b4e5cc54209582bf85f004905e466eb",
+          "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+          "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20"
+        },
+        "seconds": 5.22107539998251
+      }
+    },
+    "boat-common-chart-body2-q6-1s": {
+      "path": "artifacts\\boat-common-chart-body2-q6-1s.json",
+      "sha256": "8b419c48a2a9802f4d23fa41b83d2b5f327d5a6678a5adbeb915b0f12cbc2ceb",
+      "report": {
+        "complete": false,
+        "seconds": 181.0673078999971,
+        "accepted_simulated_seconds": 0.9644647283463897,
+        "accepted_steps": 32,
+        "source_sha256": {
+          "boat_moving.py": "27069509079d4f758d6710ef996bd9c06f36305a9d1302c520a7419405934bae",
+          "boat_geometry_template.py": "4bd82128a54120432af7e258bfeb14bb5db31ab599c10eb0463fc164988b6172",
+          "boat_world_boundary.py": "e5b69c97f3087d15c4543c0d7041559fd7fbe67e2fa8422855ea27612bc52a98",
+          "boat_parent_clip_proof.py": "1cca90c54c909b92a7b2671a17f2734122bfd489b70d0c1b21915448626dc7e4",
+          "boat_world_field.py": "cb976a016f8bcb01751b1cc8ac118902229cfffebb38fbfac562cb3826ed776e",
+          "body_pressure.py": "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+          "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+          "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+          "cuda_operator.py": "497e47a88cf187d6979736cab8a4da9a3b4e5cc54209582bf85f004905e466eb",
+          "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+          "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20",
+          "boat_operator_reuse.py": "72dad4861675c4fb8b270acf24af5ba686b2c903ef2716bb0ccba97f5cde5f95",
+          "boat_past_operator.py": "9a753e81141ea6b43af1146f21cc8023aad8fae92b30ddfa9f8ac822f3c48f5f",
+          "boat_ale_pressure.py": "76ceab24ef23c2a7d20359b15e15394d75df924f20b49eb61b0326da6c31c857",
+          "boat_motion_metrics.py": "b6510e87b867b467250719c49eca9eabc512173f0c37c09efb92e36513a8cc83"
+        },
+        "controls": {
+          "max_rhs": 200,
+          "soft_elapsed_budget_seconds": 180.0,
+          "common_pressure_chart": true,
+          "pressure_derivative": "charted nodal with explicit material fallback on chart failure",
+          "derivative_step_seconds": 0.001,
+          "rtol": 0.001,
+          "first_step_seconds": 0.05,
+          "minimum_chart_derivative_step_seconds": 1.5625e-05,
+          "max_step_seconds": 0.05,
+          "topology_templates_retained": 4,
+          "absolute_tolerance_by_component": [
+            0.001,
+            0.001,
+            0.001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.001,
+            0.001,
+            0.001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01
+          ]
+        },
+        "operator_counts": {
+          "fresh_rhs": 136,
+          "reused_rhs": 0,
+          "fresh_assemblies": 408,
+          "predicted_fields": 0,
+          "failed_reuse_attempts": 0
+        },
+        "failure": {
+          "type": "RuntimeError",
+          "message": "bounded moving-case budget exhausted between operations"
+        },
+        "common_chart_attempt_count": 0
+      }
+    },
+    "boat-contact-decomposition-964ms": {
+      "path": "artifacts\\boat-contact-decomposition-964ms.json",
+      "sha256": "b5c6cad1bef294c97909de9c5862a0d1b6908c55e18329c1cb6f0d90c2ac02c4",
+      "report": {
+        "complete": true,
+        "qualified": false,
+        "scope": "Actual accepted diagnostic-tank state; quadrature and affine harmonic controls, no trajectory or open-water qualification.",
+        "time_seconds": 0.9644647283463897,
+        "original_surface": {
+          "fine_mass_condition": 7.435776011350688,
+          "parent_mass_condition": 6.967409277767876,
+          "conditioning_roundoff_budget": 1e-08,
+          "condition_measure": "LAPACK one-norm estimate of diagonally equilibrated mass from Cholesky factor",
+          "maximum_fine_normal_flux_density": 681.1514538526652,
+          "maximum_fine_vertical_velocity_at_quadrature": 599.3327404855136,
+          "maximum_bernoulli_rate_at_quadrature": 181073.01959003235,
+          "unresolved_kinematic_mass_relative": 0.6587016755058603,
+          "maximum_parent_height_rate": 1.7969359628559523,
+          "maximum_parent_potential_rate": 2.2121332048384157
+        },
+        "rows": [
+          {
+            "order": 6,
+            "target_subdivision_levels": 0,
+            "affine_pair_control": {
+              "raw_green_relative": 2.255440822380633e-15,
+              "symmetrized_green_relative": 1.3799216645438803e-05,
+              "reciprocity_action_relative": 1.3799216645295265e-05,
+              "raw_green_maximum": 2.831068712794149e-15,
+              "reciprocity_action_maximum": 1.3154869635301223e-05,
+              "raw_weak_curl_relative": 7.71404402290757e-05,
+              "symmetric_weak_curl_relative": 0.00010067945695380952,
+              "propagated_auxiliary_relative": 3.997540350990904e-05,
+              "full_defect_decomposition_maximum": 6.257690525967533e-15
+            },
+            "integration_diagnostics": {
+              "v_quadrature_asymmetry": 9.382499967323409e-05,
+              "h_constant_norm": 1.0685896612017132e-15,
+              "operator_bytes": {
+                "single_layer_factor": 9469952,
+                "mixed_trace": 4752384,
+                "energy": 2384928
+              }
+            },
+            "energy_constant_maximum": 5.3090722205837754e-14,
+            "seconds": 3.0136164000141434,
+            "actual_surface": {
+              "fine_mass_condition": 7.435776011350688,
+              "parent_mass_condition": 6.967409277767876,
+              "conditioning_roundoff_budget": 1e-08,
+              "condition_measure": "LAPACK one-norm estimate of diagonally equilibrated mass from Cholesky factor",
+              "maximum_fine_normal_flux_density": 681.1514538527974,
+              "maximum_fine_vertical_velocity_at_quadrature": 599.3327404856299,
+              "maximum_bernoulli_rate_at_quadrature": 181073.01959010263,
+              "unresolved_kinematic_mass_relative": 0.6587016755058619,
+              "maximum_parent_height_rate": 1.7969359628559485,
+              "maximum_parent_potential_rate": 2.2121332048384033,
+              "peak_vertical_free_face_local": 204,
+              "peak_vertical_location_world": [
+                1.1471959823682614,
+                1.1343396493701519,
+                0.2325821769745815
+              ],
+              "peak_vertical_projected_face_area_m2": 1.7874471858427889e-06,
+              "minimum_projected_free_face_area_m2": 1.787447185842446e-06,
+              "graph_flux_square_surface_integral_m4_per_s2": 12.051916152192511,
+              "vertical_square_surface_integral_m4_per_s2": 11.773492622825653,
+              "peak_face_vertical_square_fraction": 0.011119993009765563,
+              "bernoulli_absolute_surface_integral_m4_per_s2": 54.717435132177904,
+              "peak_distance_to_contact_m": 1.1001932414252711e-05,
+              "peak_free_parent": 10
+            },
+            "relative_field_residual": 1.3984259747421317e-14,
+            "affine_control": {
+              "velocity": [
+                0.3,
+                -0.2,
+                0.4
+              ],
+              "gauge_constant": 0.7,
+              "maximum_potential_error": 0.0012040471108476503,
+              "weak_consistency_relative": 0.00011210292286594379,
+              "maximum_graph_flux_error": 13.640864673534296,
+              "graph_flux_mass_relative": 0.004101520560852833,
+              "exact_vertical_velocity_m_per_s": 0.4,
+              "recovered_surface": {
+                "fine_mass_condition": 7.435776011350688,
+                "parent_mass_condition": 6.967409277767876,
+                "conditioning_roundoff_budget": 1e-08,
+                "condition_measure": "LAPACK one-norm estimate of diagonally equilibrated mass from Cholesky factor",
+                "maximum_fine_normal_flux_density": 14.046684093090096,
+                "maximum_fine_vertical_velocity_at_quadrature": 12.234619679675898,
+                "maximum_bernoulli_rate_at_quadrature": 75.3931421896385,
+                "unresolved_kinematic_mass_relative": 0.03644184718953657,
+                "maximum_parent_height_rate": 0.4448920001570711,
+                "maximum_parent_potential_rate": 0.03308692656999378,
+                "peak_vertical_free_face_local": 183,
+                "peak_vertical_location_world": [
+                  1.1388597486020844,
+                  1.134491799791947,
+                  0.23303698569288944
+                ],
+                "peak_vertical_projected_face_area_m2": 1.7874471858427889e-06,
+                "minimum_projected_free_face_area_m2": 1.787447185842446e-06,
+                "graph_flux_square_surface_integral_m4_per_s2": 9.91740666939164,
+                "vertical_square_surface_integral_m4_per_s2": 9.777420095207031,
+                "peak_face_vertical_square_fraction": 4.835447208529635e-06,
+                "bernoulli_absolute_surface_integral_m4_per_s2": 1.0027464027624151
+              },
+              "independently_projected_surface": {
+                "fine_mass_condition": 7.435776011350688,
+                "parent_mass_condition": 6.967409277767876,
+                "conditioning_roundoff_budget": 1e-08,
+                "condition_measure": "LAPACK one-norm estimate of diagonally equilibrated mass from Cholesky factor",
+                "maximum_fine_normal_flux_density": 0.4725931567514282,
+                "maximum_fine_vertical_velocity_at_quadrature": 0.44809989244515447,
+                "maximum_bernoulli_rate_at_quadrature": 0.043083137731125584,
+                "unresolved_kinematic_mass_relative": 0.03622831897542927,
+                "maximum_parent_height_rate": 0.44490966343908617,
+                "maximum_parent_potential_rate": 0.033105183656019124,
+                "peak_vertical_free_face_local": 42,
+                "peak_vertical_location_world": [
+                  -2.9810220560744574,
+                  0.014813643165417001,
+                  0.11548864852324986
+                ],
+                "peak_vertical_projected_face_area_m2": 0.0019894300395353645,
+                "minimum_projected_free_face_area_m2": 1.787447185842446e-06,
+                "graph_flux_square_surface_integral_m4_per_s2": 9.91725963859524,
+                "vertical_square_surface_integral_m4_per_s2": 9.777256382909652,
+                "peak_face_vertical_square_fraction": 3.6628926583169156e-05,
+                "bernoulli_absolute_surface_integral_m4_per_s2": 1.002582400859152
+              },
+              "maximum_parent_rate_error": 8.28228182568648e-05
+            },
+            "body_motion_decomposition": {
+              "maximum_absolute_radiation_contributions_m_per_s": [
+                4.670983055247125,
+                4.685659976812458,
+                499.0974703778567,
+                4.040570997589564,
+                20.411550979659182,
+                2.7784770043919003
+              ],
+              "maximum_absolute_stationary_density_m_per_s": 162.88984956691388
+            }
+          },
+          {
+            "order": 12,
+            "target_subdivision_levels": 0,
+            "affine_pair_control": {
+              "raw_green_relative": 1.603921419398926e-15,
+              "symmetrized_green_relative": 8.643972713511803e-07,
+              "reciprocity_action_relative": 8.643972713493035e-07,
+              "raw_green_maximum": 2.3314683517128287e-15,
+              "reciprocity_action_maximum": 9.167680237316906e-07,
+              "raw_weak_curl_relative": 5.592544255836456e-06,
+              "symmetric_weak_curl_relative": 9.46363143570424e-06,
+              "propagated_auxiliary_relative": 5.943389387845592e-06,
+              "full_defect_decomposition_maximum": 8.056207414864071e-15
+            },
+            "integration_diagnostics": {
+              "v_quadrature_asymmetry": 6.909754423109001e-06,
+              "h_constant_norm": 7.7021722333370235e-16,
+              "operator_bytes": {
+                "single_layer_factor": 9469952,
+                "mixed_trace": 4752384,
+                "energy": 2384928
+              }
+            },
+            "energy_constant_maximum": 7.777784149979799e-14,
+            "seconds": 0.8340167000133079,
+            "actual_surface": {
+              "fine_mass_condition": 7.435776011350688,
+              "parent_mass_condition": 6.967409277767876,
+              "conditioning_roundoff_budget": 1e-08,
+              "condition_measure": "LAPACK one-norm estimate of diagonally equilibrated mass from Cholesky factor",
+              "maximum_fine_normal_flux_density": 726.4568759196386,
+              "maximum_fine_vertical_velocity_at_quadrature": 639.0198368232625,
+              "maximum_bernoulli_rate_at_quadrature": 205848.2022915184,
+              "unresolved_kinematic_mass_relative": 0.6599108969865048,
+              "maximum_parent_height_rate": 1.7966154350902346,
+              "maximum_parent_potential_rate": 2.202434195677742,
+              "peak_vertical_free_face_local": 204,
+              "peak_vertical_location_world": [
+                1.1471959823682614,
+                1.1343396493701519,
+                0.2325821769745815
+              ],
+              "peak_vertical_projected_face_area_m2": 1.7874471858427889e-06,
+              "minimum_projected_free_face_area_m2": 1.787447185842446e-06,
+              "graph_flux_square_surface_integral_m4_per_s2": 12.083437618978245,
+              "vertical_square_surface_integral_m4_per_s2": 11.804524906984572,
+              "peak_face_vertical_square_fraction": 0.012405564343393476,
+              "bernoulli_absolute_surface_integral_m4_per_s2": 54.73415247550281,
+              "peak_distance_to_contact_m": 1.1001932414252711e-05,
+              "peak_free_parent": 10
+            },
+            "relative_field_residual": 1.4019819685952614e-14,
+            "affine_control": {
+              "velocity": [
+                0.3,
+                -0.2,
+                0.4
+              ],
+              "gauge_constant": 0.7,
+              "maximum_potential_error": 0.00025833682041553896,
+              "weak_consistency_relative": 1.2234005420139894e-05,
+              "maximum_graph_flux_error": 3.9849049626539306,
+              "graph_flux_mass_relative": 0.0010899031486086123,
+              "exact_vertical_velocity_m_per_s": 0.4,
+              "recovered_surface": {
+                "fine_mass_condition": 7.435776011350688,
+                "parent_mass_condition": 6.967409277767876,
+                "conditioning_roundoff_budget": 1e-08,
+                "condition_measure": "LAPACK one-norm estimate of diagonally equilibrated mass from Cholesky factor",
+                "maximum_fine_normal_flux_density": 4.390724382209731,
+                "maximum_fine_vertical_velocity_at_quadrature": 3.8805966778825653,
+                "maximum_bernoulli_rate_at_quadrature": 7.526707361409888,
+                "unresolved_kinematic_mass_relative": 0.03624335345213543,
+                "maximum_parent_height_rate": 0.44490787029865525,
+                "maximum_parent_potential_rate": 0.03310365343049578,
+                "peak_vertical_free_face_local": 183,
+                "peak_vertical_location_world": [
+                  1.1388597486020844,
+                  1.134491799791947,
+                  0.23303698569288944
+                ],
+                "peak_vertical_projected_face_area_m2": 1.7874471858427889e-06,
+                "minimum_projected_free_face_area_m2": 1.787447185842446e-06,
+                "graph_flux_square_surface_integral_m4_per_s2": 9.917269877308557,
+                "vertical_square_surface_integral_m4_per_s2": 9.777268029435938,
+                "peak_face_vertical_square_fraction": 5.586699146586498e-07,
+                "bernoulli_absolute_surface_integral_m4_per_s2": 1.0026101228674622
+              },
+              "independently_projected_surface": {
+                "fine_mass_condition": 7.435776011350688,
+                "parent_mass_condition": 6.967409277767876,
+                "conditioning_roundoff_budget": 1e-08,
+                "condition_measure": "LAPACK one-norm estimate of diagonally equilibrated mass from Cholesky factor",
+                "maximum_fine_normal_flux_density": 0.4725931567514282,
+                "maximum_fine_vertical_velocity_at_quadrature": 0.44809989244515447,
+                "maximum_bernoulli_rate_at_quadrature": 0.043083137731125584,
+                "unresolved_kinematic_mass_relative": 0.03622831897542927,
+                "maximum_parent_height_rate": 0.44490966343908617,
+                "maximum_parent_potential_rate": 0.033105183656019124,
+                "peak_vertical_free_face_local": 42,
+                "peak_vertical_location_world": [
+                  -2.9810220560744574,
+                  0.014813643165417001,
+                  0.11548864852324986
+                ],
+                "peak_vertical_projected_face_area_m2": 0.0019894300395353645,
+                "minimum_projected_free_face_area_m2": 1.787447185842446e-06,
+                "graph_flux_square_surface_integral_m4_per_s2": 9.91725963859524,
+                "vertical_square_surface_integral_m4_per_s2": 9.777256382909652,
+                "peak_face_vertical_square_fraction": 3.6628926583169156e-05,
+                "bernoulli_absolute_surface_integral_m4_per_s2": 1.002582400859152
+              },
+              "maximum_parent_rate_error": 6.277259267783303e-06
+            },
+            "body_motion_decomposition": {
+              "maximum_absolute_radiation_contributions_m_per_s": [
+                4.967678940773806,
+                5.054066010235089,
+                532.4524929893103,
+                4.364632107302199,
+                22.65091125599649,
+                3.1016242995922316
+              ],
+              "maximum_absolute_stationary_density_m_per_s": 172.53009241258064
+            }
+          },
+          {
+            "order": 24,
+            "target_subdivision_levels": 0,
+            "affine_pair_control": {
+              "raw_green_relative": 1.1014188867175536e-15,
+              "symmetrized_green_relative": 5.805028847582499e-08,
+              "reciprocity_action_relative": 5.805028854897222e-08,
+              "raw_green_maximum": 9.992007221626409e-16,
+              "reciprocity_action_maximum": 6.091320251563216e-08,
+              "raw_weak_curl_relative": 3.8179721034917957e-07,
+              "symmetric_weak_curl_relative": 7.832241825878629e-07,
+              "propagated_auxiliary_relative": 5.873725586132173e-07,
+              "full_defect_decomposition_maximum": 6.825753860257899e-15
+            },
+            "integration_diagnostics": {
+              "v_quadrature_asymmetry": 4.683679794754841e-07,
+              "h_constant_norm": 4.082563280494167e-16,
+              "operator_bytes": {
+                "single_layer_factor": 9469952,
+                "mixed_trace": 4752384,
+                "energy": 2384928
+              }
+            },
+            "energy_constant_maximum": 1.0608179256627659e-13,
+            "seconds": 3.085288500005845,
+            "actual_surface": {
+              "fine_mass_condition": 7.435776011350688,
+              "parent_mass_condition": 6.967409277767876,
+              "conditioning_roundoff_budget": 1e-08,
+              "condition_measure": "LAPACK one-norm estimate of diagonally equilibrated mass from Cholesky factor",
+              "maximum_fine_normal_flux_density": 724.6910779567091,
+              "maximum_fine_vertical_velocity_at_quadrature": 637.4836277009343,
+              "maximum_bernoulli_rate_at_quadrature": 204859.65929045115,
+              "unresolved_kinematic_mass_relative": 0.6600333313314836,
+              "maximum_parent_height_rate": 1.7965910789955917,
+              "maximum_parent_potential_rate": 2.2014349273307614,
+              "peak_vertical_free_face_local": 204,
+              "peak_vertical_location_world": [
+                1.1471959823682614,
+                1.1343396493701519,
+                0.2325821769745815
+              ],
+              "peak_vertical_projected_face_area_m2": 1.7874471858427889e-06,
+              "minimum_projected_free_face_area_m2": 1.787447185842446e-06,
+              "graph_flux_square_surface_integral_m4_per_s2": 12.086708128946125,
+              "vertical_square_surface_integral_m4_per_s2": 11.807701322882389,
+              "peak_face_vertical_square_fraction": 0.012362949552505949,
+              "bernoulli_absolute_surface_integral_m4_per_s2": 54.735868034015326,
+              "peak_distance_to_contact_m": 1.1001932414252711e-05,
+              "peak_free_parent": 10
+            },
+            "relative_field_residual": 1.421653888945451e-14,
+            "affine_control": {
+              "velocity": [
+                0.3,
+                -0.2,
+                0.4
+              ],
+              "gauge_constant": 0.7,
+              "maximum_potential_error": 1.8528070241052852e-05,
+              "weak_consistency_relative": 1.1165408371499312e-06,
+              "maximum_graph_flux_error": 0.8833106798880601,
+              "graph_flux_mass_relative": 0.00022766640289116142,
+              "exact_vertical_velocity_m_per_s": 0.4,
+              "recovered_surface": {
+                "fine_mass_condition": 7.435776011350688,
+                "parent_mass_condition": 6.967409277767876,
+                "conditioning_roundoff_budget": 1e-08,
+                "condition_measure": "LAPACK one-norm estimate of diagonally equilibrated mass from Cholesky factor",
+                "maximum_fine_normal_flux_density": 0.8959629657015791,
+                "maximum_fine_vertical_velocity_at_quadrature": 0.8420016344957306,
+                "maximum_bernoulli_rate_at_quadrature": 0.2927314089554051,
+                "unresolved_kinematic_mass_relative": 0.036228866253892704,
+                "maximum_parent_height_rate": 0.4449095390443096,
+                "maximum_parent_potential_rate": 0.03310509703040261,
+                "peak_vertical_free_face_local": 162,
+                "peak_vertical_location_world": [
+                  1.1431108997514006,
+                  1.1343772477259786,
+                  0.23280768934892312
+                ],
+                "peak_vertical_projected_face_area_m2": 1.7874471858427889e-06,
+                "minimum_projected_free_face_area_m2": 1.787447185842446e-06,
+                "graph_flux_square_surface_integral_m4_per_s2": 9.917259983516015,
+                "vertical_square_surface_integral_m4_per_s2": 9.777256885042446,
+                "peak_face_vertical_square_fraction": 6.740167374226874e-08,
+                "bernoulli_absolute_surface_integral_m4_per_s2": 1.0025841948819703
+              },
+              "independently_projected_surface": {
+                "fine_mass_condition": 7.435776011350688,
+                "parent_mass_condition": 6.967409277767876,
+                "conditioning_roundoff_budget": 1e-08,
+                "condition_measure": "LAPACK one-norm estimate of diagonally equilibrated mass from Cholesky factor",
+                "maximum_fine_normal_flux_density": 0.4725931567514282,
+                "maximum_fine_vertical_velocity_at_quadrature": 0.44809989244515447,
+                "maximum_bernoulli_rate_at_quadrature": 0.043083137731125584,
+                "unresolved_kinematic_mass_relative": 0.03622831897542927,
+                "maximum_parent_height_rate": 0.44490966343908617,
+                "maximum_parent_potential_rate": 0.033105183656019124,
+                "peak_vertical_free_face_local": 42,
+                "peak_vertical_location_world": [
+                  -2.9810220560744574,
+                  0.014813643165417001,
+                  0.11548864852324986
+                ],
+                "peak_vertical_projected_face_area_m2": 0.0019894300395353645,
+                "minimum_projected_free_face_area_m2": 1.787447185842446e-06,
+                "graph_flux_square_surface_integral_m4_per_s2": 9.91725963859524,
+                "vertical_square_surface_integral_m4_per_s2": 9.777256382909652,
+                "peak_face_vertical_square_fraction": 3.6628926583169156e-05,
+                "bernoulli_absolute_surface_integral_m4_per_s2": 1.002582400859152
+              },
+              "maximum_parent_rate_error": 3.375555195916924e-07
+            },
+            "body_motion_decomposition": {
+              "maximum_absolute_radiation_contributions_m_per_s": [
+                4.951917047317216,
+                5.058115501643117,
+                531.3541546457612,
+                4.357267330088874,
+                22.700837750857364,
+                3.116328900690908
+              ],
+              "maximum_absolute_stationary_density_m_per_s": 171.77082553516277
+            }
+          },
+          {
+            "order": 6,
+            "target_subdivision_levels": 1,
+            "affine_pair_control": {
+              "raw_green_relative": 2.7903749911087033e-15,
+              "symmetrized_green_relative": 3.0794280262504896e-06,
+              "reciprocity_action_relative": 3.0794280260138417e-06,
+              "raw_green_maximum": 3.774758283725532e-15,
+              "reciprocity_action_maximum": 3.1813466501579792e-06,
+              "raw_weak_curl_relative": 1.9837572031454356e-05,
+              "symmetric_weak_curl_relative": 2.879325483254975e-05,
+              "propagated_auxiliary_relative": 1.2826560559166717e-05,
+              "full_defect_decomposition_maximum": 6.738823874732815e-15
+            },
+            "integration_diagnostics": {
+              "v_quadrature_asymmetry": 2.464207895413768e-05,
+              "h_constant_norm": 2.2343238370581275e-15,
+              "operator_bytes": {
+                "single_layer_factor": 9469952,
+                "mixed_trace": 4752384,
+                "energy": 2384928
+              }
+            },
+            "energy_constant_maximum": 6.279152603275362e-14,
+            "seconds": 0.8977908000233583,
+            "actual_surface": {
+              "fine_mass_condition": 7.435776011350688,
+              "parent_mass_condition": 6.967409277767876,
+              "conditioning_roundoff_budget": 1e-08,
+              "condition_measure": "LAPACK one-norm estimate of diagonally equilibrated mass from Cholesky factor",
+              "maximum_fine_normal_flux_density": 722.6945911941251,
+              "maximum_fine_vertical_velocity_at_quadrature": 635.772271342732,
+              "maximum_bernoulli_rate_at_quadrature": 203761.21160586583,
+              "unresolved_kinematic_mass_relative": 0.6596347648926041,
+              "maximum_parent_height_rate": 1.7966780542051906,
+              "maximum_parent_potential_rate": 2.2046652319689515,
+              "peak_vertical_free_face_local": 204,
+              "peak_vertical_location_world": [
+                1.1471959823682614,
+                1.1343396493701519,
+                0.2325821769745815
+              ],
+              "peak_vertical_projected_face_area_m2": 1.7874471858427889e-06,
+              "minimum_projected_free_face_area_m2": 1.787447185842446e-06,
+              "graph_flux_square_surface_integral_m4_per_s2": 12.076131380134452,
+              "vertical_square_surface_integral_m4_per_s2": 11.797379803088056,
+              "peak_face_vertical_square_fraction": 0.012361933843380227,
+              "bernoulli_absolute_surface_integral_m4_per_s2": 54.73022965997582,
+              "peak_distance_to_contact_m": 1.1001932414252711e-05,
+              "peak_free_parent": 10
+            },
+            "relative_field_residual": 1.6151002579188838e-14,
+            "affine_control": {
+              "velocity": [
+                0.3,
+                -0.2,
+                0.4
+              ],
+              "gauge_constant": 0.7,
+              "maximum_potential_error": 0.0005100932289923144,
+              "weak_consistency_relative": 3.3556919562679314e-05,
+              "maximum_graph_flux_error": 5.160017565538017,
+              "graph_flux_mass_relative": 0.001545784143254246,
+              "exact_vertical_velocity_m_per_s": 0.4,
+              "recovered_surface": {
+                "fine_mass_condition": 7.435776011350688,
+                "parent_mass_condition": 6.967409277767876,
+                "conditioning_roundoff_budget": 1e-08,
+                "condition_measure": "LAPACK one-norm estimate of diagonally equilibrated mass from Cholesky factor",
+                "maximum_fine_normal_flux_density": 5.556118277256963,
+                "maximum_fine_vertical_velocity_at_quadrature": 4.929240319770723,
+                "maximum_bernoulli_rate_at_quadrature": 12.183844524766606,
+                "unresolved_kinematic_mass_relative": 0.0362565174257317,
+                "maximum_parent_height_rate": 0.4449046982510777,
+                "maximum_parent_potential_rate": 0.033101559366085706,
+                "peak_vertical_free_face_local": 204,
+                "peak_vertical_location_world": [
+                  1.1471959823682614,
+                  1.1343396493701519,
+                  0.2325821769745815
+                ],
+                "peak_vertical_projected_face_area_m2": 1.7874471858427889e-06,
+                "minimum_projected_free_face_area_m2": 1.787447185842446e-06,
+                "graph_flux_square_surface_integral_m4_per_s2": 9.91727808857471,
+                "vertical_square_surface_integral_m4_per_s2": 9.77727969354993,
+                "peak_face_vertical_square_fraction": 9.901124148331626e-07,
+                "bernoulli_absolute_surface_integral_m4_per_s2": 1.00263089132024
+              },
+              "independently_projected_surface": {
+                "fine_mass_condition": 7.435776011350688,
+                "parent_mass_condition": 6.967409277767876,
+                "conditioning_roundoff_budget": 1e-08,
+                "condition_measure": "LAPACK one-norm estimate of diagonally equilibrated mass from Cholesky factor",
+                "maximum_fine_normal_flux_density": 0.4725931567514282,
+                "maximum_fine_vertical_velocity_at_quadrature": 0.44809989244515447,
+                "maximum_bernoulli_rate_at_quadrature": 0.043083137731125584,
+                "unresolved_kinematic_mass_relative": 0.03622831897542927,
+                "maximum_parent_height_rate": 0.44490966343908617,
+                "maximum_parent_potential_rate": 0.033105183656019124,
+                "peak_vertical_free_face_local": 42,
+                "peak_vertical_location_world": [
+                  -2.9810220560744574,
+                  0.014813643165417001,
+                  0.11548864852324986
+                ],
+                "peak_vertical_projected_face_area_m2": 0.0019894300395353645,
+                "minimum_projected_free_face_area_m2": 1.787447185842446e-06,
+                "graph_flux_square_surface_integral_m4_per_s2": 9.91725963859524,
+                "vertical_square_surface_integral_m4_per_s2": 9.777256382909652,
+                "peak_face_vertical_square_fraction": 3.6628926583169156e-05,
+                "bernoulli_absolute_surface_integral_m4_per_s2": 1.002582400859152
+              },
+              "maximum_parent_rate_error": 1.589372864428326e-05
+            },
+            "body_motion_decomposition": {
+              "maximum_absolute_radiation_contributions_m_per_s": [
+                4.933009627267762,
+                5.014557570849471,
+                528.6043428894664,
+                4.2999116018209405,
+                22.32432273837177,
+                3.0651260864595065
+              ],
+              "maximum_absolute_stationary_density_m_per_s": 172.91916313806678
+            }
+          },
+          {
+            "order": 6,
+            "target_subdivision_levels": 2,
+            "affine_pair_control": {
+              "raw_green_relative": 3.3427661530401275e-15,
+              "symmetrized_green_relative": 7.531379611415525e-07,
+              "reciprocity_action_relative": 7.531379608988145e-07,
+              "raw_green_maximum": 4.6629367034256575e-15,
+              "reciprocity_action_maximum": 7.810966545730218e-07,
+              "raw_weak_curl_relative": 5.05839546067219e-06,
+              "symmetric_weak_curl_relative": 8.153079533661812e-06,
+              "propagated_auxiliary_relative": 4.322595062585915e-06,
+              "full_defect_decomposition_maximum": 4.014538176996737e-15
+            },
+            "integration_diagnostics": {
+              "v_quadrature_asymmetry": 6.29809695638701e-06,
+              "h_constant_norm": 2.4702462297909733e-15,
+              "operator_bytes": {
+                "single_layer_factor": 9469952,
+                "mixed_trace": 4752384,
+                "energy": 2384928
+              }
+            },
+            "energy_constant_maximum": 7.834858830182878e-14,
+            "seconds": 4.388938999996753,
+            "actual_surface": {
+              "fine_mass_condition": 7.435776011350688,
+              "parent_mass_condition": 6.967409277767876,
+              "conditioning_roundoff_budget": 1e-08,
+              "condition_measure": "LAPACK one-norm estimate of diagonally equilibrated mass from Cholesky factor",
+              "maximum_fine_normal_flux_density": 712.4423753495213,
+              "maximum_fine_vertical_velocity_at_quadrature": 626.7184852476593,
+              "maximum_bernoulli_rate_at_quadrature": 197999.1000140326,
+              "unresolved_kinematic_mass_relative": 0.6597031789997164,
+              "maximum_parent_height_rate": 1.7966128032905355,
+              "maximum_parent_potential_rate": 2.2041833530168753,
+              "peak_vertical_free_face_local": 204,
+              "peak_vertical_location_world": [
+                1.1471959823682614,
+                1.1343396493701519,
+                0.2325821769745815
+              ],
+              "peak_vertical_projected_face_area_m2": 1.7874471858427889e-06,
+              "minimum_projected_free_face_area_m2": 1.787447185842446e-06,
+              "graph_flux_square_surface_integral_m4_per_s2": 12.07755155701839,
+              "vertical_square_surface_integral_m4_per_s2": 11.798718121946507,
+              "peak_face_vertical_square_fraction": 0.011965298027565794,
+              "bernoulli_absolute_surface_integral_m4_per_s2": 54.73120758455655,
+              "peak_distance_to_contact_m": 1.1001932414252711e-05,
+              "peak_free_parent": 10
+            },
+            "relative_field_residual": 1.7927426779235308e-14,
+            "affine_control": {
+              "velocity": [
+                0.3,
+                -0.2,
+                0.4
+              ],
+              "gauge_constant": 0.7,
+              "maximum_potential_error": 0.0002194418614588356,
+              "weak_consistency_relative": 1.0173709119115653e-05,
+              "maximum_graph_flux_error": 0.9044256071116876,
+              "graph_flux_mass_relative": 0.0003660133191801111,
+              "exact_vertical_velocity_m_per_s": 0.4,
+              "recovered_surface": {
+                "fine_mass_condition": 7.435776011350688,
+                "parent_mass_condition": 6.967409277767876,
+                "conditioning_roundoff_budget": 1e-08,
+                "condition_measure": "LAPACK one-norm estimate of diagonally equilibrated mass from Cholesky factor",
+                "maximum_fine_normal_flux_density": 1.2974629552463333,
+                "maximum_fine_vertical_velocity_at_quadrature": 1.1908714222363301,
+                "maximum_bernoulli_rate_at_quadrature": 0.6502485336852899,
+                "unresolved_kinematic_mass_relative": 0.0362287851658465,
+                "maximum_parent_height_rate": 0.4449082509418142,
+                "maximum_parent_potential_rate": 0.03310450887003394,
+                "peak_vertical_free_face_local": 162,
+                "peak_vertical_location_world": [
+                  1.1425836223555907,
+                  1.134457525936662,
+                  0.2328314134460919
+                ],
+                "peak_vertical_projected_face_area_m2": 1.7874471858427889e-06,
+                "minimum_projected_free_face_area_m2": 1.787447185842446e-06,
+                "graph_flux_square_surface_integral_m4_per_s2": 9.917259467709199,
+                "vertical_square_surface_integral_m4_per_s2": 9.777257709016007,
+                "peak_face_vertical_square_fraction": 7.911556380247158e-08,
+                "bernoulli_absolute_surface_integral_m4_per_s2": 1.0025976588342802
+              },
+              "independently_projected_surface": {
+                "fine_mass_condition": 7.435776011350688,
+                "parent_mass_condition": 6.967409277767876,
+                "conditioning_roundoff_budget": 1e-08,
+                "condition_measure": "LAPACK one-norm estimate of diagonally equilibrated mass from Cholesky factor",
+                "maximum_fine_normal_flux_density": 0.4725931567514282,
+                "maximum_fine_vertical_velocity_at_quadrature": 0.44809989244515447,
+                "maximum_bernoulli_rate_at_quadrature": 0.043083137731125584,
+                "unresolved_kinematic_mass_relative": 0.03622831897542927,
+                "maximum_parent_height_rate": 0.44490966343908617,
+                "maximum_parent_potential_rate": 0.033105183656019124,
+                "peak_vertical_free_face_local": 42,
+                "peak_vertical_location_world": [
+                  -2.9810220560744574,
+                  0.014813643165417001,
+                  0.11548864852324986
+                ],
+                "peak_vertical_projected_face_area_m2": 0.0019894300395353645,
+                "minimum_projected_free_face_area_m2": 1.787447185842446e-06,
+                "graph_flux_square_surface_integral_m4_per_s2": 9.91725963859524,
+                "vertical_square_surface_integral_m4_per_s2": 9.777256382909652,
+                "peak_face_vertical_square_fraction": 3.6628926583169156e-05,
+                "bernoulli_absolute_surface_integral_m4_per_s2": 1.002582400859152
+              },
+              "maximum_parent_rate_error": 3.476376575630791e-06
+            },
+            "body_motion_decomposition": {
+              "maximum_absolute_radiation_contributions_m_per_s": [
+                4.869423570060377,
+                4.968515859890948,
+                522.5012975374586,
+                4.287677029603668,
+                22.171777213520322,
+                3.0409166720596956
+              ],
+              "maximum_absolute_stationary_density_m_per_s": 168.91696866625568
+            }
+          }
+        ],
+        "input_sha256": {
+          "artifacts\\boat-common-chart-body2-q6-1s.json": "8b419c48a2a9802f4d23fa41b83d2b5f327d5a6678a5adbeb915b0f12cbc2ceb",
+          "artifacts\\boat-common-chart-body2-q6-1s.npz": "ccf33601d8cc65e1d2ffc068e110ec9545eb7372f41649845a6f0b9472b587ca",
+          "artifacts\\boat-common-chart-body2-q6-1s-geometry-33.npz": "226ef76eb84637af3afd0c87a3df334fdc77027b6c834f1d570f975b4e862181",
+          "artifacts\\boat-common-chart-body2-q6-1s-geometry-33.json": "8ae1e7f3c34f2921634d55c40b6962c299ca7f84b10a46d7d6227e9ca13db303"
+        },
+        "source_sha256": {
+          "boat_contact_flux_audit.py": "8ee5f460b2f185208abf25eba0f1024eee95d9879f3057f2d21f9df19e77e9ed",
+          "boat_target_quadrature.py": "b50a739aaa213e01711e673185ea1a917fb1d182bd717fe7d1eb7a7c86441478",
+          "boat_world_field.py": "d797fb54fa6c45ad1e49f8211b9acbc46362ff2e3d022fbf35e09196585e5320",
+          "boat_world_boundary.py": "e5b69c97f3087d15c4543c0d7041559fd7fbe67e2fa8422855ea27612bc52a98",
+          "boat_parent_clip_proof.py": "1cca90c54c909b92a7b2671a17f2734122bfd489b70d0c1b21915448626dc7e4",
+          "boat_geometry_template.py": "4bd82128a54120432af7e258bfeb14bb5db31ab599c10eb0463fc164988b6172",
+          "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+          "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+          "cuda_operator.py": "497e47a88cf187d6979736cab8a4da9a3b4e5cc54209582bf85f004905e466eb",
+          "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+          "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20"
+        },
+        "chart_identity": {
+          "path": "artifacts\\boat-common-chart-body2-q6-1s-geometry-33.npz",
+          "node_chart_key": "4da9959649d38cb05738df13f147f634ad14c142beabd386fe63bf7e27e87c4d",
+          "selection": "Explicit owned chart, hash verified; legacy pilot has no recorded base chart key. Order-six surface replay checked below."
+        },
+        "seconds": 12.294828199985204
+      }
+    }
+  }
+}

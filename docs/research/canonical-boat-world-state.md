@@ -20,6 +20,9 @@ rotation over a 4 m lever arm displaces a point about 7 mm. The user's final
 scope clarification is ordinary motion tolerable for a person aboard; there
 is NO fixed roll-angle cutoff. The earlier 20-30 degree discussion can guide
 test coverage, but it is neither an operating limit nor a safety determination.
+Motion severity depends on rates, accelerations and combined six-DOF motion,
+not angle alone. This intended-use boundary does not define an automatic
+human-safety classifier; do not invent numerical safety thresholds from it.
 Preserve full six-DOF coupling while prioritizing
 the user's roll assessment. Do not equate local quaternion/ODE
 tolerances with this end-to-end target. Measure mesh, quadrature, time and
@@ -632,6 +635,46 @@ boat affine action. A nonlinear spectral exterior coupled to a local hull BEM
 is another larger avenue, but earlier FFT/image coupling failed; domain/interface
 flux, work and pressure must pass before another trajectory. Neither avenue has
 earned a speed claim.
+
+## Actual-state integration defect: next correction target
+
+Evidence: `boat-contact-integration.json`. Cheaper body-refinement-one runs at
+q3/q6 fail the requested motion agreement against the unqualified body-two/q6
+prefix. Over the shared 0.92493 s, maximum roll differences are 0.431/0.457
+degree and surge differences 2.69/2.30 cm. Neither cheaper run completes one
+second within its bounded work budget. The finer reference reaches only about
+1.53 degrees roll, so even agreement would not qualify representative motion.
+
+A replacement chart covers the saved 0.925 s pressure trial and allows a fresh
+whole-center/stencil audit. The opt-in runtime replacement is still experimental:
+the subsequent bounded moving run reaches 0.96446 s in 181.07 s and makes ZERO
+replacement attempts. It proves neither runtime repair nor a speed improvement.
+
+That accepted endpoint exposes a tiny free triangle (projected area 1.79e-6 m2)
+with a quadrature point 11 micrometers from the contact edge. Its recovered
+vertical speed is 599 m/s at q6. A compatible affine harmonic control on the
+SAME physical boundary proves numerical error independently of any possible
+physical corner singularity. Exact affine vertical speed is 0.4 m/s; the current
+continuous graph-flux projection independently recovers a 0.4481 m/s peak.
+The solved control peaks are 12.23, 3.88 and 0.842 m/s at q6/q12/q24. Distinguish
+the recovery method's smaller consistency error from the much larger BEM defect.
+
+Uniform red subdivision of target integration regions, retaining original
+panels, unknowns, self jumps and equations, is rejected as the next default.
+Composite q6 with four/sixteen children gives affine peaks 4.93/1.19 m/s;
+ordinary q12/q24 is better at the SAME 144/576 sample counts. These diagnostic
+costs include capture/compilation effects and are not assembly benchmarks.
+
+The raw pair matrices satisfy `H*u - Vraw*q` to about 1e-15 relative for this
+affine field. After `Vs=(Vraw+Vraw.T)/2`, the residual is 1.38e-5 at q6.
+The complete energy defect is independently decomposed as
+`E*u-b = (Ws*u + H.T*q-b) + H.T*Vs^-1*(H*u-Vs*q)`.
+Its residual closes to less than 9e-15 absolute across all five rules. Both
+the weak-curl integration and the reciprocity correction contribute; removing
+symmetrization does not repair the formulation. Improve the underlying
+reciprocal/weak integrals before another long trajectory. No clipping, smoothing
+or algebraic affine patch is adopted. The actual-state q24 peak remains about
+637 m/s; this alone cannot establish physical validity or its numerical cause.
 
 ## Primary context
 
