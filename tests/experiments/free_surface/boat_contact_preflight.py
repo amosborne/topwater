@@ -20,7 +20,7 @@ from .p4_canoe_contact import P4CanoeContact
 from .p4_fluid_ordering import fresh
 
 
-def make_chart(*, enriched=False):
+def make_chart(*, enriched=False, state=None):
     """Explicit 12 m x 6 m x 2 m surface box around the actual loaded boat.
 
     This box is solely a contact-geometry diagnostic, not an accepted wave tank.
@@ -29,7 +29,7 @@ def make_chart(*, enriched=False):
     body = reference_body()
     if body.mass != 2500:
         raise ValueError('the updated 2500 kg reference boat is required')
-    rest, _ = equilibrium()
+    rest = equilibrium()[0] if state is None else state
     box, top, top_nodes = tank(12, 6, 2, depth=2.)
     points = box.vertices*np.array([6/(2*np.pi), 3/np.pi, 1.])
     chart = CanoeContact.make(body, rest, points[box.faces[~top]],
