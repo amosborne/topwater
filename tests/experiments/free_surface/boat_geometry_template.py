@@ -6,6 +6,7 @@ Roundoff radii are engineering guards, not a formal interval proof; acceptance
 must be checked against exact-reference geometry and current physical fields.
 """
 from itertools import combinations
+from hashlib import sha256
 import json
 import numpy as np
 
@@ -15,6 +16,21 @@ from topwater.frames import rotation_matrix
 
 class InvalidTemplate(ValueError):
     pass
+
+
+def chart_key(reference):
+    """Identity of immutable node recipes/ownership, independent of pose/eta/psi."""
+    names = sorted(name for name in reference if name.startswith('template_'))
+    names += ['source_body_vertices', 'source_body_faces', 'source_body_cg', 'parents',
+              'body_faces', 'free_faces', 'wall_faces', 'bottom_faces', 'free_nodes',
+              'body_source_group', 'free_source_parent', 'free_parent_indices']
+    digest = sha256()
+    for name in [*names, 'parent_xy']:
+        value = (reference['parent_nodes'][:, :2] if name == 'parent_xy' else reference[name])
+        value = np.ascontiguousarray(value)
+        digest.update(name.encode()); digest.update(value.dtype.str.encode())
+        digest.update(str(value.shape).encode()); digest.update(value.tobytes())
+    return np.array(digest.hexdigest())
 
 
 def _plane(label, arrays, world, roof):
@@ -98,7 +114,7 @@ def export_template(registry, meta, arrays, critical_vertices):
         if not len(choices) or max(determinants) == 0:
             raise ValueError('reference witness has no independent owner triple')
         triples.append(choices[int(np.argmax(determinants))])
-    return dict(template_plane_aliases=np.array(json.dumps(aliases, default=int)),
+    result = dict(template_plane_aliases=np.array(json.dumps(aliases, default=int)),
         template_faces=arrays['faces'].copy(),
         template_owner_triples=np.asarray(triples, dtype=int),
         template_owner_determinant_sign=np.sign(np.linalg.det(canonical[np.asarray(triples), :3])),
@@ -108,6 +124,8 @@ def export_template(registry, meta, arrays, critical_vertices):
         template_fan_vertices=np.asarray(fan_vertices), template_fan_offsets=np.asarray(offsets),
         template_fan_centers=centers, template_fan_planes=np.asarray(fan_planes),
         template_fan_orientation=np.asarray(fan_signs))
+    result['node_chart_key'] = chart_key(dict(arrays, **result))
+    return result
 
 
 def _centroid(points, loop, normal):
@@ -126,6 +144,9 @@ def evaluate_template(reference, *, pose, parent_eta, parent_psi):
     if (len(reference['template_node_to_owner']) != len(reference['points'])
             or not np.array_equal(reference['faces'], reference['template_faces'])):
         raise InvalidTemplate('reference template was reindexed or refined')
+    key = chart_key(reference)
+    if 'node_chart_key' in reference and reference['node_chart_key'] != key:
+        raise InvalidTemplate('reference chart recipes or ownership changed')
     rotation, world, roof = _inputs(reference, pose, parent_eta)
     psi = np.asarray(parent_psi, dtype=float)
     if psi.shape != (len(roof),) or not np.isfinite(psi).all():
@@ -203,6 +224,7 @@ def evaluate_template(reference, *, pose, parent_eta, parent_psi):
     except ValueError as error:
         raise InvalidTemplate('current closed mesh failed its geometric guard') from error
     result = {key: value for key, value in reference.items() if not key.startswith('template_')}
+    result['node_chart_key'] = key
     result.update(points=points, parent_nodes=roof, parent_psi=psi.copy(), body_vertices=world,
                   pose_position=pose.position.copy(), pose_orientation=pose.orientation.copy())
     material = np.linalg.solve(rotation, (points-pose.position).T).T+reference['source_body_cg']

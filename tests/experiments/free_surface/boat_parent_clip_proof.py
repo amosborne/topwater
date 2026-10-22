@@ -346,6 +346,49 @@ def merge_body_polygons(registry, polygons, *, protected=(), allow_disconnected=
         group_area_and_first_moment_preserved_exactly=True)
 
 
+def polygon_ears(points, polygon, normal):
+    """Exact simple-loop ears, retaining collinear shared boundary vertices."""
+    loop, result = list(polygon), []
+    def side(a, b, c):
+        return dot(cross(sub(points[b], points[a]), sub(points[c], points[a])), normal)
+    while len(loop) > 3:
+        for i, b in enumerate(loop):
+            a, c = loop[i-1], loop[(i+1) % len(loop)]
+            if side(a, b, c) <= 0:
+                continue
+            if any(side(a, b, v) >= 0 and side(b, c, v) >= 0 and side(c, a, v) >= 0
+                   for v in loop if v not in (a, b, c)):
+                continue
+            result.append([a, b, c])
+            del loop[i]
+            break
+        else:
+            raise ValueError('wet polygon has no nondegenerate exact ear')
+    if side(*loop) <= 0:
+        raise ValueError('degenerate final wet polygon ear')
+    return [*result, loop]
+
+
+def split_nonstar_polygons(registry, polygons):
+    """Keep centroid fans where valid; exact ears partition concave exceptions.
+
+    Retain every boundary vertex, including collinear shared cutpoints. Each
+    returned triangle can use the existing centroid-fan/chart machinery.
+    """
+    points, result = registry.points, []
+    for polygon, plane, sign, kind, parent in polygons:
+        normal = tuple(sum(cross(points[a], points[b])[j]
+                           for a, b in zip(polygon, polygon[1:]+polygon[:1])) for j in range(3))
+        center = polygon_centroid(points, polygon)
+        if all(dot(cross(sub(points[a], center), sub(points[b], center)), normal) > 0
+               for a, b in zip(polygon, polygon[1:]+polygon[:1])):
+            result.append((polygon, plane, sign, kind, parent))
+            continue
+        result.extend((ear, plane, sign, kind, parent)
+                      for ear in polygon_ears(points, polygon, normal))
+    return result
+
+
 def triangulate(registry, polygons):
     # Every ACTUAL boundary cutpoint is propagated globally, including points
     # introduced by neighboring parents. Unused infinite-plane intersections
@@ -353,7 +396,11 @@ def triangulate(registry, polygons):
     candidates = sorted({v for polygon, *_ in polygons for v in polygon})
     polygons = [(registry.split_edges(p, candidates), plane, sign, kind, parent)
                 for p, plane, sign, kind, parent in polygons]
-    polygons, body_merge = merge_body_polygons(registry, polygons)
+    polygons, body_merge = merge_body_polygons(registry, polygons, require_star=False,
+                                               allow_disconnected=True)
+    merged_count = len(polygons)
+    polygons = split_nonstar_polygons(registry, polygons)
+    body_merge['additional_nonstar_polygon_pieces'] = len(polygons)-merged_count
     points = [tuple(p) for p in registry.points]
     faces, kinds, source, planes = [], [], [], []
     for polygon, plane, sign, kind, parent in polygons:

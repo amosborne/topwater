@@ -1647,3 +1647,18 @@ samples become dry in an offset mesh. The derived trial is preserved in
 timing. No dry potential is filled or extrapolated. Current evidence, including
 the failed control and the short pair with no elapsed improvement:
 `docs/research/boat-curved-operator.json`.
+
+`boat_ale_audit --pilot <pilot> --time .2 --output <audit>` freshly assembles
+the center and +/-1 ms, +/-0.5 ms operators at an accepted state, comparing
+material and strictly owned nodal ALE pressure. `--state-case` selects a saved
+regression trial instead. `boat_moving --charted-pressure` selects nodal pressure
+with explicit whole-stencil material fallback at chart topology transitions.
+Actual chart velocity supplies the Bernoulli correction; dry values are never
+extrapolated. Mixed-representation refresh comparisons are labelled separately.
+The .25 s pressure regression passes; the subsequent .275 s concave wet facet
+now uses exact ear partitioning within existing centroid-fan charts. Neither
+repair qualifies an ocean trajectory or sustained simulation throughput.
+Separate positive wet loops on a facet are retained independently; the actual
+.3375 s failed trial tests that coverage, closure and chart replay too. Ear
+clipping shares one implementation with the material-overlay experiment.
+Measured evidence: `docs/research/boat-ale-pressure.json`.

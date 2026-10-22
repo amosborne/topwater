@@ -5,6 +5,14 @@ gravity 9.81 m/s², and selected observed SoCal sea with seed 42. This is an
 architecture/force-audit proposal; no new fluid solve or implementation has
 qualified it. The failed canoe volume/chart is not the reference geometry.
 
+The optimization target is this boat/sea problem, following the user's explicit
+scope restriction. Substantially larger/smaller boats and substantially more
+energetic, faster or slower seas are outside the target. Do not spend runtime
+or add abstraction to cover them. Keep full nonlinear six-DOF motion, the
+observed directional sea and physical failure checks in timing comparisons.
+The target remains at most 20 wall seconds per simulated second on this machine,
+with real time preferred; reduced work counts alone do not meet it.
+
 **Recommendation:** investigate a surface-only variational BEM with an evolved
 fixed-world surface state and freshly reconstructed wetted boundary. First use
 fixed piecewise-affine world parents, retaining local surface response. Do not
@@ -494,6 +502,38 @@ wet chart, subtracting actual chart mesh velocity in Bernoulli. Such chart
 nodes remain wet while their material labels can slide along the hull; no dry
 potential extrapolation is warranted. Require harmonic moving-mesh identities
 and actual-boat h/h2 checks before returning to longer timing.
+
+The opt-in charted derivative now follows identical wet nodes through one
+explicitly identified base chart, using actual chart velocity in the existing
+Bernoulli chain rule. An oblique translating harmonic-flow patch with a sliding
+interior node recovers exact pressure. At the actual .25 s failed trial, material
+coverage still rejects while nodal h/h2 loads differ by at most .00435 N/Nm;
+the maximum facet-normal mesh/rigid velocity mismatch drops from 4.73e-7 to
+1.18e-7 m/s. At the covered .20 s state, nodal/material loads agree within
+.00714 N/Nm. These are derivative checks, not physical validation.
+
+At initial topology degeneracy, neither offset shares the base nodal chart.
+`boat_moving --charted-pressure` explicitly retries a wholly fresh material
+stencil on chart failure, recording representation and cost. Dry samples still
+reject. Refresh audits record both representations; a mixed comparison is not
+labelled operator-only error. Adversarial review prompted these distinctions.
+
+The next fresh run advances past .25 s, then fails at .275 s because the current
+wet-facet polygon is not star-shaped about its centroid. The exact triangulator
+now retains existing valid fans and partitions concave exceptions into exact
+ears, preserving all shared boundary cutpoints. Each ear uses the existing
+centroid-fan/chart machinery. An independent concave control verifies exact
+area, first moments and boundary edges; the actual derived .275 s state verifies
+cold construction, chart replay and closed opposite edge winding. Union-component
+counts precede ear splitting; additional pieces are reported separately.
+The subsequent run accepts .30 s, then finds multiple disconnected wet loops
+on a hull facet at the .3375 s trial. Enable the existing exact positive-loop
+support: each component retains its boundary/ownership, without bridging the
+dry gap. Holes, opposite winding and ambiguous branches still reject. The
+saved trial has the same cold/replay/closed-edge regression coverage. Exact
+ear clipping is shared with the material-overlay experiment, with no duplicate
+triangulation algorithm. No complete one-second timing has yet been earned.
+Evidence and archived measured producers: `boat-ale-pressure.json`.
 
 The larger-cost avenue remains reduction before geometry approximation. At a
 fixed geometry, six rigid modes plus fifteen parent potential modes give only

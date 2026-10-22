@@ -11,9 +11,10 @@ from tests.reference_boat import WATER_DENSITY, GRAVITY
 from .boat_world_boundary import body_material_samples, interpolate_body_trace
 from .boat_world_field import current_field, surface_rates
 from .body_pressure import evaluate_body_pressure, quadrature
+from .boat_ale_pressure import differentiate
 
 
-def evaluate(body, arrays, state, values, time, energy, offsets, offset_energies):
+def evaluate(body, arrays, state, values, time, energy, offsets, offset_energies, *, charted=False):
     pose = InitialState(state[:3], state[3:7]/np.linalg.norm(state[3:7]))
     twist = state[7:13]
     if (not np.isfinite(energy).all()
@@ -33,12 +34,20 @@ def evaluate(body, arrays, state, values, time, energy, offsets, offset_energies
             moved = offsets[dt]
             moved_field = current_field(moved, offset_energies[dt], values, twist,
                                         acceleration_columns=False, time=time+dt)
-            traces.append(interpolate_body_trace(moved, moved_field['potential'], samples, groups,
-                                                face_hints=hints))
+            traces.append(moved_field['potential'] if charted else
+                interpolate_body_trace(moved, moved_field['potential'], samples, groups, face_hints=hints))
+        diagnostics = {}
+        if charted:
+            rate, mesh_velocity, diagnostics = differentiate(arrays, offsets[h], offsets[-h],
+                traces[0], traces[1], h, pose.position, twist)
+        else:
+            rate = (traces[0]-traces[1])/(2*h)
         pressure = evaluate_body_pressure(arrays['points'], arrays['faces'], arrays['body_faces'],
             pose.position, body.mass, rotation@body.inertia_cg@rotation.T, twist,
-            field['potential'], (traces[0]-traces[1])/(2*h), mesh_velocity,
+            field['potential'], rate, mesh_velocity,
             field['acceleration_potentials'], density=WATER_DENSITY, gravity=GRAVITY)
         pressures.append(dict(step=h, load_world=pressure.hydrodynamic_load.tolist(),
-            acceleration_world=pressure.acceleration.tolist(), added_mass=pressure.added_mass.tolist()))
+            acceleration_world=pressure.acceleration.tolist(), added_mass=pressure.added_mass.tolist(),
+            derivative_representation='charted nodal' if charted else 'material quadrature',
+            derivative_diagnostics=diagnostics))
     return field, eta, psi, pressures

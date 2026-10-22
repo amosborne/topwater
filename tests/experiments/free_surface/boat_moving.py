@@ -23,6 +23,7 @@ from .boat_geometry_template import evaluate_template, InvalidTemplate
 from .boat_world_boundary import construct, body_material_samples, interpolate_body_trace
 from .boat_world_field import current_field, surface_rates, refine_boundary
 from .body_pressure import evaluate_body_pressure, quadrature
+from .boat_ale_pressure import differentiate
 from .boat_operator_reuse import LocalOperator, InvalidReuse, LIMITS
 from .boat_past_operator import PastLocalOperator, LIMITS as PAST_LIMITS
 from .incident_baseline_benchmark import coefficients
@@ -30,7 +31,7 @@ from .p4_fluid_ordering import fresh
 
 
 def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_step=.01,
-        quadrature_order=3, operator_reuse=None):
+        quadrature_order=3, operator_reuse=None, charted_pressure=False):
     from .cuda_operator import prepare_energy, cp
     if isinstance(operator_reuse, bool):
         operator_reuse = 'one-direction' if operator_reuse else None
@@ -52,6 +53,8 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
             limits=(LIMITS if operator_reuse == 'one-direction' else PAST_LIMITS) if operator_reuse else None,
             scope='Past-only local model; atomic whole-RHS fallback. Geometry limits are heuristics, not force-error bounds. Stage history can affect refresh decisions.'),
         controls=dict(max_rhs=max_rhs, soft_elapsed_budget_seconds=budget_seconds,
+            pressure_derivative=('charted nodal with explicit material fallback on chart failure'
+                                 if charted_pressure else 'material quadrature'),
             derivative_step_seconds=.001, rtol=.001, first_step_seconds=min(max_step, duration),
             max_step_seconds=max_step, topology_templates_retained=4),
         source_sha256={name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
@@ -59,7 +62,7 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
                          'boat_parent_clip_proof.py', 'boat_world_field.py', 'body_pressure.py',
                          'canoe.py', 'incident_baseline_benchmark.py',
                          'cuda_operator.py', 'cuda_energy.cu', 'cuda_pair.cuh', 'boat_operator_reuse.py',
-                         'boat_past_operator.py')})
+                         'boat_past_operator.py', 'boat_ale_pressure.py')})
     started = perf_counter()
     times, states, solver = [], [], None
     templates, cold_count, operator_model = [], 0, None
@@ -84,21 +87,24 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
         del templates[4:]
         return arrays, metadata
 
-    def geometry(pose, eta, psi, label):
+    def geometry(pose, eta, psi, label, chart=None):
         elapsed_check()
         before = perf_counter()
         reasons = []
-        for index, template in enumerate(templates):
+        for index, template in enumerate(templates if chart is None else [chart]):
             try:
                 arrays, diagnostics = evaluate_template(template, pose=pose,
                     parent_eta=eta, parent_psi=psi)
             except InvalidTemplate as error:
                 reasons.append(str(error))
                 continue
-            templates.insert(0, templates.pop(index))
+            if chart is None:
+                templates.insert(0, templates.pop(index))
             mode = 'current guarded chart'
             break
         else:
+            if chart is not None:
+                raise InvalidTemplate('pressure offsets leave the base chart: '+str(reasons))
             arrays, metadata = cold(body=body, pose=pose,
                 parent_xy=initial_geometry['parent_nodes'][:, :2], parents=initial_geometry['parents'],
                 parent_eta=eta, parent_psi=psi)
@@ -148,12 +154,14 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
         quaternion = state[3:7]/np.linalg.norm(state[3:7])
         pose = InitialState(state[:3], quaternion)
         twist, eta, psi = state[7:13], state[13:13+size], state[13+size:]
+        saved['attempted_rhs_state'], saved['attempted_rhs_time'] = state.copy(), float(time)
         arrays = geometry(pose, eta, psi, 'base')
+        selected_chart = templates[0]
         samples, groups = body_material_samples(arrays, quadrature()[0])
         hints = np.broadcast_to(np.arange(len(arrays['body_faces']))[:, None], groups.shape)
         rotation = rotation_matrix(quaternion)
 
-        def stencil(model):
+        def stencil(model, use_chart=charted_pressure):
             current, center_energy = field(arrays, twist, time, True, model)
             eta_rate, psi_rate, surface = surface_rates(arrays['points'],
                 arrays['faces'][arrays['free_faces']], arrays['free_nodes'], current['parent_map'],
@@ -165,7 +173,8 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
                     *Rotation.from_quat(quaternion, scalar_first=True)).as_quat(scalar_first=True)
                 try:
                     moved.append(geometry(InitialState(pose.position+offset*twist[:3], orientation),
-                        eta+offset*eta_rate, psi+offset*psi_rate, f'offset-{sign}'))
+                        eta+offset*eta_rate, psi+offset*psi_rate, f'offset-{sign}',
+                        chart=selected_chart if use_chart else None))
                 except ValueError as error:
                     if model is not None:
                         raise InvalidReuse('predicted direction has invalid offset geometry: '+str(error)) from error
@@ -176,14 +185,28 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
             for sign, offset_arrays in zip((1, -1), moved):
                 moved_field, energy = field(offset_arrays, twist, time+sign*.001, False, model)
                 energies.append(energy)
-                traces.append(interpolate_body_trace(offset_arrays, moved_field['potential'], samples, groups,
-                                                      face_hints=hints))
+                traces.append(moved_field['potential'] if use_chart else
+                    interpolate_body_trace(offset_arrays, moved_field['potential'], samples, groups,
+                                           face_hints=hints))
+            if use_chart:
+                try:
+                    rate, mesh_velocity, diagnostics = differentiate(arrays, *moved, *traces,
+                        .001, pose.position, twist)
+                except ValueError as error:
+                    if model is not None:
+                        raise InvalidReuse(str(error)) from error
+                    raise
+            else:
+                rate = (traces[0]-traces[1])/.002
+                mesh_velocity = twist[:3]+np.cross(twist[3:], arrays['points']-pose.position)
+                diagnostics = {}
             pressure = evaluate_body_pressure(arrays['points'], arrays['faces'], arrays['body_faces'],
                 pose.position, body.mass, rotation@body.inertia_cg@rotation.T, twist, current['potential'],
-                (traces[0]-traces[1])/.002,
-                twist[:3]+np.cross(twist[3:], arrays['points']-pose.position),
+                rate, mesh_velocity,
                 current['acceleration_potentials'], density=WATER_DENSITY, gravity=GRAVITY)
-            return pressure, eta_rate, psi_rate, surface, [arrays, *moved], energies
+            return (pressure, eta_rate, psi_rate, surface, [arrays, *moved], energies,
+                    dict(representation='charted nodal' if use_chart else 'material quadrature',
+                         diagnostics=diagnostics))
 
         result, audit_candidate = None, None
         refresh = (operator_reuse in ('past-linear', 'past-curved') and operator_model is not None
@@ -204,12 +227,26 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
                 # Discard ALL candidate values, including their surface direction.
                 # A fresh base determines both fresh pressure-offset geometries.
         if result is None:
-            result = stencil(None)
+            try:
+                result = stencil(None)
+            except InvalidTemplate as error:
+                if not charted_pressure:
+                    raise
+                # At a topology transition no common nodal chart may exist.
+                # Recompute the ENTIRE stencil with strictly wet material
+                # samples. This path still fails if those samples become dry.
+                row['pressure_derivative_fallback'] = str(error)
+                result = stencil(None, use_chart=False)
             row['operator_mode'] = 'fresh'
-        pressure, eta_rate, psi_rate, surface, stencil_arrays, stencil_energies = result
+        pressure, eta_rate, psi_rate, surface, stencil_arrays, stencil_energies, derivative = result
+        row['pressure_derivative_representation'] = derivative['representation']
+        row['pressure_derivative'] = derivative['diagnostics']
         if audit_candidate is not None:
             old_pressure, old_eta, old_psi = audit_candidate[:3]
             row['refresh_audit'] = dict(available=True, anchor_rhs_index=operator_model.rhs_index,
+                candidate_pressure_derivative=audit_candidate[6]['representation'],
+                fresh_pressure_derivative=derivative['representation'],
+                operator_only_comparison=audit_candidate[6]['representation'] == derivative['representation'],
                 hydrodynamic_load_error_world=(old_pressure.hydrodynamic_load-pressure.hydrodynamic_load).tolist(),
                 acceleration_error_world=(old_pressure.acceleration-pressure.acceleration).tolist(),
                 parent_height_rate_error_m_per_s=(old_eta-eta_rate).tolist(),
@@ -311,6 +348,7 @@ if __name__ == '__main__':
     parser.add_argument('--max-step', type=float, default=.01)
     parser.add_argument('--quadrature-order', type=int, default=3, choices=(3, 6, 12))
     parser.add_argument('--operator-reuse', nargs='?', const='one-direction', choices=('one-direction', 'past-linear', 'past-curved'))
+    parser.add_argument('--charted-pressure', action='store_true')
     result = run(**vars(parser.parse_args()))
     print(json.dumps({key: result[key] for key in
         ('complete', 'seconds', 'accepted_simulated_seconds', 'accepted_steps', 'cold_geometry_count')}))

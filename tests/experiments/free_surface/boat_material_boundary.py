@@ -13,7 +13,7 @@ import numpy as np
 
 from topwater import HullMesh
 from .boat_parent_clip_proof import (GROUPS, sub, cross, dot, polygon_centroid,
-                                     merge_body_polygons)
+                                     merge_body_polygons, polygon_ears)
 
 
 def material_cells(source, faces, refinement):
@@ -60,33 +60,6 @@ def _clip(polygon, triangle):
     area = tuple(sum(cross(p, q)[j] for p, q in zip(result, result[1:]+result[:1]))
                  for j in range(3))
     return result if any(area) else []
-
-
-def _ears(points, polygon, normal):
-    """Exact ears of a simple oriented fringe loop, preserving seam vertices."""
-    loop, result = list(polygon), []
-
-    def side(a, b, c):
-        return dot(cross(sub(points[b], points[a]), sub(points[c], points[a])), normal)
-
-    while len(loop) > 3:
-        for i, b in enumerate(loop):
-            a, c = loop[i-1], loop[(i+1) % len(loop)]
-            if side(a, b, c) <= 0:
-                continue
-            # Boundary points also block an ear: skipping one would introduce
-            # a T-junction on the shared body/free or material seam.
-            if any(side(a, b, p) >= 0 and side(b, c, p) >= 0 and side(c, a, p) >= 0
-                   for p in loop if p not in (a, b, c)):
-                continue
-            result.append([a, b, c])
-            del loop[i]
-            break
-        else:
-            raise ValueError('no exact nondegenerate ear in material fringe loop')
-    if side(*loop) <= 0:
-        raise ValueError('degenerate final material fringe ear')
-    return [*result, loop]
 
 
 def triangulate_material(registry, polygons, source, source_faces, rr, cg, position, refinement):
@@ -186,7 +159,7 @@ def triangulate_material(registry, polygons, source, source_faces, rr, cg, posit
             star = all(dot(cross(sub(points[a], center), sub(points[b], center)), normal) > 0
                        for a, b in zip(polygon, polygon[1:]+polygon[:1]))
             if not star and kind == 'body':
-                triangles = _ears(points, polygon, normal)
+                triangles = polygon_ears(points, polygon, normal)
                 nonstar.append(owner)
             else:
                 if not star:
