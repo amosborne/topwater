@@ -90,6 +90,42 @@ def test_all_six_world_twists_and_global_heights_match_geometry_fd(case):
                                    body_force@twist+height_force@rate, atol=2e-11, rtol=2e-13)
 
 
+def test_boundary_transport_matches_full_map_for_actual_pressure_work(case):
+    from .experiments.free_surface.canonical_canoe import body_map
+    from .experiments.free_surface.p4_variational_canoe import (
+        _configuration_state, _pullback, _boundary_configuration_pullback)
+
+    owner = case;position, orientation, eta = finite_state(owner)
+    state = owner.evaluate(position, orientation, eta)
+    boundary = owner.volume_map.boundary
+    twist = np.array([.07, -.04, .03, .02, -.03, .015])
+    height_rate = 3e-4*np.cos(np.arange(len(eta))*.9)
+    with threadpool_limits(1):
+        direct_velocity = state.boundary_velocity(height_rate, twist)
+        np.testing.assert_allclose(direct_velocity, state.velocity(height_rate, twist)[boundary],
+                                   atol=3e-15, rtol=3e-14)
+        # Independent physical pressure work p=rho*g*z on the complete real
+        # boundary, including hull and every free-surface height master.
+        force = owner.boundary_moments(state)['gravity_gradient']
+        direct = state.boundary_pullback(force[boundary])
+        full = state.pullback(force)
+        for actual, expected in zip(direct, full):
+            np.testing.assert_allclose(actual, expected, atol=3e-10, rtol=3e-14)
+        work = np.sum(force[boundary]*direct_velocity)
+        assert work == pytest.approx(direct[0]@twist+direct[1]@height_rate, abs=3e-10, rel=3e-14)
+        rotation = (Rotation.from_quat(orientation, scalar_first=True)
+                    *Rotation.from_quat(owner.domain.rest.orientation, scalar_first=True).inv()).as_rotvec()
+        q = np.r_[position, rotation, eta]
+        qdot = np.r_[np.linalg.solve(body_map(rotation), twist), height_rate]
+        for step in (1e-5, 5e-6):
+            plus, minus = q+step*qdot, q-step*qdot
+            old = (_pullback(_configuration_state(owner, plus), plus, force)
+                   -_pullback(_configuration_state(owner, minus), minus, force))/(2*step)
+            new = (_boundary_configuration_pullback(owner, plus, force[boundary])
+                   -_boundary_configuration_pullback(owner, minus, force[boundary]))/(2*step)
+            np.testing.assert_allclose(new, old, atol=3e-8, rtol=3e-13)
+
+
 def moment_difference(owner, plus, minus):
     """Independent physical quadrature, subtracting integrands before totals."""
     barycentric, weights = triangle_samples(np.eye(3)[None], 10)
