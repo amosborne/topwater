@@ -10,7 +10,7 @@ import json
 from pathlib import Path
 
 import numpy as np
-from scipy.sparse import coo_matrix
+from scipy.sparse import bmat,coo_matrix
 from scipy.sparse.linalg import splu
 from threadpoolctl import threadpool_limits
 
@@ -28,31 +28,34 @@ def solve(domain,frequencies,*,sponge_strength=4.,sponge_buffer=.5):
         domain.rest.orientation,np.zeros(size))
     damping,widths=sponge(points[domain.free_nodes],sponge_strength,sponge_buffer)
     mass,weighted=matrices(points,domain.free_faces,domain.free_nodes,damping)
-    mass_factor=splu(mass.tocsc())
     active=np.flatnonzero(energy.diagonal()>0)
     free=domain.free_nodes
-    indices=(np.repeat(free,size),np.tile(free,size))
+    free_active=np.searchsorted(active,free)
+    if np.any(free_active>=len(active)) or not np.array_equal(active[free_active],free):
+        raise ValueError('free surface references an inactive fluid potential node')
+    right=np.vstack((load[active],np.zeros((size,6)))).astype(complex)
     reports=[];potentials=[];heights=[]
     for omega in frequencies:
         # exp(-i omega t): D eta = Schur psi - C V; D psi = -g M eta.
-        # Eliminating eta adds D M^-1 D/g to the full fluid energy matrix.
-        derivative=weighted.toarray().astype(complex)-1j*omega*mass.toarray()
-        robin=(weighted@mass_factor.solve(weighted.toarray())-omega**2*mass.toarray()
-            -2j*omega*weighted.toarray())/9.81
-        system=energy.astype(complex)+coo_matrix((robin.ravel(),indices),shape=energy.shape).tocsr()
-        factor=splu(system[active][:,active].tocsc())
+        # Retain eta to avoid densifying the entire far free surface through
+        # M^-1. Eliminating this block recovers E + P.T*D*M^-1*D*P/g.
+        derivative=(weighted-1j*omega*mass).tocoo()
+        coupling=coo_matrix((-derivative.data,(free_active[derivative.row],derivative.col)),
+            shape=(len(active),size)).tocsc()
+        system=bmat([[energy[active][:,active].astype(complex),coupling],
+            [coupling.T,-9.81*mass]],format='csc')
+        solved=splu(system).solve(right)
         potential=np.zeros_like(load,dtype=complex)
-        potential[active]=factor.solve(load[active].astype(complex))
+        potential[active]=solved[:len(active)]
         response=load.T@potential
-        # Columns currently correspond to UNIT VELOCITY; convert heights too.
+        # Both potential and height columns correspond to unit body velocity.
         trace=potential[free]
-        eta=-(mass_factor.solve((derivative@trace).real)
-              +1j*mass_factor.solve((derivative@trace).imag))/9.81
-        residual=system@potential-load
+        eta=solved[len(active):]
+        residual=system@solved-right
         dissipation=(2*omega/9.81)*(trace.conj().T@weighted@trace)
         reports.append(dict(omega=float(omega),added_mass=(1000*response.real).tolist(),
             radiation_damping=(1000*omega*response.imag).tolist(),
-            relative_system_residual=float(np.linalg.norm(residual[active])/np.linalg.norm(load[active])),
+            relative_system_residual=float(np.linalg.norm(residual)/np.linalg.norm(right)),
             reciprocity_relative=float(np.linalg.norm(response-response.T)/np.linalg.norm(response)),
             passivity_identity_relative=float(np.linalg.norm(response.imag-dissipation)/max(np.linalg.norm(response.imag),1e-30)),
             minimum_damping_eigenvalue=float(np.linalg.eigvalsh(500*omega*(response.imag+response.imag.T)).min())))
