@@ -89,6 +89,32 @@ def integrate(model, times, motion, *, rtol=1e-10, atol=1e-12):
                 hydrodynamic_load=loads, prescribed_motion=motions)
 
 
+def comparison_norms(times, physical, loads, linear, mass, buoyancy):
+    """Shared time/mass-weighted physical-field and six-load comparison."""
+    size = mass.shape[0]
+    difference = loads-linear['hydrodynamic_load']
+    dynamic = linear['hydrodynamic_load']-buoyancy
+    duration = times[-1]-times[0]
+    summary = dict(
+        maximum_load_difference_by_row=np.max(abs(difference), axis=0).tolist(),
+        load_difference_time_rms_by_row=np.sqrt(trapezoid(difference**2, times, axis=0)/duration).tolist(),
+        linear_dynamic_load_time_rms_by_row=np.sqrt(trapezoid(dynamic**2, times, axis=0)/duration).tolist(),
+        load_units=['N']*3+['N m']*3,
+        surface_norm='Trapezoidal time RMS of the constant rest flat projected consistent-mass L2 norm.')
+    for name, actual in (('eta', physical[:, 13:13+size]), ('psi', physical[:, 13+size:])):
+        difference = actual-linear[name]
+        error_squared = np.sum(difference*(mass@difference.T).T, axis=1)
+        signal_squared = np.sum(linear[name]*(mass@linear[name].T).T, axis=1)
+        error_integral = float(trapezoid(error_squared, times))
+        signal_integral = float(trapezoid(signal_squared, times))
+        summary[name+'_maximum_absolute_difference'] = float(np.max(abs(difference)))
+        summary[name+'_mass_l2_time_rms_difference'] = float(np.sqrt(error_integral/duration))
+        summary[name+'_mass_l2_time_rms_reference'] = float(np.sqrt(signal_integral/duration))
+        summary[name+'_relative_mass_time_l2_difference'] = (
+            float(np.sqrt(error_integral/signal_integral)) if signal_integral > 0 else None)
+    return summary
+
+
 def compare(report_path, *, gpu=True):
     """Compare an existing variational NPZ; never run another nonlinear case."""
     report_path = Path(report_path)
@@ -124,27 +150,9 @@ def compare(report_path, *, gpu=True):
     size = len(domain.free_nodes)
     if physical.shape != (len(times), 13+2*size):
         raise ValueError('saved physical surface state does not match reconstructed domain')
-    difference = saved['hydrodynamic_load']-linear['hydrodynamic_load']
-    dynamic = linear['hydrodynamic_load']-model.buoyancy
-    duration = times[-1]-times[0]
     summary = dict(qualified=False, source=str(report_path),
         scope='Same finite-tank linear startup control; not spatial/nonlinear/Capytaine qualification.',
-        maximum_load_difference_by_row=np.max(abs(difference), axis=0).tolist(),
-        load_difference_time_rms_by_row=np.sqrt(trapezoid(difference**2, times, axis=0)/duration).tolist(),
-        linear_dynamic_load_time_rms_by_row=np.sqrt(trapezoid(dynamic**2, times, axis=0)/duration).tolist(),
-        load_units=['N']*3+['N m']*3,
-        surface_norm='Trapezoidal time RMS of the constant rest flat projected consistent-mass L2 norm.')
-    for name, actual in (('eta', physical[:, 13:13+size]), ('psi', physical[:, 13+size:])):
-        difference = actual-linear[name]
-        error_squared = np.sum(difference*(model.mass@difference.T).T, axis=1)
-        signal_squared = np.sum(linear[name]*(model.mass@linear[name].T).T, axis=1)
-        error_integral = float(trapezoid(error_squared, times))
-        signal_integral = float(trapezoid(signal_squared, times))
-        summary[name+'_maximum_absolute_difference'] = float(np.max(abs(difference)))
-        summary[name+'_mass_l2_time_rms_difference'] = float(np.sqrt(error_integral/duration))
-        summary[name+'_mass_l2_time_rms_reference'] = float(np.sqrt(signal_integral/duration))
-        summary[name+'_relative_mass_time_l2_difference'] = (
-            float(np.sqrt(error_integral/signal_integral)) if signal_integral > 0 else None)
+        **comparison_norms(times, physical, saved['hydrodynamic_load'], linear, model.mass, model.buoyancy))
     return summary, linear
 
 
