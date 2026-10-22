@@ -76,8 +76,8 @@ def surface_maps(geometry, state, *, order=9):
     return eta_map, transport, mass
 
 
-def assemble(geometry, q, *, volume_order=8, boundary_order=9):
-    """Assemble current physical blocks without choosing a fluid solve method.
+def geometry_data(geometry, q, *, volume_order=8, boundary_order=9):
+    """Current physical geometry, boundary maps and masses; no volume operator.
 
     q=(CG position, local rotation vector from rest, all surface heights).
     Density/gravity follow the existing canonical-canoe reference.
@@ -94,7 +94,6 @@ def assemble(geometry, q, *, volume_order=8, boundary_order=9):
     # Surface orientation is checked at its own quadrature, independently of
     # sampled volume positivity and the local contact chart's guards.
     physical_moments = geometry.boundary_moments(state, order=boundary_order)
-    energy = stiffness(geometry.mesh, state.points, order=volume_order)
     load = body_load(geometry.mesh, geometry.body_faces, state.points, q[:3], order=boundary_order)
     active = np.unique(geometry.mesh.elements)
     free = geometry.free_nodes
@@ -110,13 +109,20 @@ def assemble(geometry, q, *, volume_order=8, boundary_order=9):
                                            geometry.mesh.points, order=boundary_order)
     gravity_relative = float(np.sum(gravity-reference_gravity)
                              +domain.body.mass*9.81*(q[2]-domain.rest.position[2]))
-    return dict(q=q, orientation=orientation, state=state, energy=energy, load=load,
+    return dict(q=q, orientation=orientation, state=state, load=load,
         free=free, inside=inside, rigid_mass=rigid,
         eta_map=eta_map, eta_factor=eta_factor, body_transport=body_transport,
         mass=mass, gravity=gravity_relative,
         fluid_volume=float(volume.sum()), body_map=body_map(q[3:6]),
         volume_order=volume_order, boundary_order=boundary_order,
         physical_boundary_moments=physical_moments)
+
+
+def assemble(geometry, q, *, volume_order=8, boundary_order=9):
+    """Current physical blocks and assembled volume operator, without fluid LU."""
+    data = geometry_data(geometry, q, volume_order=volume_order, boundary_order=boundary_order)
+    data['energy'] = stiffness(geometry.mesh, data['state'].points, order=volume_order)
+    return data
 
 
 def prepare(geometry, q, *, volume_order=8, boundary_order=9):

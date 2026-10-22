@@ -70,9 +70,18 @@ def evaluate(geometry, data, momentum, *, derivative_step=1e-4):
     force along qdot; Hessian symmetry includes every configuration coordinate.
     Three small rigid rotation differences supply the explicit body-chart term.
     """
+    return action_rate(geometry, data, decode(data, momentum), derivative_step=derivative_step)
+
+
+def action_rate(geometry, data, current, *, derivative_step=1e-4, kinetic=None):
+    """Full action gradient from a decoded field, independent of its solver.
+
+    ``kinetic`` optionally supplies (physical kinetic energy, full nodal shape
+    gradient) evaluated from the same current field/geometry/quadrature. This
+    keeps boundary action, chart pullbacks and rigid dynamics in one place.
+    """
     if not np.isfinite(derivative_step) or derivative_step <= 0:
         raise ValueError('finite positive geometry derivative step required')
-    current = decode(data, momentum)
     volume_order, boundary_order = data['volume_order'], data['boundary_order']
     q, qdot = data['q'], current['qdot']
     points, potential = data['state'].points, current['potential']
@@ -87,12 +96,19 @@ def evaluate(geometry, data, momentum, *, derivative_step=1e-4):
         np.add.at(position_force, nodes, term['position_gradient'])
         np.add.at(velocity_force, nodes, term['velocity_gradient'])
         np.add.at(boundary_flux, nodes, term['potential_gradient'])
-    kinetic_gradient = np.zeros_like(points)
-    physical_kinetic = 0.
-    for nodes in geometry.mesh.elements:
-        term = cell_integrals(points[nodes], potential[nodes], order=volume_order)
-        physical_kinetic += term['kinetic_energy']
-        np.add.at(kinetic_gradient, nodes, term['kinetic_gradient'])
+    if kinetic is None:
+        kinetic_gradient = np.zeros_like(points)
+        physical_kinetic = 0.
+        for nodes in geometry.mesh.elements:
+            term = cell_integrals(points[nodes], potential[nodes], order=volume_order)
+            physical_kinetic += term['kinetic_energy']
+            np.add.at(kinetic_gradient, nodes, term['kinetic_gradient'])
+    else:
+        physical_kinetic, kinetic_gradient = kinetic
+        kinetic_gradient = np.asarray(kinetic_gradient)
+        if (not np.isfinite(physical_kinetic) or kinetic_gradient.shape != points.shape
+                or not np.all(np.isfinite(kinetic_gradient))):
+            raise ValueError('finite physical kinetic energy and full nodal shape force required')
     gravity = data['physical_boundary_moments']
     # The complete body/surface velocity term is int_boundary phi*Xdot.n:
     # body-chart tangential sliding does no normal work, and walls have zero
