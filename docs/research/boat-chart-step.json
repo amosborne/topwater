@@ -1,0 +1,241 @@
+{
+  "qualified": false,
+  "scope": "Same canonical nonlinear boat/sea; chart-validity pressure stencil experiment. No accuracy-adaptive or ocean qualification.",
+  "runs": [
+    {
+      "report": {
+        "path": "artifacts\\boat-ale-fresh-1s-q6-components.json",
+        "sha256": "da125a1c6b7a57d30487a69edb65b645b932d8b326681d68d161b08082f8b5ed"
+      },
+      "arrays": {
+        "path": "artifacts\\boat-ale-fresh-1s-q6-components.npz",
+        "sha256": "dd6809a935e275129e1ccdeb1f3bfcb1e029b70e5a5e281348913a5ff5424d91"
+      },
+      "producer_archive": "artifacts\\boat-ale-fresh-1s-q6-components-source",
+      "complete": false,
+      "seconds": 83.9757249999966,
+      "failure": {
+        "type": "ValueError",
+        "message": "material samples lack wet original-facet coverage: [1156, 1158, 1159, 1160, 1162, 1163, 1178, 1179]"
+      },
+      "accepted_simulated_seconds": 0.3,
+      "operator_counts": {
+        "fresh_rhs": 21,
+        "reused_rhs": 0,
+        "fresh_assemblies": 67,
+        "predicted_fields": 0,
+        "failed_reuse_attempts": 0
+      },
+      "operator_seconds": 37.94907459997921,
+      "cold_geometry_seconds": 35.4000622999738,
+      "process_peak_rss_bytes": 590159872,
+      "reserved_gpu_pool_bytes": 144604160
+    },
+    {
+      "report": {
+        "path": "artifacts\\boat-ale-350ms-h500us-q6.json",
+        "sha256": "8e4d228c73c58e5199172dcc9082e8031b2cbc12dadaf4865a8c2278bc2817a8"
+      },
+      "arrays": {
+        "path": "artifacts\\boat-ale-350ms-h500us-q6.npz",
+        "sha256": "8f259c76c91d1cd2043cf7c69655aedade4fccf1fef941847a50c90eda0769d6"
+      },
+      "producer_archive": "artifacts\\boat-ale-350ms-h500us-q6-source",
+      "complete": false,
+      "seconds": 5.543969099991955,
+      "failure": {
+        "type": "InvalidTemplate",
+        "message": "current polygon lost its interior oriented fan"
+      },
+      "derivatives": []
+    },
+    {
+      "report": {
+        "path": "artifacts\\boat-ale-350ms-h125us-q6.json",
+        "sha256": "16db3415ed0e1e423686d1f72480f7b83c29ba38d3bf2c7b46c3c4f243d2880d"
+      },
+      "arrays": {
+        "path": "artifacts\\boat-ale-350ms-h125us-q6.npz",
+        "sha256": "e23988efba19ad002001e8f287fa4ccbcb191a15f70ae21100798fc44a2a5256"
+      },
+      "producer_archive": "artifacts\\boat-ale-350ms-h125us-q6-source",
+      "complete": false,
+      "seconds": 5.146698099997593,
+      "failure": {
+        "type": "InvalidTemplate",
+        "message": "current polygon lost its interior oriented fan"
+      },
+      "derivatives": []
+    },
+    {
+      "report": {
+        "path": "artifacts\\boat-ale-350ms-h16us-q6.json",
+        "sha256": "c4204c3c2932fb8bfcec91338b7f620c16d429c6cf00849f31f37f33985dafc5"
+      },
+      "arrays": {
+        "path": "artifacts\\boat-ale-350ms-h16us-q6.npz",
+        "sha256": "155326d3a6272bf7ba5e6c3dd84c9da1d77b1ca76940bed8e73a37ed20762f54"
+      },
+      "producer_archive": "artifacts\\boat-ale-350ms-h16us-q6-source",
+      "complete": true,
+      "seconds": 8.455389100010507,
+      "failure": null,
+      "derivatives": [
+        {
+          "representation": "material quadrature",
+          "failure": null,
+          "pressures": [
+            {
+              "step": 1.5625e-05,
+              "load_world": [
+                -1365.528827896076,
+                -787.3520642096294,
+                28692.024133291696,
+                671.3048178828344,
+                -2315.9223250534196,
+                -310.7054963620477
+              ],
+              "derivative_diagnostics": {}
+            },
+            {
+              "step": 7.8125e-06,
+              "load_world": [
+                -1365.5819691151548,
+                -786.9004509336278,
+                28691.30267962251,
+                672.6998387478542,
+                -2315.304208055888,
+                -310.1507297743326
+              ],
+              "derivative_diagnostics": {}
+            }
+          ]
+        },
+        {
+          "representation": "charted nodal",
+          "failure": null,
+          "pressures": [
+            {
+              "step": 1.5625e-05,
+              "load_world": [
+                -1365.4440972371328,
+                -788.0195151171118,
+                28693.950995300424,
+                675.497990041354,
+                -2315.66413034007,
+                -310.4736322668272
+              ],
+              "derivative_diagnostics": {
+                "maximum_body_normal_velocity_error_m_per_s": 2.2535245225441258e-08,
+                "rms_body_normal_velocity_error_m_per_s": 3.787007907240687e-09
+              }
+            },
+            {
+              "step": 7.8125e-06,
+              "load_world": [
+                -1365.5700693804572,
+                -787.0873720622569,
+                28691.570040172053,
+                673.0750235103645,
+                -2315.2458849171544,
+                -310.1088583592034
+              ],
+              "derivative_diagnostics": {
+                "maximum_body_normal_velocity_error_m_per_s": 5.608798536727022e-09,
+                "rms_body_normal_velocity_error_m_per_s": 9.464392347488457e-10
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "report": {
+        "path": "artifacts\\boat-ale-fresh-1s-q6-adaptive-chart.json",
+        "sha256": "661d824b7ae14ef3ddf5e9e9fb70fea49dafabbfa97938590a19841197d4f389"
+      },
+      "arrays": {
+        "path": "artifacts\\boat-ale-fresh-1s-q6-adaptive-chart.npz",
+        "sha256": "8e5fb0ceffb7e29df616b1460f44935dcd3d642fa973f28116cb2ecd5a3eed11"
+      },
+      "producer_archive": "artifacts\\boat-ale-fresh-1s-q6-adaptive-chart-source",
+      "complete": false,
+      "seconds": 180.11757139998372,
+      "failure": {
+        "type": "RuntimeError",
+        "message": "bounded moving-case budget exhausted between operations"
+      },
+      "accepted_simulated_seconds": 0.9198976676473541,
+      "operator_counts": {
+        "fresh_rhs": 98,
+        "reused_rhs": 0,
+        "fresh_assemblies": 294,
+        "predicted_fields": 0,
+        "failed_reuse_attempts": 0
+      },
+      "operator_seconds": 110.72060190013144,
+      "cold_geometry_seconds": 43.41691720005474,
+      "process_peak_rss_bytes": 592822272,
+      "reserved_gpu_pool_bytes": 144604160
+    },
+    {
+      "report": {
+        "path": "artifacts\\boat-ale-fresh-1s-q6-baseline.json",
+        "sha256": "b825b5dfcb31974934f3d9f852fc29687fa55374d9470c8763b0767f1650a941"
+      },
+      "arrays": {
+        "path": "artifacts\\boat-ale-fresh-1s-q6-baseline.npz",
+        "sha256": "d9cb8105751ef7a9d39bda77f019c7c6e317d85dd1a556d5a8b949a71e943070"
+      },
+      "producer_archive": "artifacts\\boat-ale-fresh-1s-q6-baseline-source",
+      "complete": false,
+      "seconds": 169.65938490000553,
+      "failure": {
+        "type": "ValueError",
+        "message": "material samples lack wet original-facet coverage: [759, 904, 905, 906, 907, 1054, 1348, 1350]"
+      },
+      "accepted_simulated_seconds": 0.9249306328027712,
+      "operator_counts": {
+        "fresh_rhs": 130,
+        "reused_rhs": 0,
+        "fresh_assemblies": 393,
+        "predicted_fields": 0,
+        "failed_reuse_attempts": 0
+      },
+      "operator_seconds": 93.71645909975632,
+      "cold_geometry_seconds": 45.54566689999774,
+      "process_peak_rss_bytes": 593174528,
+      "reserved_gpu_pool_bytes": 144604160
+    }
+  ],
+  "fan_only_falsifier": {
+    "qualified": false,
+    "scope": "Geometry-only fan-repair falsifier: InvalidFan means all physical owner/birth/sign/domain guards passed, but chosen fan did not. No invalid mesh used for a field solve.",
+    "case_sha256": "45fac899b34b0763100b83fcde6195ee6d8d05d6b050b6e2f3f2d4b549bb54b2",
+    "source_sha256": "4bd82128a54120432af7e258bfeb14bb5db31ab599c10eb0463fc164988b6172",
+    "rows": [
+      {
+        "chart": "artifacts\\boat-curved-fresh-200ms-q6-geometry-0.npz",
+        "sha256": "aa7a77548fbd19f3d93b1aabc473983c0e41acc50541a97f22bebf1aad7874b5",
+        "result": "InvalidTemplate: reference plane incidence split"
+      },
+      {
+        "chart": "artifacts\\boat-curved-fresh-200ms-q6-geometry-1.npz",
+        "sha256": "9de372f6c8065cab7fabdae261855c16be9c2134423a7c826d74959b600569df",
+        "result": "InvalidFan: current polygon lost its interior oriented fan: [71]"
+      },
+      {
+        "chart": "artifacts\\boat-curved-fresh-200ms-q6-geometry-2.npz",
+        "sha256": "918adcc9f16d06a49777dcacf9b40943b7d31894e33ba7238411898249a9fb82",
+        "result": "InvalidTemplate: owner-plane orientation changed"
+      }
+    ]
+  },
+  "limitations": [
+    "Smaller h is chosen for chart validity, not by a truncation/roundoff estimator.",
+    "At h=15.625us the saved .35s trial completes but h/h2 changes up to2.423N/Nm; this is not a pressure-accuracy qualification.",
+    "Cache candidates retain the actual training h and derivative representation; mixed refresh comparisons are labelled.",
+    "Fresh center field/rates are shared only within one immutable RHS; candidate and fresh center ownership remain separate.",
+    "Larger-budget control still fails at .924942s trial after accepting .924931s. RK steps shrink sharply near this event; cause not yet isolated. No completed1s control or steady throughput claim. Exact failing trial is versioned in boat-state-925ms.json."
+  ]
+}

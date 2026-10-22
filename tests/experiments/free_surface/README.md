@@ -1662,3 +1662,28 @@ Separate positive wet loops on a facet are retained independently; the actual
 .3375 s failed trial tests that coverage, closure and chart replay too. Ear
 clipping shares one implementation with the material-overlay experiment.
 Measured evidence: `docs/research/boat-ale-pressure.json`.
+
+`boat_geometry_cost --output <report>` compares cached/uncached EXACT plane
+predicates on the .275/.3375 s failed-stage fixtures, alternating pair order and
+requiring every saved geometry array to remain bitwise identical. The measured
+1.81x/2.10x geometry gains earn default caching in canonical `construct`.
+Evidence: `docs/research/boat-geometry-cache.json`.
+
+The opt-in charted moving driver now halves the pressure derivative step only
+to find a valid common chart, down to 1ms/64, sharing a center field within one
+RHS. It records each rejection and chosen step. This is not an accuracy
+estimator. `boat_ale_audit --step <h>` checks a prescribed state's h/h2 pressures;
+the saved .35 s trial shows significant small-h sensitivity. Candidate models
+retain their actual training step/representation, and mixed refresh comparisons
+are labelled. `InvalidFan` means other physical arrangement guards passed;
+it remains a rejection, not permission to solve on invalid triangles.
+Evidence: `docs/research/boat-chart-step.json`.
+
+The requested output budget is 0.1 degree in EACH of roll/pitch/yaw and 1 cm in
+EACH of surge/sway/heave. Scope is ordinary motion tolerable for a person
+aboard, without a fixed roll-angle cutoff. The bounded driver records these
+requirements and accepted quaternion-derived attitude. Heading comparisons wrap
+at360 degrees. These are convergence targets, not achieved accuracy or a
+human-safety determination. Extreme-motion continuation is outside scope.
+The larger-budget nonlinear control still fails near .925 s; its exact trial
+is saved in `tests/data/boat-state-925ms.json` for direct regression work.

@@ -13,6 +13,28 @@ observed directional sea and physical failure checks in timing comparisons.
 The target remains at most 20 wall seconds per simulated second on this machine,
 with real time preferred; reduced work counts alone do not meet it.
 
+The user has now supplied an output accuracy target: 0.1 degree numerical
+convergence in EACH of roll/pitch/yaw, with a practical equivalent 1 cm target
+for EACH translation (surge fore/aft, sway sideways, heave vertical). A 0.1 degree
+rotation over a 4 m lever arm displaces a point about 7 mm. The user's final
+scope clarification is ordinary motion tolerable for a person aboard; there
+is NO fixed roll-angle cutoff. The earlier 20-30 degree discussion can guide
+test coverage, but it is neither an operating limit nor a safety determination.
+Preserve full six-DOF coupling while prioritizing
+the user's roll assessment. Do not equate local quaternion/ODE
+tolerances with this end-to-end target. Measure mesh, quadrature, time and
+operator approximations against roll over representative wave/roll periods;
+short weakly excited roll traces cannot establish it. `boat_motion_metrics.py`
+derives roll/pitch/yaw diagnostics without changing quaternion evolution. Roll
+uses projected world vertical in the body port/up plane, independent of heading;
+periodic angle errors must be wrapped. Do not add robustness requirements for
+dangerous/extreme motion, or invent an angle-only human-safety rule. Existing
+flooding/contact and incident-wave physical/domain checks remain in force.
+For comparisons, project horizontal position differences along/across the SAME
+reference heading, retaining world-up heave; do not compare candidate/reference
+translations in independently rotated frames. ZYX pitch is positive bow-down
+in the existing bow/port/up convention; correlation must retain that sign.
+
 **Recommendation:** investigate a surface-only variational BEM with an evolved
 fixed-world surface state and freshly reconstructed wetted boundary. First use
 fixed piecewise-affine world parents, retaining local surface response. Do not
@@ -534,6 +556,62 @@ saved trial has the same cold/replay/closed-edge regression coverage. Exact
 ear clipping is shared with the material-overlay experiment, with no duplicate
 triangulation algorithm. No complete one-second timing has yet been earned.
 Evidence and archived measured producers: `boat-ale-pressure.json`.
+
+## Current cost and next exact simplifications
+
+Repeated exact intersection-plane predicates were unnecessary work. A bounded
+cache stores three sign bitmasks per intersection triple, retaining no large
+Fraction values. Two alternating-order matched pairs at each of the actual
+.275/.3375 s states give 1.81x/2.10x geometry speedups, with EVERY saved geometry
+and ownership array bitwise identical. Enable it in canonical `construct`;
+unrelated reference registries keep their previous default. The cache-off path
+includes new counters/sign-comparison overhead, so this is its own matched
+comparison, not an exact timing replay of earlier uninstrumented code. Evidence:
+`boat-geometry-cache.json`.
+
+Classify a failed fan only after all owner/birth/sign/rim/domain guards pass.
+At the .275 s trial, an old .20 s chart passes those guards but loses fan 71.
+That earns a local-retriangulation experiment; it does not authorize returning
+an inverted triangle. Several historical cold rebuilds may therefore be
+avoiding a numerical triangulation issue by repeating physical clipping work.
+
+The .35 s trial leaves the chart at 1 ms, .5 ms and .125 ms. At 15.625 us both
+h/h2 stencils complete, but load differences reach 2.423 N/Nm. The bounded fresh
+driver now halves h for chart validity, with a minimum 1 ms/64, before explicit
+material fallback. This is NOT an accuracy-adaptive derivative. Each immutable
+RHS shares its current center field/rates across attempts, but not between
+candidate and fresh operators. Cached candidates use their actual training h
+and representation; refresh diagnostics record both, protecting the prior
+anchor-consistency checks. Evidence: `boat-chart-step.json`.
+
+The next bounded all-fresh run accepts .91990 s in 180.12 s before its elapsed
+budget expires: 195.8 wall seconds per accepted simulated second. All 98 RHS
+complete; 294 operators consume 110.72 s and 29 cold geometries consume 43.42 s.
+This is a timed nonlinear prefix, not a completed one-second control or an
+acceptable baseline. Exact geometry caching has not solved the dominant cost.
+
+The larger-budget repeat still fails before one second: it accepts .924931 s
+in 169.66 s, then the .924942 s trial has no common chart down to the minimum
+h and loses material coverage on fallback. The RK steps shrink sharply near
+this event; a cause has not been isolated. This is a distinct failed control,
+not a timing improvement or stability result. The exact attempted state is
+`tests/data/boat-state-925ms.json`; do not rerun the whole trajectory merely to
+rediscover the failure. First test the pressure/triangulation event directly.
+
+The next operator experiment keeps the full current center solve, including
+six acceleration columns, and uses its mixed factor only to precondition
+single-RHS CURRENT offset operator actions. It can avoid forming full offset
+energy matrices while retaining current V/H quadrature/factors and actual-time
+loads. It must match offset potentials and all six h/h2 pressures before any
+adoption; arithmetic savings are not a timing prediction. Concrete falsifier:
+`boat-offset-action.md`.
+
+The motion accuracy targets also earn revisiting cheaper body/quadrature meshes
+and temporal controls. Previous comparisons concentrated on instantaneous loads
+without a user-owned motion-error budget. Treat 0.1 degree / 1 cm as observed output
+convergence gate, never a local integrator atol or a promise of physical-model
+accuracy. The current numerical event and the finite-tank/open-water limits
+remain unresolved.
 
 The larger-cost avenue remains reduction before geometry approximation. At a
 fixed geometry, six rigid modes plus fifteen parent potential modes give only

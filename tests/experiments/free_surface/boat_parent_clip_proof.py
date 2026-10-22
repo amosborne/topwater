@@ -41,12 +41,15 @@ def cross(a, b):
 
 class PlanePoints:
     """Tiny reference registry: all planes are frozen before intersections."""
-    def __init__(self, *, max_points=None, max_intersections=None, capture_constraints=False):
+    def __init__(self, *, max_points=None, max_intersections=None, capture_constraints=False,
+                 cache_signs=False):
         self.planes, self.labels, self.cache = [], [], {}
         self.points, self.incidence, self.vertex_by_owner = [], [], {}
         self.registered_intersections = {}
         self.relevant = [] if capture_constraints else None
         self.max_points, self.max_intersections = max_points, max_intersections
+        self.sign_cache = {} if cache_signs else None
+        self.sign_requests, self.sign_cache_hits = 0, 0
 
     def plane(self, points, label):
         if self.cache:
@@ -65,6 +68,21 @@ class PlanePoints:
     def value(self, i, point):
         plane = self.planes[i]
         return dot(plane[:3], point)-plane[3]
+
+    def _sign(self, triple, point, plane):
+        """Exact cached predicate; masks retain signs, never large Fractions."""
+        self.sign_requests += 1
+        bit = 1 << plane
+        known, zero, positive = ((0, 0, 0) if self.sign_cache is None else
+                                self.sign_cache.get(triple, (0, 0, 0)))
+        if known & bit:
+            self.sign_cache_hits += 1
+            return 0 if zero & bit else (1 if positive & bit else -1)
+        value = self.value(plane, point)
+        sign = (value > 0)-(value < 0)
+        if self.sign_cache is not None:
+            self.sign_cache[triple] = known | bit, zero | (bit if sign == 0 else 0), positive | (bit if sign > 0 else 0)
+        return sign
 
     def intersection(self, triple):
         triple = tuple(sorted(triple))
@@ -89,7 +107,7 @@ class PlanePoints:
             return self.registered_intersections[triple]
         # Only accepted polytope vertices need global incidence. Outside-plane
         # intersections cannot be required by the subsequent boundary splitting.
-        owner = tuple(i for i in range(len(self.planes)) if not self.value(i, point))
+        owner = tuple(i for i in range(len(self.planes)) if not self._sign(triple, point, i))
         if owner not in self.vertex_by_owner:
             if self.max_points is not None and len(self.points) >= self.max_points:
                 raise RuntimeError('reference point cap reached')
@@ -107,7 +125,7 @@ class PlanePoints:
         vertices = set()
         for triple in combinations(sorted({i for i, _ in constraints}), 3):
             point = self.intersection(triple)
-            if point is not None and all(sign*self.value(i, point) <= 0 for i, sign in constraints):
+            if point is not None and all(sign*self._sign(triple, point, i) <= 0 for i, sign in constraints):
                 vertices.add(self.register(triple, point))
         if self.relevant is not None:
             for vertex in vertices:

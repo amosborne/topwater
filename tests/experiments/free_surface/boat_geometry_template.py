@@ -18,6 +18,10 @@ class InvalidTemplate(ValueError):
     pass
 
 
+class InvalidFan(InvalidTemplate):
+    """Physical chart guards passed, but its chosen triangulation is invalid."""
+
+
 def chart_key(reference):
     """Identity of immutable node recipes/ownership, independent of pose/eta/psi."""
     names = sorted(name for name in reference if name.startswith('template_'))
@@ -184,7 +188,7 @@ def evaluate_template(reference, *, pose, parent_eta, parent_psi):
     points[selected] = owner_points[node_to_owner[selected]]
     node_radius = np.zeros(len(points))
     node_radius[selected] = radius[node_to_owner[selected]]
-    fan_radii = []
+    fan_radii, invalid_fans = [], []
     vertices, offsets = reference['template_fan_vertices'], reference['template_fan_offsets']
     for fan, (start, stop) in enumerate(zip(offsets[:-1], offsets[1:])):
         loop = vertices[start:stop]
@@ -195,7 +199,7 @@ def evaluate_template(reference, *, pose, parent_eta, parent_psi):
         n = np.cross(points[loop]-center, points[np.roll(loop, -1)]-center)
         sectors = n@normal
         if not np.all(sectors*reference['template_fan_orientation'][fan] > 0):
-            raise InvalidTemplate('current polygon lost its interior oriented fan')
+            invalid_fans.append(fan)
         fan_radius = 8*max(node_radius[loop])+plane_error
         node_radius[node] = fan_radius
         fan_radii.append(fan_radius)
@@ -219,6 +223,10 @@ def evaluate_template(reference, *, pose, parent_eta, parent_psi):
             or np.any(world[:, :2].min(axis=0) <= roof[:, :2].min(axis=0)+plane_error)
             or np.any(world[:, :2].max(axis=0) >= roof[:, :2].max(axis=0)-plane_error)):
         raise InvalidTemplate('body reaches the bed or fixed outer walls')
+    if invalid_fans:
+        # Distinguish a failed numerical fan from a failed physical clipping
+        # arrangement only AFTER every owner/birth/sign/domain guard passes.
+        raise InvalidFan('current polygon lost its interior oriented fan: '+str(invalid_fans))
     try:
         HullMesh(points, reference['faces'])
     except ValueError as error:

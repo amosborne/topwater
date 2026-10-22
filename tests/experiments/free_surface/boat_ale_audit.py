@@ -18,10 +18,12 @@ from .incident_baseline_benchmark import coefficients
 from .p4_fluid_ordering import fresh
 
 
-def run(pilot, output, state_case=None, time=.2):
+def run(pilot, output, state_case=None, time=.2, step=.001):
     from .cuda_operator import prepare_energy
     pilot, output = Path(pilot), fresh(output)
     source = json.loads(pilot.read_text())
+    if not np.isfinite(step) or step <= 0:
+        raise ValueError('positive finite derivative step required')
     paths = [pilot, pilot.with_suffix('.npz')]
     if state_case:
         paths.append(Path(state_case))
@@ -43,7 +45,7 @@ def run(pilot, output, state_case=None, time=.2):
         raise ValueError('audit supports body-only refinement')
     report = dict(complete=False, qualified=False,
         scope='Prescribed nonlinear boat state, fresh same-chart h/h2 pressure; no trajectory or open-water qualification.',
-        time_seconds=time, fixture_sha256=fixture_hash, phases=[], comparisons=[],
+        time_seconds=time, derivative_step_seconds=step, fixture_sha256=fixture_hash, phases=[], comparisons=[],
         input_sha256={str(p): sha256(p.read_bytes()).hexdigest() for p in paths},
         source_sha256={name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
             for name in ('boat_ale_audit.py', 'boat_ale_pressure.py', 'boat_geometry_template.py',
@@ -105,7 +107,7 @@ def run(pilot, output, state_case=None, time=.2):
         er, pr, _ = surface_rates(arrays['points'], arrays['faces'][arrays['free_faces']],
             arrays['free_nodes'], field['parent_map'], arrays['parent_psi'], field['flux'])
         offsets, energies = {}, {}
-        for dt in (.001, -.001, .0005, -.0005):
+        for dt in (step, -step, step/2, -step/2):
             orientation = (Rotation.from_rotvec(dt*state[10:13])
                 *Rotation.from_quat(pose.orientation, scalar_first=True)).as_quat(scalar_first=True)
             offsets[dt] = refine(evaluate_template(chart,
@@ -139,4 +141,5 @@ if __name__ == '__main__':
     parser.add_argument('--output', required=True)
     parser.add_argument('--state-case')
     parser.add_argument('--time', type=float, default=.2)
+    parser.add_argument('--step', type=float, default=.001)
     run(**vars(parser.parse_args()))

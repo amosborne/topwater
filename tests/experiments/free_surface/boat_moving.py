@@ -24,6 +24,8 @@ from .boat_world_boundary import construct, body_material_samples, interpolate_b
 from .boat_world_field import current_field, surface_rates, refine_boundary
 from .body_pressure import evaluate_body_pressure, quadrature
 from .boat_ale_pressure import differentiate
+from .boat_motion_metrics import (attitude_degrees, ANGLE_ERROR_TARGET_DEGREES,
+                                 POSITION_ERROR_TARGET_METERS)
 from .boat_operator_reuse import LocalOperator, InvalidReuse, LIMITS
 from .boat_past_operator import PastLocalOperator, LIMITS as PAST_LIMITS
 from .incident_baseline_benchmark import coefficients
@@ -45,6 +47,11 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
     report = dict(complete=False, qualified=False,
         scope='Coupled nonlinear six-DOF and free-surface state in a 12x6x2 m diagnostic tank; no open-water or temporal/spatial qualification',
         scipy_version=scipy.__version__, requested_duration_seconds=duration,
+        motion_requirement=dict(roll_pitch_yaw_error_target_degrees=ANGLE_ERROR_TARGET_DEGREES,
+            surge_sway_heave_error_target_meters=POSITION_ERROR_TARGET_METERS,
+            translation_comparison_frame='Common reference heading for horizontal surge/sway; world up for heave.',
+            operating_scope='Ordinary motion tolerable for a person aboard; no fixed roll-angle cutoff.',
+            status='Requested numerical motion convergence and operating scope; not yet validated.'),
         state_layout=['position_world_m[3]', 'orientation_wxyz[4]',
             'velocity_world_m_per_s[3]', 'angular_velocity_world_rad_per_s[3]',
             'parent_eta_m[N]', 'parent_psi_m2_per_s[N]'],
@@ -56,13 +63,14 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
             pressure_derivative=('charted nodal with explicit material fallback on chart failure'
                                  if charted_pressure else 'material quadrature'),
             derivative_step_seconds=.001, rtol=.001, first_step_seconds=min(max_step, duration),
+            minimum_chart_derivative_step_seconds=.001/64,
             max_step_seconds=max_step, topology_templates_retained=4),
         source_sha256={name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
             for name in ('boat_moving.py', 'boat_geometry_template.py', 'boat_world_boundary.py',
                          'boat_parent_clip_proof.py', 'boat_world_field.py', 'body_pressure.py',
                          'canoe.py', 'incident_baseline_benchmark.py',
                          'cuda_operator.py', 'cuda_energy.cu', 'cuda_pair.cuh', 'boat_operator_reuse.py',
-                         'boat_past_operator.py', 'boat_ale_pressure.py')})
+                         'boat_past_operator.py', 'boat_ale_pressure.py', 'boat_motion_metrics.py')})
     started = perf_counter()
     times, states, solver = [], [], None
     templates, cold_count, operator_model = [], 0, None
@@ -160,15 +168,19 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
         samples, groups = body_material_samples(arrays, quadrature()[0])
         hints = np.broadcast_to(np.arange(len(arrays['body_faces']))[:, None], groups.shape)
         rotation = rotation_matrix(quaternion)
+        centers = {}
 
-        def stencil(model, use_chart=charted_pressure):
-            current, center_energy = field(arrays, twist, time, True, model)
-            eta_rate, psi_rate, surface = surface_rates(arrays['points'],
-                arrays['faces'][arrays['free_faces']], arrays['free_nodes'], current['parent_map'],
-                psi, current['flux'])
+        def stencil(model, use_chart=charted_pressure, step=.001):
+            if id(model) not in centers:
+                current, center_energy = field(arrays, twist, time, True, model)
+                eta_rate, psi_rate, surface = surface_rates(arrays['points'],
+                    arrays['faces'][arrays['free_faces']], arrays['free_nodes'], current['parent_map'],
+                    psi, current['flux'])
+                centers[id(model)] = current, center_energy, eta_rate, psi_rate, surface
+            current, center_energy, eta_rate, psi_rate, surface = centers[id(model)]
             moved = []
             for sign in (1, -1):
-                offset = sign*.001
+                offset = sign*step
                 orientation = (Rotation.from_rotvec(offset*twist[3:])
                     *Rotation.from_quat(quaternion, scalar_first=True)).as_quat(scalar_first=True)
                 try:
@@ -183,7 +195,7 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
                 row['reuse_direction'] = model.check_direction(*moved)
             traces, energies = [], [center_energy]
             for sign, offset_arrays in zip((1, -1), moved):
-                moved_field, energy = field(offset_arrays, twist, time+sign*.001, False, model)
+                moved_field, energy = field(offset_arrays, twist, time+sign*step, False, model)
                 energies.append(energy)
                 traces.append(moved_field['potential'] if use_chart else
                     interpolate_body_trace(offset_arrays, moved_field['potential'], samples, groups,
@@ -191,13 +203,13 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
             if use_chart:
                 try:
                     rate, mesh_velocity, diagnostics = differentiate(arrays, *moved, *traces,
-                        .001, pose.position, twist)
+                        step, pose.position, twist)
                 except ValueError as error:
                     if model is not None:
                         raise InvalidReuse(str(error)) from error
                     raise
             else:
-                rate = (traces[0]-traces[1])/.002
+                rate = (traces[0]-traces[1])/(2*step)
                 mesh_velocity = twist[:3]+np.cross(twist[3:], arrays['points']-pose.position)
                 diagnostics = {}
             pressure = evaluate_body_pressure(arrays['points'], arrays['faces'], arrays['body_faces'],
@@ -206,14 +218,16 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
                 current['acceleration_potentials'], density=WATER_DENSITY, gravity=GRAVITY)
             return (pressure, eta_rate, psi_rate, surface, [arrays, *moved], energies,
                     dict(representation='charted nodal' if use_chart else 'material quadrature',
-                         diagnostics=diagnostics))
+                         step_seconds=step, diagnostics=diagnostics))
 
         result, audit_candidate = None, None
         refresh = (operator_reuse in ('past-linear', 'past-curved') and operator_model is not None
                    and abs(time-operator_model.time) >= PAST_LIMITS['refresh_age_seconds']-1e-14)
         if operator_model is not None:
             try:
-                candidate = stencil(operator_model)
+                candidate = stencil(operator_model,
+                    use_chart=operator_model.pressure_derivative_representation == 'charted nodal',
+                    step=operator_model.derivative_step_seconds)
                 if refresh:
                     audit_candidate = candidate
                     row['refresh_reason'] = 'scheduled age refresh; valid old model audited'
@@ -227,26 +241,34 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
                 # Discard ALL candidate values, including their surface direction.
                 # A fresh base determines both fresh pressure-offset geometries.
         if result is None:
-            try:
-                result = stencil(None)
-            except InvalidTemplate as error:
-                if not charted_pressure:
-                    raise
-                # At a topology transition no common nodal chart may exist.
-                # Recompute the ENTIRE stencil with strictly wet material
-                # samples. This path still fails if those samples become dry.
-                row['pressure_derivative_fallback'] = str(error)
+            for halving in range(7 if charted_pressure else 1):
+                try:
+                    result = stencil(None, step=.001/2**halving)
+                    break
+                except InvalidTemplate as error:
+                    if not charted_pressure:
+                        raise
+                    row.setdefault('pressure_chart_step_rejections', []).append(
+                        dict(step_seconds=.001/2**halving, reason=str(error)))
+            if result is None:
+                # No common nodal chart at these steps: explicitly use strictly
+                # wet material samples. Never mix the two offset representations.
+                row['pressure_derivative_fallback'] = 'no common chart after six step halvings'
                 result = stencil(None, use_chart=False)
             row['operator_mode'] = 'fresh'
         pressure, eta_rate, psi_rate, surface, stencil_arrays, stencil_energies, derivative = result
         row['pressure_derivative_representation'] = derivative['representation']
         row['pressure_derivative'] = derivative['diagnostics']
+        row['pressure_derivative_step_seconds'] = derivative['step_seconds']
         if audit_candidate is not None:
             old_pressure, old_eta, old_psi = audit_candidate[:3]
             row['refresh_audit'] = dict(available=True, anchor_rhs_index=operator_model.rhs_index,
                 candidate_pressure_derivative=audit_candidate[6]['representation'],
                 fresh_pressure_derivative=derivative['representation'],
-                operator_only_comparison=audit_candidate[6]['representation'] == derivative['representation'],
+                candidate_derivative_step_seconds=audit_candidate[6]['step_seconds'],
+                fresh_derivative_step_seconds=derivative['step_seconds'],
+                operator_only_comparison=(audit_candidate[6]['representation'] == derivative['representation']
+                    and audit_candidate[6]['step_seconds'] == derivative['step_seconds']),
                 hydrodynamic_load_error_world=(old_pressure.hydrodynamic_load-pressure.hydrodynamic_load).tolist(),
                 acceleration_error_world=(old_pressure.acceleration-pressure.acceleration).tolist(),
                 parent_height_rate_error_m_per_s=(old_eta-eta_rate).tolist(),
@@ -270,7 +292,11 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
                                                        curved=operator_reuse == 'past-curved')
                 else:
                     raise InvalidReuse('no previous completed fresh stencil')
-                row['operator_training'] = operator_model.diagnostics
+                operator_model.derivative_step_seconds = derivative['step_seconds']
+                operator_model.pressure_derivative_representation = derivative['representation']
+                row['operator_training'] = dict(operator_model.diagnostics,
+                    derivative_step_seconds=derivative['step_seconds'],
+                    pressure_derivative_representation=derivative['representation'])
             except (ValueError, np.linalg.LinAlgError, FloatingPointError) as error:
                 operator_model = None
                 row['operator_training_rejection'] = str(error)
@@ -331,6 +357,10 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
             predicted_fields=sum(f['mode'] == 'predicted' for r in report['rhs'] for f in r['fields']),
             failed_reuse_attempts=sum('reuse_rejection' in r for r in report['rhs']))
         if states:
+            angles = np.array([attitude_degrees(state[3:7]) for state in states])
+            rolls = angles[:, 0]
+            saved['accepted_roll_pitch_yaw_degrees'] = angles
+            report['maximum_absolute_accepted_roll_degrees'] = float(np.max(np.abs(rolls)))
             report['maximum_accepted_quaternion_norm_error'] = float(np.max(abs(
                 np.linalg.norm(np.array(states)[:, 3:7], axis=1)-1)))
         np.savez(output.with_suffix('.npz'), **saved)

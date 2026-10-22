@@ -13,6 +13,7 @@ from fractions import Fraction as F
 from hashlib import sha256
 import json
 from pathlib import Path
+from sys import getsizeof
 from time import perf_counter
 
 import numpy as np
@@ -96,7 +97,7 @@ def material_coordinates(registry_points, rr, cg, position):
 
 def construct(output, *, body=None, pose=None, parent_xy=None, parents=None,
               parent_eta=None, parent_psi=None, export_template=False,
-              material_refinement=None):
+              material_refinement=None, cache_signs=True):
     """Construct one checkpointed snapshot; coefficients stay on WORLD parents.
 
     Returns ``(mesh, arrays, report)``. Pose translations locate the body's CG;
@@ -176,7 +177,8 @@ def construct(output, *, body=None, pose=None, parent_xy=None, parents=None,
             potential_trace_control='P1 nodal trace of incident Airy potential at actual graph height; mean-water values saved separately; no nonlinear field initialization claim',
             affine_pose_roundoff_max=float(np.max(abs(np.asarray(world, dtype=float)
                 -((body.mesh.vertices-body.cg)@rotation.T+rest.position)))))
-        registry = PlanePoints(max_points=12000, max_intersections=50000, capture_constraints=export_template)
+        registry = PlanePoints(max_points=12000, max_intersections=50000,
+                               capture_constraints=export_template, cache_signs=cache_signs)
         hull = hull_planes(registry, world, body.mesh.faces)
         cells, roofs, outer = columns(registry, roof, parents)
         if len(registry.planes) > 128:
@@ -322,6 +324,17 @@ def construct(output, *, body=None, pose=None, parent_xy=None, parents=None,
             arrays['partial_polygon_offsets'] = np.r_[0, np.cumsum([len(polygon) for polygon, *_ in polygons])]
             report['point_owners'] = len(registry.points)
             report['intersection_cache'] = len(registry.cache)
+            report['exact_sign_predicates'] = dict(requests=registry.sign_requests,
+                enabled=registry.sign_cache is not None,
+                cache_hits=registry.sign_cache_hits,
+                cached_intersections=0 if registry.sign_cache is None else len(registry.sign_cache),
+                # Shallow dict/key/tuple/int ownership estimate; no Fraction
+                # predicate values are retained. Shared integers may be counted
+                # more than once, making this a conservative container estimate.
+                container_bytes=0 if registry.sign_cache is None else
+                    getsizeof(registry.sign_cache)+sum(getsizeof(key)+getsizeof(masks)
+                        +sum(getsizeof(mask) for mask in masks)
+                        for key, masks in registry.sign_cache.items()))
         np.savez(output.with_suffix('.npz'), **arrays)
         output.write_text(json.dumps(report, indent=2, allow_nan=False)+'\n')
     return mesh, arrays, report

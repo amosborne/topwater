@@ -1,0 +1,173 @@
+{
+  "qualified": false,
+  "scope": "Canonical 24ft/2500kg boat and observed SoCal sea. Exact-predicate geometry optimization, not sustained simulation qualification.",
+  "benchmark": {
+    "path": "artifacts\\boat-geometry-sign-cache.json",
+    "sha256": "232c8b34873db97803cf4514920f7ebbefd6daafade2f1febe964d9ec6a7d6f7"
+  },
+  "producer_archive": "artifacts/boat-geometry-sign-cache-source",
+  "states": [
+    {
+      "path": "C:\\Users\\alex\\topwater\\tests\\data\\boat-state-275ms.json",
+      "sha256": "45fac899b34b0763100b83fcde6195ee6d8d05d6b050b6e2f3f2d4b549bb54b2",
+      "uncached_median_seconds": 3.6595286000083433,
+      "cached_median_seconds": 2.0259845499967923,
+      "geometry_speedup": 1.8062964004410287
+    },
+    {
+      "path": "C:\\Users\\alex\\topwater\\tests\\data\\boat-state-337ms.json",
+      "sha256": "b8db0fc0d41731308de198cb137f35b8e3f2bc0b25d915c1e066548980580ed5",
+      "uncached_median_seconds": 3.9844001500023296,
+      "cached_median_seconds": 1.8948117999825627,
+      "geometry_speedup": 2.102794668071519
+    }
+  ],
+  "matched_rows": [
+    {
+      "state": "boat-state-275ms.json",
+      "repeat": 0,
+      "cache_signs": false,
+      "seconds": 3.7153980000002775,
+      "geometry_seconds": 3.6997072999947704,
+      "predicates": {
+        "requests": 129396,
+        "cache_hits": 0,
+        "cached_intersections": 0
+      },
+      "all_geometry_arrays_bitwise_identical": true,
+      "geometry_path": "artifacts\\boat-geometry-sign-cache-boat-state-275ms-r0-cache0.json",
+      "geometry_sha256": "5397088d9485e03dfcdf7f0b67301e49aa737415477acc811063110dc1ee6638",
+      "arrays_sha256": "0ec127d5e222faf85d5d65582306156e6ea184f0425d666c03387ab780ec1def"
+    },
+    {
+      "state": "boat-state-275ms.json",
+      "repeat": 0,
+      "cache_signs": true,
+      "seconds": 2.1088147000118624,
+      "geometry_seconds": 2.0981903999927454,
+      "predicates": {
+        "requests": 129396,
+        "cache_hits": 105703,
+        "cached_intersections": 2391
+      },
+      "all_geometry_arrays_bitwise_identical": true,
+      "geometry_path": "artifacts\\boat-geometry-sign-cache-boat-state-275ms-r0-cache1.json",
+      "geometry_sha256": "08510451e5a48eac40d889b1519b49a39640939ab8c832a7cc994d02f8728d90",
+      "arrays_sha256": "0ec127d5e222faf85d5d65582306156e6ea184f0425d666c03387ab780ec1def"
+    },
+    {
+      "state": "boat-state-275ms.json",
+      "repeat": 1,
+      "cache_signs": true,
+      "seconds": 1.9431543999817222,
+      "geometry_seconds": 1.9238286999752745,
+      "predicates": {
+        "requests": 129396,
+        "cache_hits": 105703,
+        "cached_intersections": 2391
+      },
+      "all_geometry_arrays_bitwise_identical": true,
+      "geometry_path": "artifacts\\boat-geometry-sign-cache-boat-state-275ms-r1-cache1.json",
+      "geometry_sha256": "1f55b3b5965b973bd09fb040e4886871311aa1197459f4e73907dff7122ce276",
+      "arrays_sha256": "0ec127d5e222faf85d5d65582306156e6ea184f0425d666c03387ab780ec1def"
+    },
+    {
+      "state": "boat-state-275ms.json",
+      "repeat": 1,
+      "cache_signs": false,
+      "seconds": 3.603659200016409,
+      "geometry_seconds": 3.5948852000001352,
+      "predicates": {
+        "requests": 129396,
+        "cache_hits": 0,
+        "cached_intersections": 0
+      },
+      "all_geometry_arrays_bitwise_identical": true,
+      "geometry_path": "artifacts\\boat-geometry-sign-cache-boat-state-275ms-r1-cache0.json",
+      "geometry_sha256": "e64b7467c5b44a61587e87803bf75a06aad52e1c06befee2f1fa406783bb1835",
+      "arrays_sha256": "0ec127d5e222faf85d5d65582306156e6ea184f0425d666c03387ab780ec1def"
+    },
+    {
+      "state": "boat-state-337ms.json",
+      "repeat": 0,
+      "cache_signs": false,
+      "seconds": 3.999518700002227,
+      "geometry_seconds": 3.9712438999849837,
+      "predicates": {
+        "requests": 128109,
+        "cache_hits": 0,
+        "cached_intersections": 0
+      },
+      "all_geometry_arrays_bitwise_identical": true,
+      "geometry_path": "artifacts\\boat-geometry-sign-cache-boat-state-337ms-r0-cache0.json",
+      "geometry_sha256": "fffc34c6586801fbbd411ee800a9d9c34a7a575b879cfbeadff4dd4de961b3f9",
+      "arrays_sha256": "f5aa947ce9226ba6d5adefc15540f1797c32c60e834a6f5bb6fea11832bd6729"
+    },
+    {
+      "state": "boat-state-337ms.json",
+      "repeat": 0,
+      "cache_signs": true,
+      "seconds": 1.622256299975561,
+      "geometry_seconds": 1.6028142999857664,
+      "predicates": {
+        "requests": 128109,
+        "cache_hits": 104478,
+        "cached_intersections": 2391
+      },
+      "all_geometry_arrays_bitwise_identical": true,
+      "geometry_path": "artifacts\\boat-geometry-sign-cache-boat-state-337ms-r0-cache1.json",
+      "geometry_sha256": "476729e95ddb46444e49677f2663d7f8c7d7a28501e7ab1952c3349d6285bd93",
+      "arrays_sha256": "f5aa947ce9226ba6d5adefc15540f1797c32c60e834a6f5bb6fea11832bd6729"
+    },
+    {
+      "state": "boat-state-337ms.json",
+      "repeat": 1,
+      "cache_signs": true,
+      "seconds": 2.1673672999895643,
+      "geometry_seconds": 2.1533735999837518,
+      "predicates": {
+        "requests": 128109,
+        "cache_hits": 104478,
+        "cached_intersections": 2391
+      },
+      "all_geometry_arrays_bitwise_identical": true,
+      "geometry_path": "artifacts\\boat-geometry-sign-cache-boat-state-337ms-r1-cache1.json",
+      "geometry_sha256": "9e3e605665b7cbcc9023371b88fa1570a7c0b04dd56475772021aa8b3fcba595",
+      "arrays_sha256": "f5aa947ce9226ba6d5adefc15540f1797c32c60e834a6f5bb6fea11832bd6729"
+    },
+    {
+      "state": "boat-state-337ms.json",
+      "repeat": 1,
+      "cache_signs": false,
+      "seconds": 3.9692816000024322,
+      "geometry_seconds": 3.961987399990903,
+      "predicates": {
+        "requests": 128109,
+        "cache_hits": 0,
+        "cached_intersections": 0
+      },
+      "all_geometry_arrays_bitwise_identical": true,
+      "geometry_path": "artifacts\\boat-geometry-sign-cache-boat-state-337ms-r1-cache0.json",
+      "geometry_sha256": "4a5a6ec523a886e96b00ee9742a94a58d8958b8b8619c274407c93424ebcb246",
+      "arrays_sha256": "f5aa947ce9226ba6d5adefc15540f1797c32c60e834a6f5bb6fea11832bd6729"
+    }
+  ],
+  "all_geometry_arrays_bitwise_identical": true,
+  "adoption": "Enabled exact sign caching by default in canonical boat_world_boundary.construct only. PlanePoints default remains uncached for unrelated references.",
+  "cache_description": "Per canonical intersection triple: three bitmasks retain known, zero and positive plane signs. Frozen planes and existing intersection cap bound storage. No Fraction predicate values are retained.",
+  "memory_observation": {
+    "source": {
+      "path": "artifacts\\boat-ale-fresh-1s-q6-adaptive-chart.json",
+      "sha256": "661d824b7ae14ef3ddf5e9e9fb70fea49dafabbfa97938590a19841197d4f389"
+    },
+    "cold_rebuilds": 29,
+    "maximum_container_estimate_bytes": 594316,
+    "minimum_container_estimate_bytes": 581840,
+    "scope": "Conservative sum of dictionary/key/tuple/int shallow sizes; shared integers may be counted repeatedly. Not process peak RSS."
+  },
+  "limitations": [
+    "Two matched alternating-order pairs per state; no timing distribution across machines.",
+    "Cache-off path includes new request counting and sign comparison overhead; this is a matched on/off benchmark, not a timing replay of earlier uninstrumented code.",
+    "Every saved geometry/ownership array is compared bitwise; source/report hashes differ intentionally."
+  ]
+}
