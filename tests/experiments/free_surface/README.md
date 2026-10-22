@@ -26,6 +26,21 @@ case differs by at most 3.4% on the six diagonal terms. Finite-box/depth effects
 remain mixed with spatial error; this is not an open-water correlation gate.
 Physical hull geometry stays fixed during coplanar panel refinement.
 
+The material-layout falsifier separates subdivision before clipping from the
+reference's subdivision after clipping:
+
+```text
+uv run --locked --group correlation python -m tests.experiments.free_surface.material_layout
+```
+
+All layouts use the same physical hull, fluid formulation and exterior, with
+fresh Capytaine comparisons at rest and two heave/heel poses. The transverse
+material refinement reduces the resting hull from 704 to 640 panels and passes
+the existing 3.4% diagonal screen there. It fails a held-out pose at 3.53% surge
+error. The reference passes all three poses. The report retains all six modes,
+the failures, preparation cost and complete case timings; these first timings
+are not warm benchmarks. Neither smaller layout replaces the reference.
+
 The repeated six-RHS timings reuse unchanged operators and factors. They are
 not moving-stage timings. Full candidate time includes geometry, construction,
 factorization and the repeated solves; independent Capytaine work is outside

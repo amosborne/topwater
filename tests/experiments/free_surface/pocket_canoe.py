@@ -27,15 +27,28 @@ def run(n,subdivisions,expected):
     start=perf_counter()
     data=SimulationInputs.from_json(json.dumps(input_data(2)))
     rest,wet=equilibrate_heave(data.body,data.initial_state)
+    hull=wet.wetted_triangles
+    for _ in range(subdivisions):
+        hull=subdivide(hull)
+    result=run_hull(n,hull,rest.position,expected,start=start)
+    result['subdivisions']=subdivisions
+    return result
+
+
+def run_hull(n,hull,center,expected,*,start=None):
+    """Solve the same pocket for supplied physical wet triangles and body CG.
+
+    The caller supplies body-outward hull winding, as in hydrostatics. This remains
+    the canonical convex, horizontal-waterline experiment, not a mesh API.
+    """
+    if start is None:
+        start=perf_counter()
     points,tets,near,fs=grid(n,0.,0)
     # An actual local pocket may end below the hull, rather than at the seabed.
     near &= np.all(points[tets][:,:,2]>=-1.,axis=1)
     faces=boundary(points,tets[near])
     top=np.all(points[faces,2]==0,axis=1)
     walls=points[faces[~top]]
-    hull=wet.wetted_triangles
-    for _ in range(subdivisions):
-        hull=subdivide(hull)
     edges=np.stack((hull,np.roll(hull,-1,axis=1)),axis=2).reshape(-1,2,3)
     segments=edges[np.all(edges[:,:,2]==0,axis=1)]
     mesh,body,free=join_wetted_hull(hull,segments,walls,points[np.unique(faces[top])])
@@ -56,7 +69,7 @@ def run(n,subdivisions,expected):
     local,diagnostics=assemble_energy(mesh.faces,panels,3)
     energy+=coo_matrix((local.ravel(),(np.repeat(mapping,len(mapping)),
         np.tile(mapping,len(mapping)))),shape=energy.shape).tocsr()
-    load=np.zeros((len(points),6));load[mapping]=body_load(mesh,panels,body,rest.position)
+    load=np.zeros((len(points),6));load[mapping]=body_load(mesh,panels,body,center)
     active=np.flatnonzero(energy.diagonal()>0)
     unknown=np.setdiff1d(active,free_nodes)
     operator=energy[unknown][:,unknown].tocsc()
@@ -72,7 +85,7 @@ def run(n,subdivisions,expected):
     scale=np.array([1.,1.,1.,3.5,3.5,3.5])
     normalized=(actual-expected)/scale[:,None]/scale[None,:]/(1000*3.5**3)
     factor_bytes=sum(m.data.nbytes+m.indices.nbytes+m.indptr.nbytes for m in (factor.L,factor.U))
-    return dict(qualified=False,n=n,subdivisions=subdivisions,pocket_bottom=-1.,hull_panels=len(body),
+    return dict(qualified=False,n=n,pocket_bottom=-1.,hull_panels=len(body),
         local_panels=len(panels),local_nodes=len(mapping),unknowns=len(unknown),
         geometry_seconds=geometry_seconds,assembly_seconds=assembly_seconds,
         factor_seconds=factor_seconds,solve_first_seconds=times[0],solve_warm_seconds=times[1:],
