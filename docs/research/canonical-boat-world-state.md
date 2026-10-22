@@ -269,6 +269,26 @@ The finite tank and 15-coefficient surface state must still be replaced or
 qualified for the actual open-water problem; finer boundary agreement alone
 does not settle them.
 
+An offline reconstruction of the accepted 0.05/0.20 s states identifies a
+representation cost before introducing operator caches. Only 128 of 752 body
+panels retain their material coordinates, although these cover 66.45% of wet
+area. Moving facet-fan centers spread waterline motion into 338 of 415 body
+nodes (7.08 cm median material displacement among moving nodes). Source and
+hashed reconstructions: `artifacts/audit_boat_material_motion.py` and
+`artifacts/boat-material-motion-compatible-chart.{json,npz}`. The next geometry
+candidate is a fixed material hull tessellation, clipping only its waterline
+fringe and retaining intended material edges. It must preserve physical moments,
+closure and pressure-offset continuity; no generic remeshing framework is needed.
+
+Rigid bulk/bulk free-space kernel pairs preserve distances, areas, normals and
+paired surface-curl products under common six-DOF motion. This permits exact
+reuse of corresponding **raw** V/H/W blocks. It does not make their condensed
+energy block invariant: `E=W+H.T@inv(V)@H` remains globally coupled to changing
+free/fringe panels. With the current fan mesh, invariant bulk/bed pairs occupy
+only 1.63% of raw pairs, so direct pair caching alone has little leverage.
+Any new tessellation therefore earns its place through an actual geometry and
+pressure comparison before implementing partial assembly or factor updates.
+
 The nonlinear graph HOS reference (`hos_graph.py`) separately passed independent
 harmonic-field checks, including direct continuation, grid and product-padding
 controls. It is a prospective far-field component, not an implemented near/far
