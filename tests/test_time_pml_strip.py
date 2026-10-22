@@ -12,6 +12,9 @@ def test_pulse_is_zero_after_drive_but_excites_dc_memory():
     omega = 2.;period = 2*np.pi/omega
     times = np.linspace(0., 8*period, 16001)
     pulse = drive(times, omega)
+    np.testing.assert_array_equal(pulse, drive(times, omega, plateau_periods=4.))
+    np.testing.assert_allclose(drive(32*period, omega, plateau_periods=32.), 1.2)
+    assert drive(34*period, omega, plateau_periods=32.) == 0.
     assert pulse[0] == 0.
     np.testing.assert_array_equal(pulse[times >= 6*period], 0.)
     # Integral of the chosen finite pulse is nonzero; an accidentally balanced
@@ -51,7 +54,8 @@ def test_failed_run_preserves_only_completed_history_and_original_error(tmp_path
     failure = FloatingPointError('synthetic failed midpoint')
 
     class FakeMidpoint:
-        def __init__(self, supplied, dt):
+        def __init__(self, supplied, dt, *, plateau_periods=4.):
+            assert plateau_periods == 32.
             assert output.parent.is_dir()  # Created before any numerical work.
             self.dt = dt;self.time = 0.
             self.free = np.unique(supplied.top);self.left = np.unique(supplied.left)
@@ -71,10 +75,12 @@ def test_failed_run_preserves_only_completed_history_and_original_error(tmp_path
     monkeypatch.setattr(module, 'make_strip', lambda *args, **kwargs: strip)
     monkeypatch.setattr(module, 'MidpointStrip', FakeMidpoint)
     with pytest.raises(FloatingPointError) as caught:
-        module.run(np.pi/100, output)
+        module.run(np.pi/100, output, plateau_periods=32.)
     assert caught.value is failure
     report = json.loads(output.read_text())
     assert report['complete'] is False and report['valid_midpoints'] == 1
+    assert report['duration_periods'] == 40. and report['fit_period_range'] == [31., 33.]
+    assert report['pulse_plateau_periods'] == 32.
     assert report['error']['type'] == 'FloatingPointError'
     assert 'insufficient' in report['harmonic_fit']
     assert report['runtime']['git_revision'] and len(report['source_sha256']) == 4
