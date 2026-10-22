@@ -10,10 +10,12 @@ from hashlib import sha256
 import json
 from pathlib import Path
 import pstats
+import platform
 from time import perf_counter
 
 import numpy as np
-from threadpoolctl import threadpool_limits
+import scipy
+from threadpoolctl import threadpool_limits, threadpool_info
 
 from .p4_canoe_field import prepare
 from .p4_canoe_stage import verify_master_identity
@@ -30,11 +32,15 @@ def run(stage, output, *, derivative_step=1e-4):
         raise ValueError('positive finite derivative step required')
     with np.load(stage, allow_pickle=False) as saved:
         canonical = saved['canonical'].copy();physical = saved['physical'].copy()
+        saved_rate = saved['canonical_rate'].copy()
     if canonical.ndim != 1 or len(canonical) % 2 or not np.all(np.isfinite(canonical)):
         raise ValueError('finite saved canonical state required')
     report = dict(scope='One fresh full nonlinear saved-state RHS; no trajectory/timing qualification',
                   complete=False, stage_path=str(stage), stage_sha256=sha256(stage.read_bytes()).hexdigest(),
-                  derivative_step=derivative_step, phase_wall_seconds={})
+                  derivative_step=derivative_step, phase_wall_seconds={},
+                  profiling_overhead='Cold cProfile-instrumented diagnostic; Python call costs include profiler overhead',
+                  runtime=dict(python=platform.python_version(), numpy=np.__version__, scipy=scipy.__version__,
+                               native_threadpools=threadpool_info()))
     paths = ['profile_p4_canoe_stage.py', 'p4_canoe_field.py', 'p4_variational_canoe.py',
              'p4_geometry.py', 'p4_boundary_action.py', 'p4_surface.py',
              'p4_whole_geometry.py', 'p4_volume_map.py', 'p4_canoe_contact.py']
@@ -63,6 +69,10 @@ def run(stage, output, *, derivative_step=1e-4):
         result = phase('evaluate', lambda: evaluate(owner, data, canonical[size:], derivative_step=derivative_step))
         error = float(np.max(abs(result['physical_state']-physical)))
         report['saved_physical_state_max_error'] = error
+        if saved_rate.shape != result['rate'].shape or not np.all(np.isfinite(saved_rate)):
+            raise ValueError('finite saved canonical_rate matching current master space required')
+        report['saved_canonical_rate_max_error'] = float(np.max(abs(result['rate']-saved_rate)))
+        report['rate_comparison'] = 'Raw difference reported, not an accuracy gate; source/derivative controls may differ from the saved stage'
         if error > 1e-9:
             raise ValueError('fresh state differs from saved physical state')
         report.update(complete=True, weak_normal_relative=result['full_weak_normal_velocity_relative_residual'],
@@ -82,7 +92,7 @@ def run(stage, output, *, derivative_step=1e-4):
                 for key, value in ranked]
             if result is not None:
                 np.savez(output.with_suffix('.npz'), canonical=canonical, canonical_rate=result['rate'],
-                         physical=result['physical_state'], qdot=result['qdot'])
+                         physical=result['physical_state'], qdot=result['qdot'], saved_canonical_rate=saved_rate)
             output.write_text(json.dumps(report, indent=2)+'\n')
         except BaseException as save_error:
             # Report I/O failure without masking an already-active numeric error.
