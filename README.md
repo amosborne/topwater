@@ -189,8 +189,9 @@ mathematical test boundary, never a physical wetted deck.
 
 Independent quadrature checks self, near and far interactions. Unresolved close
 pairs fail explicitly; global panel-intersection detection is not implemented.
-The compiled kernel replaces the measured NumPy bottleneck without maintaining
-a second production formula. Benchmark assembly with
+The compiled kernel handles ordinary pairs. Rare close scalar interactions use
+bounded higher-precision analytic evaluation when cancellation defeats its
+error estimate; unresolved close gradients still fail explicitly. Benchmark assembly with
 `uv run --locked python -m tests.benchmark_rankine`, or add `--operation field`
 for 128 fixed bulk targets and gradients. Reports record five warm timings,
 isolated cold compilation, actual BLAS threads, numerical errors and fresh-process

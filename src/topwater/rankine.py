@@ -82,7 +82,7 @@ class PanelInfluence:
 
 
 def _fallback(target, triangle, normal, controls, gradients):
-    """Order-refined quadrature for well-separated analytic cancellation only.
+    """Resolve analytic cancellation with bounded additional work.
 
     Fixed-origin Gaussian rules can agree while missing a near-singular peak.
     Never use their order agreement as evidence for an unresolved close pair.
@@ -90,7 +90,32 @@ def _fallback(target, triangle, normal, controls, gradients):
     area2 = np.linalg.norm(np.cross(triangle[1]-triangle[0], triangle[2]-triangle[0]))
     diameter = np.linalg.norm(np.roll(triangle, -1, axis=0)-triangle, axis=1).max()
     if np.linalg.norm(target-triangle.mean(axis=0)) < 2*diameter:
-        raise QuadratureError("analytic accuracy unresolved for a close panel pair")
+        if gradients:
+            raise QuadratureError("analytic accuracy unresolved for a close panel gradient")
+        # A close peak can defeat quadrature order agreement. Re-evaluate the
+        # analytic integral instead; edge/vertex/trace checks run before this.
+        from decimal import DecimalException
+        from ._rankine_extended import triangle_values
+
+        previous = None
+        last_error = None
+        for refinement in range(min(controls.max_refinement+1, 5)):
+            try:
+                values, rounding = triangle_values(target, triangle, normal, 32+16*refinement)
+            except (DecimalException, ValueError, ZeroDivisionError) as error:
+                # Cancellation can round a positive denominator to zero at a
+                # lower precision. Retry within the same bounded work budget.
+                last_error = error
+                previous = None
+                continue
+            scaled = np.asarray(values)/[diameter, 1.]
+            error = np.asarray(rounding)/[diameter, 1.]
+            tolerance = controls.quadrature_atol+controls.quadrature_rtol*np.abs(scaled)
+            if (previous is not None and np.all(np.isfinite(scaled)) and values[0] > 0
+                    and np.all(np.abs(scaled-previous)+error <= tolerance)):
+                return values, 0
+            previous = scaled
+        raise QuadratureError("close panel analytic evaluation exceeded max_refinement or float precision") from last_error
     previous = None
     evaluations = 0
     for refinement in range(controls.max_refinement + 1):

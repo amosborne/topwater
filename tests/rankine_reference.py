@@ -9,6 +9,56 @@ import numpy as np
 from scipy.integrate import quad
 
 
+def edge_aligned_values(target, triangle, normal_sign=1):
+    """Independent off-plane S/K reference for thin waterline triangles.
+
+    Integrate along the longest edge analytically, then adapt across its width.
+    Endpoint-transition splits resolve the narrow peak which global Gaussian
+    refinement misses. This is not a trace or gradient reference.
+    """
+    triangle = np.asarray(triangle)
+    lengths = np.linalg.norm(np.roll(triangle, -1, axis=0)-triangle, axis=1)
+    a, b, c = np.roll(triangle, -int(np.argmax(lengths)), axis=0)
+    length = np.linalg.norm(b-a)
+    tangent = (b-a)/length
+    normal = np.cross(b-a, c-a)
+    normal /= np.linalg.norm(normal)
+    short = np.cross(normal, tangent)
+    width, skew = np.dot(c-a, short), np.dot(c-a, tangent)
+    along, across = np.dot(target-a, tangent), np.dot(target-a, short)
+    height = np.dot(target-a, normal)
+    if height == 0:
+        raise ValueError('edge-aligned reference requires an off-plane target')
+    split = []
+    if skew != 0:
+        split.append(along/skew)
+    if skew != length:
+        split.append((along-length)/(skew-length))
+    split = [v for v in split if 0 < v < 1]
+
+    def integrand(v, double):
+        lo = v*skew-along
+        hi = lo+(1-v)*length
+        perpendicular2 = (v*width-across)**2+height**2
+        if double:
+            radial = (hi/np.sqrt(hi*hi+perpendicular2)
+                      - lo/np.sqrt(lo*lo+perpendicular2))/perpendicular2
+            return normal_sign*width*height*radial/(4*np.pi)
+        radial = (np.arcsinh(hi/np.sqrt(perpendicular2))
+                  - np.arcsinh(lo/np.sqrt(perpendicular2)))
+        return width*radial/(4*np.pi)
+
+    values = []
+    for double in (False, True):
+        result = quad(integrand, 0, 1, args=(double,), points=split,
+                      epsabs=1e-13 if double else 1e-17,
+                      epsrel=1e-12, limit=300, full_output=1)
+        if len(result) != 3:
+            raise RuntimeError(result[3])
+        values.append(result[0])
+    return tuple(values)
+
+
 def panel_reference(target, triangle, normal_sign=1):
     target, triangle = np.asarray(target), np.asarray(triangle)
     cross = np.cross(triangle[1]-triangle[0], triangle[2]-triangle[0])

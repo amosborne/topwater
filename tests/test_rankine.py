@@ -107,7 +107,7 @@ def test_coplanar_exterior_normal_derivative_is_nonzero():
     assert_allclose(difference[0, 0], reference[3][2], rtol=1e-9)
 
 
-def test_cancellation_fallback_and_explicit_failure_for_unresolved_near_pairs():
+def test_cancellation_fallback_and_explicit_failure_for_unresolved_gradients():
     panels = TrianglePanels(TRIANGLE[None])
     controls = LaplaceControls(quadrature_rtol=1e-12, quadrature_atol=1e-30)
     result = panel_influence([[1e8, 3e7, 4e7]], panels, controls=controls, gradients=True)
@@ -115,11 +115,13 @@ def test_cancellation_fallback_and_explicit_failure_for_unresolved_near_pairs():
     # At this separation the leading monopole gives an independent 1/r check.
     delta = np.array([1e8, 3e7, 4e7])-panels.centroids[0]
     assert_allclose(result.single_layer[0, 0], .5/(4*np.pi*np.linalg.norm(delta)), rtol=1e-14)
-    for target in ([0, 0, 1e-12], [.5, 1e-12, 1e-12]):
-        with pytest.raises(QuadratureError, match="close panel"):
-            _fallback(np.array(target), TRIANGLE, np.array([0, 0, 1]), LaplaceControls(), False)
-    with pytest.raises(QuadratureError, match="close panel"):
-        panel_influence([[.5, 1e-12, 1e-12]], panels)
+    # Solid-angle limits at a right-angle corner and one height inside an edge.
+    # Generic adaptive quadrature can miss the 1e-12-wide peak here.
+    for target, expected in (([0, 0, 1e-12], .125), ([.5, 1e-12, 1e-12], .375)):
+        actual, _ = _fallback(np.array(target), TRIANGLE, np.array([0, 0, 1]), LaplaceControls(), False)
+        assert_allclose(actual[1], expected, atol=1e-11)
+    result = panel_influence([[.5, 1e-12, 1e-12]], panels)
+    assert result.fallback_pairs == 1
     with pytest.raises(QuadratureError, match="close panel"):
         panel_influence([[.5, -1e-12, 0]], panels, gradients=True)
     with pytest.raises(QuadratureError, match="max_refinement"):

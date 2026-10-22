@@ -158,6 +158,15 @@ satisfy `error <= atol + rtol*abs(reference)` for `S/panel_diameter` and `K`.
 These are requested tolerances, not certified error bounds; independent checks
 below establish their adequacy. Defaults are `rtol=1e-8`, `atol=1e-10` and at
 most eight fallback order increases. An exhausted work budget is an explicit error.
+Well-separated cancellation uses order-refined quadrature. Close scalar pairs
+instead recompute the analytic integrals and geometry from the float vertices
+using standard-library decimal arithmetic, from 32 through at most 96 digits.
+Success requires agreement between successive precisions plus a binary64
+rounding allowance within the same requested tolerance. `max_refinement` also
+bounds these precision increases. Close gradient cancellation still fails
+explicitly. Independent edge-aligned integration verifies the thin image
+interactions found while moving the canonical canoe through its waterline;
+agreement of global Gaussian orders is insufficient for those narrow peaks.
 
 Scale the mixed system with a declared positive length `L` and potential scale
 `Phi`: `phi_hat=phi/Phi`, `q_hat=L*q/Phi`, `S_hat=S/L`. On a Neumann panel the
