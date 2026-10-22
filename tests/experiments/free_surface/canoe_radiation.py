@@ -218,6 +218,7 @@ def run(n=12, *, periods=.05, omega=4., amplitude=1e-4, ramp_periods=2.,
         reference_a = reference['added_mass'][0]
         reference_b = reference['radiation_damping'][0]
         report['capytaine'] = dict(added_mass=reference_a.tolist(), radiation_damping=reference_b.tolist(),
+            green_function_settings=reference['green_function_settings'],
             added_mass_diagonal=float(reference_a[mode_index, mode_index]),
             damping_diagonal=float(reference_b[mode_index, mode_index]),
             scope='Same rest wet panels and depth; unbounded horizontal reference. '

@@ -1,4 +1,5 @@
 """Validation-only Capytaine reference on exactly supplied wetted triangles."""
+from pathlib import Path
 import numpy as np
 from numpy.testing import assert_allclose
 from threadpoolctl import threadpool_limits
@@ -52,7 +53,9 @@ def frequency_response(triangles, center, mass, frequencies, headings, *, water_
     from capytaine.bem.airy_waves import froude_krylov_force
 
     body = body_from_triangles(triangles, center, mass)
-    green = cpt.Delhommeau(tabulation_nr=0, tabulation_nz=0, tabulation_cache_dir=None)
+    cache=Path('artifacts/capytaine-green-cache')
+    cache.mkdir(parents=True,exist_ok=True)
+    green = cpt.Delhommeau(tabulation_cache_dir=str(cache))
     added_mass = np.empty((len(frequencies), 6, 6))
     damping = np.empty_like(added_mass)
     diffraction = np.empty((len(frequencies), len(headings), 6), dtype=complex)
@@ -72,5 +75,6 @@ def frequency_response(triangles, center, mass, frequencies, headings, *, water_
                 diffraction[f, h] = [result.forces[row] for row in MODES]
                 incident[f, h] = [fk[row] for row in MODES]
     return dict(added_mass=added_mass, radiation_damping=damping,
+                green_function_settings=green.exportable_settings,
                 diffraction=diffraction, froude_krylov=incident,
                 excitation=diffraction+incident)
