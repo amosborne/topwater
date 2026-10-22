@@ -5,11 +5,17 @@ The mirrored quadrature is part of this explicitly mirrored discretization.
 Neither the old full-tank TetGen mesh nor nonlinear motion is parity reduced.
 """
 from functools import lru_cache
+from hashlib import sha256
+import argparse
+import json
+from pathlib import Path
+import subprocess
 
 import numpy as np
 from numpy.polynomial.legendre import leggauss
 from scipy.sparse import coo_matrix
 from scipy.sparse.linalg import splu
+from threadpoolctl import threadpool_limits
 
 from topwater.rankine import TrianglePanels
 from tests.laplace_reference import triangle_samples
@@ -158,3 +164,45 @@ def compare(quarter, body_faces, center, omega, onset, width, strength, *, order
         scope='Coarse exact-mirrored discrete correctness control only. Structurally zero '
               'cross-parity entries are derived, not independently computed quarter entries. '
               'No propagation, mesh convergence, nonlinear or Capytaine qualification.')
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--reference', type=Path, required=True)
+    parser.add_argument('--mesh-only', action='store_true')
+    parser.add_argument('--output', type=Path, default=Path('artifacts/quarter-canoe-control.json'))
+    args = parser.parse_args()
+    from .quarter_canoe import POCKET, make_plc, make_quarter, mirrored_body
+    from .canoe_wet_reference import pinned_reference, verify_coverage
+
+    # Deliberately coarse and fixed: only an algebraic symmetry control.
+    # These cells DO NOT resolve the outgoing-wave validation family.
+    x, y, z = [0., POCKET[0], POCKET[0]+1.], [0., POCKET[1], POCKET[1]+1.], [-4., -1., 0.]
+    with threadpool_limits(1):
+        plc = make_plc(x, y, z, subdivisions=0)
+        mesh, faces, body, parents, preflight = make_quarter(plc)
+        full, maps, _, _ = mirror(mesh)
+        full_body, full_parents = mirrored_body(full, maps, body, parents, plc.parent_reflections)
+        domain, reference, _, provenance = pinned_reference(args.reference)
+        coverage = verify_coverage(full.points[full_body][:, ::-1], full_parents,
+                                   reference, domain.contact.body_source_faces)
+        report = dict(qualified=False, mesh_only=args.mesh_only,
+            revision=subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(),
+            source_sha256={name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
+                for name in ('quarter_canoe.py', 'quarter_canoe_control.py', 'canoe_wet_reference.py',
+                             'pml_corner.py', 'pml_strip.py', 'p4_tetra.py', 'p4_canoe.py')},
+            x=x, y=y, z=z, wet_subdivisions=0, quarter_nodes=len(mesh.points),
+            full_nodes=len(full.points), quarter_tetrahedra=len(mesh.tets),
+            full_tetrahedra=len(full.tets), mesher_preflight=preflight,
+            reference=provenance, physical_coverage=coverage,
+            scope='Fixed coarse canonical canoe parity control, not wave or Capytaine accuracy.')
+        print(json.dumps(dict(stage='coarse mesh preflight complete',
+            quarter_nodes=len(mesh.points), full_nodes=len(full.points))), flush=True)
+        if not args.mesh_only:
+            report['control'] = compare(mesh, body, plc.center, 4., POCKET+.5, [0.5, 0.5], 8.)
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    np.savez(args.output.with_suffix('.npz'), points=mesh.points[:mesh.vertex_count],
+        tets=mesh.tets, body_faces=body, body_parents=parents, center=plc.center)
+    args.output.write_text(json.dumps(report, indent=2)+'\n')
+    print(json.dumps(dict(output=str(args.output), mesh_only=args.mesh_only,
+        quarter_nodes=len(mesh.points), full_nodes=len(full.points))), flush=True)
