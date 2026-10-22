@@ -352,10 +352,22 @@ establish wave/Capytaine accuracy; a memory-bounded frequency solve is next.
 a queried 9 GiB process commit limit. The 110435-row scalar matrix has 7837923
 nonzeros and uses 157 MB of sparse arrays. Default COLAMD factorization failed
 with `MemoryError`; it produced no coefficient. The unchanged physical case is
-being retried with `MMD_AT_PLUS_A` ordering. This worker saves the exact scalar
+solved successfully with `MMD_AT_PLUS_A` ordering. At omega=2 the heave added
+mass is 584.239864 kg against Capytaine's 589.851139 kg (0.9513% difference),
+and damping is 443.391742 against 446.360957 kg/s (0.6652%). The relative linear
+residual is 5.75e-13; measured peak process commit is 9629724672 bytes, close
+to the 9 GiB limit. This worker saves the exact scalar
 input before factorization and rejects reuse after changes to equations, mesh,
-reference, loads or data. Seven focused integrity tests pass. A heave result,
-if obtained, remains one block rather than the required six-mode family.
+reference, loads or data. Seven focused integrity tests pass. This is one
+coefficient pair rather than the required six-mode frequency family; spatial
+and outgoing-boundary stability remain unqualified.
+
+`p4_canoe_radiation` and `p4_linear_canoe_transient` now provide the nonlinear
+prescribed-heave startup and identical-rest closed-tank comparison drivers.
+They retain all six load rows and the zero-start natural response. These
+drivers have not yet been numerically exercised. Prescribed heave complements
+the separate free six-DOF release; it does not establish a six-axis trajectory
+or an outgoing-water Capytaine comparison.
 
 The prescribed nonlinear controller also passes an independent physical-work
 check on the moving canonical canoe with nonflat surface, all six velocities
