@@ -121,6 +121,8 @@ def run(n=12, *, periods=.05, omega=4., amplitude=1e-4, ramp_periods=2.,
         raise ValueError('rtol < 1 and positive integer fit periods required')
     if mode not in MODES:
         raise ValueError(f'mode must be one of {MODES}')
+    if variational and not gpu:
+        raise ValueError('variational radiation currently requires the CUDA experiment environment')
     mode_index = MODES.index(mode)
     domain = make_domain(n, gpu, wet_subdivisions=wet_subdivisions,
                          exterior_scale=exterior_scale)
