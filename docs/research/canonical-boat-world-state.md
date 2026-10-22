@@ -676,6 +676,74 @@ reciprocal/weak integrals before another long trajectory. No clipping, smoothing
 or algebraic affine patch is adopted. The actual-state q24 peak remains about
 637 m/s; this alone cannot establish physical validity or its numerical cause.
 
+## Strong trace recovery is not yet qualified
+
+Further frozen-state controls are recorded in `boat-contact-recovery.json`.
+Uniform q48/q96 recovers the affine-control peak as 0.44810004/0.44809990 m/s,
+matching the independent current-recovery baseline 0.44809989. The actual-state
+peak remains 628/630 m/s and its vertical-square integral is 11.7984/11.8005
+m4/s2. Thus the proven integration error does not explain the whole actual-state
+spike. Three-edge averaged, edge-graded q6 rules also fail to beat ordinary q12
+(108 versus 144 target samples); stop this target-rule tuning avenue.
+
+The auxiliary P0 normal trace from `Vs^-1*H*phi` is a second DISCRETE
+reconstruction, not a reference solution. At q48 its actual-state vertical-square
+integral is 9.05095 m4/s2 versus reaction recovery 11.7984. One conforming free
+refinement leaves geometry and the 15+15 evolved state exactly unchanged but
+changes these integrals to 8.87818 and 14.1912. Quadrature q24/q48 differences on
+that refined mesh are much smaller than this spatial change. Local affine
+errors remain (q48 peak 0.6079 versus independent 0.4505), so this is evidence
+of unresolved recovery, not a completed spatial-convergence study.
+
+An exact saved-field decomposition separates the sources of the free reaction.
+Let `L` map constant face fluxes to integrated nodal loads, and `b` be the
+prescribed nonfree load. Then, on free nodes,
+`E*phi-b = Lfree*qaux + (Lnonfree*qaux-b) + (E*phi-Lall*qaux)`.
+Separate body and outer contributions in the middle term. Their vectors close
+to 2.8e-17 absolute; the mass Gram matrix retains cancellation cross terms.
+At the original q48 peak the signed vertical contributions are approximately
+41.63 (auxiliary free), +1308.24 (body residual), +0.003 (outer residual),
+-722.20 (consistency), and -0.004 (tangent), summing to 627.67 m/s. This does not
+justify subtracting any component. Shared contact-node tests have body and
+free support; their weak reaction is not intrinsically a strong free velocity.
+
+A two-level BODY-TARGETED refinement around the original contact node adds only
+28 faces (1088 to 1116); conformity also splits adjacent free faces. At the SAME
+original physical probe, the recovered velocity changes from +627.67 m/s to
+-5.26 at q48 (+6.30 at q24). The sampled maximum moves about 1.8 mm and becomes
+860.66 m/s. The original node's physical body/free support ratio falls from
+34.8 to 8.70. Global reaction/auxiliary integrals become 11.7231/9.04669; this is
+not a converged repair and no refinement policy earns adoption. Point maxima,
+fixed probes, quadrature sensitivity, integrated quantities and all cancelling
+terms must be considered together.
+
+Next test the surface rates against derivatives of the SAME restricted
+stationary energy, including moving contact/basis terms, before squaring a
+strong lift of a weak reaction in another long nonlinear trajectory. Do not
+declare the auxiliary flux exact, clip velocities, or project away residuals.
+Contact-distance bins in the diagnostic use sampled indicators, not exact
+geometric strip clipping; global polynomial integrals have the stronger claim.
+
+The bounded next falsifier needs only two parent-height directions: one away
+from contact and one at the affected parent. With `b=B*V+b_inc`, define
+`F=rho*(phi.T*E*phi/2-phi.T*b)` at the stationary mixed field. Its derivative
+must include `rho*rF.T*dS*psi` in addition to the fixed-trace energy shape
+derivative and `-rho*phi.T*db`. Verify this against h/h2 scalar finite
+differences with re-solved fields before extending to all directions.
+The surface one-form is `rho*psi.T*C*eta_dot`, where
+`C=S.T*Mxy*S` depends on the moving exposed-water hole. Consequently
+`rho*C.T*psi_dot = -F_eta-U_eta + rho*((psi.T*C_eta[k]*eta_dot)_k-C_dot.T*psi)`.
+`C_dot` includes both body and surface motion. Compare these WEAK parent loads
+with the existing Bernoulli rate, including incident-load and gravity
+derivatives; do not compare only the kinetic energy derivative.
+
+If this control passes, use one order-matched `cuda_shape_gradient.vertex_gradient`
+pass and cheap same-chart geometry derivatives for all 15 directions, rather
+than 30 full energy assemblies. Current shape-gradient auxiliary ownership is
+order-three-specific and must remain strict until matching quadrature is
+implemented. This is an implementation route, not a completed correction;
+six-DOF work/pressure consistency still needs validation too.
+
 ## Primary context
 
 Variational free-surface discretization with moving boundaries is established;

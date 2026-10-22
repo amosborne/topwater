@@ -1705,3 +1705,17 @@ Composite red subdivision is inferior to equal-count ordinary rules and is
 not adopted. Evidence and the full defect decomposition are recorded in
 `docs/research/boat-contact-integration.json`; this is the current correction
 target, before further long trajectories or throughput claims.
+
+Further controls (`docs/research/boat-contact-recovery.json`) reach q96 affine
+consistency while the actual peak persists. `--orders 6 24 48 96` selects that
+bounded control. `--edge-graded` tests rejected edge-clustered rules.
+`--free-refinement 1` or `--local-body-refinement 2` separately changes the
+conforming boundary approximation on exactly the same geometry and parent
+traces. Neither earns a default change. `boat_contact_reaction --audit <report>
+--output <report> --probe-point <x y z>` reuses saved fields WITHOUT another
+operator solve, decomposing the reaction into auxiliary free flux, body/outer
+Neumann residuals and a consistency defect. Shared-node residuals and cancellation
+are amplified by strong mass recovery on tiny free supports. Fixed physical
+probes are essential when comparing these meshes: sampled maxima move. This
+motivates a restricted-energy surface-rate check; it does not establish a
+physical flux replacement or permit residual subtraction.

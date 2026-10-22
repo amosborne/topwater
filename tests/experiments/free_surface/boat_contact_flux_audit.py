@@ -18,10 +18,17 @@ from .incident_baseline_benchmark import coefficients
 from .p4_fluid_ordering import fresh
 
 
-def run(pilot, output, chart_path, composite=False):
+def run(pilot, output, chart_path, composite=False, orders=(6, 12, 24), edge_graded=False,
+        free_refinement=0, local_body_refinement=0):
     from . import cuda_operator as gpu
     from .cuda_operator import prepare_energy
     pilot, output = Path(pilot), fresh(output)
+    if not orders or orders[0] != 6 or any(order not in (6, 12, 24, 48, 96) for order in orders):
+        raise ValueError('begin with replay order six; bounded orders are 6/12/24/48/96')
+    if free_refinement not in (0, 1):
+        raise ValueError('bounded spatial control allows zero or one free-surface refinement')
+    if local_body_refinement not in (0, 1, 2) or (free_refinement and local_body_refinement):
+        raise ValueError('separate free refinement from zero/one/two local body refinements')
     output.parent.mkdir(parents=True, exist_ok=True)
     source = json.loads(pilot.read_text())
     fixture = Path(__file__).resolve().parents[2]/'reference_boat.py'
@@ -39,7 +46,7 @@ def run(pilot, output, chart_path, composite=False):
         time_seconds=time, original_surface=old['surface'], rows=[],
         input_sha256={str(p): sha256(p.read_bytes()).hexdigest() for p in (pilot, pilot.with_suffix('.npz'))},
         source_sha256={name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
-            for name in ('boat_contact_flux_audit.py', 'boat_target_quadrature.py', 'boat_world_field.py', 'boat_world_boundary.py',
+            for name in ('boat_contact_flux_audit.py', 'boat_contact_trace.py', 'boat_target_quadrature.py', 'boat_world_field.py', 'boat_world_boundary.py',
                          'boat_parent_clip_proof.py', 'boat_geometry_template.py', 'canoe.py',
                          'incident_baseline_benchmark.py', 'cuda_operator.py', 'cuda_energy.cu', 'cuda_pair.cuh')})
     saved, started = dict(state=state), perf_counter()
@@ -81,6 +88,35 @@ def run(pilot, output, chart_path, composite=False):
             raise ValueError('chart fixture differs')
         report['input_sha256'].update({str(p): sha256(p.read_bytes()).hexdigest() for p in (path, metadata_path)})
         values = coefficients(sea_states.loads_realization(json.dumps(metadata['actual_sea_realization'])))
+
+        def check_replay(surface):
+            for key in ('maximum_fine_vertical_velocity_at_quadrature',
+                        'maximum_parent_height_rate', 'maximum_parent_potential_rate'):
+                if not np.isclose(surface[key], old['surface'][key], rtol=1e-10, atol=1e-10):
+                    raise ValueError('explicit chart does not reproduce saved surface: '+key)
+
+        if free_refinement or local_body_refinement:
+            base_panels = TrianglePanels(arrays['points'][arrays['faces']], 1)
+            base_energy = prepare_energy(arrays['faces'], base_panels, order=6).energy
+            base_field = current_field(arrays, base_energy, values, state[7:13], time=time)
+            _, _, base_surface = surface_rates(arrays['points'], arrays['faces'][arrays['free_faces']],
+                arrays['free_nodes'], base_field['parent_map'], arrays['parent_psi'], base_field['flux'])
+            check_replay(base_surface)
+            if free_refinement:
+                arrays = refine_boundary(arrays, region='free')
+            else:
+                contact_nodes = np.intersect1d(arrays['free_nodes'],
+                    np.unique(arrays['faces'][arrays['body_faces']]))
+                location = np.array(base_surface['peak_vertical_location_world'])
+                node = int(contact_nodes[np.argmin(np.linalg.norm(arrays['points'][contact_nodes]-location, axis=1))])
+                report['local_body_refinement'] = dict(levels=local_body_refinement, contact_node=node,
+                    rule='Body faces incident to the nearest contact node to the ORIGINAL q6 vertical peak; same node at each level.')
+                for _ in range(local_body_refinement):
+                    selected = arrays['body_faces'][np.any(arrays['faces'][arrays['body_faces']] == node, axis=1)]
+                    arrays = refine_boundary(arrays, region='body', marked_faces=selected)
+        report['extra_free_refinement'] = free_refinement
+        report['boundary_counts'] = dict(nodes=len(arrays['points']), faces=len(arrays['faces']),
+            free_faces=len(arrays['free_faces']), body_faces=len(arrays['body_faces']))
         points, faces, fixed = arrays['points'], arrays['faces'], arrays['free_nodes']
         panels = TrianglePanels(points[faces], 1)
         free_faces = faces[arrays['free_faces']]
@@ -113,10 +149,12 @@ def run(pilot, output, chart_path, composite=False):
         nonfree_boundary = boundary-free_boundary
         expected_flux = free_boundary[fixed]
         expected_density = cho_solve(mass_factor, expected_flux)
-        rules = [(6, 0), (12, 0), (24, 0)]
+        rules = [(order, 0, 0) for order in orders]
         if composite:
-            rules += [(6, 1), (6, 2)]
-        for order, levels in rules:
+            rules += [(6, 1, 0), (6, 2, 0)]
+        if edge_graded:
+            rules += [(6, 0, 2), (6, 0, 4)]
+        for order, levels, edge_power in rules:
             if perf_counter()-started > 90:
                 raise RuntimeError('90s contact audit budget exhausted')
             before = perf_counter()
@@ -130,7 +168,10 @@ def run(pilot, output, chart_path, composite=False):
 
             gpu._pairs = capture_pairs
             try:
-                if levels:
+                if edge_power:
+                    from .boat_target_quadrature import prepare_edge_energy
+                    assembly = prepare_edge_energy(faces, panels, order, edge_power)
+                elif levels:
                     from .boat_target_quadrature import prepare_composite_energy
                     assembly = prepare_composite_energy(faces, panels, order, levels)
                 else:
@@ -143,11 +184,8 @@ def run(pilot, output, chart_path, composite=False):
             field = current_field(arrays, energy, values, state[7:13], time=time)
             er, pr, surface = surface_rates(points, free_faces, fixed, field['parent_map'],
                                            arrays['parent_psi'], field['flux'])
-            if order == 6 and levels == 0:
-                for key in ('maximum_fine_vertical_velocity_at_quadrature',
-                            'maximum_parent_height_rate', 'maximum_parent_potential_rate'):
-                    if not np.isclose(surface[key], old['surface'][key], rtol=1e-10, atol=1e-10):
-                        raise ValueError('explicit chart does not reproduce saved surface: '+key)
+            if order == 6 and levels == 0 and edge_power == 0 and not (free_refinement or local_body_refinement):
+                check_replay(surface)
             peak = np.array(surface['peak_vertical_location_world'])
             start, direction = points[contact_edges[:, 0]], points[contact_edges[:, 1]]-points[contact_edges[:, 0]]
             parameter = np.clip(np.sum((peak-start)*direction, axis=1)/np.sum(direction**2, axis=1), 0, 1)
@@ -170,6 +208,13 @@ def run(pilot, output, chart_path, composite=False):
             actual_density = cho_solve(mass_factor, field['flux'])
             stationary_density = actual_density-contributions.sum(axis=1)
             raw_v, raw_h = captured['v'], captured['h']
+            from .boat_contact_trace import compare_traces
+            normal_traces = cho_solve((assembly.factor.get(), True),
+                                     raw_h@np.column_stack((field['potential'], harmonic, exact_phi)))
+            actual_trace_comparison = compare_traces(points, free_faces, fixed,
+                field['potential'], actual_density, normal_traces[arrays['free_faces'], 0], contact_edges)
+            affine_trace_comparison = compare_traces(points, free_faces, fixed,
+                harmonic, harmonic_density, normal_traces[arrays['free_faces'], 1], contact_edges, gravity=0.)
             exact_q = panels.normals@a
             green = raw_h@exact_phi-raw_v@exact_q
             reciprocal_change = (raw_v.T-raw_v)@exact_q/2
@@ -201,6 +246,10 @@ def run(pilot, output, chart_path, composite=False):
                 propagated_auxiliary_relative=float(np.linalg.norm(propagated)/np.linalg.norm(boundary)),
                 full_defect_decomposition_maximum=float(np.max(abs(decomposition_error))))
             report['rows'].append(dict(order=order, target_subdivision_levels=levels,
+                target_edge_power=edge_power,
+                actual_trace_comparison=actual_trace_comparison,
+                affine_trace_comparison=affine_trace_comparison,
+                affine_auxiliary_exact_trace_error_maximum=float(np.max(abs(normal_traces[:, 2]-exact_q))),
                 affine_pair_control=pair_control,
                 integration_diagnostics=assembly.diagnostics,
                 energy_constant_maximum=float(np.max(abs(energy@np.ones(len(points))))),
@@ -217,10 +266,11 @@ def run(pilot, output, chart_path, composite=False):
                 body_motion_decomposition=dict(
                     maximum_absolute_radiation_contributions_m_per_s=np.max(abs(contributions), axis=0).tolist(),
                     maximum_absolute_stationary_density_m_per_s=float(np.max(abs(stationary_density))))))
-            saved.update({f'q{order}_sub{levels}_{name}': value for name, value in dict(energy=energy,
+            saved.update({f'q{order}_sub{levels}_edge{edge_power}_{name}': value for name, value in dict(energy=energy,
                 potential=field['potential'], flux=field['flux'], eta_rate=er, psi_rate=pr,
                 harmonic_potential=harmonic, harmonic_flux=harmonic_flux, expected_flux=expected_flux,
                 raw_green_defect=green, reciprocity_action=reciprocal_change,
+                auxiliary_normal_traces=normal_traces,
                 raw_weak_curl_defect=weak_raw, symmetric_weak_curl_defect=weak_sym,
                 propagated_auxiliary_defect=propagated,
                 radiation_density_contributions=contributions, stationary_density=stationary_density).items()})
@@ -241,4 +291,8 @@ if __name__ == '__main__':
     parser.add_argument('--output', required=True)
     parser.add_argument('--chart-path', required=True)
     parser.add_argument('--composite', action='store_true')
+    parser.add_argument('--orders', type=int, nargs='+', default=(6, 12, 24))
+    parser.add_argument('--edge-graded', action='store_true')
+    parser.add_argument('--free-refinement', type=int, choices=(0, 1), default=0)
+    parser.add_argument('--local-body-refinement', type=int, choices=(0, 1, 2), default=0)
     run(**vars(parser.parse_args()))

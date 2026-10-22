@@ -40,6 +40,11 @@ def test_two_marked_edges_use_conforming_oriented_three_triangle_split():
     assert np.all(np.einsum('ij,ij->i', normal, child_normal) > 0)
     # The fixed combinatorial choice is repeatable, including symmetric faces.
     assert np.array_equal(refine_boundary(arrays, region='body')['faces'], refined['faces'])
+    local = refine_boundary(arrays, region='body', marked_faces=np.array([0]))
+    assert np.array_equal(np.bincount(local['refinement_parent_face']), [4, 2, 2, 2])
+    assert_allclose(local['refinement_moment_errors'], 0., atol=1e-16)
+    with pytest.raises(ValueError, match='subset'):
+        refine_boundary(arrays, region='body', marked_faces=np.array([3]))
     with pytest.raises(ValueError, match='region'):
         refine_boundary(arrays, region='walls')
 

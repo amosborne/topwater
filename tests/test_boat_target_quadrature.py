@@ -2,7 +2,7 @@
 import numpy as np
 import pytest
 
-from tests.experiments.free_surface.boat_target_quadrature import composite_samples
+from tests.experiments.free_surface.boat_target_quadrature import composite_samples, edge_samples
 from tests.laplace_reference import triangle_samples
 
 
@@ -24,3 +24,17 @@ def test_composite_preserves_quadratic_moments(levels):
                 (reference[:, :, i]*reference[:, :, j])@reference_weights,
                 rtol=2e-15, atol=2e-15)
     np.testing.assert_array_equal(triangles, original)
+
+
+@pytest.mark.parametrize('power', [2, 4])
+def test_edge_rule_integrates_affine_moments_and_is_vertex_invariant(power):
+    triangles = np.array([[[0., 0., 0.], [3., 0., 1.], [0., 2., -.4]]])
+    points, weights = edge_samples(triangles, 6, power)
+    assert np.all(weights > 0)
+    np.testing.assert_allclose(weights.sum(), 1., atol=1e-15)
+    np.testing.assert_allclose(weights@points[0], triangles.mean(axis=1)[0], atol=1e-15)
+    # Cyclic vertex relabeling must not privilege a different edge.
+    shifted, shifted_weights = edge_samples(np.roll(triangles, 1, axis=1), 6, power)
+    for coordinate in range(3):
+        np.testing.assert_allclose(weights@np.exp(points[0, :, coordinate]),
+            shifted_weights@np.exp(shifted[0, :, coordinate]), rtol=2e-15)

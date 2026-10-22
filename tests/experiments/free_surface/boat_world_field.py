@@ -23,7 +23,7 @@ from .incident_baseline_benchmark import coefficients, fused_cpu
 from .p4_fluid_ordering import fresh
 
 
-def refine_boundary(arrays, *, region='all'):
+def refine_boundary(arrays, *, region='all', marked_faces=None):
     """Subdivide the same physical boundary and inherit fixed parent traces.
 
     This enriches the fluid discretization, not the boat geometry or evolved
@@ -38,8 +38,16 @@ def refine_boundary(arrays, *, region='all'):
         raise ValueError("refinement region must be 'all', 'body', or 'free'")
     face_edges = inverse.reshape(3, -1).T
     marked = np.ones(len(edges), dtype=bool) if region == 'all' else np.zeros(len(edges), dtype=bool)
-    if region != 'all':
-        marked[face_edges[arrays[region+'_faces']].ravel()] = True
+    selected = np.arange(len(faces)) if region == 'all' else arrays[region+'_faces']
+    if marked_faces is not None:
+        requested = np.asarray(marked_faces)
+        if (requested.ndim != 1 or not np.issubdtype(requested.dtype, np.integer)
+                or not len(requested) or not np.isin(requested, selected).all()):
+            raise ValueError('marked faces must be a nonempty integer subset of the selected region')
+        selected = np.unique(requested)
+        marked[:] = False
+    if region != 'all' or marked_faces is not None:
+        marked[face_edges[selected].ravel()] = True
     midpoint = np.full(len(edges), -1, dtype=int)
     midpoint[marked] = np.arange(marked.sum())+len(points)
     edges = edges[marked]
