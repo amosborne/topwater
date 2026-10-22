@@ -236,6 +236,19 @@ and offline comparison checks, 20 focused tests pass. The longer release retry
 and its tighter same-case repeat remain pending. `compare_p4_releases` will
 retain six-axis motion, raw energy/volume drift and exact common-endpoint
 differences, requiring identical initial stage, masters and runtime sources.
+If a later step fails, the release CLI preserves complete accepted snapshots
+in separate `-failed.json/.npz` files and rethrows the original error. Five
+focused checks cover this failure path; failed trial states are excluded.
+
+`p4_rest_operator_bridge` compares the actual nonlinear and frequency helpers
+on the same saved coarse canoe mesh without a fluid solve. Two zero-stretch
+frequencies isolate stiffness and surface mass separately; their relative
+differences are 4.51e-15 and 2.78e-15. The combined six-column body-load
+difference is 1.61e-15. An independent harmonic-quartic boundary-flux control
+has relative weak-form errors 2.35e-14/6.36e-14. This verifies the affine-rest
+assembly connection only. Different fluid resolutions and the missing causal
+time-domain outgoing boundary still prevent combining the closed-tank nonlinear
+and open-frequency results into an end-to-end open-water qualification.
 
 `p4_rest_geometry_checks` separately checks the actual canoe without assembling
 another fluid operator. At rest, Ceta agrees with the surface mass within
