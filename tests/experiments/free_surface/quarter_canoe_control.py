@@ -41,15 +41,20 @@ def rule(order, swapped=False):
     return bary, d[:, :, 1:]-d[:, :, :1], (wu*wv*wt*(1-u)**2*(1-v)).ravel()
 
 
-def scalar_operator(mesh, omega, onset, width, strength, *, order=12, swaps=None, surface_faces=None):
+def scalar_operator(mesh, omega, onset, width, strength, *, order=12, swaps=None, surface_faces=None,
+                    max_nodes=20000):
     """Physical complex-stretch weak form K_s - omega² M_s/g.
 
     Ordinary transpose gives the complex-symmetric form. No conjugation,
     physical sponge Q, symmetrization, or boundary row correction is applied.
-    This deliberately straightforward assembler is for coarse controls only.
+    The default cap is for coarse controls. The reviewed actual-candidate
+    worker may explicitly allow up to120000 nodes under its OS memory limit;
+    that allocation limit, not input sparse storage, bounds its process commit.
     """
-    if len(mesh.points) > 20000:
-        raise ValueError('coarse control exceeds its 20000-node assembly cap')
+    if isinstance(max_nodes, bool) or not isinstance(max_nodes, int) or not 1 <= max_nodes <= 120000:
+        raise ValueError('explicit node cap must be an integer in1..120000')
+    if len(mesh.points) > max_nodes:
+        raise ValueError(f'control exceeds its explicit {max_nodes}-node assembly cap')
     if not np.isfinite(omega) or omega <= 0:
         raise ValueError('positive finite frequency required')
     if swaps is None:
