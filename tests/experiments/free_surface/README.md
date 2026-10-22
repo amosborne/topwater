@@ -47,6 +47,23 @@ force fits, amplitude/time refinement and all-six-mode correlation remain
 required. Reports label the formulation so the older pressure controls cannot
 be combined with variational results in a coefficient family.
 
+The current P1 tetrahedral exterior also fails the declared wave-phase gate:
+
+```text
+uv run --locked python -m tests.experiments.free_surface.exterior_dispersion
+```
+
+This command deliberately exits 1 while the gate fails. One periodic column
+uses the actual exterior stiffness and consistent surface mass, checked against
+an independently derived stencil and the finite-depth gravity-wave dispersion
+relation. At n=48 and omega=6 rad/s, axial frequency errors are 10.7% and 6.32%,
+predicting 3.37 and 1.99 rad phase errors after five periods. These are spatial
+errors without a hull, sponge or timestep. Separate horizontal/vertical controls
+show that concentrating only the vertical layers cannot resolve the failure.
+The nonlinear body/work checks above remain useful, but do not qualify this
+exterior propagation method. Higher-order cell candidates are being tested
+before changing the coupled solver; no accuracy gate is relaxed.
+
 ## Spatial-pocket accuracy and construction baseline
 
 Two checkout-only commands test an actual spatial decomposition:
