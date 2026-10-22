@@ -12,6 +12,8 @@ from .experiments.free_surface.moving_canoe import make_domain,initial_state,mov
 from .experiments.free_surface.canonical_canoe import encode,physical_rate
 from .experiments.free_surface.variational_canoe import rhs
 from .experiments.free_surface.linear_canoe_radiation import solve
+from .experiments.free_surface.canonical_canoe import _prepare,configuration
+from topwater.hydrostatics import hydrostatics
 
 
 def test_six_mode_response_is_reciprocal_and_passive():
@@ -36,7 +38,13 @@ def test_frequency_equations_are_the_actual_nonlinear_fluid_first_variation():
         potential=solved['potential_per_velocity'][0]@velocity
         eta=solved['height_per_velocity'][0]@velocity
         expected=np.r_[(-1j*omega*eta).real,(-1j*omega*potential[domain.free_nodes]).real]
+        rest=initial_state(domain,False)
+        data=_prepare(domain,configuration(domain,rest),psi=np.zeros(size))
+        restoring=hydrostatics(domain.body,domain.rest).stiffness
+        expected_acceleration=np.linalg.solve(data['effective_mass'],
+            -restoring@displacement.real-1000*data['coupling'].T@expected[size:])
         errors=[]
+        acceleration_errors=[]
         for amplitude in (1e-4,5e-5):
             derivatives=[]
             for sign in (1,-1):
@@ -48,8 +56,12 @@ def test_frequency_equations_are_the_actual_nonlinear_fluid_first_variation():
                 state[13:13+size]=scale*eta.real
                 state[13+size:]=scale*potential[domain.free_nodes].real
                 canonical=encode(domain,state)
-                derivatives.append(physical_rate(domain,canonical,rhs(domain,canonical))[13:])
+                derivatives.append(physical_rate(domain,canonical,rhs(domain,canonical)))
             actual=(derivatives[0]-derivatives[1])/(2*amplitude)
-            errors.append(np.linalg.norm(actual-expected)/np.linalg.norm(expected))
+            errors.append(np.linalg.norm(actual[13:]-expected)/np.linalg.norm(expected))
+            acceleration_errors.append(np.linalg.norm(actual[7:13]-expected_acceleration)
+                /np.linalg.norm(expected_acceleration))
     assert errors[1]<2e-5,errors
     assert errors[1]<.4*errors[0],errors
+    assert acceleration_errors[1]<2e-5,acceleration_errors
+    assert acceleration_errors[1]<.4*acceleration_errors[0],acceleration_errors

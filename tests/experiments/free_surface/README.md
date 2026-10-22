@@ -8,7 +8,8 @@ using forces differentiated from the same discrete action as the fluid solve:
 
 ```text
 uv run --locked --with "cupy-cuda12x[ctk]==14.2.0" python -m tests.experiments.free_surface.variational_canoe --duration 1 --initial-scale 10
-uv run --locked --with "cupy-cuda12x[ctk]==14.2.0" python -m tests.experiments.free_surface.linear_canoe_radiation --n 24 --exterior-scale 2 --omega 2 4 6
+uv run --locked --group correlation --with "cupy-cuda12x[ctk]==14.2.0" python -m tests.experiments.free_surface.linear_canoe_radiation --n 24 --exterior-scale 2 --omega 2 4 6 --capytaine
+uv run --locked --group correlation --with "cupy-cuda12x[ctk]==14.2.0" python -m tests.experiments.free_surface.canoe_radiation --variational --mode heave --periods 6 --capytaine
 ```
 
 The older `moving_canoe` pressure formulation below remains a comparison
@@ -22,12 +23,22 @@ trajectory and timestep convergence remain under validation.
 `linear_canoe_radiation` solves the exact rest linearization of that action for
 all six radiation modes. It retains the full contact-node hull flux loads,
 consistent weak sponge projection, phase, reciprocity and dissipation checks.
-An actual nonlinear-stage amplitude-refinement test checks the fluid first
-variation. This provides a complete matrix diagnostic against Capytaine; it
+An actual nonlinear-stage amplitude-refinement test checks the fluid and all
+six body acceleration first variations. This provides a complete matrix diagnostic against Capytaine; it
 does not establish nonlinear force accuracy, outgoing-boundary convergence,
 long-run stability or full-case performance. Current coarse tank comparisons
 do not pass every coefficient gate. Nonlinear six-DOF and Capytaine validation
 take priority over speed optimization.
+
+`canoe_radiation --variational` integrates surface heights and their conjugate
+momenta while prescribing one body motion. Its controller reaction comes from
+the same nonlinear action and is converted to six world-axis hydrodynamic
+forces/moments. The far sponge uses consistent weak projection and includes
+the geometry-dependent momentum transformation. Instantaneous acceleration,
+nonlinear directional refinement and undamped gauge checks pass. Full-period
+force fits, amplitude/time refinement and all-six-mode correlation remain
+required. Reports label the formulation so the older pressure controls cannot
+be combined with variational results in a coefficient family.
 
 ## Spatial-pocket accuracy and construction baseline
 

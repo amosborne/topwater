@@ -5,6 +5,7 @@ limit against Capytaine; it does not replace nonlinear trajectory validation.
 The finite tank and sponge require independent spatial/domain convergence.
 """
 import argparse
+from hashlib import sha256
 import json
 from pathlib import Path
 
@@ -56,13 +57,18 @@ def solve(domain,frequencies,*,sponge_strength=4.,sponge_buffer=.5):
             passivity_identity_relative=float(np.linalg.norm(response.imag-dissipation)/max(np.linalg.norm(response.imag),1e-30)),
             minimum_damping_eigenvalue=float(np.linalg.eigvalsh(500*omega*(response.imag+response.imag.T)).min())))
         potentials.append(potential);heights.append(eta)
+    wet=points[domain.local_mapping][domain.contact.faces[domain.contact.body_faces]][:,::-1]
     report=dict(qualified=False,case='rest linearization of nonlinear variational canoe',
         mode_order=list(MODES),sponge_strength=sponge_strength,sponge_buffer=sponge_buffer,
         sponge_widths=widths.tolist(),water_depth=4.,cases=reports,
+        wetted_triangles_sha256=sha256(np.asarray(wet,dtype='<f8').tobytes()).hexdigest(),
+        wetted_panels=len(wet),rotation_center=domain.rest.position.tolist(),
         scope='Full six-mode linear limit only. Finite absorbing tank; spatial, domain, '
-            'sponge and Capytaine reference convergence required. No nonlinear evolution or timing qualification.')
+            'sponge and Capytaine reference convergence required. Q=0 is checked against '
+            'the undamped nonlinear runner; Q>0 adds a validation absorber. '
+            'No nonlinear outgoing-wave evolution or timing qualification.')
     return report,dict(potential_per_velocity=np.asarray(potentials),
-        height_per_velocity=np.asarray(heights),damping=damping)
+        height_per_velocity=np.asarray(heights),damping=damping,wetted_triangles=wet)
 
 
 if __name__=='__main__':
@@ -73,12 +79,32 @@ if __name__=='__main__':
     parser.add_argument('--omega',type=float,nargs='+',default=[4.])
     parser.add_argument('--sponge-strength',type=float,default=4.)
     parser.add_argument('--sponge-buffer',type=float,default=.5)
+    parser.add_argument('--capytaine',action='store_true')
     args=parser.parse_args()
     with threadpool_limits(1):
         domain=make_domain(args.n,True,args.wet_subdivisions,args.exterior_scale)
         report,saved=solve(domain,args.omega,sponge_strength=args.sponge_strength,sponge_buffer=args.sponge_buffer)
+    if args.capytaine:
+        from tests.capytaine_reference import frequency_response
+        from .validate_radiation import coefficient_gates
+        reference=frequency_response(saved['wetted_triangles'],domain.rest.position,
+            domain.body.mass,args.omega,[],water_depth=4.)
+        for i,case in enumerate(report['cases']):
+            case['capytaine']=dict(added_mass=reference['added_mass'][i].tolist(),
+                radiation_damping=reference['radiation_damping'][i].tolist())
+            d=np.array([1.,1.,1.,3.5,3.5,3.5])
+            scale=1000*3.5**3*d[:,None]*d[None,:]
+            case.update(added_mass_nondimensional=(np.asarray(case['added_mass'])/scale).tolist(),
+                reference_added_mass_nondimensional=(reference['added_mass'][i]/scale).tolist(),
+                damping_nondimensional=(np.asarray(case['radiation_damping'])/(args.omega[i]*scale)).tolist(),
+                reference_damping_nondimensional=(reference['radiation_damping'][i]/(args.omega[i]*scale)).tolist())
+        report['capytaine_green_function_settings']=reference['green_function_settings']
+        report['coefficient_gates']=coefficient_gates(report['cases'])
     report.update(n=args.n,wet_subdivisions=args.wet_subdivisions,exterior_scale=args.exterior_scale)
-    suffix=f'n{args.n}-wet{args.wet_subdivisions}-extent{args.exterior_scale:g}-sponge{args.sponge_strength:g}'
+    frequencies='-'.join(f'{value:g}' for value in args.omega)
+    suffix=(f'n{args.n}-wet{args.wet_subdivisions}-extent{args.exterior_scale:g}'
+        f'-sponge{args.sponge_strength:g}-buffer{args.sponge_buffer:g}-omega{frequencies}'
+        f'-capytaine{int(args.capytaine)}')
     Path('artifacts').mkdir(exist_ok=True)
     np.savez(f'artifacts/linear-canoe-radiation-{suffix}.npz',**saved)
     Path(f'artifacts/linear-canoe-radiation-{suffix}.json').write_text(json.dumps(report,indent=2)+'\n')

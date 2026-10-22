@@ -53,7 +53,7 @@ def test_gross_off_diagonal_failure_is_not_hidden_by_matching_diagonals():
     assert gate['maximum_tolerance_ratio'] > 1
 
 
-@pytest.mark.parametrize('failure', ['missing', 'duplicate', 'settings', 'reference', 'fit', 'mesh'])
+@pytest.mark.parametrize('failure', ['missing', 'duplicate', 'settings', 'reference', 'fit', 'mesh', 'formulation'])
 def test_incomplete_or_inconsistent_runs_are_rejected(failure):
     inputs = reports()
     if failure == 'missing':
@@ -66,6 +66,8 @@ def test_incomplete_or_inconsistent_runs_are_rejected(failure):
         inputs[2]['capytaine']['added_mass'][1][0] = 1.
     elif failure == 'mesh':
         inputs[2]['contact_mesh'] = 'old material-edge chart'
+    elif failure == 'formulation':
+        inputs[2]['formulation'] = 'different force model'
     else:
         inputs[5]['column_harmonic_fits'] = None
     with pytest.raises(ValueError):

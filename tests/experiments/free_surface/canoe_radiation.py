@@ -113,7 +113,7 @@ def _window(times, force, start, stop):
 def run(n=12, *, periods=.05, omega=4., amplitude=1e-4, ramp_periods=2.,
         fit_periods=3, gpu=True, wet_subdivisions=2, exterior_scale=1.,
         sponge_strength=4., sponge_buffer=.5, rtol=1e-4, derivative_step=1e-4,
-        max_step=.01, capytaine=False, mode='heave'):
+        max_step=.01, capytaine=False, mode='heave', variational=False):
     if not all(np.isfinite(v) and v > 0 for v in
                (periods, omega, amplitude, ramp_periods, rtol, derivative_step, max_step)):
         raise ValueError('positive finite run settings required')
@@ -137,18 +137,29 @@ def run(n=12, *, periods=.05, omega=4., amplitude=1e-4, ramp_periods=2.,
         motion = ramped_motion(time, amplitude, omega, ramp_periods)
         state, acceleration = prescribed_state(base, fluid, motion, mode_index)
         diagnostics = {}
-        rate = rhs(domain, state, derivative_step, diagnostics=diagnostics, damping=damping)
-        force = (np.asarray(diagnostics['known_pressure_load'])-
-                 np.asarray(diagnostics['added_mass'])@acceleration)
-        cache.update(time=time, fluid=fluid.copy(), force=force)
+        if variational:
+            from .prescribed_canoe import reaction
+            diagnostics=reaction(domain,state[:13],fluid[:size],fluid[size:],acceleration,
+                damping=damping,step=derivative_step)
+            fluid_rate=np.r_[diagnostics['eta_rate'],diagnostics['pi_rate']]
+            force=diagnostics['hydrodynamic_load']
+            physical=diagnostics['physical_state']
+        else:
+            rate = rhs(domain, state, derivative_step, diagnostics=diagnostics, damping=damping)
+            force = (np.asarray(diagnostics['known_pressure_load'])-
+                     np.asarray(diagnostics['added_mass'])@acceleration)
+            fluid_rate=rate[13:]
+            physical=state
+        cache.update(time=time, fluid=fluid.copy(), force=force,physical=physical)
         calls += 1
         if calls%20==0:
             print(json.dumps(dict(progress=True,simulated_time=time,rhs_evaluations=calls)),flush=True)
-        return rate[13:]
+        return fluid_rate
 
     fluid = np.zeros(2*size)
     evaluate(0., fluid)
     times = [0.]; states = [fluid.copy()]; forces = [cache['force'].copy()]
+    physical_states=[cache['physical'].copy()]
     solver = RK23(evaluate, 0., fluid, periods*period, rtol=rtol, atol=1e-9,
                   max_step=min(max_step, period/40))
     while solver.status == 'running':
@@ -159,6 +170,7 @@ def run(n=12, *, periods=.05, omega=4., amplitude=1e-4, ramp_periods=2.,
         if cache['time'] != solver.t or not np.array_equal(cache['fluid'], solver.y):
             evaluate(solver.t, solver.y)
         times.append(solver.t); states.append(solver.y.copy()); forces.append(cache['force'].copy())
+        physical_states.append(cache['physical'].copy())
     times, states, forces = np.asarray(times), np.asarray(states), np.asarray(forces)
     restoring_column = hydrostatics(domain.body, domain.rest).stiffness[:, mode_index]
     fit = None; period_fits = []; column_fits = None
@@ -196,6 +208,8 @@ def run(n=12, *, periods=.05, omega=4., amplitude=1e-4, ramp_periods=2.,
     maximum_edge = float(np.linalg.norm(triangles-np.roll(triangles, 1, axis=1), axis=2).max())
     report = dict(qualified=False, case='prescribed-motion nonlinear radiation experiment',
         mode=mode, mode_order=list(MODES), amplitude_unit='m' if mode_index < 3 else 'rad',
+        formulation='variational' if variational else 'reconstructed pressure control',
+        integrated_fluid_variables='eta,Pi' if variational else 'eta,psi',
         n=n, gpu=gpu, wet_subdivisions=wet_subdivisions, exterior_scale=exterior_scale,
         contact_mesh='physical-facet ALE; wet triangles subdivided after clipping',
         periods=periods, ramp_periods=ramp_periods, fit_periods=fit_periods, omega=omega,
@@ -238,9 +252,10 @@ def run(n=12, *, periods=.05, omega=4., amplitude=1e-4, ramp_periods=2.,
                 report['capytaine'][name+'_relative_error']=(
                     float(actual[mode_index]/diagonal-1) if diagonal else None)
     motions = np.array([ramped_motion(t, amplitude, omega, ramp_periods) for t in times])
-    full_states = np.array([prescribed_state(base, fluid, motion, mode_index)[0]
-                            for fluid, motion in zip(states, motions)])
+    full_states = np.asarray(physical_states)
     saved = dict(times=times, states=full_states, prescribed_motion=motions, hydrodynamic_load=forces)
+    if variational:
+        saved['canonical_fluid_states']=states
     if mode == 'heave':
         saved['heave'] = motions
         report['restoring_heave'] = float(restoring_column[2])
@@ -267,13 +282,15 @@ if __name__ == '__main__':
     parser.add_argument('--max-step', type=float, default=.01)
     parser.add_argument('--cpu', action='store_true')
     parser.add_argument('--capytaine', action='store_true')
+    parser.add_argument('--variational', action='store_true')
     args = vars(parser.parse_args()); args['gpu'] = not args.pop('cpu')
     with threadpool_limits(1):
         report, states = run(**args)
     path = Path('artifacts'); path.mkdir(exist_ok=True)
     suffix = (f"{args['mode']}-n{args['n']}-wet{args['wet_subdivisions']}-periods{args['periods']:g}"
         f"-omega{args['omega']:g}-amplitude{args['amplitude']:g}-extent{args['exterior_scale']:g}"
-        f"-sponge{args['sponge_strength']:g}-rtol{args['rtol']:g}-step{args['max_step']:g}")
+        f"-sponge{args['sponge_strength']:g}-rtol{args['rtol']:g}-step{args['max_step']:g}"
+        +('-variational' if args['variational'] else ''))
     np.savez(path/f'canoe-radiation-{suffix}.npz', **states)
     (path/f'canoe-radiation-{suffix}.json').write_text(json.dumps(report, indent=2)+'\n')
     print(json.dumps(report), flush=True)

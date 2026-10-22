@@ -13,7 +13,8 @@ MODES = ('surge', 'sway', 'heave', 'roll', 'pitch', 'yaw')
 SETTINGS = ('n', 'gpu', 'wet_subdivisions', 'contact_mesh', 'exterior_scale', 'periods',
             'ramp_periods', 'fit_periods', 'amplitude', 'rtol', 'derivative_step',
             'max_step', 'water_depth', 'sponge_strength', 'sponge_buffer',
-            'domain_half_widths', 'sponge_widths', 'maximum_surface_edge')
+            'domain_half_widths', 'sponge_widths', 'maximum_surface_edge',
+            'formulation', 'integrated_fluid_variables')
 REFERENCE_SETTINGS = ('omega', 'n', 'wet_subdivisions', 'contact_mesh', 'water_depth')
 
 
@@ -28,6 +29,32 @@ def _same_settings(report, expected, keys):
     for key in keys:
         if key not in report or key not in expected or report[key] != expected[key]:
             raise ValueError(f'inconsistent or missing setting: {key}')
+
+
+def coefficient_gates(cases):
+    """Apply the declared family tolerance to complete nondimensional matrices.
+
+    This gate is shared by harmonic transients and exact rest linearization;
+    it makes no convergence or nonlinear-qualification assertion.
+    """
+    if not cases:
+        raise ValueError('nonempty complete coefficient family required')
+    gates={}
+    for family,actual_key,reference_key in (
+            ('added_mass','added_mass_nondimensional','reference_added_mass_nondimensional'),
+            ('damping','damping_nondimensional','reference_damping_nondimensional')):
+        actual=np.array([_array(case[actual_key],(6,6),actual_key) for case in cases])
+        reference=np.array([_array(case[reference_key],(6,6),reference_key) for case in cases])
+        # One floor over every supplied frequency and all 36 matrix entries.
+        floor=max(1e-10,.005*float(np.max(np.abs(reference))))
+        tolerance=.05*np.abs(reference)+floor
+        ratio=np.abs(actual-reference)/tolerance
+        worst=np.unravel_index(np.argmax(ratio),ratio.shape)
+        gates[family]=dict(passed=bool(np.all(ratio<=1)),family_floor=floor,
+            maximum_tolerance_ratio=float(ratio[worst]),
+            worst_omega=cases[worst[0]]['omega'],worst_force_mode=MODES[worst[1]],
+            worst_radiating_mode=MODES[worst[2]],tolerance_ratios=ratio.tolist())
+    return gates
 
 
 def aggregate(reports, *, references=(), length=3.5, density=1000.):
@@ -102,22 +129,7 @@ def aggregate(reports, *, references=(), length=3.5, density=1000.):
             reference_added_mass_nondimensional=(ref_a/scale).tolist(),
             damping_nondimensional=(actual_b/(omega*scale)).tolist(),
             reference_damping_nondimensional=(ref_b/(omega*scale)).tolist()))
-    gates = {}
-    for family, actual_key, reference_key in (
-            ('added_mass', 'added_mass_nondimensional', 'reference_added_mass_nondimensional'),
-            ('damping', 'damping_nondimensional', 'reference_damping_nondimensional')):
-        actual = np.array([case[actual_key] for case in cases])
-        reference = np.array([case[reference_key] for case in cases])
-        # docs/numerics.md: one floor over the COMPLETE predeclared family,
-        # including every supplied frequency and all 36 matrix entries.
-        floor = max(1e-10, .005*float(np.max(np.abs(reference))))
-        tolerance = .05*np.abs(reference)+floor
-        ratio = np.abs(actual-reference)/tolerance
-        worst = np.unravel_index(np.argmax(ratio), ratio.shape)
-        gates[family] = dict(passed=bool(np.all(ratio <= 1)), family_floor=floor,
-            maximum_tolerance_ratio=float(ratio[worst]),
-            worst_omega=cases[worst[0]]['omega'], worst_force_mode=MODES[worst[1]],
-            worst_radiating_mode=MODES[worst[2]], tolerance_ratios=ratio.tolist())
+    gates=coefficient_gates(cases)
     return dict(qualified=False, coefficient_gates_passed=all(gate['passed'] for gate in gates.values()),
         length=length, density=density, mode_order=list(MODES), cases=cases, gates=gates,
         unresolved=['amplitude convergence', 'time-step convergence', 'spatial convergence',
