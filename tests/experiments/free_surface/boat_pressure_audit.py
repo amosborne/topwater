@@ -16,6 +16,7 @@ from topwater import InitialState, sea_states
 from topwater.frames import rotation_matrix
 from topwater.rankine import TrianglePanels
 from tests.reference_boat import BEAM, LENGTH, GRAVITY, WATER_DENSITY, reference_body
+from tests.benchmark_rankine import peak_rss_bytes
 from .boat_world_boundary import construct, body_material_samples, interpolate_body_trace
 from .boat_world_field import current_field, surface_rates
 from .body_pressure import evaluate_body_pressure, quadrature
@@ -32,7 +33,10 @@ def run(output, step=1e-4):
     report = dict(complete=False, qualified=False, timings=[], derivatives=[], mixed_residuals=[],
         scope='Actual nonflat boat snapshot: pressure directional-step audit in diagnostic finite tank; no spatial/ocean/trajectory qualification',
         source_sha256={name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
-            for name in ('boat_pressure_audit.py', 'boat_world_field.py', 'boat_world_boundary.py', 'body_pressure.py')})
+            for name in ('boat_pressure_audit.py', 'boat_world_field.py', 'boat_world_boundary.py',
+                         'boat_parent_clip_proof.py', 'body_pressure.py', 'canoe.py',
+                         'cuda_operator.py', 'cuda_energy.cu', 'cuda_pair.cuh')},
+        gpu_pool_reserved_peak_bytes=0)
     start = perf_counter()
     saved = {}
 
@@ -42,6 +46,8 @@ def run(output, step=1e-4):
         before = perf_counter()
         value = function()
         cp.cuda.get_current_stream().synchronize()
+        report['gpu_pool_reserved_peak_bytes'] = max(report['gpu_pool_reserved_peak_bytes'],
+                                                    cp.get_default_memory_pool().total_bytes())
         report['timings'].append(dict(operation=name, seconds=perf_counter()-before))
         return value
 
@@ -118,6 +124,7 @@ def run(output, step=1e-4):
         report['failure'] = dict(type=type(error).__name__, message=str(error))
         raise
     finally:
+        report['process_peak_rss_bytes'] = peak_rss_bytes()
         np.savez(output.with_suffix('.npz'), **saved)
         output.write_text(json.dumps(report, indent=2, allow_nan=False)+'\n')
     return report

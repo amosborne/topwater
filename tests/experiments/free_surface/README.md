@@ -1260,3 +1260,20 @@ it does not qualify the pressure path. The initial driver source is frozen
 beside the report. Subsequent audits explicitly report a directional-load
 budget of 0.1% of weight and weight times length. Passing that numerical budget
 would still leave spatial, quadrature, surface-basis and ocean checks open.
+
+The centroid regression then identified finite fan-center jumps of up to
+0.215 m caused by counting a nearly coincident cutpoint as a full extra vertex.
+Exact polygon area centroids remove that error. The next audit
+(`artifacts/boat-pressure-area-centroid-h1e4.*`) reduced the surge-load step
+difference to 908 N but still failed (3.70% of weight). Offline extrapolation
+shows the one-sided finite-area triangles now share the same geometric limit;
+independent cut-node unknowns still coalesce while retaining finite support.
+
+A controlled probe on the four saved offset meshes changed only BEM target
+quadrature order 3/6/12. The extrapolated trace-jump norm stayed approximately
+0.00684/0.00686/0.00687; ordinary target quadrature refinement is not the cure.
+Reports and probe source are saved under
+`artifacts/boat-pressure-area-centroid-quadrature-probe.*`. The next candidate
+removes submerged background-parent cuts from hull facets while retaining
+the actual waterline and original physical facets. No pressure baseline has
+been accepted from these component timings.
