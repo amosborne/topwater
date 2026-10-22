@@ -64,6 +64,23 @@ The nonlinear body/work checks above remain useful, but do not qualify this
 exterior propagation method. Higher-order cell candidates are being tested
 before changing the coupled solver; no accuracy gate is relaxed.
 
+`p4_pocket` tests a contained higher-order candidate against an independent
+oblique harmonic field on the same flat box. At n=6 and n=12, whole-surface
+flux errors for full P4 FEM decrease from 0.349% to 0.0224%. Coupling a P1 BEM
+pocket to that exterior gives 25.3% and 9.65%, despite shared potential and
+weak-flux balance residuals below 3e-14. The mixed error includes local P1
+surface approximation and interface trace restriction; it is not a measured
+wave-reflection coefficient. These static tests do not select a new nonlinear
+solver or establish canoe, outgoing-wave or performance accuracy.
+
+The prescribed nonlinear controller also passes an independent physical-work
+check on the moving canonical canoe with nonflat surface, all six velocities
+and imposed accelerations. Without damping, its controller supplies 1.15926 W;
+with the weak sponge, controller plus sponge supplies 0.674319 W. Independent
+physical-energy differences at two displacement steps approach those values
+with residuals below 5e-9 W and 1e-9 W respectively. This checks instantaneous
+work, separately from the still-required complete radiation trajectories.
+
 ## Spatial-pocket accuracy and construction baseline
 
 Two checkout-only commands test an actual spatial decomposition:
