@@ -67,26 +67,12 @@ def initial_state(geometry):
     return q, psi, velocity
 
 
-def run():
-    """One owner/current solve and the verified fixed-phi action differences."""
-    start = perf_counter()
-    progress('build actual whole-canoe geometry')
-    geometry = P4WholeCanoeGeometry.make()
-    progress('geometry ready', active_nodes=len(np.unique(geometry.mesh.elements)),
-             surface_nodes=len(geometry.free_nodes), geometry_preflight=geometry.preflight)
-    q, psi, velocity = initial_state(geometry)
-    eta = q[6:]
-    progress('prepare fresh current curved fluid operator')
-    data = prepare(geometry, q)
-    progress('current field ready', fluid_volume=data['fluid_volume'],
-             added_mass_diagonal=np.diag(data['added_mass']).tolist())
-    canonical = encode(data, psi, velocity)
-    progress('evaluate full nonlinear canonical stage')
-    result = evaluate(geometry, data, canonical[len(q):])
-    progress('canonical stage evaluated', hamiltonian=result['hamiltonian'],
-             normal_relative_residual=result['full_weak_normal_velocity_relative_residual'],
-             fluid_work_absolute_residual=result['fluid_work_identity_absolute_residual'])
-    phi, qdot = result['potential'], result['qdot']
+def fixed_action(geometry, phi, qdot):
+    """Physical scalar L(q; fixed nodal phi, canonical qdot), orders8/9.
+
+    Only geometry is reevaluated: no perturbed fluid solve or force derivative.
+    This is the same primal action used by the original verified stage driver.
+    """
     nodes_on_faces = face_nodes(geometry.mesh, geometry.faces)
     _, reference_gravity = boundary_moments(geometry.mesh, geometry.faces, geometry.mesh.points)
 
@@ -107,6 +93,31 @@ def run():
         rigid = (.5*geometry.domain.body.mass*np.dot(twist[:3], twist[:3])
                  +.5*omega_body@geometry.domain.body.inertia_cg@omega_body)
         return float(rigid+1000*boundary-kinetic-gravity)
+
+    return scalar_action
+
+
+def run():
+    """One owner/current solve and the verified fixed-phi action differences."""
+    start = perf_counter()
+    progress('build actual whole-canoe geometry')
+    geometry = P4WholeCanoeGeometry.make()
+    progress('geometry ready', active_nodes=len(np.unique(geometry.mesh.elements)),
+             surface_nodes=len(geometry.free_nodes), geometry_preflight=geometry.preflight)
+    q, psi, velocity = initial_state(geometry)
+    eta = q[6:]
+    progress('prepare fresh current curved fluid operator')
+    data = prepare(geometry, q)
+    progress('current field ready', fluid_volume=data['fluid_volume'],
+             added_mass_diagonal=np.diag(data['added_mass']).tolist())
+    canonical = encode(data, psi, velocity)
+    progress('evaluate full nonlinear canonical stage')
+    result = evaluate(geometry, data, canonical[len(q):])
+    progress('canonical stage evaluated', hamiltonian=result['hamiltonian'],
+             normal_relative_residual=result['full_weak_normal_velocity_relative_residual'],
+             fluid_work_absolute_residual=result['fluid_work_identity_absolute_residual'])
+    phi, qdot = result['potential'], result['qdot']
+    scalar_action = fixed_action(geometry, phi, qdot)
 
     direction = np.r_[[.07, -.04, .03, .02, -.03, .015],
                       3e-4*np.cos(np.arange(len(eta))*.9)]
