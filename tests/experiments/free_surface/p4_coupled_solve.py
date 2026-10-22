@@ -62,3 +62,79 @@ def solve(matrix, load, rigid_mass, effective_momentum, surface_rhs,
                 coupled_relative_residual=float(np.linalg.norm(action(potential)-rhs)
                     /max(np.linalg.norm(rhs), np.finfo(float).tiny)),
                 fluid_residual=fluid_residual, body_residual=body_residual)
+
+
+def benchmark(path, output):
+    """Seven current-matrix cases with one reusable factor; no new geometry."""
+    from hashlib import sha256
+    import json
+    from pathlib import Path
+    from time import perf_counter
+    from scipy.sparse.linalg import splu
+    from .p4_fluid_ordering import load_input, fresh
+
+    output = fresh(output)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    matrix, data, manifest = load_input(path)
+    load, mass = data['body_load'], data['rigid_mass']
+    report = dict(complete=False, qualified=False,
+        scope='Current saved-canoe coupled algebra only; no changing operator or time integration',
+        input_npz_sha256=manifest['npz_sha256'],
+        source_sha256=sha256(Path(__file__).read_bytes()).hexdigest(),
+        rtol=1e-11, ordering='MMD_AT_PLUS_A', cases=[])
+    fields = {}
+    failure = None
+    try:
+        start = perf_counter()
+        factor = splu(matrix, permc_spec='MMD_AT_PLUS_A')
+        report['preconditioner_setup_wall_seconds'] = perf_counter()-start
+        cases = [('saved', data['p_effective'], data['fluid_surface_rhs'],
+                  data['reference_velocity'], data['reference_potential'])]
+        for column in range(6):
+            velocity = np.eye(6)[column]
+            cases.append((f'body_axis_{column}', (mass+data['added_mass'])@velocity,
+                          np.zeros(len(load)), velocity, data['response'][:, column]))
+        for name, momentum, forcing, reference_v, reference_phi in cases:
+            start = perf_counter()
+            current = solve(matrix, load, mass, momentum, forcing, factor.solve,
+                            rtol=report['rtol'])
+            elapsed = perf_counter()-start
+            potential, velocity = current['potential'], current['velocity']
+            fluid_scale = np.linalg.norm(matrix@potential)+np.linalg.norm(load@velocity)+np.linalg.norm(forcing)
+            body_scale = np.linalg.norm(mass@velocity)+1000*np.linalg.norm(load.T@potential)+np.linalg.norm(momentum)
+            report['cases'].append(dict(name=name, wall_seconds=elapsed, iterations=current['iterations'],
+                condensed_relative_residual=current['coupled_relative_residual'],
+                fluid_scaled_residual=float(np.linalg.norm(current['fluid_residual'])/max(fluid_scale, 1e-300)),
+                body_scaled_residual=float(np.linalg.norm(current['body_residual'])/max(body_scale, 1e-300)),
+                velocity_maximum_absolute_difference=float(np.max(abs(velocity-reference_v))),
+                potential_relative_difference=float(np.linalg.norm(potential-reference_phi)
+                    /max(np.linalg.norm(reference_phi), 1e-300))))
+            fields[name+'_potential'] = potential
+            fields[name+'_velocity'] = velocity
+            print(json.dumps(report['cases'][-1]), flush=True)
+        report['complete'] = True
+    except BaseException as error:
+        failure = error
+        report['failure'] = dict(type=type(error).__name__, message=str(error))
+        raise
+    finally:
+        try:
+            np.savez(output.with_suffix('.npz'), **fields)
+            output.write_text(json.dumps(report, indent=2, allow_nan=False)+'\n')
+        except BaseException as save_error:
+            if failure is not None:
+                failure.add_note('Coupled-solve evidence could not be saved: '+repr(save_error))
+            else:
+                raise
+    return report
+
+
+if __name__ == '__main__':
+    import argparse
+    from threadpoolctl import threadpool_limits
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--input', required=True)
+    parser.add_argument('--output', required=True)
+    args = parser.parse_args()
+    with threadpool_limits(limits=1):
+        benchmark(args.input, args.output)

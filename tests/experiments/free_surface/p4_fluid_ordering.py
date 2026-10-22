@@ -82,10 +82,9 @@ def save_input(path, matrix, load, response, added_mass, q, inside, free, proven
     return report
 
 
-def compare(path, output):
-    """One MMD factor on saved input; input caps do not bound factor fill."""
-    path, output = Path(path).with_suffix('.json'), fresh(output)
-    output.parent.mkdir(parents=True, exist_ok=True)
+def load_input(path):
+    """Read and verify one exact saved operator and its reference fields."""
+    path = Path(path).with_suffix('.json')
     manifest = json.loads(path.read_text())
     archive = path.with_suffix('.npz')
     if archive.stat().st_size > 400000000 or sha256(archive.read_bytes()).hexdigest() != manifest['npz_sha256']:
@@ -107,6 +106,15 @@ def compare(path, output):
     _validate(matrix, load, baseline, baseline_added)
     if manifest['density'] != 1000. or manifest['baseline_ordering'] != 'COLAMD (unchanged scipy splu default)':
         raise ValueError('baseline density/ordering differs from the prepared operator contract')
+    return matrix, arrays, manifest
+
+
+def compare(path, output):
+    """One MMD factor on saved input; input caps do not bound factor fill."""
+    path, output = Path(path).with_suffix('.json'), fresh(output)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    matrix, arrays, manifest = load_input(path)
+    load, baseline, baseline_added = arrays['body_load'], arrays['response'], arrays['added_mass']
     report = dict(qualified=False, complete=False, scope='Exact real-fluid ordering diagnostic only; no throughput qualification',
         input_json_sha256=sha256(path.read_bytes()).hexdigest(), input_npz_sha256=manifest['npz_sha256'],
         input_manifest=manifest, ordering='MMD_AT_PLUS_A',

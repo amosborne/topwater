@@ -56,6 +56,32 @@ This candidate needs substantial reductions in recurring work as well as an
 independent timestep diagnosis. Neither a factorization-only speedup nor a
 tolerance change alone is justified by this measurement.
 
+The first retained optimization consolidates the physical metrics into batched
+small matrix products and evaluates kinetic energy/shape force without unused
+volume/gravity terms. On the same complete saved-state RHS, preparation fell
+to 50.02 s and evaluation to 11.02 s: 61.04 s recurring total, about 1.91 times
+faster. Stiffness assembly took 9.38 s and kinetic cell integration 7.81 s.
+The physical-state maximum difference was 1.25e-16; the complete RHS relative
+L2 difference was 1.51e-13. Quadrature and geometry guards are unchanged.
+Fifteen focused physical cell, shape-work and geometry-trial checks also pass.
+The result remains far from the runtime ceiling; these are instrumented
+single-state measurements, not trajectory throughput.
+
+The exact saved 79,261-row/5,501,437-entry current fluid matrix also permits
+solve experiments without more geometry or assembly. MMD ordering preserved
+all six response fields (relative difference 1.96e-14) and all 36 added-mass
+entries (maximum absolute difference 3.44e-12), but factorization still took
+33.68 s. This modest ordering result does not solve repeated setup cost.
+`p4_coupled_solve` instead eliminates rigid velocity into the positive rank-six
+action `K + rho*B*M^-1*B.T`, avoiding construction of six auxiliary fields.
+The saved calm case and all six body directions agree with the existing block
+elimination to roundoff: maximum velocity difference 3.22e-14, field relative
+difference 2.27e-14, fluid scaled residual below 7.50e-14. Each needed six PCG
+iterations and 0.68--1.34 s with an exact-current fluid preconditioner; its
+28.61 s setup was measured separately. This verifies current-matrix algebra,
+not reuse after motion, nonzero-surface-potential mapping or coupled throughput.
+Those remain required before adopting this solve path.
+
 The frequency-only experiments below are supporting diagnostics, not a second
 Topwater solver architecture. The long quarter-PML experiment was stopped after
 saving complete six-mode matrices at 2 and 4 rad/s so the actual nonlinear time
