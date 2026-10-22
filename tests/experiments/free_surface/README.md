@@ -1277,3 +1277,30 @@ Reports and probe source are saved under
 removes submerged background-parent cuts from hull facets while retaining
 the actual waterline and original physical facets. No pressure baseline has
 been accepted from these component timings.
+
+Exact union of submerged pieces by original physical facet then removes
+24 artificial collinear hull points: 29 body polygons become nine, and body
+triangles fall from 110 to 46. The full boundary has 153 vertices/302 faces;
+each facet's signed area and first moment are preserved exactly. No coalescing
+unknown body vertices remain in the saved one-sided limit; remaining coalescing
+vertices are prescribed-potential free-surface nodes at the bow.
+
+The union audit (`artifacts/boat-pressure-body-union-h1e4.*`) reduces the
+surge-load step change to 13.5 N, but sway changes 50.5 N and yaw 246 Nm.
+The h=1e-4 default was not a physical requirement. A separate numerical-noise
+control at h=1e-3/5e-4 (`artifacts/boat-pressure-body-union-h1e3.*`) uses
+sub-millimetre surface offsets and passes the global directional budget
+(0.0246% of weight; force step differences 1.65/6.04/-0.011 N).
+This is a finite-difference window, not a smooth-operator proof: yaw torque
+still changes from 507 to 536 Nm, approximately 5.8% of that response.
+All four step sizes remain part of the evidence; neither the global numerical
+budget nor the small algebraic residual qualifies six-mode physical accuracy.
+
+For the latter audit, warmed offset energy assembly costs 10-13 ms, single
+field solves 13-17 ms, material trace sampling 2-3 ms and pressure integration
+0.6-0.8 ms. The exact-arithmetic reference geometry still costs 1.7-1.8 s per
+offset and dominates the complete 12.6 s audit; there is no end-to-end speed
+claim. Peak process RSS is 552 MB and peak reserved CuPy pool storage 5.76 MB
+(CUDA context/library memory is outside that pool metric). Coarse parent-state
+unresolved flux is now 38%, so physical spatial/state convergence and fast
+production geometry remain open work.
