@@ -150,7 +150,7 @@ class MidpointStrip:
 
 def run(dt, output):
     """One declared pulse/tail, not an automatically qualified boundary."""
-    output = Path(output)
+    output = Path(output).with_suffix('.json')
     if output.exists() or output.with_suffix('.npz').exists():
         raise FileExistsError('preserve existing strip outputs')
     output.parent.mkdir(parents=True, exist_ok=True)
