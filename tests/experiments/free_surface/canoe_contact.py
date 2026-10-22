@@ -11,12 +11,17 @@ from dataclasses import dataclass
 import numpy as np
 
 from topwater.frames import rotation_matrix
+from topwater.hydrostatics import FloodingError
 from .canoe import join_wetted_hull
 from .material_layout import material_mesh
 
 
 class ContactTopologyError(ValueError):
     """The waterline has reached a material vertex or inverted a surface face."""
+
+
+class RimCoverageError(ContactTopologyError):
+    """The represented free surface does not cover a projected opening rim."""
 
 
 def _rigid_jacobian(offset):
@@ -55,6 +60,7 @@ class CanoeContact:
     material_ids: np.ndarray
     contact_edges: np.ndarray
     cg: np.ndarray
+    rim_vertices: np.ndarray
 
     @classmethod
     def make(cls, body, state, walls, surface_grid, *, transverse=False, subdivisions=2):
@@ -126,7 +132,63 @@ class CanoeContact:
         return cls(mesh.vertices, mesh.faces, body_faces, free_faces, wall_faces,
             np.unique(mesh.faces[free_faces]), np.asarray(contact_nodes),
             np.unique(mesh.faces[wall_faces]), vertices, np.asarray(material_nodes),
-            np.asarray(material_ids), np.asarray(contact_edges), np.array(body.cg))
+            np.asarray(material_ids), np.asarray(contact_edges), np.array(body.cg),
+            np.array(body.mesh.vertices[body.mesh.opening_rim]))
+
+    def rim_clearance(self, points, position, orientation):
+        """Exact minimum clearance over rim segments on the current P1 graph.
+
+        Clip each projected rim segment against existing surface triangles.
+        Clearance is affine on each resulting interval, so its minimum is at
+        an interval endpoint. No surface is extrapolated into uncovered areas.
+        Coverage is checked before classifying immersion as physical flooding.
+        """
+        if not len(self.rim_vertices):
+            return None
+        rim = (self.rim_vertices-self.cg)@rotation_matrix(orientation).T+position
+        triangles = np.asarray(points)[self.faces[self.free_faces]]
+        lower = triangles[:, :, :2].min(axis=1)
+        upper = triangles[:, :, :2].max(axis=1)
+        minimum = np.inf
+        tolerance = 512*np.finfo(float).eps  # Parameter-space roundoff only.
+        for a, b in zip(rim, np.roll(rim, -1, axis=0)):
+            candidates = np.all(upper >= np.minimum(a[:2], b[:2]), axis=1)&np.all(
+                lower <= np.maximum(a[:2], b[:2]), axis=1)
+            p = triangles[candidates]
+            if not len(p):
+                raise RimCoverageError('opening rim lies outside represented free surface')
+            edges = p[:, 1:, :2]-p[:, :1, :2]
+            inverse = np.linalg.inv(edges)
+            at_a = np.einsum('fi,fij->fj', a[:2]-p[:, 0, :2], inverse)
+            change = np.einsum('i,fij->fj', b[:2]-a[:2], inverse)
+            at_a = np.column_stack((1-at_a.sum(axis=1), at_a))
+            change = np.column_stack((-change.sum(axis=1), change))
+            intervals = []
+            for triangle, bary, delta in zip(p, at_a, change):
+                lo, hi = 0., 1.
+                for value, rate in zip(bary, delta):
+                    if rate > 0:
+                        lo = max(lo, -value/rate)
+                    elif rate < 0:
+                        hi = min(hi, -value/rate)
+                    elif value < -tolerance:
+                        hi = -1.
+                if hi < lo:
+                    continue
+                intervals.append((lo, hi))
+                for t in (lo, hi):
+                    clearance = a[2]+t*(b[2]-a[2])-(bary+t*delta)@triangle[:, 2]
+                    minimum = min(minimum, clearance)
+            covered = 0.
+            for lo, hi in sorted(intervals):
+                if lo > covered+tolerance:
+                    raise RimCoverageError('opening rim crosses an unrepresented surface region')
+                covered = max(covered, hi)
+            if covered < 1-tolerance:
+                raise RimCoverageError('opening rim crosses an unrepresented surface region')
+        if minimum <= 0:
+            raise FloodingError(f'opening rim reaches the water surface (clearance {minimum:g} m)')
+        return float(minimum)
 
     def evaluate(self, position, orientation, eta):
         eta = np.asarray(eta)
@@ -148,7 +210,10 @@ class CanoeContact:
             raise ContactTopologyError('contact material edge no longer crosses upward')
         fraction = (heights-a[:, 2])/d[:, 2]
         if np.any((fraction <= 0) | (fraction >= 1)):
-            raise ContactTopologyError('waterline reached a material vertex; remeshing required')
+            i = np.flatnonzero((fraction <= 0) | (fraction >= 1))[0]
+            endpoint = self.contact_edges[i, 0 if fraction[i] <= 0 else 1]
+            raise ContactTopologyError(f'waterline reached material vertex {endpoint} '
+                f'on contact edge {tuple(self.contact_edges[i])}; remeshing required')
         points[self.contact_nodes] = a+fraction[:, None]*d
         points[self.contact_nodes, 2] = heights
         slope = d/d[:, 2, None]
