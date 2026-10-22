@@ -25,6 +25,12 @@ def _finite(value, shape, name):
     return value
 
 
+def quadrature():
+    """Interior degree-three rule shared with material-point field sampling."""
+    return (np.array([[1/3, 1/3, 1/3], [.6, .2, .2], [.2, .6, .2], [.2, .2, .6]]),
+            np.array([-27., 25., 25., 25.])/48)
+
+
 def evaluate_body_pressure(points, faces, body_faces, center, mass, inertia_world,
                           velocity_world, potential, potential_rate_ale,
                           mesh_velocity, acceleration_potentials, *, density=1000.,
@@ -32,7 +38,11 @@ def evaluate_body_pressure(points, faces, body_faces, center, mass, inertia_worl
     """Solve current world acceleration, ordered translation then rotation.
 
     ``potential_rate_ale`` follows the supplied moving nodes while holding the
-    current world twist fixed. ``acceleration_potentials[:, j]`` is the fluid
+    current world twist fixed. It may instead be supplied directly at the four
+    interior body quadrature samples, shape (body-face count, 4), following their
+    interpolated mesh velocity. This permits matched material sampling across
+    remeshing without differencing intermittently dry waterline vertices.
+    ``acceleration_potentials[:, j]`` is the fluid
     potential response to unit world velocity j at the current geometry and
     fixed surface potential. Thus phi_t = rate_ALE - w_mesh dot grad(phi)
     + acceleration_potentials @ acceleration. The caller must differentiate
@@ -60,7 +70,10 @@ def evaluate_body_pressure(points, faces, body_faces, center, mass, inertia_worl
     inertia_world = _finite(inertia_world, (3, 3), 'inertia_world')
     velocity_world = _finite(velocity_world, (6,), 'velocity_world')
     potential = _finite(potential, (count,), 'potential')
-    potential_rate_ale = _finite(potential_rate_ale, (count,), 'potential_rate_ale')
+    rate_shape = np.shape(potential_rate_ale)
+    if rate_shape not in ((count,), (len(body_faces), 4)):
+        raise ValueError('potential_rate_ale must be nodal or body quadrature values')
+    potential_rate_ale = _finite(potential_rate_ale, rate_shape, 'potential_rate_ale')
     mesh_velocity = _finite(mesh_velocity, (count, 3), 'mesh_velocity')
     acceleration_potentials = _finite(
         acceleration_potentials, (count, 6), 'acceleration_potentials')
@@ -86,8 +99,7 @@ def evaluate_body_pressure(points, faces, body_faces, center, mass, inertia_worl
     gradient = np.cross(normals[:, None], opposite)/twice_area[:, None, None]
     tangent_velocity = np.einsum('fcj,fc->fj', gradient, potential[body])
 
-    bary = np.array([[1/3, 1/3, 1/3], [.6, .2, .2], [.2, .6, .2], [.2, .2, .6]])
-    weights = np.array([-27., 25., 25., 25.])/48
+    bary, weights = quadrature()
     samples = np.einsum('qc,fcj->fqj', bary, triangles)
     displacement = samples-center
     omega = velocity_world[3:]
@@ -96,7 +108,8 @@ def evaluate_body_pressure(points, faces, body_faces, center, mass, inertia_worl
     fluid_velocity = (tangent_velocity[:, None]
                       + normal_velocity[:, :, None]*normals[:, None])
     moving_velocity = np.einsum('qc,fcj->fqj', bary, mesh_velocity[body])
-    material_rate = np.einsum('qc,fc->fq', bary, potential_rate_ale[body])
+    material_rate = (np.einsum('qc,fc->fq', bary, potential_rate_ale[body])
+                     if potential_rate_ale.ndim == 1 else potential_rate_ale)
     eulerian_rate = material_rate-np.sum(moving_velocity*fluid_velocity, axis=2)
     pressure = -density*(eulerian_rate+.5*np.sum(fluid_velocity**2, axis=2)
                          + gravity*samples[:, :, 2])

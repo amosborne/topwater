@@ -1210,3 +1210,29 @@ transverse symmetry in the authored mass moments prevents roundoff from creating
 sub-ulp sliver intersections at the centerline. This Fraction-based mesher is a
 correctness reference; its time is not a production solver benchmark. The 2 m
 bed and finite walls remain diagnostic boundaries, not open-ocean physics.
+
+### Current nonflat fluid field and fixed-world surface rates
+
+```powershell
+uv run --locked --python 3.12 --with "cupy-cuda12x[ctk]==14.2.0" python -m tests.experiments.free_surface.boat_world_field --snapshot artifacts/boat-world-boundary-seed42-checked.json --output artifacts/boat-world-field-seed42.json
+```
+
+One current mixed factor supplies the prescribed field and six acceleration
+responses. Offset field evaluations can omit those six columns. Free-surface
+reaction subtracts the prescribed body/wall/bed loads even at shared contact
+nodes. Recover fine cut-mesh flux before the nonlinear Bernoulli calculation;
+only then project the rates onto exposed fixed-world parent coefficients.
+Both mass matrices must pass the declared algebraic conditioning budget.
+
+The checked run (`artifacts/boat-world-field-seed42-checked.{json,npz}`) has
+relative mixed residual 1.7e-14 and added-mass reciprocity error 3.8e-17. Warm
+energy assembly takes 12.7 ms, field plus six responses 21.0 ms, single field
+15.9 ms and surface rates 1.2 ms; cold setup is saved separately. These are
+individual component observations, not a throughput distribution or full solve.
+
+The coarse 15-parent-coefficient state omits 33% of the fine kinematic rate in
+projected-area mass norm on this snapshot. This is an explicit approximation
+warning requiring enrichment and force/motion convergence, not an accepted
+production resolution. Independent affine harmonic controls exercise sloping
+and partially exposed parents; an unresolved local-flux control ensures that
+projected-out motion still contributes to Bernoulli kinetic head.

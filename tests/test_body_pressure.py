@@ -73,14 +73,16 @@ def test_canonical_release_has_one_hydrostatic_load_and_correct_acceleration_rea
                     hydrostatic-expected_added@expected_acceleration, atol=2e-11)
 
 
-def test_uniform_translation_ale_transport_preserves_hydrostatic_pressure(canoe):
+@pytest.mark.parametrize('at_quadrature', [False, True])
+def test_uniform_translation_ale_transport_preserves_hydrostatic_pressure(canoe, at_quadrature):
     points = canoe['mesh'].vertices
     translation = np.array([.37, -.23, 0.])
     # Exact uniform-flow potential: phi=U.x-|U|^2 t/2. Following moving
     # nodes gives phi_dot_ALE=|U|^2/2, whose transport restores Bernoulli.
     result = evaluate(canoe, velocity=np.r_[translation, np.zeros(3)],
         potential=points@translation+2.7,
-        rate=np.full(len(points), .5*translation@translation),
+        rate=np.full((len(canoe['body']), 4) if at_quadrature else len(points),
+                     .5*translation@translation),
         moving=np.broadcast_to(translation, points.shape))
     static = evaluate(canoe)
     assert_allclose(result.known_pressure_load, static.known_pressure_load,
