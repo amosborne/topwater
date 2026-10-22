@@ -192,6 +192,15 @@ def run(mesh_path, reference_path, output, budget):
         factor_nonzeros=int(factor.nnz), factor_array_bytes_not_materialized=True,
         exp_time_convention='exp(-i omega t)',
         fourfold_work_factor=4, full_family_gate_evaluated=False)
+    # Retain the physical nodal solution for independent pressure/work checks.
+    # Release LU before serialization; measuring its L/U arrays is unnecessary.
+    del factor
+    potential_path = output.with_suffix('.npz')
+    np.savez(potential_path, potential=phi, mode_index=np.array(2), omega=np.array(2.))
+    report['potential'] = dict(path=str(potential_path.resolve()),
+        array_sha256=sha256(np.asarray(phi, dtype='<c16').tobytes()).hexdigest(),
+        npz_sha256=sha256(potential_path.read_bytes()).hexdigest(),
+        dtype='<c16', ordering='Exact quarter P4 master ordering pinned by the mesh report hashes')
     checkpoint('computed omega2 EE/heave only')
     return report
 
