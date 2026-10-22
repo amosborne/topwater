@@ -159,8 +159,17 @@ velocities and independently moving high contact modes has relative weak
 normal-flow residual 1.12e-13 and fluid work-identity error 4.44e-16 J.
 Independent fixed-potential/rate action differences reduce the tested force
 direction error from 4.67e-8 to 1.15e-8 when halving the difference step.
-This does not yet establish independent physical Hamiltonian work along the
-full RHS, a P4 trajectory, rim/failure coverage or Capytaine qualification.
+`p4_stage_audit` then rebuilds five current fluid systems to check independent
+physical energy and volume along that saved full RHS. Direct velocity quadrature
+uses order 10, versus order 8 in the primal, and closed-boundary gravity/volume
+uses order 12. The independently computed initial excitation agrees with the
+Hamiltonian within 4.61e-15 J. Halving the directional difference step reduces
+energy-work error from 4.68e-7 to 1.17e-7 W and volume-rate error from
+7.25e-10 to 1.81e-10 m3/s, approximately fourfold in each case. Both satisfy
+the declared instantaneous diagnostic tolerances. The saved stage lacks master
+IDs; rebuilding assumes deterministic ordering and verifies an exact fresh
+physical-state match. This remains one stage, not a P4 trajectory, general
+rim/failure coverage, spatial accuracy or Capytaine qualification.
 
 `p4_radiation` completes the n=12/extent1/sponge4 rest-candidate family at
 omega=2,4,6 rad/s against the same immersed-geometry/CG/depth4 Capytaine reference.
