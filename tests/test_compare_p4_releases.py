@@ -61,3 +61,16 @@ def test_different_case_or_nonrefinement_is_rejected(change):
         tight_report = deepcopy(loose_report)
     with pytest.raises(ValueError):
         compare(loose_report, loose, tight_report, tight)
+
+
+def test_runtime_source_hashes_match_strictly_and_one_sided_missing_is_rejected():
+    loose_report, loose, tight_report, tight = histories()
+    assert not compare(loose_report, loose, tight_report, tight)['runtime_numerical_source_hashes_checked']
+    loose_report['source_sha256'] = {'fluid': 'same-source'}
+    with pytest.raises(ValueError, match='runtime numerical source hashes'):
+        compare(loose_report, loose, tight_report, tight)
+    tight_report['source_sha256'] = {'fluid': 'different-source'}
+    with pytest.raises(ValueError, match='runtime numerical source hashes'):
+        compare(loose_report, loose, tight_report, tight)
+    tight_report['source_sha256'] = dict(loose_report['source_sha256'])
+    assert compare(loose_report, loose, tight_report, tight)['runtime_numerical_source_hashes_checked']

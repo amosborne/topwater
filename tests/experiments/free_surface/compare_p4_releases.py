@@ -68,6 +68,9 @@ def compare(loose_report, loose, tight_report, tight):
         raise ValueError('exact shared final accepted time required')
     identities = ('source_npz_sha256', 'reference_points_sha256', 'elements_sha256',
                   'free_nodes_sha256', 'eta_modes', 'duration', 'derivative_step', 'runner_sha256')
+    runtime = ('source_sha256' in loose_report, 'source_sha256' in tight_report)
+    if any(runtime) and (not all(runtime) or loose_report['source_sha256'] != tight_report['source_sha256']):
+        raise ValueError('runtime numerical source hashes differ or are missing on one side')
     if any(loose_report[key] != tight_report[key] for key in identities):
         raise ValueError('release initial stage, masters, duration, shape step or runner differ')
     if (loose_report['source_stage_metadata'] != tight_report['source_stage_metadata']
@@ -98,7 +101,9 @@ def compare(loose_report, loose, tight_report, tight):
         endpoint[name+'_maximum_absolute_difference'] = float(np.max(abs(difference)))
         endpoint[name+'_nodal_rms_difference'] = float(np.sqrt(np.mean(difference**2)))
     return dict(qualified=False, case='same-case nonlinear P4 release temporal control',
-        identity_keys_checked=list(identities), controls=dict(loose={key: loose_report[key] for key in controls},
+        identity_keys_checked=list(identities)+(['source_sha256'] if all(runtime) else []),
+        runtime_numerical_source_hashes_checked=all(runtime),
+        controls=dict(loose={key: loose_report[key] for key in controls},
             tight={key: tight_report[key] for key in controls}),
         loose=_summary(loose), tight=_summary(tight), exact_endpoint_comparison=endpoint,
         shape_derivative_step_unchanged=loose_report['derivative_step'],
@@ -106,9 +111,10 @@ def compare(loose_report, loose, tight_report, tight):
             'components are retained without a fitted nonzero threshold. Quaternion differences are '
             'sign-invariant. Surface endpoint RMS is nodal, not a physical-area norm. No unequal-grid '
             'interpolation, observed order, temporal pass gate, spatial/outgoing or Capytaine qualification.',
-        provenance_limit='Release reports pin the initial stage, masters, runner and revision; the '
+        provenance_limit=('Both reports serialize identical runtime numerical source hashes.' if all(runtime) else
+            'Legacy release reports pin the initial stage, masters, runner and revision; the '
             'runtime hashes of all loaded numerical modules are not separately serialized. Equal '
-            'stage metadata and runner do not prove an absent runtime-source fingerprint.')
+            'stage metadata and runner do not prove an absent runtime-source fingerprint.'))
 
 
 def main():
