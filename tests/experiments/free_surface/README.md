@@ -1458,3 +1458,47 @@ sensitivity, actual class counts, timings, memory and provenance are in
 `artifacts/boat-allocation-*-fixed-direction.*`. New runs can first create a
 coarse audit, then use its JSON with `--direction-from`, `--refinement 1|2`
 and `--refinement-region body|free|all`.
+
+The selected allocation and guarded geometry now run together in
+`boat_moving`: adaptive RK23 evolves CG position, WORLD linear/angular velocity,
+body-to-world quaternion and both nonlinear WORLD parent fields. Every RHS
+assembles the CURRENT base operator and six acceleration potentials, obtains
+two current material offset traces at +/-0.001 s, integrates Bernoulli pressure
+and solves the six-body balance. No old operator or prescribed boat trajectory
+is reused. A bounded four-chart topology cache refreshes with exact construction
+when guards reject; accepted states, completed RHS diagnostics and cold geometry
+checkpoints are saved. Physical-unit pilot tolerances are explicit in the report,
+not accuracy acceptance limits. The raw quaternion satisfies WORLD kinematics;
+normalization is only for geometry, preserving RK23 FSAL state consistency.
+
+Actual body-2/observed-sea pilots advance 0.2 s with 0.05 and 0.1 s step caps.
+They accept four/two steps (13/seven RHS calls), respectively, and need three
+cold charts only. The boat rises about 4.4 cm. Coarse-minus-fine endpoint
+differences are 0.203 mm maximum position, 2.48e-5 rad physical orientation,
+0.000246 m/s linear velocity, 7.80e-5 rad/s angular velocity, 0.846 mm parent
+height and 0.00126 m2/s parent potential. This is short-window step sensitivity,
+not temporal order, wave-period/long-time drift or spatial/ocean qualification.
+The finite 2 m-deep bed and coarse 15-coefficient state remain explicit limits.
+
+Including startup, the 0.1 s-cap run costs 14.39 s for 0.2 simulated seconds.
+Summing only its six post-startup RHS calls gives 14.60 wall/sim seconds;
+this conditional short-pilot component ratio is NOT sustained ocean throughput.
+Current operator assemblies occupy about 47% of those RHS calls, so operator
+work is now one of several worthwhile targets. Geometry and material sampling
+also matter; even eliminating the entire operator would give less than 1.9x
+RHS speedup at this allocation.
+
+One exact improvement is retained: body-local face hints skip material search
+only after checking CURRENT same-facet strict containment and recomputing
+CURRENT barycentric weights. Invalid, dry, changed-topology or edge hints keep
+the original search/coverage behavior. On the saved actual 736-body-face field,
+2944 queries take 2.6-4.1 ms instead of 49-57 ms, with trace differences below
+1.8e-15. The identical coupled 0.2 s replay reduces the post-startup component
+ratio to 12.61 and changes the endpoint state by at most 3.3e-13 and loads by
+5.6e-9 N or Nm. Whole-pilot startup-inclusive cost is still 14.29 s. Numerical
+evidence/provenance: `docs/research/boat-moving-pilot.json`; raw states/reports:
+`artifacts/boat-moving-body2-*`, CPU probe `artifacts/boat-material-hint-benchmark.*`.
+
+```powershell
+uv run --locked --python C:/Users/alex/topwater/.venv/Scripts/python.exe --with 'cupy-cuda12x[ctk]==14.2.0' python -m tests.experiments.free_surface.boat_moving --duration 0.2 --max-step 0.1 --refinement 2 --max-rhs 25 --budget-seconds 90 --output artifacts/boat-moving-new.json
+```

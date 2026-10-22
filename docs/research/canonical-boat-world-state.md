@@ -247,6 +247,28 @@ sensitivity. Coarse parent rates omit
 candidate: physical/state/quadrature convergence, production geometry,
 near/far coupling and actual six-DOF trajectory validation are still required.
 
+Subsequent controlled allocation measurements retain the same physical state
+and prescribed parent direction while refining the hull or free boundary.
+Hull level two uses 1046 panels rather than uniform level two's 4832; current
+energy assembly drops from 2.14 s to 0.117 s, with unresolved differences in
+sway/roll/yaw and no established pitch/surge plateau. Raw six-axis evidence is
+in `boat-refinement-allocation.json`; this is an allocation candidate, not an
+accuracy certificate.
+
+That candidate now drives a bounded **coupled** nonlinear six-DOF/free-surface
+RK23 pilot (`boat_moving.py`). Current guarded geometry reconstructs at each
+stage and refreshes exact clipping when necessary; current base and two offset
+operators are still assembled. Two 0.2 s pilots compare 0.05/0.1 s step caps;
+the latter accepts two steps, needs only three startup charts and has small
+physical endpoint differences over this window. Checked current material-face
+containment further reduces sampling cost while reproducing the coupled
+endpoint to roundoff. `boat-moving-pilot.json` records total startup-inclusive
+times separately from post-startup RHS component costs. These observations do
+not establish deep-water, temporal, spatial or long-trajectory qualification.
+The finite tank and 15-coefficient surface state must still be replaced or
+qualified for the actual open-water problem; finer boundary agreement alone
+does not settle them.
+
 The nonlinear graph HOS reference (`hos_graph.py`) separately passed independent
 harmonic-field checks, including direct continuation, grid and product-padding
 controls. It is a prospective far-field component, not an implemented near/far

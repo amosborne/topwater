@@ -1,0 +1,174 @@
+{
+  "qualified": false,
+  "scope": "Short coupled 6DOF/nonlinear-surface finite-tank pilot; not temporal order, long-time drift, ocean accuracy or sustained throughput validation",
+  "fixture_sha256": "5d4cd16a436f30afc39d96d062ab060e706dcb736716ee7e0be16351672850cf",
+  "state_layout": [
+    "position_world_m[3]",
+    "orientation_wxyz[4]",
+    "velocity_world_m_per_s[3]",
+    "angular_velocity_world_rad_per_s[3]",
+    "parent_eta_m[N]",
+    "parent_psi_m2_per_s[N]"
+  ],
+  "source_sha256": {
+    "boat_moving.py": "ee282806b301753be89d1d63e20df8a81b9cbebc2d4ef1a3da58c12211d487d9",
+    "boat_geometry_template.py": "1fe910f6833181bd62f66be74850e34c5aede7a8e5456d34851f187a2d7f2f1d",
+    "boat_world_boundary.py": "46649c118295b134b301d8f3023d15621395d2faaf9ef7fcb0fc25dad4868787",
+    "boat_parent_clip_proof.py": "09adf22a3f8b31fb9a63406cc802adce7766fc11eb10a9cc34d5e6acd6887852",
+    "boat_world_field.py": "cb976a016f8bcb01751b1cc8ac118902229cfffebb38fbfac562cb3826ed776e",
+    "body_pressure.py": "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+    "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+    "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+    "cuda_operator.py": "7c91423618a5d0d92a0316a08c9bf1a1941efefd2327183eed1f1d36c1dd24b8",
+    "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+    "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20"
+  },
+  "boundary_refinement": {
+    "region": "body",
+    "levels": 2
+  },
+  "endpoint_coarse_minus_fine": {
+    "position_world_m": [
+      1.3071491404026761e-05,
+      5.452245584276413e-07,
+      0.000203042440479001
+    ],
+    "physical_rotation_angle_rad": 2.4821667237736303e-05,
+    "linear_velocity_world_m_per_s": [
+      -0.0002455122588523387,
+      8.838987742253168e-08,
+      -0.00015170315993906502
+    ],
+    "angular_velocity_world_rad_per_s": [
+      6.212670852875218e-05,
+      -7.80007182030161e-05,
+      1.7242179762413934e-05
+    ],
+    "maximum_parent_height_difference_m": 0.0008462124430239637,
+    "maximum_parent_potential_difference_m2_per_s": 0.0012605817769362204,
+    "hydrodynamic_load_world": [
+      -0.7687781499309949,
+      -0.18267345514914268,
+      -7.471213262855599,
+      0.4811247417976574,
+      0.6321266040076807,
+      1.0404708563029317
+    ]
+  },
+  "rows": [
+    {
+      "path": "artifacts\\boat-moving-body2-200ms-h50ms.json",
+      "report_sha256": "68951a31add686dea3c015df7951a302010d5ef189eda12076e4db4a9e2bdcf9",
+      "states_sha256": "0fa15920c3549b9db730d85703b1a404d33e789182569c79550801f8bf558e74",
+      "simulated_seconds": 0.2,
+      "accepted_steps": 4,
+      "accepted_step_sizes_seconds": [
+        0.05,
+        0.05,
+        0.05000000000000002,
+        0.04999999999999999
+      ],
+      "rhs_evaluations": 13,
+      "cold_geometry_count": 3,
+      "total_wall_seconds": 18.688273200008553,
+      "wall_to_simulated_ratio_including_startup": 93.44136600004276,
+      "post_startup_rhs_seconds": 6.760667000053218,
+      "post_startup_rhs_sum_to_simulated_ratio": 33.80333500026609,
+      "post_startup_operator_fraction_of_rhs_seconds": 0.44833452081938635,
+      "post_startup_rhs_median_seconds": 0.5628415500104893,
+      "maximum_position_change_m": [
+        0.009310894086252939,
+        0.0015313023650489696,
+        0.04395188600978464
+      ],
+      "endpoint_rotation_world_vector_rad": [
+        -0.00184652314267165,
+        -0.0033290643210796057,
+        0.004893291344623071
+      ],
+      "endpoint_hydrodynamic_load_world": [
+        -444.3326049740292,
+        266.0438956880048,
+        28923.0923764628,
+        -178.66473072255644,
+        -647.8289096523686,
+        554.5748694916838
+      ],
+      "maximum_accepted_quaternion_norm_error": 7.436617988076932e-10,
+      "reserved_gpu_pool_bytes": 67534848,
+      "process_peak_rss_bytes": 577331200
+    },
+    {
+      "path": "artifacts\\boat-moving-body2-200ms-h100ms.json",
+      "report_sha256": "296783a07d72847b1b9cd1352cb615a443bc7ed221930ea2c04cc2cdaa32a525",
+      "states_sha256": "51b07b596ef8eca0f0ac199ca5238e36521fa53f7ebfe4ee2ffbeaf3d75dde2c",
+      "simulated_seconds": 0.2,
+      "accepted_steps": 2,
+      "accepted_step_sizes_seconds": [
+        0.1,
+        0.1
+      ],
+      "rhs_evaluations": 7,
+      "cold_geometry_count": 3,
+      "total_wall_seconds": 14.389550899999449,
+      "wall_to_simulated_ratio_including_startup": 71.94775449999725,
+      "post_startup_rhs_seconds": 2.919377700018231,
+      "post_startup_rhs_sum_to_simulated_ratio": 14.596888500091154,
+      "post_startup_operator_fraction_of_rhs_seconds": 0.4707286419840213,
+      "post_startup_rhs_median_seconds": 0.4873008500144351,
+      "maximum_position_change_m": [
+        0.009323965577656966,
+        0.0014273157335261714,
+        0.04415492845026364
+      ],
+      "endpoint_rotation_world_vector_rad": [
+        -0.001868108885955086,
+        -0.003341255836591495,
+        0.00489453196970364
+      ],
+      "endpoint_hydrodynamic_load_world": [
+        -445.1013831239602,
+        265.86122223285565,
+        28915.621163199943,
+        -178.18360598075878,
+        -647.1967830483609,
+        555.6153403479867
+      ],
+      "maximum_accepted_quaternion_norm_error": 7.523463629866e-09,
+      "reserved_gpu_pool_bytes": 67534848,
+      "process_peak_rss_bytes": 576761856
+    }
+  ],
+  "checked_material_hint_optimization": {
+    "path": "artifacts\\boat-moving-body2-200ms-h100ms-checked-hints.json",
+    "report_sha256": "083d61dccf271f69a96cec6e18a3d3f00d87867457c7bdb9a381bdaaac640607",
+    "states_sha256": "108a4565483cc47ed402c8549af3e5fb8184ea95c1d780fa3c0e25e172187a6e",
+    "source_sha256": {
+      "boat_moving.py": "5ee58eba8994dfa640715da2e411e5d81fb88f504f46452283f2490f5635e5bc",
+      "boat_geometry_template.py": "1fe910f6833181bd62f66be74850e34c5aede7a8e5456d34851f187a2d7f2f1d",
+      "boat_world_boundary.py": "6d981ddb3cc244e0ef96549697a52a354b94aba9404987366faf5be20b297e93",
+      "boat_parent_clip_proof.py": "09adf22a3f8b31fb9a63406cc802adce7766fc11eb10a9cc34d5e6acd6887852",
+      "boat_world_field.py": "cb976a016f8bcb01751b1cc8ac118902229cfffebb38fbfac562cb3826ed776e",
+      "body_pressure.py": "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+      "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+      "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+      "cuda_operator.py": "7c91423618a5d0d92a0316a08c9bf1a1941efefd2327183eed1f1d36c1dd24b8",
+      "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+      "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20"
+    },
+    "maximum_raw_state_difference": 3.2951419370874646e-13,
+    "physical_rotation_angle_difference_rad": 2.0189604217765497e-14,
+    "hydrodynamic_load_difference_world": [
+      3.4764298106892966e-09,
+      8.503775461576879e-10,
+      1.0877556633204222e-09,
+      -2.5909230316756293e-10,
+      -5.5824784794822335e-09,
+      -2.0173729353700764e-09
+    ],
+    "total_wall_seconds": 14.286329800001113,
+    "cold_geometry_count": 3,
+    "post_startup_rhs_sum_to_simulated_ratio": 12.607885999896098,
+    "reserved_gpu_pool_bytes": 67534848
+  }
+}
