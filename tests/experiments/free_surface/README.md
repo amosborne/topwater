@@ -1320,3 +1320,43 @@ It changes traces by only 1.6e-11 and leaves the extrapolated remainder
 unchanged (`artifacts/boat-coplanar-plane-probe*`). No shader change is adopted.
 The remaining auxiliary P0 flux space still contains vanishing integration
 triangles; it is distinct from the now-stable mixed potential unknowns.
+
+### Matched-state boundary and state-resolution checks
+
+`boat_pressure_audit --step 0.001 --refinement 1` (or `2`) uniformly subdivides
+the SAME boundary and inherits the SAME fixed-world parent fields. Closed fluid
+moments, physical facet moments and affine world/material traces are checked.
+Each actual refined checkpoint is saved separately from its coarse construction
+record and hashed in the report; pressure fields must use that refined mesh.
+
+The three reports `artifacts/boat-pressure-body-union{,-refined1,-refined2}-h1e3.json`
+are compared by `boat_pressure_convergence`, which verifies physical input
+identity before tabulating all six loads/accelerations and derivative sensitivity.
+Summary: `artifacts/boat-pressure-spatial-convergence.json`.
+
+| Faces | Surge N | Heave N | Roll Nm | Pitch Nm | Yaw Nm |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 302 | 607 | 30123 | -308 | 250 | 507 |
+| 1208 | 686 | 29989 | -303 | 86 | 404 |
+| 4832 | 736 | 29946 | -301 | -2 | 427 |
+
+The finer differences contract, but pitch crosses zero and surge/yaw are not
+settled. No six-mode physical pass is claimed. The 4832-face audit costs 25.5 s
+including both derivative steps, peaks at 723 MB process RSS/1.43 GB reserved
+CuPy pool, and takes about 1.9-2.7 s per offset operator assembly. Increasing
+uniform resolution is a reference tool, not a practical runtime solution.
+The 15-coefficient parent state still omits approximately 37% of fine flux.
+
+An independent 45-coefficient state preflight samples the SAME explicit sea at
+a finer 8-by-4 background grid; this intentionally changes its P1 approximation
+and is not part of the matched-state table. It passes geometry/current algebra
+checks at 608 panels, with 0.261 m rim clearance and parent mass condition 266.
+Omitted fine flux improves to 22.6%, still unqualified. Changing state capacity
+must therefore accompany boundary-operator accuracy work. Evidence/source:
+`artifacts/boat-world-state-8x4-preflight.*`.
+
+Exact diagonal equilibration of the auxiliary single-layer factor was also
+tested on the frozen union meshes: condition estimates become about 86, but
+body traces change only 3.6e-15 and derivative sensitivity is unchanged.
+That exact algebraic change is not adopted as a cure; probe source/results are
+`artifacts/boat-pressure-body-union-equilibration-probe.*`.

@@ -107,7 +107,7 @@ def construct(output, *, body=None, pose=None, parent_xy=None, parents=None,
     start = perf_counter()
     report = dict(qualified=False, complete=False, parents_completed=[],
         scope='Full nonflat physical boundary reference only; no PDE, force model, evolved-state transfer or runtime qualification',
-        limits=dict(maximum_planes=80, maximum_point_owners=12000, maximum_intersection_cache=50000,
+        limits=dict(maximum_planes=128, maximum_point_owners=12000, maximum_intersection_cache=50000,
                     soft_parent_budget_seconds=25),
         budget_scope='Elapsed checks between parents; an in-flight parent/edge pass is not preempted',
         source_sha256={name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest() for name in
@@ -177,7 +177,7 @@ def construct(output, *, body=None, pose=None, parent_xy=None, parents=None,
         registry = PlanePoints(max_points=12000, max_intersections=50000)
         hull = hull_planes(registry, world, body.mesh.faces)
         cells, roofs, outer = columns(registry, roof, parents)
-        if len(registry.planes) > 80:
+        if len(registry.planes) > 128:
             raise RuntimeError('reference plane cap reached before clipping')
         report['planes'] = len(registry.planes)
         report['rim_clearance'] = rim_clearance(registry, world, body.mesh.opening_rim, cells, roofs)
