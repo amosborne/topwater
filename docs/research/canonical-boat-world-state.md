@@ -375,6 +375,34 @@ baseline adoption or a claimed large speedup. Full evidence and source hashes:
 `boat-material-mesh.json`; experimental implementation:
 `tests/experiments/free_surface/boat_material_boundary.py`.
 
+The first operator-reuse falsifier uses accepted 0.05/0.10 s states to predict
+the 0.15 s geometry on the same guarded chart (1070 panels). Its rank-one map
+projects nodal displacement in a fixed lumped-area metric; the same map is
+evaluated on actual pressure-direction offset geometries. Frozen and secant
+operators change fine-step heave/pitch loads by [-373 N, -358 Nm] and
+[-85 N, -61 Nm], respectively. Fresh h/h2 sensitivity is below 0.001 N/Nm.
+Neither approximation is adopted.
+
+Replaying saved matrices separates operator value from its directional slope.
+Correcting the center alone still leaves -68 N heave and -65 Nm pitch error;
+correcting the slope alone reduces those to -16 N and +3.8 Nm. The exact-center
+case has essentially zero current field residual despite wrong pressure.
+A refresh controller must therefore check operator variation along the current
+motion/surface direction as well as the current field. These exact-slope controls
+use held-out operators and are diagnostics, not a runtime policy.
+
+A one-direction GPU action now differentiates the shared numerical pair formula
+and reuses the current V/H factor. It applies all product-rule terms of
+`E=W+H.T@inv(V)@H`, including both surface curls, without forming dE or dW.
+On the actual state, halving h reduces action/finite-difference discrepancy
+from 2.08e-6 to 5.21e-7. Independent canonical-hull rigid/scaling identities
+also pass. Uniform-rule ownership is explicit; stale geometry or alternate
+integration kernels reject. Matched order-six action medians are 0.387/0.674 s
+versus 0.394/0.596 s for two assemblies, so there is no consistent speed win.
+This is not yet a differentiated pressure solver and remains experimental.
+Matrices, all six loads, timing samples and producer hashes:
+`boat-operator-prediction.json`.
+
 ## Primary context
 
 Variational free-surface discretization with moving boundaries is established;

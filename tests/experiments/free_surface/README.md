@@ -1543,3 +1543,26 @@ three still differ substantially in pressure; exact raw bulk pairs cover only
 `docs/research/boat-material-mesh.json` records all six forces/moments, h-pair
 sensitivity, geometry counts, timings, source archives and the decision to keep
 this experimental.
+
+`boat_operator_prediction.py --pilot <complete-pilot.json>` tests a declared
+rank-one geometry secant against the held-out 0.15 s accepted state using
+0.05/0.10 s anchors. It requires one common guarded basis, recomputes all current
+loads/forcing and compares frozen/secant pressure on the same prescribed
+physical direction. `--operator-from <saved-audit.json>` replays the stored
+matrices on CPU and diagnoses center versus slope errors without new fluid
+assemblies. Exact-slope controls are offline references, not a refresh method.
+
+`boat_directional_action.py --snapshot <saved-audit.json> --order 6` compares a
+current GPU directional energy action with two fresh assemblies, alternating
+timing order. `cuda_directional.py` shares the primal pair formula and current
+V/H factor, differentiating all source/target geometry and both curls. It
+supports uniform quadrature owners only; scalar quadrature order alone cannot
+identify an adaptive row rule. The existing force helper also rejects unknown
+rule ownership. This action does not yet differentiate boundary loads/free
+trace or convert chart derivatives into material pressure derivatives.
+
+The rank-one predictor fails pressure accuracy despite modest current-field
+defect; an exact current center with an incorrect slope can have zero current
+field defect and wrong pressure. The derivative action converges against h/h2
+checks but has no reliable component speed advantage. Neither changes the
+moving baseline. Evidence: `docs/research/boat-operator-prediction.json`.

@@ -18,11 +18,12 @@ from cupyx.scipy.linalg import solve_triangular
 # headers on a compiler include path. The numeric body has one source owner.
 _folder=Path(__file__).parent
 _source=(_folder/'cuda_shape.cu').read_text().replace(
-    '#include "cuda_pair.cuh"',(_folder/'cuda_pair.cuh').read_text())
+    '#include "cuda_pair.cuh"',(_folder/'cuda_pair.cuh').read_text()).replace(
+    '#include "cuda_dual.cuh"',(_folder/'cuda_dual.cuh').read_text())
 _kernel=cp.RawKernel(_source,'vertex_gradient',options=('--std=c++11',))
 
 
-def _geometric(points,faces,moving):
+def _geometric(points,faces,moving,*,order=3):
     tri=points[faces];dt=moving[faces]
     panel=TrianglePanels(tri,1)
     e=tri[:,1:]-tri[:,:1];de=dt[:,1:]-dt[:,:1]
@@ -42,8 +43,8 @@ def _geometric(points,faces,moving):
         gradient*d_twice[:,None,None])/(2*panel.areas[:,None,None])
     curl=np.cross(n[:,None],gradient)
     d_curl=np.cross(dn[:,None],gradient)+np.cross(n[:,None],d_gradient)
-    samples,weights=triangle_samples(tri,3)
-    bary,_=triangle_samples(np.eye(3)[None],3)
+    samples,weights=triangle_samples(tri,order)
+    bary,_=triangle_samples(np.eye(3)[None],order)
     d_samples=np.einsum('qc,fci->fqi',bary[0],dt)
     values=[tri,n,panel.edge_outward,tangent,length,panel.areas,panel.centroids,
             panel.normal_sign,gradient,samples,weights]

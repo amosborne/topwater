@@ -40,6 +40,7 @@ from cupyx.scipy.linalg import solve_triangular
 _source=(Path(__file__).with_name('cuda_pair.cuh').read_text()+'\n'+
     Path(__file__).with_name('cuda_energy.cu').read_text())
 _pairs=cp.RawKernel(_source,'energy_pairs',options=('--std=c++11',))
+_uniform_pairs=_pairs
 _curl=cp.RawKernel(_source,'curl_energy',options=('--std=c++11',))
 
 
@@ -58,9 +59,11 @@ class EnergyAssembly:
     triangles: np.ndarray
     normal_sign: np.ndarray
     quadrature_order: int
+    uniform_quadrature: bool
 
     def auxiliary(self, points, faces, potential):
-        if (self.quadrature_order != 3 or potential.shape != (len(self.energy),)
+        if (self.quadrature_order != 3 or not self.uniform_quadrature
+                or potential.shape != (len(self.energy),)
                 or not np.array_equal(faces, self.faces)
                 or not np.array_equal(points[faces], self.triangles)
                 or np.any(self.normal_sign != 1)):
@@ -72,6 +75,7 @@ class EnergyAssembly:
 
 def prepare_energy(faces,panels,order=3):
     """Assemble once, retaining current V factor/H for matching shape forces."""
+    pair_kernel=_pairs
     points,weights=triangle_samples(panels.triangles,order)
     opposite=np.roll(panels.triangles,-2,axis=1)-np.roll(panels.triangles,-1,axis=1)
     gradient=np.cross(panels.geometric_normals[:,None],opposite)/(2*panels.areas[:,None,None])
@@ -82,7 +86,7 @@ def prepare_energy(faces,panels,order=3):
         panels.edge_lengths,panels.areas,panels.centroids,panels.normal_sign,
         faces.astype(np.int64),gradient,points,weights)]
     v=cp.empty((nf,nf),dtype=cp.float64);h=cp.zeros((nf,nv),dtype=cp.float64)
-    _pairs(((nf*nf+127)//128,),(128,),(*geometry,np.int32(nf),np.int32(nv),np.int32(nq),v,h))
+    pair_kernel(((nf*nf+127)//128,),(128,),(*geometry,np.int32(nf),np.int32(nv),np.int32(nq),v,h))
     asymmetry=float((cp.max(cp.abs(v-v.T))/cp.max(cp.abs(v))).get())
     v=(v+v.T)*.5
     incident_order=np.argsort(faces.ravel(),kind='stable').astype(np.int32)
@@ -103,7 +107,8 @@ def prepare_energy(faces,panels,order=3):
         value.setflags(write=False)
     energy = w.get()
     energy.setflags(write=False)
-    return EnergyAssembly(energy, diagnostics, factor, h, *owned, order)
+    return EnergyAssembly(energy, diagnostics, factor, h, *owned, order,
+                          pair_kernel is _uniform_pairs)
 
 
 def assemble_energy(faces,panels,order=3):
