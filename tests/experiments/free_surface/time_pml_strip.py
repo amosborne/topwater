@@ -67,11 +67,14 @@ def stationary_field(strip, points, strength=8.):
 
 class MidpointStrip:
     """One fixed real factor per dt, three q-point histories, no projection."""
-    def __init__(self, strip, dt, strength=8., order=12):
+    def __init__(self, strip, dt, strength=8., order=12, *, plateau_periods=4.):
         if not np.isfinite(dt) or dt <= 0 or not np.isfinite(strength) or strength < 0:
             raise ValueError('positive finite dt and nonnegative sigma required')
         if len(strip.points) > 2000 or len(strip.triangles) > 250:
             raise ValueError('bounded strip requires <=2000nodes/250triangles')
+        if not np.isfinite(plateau_periods) or plateau_periods < 2:
+            raise ValueError('at least two finite plateau periods required for the final fit')
+        self.plateau_periods = plateau_periods
         self.strip = strip;self.dt = dt;self.h = dt/2
         self.value, derivative, weight = _triangle_rule(order)
         corners = strip.points[strip.triangles]
@@ -113,7 +116,8 @@ class MidpointStrip:
         rhs[self.free] += ((self.mass@self.psi)/h**2+(self.weighted@self.psi)/h
                           +(self.mass@self.v)/h)/GRAVITY
         end = self.time+self.dt
-        boundary = .5*(drive(self.time, strip.omega)+drive(end, strip.omega))*self.profile
+        boundary = .5*(drive(self.time, strip.omega, plateau_periods=self.plateau_periods)
+                        +drive(end, strip.omega, plateau_periods=self.plateau_periods))*self.profile
         mid = np.empty_like(rhs);mid[self.left] = boundary
         mid[self.unknown] = self.factor.solve(rhs[self.unknown]-self.boundary_block@boundary)
         if not np.all(np.isfinite(mid)):
@@ -148,14 +152,16 @@ class MidpointStrip:
         return np.r_[kinetic+gravity, [np.max(abs(a)) for a in (self.chi, self.z, self.q)]]
 
 
-def run(dt, output):
+def run(dt, output, *, plateau_periods=4.):
     """One declared pulse/tail, not an automatically qualified boundary."""
-    output = Path(output)
+    output = Path(output).with_suffix('.json')
     if output.exists() or output.with_suffix('.npz').exists():
         raise FileExistsError('preserve existing strip outputs')
     output.parent.mkdir(parents=True, exist_ok=True)
     strip = make_strip(2., np.pi/4, WIDTH, spacing=np.pi/6, layers=4, quiet_wavelengths=.25)
-    period = 2*np.pi/strip.omega;duration = 12*period
+    if not np.isfinite(plateau_periods) or plateau_periods < 2:
+        raise ValueError('at least two finite plateau periods required for the final fit')
+    period = 2*np.pi/strip.omega;duration = (plateau_periods+8)*period
     if not np.isfinite(dt) or dt <= 0 or duration/dt > 20000 or dt > period/20:
         raise ValueError('declared strip requires20..1666steps/period, bounded saved histories')
     count = int(np.ceil(duration/dt));times = [];fields = [];diagnostics = []
@@ -176,9 +182,11 @@ def run(dt, output):
               'volume_quadrature': 12, 'spacing': float(np.pi/6),
               'graded_vertical_layers': 4, 'quiet_wavelengths': .25,
               'nodes': len(strip.points), 'triangles': len(strip.triangles),
-              'pulse_ramp_periods': 1., 'pulse_plateau_periods': 4., 'pulse_dc': .2,
-              'duration_periods': 12., 'duration_requested': duration,
-              'fit_period_range': [3., 5.],
+              'pulse_ramp_periods': 1., 'pulse_plateau_periods': plateau_periods, 'pulse_dc': .2,
+              'duration_periods': plateau_periods+8, 'duration_requested': duration,
+              'fit_period_range': [plateau_periods-1, plateau_periods+1],
+              'settling_variation_threshold_over_exact_norm': .001,
+              'settling_status': 'requires offline consecutive-period fits; no automatic qualification',
               'diagnostic_columns': ['quiet_energy_per_density', 'chi_max', 'z_max', 'q_max'],
               'zero_history': True, 'no_mean_or_history_reset': True,
               'potential_and_energy_location': 'actual midpoint solve',
@@ -205,7 +213,7 @@ def run(dt, output):
                       last_valid_endpoint_time=float(endpoint_times[ne-1]) if ne else None)
         if error is not None:
             report['error'] = {'type': type(error).__name__, 'message': str(error)}
-        fit = (sample_times >= 3*period)&(sample_times <= 5*period)
+        fit = (sample_times >= (plateau_periods-1)*period)&(sample_times <= (plateau_periods+1)*period)
         harmonic = np.empty(0, complex);exact = np.empty(0, complex)
         if np.count_nonzero(fit) >= 8 and np.ptp(sample_times[fit]) >= 1.5*period:
             design = np.column_stack((np.cos(strip.omega*sample_times[fit]),
@@ -227,7 +235,7 @@ def run(dt, output):
         output.write_text(json.dumps(report, indent=2)+'\n')
 
     try:
-        solver = MidpointStrip(strip, dt)
+        solver = MidpointStrip(strip, dt, plateau_periods=plateau_periods)
         endpoint_times.append(0.);surface_v.append(solver.v.copy());surface_psi.append(solver.psi.copy())
         last_aux = dict(final_chi=solver.chi, final_z=solver.z, final_q=solver.q)
         for _ in range(count):
@@ -251,7 +259,8 @@ def run(dt, output):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--dt', type=float, required=True)
+    parser.add_argument('--plateau-periods', type=float, default=4., help='carrier plateau; >=2, default4; retains six-period undriven tail')
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     with threadpool_limits(limits=1):
-        print(json.dumps(run(args.dt, args.output), indent=2))
+        print(json.dumps(run(args.dt, args.output, plateau_periods=args.plateau_periods), indent=2))
