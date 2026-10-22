@@ -41,10 +41,11 @@ def cross(a, b):
 
 class PlanePoints:
     """Tiny reference registry: all planes are frozen before intersections."""
-    def __init__(self, *, max_points=None, max_intersections=None):
+    def __init__(self, *, max_points=None, max_intersections=None, capture_constraints=False):
         self.planes, self.labels, self.cache = [], [], {}
         self.points, self.incidence, self.vertex_by_owner = [], [], {}
         self.registered_intersections = {}
+        self.relevant = [] if capture_constraints else None
         self.max_points, self.max_intersections = max_points, max_intersections
 
     def plane(self, points, label):
@@ -95,6 +96,8 @@ class PlanePoints:
             self.vertex_by_owner[owner] = len(self.points)
             self.points.append(point)
             self.incidence.append(frozenset(owner))
+            if self.relevant is not None:
+                self.relevant.append(set())
         index = self.vertex_by_owner[owner]
         assert self.points[index] == point
         self.registered_intersections[triple] = index
@@ -106,6 +109,9 @@ class PlanePoints:
             point = self.intersection(triple)
             if point is not None and all(sign*self.value(i, point) <= 0 for i, sign in constraints):
                 vertices.add(self.register(triple, point))
+        if self.relevant is not None:
+            for vertex in vertices:
+                self.relevant[vertex].update(i for i, _ in constraints)
         return vertices
 
     def polygon(self, vertices, plane, sign):

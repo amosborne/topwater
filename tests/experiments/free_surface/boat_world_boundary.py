@@ -95,7 +95,7 @@ def material_coordinates(registry_points, rr, cg, position):
 
 
 def construct(output, *, body=None, pose=None, parent_xy=None, parents=None,
-              parent_eta=None, parent_psi=None):
+              parent_eta=None, parent_psi=None, export_template=False):
     """Construct one checkpointed snapshot; coefficients stay on WORLD parents.
 
     Returns ``(mesh, arrays, report)``. Pose translations locate the body's CG;
@@ -163,7 +163,8 @@ def construct(output, *, body=None, pose=None, parent_xy=None, parents=None,
         arrays.update(parent_nodes=np.asarray(roof, dtype=float), parents=np.array(parents), parent_psi=psi,
             parent_psi_mean_water=psi_mean,
             body_vertices=np.asarray(world, dtype=float), source_body_vertices=body.mesh.vertices,
-            source_body_faces=body.mesh.faces,
+            source_body_faces=body.mesh.faces, source_body_cg=body.cg,
+            source_body_rim=body.mesh.opening_rim,
             pose_position=rest.position, pose_orientation=rest.orientation)
         report.update(body_mass=body.mass, actual_sea_realization=json.loads(sea_states.dumps_realization(waves)),
             pose=('actual mean-water equilibrium, unchanged by the selected wave snapshot'
@@ -174,7 +175,7 @@ def construct(output, *, body=None, pose=None, parent_xy=None, parents=None,
             potential_trace_control='P1 nodal trace of incident Airy potential at actual graph height; mean-water values saved separately; no nonlinear field initialization claim',
             affine_pose_roundoff_max=float(np.max(abs(np.asarray(world, dtype=float)
                 -((body.mesh.vertices-body.cg)@rotation.T+rest.position)))))
-        registry = PlanePoints(max_points=12000, max_intersections=50000)
+        registry = PlanePoints(max_points=12000, max_intersections=50000, capture_constraints=export_template)
         hull = hull_planes(registry, world, body.mesh.faces)
         cells, roofs, outer = columns(registry, roof, parents)
         if len(registry.planes) > 128:
@@ -211,6 +212,17 @@ def construct(output, *, body=None, pose=None, parent_xy=None, parents=None,
             report['parents_completed'].append(dict(parent=parent_id, seconds=perf_counter()-before,
                 bbox_disjoint=far, polygons=len(pieces), point_owners=len(registry.points), duplicate_body=duplicates))
         report['parent_clipping_seconds'] = perf_counter()-start
+        critical = set()
+        if export_template:
+            # Dry vertices are essential: a new wet region can be born before
+            # any currently active wet-boundary vertex changes arrangement.
+            for parent, constraints in enumerate(cells):
+                if perf_counter()-start > 25:
+                    raise RuntimeError('reference critical-witness budget exhausted')
+                vertices = registry.polytope([*hull, *constraints[2:]])
+                critical.update(vertices)
+                for vertex in vertices:
+                    registry.relevant[vertex].add(roofs[parent][0])
         mesh, meta = triangulate(registry, polygons)
         triangles = mesh.vertices[mesh.faces]
         tetra = np.einsum('fi,fi->f', triangles[:, 0], np.cross(triangles[:, 1], triangles[:, 2]))/6
@@ -276,6 +288,11 @@ def construct(output, *, body=None, pose=None, parent_xy=None, parents=None,
                                                       for f in body_faces], dtype=float),
                       body_vertex_source_triangle=np.asarray(source_ids, dtype=np.int64),
                       body_vertex_source_barycentric=np.asarray(source_bary, dtype=float))
+        if export_template:
+            from .boat_geometry_template import export_template as export
+            arrays.update(export(registry, meta, arrays, critical))
+            report['template_export'] = dict(dry_and_wet_critical_vertices=len(critical),
+                source_sha256=sha256(Path(__file__).with_name('boat_geometry_template.py').read_bytes()).hexdigest())
         report.update(complete=True, seconds=perf_counter()-start, nodes=len(mesh.vertices), triangles=len(mesh.faces),
             body_triangles=len(body_faces), free_triangles=len(free), wall_triangles=len(walls), bottom_triangles=len(bottom),
             source_physical_triangle_groups=[list(group) for group in GROUPS[:-1]],
