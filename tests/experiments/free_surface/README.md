@@ -348,6 +348,15 @@ conceptual full mesh has 435913 nodes; this preflight does not allocate it.
 No fluid operator or factor is built. Mesh counts do not bound LU fill or
 establish wave/Capytaine accuracy; a memory-bounded frequency solve is next.
 
+`quarter_canoe_frequency` runs the first actual omega=2 heave comparison under
+a queried 9 GiB process commit limit. The 110435-row scalar matrix has 7837923
+nonzeros and uses 157 MB of sparse arrays. Default COLAMD factorization failed
+with `MemoryError`; it produced no coefficient. The unchanged physical case is
+being retried with `MMD_AT_PLUS_A` ordering. This worker saves the exact scalar
+input before factorization and rejects reuse after changes to equations, mesh,
+reference, loads or data. Seven focused integrity tests pass. A heave result,
+if obtained, remains one block rather than the required six-mode family.
+
 The prescribed nonlinear controller also passes an independent physical-work
 check on the moving canonical canoe with nonflat surface, all six velocities
 and imposed accelerations. Without damping, its controller supplies 1.15926 W;
