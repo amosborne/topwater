@@ -207,6 +207,24 @@ These are one-state diagnostic timings, not trajectory throughput or a warm
 speedup claim. A warm full-stage profile is required before selecting the next
 kernel change. Accepted timestep and physical error remain decisive.
 
+The subsequent warm diagnostic is preserved in
+`artifacts/p4-nonlinear-exact-matrixfree-warm-rhs.{json,npz,prof}`. Its unprofiled
+warm full RHS is 7.94 s, including fresh current geometry, metric and all force
+terms. The final profiled repetition is 9.00 s; these two observations are not
+a throughput distribution. All three repetitions retain full-rate relative
+agreement within `5.62e-14`. Warm phase costs are 1.74 s boundary geometry,
+0.556 s exact metric cache, 1.10 s current coupled field, 0.651 s kinetic shape
+work and 3.86 s remaining action. The profile identifies unnecessary volume
+extensions/transposes in boundary-only terms as a concrete exact simplification.
+
+With three RHS calls per accepted RK step, this measured cost would require
+`h >= 3*7.94/20 = 1.19 s` just to reach 20x real time, before rejected trials.
+At a hypothetical `h=0.01 s` the estimate is 2,382x. Neither is a measured
+accepted timestep. The exact metric cache is now only about seven percent of
+the unprofiled stage; improving it alone cannot make this discretization usable.
+Boundary work, actual temporal error/scaling and the frozen spectral diagnostic
+are therefore the next discriminators before another long trajectory.
+
 The independent 80-cell actual nonlinear predictor audit also falsifies an
 operator-only reuse gate: halving the predictor interval from `1e-4` to
 `5e-5 s` reduces tangent-action error from `1.13e-5` to `2.84e-6`, but full
