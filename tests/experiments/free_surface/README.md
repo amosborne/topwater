@@ -221,7 +221,21 @@ trace. The interior flow remains compatible with the moving hull; the water is
 not globally motionless. The full nonlinear RHS generates the surface motion.
 This separate seed defaults to `artifacts/p4-calm-stage.json/.npz` and is consumed
 by the existing `p4_canoe_release` runner. The original nonflat/high-contact audit
-and its saved results remain separate. The new longer release has not run yet.
+and its saved results remain separate. The calm initial stage has completed:
+the weak-normal relative residual is 1.30e-13 and independent scalar-action
+difference errors fall from 4.67e-8 to 1.15e-8 when the step is halved.
+The attempted 1.6 s release stopped before its first accepted step because
+the initial 0.01 s proposal produced an invalid sampled cell Jacobian.
+
+`GeometryRK23` now rejects that specific numerical trial failure and retries
+with a smaller step from the unchanged accepted state. Physical contact/rim
+failures and other errors still propagate. Analytic ODE controls check recovery,
+backoff after an ordinary accuracy rejection, physical-error propagation and
+bitwise agreement with ordinary RK23 on valid stages. Together with the cell
+and offline comparison checks, 20 focused tests pass. The longer release retry
+and its tighter same-case repeat remain pending. `compare_p4_releases` will
+retain six-axis motion, raw energy/volume drift and exact common-endpoint
+differences, requiring identical initial stage, masters and runtime sources.
 
 `p4_rest_geometry_checks` separately checks the actual canoe without assembling
 another fluid operator. At rest, Ceta agrees with the surface mass within
