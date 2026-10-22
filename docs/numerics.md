@@ -2,11 +2,15 @@
 
 This is the decision record for the first numerical implementation. It specifies
 work to verify; it does not certify an operator, a wave solver or hydrodynamic
-correlation that has not been implemented. The canonical canoe and loading in
-`tests/reference_hull.py` remain the one shared hull reference.
+correlation that has not been implemented. The canoe and loading in
+`tests/reference_hull.py` remain verification controls. The application baseline
+is a simple 24 ft center-console boat in an observed Southern California sea;
+changing that baseline does not invalidate or replace earlier canoe evidence.
 
 ## Required operating envelope
 
+The application is an unpowered boat adrift on open ocean: 18–30 ft length,
+7–11 ft maximum beam, with incident frequencies no higher than **0.6 Hz**.
 The user excludes breaking waves, slamming and incident wavelengths shorter
 than **twice the boat beam**. Beam is the complete physical hull's maximum
 body-frame transverse width, independent of heading, roll or numerical mesh
@@ -20,9 +24,31 @@ constant depth, `k_max=pi/beam` and
 `omega_max^2=g*k_max*tanh(k_max*depth)` implement the wavelength cutoff without
 a wavenumber root solve. The infinite-depth limit replaces `tanh` by one.
 `WaveComponents` alone lacks depth, so this gate belongs at the scenario entry
-point that owns the wave model. Current checkout-only evolution cases are not
+point that owns the wave model. Apply the independent 0.6 Hz limit as well.
+For a 9 ft beam in deep water at `g=9.81 m/s^2`, the wavelength condition is
+more restrictive: approximately 0.53 Hz. Current checkout-only evolution cases are not
 a qualified public simulation API; the new scenario guards remain to be wired
 and verified before claiming enforcement.
+
+The application reference uses round, declared hull and loading assumptions,
+not a detailed equipment inventory or a fitted commercial-boat surrogate.
+Integrate a uniform fiberglass shell's specified total mass over the physical
+surface, then add one amidships point mass for console/gear/adults and one aft
+point mass for the motor. Derive CG and the full inertia tensor; do not invent
+independent inertia values or add artificial-cap mass. Solve heave and pitch
+balance on the actual geometry. These reference assumptions are not a laminate
+design or a stability certification.
+
+The sea-state catalog must retain whole observed directional spectra and source
+provenance. Generate explicit seeded phases to realize a measured spectrum;
+the observations do not supply an exact phase-resolved water-surface history.
+Do not independently sample frequency-band amplitude distributions, silently
+remove incompatible short-wave energy, or renormalize a truncated spectrum.
+Unmeasured frequency tails remain unknown. A canonical Southern California
+record should be selected by a documented reproducible rule and retain its
+actual timestamp, rather than being an invented average spectrum. Generated
+incoming fields need not be represented by a volume mesh spanning their longest
+wavelength; fluid truncation must still handle outgoing radiation and scattering.
 
 Breaking screening must consider actual wave height, steepness, depth and
 group focusing. The regular progressive-wave Miche limit
@@ -86,7 +112,8 @@ adequate discretization. Vary hull resolution, near-surface resolution, far-fiel
 wave resolution and interface position independently, and justify increases by
 load/motion error rather than mesh appearance. The curved canonical canoe remains
 the common validation hull; its required geometry resolution need not transfer
-to a hull made of a few planar faces.
+to a hull made of a few planar faces. The new application benchmark uses the
+simple 24 ft boat; the canoe retains its role as a verification control.
 
 With opposite fluid-outward interface normals, the coupled solution must satisfy
 `phi_near = phi_far + a(t)` and `q_near + q_far = 0`. Potential continuity supplies
@@ -139,7 +166,8 @@ expensive validation. Keep the existing physical reference to check candidates:
 - The reason for sub-millisecond accepted steps, followed by an appropriate
   implicit, exponential or split integrator if accurate wave dynamics warrant it.
 
-Use the same canonical canoe, loading and time-domain physical cases. Compare
+Use identical boat, loading and time-domain sea inputs across candidates, with
+the existing canoe cases retained as verification controls. Compare
 at matched demonstrated force, motion and wave accuracy rather than equal
 element counts. Measure full-case wall time first and peak memory second,
 including assembly, operator updates, factorization/solves and rejected steps.

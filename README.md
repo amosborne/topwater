@@ -28,50 +28,29 @@ Capytaine supplies independent hydrostatic and instantaneous added-mass benchmar
 
 The initial scope is a single rigid body in deep water, with reproducible directional wave realizations and no anchor or mooring forces. Viscous damping remains an explicit model requiring sensitivity analysis or calibration. Breaking/overturning waves, resolved slamming jets, flooding, propulsion and multiple bodies are outside the initial scope. Free yaw does not guarantee a settled heading.
 
-## Reference hull
+## Reference boat
 
-![Canonical canoe mesh at computed buoyancy equilibrium in flat water](docs/images/reference-hull.png)
+![Simple 24 ft boat mesh at solved calm-water equilibrium](docs/images/reference-boat.png)
 
-One canonical single-person canoe supplies the shared geometry and loading for
-tests and Capytaine comparisons. It is an open lower half-ellipsoid,
-**3.5 m long, 0.9 m wide and 0.35 m deep**, with its rim at body `z = 0`.
-An explicitly marked artificial cap closes the test mesh; the image omits it
-to show the opening. That cap is not a watertight deck. The image shows the
-computed calm-water heave equilibrium and the payload's specified CG.
-Refinements approximate the same exact surface; they are not different hulls.
-The smooth reference does not exercise chines or transoms.
+The application reference is a deliberately simple **24 ft x 9 ft** open V-hull
+with a physical transom, flared sides and a tapered bow. Its loading uses round
+assumptions: **600 kg uniform fiberglass shell**, **400 kg amidships** for the
+console, gear and adults, and a **250 kg motor** at the stern. The latter two
+are point masses. Shell integration and their offsets determine CG and the full
+inertia tensor; they are not independently guessed inputs.
 
-Loading uses round, illustrative inputs: a **3 mm thin shell**, assumed
-fiberglass/resin laminate density **1800 kg/m³**, and an **80 kg adult payload**
-on the centreline, with its CG **0.1 m above the rim**. The payload is a point
-mass with no intrinsic body inertia. Shell loading uses surface area times
-thickness and density; the artificial cap has no mass. The model omits shell
-through-thickness inertia and separate seat/equipment mass. It is a declared
-reference case, not a laminate specification or a model of a manufactured canoe.
-
-Mass, CG and the full inertia tensor about combined CG are integrated from that
-loading. Independent surface quadrature supplies the reference; triangle
-integration must converge toward it. A scalar root of the exact shape's
-displacement sets the initial draft in water of density 1000 kg/m³, placing the
-world waterline at `z = 0`. The finite mesh approximates that pose.
-`equilibrate_heave` solves buoyancy balance on the actual mesh; the image uses
-that solved pose. Neither calculation asserts roll/pitch stability.
-
-Calm-water checks stop at **rim immersion** (flooding onset) or
-**complete loss of hull–water contact**, including invalid initial states.
-Rim clearance must use the local evolving free surface. An artificial closure
-must never hide flooding by supporting deck pressure. These failure detectors
-are implemented in the calm-water API. The moving-surface experiment checks rim
-clearance against its local surface representation; general topology changes
-and failure-aware evolution remain unqualified.
-
-The definition, generator and analytical reference values live together in
-[tests/reference_hull.py](tests/reference_hull.py). Run the geometry checks with
-`uv run pytest tests/test_reference_hull.py` and time initial mesh validation
-with `uv run python -m tests.benchmark_inputs`. These timings exclude a fluid
-solve and do not measure timestep performance.
+The image shows the actual coarse mesh at its solved heave and pitch equilibrium
+in seawater. The artificial opening cap is omitted and carries neither mass nor
+pressure. This is an illustrative reference, not a manufactured boat or a
+laminate specification. See the [definition and physical checks](docs/reference-boat.md).
 Regenerate the image with
-`uv run --with matplotlib python -m tests.plot_reference_hull`.
+`uv run --locked --with matplotlib python -m tests.plot_reference_boat`.
+
+The original [single-person canoe](tests/reference_hull.py) remains unchanged
+as an analytical geometry, loading and solver verification control. Earlier
+canoe timings do not describe the new boat or qualify its simulation speed.
+Calm-water checks stop at rim immersion or complete loss of water contact;
+general moving-surface breaking, slamming and contact guards remain unqualified.
 
 ## Physical input API
 
