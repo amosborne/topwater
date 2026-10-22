@@ -215,6 +215,14 @@ polynomial test catches an interior peak missed by every nodal sample.
 This very short run establishes execution through the coupled integrator,
 not temporal accuracy, representative motion or qualified throughput.
 
+For the longer physical release, `p4_canoe_stage --calm` selects the same finite
+pose and six velocities with initially flat elevation and zero surface-potential
+trace. The interior flow remains compatible with the moving hull; the water is
+not globally motionless. The full nonlinear RHS generates the surface motion.
+This separate seed defaults to `artifacts/p4-calm-stage.json/.npz` and is consumed
+by the existing `p4_canoe_release` runner. The original nonflat/high-contact audit
+and its saved results remain separate. The new longer release has not run yet.
+
 `p4_rest_geometry_checks` separately checks the actual canoe without assembling
 another fluid operator. At rest, Ceta agrees with the surface mass within
 2.09e-17, Cv is zero, and all six normal-flux loads agree with independent
