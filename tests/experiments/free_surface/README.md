@@ -22,9 +22,18 @@ one-second n=12/wet2/initial-scale10 trajectory completes with 201 accepted
 steps and 605 RHS evaluations. All six body velocities evolve. Maximum energy
 change is 1.55e-5 J, or 0.00455% of the 0.341 J initial disturbance energy;
 water volume changes by at most 2.70e-9 m3. Minimum rim clearance is 0.199 m.
-The same full case with halved maximum timestep and tighter tolerance is
-running; temporal convergence remains unqualified. The diagnostic run took
-2478 s during concurrent validation work. This is a major performance limitation;
+The same full case with maximum timestep halved to 0.0025 s and tolerance
+tightened to 1e-5 completes with 401 accepted steps and 1205 RHS evaluations.
+Energy drift decreases by 7.97 times to 1.95e-6 J (0.000571% of the disturbance),
+and maximum water-volume drift decreases to 3.37e-10 m3. At the identical final
+time, position components differ by less than 4e-9 m, world rotation components
+by less than 4e-8 rad, and world linear/angular velocities by less than
+7e-8 m/s and 5e-7 rad/s. Reference-domain endpoint eta/psi L2 differences are
+6.41e-5 and 2.62e-5 relative. The only intervening implementation change on
+this free-evolution path extracts the unchanged operator assembly into a helper.
+Two time levels show consistency; they do not establish convergence order or
+spatial/open-water accuracy. Diagnostic coarse/fine wall times were 2478/6966 s
+during concurrent validation work. This remains a major performance limitation;
 full-case throughput benchmarking and optimization follow correctness validation.
 
 `linear_canoe_radiation` solves the exact rest linearization of that action for
