@@ -1,4 +1,4 @@
-"""Prescribed-heave radiation check through the nonlinear moving-canoe stage.
+"""Prescribed-motion radiation check through the nonlinear moving-canoe stage.
 
 This is an unqualified finite absorbing-tank experiment, not a radiation model
 used by production dynamics. The short default only exercises the runner.
@@ -9,6 +9,9 @@ from pathlib import Path
 import numpy as np
 from scipy.integrate import RK23, trapezoid
 from scipy.optimize import brentq
+from scipy.spatial.transform import Rotation
+
+MODES = ('surge', 'sway', 'heave', 'roll', 'pitch', 'yaw')
 
 from topwater.hydrostatics import hydrostatics
 from .moving_canoe import make_domain, initial_state, rhs, field
@@ -28,6 +31,33 @@ def heave(time, amplitude, omega, ramp_periods=2.):
         second*c-2*omega*first*s_phase-omega**2*ramp*c])
 
 
+def prescribed_state(base, fluid, motion, mode):
+    """Apply one translation or fixed-world-axis rotation about the world CG."""
+    state = base.copy()
+    state[7:13] = 0.
+    state[7+mode] = motion[1]
+    if mode < 3:
+        state[mode] += motion[0]
+    else:
+        axis = np.eye(3)[mode-3]
+        state[3:7] = (Rotation.from_rotvec(axis*motion[0])*
+            Rotation.from_quat(base[3:7], scalar_first=True)).as_quat(scalar_first=True)
+    state[13:] = fluid
+    acceleration = np.zeros(6); acceleration[mode] = motion[2]
+    return state, acceleration
+
+
+def column_errors(actual, reference):
+    """Separate force and moment row scales; a zero reference family is undefined."""
+    actual, reference = np.asarray(actual), np.asarray(reference)
+    errors = []
+    for start in (0, 3):
+        scale = np.max(np.abs(reference[start:start+3]))
+        errors.extend(((actual[start:start+3]-reference[start:start+3])/scale).tolist()
+                      if scale else [None]*3)
+    return errors
+
+
 def sponge(points, strength, buffer=.5):
     """Smooth bounded outer damping, zero on the local pocket plus buffer."""
     if strength < 0 or buffer < 0:
@@ -45,7 +75,7 @@ def sponge(points, strength, buffer=.5):
 def harmonic_fit(times, forces, omega, amplitude, restoring):
     """Time-weighted DC/cos/sin fit, using the exp(-i omega t) convention.
 
-    Total heave force = DC + a*(omega^2*A-C)*cos + a*omega*B*sin.
+    Each generalized force = DC + a*(omega^2*A-C)*cos + a*omega*B*sin.
     Trapezoidal time weights avoid bias from adaptive sampling density.
     """
     t, f = np.asarray(times), np.asarray(forces)
@@ -83,12 +113,15 @@ def _window(times, force, start, stop):
 def run(n=12, *, periods=.05, omega=4., amplitude=1e-4, ramp_periods=2.,
         fit_periods=3, gpu=True, material_subdivisions=2, exterior_scale=1.,
         sponge_strength=4., sponge_buffer=.5, rtol=1e-4, derivative_step=1e-4,
-        max_step=.01, capytaine=False):
+        max_step=.01, capytaine=False, mode='heave'):
     if not all(np.isfinite(v) and v > 0 for v in
                (periods, omega, amplitude, ramp_periods, rtol, derivative_step, max_step)):
         raise ValueError('positive finite run settings required')
     if rtol >= 1 or fit_periods < 1 or int(fit_periods) != fit_periods:
         raise ValueError('rtol < 1 and positive integer fit periods required')
+    if mode not in MODES:
+        raise ValueError(f'mode must be one of {MODES}')
+    mode_index = MODES.index(mode)
     domain = make_domain(n, gpu, material_subdivisions=material_subdivisions,
                          exterior_scale=exterior_scale)
     size = len(domain.free_nodes)
@@ -102,13 +135,9 @@ def run(n=12, *, periods=.05, omega=4., amplitude=1e-4, ramp_periods=2.,
     def evaluate(time, fluid):
         nonlocal calls
         motion = heave(time, amplitude, omega, ramp_periods)
-        state = base.copy()
-        state[2] += motion[0]
-        state[9] = motion[1]
-        state[13:] = fluid
+        state, acceleration = prescribed_state(base, fluid, motion, mode_index)
         diagnostics = {}
         rate = rhs(domain, state, derivative_step, diagnostics=diagnostics, damping=damping)
-        acceleration = np.zeros(6); acceleration[2] = motion[2]
         force = (np.asarray(diagnostics['known_pressure_load'])-
                  np.asarray(diagnostics['added_mass'])@acceleration)
         cache.update(time=time, fluid=fluid.copy(), force=force)
@@ -131,27 +160,42 @@ def run(n=12, *, periods=.05, omega=4., amplitude=1e-4, ramp_periods=2.,
             evaluate(solver.t, solver.y)
         times.append(solver.t); states.append(solver.y.copy()); forces.append(cache['force'].copy())
     times, states, forces = np.asarray(times), np.asarray(states), np.asarray(forces)
-    restoring = float(hydrostatics(domain.body, domain.rest).stiffness[2, 2])
-    fit = None; period_fits = []
+    restoring_column = hydrostatics(domain.body, domain.rest).stiffness[:, mode_index]
+    fit = None; period_fits = []; column_fits = None
     if periods >= ramp_periods+fit_periods:
         start = (periods-fit_periods)*period
-        t, f = _window(times, forces[:, 2], start, periods*period)
-        fit = harmonic_fit(t, f, omega, amplitude, restoring)
+        column_fits = []
+        for row in range(6):
+            t, f = _window(times, forces[:, row], start, periods*period)
+            row_fit = harmonic_fit(t, f, omega, amplitude, restoring_column[row])
+            if row != mode_index:
+                # Only the driven generalized velocity contributes physical work.
+                row_fit.pop('mean_fluid_work')
+            column_fits.append(row_fit)
+        fit = column_fits[mode_index]
         for j in range(fit_periods):
-            t, f = _window(times, forces[:, 2], start+j*period, start+(j+1)*period)
-            period_fits.append(harmonic_fit(t, f, omega, amplitude, restoring))
-        transfer = np.array([[row['cosine'], row['sine']] for row in period_fits])
-        changes = np.linalg.norm(np.diff(transfer, axis=0), axis=1)
-        fit['period_to_period_force_change'] = changes.tolist()
-        harmonic_amplitude = np.hypot(fit['cosine'], fit['sine'])
-        fit['period_to_period_force_change_relative'] = (
-            (changes/harmonic_amplitude).tolist() if harmonic_amplitude else None)
-        fit['harmonic_residual_relative'] = (
-            fit['harmonic_residual_rms']/harmonic_amplitude if harmonic_amplitude else None)
+            row_fits = []
+            for row in range(6):
+                t, f = _window(times, forces[:, row], start+j*period, start+(j+1)*period)
+                row_fit = harmonic_fit(t, f, omega, amplitude, restoring_column[row])
+                if row != mode_index:
+                    row_fit.pop('mean_fluid_work')
+                row_fits.append(row_fit)
+            period_fits.append(row_fits)
+        for row, row_fit in enumerate(column_fits):
+            transfer = np.array([[period[row]['cosine'], period[row]['sine']] for period in period_fits])
+            changes = np.linalg.norm(np.diff(transfer, axis=0), axis=1)
+            row_fit['period_to_period_force_change'] = changes.tolist()
+            harmonic_amplitude = np.hypot(row_fit['cosine'], row_fit['sine'])
+            row_fit['period_to_period_force_change_relative'] = (
+                (changes/harmonic_amplitude).tolist() if harmonic_amplitude else None)
+            row_fit['harmonic_residual_relative'] = (
+                row_fit['harmonic_residual_rms']/harmonic_amplitude if harmonic_amplitude else None)
     k = brentq(lambda value: 9.81*value*np.tanh(4*value)-omega**2, 1e-10, omega**2/9.81+10)
     triangles = domain.reference_points[domain.free_faces]
     maximum_edge = float(np.linalg.norm(triangles-np.roll(triangles, 1, axis=1), axis=2).max())
-    report = dict(qualified=False, case='prescribed-heave nonlinear radiation experiment',
+    report = dict(qualified=False, case='prescribed-motion nonlinear radiation experiment',
+        mode=mode, mode_order=list(MODES), amplitude_unit='m' if mode_index < 3 else 'rad',
         n=n, gpu=gpu, material_subdivisions=material_subdivisions, exterior_scale=exterior_scale,
         periods=periods, ramp_periods=ramp_periods, fit_periods=fit_periods, omega=omega,
         amplitude=amplitude, rtol=rtol, derivative_step=derivative_step, max_step=max_step,
@@ -159,8 +203,8 @@ def run(n=12, *, periods=.05, omega=4., amplitude=1e-4, ramp_periods=2.,
         wavelength_over_maximum_edge=2*np.pi/k/maximum_edge,
         domain_half_widths=np.max(np.abs(domain.reference_points[:, :2]), axis=0).tolist(),
         sponge_widths=widths.tolist(), sponge_strength=sponge_strength, sponge_buffer=sponge_buffer,
-        restoring_heave=restoring, rhs_evaluations=calls, accepted_steps=len(times)-1,
-        harmonic_fit=fit, individual_period_fits=period_fits,
+        restoring_column=restoring_column.tolist(), rhs_evaluations=calls, accepted_steps=len(times)-1,
+        harmonic_fit=fit, column_harmonic_fits=column_fits, individual_period_fits=period_fits,
         scope='Finite absorbing tank; fixed contact topology. No outgoing-boundary, spatial, '
               'amplitude or transient convergence established. Short smoke runs have no harmonic fit. '
               'No performance or finite-frequency qualification claim.')
@@ -170,26 +214,42 @@ def run(n=12, *, periods=.05, omega=4., amplitude=1e-4, ramp_periods=2.,
         wet = current['points'][domain.local_mapping][domain.contact.faces[domain.contact.body_faces]]
         reference = frequency_response(wet[:, ::-1], base[:3], domain.body.mass,
                                        [omega], [], water_depth=4.)
-        report['capytaine'] = dict(added_mass_heave=float(reference['added_mass'][0, 2, 2]),
-            damping_heave=float(reference['radiation_damping'][0, 2, 2]),
-            scope='Same rest wet panels and depth; unbounded horizontal reference.')
+        reference_a = reference['added_mass'][0]
+        reference_b = reference['radiation_damping'][0]
+        report['capytaine'] = dict(added_mass=reference_a.tolist(), radiation_damping=reference_b.tolist(),
+            added_mass_diagonal=float(reference_a[mode_index, mode_index]),
+            damping_diagonal=float(reference_b[mode_index, mode_index]),
+            scope='Same rest wet panels and depth; unbounded horizontal reference. '
+                  'Column force/moment scales are diagnostics, not the formal whole-matrix '
+                  'nondimensional family gate; all six prescribed modes are required for that.')
         if fit is not None:
-            report['capytaine']['added_mass_relative_error']=(
-                fit['added_mass']/report['capytaine']['added_mass_heave']-1)
-            report['capytaine']['damping_relative_error']=(
-                fit['radiation_damping']/report['capytaine']['damping_heave']-1)
+            actual_a = np.array([row['added_mass'] for row in column_fits])
+            actual_b = np.array([row['radiation_damping'] for row in column_fits])
+            report['capytaine'].update(
+                added_mass_column_force_moment_scaled_error=column_errors(actual_a, reference_a[:, mode_index]),
+                damping_column_force_moment_scaled_error=column_errors(actual_b, reference_b[:, mode_index]),
+                expected_force_cosine=(amplitude*(omega**2*reference_a[:, mode_index]-restoring_column)).tolist(),
+                expected_force_sine=(amplitude*omega*reference_b[:, mode_index]).tolist())
+            for name,actual,expected in (
+                    ('added_mass',actual_a,reference_a),('damping',actual_b,reference_b)):
+                diagonal=expected[mode_index,mode_index]
+                report['capytaine'][name+'_relative_error']=(
+                    float(actual[mode_index]/diagonal-1) if diagonal else None)
     motions = np.array([heave(t, amplitude, omega, ramp_periods) for t in times])
-    full_states = np.broadcast_to(base, (len(times), len(base))).copy()
-    full_states[:, 2] += motions[:, 0]
-    full_states[:, 9] = motions[:, 1]
-    full_states[:, 13:] = states
-    return report, dict(times=times, states=full_states, heave=motions, hydrodynamic_load=forces)
+    full_states = np.array([prescribed_state(base, fluid, motion, mode_index)[0]
+                            for fluid, motion in zip(states, motions)])
+    saved = dict(times=times, states=full_states, prescribed_motion=motions, hydrodynamic_load=forces)
+    if mode == 'heave':
+        saved['heave'] = motions
+        report['restoring_heave'] = float(restoring_column[2])
+    return report, saved
 
 
 if __name__ == '__main__':
     import argparse
     from threadpoolctl import threadpool_limits
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--mode', choices=MODES, default='heave')
     parser.add_argument('--n', type=int, default=12)
     parser.add_argument('--periods', type=float, default=.05)
     parser.add_argument('--omega', type=float, default=4.)
@@ -209,7 +269,7 @@ if __name__ == '__main__':
     with threadpool_limits(1):
         report, states = run(**args)
     path = Path('artifacts'); path.mkdir(exist_ok=True)
-    suffix = (f"n{args['n']}-material{args['material_subdivisions']}-periods{args['periods']:g}"
+    suffix = (f"{args['mode']}-n{args['n']}-material{args['material_subdivisions']}-periods{args['periods']:g}"
         f"-omega{args['omega']:g}-amplitude{args['amplitude']:g}-extent{args['exterior_scale']:g}"
         f"-sponge{args['sponge_strength']:g}-rtol{args['rtol']:g}-step{args['max_step']:g}")
     np.savez(path/f'canoe-radiation-{suffix}.npz', **states)
