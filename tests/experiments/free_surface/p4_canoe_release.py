@@ -100,10 +100,39 @@ def _revision():
         return None
 
 
+def _check_failure_output(path):
+    path = Path(path)
+    if path.exists() or path.with_suffix('.npz').exists():
+        raise FileExistsError('failure artifact already exists; choose a new --output stem before running')
+
+
+def _advance(solver, record, save_failure):
+    """Record accepted endpoints only; preserving output never hides failure."""
+    try:
+        record()
+        while solver.status == 'running':
+            message = solver.step()
+            if solver.status == 'failed':
+                raise RuntimeError(message)
+            record()
+    except BaseException as error:
+        try:
+            save_failure(error)
+        except BaseException as save_error:
+            try:
+                error.add_note(f'Accepted-history output also failed: {type(save_error).__name__}: {save_error}')
+            except BaseException:
+                pass
+        raise
+
+
 def run(stage_path, *, duration=.001, max_step=.001, rtol=1e-4,
-        atol=1e-10, derivative_step=1e-4):
+        atol=1e-10, derivative_step=1e-4, failure_output=None):
     """Integrate the saved all-six-velocity/nonflat actual-stage initial state."""
     start = perf_counter()
+    if failure_output is not None:
+        failure_output = Path(failure_output)
+        _check_failure_output(failure_output)
     sources = ['p4_canoe_release.py', 'p4_canoe_stage.py', 'geometry_rk23.py',
         'p4_canoe_field.py', 'p4_variational_canoe.py', 'p4_whole_geometry.py',
         'p4_volume_map.py', 'p4_canoe_contact.py', 'canoe_contact.py', 'p4_geometry.py',
@@ -186,17 +215,21 @@ def run(stage_path, *, duration=.001, max_step=.001, rtol=1e-4,
         margins.append(cache['margin']); weak_errors.append(cache['weak_normal_relative'])
         work_errors.append(cache['fluid_work_residual'])
 
-    record()
-    while solver.status == 'running':
-        message = solver.step()
-        if solver.status == 'failed':
-            raise RuntimeError(message)
-        record()
-    energies, volumes = np.asarray(energies), np.asarray(volumes)
-    physical_states = np.asarray(states)
-    energy_change = float(np.max(abs(energies-energies[0])))
-    report = dict(qualified=False, case='fully nonlinear P4 canonical canoe release',
-        source_stage=str(stage_path), source_stage_metadata=metadata,
+    def history_arrays():
+        # A record interrupted by allocation failure may have appended only
+        # some columns. Keep only the complete accepted rows shared by all.
+        rows = min(map(len, (times, states, canonical_states, energies, volumes, bounds,
+                            rim_heights, surface_heights, margins, weak_errors, work_errors)))
+        return dict(times=np.asarray(times[:rows]), states=np.asarray(states[:rows]),
+            canonical_states=np.asarray(canonical_states[:rows]), hamiltonian=np.asarray(energies[:rows]),
+            fluid_volume=np.asarray(volumes[:rows]), rim_clearance_lower_bound=np.asarray(bounds[:rows]),
+            minimum_rim_z=np.asarray(rim_heights[:rows]), free_surface_height_upper_bound=np.asarray(surface_heights[:rows]),
+            rim_roundoff_margin=np.asarray(margins[:rows]),
+            weak_normal_relative_residual=np.asarray(weak_errors[:rows], dtype=float),
+            fluid_work_identity_absolute_residual=np.asarray(work_errors[:rows]))
+
+    def provenance():
+        return dict(source_stage=str(stage_path), source_stage_metadata=metadata,
         source_npz_sha256=sha256(stage_path.read_bytes()).hexdigest(), source_revision=_revision(),
         runner_sha256=sha256(Path(__file__).read_bytes()).hexdigest(),
         source_sha256=source_hashes,
@@ -208,10 +241,35 @@ def run(stage_path, *, duration=.001, max_step=.001, rtol=1e-4,
         free_nodes_sha256=sha256(np.asarray(owner.free_nodes, dtype='<i8').tobytes()).hexdigest(),
         reference_linear_node_count=len(owner.domain.reference_points),
         eta_modes=len(owner.free_nodes), geometry_preflight=owner.preflight,
-        duration=duration, simulated_seconds=solver.t, rtol=rtol, atol=atol,
+        duration=duration, rtol=rtol, atol=atol,
         max_step=max_step, first_step=min(duration, max_step), derivative_step=derivative_step,
         rhs_evaluations=calls, accepted_steps=len(times)-1,
-        invalid_geometry_trial_rejections=solver.invalid_geometry_rejections,
+        invalid_geometry_trial_rejections=solver.invalid_geometry_rejections)
+
+    def save_failure(error):
+        if failure_output is None or not times:
+            return
+        arrays = history_arrays()
+        if not len(arrays['times']):
+            return
+        _check_failure_output(failure_output)
+        report = dict(provenance(), qualified=False, incomplete=True,
+            case='incomplete nonlinear P4 canonical canoe release',
+            duration_requested=duration, last_accepted_time=float(arrays['times'][-1]),
+            accepted_steps=len(arrays['times'])-1,
+            error_type=type(error).__name__, error_message=str(error),
+            scope='Accepted endpoints only, preserved after a failed incomplete run. '
+                  'No failed trial state or complete-trajectory/qualification claim.')
+        failure_output.parent.mkdir(parents=True, exist_ok=True)
+        np.savez(failure_output.with_suffix('.npz'), **arrays)
+        failure_output.write_text(json.dumps(report, indent=2)+'\n')
+
+    _advance(solver, record, save_failure)
+    arrays = history_arrays()
+    energies, volumes, physical_states = arrays['hamiltonian'], arrays['fluid_volume'], arrays['states']
+    energy_change = float(np.max(abs(energies-energies[0])))
+    report = dict(provenance(), qualified=False, case='fully nonlinear P4 canonical canoe release',
+        simulated_seconds=solver.t,
         initial_excitation_energy_joules=float(energies[0]), maximum_hamiltonian_change_joules=energy_change,
         maximum_hamiltonian_change_over_excitation=energy_change/abs(float(energies[0])) if energies[0] else None,
         maximum_fluid_volume_change_m3=float(np.max(abs(volumes-volumes[0]))),
@@ -230,12 +288,6 @@ def run(stage_path, *, duration=.001, max_step=.001, rtol=1e-4,
             'and conservative positive rim separation only. General P4 flooding/loss-contact event '
             'coverage, remeshing, long-time stability, temporal/spatial/Capytaine and performance '
             'qualification remain unestablished.')
-    arrays = dict(times=np.asarray(times), states=physical_states,
-        canonical_states=np.asarray(canonical_states), hamiltonian=energies, fluid_volume=volumes,
-        rim_clearance_lower_bound=np.asarray(bounds), minimum_rim_z=np.asarray(rim_heights),
-        free_surface_height_upper_bound=np.asarray(surface_heights), rim_roundoff_margin=np.asarray(margins),
-        weak_normal_relative_residual=np.asarray(weak_errors, dtype=float),
-        fluid_work_identity_absolute_residual=np.asarray(work_errors))
     report['diagnostic_wall_seconds'] = perf_counter()-start
     report['diagnostic_wall_scope'] = ('Input loading, one geometry build, current RHS evaluations '
         'and accepted diagnostics; output writing excluded. Concurrency/hardware are uncontrolled. '
@@ -253,9 +305,11 @@ if __name__ == '__main__':
     parser.add_argument('--derivative-step', type=float, default=1e-4)
     parser.add_argument('--output', type=Path, default=Path('artifacts/p4-canoe-release.json'))
     args = parser.parse_args()
+    failure_output = args.output.with_name(args.output.stem+'-failed.json')
     with threadpool_limits(1):
         report, arrays = run(args.stage, duration=args.duration, max_step=args.max_step,
-            rtol=args.rtol, atol=args.atol, derivative_step=args.derivative_step)
+            rtol=args.rtol, atol=args.atol, derivative_step=args.derivative_step,
+            failure_output=failure_output)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     np.savez(args.output.with_suffix('.npz'), **arrays)
     args.output.write_text(json.dumps(report, indent=2)+'\n')
