@@ -51,6 +51,7 @@ def run(reference, mesh, frequencies, output, *, refine_once=False, grid_file=No
     if output.exists() or archive.exists():
         raise FileExistsError('choose a fresh output stem; existing results are preserved')
     frequencies = _frequencies(frequencies)
+    output.parent.mkdir(parents=True, exist_ok=True)
     domain, pinned, _, provenance = pinned_reference(reference)
     with np.load(mesh, allow_pickle=False) as saved:
         coarse = np.asarray(saved['wetted_triangles'], dtype=float)
@@ -95,7 +96,10 @@ def run(reference, mesh, frequencies, output, *, refine_once=False, grid_file=No
             radiation_damping='row force unit / column velocity unit'),
         added_mass_infinite_depth=4.,
         infinity_provenance='Separate omega=inf call to frequency_response at water_depth=4; '
-            'the infinite-depth instantaneous_inertia helper is never used.',
+            'the infinite-depth instantaneous_inertia helper is never used. Capytaine 3.0 '
+            'automatically selects high_freq Green singularities at infinity; its exported '
+            'settings retain the configured singularity value.',
+        infinity_effective_green_singularities='high_freq',
         limitations='No zero frequency, extrapolation, interpolation, tail closure, fitting to Topwater, '
             'IRF or force-history convergence. Frequency, time and spatial refinement remain required.')
     added, damping, infinite, infinite_damping, settings = [], [], None, None, None
