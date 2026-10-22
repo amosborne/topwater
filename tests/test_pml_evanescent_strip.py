@@ -62,3 +62,25 @@ def test_selected_evanescent_field_and_wall_return_match_without_power_normaliza
         assert case['fullfield_errors']['quiet_physical_velocity_relative_l2']<.002
         assert case['incident_physical_power_flux']==0.
         assert case['incident_power_normalization_used'] is False
+
+
+def test_real_stretch_changes_evanescent_distance_without_incident_power_normalization():
+    compact = 1.5943951023931955
+    physical = 7.877580409572782
+    real_terminal = 2*physical/compact-1
+    sigma_terminal = 8*physical/compact
+    for omega in (2., 4., 6.):
+        strip = make_evanescent_strip(omega, 0., compact, spacing=2*np.pi/9, layers=4)
+        _, roots, _ = vertical_modes(omega, 1)
+        alpha = roots[0]
+        point = np.array([[strip.xlevels[0], -.4], [.8, -2.], [compact, -.1]])
+        value, derivative, reflected = exact_evanescent_field(strip, point,
+            sigma_terminal, real_terminal=real_terminal)
+        expected = np.exp(-2*alpha*physical-1j*alpha*8*physical/omega)
+        np.testing.assert_allclose(reflected, expected, atol=2e-16, rtol=3e-14)
+        np.testing.assert_allclose(abs(reflected), np.exp(-2*alpha*physical), atol=2e-16, rtol=3e-14)
+        # Source and wall conormal identities remain exact after real stretch.
+        vertical = np.cos(roots[0]*(point[0, 1]+DEPTH))
+        np.testing.assert_allclose(-derivative[0, 0]+alpha*value[0],
+                                   2*alpha*vertical, atol=2e-14, rtol=2e-13)
+        assert abs(derivative[-1, 0]) < 1e-13

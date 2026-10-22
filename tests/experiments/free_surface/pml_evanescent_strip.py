@@ -1,8 +1,8 @@
 """Lowest-evanescent-mode PML strip accuracy falsifier; no physical flux ratio.
 
-Imaginary coordinate stretching changes the phase of evanescent modes, not
-exp(-alpha*x) spatial decay. A finite wall returns exp(-2*alpha*L), regardless
-of PML strength. This is a necessary nearfield control, not canoe adoption.
+Imaginary coordinate stretching changes the phase of evanescent modes.
+Amplitude decay is exp(-2*alpha*Re(f(L))); real stretching changes that distance,
+while increasing the imaginary stretch alone does not. This is a necessary nearfield control, not canoe adoption.
 The scalar operator is the exact elimination of the reviewed Ms augmented
 system. No physical Q-sponge power identity applies to this control.
 """
@@ -34,7 +34,7 @@ def make_evanescent_strip(omega=2., angle=0., width=1.5943951023931955, *,
                       quiet_wavelengths=quiet_length*kappa/(2*np.pi))
 
 
-def exact_evanescent_field(strip, points, strength, *, right='wall'):
+def exact_evanescent_field(strip, points, strength, *, right='wall', real_terminal=1.):
     """Unit incoming UNNORMALIZED Z1=cos(mu0(z+h)) at the left reference plane."""
     if right not in ('wall', 'outgoing'):
         raise ValueError('wall/outgoing right boundary required')
@@ -42,8 +42,8 @@ def exact_evanescent_field(strip, points, strength, *, right='wall'):
     mu = roots[0];alpha = np.sqrt(mu*mu+strip.ky**2)
     points = np.asarray(points);x, z = points[..., 0], points[..., 1]
     width, left = strip.xlevels[-1], strip.xlevels[0]
-    f, s, _ = stretching(x, width, strength, strip.omega)
-    end, _, _ = stretching(width, width, strength, strip.omega)
+    f, s, _ = stretching(x, width, strength, strip.omega, real_terminal=real_terminal)
+    end, _, _ = stretching(width, width, strength, strip.omega, real_terminal=real_terminal)
     incoming = np.exp(-alpha*(f-left))
     returning = np.exp(-alpha*(2*end-f-left)) if right=='wall' else np.zeros_like(incoming)
     vertical = np.cos(mu*(z+DEPTH))
@@ -54,7 +54,7 @@ def exact_evanescent_field(strip, points, strength, *, right='wall'):
     return value, derivative, complex(reflection)
 
 
-def _field_errors(strip, potential, strength, right, *, order=18):
+def _field_errors(strip, potential, strength, right, *, order=18, real_terminal=1.):
     """Independent real(dx dz) L2 field/error; PML derivatives are computational."""
     value, derivative, weights = _triangle_rule(order)
     error = np.zeros(4);reference = np.zeros(4)
@@ -67,7 +67,7 @@ def _field_errors(strip, potential, strength, right, *, order=18):
         sample = np.einsum('qa,tai->tqi', value, strip.points[ids])
         actual = np.einsum('qa,ta->tq', value, potential[ids])
         actual_gradient = np.einsum('tqai,ta->tqi', gradient, potential[ids])
-        expected, expected_gradient, _ = exact_evanescent_field(strip, sample, strength, right=right)
+        expected, expected_gradient, _ = exact_evanescent_field(strip, sample, strength, right=right, real_terminal=real_terminal)
         e0 = abs(actual-expected)**2;r0 = abs(expected)**2
         e1 = np.sum(abs(actual_gradient-expected_gradient)**2, axis=-1)+strip.ky**2*e0
         r1 = np.sum(abs(expected_gradient)**2, axis=-1)+strip.ky**2*r0
@@ -80,12 +80,12 @@ def _field_errors(strip, potential, strength, right, *, order=18):
 
 
 def solve_evanescent_case(strip, strength=4., *, right='wall', modes=128,
-                           volume_order=12, surface_order=12, port_quadrature_multiplier=1):
+                           volume_order=12, surface_order=12, port_quadrature_multiplier=1, real_terminal=1.):
     """One small reviewed solve. A single evanescent mode has ZERO incident flux."""
     if right not in ('wall', 'outgoing'):
         raise ValueError('wall/outgoing right boundary required')
     energy, free, mass = pml_matrices(strip, strength, volume_order=volume_order,
-                                     surface_order=surface_order)
+                                     surface_order=surface_order, real_terminal=real_terminal)
     entries = mass.tocoo()
     robin = coo_matrix((entries.data, (free[entries.row], free[entries.col])), shape=energy.shape).tocsc()
     system = energy-strip.omega**2/GRAVITY*robin
@@ -110,14 +110,17 @@ def solve_evanescent_case(strip, strength=4., *, right='wall', modes=128,
     amplification = np.exp(-2*alpha*strip.xlevels[0])
     reflected_left = trace[1]-1
     reflection = reflected_left*amplification
-    _, _, exact = exact_evanescent_field(strip, strip.points[:1], strength, right=right)
+    _, _, exact = exact_evanescent_field(strip, strip.points[:1], strength, right=right, real_terminal=real_terminal)
     norm = left['norm'][1]
+    endpoint, _, _ = stretching(strip.xlevels[-1],strip.xlevels[-1],strength,strip.omega,real_terminal=real_terminal)
     return dict(qualified=False, case='lowest evanescent finite-depth PML strip only',
         omega=strip.omega, angle_degrees=float(np.rad2deg(strip.angle)), width=float(strip.xlevels[-1]),
-        strength=strength, right_boundary=right, mu0=float(mu), alpha=float(alpha),
+        strength=strength, real_terminal=real_terminal, right_boundary=right, mu0=float(mu), alpha=float(alpha),
+        layer_coordinate_endpoint=[float(endpoint.real),float(endpoint.imag)],
+        represented_real_layer_length=float(endpoint.real),
         selected_vertical_mode='port column1=cos(mu[0]*(z+h)); column0 remains propagating',
         quiet_length=float(-strip.xlevels[0]), left_to_layer_reflection_amplification=float(amplification),
-        exact_physical_spatial_roundtrip_decay=float(np.exp(-2*alpha*strip.xlevels[-1])),
+        exact_physical_spatial_roundtrip_decay=float(np.exp(-2*alpha*endpoint.real)),
         reflection_at_layer_start=[float(reflection.real), float(reflection.imag)],
         exact_reflection_at_layer_start=[float(exact.real), float(exact.imag)],
         reflection_amplitude=float(abs(reflection)), exact_reflection_amplitude=float(abs(exact)),
@@ -127,8 +130,9 @@ def solve_evanescent_case(strip, strength=4., *, right='wall', modes=128,
         exact_selected_left_modal_trace=[float((1+exact/amplification).real),float((1+exact/amplification).imag)],
         spurious_propagating_mode_amplitude_at_left=float(abs(trace[0])),
         selected_vertical_mode_l2_norm_squared=float(norm),
-        fullfield_errors=_field_errors(strip, potential, strength, right),
+        fullfield_errors=_field_errors(strip, potential, strength, right, real_terminal=real_terminal),
         relative_system_residual=residual, potential_nodes=len(strip.points),
+        layer_horizontal_cell_widths=np.diff(strip.xlevels[strip.xlevels>=0]).tolist(),
         complex_input_nonzeros=system.nnz, complex_input_array_bytes=size, factor_memory_bound=False,
         evanescent_port_modes=modes, volume_quadrature_order=volume_order,
         surface_quadrature_order=surface_order, field_check_quadrature_order=18,
@@ -136,7 +140,7 @@ def solve_evanescent_case(strip, strength=4., *, right='wall', modes=128,
         maximum_horizontal_spacing=float(np.diff(strip.xlevels).max()), zlevels=strip.zlevels.tolist(),
         incident_physical_power_flux=0., incident_power_normalization_used=False,
         scope='Unit-amplitude evanescent field/reflection only; no normalization by zero physical incident '
-              'power. Imaginary stretching does not improve exp(-2alpha L) amplitude decay. '
+              'power. Imaginary stretching changes phase; real endpoint sets exp(-2alpha Re(fL)) decay. '
               'No canoe, nonlinear boundary, nearfield or outgoing qualification from this necessary test.')
 
 
@@ -145,7 +149,8 @@ if __name__=='__main__':
     parser.add_argument('--omega',type=float,default=2.)
     parser.add_argument('--angle',type=float,default=0.)
     parser.add_argument('--width',type=float,default=1.5943951023931955)
-    parser.add_argument('--strength',type=float,choices=[0.,4.,8.],default=4.)
+    parser.add_argument('--strength',type=float,default=4.)
+    parser.add_argument('--real-terminal',type=float,default=1.)
     parser.add_argument('--spacing',type=float,default=np.pi/6)
     parser.add_argument('--layers',type=int,choices=[4,8],default=4)
     parser.add_argument('--volume-order',type=int,default=12)
@@ -157,7 +162,7 @@ if __name__=='__main__':
         strip=make_evanescent_strip(args.omega,np.deg2rad(args.angle),args.width,
             spacing=args.spacing,layers=args.layers)
         result=solve_evanescent_case(strip,args.strength,right=args.right,modes=args.modes,
-            volume_order=args.volume_order)
+            volume_order=args.volume_order,real_terminal=args.real_terminal)
     args.output.parent.mkdir(parents=True,exist_ok=True)
     args.output.write_text(json.dumps(result,indent=2)+'\n')
     print(json.dumps(result),flush=True)

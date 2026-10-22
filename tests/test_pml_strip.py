@@ -75,3 +75,35 @@ def test_scalar_augmented_pml_give_same_complex_reflection_and_analytic_field():
         assert result['fullfield_errors']['quiet_physical_velocity_relative_l2'] < .002
     np.testing.assert_allclose(augmented['reflection_at_layer_start'], scalar['reflection_at_layer_start'],
                                atol=2e-10, rtol=2e-9)
+
+
+def test_compact_real_coordinate_has_exact_long_layer_endpoint_and_wave_reflection():
+    compact = 1.5943951023931955
+    physical = 7.877580409572782
+    real_terminal = 2*physical/compact-1
+    sigma_terminal = 8*physical/compact
+    for omega in (2., 4., 6.):
+        endpoint, _, _ = stretching(compact, compact, sigma_terminal, omega,
+                                    real_terminal=real_terminal)
+        np.testing.assert_allclose(endpoint.real, physical, atol=5e-14, rtol=0.)
+        np.testing.assert_allclose(endpoint.imag, 8*physical/(2*omega), atol=5e-14, rtol=0.)
+        quiet = np.array([-.7, 0.])
+        f, derivative, _ = stretching(quiet, compact, sigma_terminal, omega,
+                                      real_terminal=real_terminal)
+        np.testing.assert_array_equal(f, quiet.astype(complex))
+        np.testing.assert_array_equal(derivative, np.ones(2, complex))
+        for spacing in (2*np.pi/9, np.pi/9):
+            strip = make_strip(omega, np.pi/4, compact, spacing=spacing, layers=4)
+            # Same fixed actual n18-envelope spacing used by the planned kill
+            # control; no PDE or assumption that compressed waves are resolved.
+            point = np.array([[.2, -.4], [.7, -2.], [1.3, -.1]])
+            _, _, reflected = exact_field(strip, point, sigma_terminal,
+                                          real_terminal=real_terminal)
+            expected = np.exp(2j*strip.kappa*physical-strip.kappa*8*physical/omega)
+            np.testing.assert_allclose(reflected, expected, atol=2e-16, rtol=3e-14)
+    x = np.array([.1, .5, 1.2])
+    f, derivative, _ = stretching(x, compact, sigma_terminal, 6., real_terminal=real_terminal)
+    step = 1e-5
+    plus = stretching(x+step, compact, sigma_terminal, 6., real_terminal=real_terminal)[0]
+    minus = stretching(x-step, compact, sigma_terminal, 6., real_terminal=real_terminal)[0]
+    np.testing.assert_allclose((plus-minus)/(2*step), derivative, atol=3e-8, rtol=5e-9)
