@@ -142,7 +142,8 @@ class PlanePoints:
             cuts = []
             for c in candidates:
                 point = self.points[c]
-                if common.issubset(self.incidence[c]):
+                if (common.issubset(self.incidence[c])
+                        and not any(cross(direction, sub(point, self.points[a])))):
                     t = dot(sub(point, self.points[a]), direction)/length2
                     if 0 <= t < 1:
                         cuts.append((t, c))
@@ -248,14 +249,16 @@ def polygon_centroid(points, polygon):
                  /(3*measure) for j in range(3))
 
 
-def merge_body_polygons(registry, polygons):
+def merge_body_polygons(registry, polygons, *, protected=(), allow_disconnected=False,
+                        require_star=True):
     """Remove artificial submerged column cuts, retaining the exact wet hull.
 
-    Only one star-shaped boundary loop per authored physical group is supported
-    here. Nonbody-required cutpoints and original hull corners remain shared;
+    By default one star-shaped boundary loop per authored group is supported.
+    The material-cell overlay can retain disconnected positive loops explicitly.
+    Nonbody-required cutpoints and original hull corners remain shared;
     no proximity merge, convex hull replacement or change of physical coverage.
     """
-    required = {i for p, _, _, kind, _ in polygons if kind != 'body' for i in p}
+    required = {i for p, _, _, kind, _ in polygons if kind != 'body' for i in p}|set(protected)
     hull_planes = {i for i, labels in enumerate(registry.labels)
                    if any(label[0] == 'hull' for label in labels)}
     points = registry.points
@@ -299,35 +302,45 @@ def merge_body_polygons(registry, polygons):
             outgoing[a], incoming[b] = b, a
         if set(outgoing) != set(incoming) or not outgoing:
             raise ValueError('open original-body facet boundary')
-        loop = [min(outgoing)]
-        while outgoing[loop[-1]] != loop[0]:
-            successor = outgoing[loop[-1]]
-            if successor in loop:
-                raise ValueError('unsupported repeated wet-facet boundary vertex')
-            loop.append(successor)
-        if len(loop) != len(outgoing):
+        loops, remaining = [], set(outgoing)
+        while remaining:
+            loop = [min(remaining)]
+            remaining.remove(loop[0])
+            while outgoing[loop[-1]] != loop[0]:
+                successor = outgoing[loop[-1]]
+                if successor not in remaining:
+                    raise ValueError('unsupported repeated wet-facet boundary vertex')
+                loop.append(successor)
+                remaining.remove(successor)
+            loops.append(loop)
+        if len(loops) > 1 and not allow_disconnected:
             raise ValueError('unsupported multiple wet-facet boundary loops')
         # All incident physical groups simplify a straight shared chine the
         # same way. Actual physical corners carry at least three hull planes.
-        changed = True
-        while changed:
-            changed = False
-            for k, vertex in enumerate(loop):
-                if vertex in required or len(registry.incidence[vertex]&hull_planes) >= 3:
-                    continue
-                previous, following = points[loop[k-1]], points[loop[(k+1)%len(loop)]]
-                a, b = sub(previous, points[vertex]), sub(following, points[vertex])
-                if not any(cross(a, b)) and dot(a, b) < 0:
-                    del loop[k]; removed += 1; changed = True
-                    break
-        n, center = moments(loop)
-        after = [n[axis], *(n[axis]*c for c in center)]
+        after = [F(0)]*4
+        for loop in loops:
+            changed = True
+            while changed:
+                changed = False
+                for k, vertex in enumerate(loop):
+                    if vertex in required or len(registry.incidence[vertex]&hull_planes) >= 3:
+                        continue
+                    previous, following = points[loop[k-1]], points[loop[(k+1)%len(loop)]]
+                    a, b = sub(previous, points[vertex]), sub(following, points[vertex])
+                    if not any(cross(a, b)) and dot(a, b) < 0:
+                        del loop[k]; removed += 1; changed = True
+                        break
+            n, center = moments(loop)
+            if n[axis]*normal[axis] <= 0:
+                raise ValueError('unsupported hole or reversed wet-facet boundary')
+            after = [a+b for a, b in zip(after, [n[axis], *(n[axis]*c for c in center)])]
+            if require_star:
+                for a, b in zip(loop, loop[1:]+loop[:1]):
+                    if dot(cross(sub(points[a], center), sub(points[b], center)), n) <= 0:
+                        raise ValueError('wet-facet loop is not star-shaped about its area centroid')
+            merged.append((loop, plane, sign, 'body', group))
         if before != after:
             raise ValueError('body union changed exact physical area or first moment')
-        for a, b in zip(loop, loop[1:]+loop[:1]):
-            if dot(cross(sub(points[a], center), sub(points[b], center)), n) <= 0:
-                raise ValueError('wet-facet loop is not star-shaped about its area centroid')
-        merged.append((loop, plane, sign, 'body', group))
     return other+merged, dict(body_polygons_before=sum(map(len, pieces.values())),
         body_polygons_after=len(merged), removed_collinear_body_points=removed,
         group_area_and_first_moment_preserved_exactly=True)

@@ -1525,3 +1525,21 @@ qualify the user's 20x ceiling or the open-ocean problem.
 The moving solver still uses its original default. Six-axis matrices, timings,
 pressure differences, known limitations and source hashes are in
 `docs/research/boat-operator-integration.json`.
+
+`boat_material_boundary.py` is a cold exact reference for a fixed hull-material
+mesh with faithfully cut fringe. Fully wet cells keep original triangles;
+separate wet components remain separate, and concave fringe loops use exact
+ears when a centroid fan is invalid. No guarded material template or operator
+cache is implemented. `boat_pressure_audit --material-refinement 2`
+(or `3`) selects it; use `--quadrature-order 6` or `12` and a complete
+`--direction-from` audit to isolate mesh sensitivity at a common physical
+direction. Material overlay replaces fan refinement, so combine it only with
+the default `--refinement 0`. The ordinary moving pilot keeps its old mesh.
+
+The saved 0.2 s state in `tests/data/boat-state-200ms.json` is a derived geometry
+regression, not an independently validated trajectory. Material levels two and
+three still differ substantially in pressure; exact raw bulk pairs cover only
+4.3-4.5% of the complete boundary's pairs in the two-state identity check.
+`docs/research/boat-material-mesh.json` records all six forces/moments, h-pair
+sensitivity, geometry counts, timings, source archives and the decision to keep
+this experimental.

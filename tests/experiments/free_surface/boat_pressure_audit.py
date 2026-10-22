@@ -24,7 +24,8 @@ from .incident_baseline_benchmark import coefficients
 from .p4_fluid_ordering import fresh
 
 
-def run(output, step=1e-4, refinement=0, refinement_region='all', direction_from=None):
+def run(output, step=1e-4, refinement=0, refinement_region='all', direction_from=None,
+        material_refinement=None, quadrature_order=3):
     from .cuda_operator import prepare_energy, cp
     if not np.isfinite(step) or step <= 0:
         raise ValueError('positive finite directional step required')
@@ -32,6 +33,10 @@ def run(output, step=1e-4, refinement=0, refinement_region='all', direction_from
         raise ValueError('bounded audit supports refinement levels zero through two')
     if refinement_region not in ('all', 'body', 'free'):
         raise ValueError('refinement region must be all, body or free')
+    if quadrature_order not in (3, 6, 12):
+        raise ValueError('bounded audit supports quadrature orders 3, 6 and 12')
+    if material_refinement is not None and refinement:
+        raise ValueError('material-cell overlay replaces fan subdivision in this audit')
     output = fresh(output)
     output.parent.mkdir(parents=True, exist_ok=True)
     report = dict(complete=False, qualified=False, timings=[], derivatives=[], mixed_residuals=[], geometry_checkpoints=[],
@@ -41,7 +46,11 @@ def run(output, step=1e-4, refinement=0, refinement_region='all', direction_from
                          'boat_parent_clip_proof.py', 'body_pressure.py', 'canoe.py',
                          'cuda_operator.py', 'cuda_energy.cu', 'cuda_pair.cuh')},
         gpu_pool_reserved_peak_bytes=0, boundary_refinement=refinement,
-        refinement_region=refinement_region)
+        refinement_region=refinement_region, material_refinement=material_refinement,
+        quadrature_order=quadrature_order)
+    if material_refinement is not None:
+        report['source_sha256']['boat_material_boundary.py'] = sha256(
+            Path(__file__).with_name('boat_material_boundary.py').read_bytes()).hexdigest()
     start = perf_counter()
     saved = {}
 
@@ -66,7 +75,8 @@ def run(output, step=1e-4, refinement=0, refinement_region='all', direction_from
             raise ValueError('mixed field residual exceeds 1e-9 algebraic budget')
 
     def geometry(label, **inputs):
-        _, arrays, geometry_report = construct(checkpoint(label), **inputs)
+        _, arrays, geometry_report = construct(checkpoint(label),
+            material_refinement=material_refinement, **inputs)
         for level in range(refinement):
             arrays = refine_boundary(arrays, region=refinement_region)
             path = fresh(checkpoint(label+f'-refined{level+1}'))
@@ -90,7 +100,8 @@ def run(output, step=1e-4, refinement=0, refinement_region='all', direction_from
         body = reference_body()
         arrays = timed('base_geometry', lambda: geometry('base'))
         points, faces = arrays['points'], arrays['faces']
-        energy = timed('base_energy', lambda: prepare_energy(faces, TrianglePanels(points[faces], 1))).energy
+        energy = timed('base_energy', lambda: prepare_energy(faces,
+            TrianglePanels(points[faces], 1), order=quadrature_order)).energy
         values = coefficients(sea_states.realize(beam_m=BEAM, gravity=GRAVITY, seed=42))
         twist = np.array([.03, -.02, .01, .01, -.015, .02])
         report['world_twist'] = twist.tolist()
@@ -150,7 +161,7 @@ def run(output, step=1e-4, refinement=0, refinement_region='all', direction_from
                     parent_xy=arrays['parent_nodes'][:, :2], parents=arrays['parents'],
                     parent_eta=arrays['parent_nodes'][:, 2]+dt*eta_rate, parent_psi=arrays['parent_psi']+dt*psi_rate))
                 moved_energy = timed(label+'-energy', lambda: prepare_energy(moved['faces'],
-                    TrianglePanels(moved['points'][moved['faces']], 1))).energy
+                    TrianglePanels(moved['points'][moved['faces']], 1), order=quadrature_order)).energy
                 moved_field = timed(label+'-single_field', lambda: current_field(moved,
                     moved_energy, values, twist, acceleration_columns=False, time=dt))
                 check_field(moved_field, label)
@@ -200,4 +211,6 @@ if __name__ == '__main__':
     parser.add_argument('--refinement', type=int, default=0)
     parser.add_argument('--refinement-region', choices=('all', 'body', 'free'), default='all')
     parser.add_argument('--direction-from', help='Complete audit JSON supplying the same prescribed parent rates')
+    parser.add_argument('--material-refinement', type=int, choices=(0, 1, 2, 3))
+    parser.add_argument('--quadrature-order', type=int, choices=(3, 6, 12), default=3)
     print(json.dumps(run(**vars(parser.parse_args())), indent=2))

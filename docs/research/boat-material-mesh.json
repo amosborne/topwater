@@ -1,0 +1,713 @@
+{
+  "qualified": false,
+  "scope": "Fixed-material canonical boat hull overlay, exact geometry and pressure sensitivity. No production geometry, cache, ocean or throughput qualification.",
+  "axes": [
+    "surge",
+    "sway",
+    "heave",
+    "roll",
+    "pitch",
+    "yaw"
+  ],
+  "method": "Intersect convex parent wet pieces with dyadic material hull cells before union. Exact shared seam points, protected material vertices. Whole cells retain original triangles; cut cells use interior fans or exact ear triangulation when no valid centroid fan exists. Positive disconnected components remain separate; holes/ambiguous branches reject.",
+  "reference": {
+    "raw_report": {
+      "path": "artifacts\\boat-adaptive-quadrature-pressure-pressure-uniform12.json",
+      "sha256": "acc36a1bc6b895b764e649adfe2feadb001532b6cbdbf5d4c18cc821d422ded2"
+    },
+    "body_panels": 736,
+    "all_panels": 1046,
+    "integration": "Uniform order twelve via the recorded integration override; see boat-operator-integration.json.",
+    "fine_step_load_world": [
+      735.2876963139804,
+      337.27547024949104,
+      29961.152394901725,
+      -289.7629982190798,
+      -0.6402731344960557,
+      432.632629774217
+    ]
+  },
+  "pressure_checks": [
+    {
+      "material_refinement": 2,
+      "quadrature_order": 6,
+      "raw_report": {
+        "path": "artifacts\\boat-material-pressure-level2-q6.json",
+        "sha256": "d88aa0ef4ddf4f6d57edac9a0078f6a6df8fae65f45e225d9c7d219fe1930cb3"
+      },
+      "producer_copy": "artifacts\\boat-material-pressure-level2-q6-source",
+      "source_sha256": {
+        "boat_pressure_audit.py": "c5df02b739f113d776d697b31683267bbab527fdc562effdc9194fdd6429c148",
+        "boat_world_field.py": "cb976a016f8bcb01751b1cc8ac118902229cfffebb38fbfac562cb3826ed776e",
+        "boat_world_boundary.py": "a0902fb0e44a0138c5d501d72a4b549ae56d543063cd1a7542ec060f973ef6ce",
+        "boat_parent_clip_proof.py": "681036b8a7f523c33061c04065006baa1bc8ec4bc4b9df79c6b04de42f7c5051",
+        "body_pressure.py": "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+        "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+        "cuda_operator.py": "7c91423618a5d0d92a0316a08c9bf1a1941efefd2327183eed1f1d36c1dd24b8",
+        "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+        "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20",
+        "boat_material_boundary.py": "c7725d408d2323296676257eecba4aa371fa97a57b579b22df1e8e03961832d1"
+      },
+      "physical_direction": {
+        "kind": "prescribed matched-state direction; not a coupled RHS audit",
+        "source_sha256": {
+          "artifacts\\boat-adaptive-quadrature-pressure-pressure-uniform12.json": "acc36a1bc6b895b764e649adfe2feadb001532b6cbdbf5d4c18cc821d422ded2",
+          "artifacts\\boat-adaptive-quadrature-pressure-pressure-uniform12-base.npz": "88bc5b5767ee4ca92393526985e7698b43fd60f39aaad3dd8d4db511b9b3c113",
+          "artifacts\\boat-adaptive-quadrature-pressure-pressure-uniform12.npz": "7fad1d5d28ac6335404f4b13be3f5d1f007c2628335741ef4af1f321b593c17e",
+          "artifacts\\boat-adaptive-quadrature-pressure-pressure-uniform12-base.json": "02e1673bfc2ab9fdfc9a55b7112d2ecec088dd034825af348126f9be02a3e8f4"
+        },
+        "computed_height_rate_max_difference": 0.0022519522262182123,
+        "computed_potential_rate_max_difference": 0.0022212834500705547
+      },
+      "geometry_checkpoints": [
+        {
+          "label": "base",
+          "path": "artifacts\\boat-material-pressure-level2-q6-base.json",
+          "arrays_sha256": "891a1f44567616c80f9dd7c0f410934face79e4db0a246897afb5cf955ff6430",
+          "nodes": 287,
+          "faces": 570,
+          "face_counts": {
+            "body": 272,
+            "free": 172,
+            "wall": 78,
+            "bottom": 48
+          }
+        },
+        {
+          "label": "level0-sign1",
+          "path": "artifacts\\boat-material-pressure-level2-q6-level0-sign1.json",
+          "arrays_sha256": "628e2f7365ac8912fb46093a07a6a9815232e83fe10272e56932a0067aad1e83",
+          "nodes": 290,
+          "faces": 576,
+          "face_counts": {
+            "body": 273,
+            "free": 177,
+            "wall": 78,
+            "bottom": 48
+          }
+        },
+        {
+          "label": "level0-sign-1",
+          "path": "artifacts\\boat-material-pressure-level2-q6-level0-sign-1.json",
+          "arrays_sha256": "63f59fb706110d9c3b70995970ff62d2dc736f01088ebd2c276c5dff76dea7a9",
+          "nodes": 288,
+          "faces": 572,
+          "face_counts": {
+            "body": 273,
+            "free": 173,
+            "wall": 78,
+            "bottom": 48
+          }
+        },
+        {
+          "label": "level1-sign1",
+          "path": "artifacts\\boat-material-pressure-level2-q6-level1-sign1.json",
+          "arrays_sha256": "4ac2e714aaade9378a133c7a2a87b0ec13089df0ab28190a5f474411cf14f5c5",
+          "nodes": 290,
+          "faces": 576,
+          "face_counts": {
+            "body": 273,
+            "free": 177,
+            "wall": 78,
+            "bottom": 48
+          }
+        },
+        {
+          "label": "level1-sign-1",
+          "path": "artifacts\\boat-material-pressure-level2-q6-level1-sign-1.json",
+          "arrays_sha256": "7f9e625a2c0facae338ca6037a7b6bd8ad813a94418c306dbd6bad109fc31e1a",
+          "nodes": 288,
+          "faces": 572,
+          "face_counts": {
+            "body": 273,
+            "free": 173,
+            "wall": 78,
+            "bottom": 48
+          }
+        }
+      ],
+      "hydrodynamic_load_world_by_h": {
+        "0.001": [
+          697.0027102974069,
+          297.12437192401103,
+          30009.60576093107,
+          -281.79334092384204,
+          99.39776908193107,
+          451.83874571403567
+        ],
+        "0.0005": [
+          696.6789599327351,
+          297.5392203997558,
+          30009.64825851351,
+          -281.84705273015936,
+          99.4120652010406,
+          452.5900562674369
+        ]
+      },
+      "fine_step_load_difference_from_reference": [
+        -38.60873638124531,
+        -39.73624984973526,
+        48.49586361178444,
+        7.915945488920443,
+        100.05233833553666,
+        19.95742649321994
+      ],
+      "acceleration_world_by_h": {
+        "0.001": [
+          0.27880108411896276,
+          0.11884974876960452,
+          2.1938423043724304,
+          -0.20565376285052417,
+          0.010457969927030622,
+          0.04122286695074994
+        ],
+        "0.0005": [
+          0.278671583973094,
+          0.11901568815990228,
+          2.1938593034054055,
+          -0.20568976998676192,
+          0.010459446170015131,
+          0.041293226622593326
+        ]
+      },
+      "h_pair_load_difference_world": [
+        -0.3237503646718096,
+        0.4148484757447477,
+        0.04249758243895485,
+        -0.05371180631732386,
+        0.014296119109530991,
+        0.7513105534012539
+      ],
+      "seconds": 25.50243289998616,
+      "energy_seconds": [
+        0.30393330001970753,
+        0.09049689999665134,
+        0.07549860002472997,
+        0.2958255999838002,
+        0.31532829999923706
+      ],
+      "limitation": "Prescribed common physical direction. Different trial space; not a coupled trajectory or spatial accuracy certificate. Exact cold geometry dominates cost."
+    },
+    {
+      "material_refinement": 2,
+      "quadrature_order": 12,
+      "raw_report": {
+        "path": "artifacts\\boat-material-pressure-level2-q12.json",
+        "sha256": "7a983e0345477682724f149f3da80fb8edbb30f7603a881e4baadde766b00cd9"
+      },
+      "producer_copy": "artifacts\\boat-material-pressure-level2-q12-source",
+      "source_sha256": {
+        "boat_pressure_audit.py": "c5df02b739f113d776d697b31683267bbab527fdc562effdc9194fdd6429c148",
+        "boat_world_field.py": "cb976a016f8bcb01751b1cc8ac118902229cfffebb38fbfac562cb3826ed776e",
+        "boat_world_boundary.py": "a0902fb0e44a0138c5d501d72a4b549ae56d543063cd1a7542ec060f973ef6ce",
+        "boat_parent_clip_proof.py": "74c1d4b5ae98dcdd2876b95f151819a449c837a53fe32626415380edeee4d488",
+        "body_pressure.py": "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+        "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+        "cuda_operator.py": "7c91423618a5d0d92a0316a08c9bf1a1941efefd2327183eed1f1d36c1dd24b8",
+        "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+        "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20",
+        "boat_material_boundary.py": "034dba12a114dac198080f26d0af45441c0649c241a2a0bfabda70f0a2a60d31"
+      },
+      "physical_direction": {
+        "kind": "prescribed matched-state direction; not a coupled RHS audit",
+        "source_sha256": {
+          "artifacts\\boat-adaptive-quadrature-pressure-pressure-uniform12.json": "acc36a1bc6b895b764e649adfe2feadb001532b6cbdbf5d4c18cc821d422ded2",
+          "artifacts\\boat-adaptive-quadrature-pressure-pressure-uniform12-base.npz": "88bc5b5767ee4ca92393526985e7698b43fd60f39aaad3dd8d4db511b9b3c113",
+          "artifacts\\boat-adaptive-quadrature-pressure-pressure-uniform12.npz": "7fad1d5d28ac6335404f4b13be3f5d1f007c2628335741ef4af1f321b593c17e",
+          "artifacts\\boat-adaptive-quadrature-pressure-pressure-uniform12-base.json": "02e1673bfc2ab9fdfc9a55b7112d2ecec088dd034825af348126f9be02a3e8f4"
+        },
+        "computed_height_rate_max_difference": 0.002254106090257557,
+        "computed_potential_rate_max_difference": 0.0022111866186178553
+      },
+      "geometry_checkpoints": [
+        {
+          "label": "base",
+          "path": "artifacts\\boat-material-pressure-level2-q12-base.json",
+          "arrays_sha256": "891a1f44567616c80f9dd7c0f410934face79e4db0a246897afb5cf955ff6430",
+          "nodes": 287,
+          "faces": 570,
+          "face_counts": {
+            "body": 272,
+            "free": 172,
+            "wall": 78,
+            "bottom": 48
+          }
+        },
+        {
+          "label": "level0-sign1",
+          "path": "artifacts\\boat-material-pressure-level2-q12-level0-sign1.json",
+          "arrays_sha256": "628e2f7365ac8912fb46093a07a6a9815232e83fe10272e56932a0067aad1e83",
+          "nodes": 290,
+          "faces": 576,
+          "face_counts": {
+            "body": 273,
+            "free": 177,
+            "wall": 78,
+            "bottom": 48
+          }
+        },
+        {
+          "label": "level0-sign-1",
+          "path": "artifacts\\boat-material-pressure-level2-q12-level0-sign-1.json",
+          "arrays_sha256": "63f59fb706110d9c3b70995970ff62d2dc736f01088ebd2c276c5dff76dea7a9",
+          "nodes": 288,
+          "faces": 572,
+          "face_counts": {
+            "body": 273,
+            "free": 173,
+            "wall": 78,
+            "bottom": 48
+          }
+        },
+        {
+          "label": "level1-sign1",
+          "path": "artifacts\\boat-material-pressure-level2-q12-level1-sign1.json",
+          "arrays_sha256": "4ac2e714aaade9378a133c7a2a87b0ec13089df0ab28190a5f474411cf14f5c5",
+          "nodes": 290,
+          "faces": 576,
+          "face_counts": {
+            "body": 273,
+            "free": 177,
+            "wall": 78,
+            "bottom": 48
+          }
+        },
+        {
+          "label": "level1-sign-1",
+          "path": "artifacts\\boat-material-pressure-level2-q12-level1-sign-1.json",
+          "arrays_sha256": "7f9e625a2c0facae338ca6037a7b6bd8ad813a94418c306dbd6bad109fc31e1a",
+          "nodes": 288,
+          "faces": 572,
+          "face_counts": {
+            "body": 273,
+            "free": 173,
+            "wall": 78,
+            "bottom": 48
+          }
+        }
+      ],
+      "hydrodynamic_load_world_by_h": {
+        "0.001": [
+          697.2878778175946,
+          296.37109067722565,
+          30009.228026184916,
+          -281.5123672735334,
+          99.75567023387703,
+          452.01907579995554
+        ],
+        "0.0005": [
+          697.2467821231578,
+          296.6634764631224,
+          30009.24516070021,
+          -281.5708798095591,
+          99.70800389547367,
+          453.32603078963643
+        ]
+      },
+      "fine_step_load_difference_from_reference": [
+        -38.040914190822605,
+        -40.61199378636866,
+        48.09276579848665,
+        8.192118409520731,
+        100.34827702996972,
+        20.693401015419454
+      ],
+      "acceleration_world_by_h": {
+        "0.001": [
+          0.2789151511270379,
+          0.11854843627089025,
+          2.1936912104739648,
+          -0.20544543199655474,
+          0.010494927444010482,
+          0.04124118259343444
+        ],
+        "0.0005": [
+          0.27889871284926304,
+          0.1186653905852489,
+          2.193698064280082,
+          -0.20548228388984555,
+          0.01049000533213327,
+          0.04136374763777271
+        ]
+      },
+      "h_pair_load_difference_world": [
+        -0.04109569443676264,
+        0.2923857858967267,
+        0.017134515295765596,
+        -0.058512536025659756,
+        -0.04766633840335999,
+        1.3069549896808894
+      ],
+      "seconds": 34.985403500002576,
+      "energy_seconds": [
+        0.4765080999932252,
+        0.26626890001352876,
+        0.7071375999948941,
+        0.6700626999954693,
+        0.6503199999860954
+      ],
+      "limitation": "Prescribed common physical direction. Different trial space; not a coupled trajectory or spatial accuracy certificate. Exact cold geometry dominates cost."
+    },
+    {
+      "material_refinement": 3,
+      "quadrature_order": 6,
+      "raw_report": {
+        "path": "artifacts\\boat-material-pressure-level3-q6.json",
+        "sha256": "f04bcef47e9b70f7224ea34bfeec9226ef87e852abd3d4468d094e55f8a64a5d"
+      },
+      "producer_copy": "artifacts\\boat-material-pressure-level3-q6-source",
+      "source_sha256": {
+        "boat_pressure_audit.py": "c5df02b739f113d776d697b31683267bbab527fdc562effdc9194fdd6429c148",
+        "boat_world_field.py": "cb976a016f8bcb01751b1cc8ac118902229cfffebb38fbfac562cb3826ed776e",
+        "boat_world_boundary.py": "a0902fb0e44a0138c5d501d72a4b549ae56d543063cd1a7542ec060f973ef6ce",
+        "boat_parent_clip_proof.py": "b7e6d48d914fda1e11e0fe1c8d87cfebed5e5d8ccaa4585ee5266f46c1acd424",
+        "body_pressure.py": "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+        "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+        "cuda_operator.py": "7c91423618a5d0d92a0316a08c9bf1a1941efefd2327183eed1f1d36c1dd24b8",
+        "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+        "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20",
+        "boat_material_boundary.py": "656bee50cbadedcd071a41c79106094e555d1da4e8438611345553c173584013"
+      },
+      "physical_direction": {
+        "kind": "prescribed matched-state direction; not a coupled RHS audit",
+        "source_sha256": {
+          "artifacts\\boat-adaptive-quadrature-pressure-pressure-uniform12.json": "acc36a1bc6b895b764e649adfe2feadb001532b6cbdbf5d4c18cc821d422ded2",
+          "artifacts\\boat-adaptive-quadrature-pressure-pressure-uniform12-base.npz": "88bc5b5767ee4ca92393526985e7698b43fd60f39aaad3dd8d4db511b9b3c113",
+          "artifacts\\boat-adaptive-quadrature-pressure-pressure-uniform12.npz": "7fad1d5d28ac6335404f4b13be3f5d1f007c2628335741ef4af1f321b593c17e",
+          "artifacts\\boat-adaptive-quadrature-pressure-pressure-uniform12-base.json": "02e1673bfc2ab9fdfc9a55b7112d2ecec088dd034825af348126f9be02a3e8f4"
+        },
+        "computed_height_rate_max_difference": 0.0009713691925604742,
+        "computed_potential_rate_max_difference": 0.0005695092493165355
+      },
+      "geometry_checkpoints": [
+        {
+          "label": "base",
+          "path": "artifacts\\boat-material-pressure-level3-q6-base.json",
+          "arrays_sha256": "3ee852c31e2b20ed4aac77f370279d3519d2ceaa296214cf3e53daaae33e02c9",
+          "nodes": 599,
+          "faces": 1194,
+          "face_counts": {
+            "body": 848,
+            "free": 220,
+            "wall": 78,
+            "bottom": 48
+          }
+        },
+        {
+          "label": "level0-sign1",
+          "path": "artifacts\\boat-material-pressure-level3-q6-level0-sign1.json",
+          "arrays_sha256": "d442bb0a38dccb9b530c269b04dc6e73e2e281c62576f5bd3b5dc948196950fa",
+          "nodes": 603,
+          "faces": 1202,
+          "face_counts": {
+            "body": 851,
+            "free": 225,
+            "wall": 78,
+            "bottom": 48
+          }
+        },
+        {
+          "label": "level0-sign-1",
+          "path": "artifacts\\boat-material-pressure-level3-q6-level0-sign-1.json",
+          "arrays_sha256": "001020c64db86677d52724c42f2cc6fef0b9cc0275d175517b4d44b7f584f0c6",
+          "nodes": 601,
+          "faces": 1198,
+          "face_counts": {
+            "body": 851,
+            "free": 221,
+            "wall": 78,
+            "bottom": 48
+          }
+        },
+        {
+          "label": "level1-sign1",
+          "path": "artifacts\\boat-material-pressure-level3-q6-level1-sign1.json",
+          "arrays_sha256": "93659a7531186c6889f7232d85385c610b920b7dd10c5cfdf231de2cf61b30fb",
+          "nodes": 603,
+          "faces": 1202,
+          "face_counts": {
+            "body": 851,
+            "free": 225,
+            "wall": 78,
+            "bottom": 48
+          }
+        },
+        {
+          "label": "level1-sign-1",
+          "path": "artifacts\\boat-material-pressure-level3-q6-level1-sign-1.json",
+          "arrays_sha256": "78a30d1ba230719a8c0b969d1f8e7b05d0e0842b195af115a6272afb366925b7",
+          "nodes": 601,
+          "faces": 1198,
+          "face_counts": {
+            "body": 851,
+            "free": 221,
+            "wall": 78,
+            "bottom": 48
+          }
+        }
+      ],
+      "hydrodynamic_load_world_by_h": {
+        "0.001": [
+          735.96194071274,
+          320.22100687462955,
+          29962.632400478247,
+          -285.8949723997101,
+          6.049100955495305,
+          442.1519092072656
+        ],
+        "0.0005": [
+          736.0503502160674,
+          322.0013134607732,
+          29962.596560094047,
+          -285.703466043605,
+          6.475925623562034,
+          449.3523935495349
+        ]
+      },
+      "fine_step_load_difference_from_reference": [
+        0.7626539020869814,
+        -15.274156788717846,
+        1.4441651923225436,
+        4.059532175474828,
+        7.11619875805809,
+        16.719763775317915
+      ],
+      "acceleration_world_by_h": {
+        "0.001": [
+          0.29438477628509596,
+          0.12808840274985178,
+          2.175052960191299,
+          -0.20872923705778654,
+          0.0008186184788459851,
+          0.040292407627029986
+        ],
+        "0.0005": [
+          0.294420140086427,
+          0.1288005253843094,
+          2.1750386240376214,
+          -0.20855285340480556,
+          0.000862693162125387,
+          0.0409701593267524
+        ]
+      },
+      "h_pair_load_difference_world": [
+        0.08840950332739794,
+        1.780306586143638,
+        -0.03584038420012803,
+        0.1915063561051511,
+        0.4268246680667289,
+        7.200484342269306
+      ],
+      "seconds": 106.25467280001612,
+      "energy_seconds": [
+        0.6761404999997467,
+        0.6576428999833297,
+        0.6835927999927662,
+        0.7151734000071883,
+        0.7721409999940079
+      ],
+      "limitation": "Prescribed common physical direction. Different trial space; not a coupled trajectory or spatial accuracy certificate. Exact cold geometry dominates cost."
+    }
+  ],
+  "imported_source_provenance": "Audit-level source hashes identify loaded producer code and match archived bytes. Some level3 child geometry reports read helper files after a metadata/argument-type-validation edit during execution; use the audit-level producer archive for that run.",
+  "motion_identity": {
+    "raw_report": {
+      "path": "artifacts\\boat-material-motion-summary.json",
+      "sha256": "7678f034f2110ef1a3d654f4402912f71895a9974f6e163e2f8137ae578c2d32"
+    },
+    "complete": true,
+    "qualified": false,
+    "scope": "Exact geometry identity on two accepted six-DOF snapshots; no fluid solve/cache speedup claim",
+    "input_sha256": "0fa15920c3549b9db730d85703b1a404d33e789182569c79550801f8bf558e74",
+    "records": [
+      {
+        "time": 0.05,
+        "faces": 574,
+        "body_faces": 271,
+        "material_overlay": {
+          "refinement": 2,
+          "seconds": 2.8596767999988515,
+          "authored_material_cells": 240,
+          "fully_wet_cells": 129,
+          "direct_body_triangles": 150,
+          "nonstar_fringe_loops": 0,
+          "per_group_area_and_first_moments_exact": true
+        },
+        "geometry_seconds": 4.631288800010225
+      },
+      {
+        "time": 0.2,
+        "faces": 560,
+        "body_faces": 257,
+        "material_overlay": {
+          "refinement": 2,
+          "seconds": 2.896109499997692,
+          "authored_material_cells": 240,
+          "fully_wet_cells": 119,
+          "direct_body_triangles": 141,
+          "nonstar_fringe_loops": 1,
+          "per_group_area_and_first_moments_exact": true
+        },
+        "geometry_seconds": 4.598717299988493
+      }
+    ],
+    "common_fully_wet_cells": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      39,
+      44,
+      48,
+      64,
+      66,
+      67,
+      72,
+      74,
+      75,
+      80,
+      101,
+      102,
+      103,
+      105,
+      106,
+      107,
+      109,
+      117,
+      133,
+      144,
+      145,
+      146,
+      147,
+      148,
+      149,
+      150,
+      151,
+      152,
+      153,
+      154,
+      155,
+      156,
+      157,
+      158,
+      159,
+      160,
+      161,
+      162,
+      163,
+      164,
+      165,
+      166,
+      167,
+      168,
+      169,
+      170,
+      171,
+      172,
+      173,
+      174,
+      175,
+      176,
+      177,
+      179,
+      180,
+      181,
+      182,
+      183,
+      188,
+      189,
+      191,
+      192,
+      193,
+      194,
+      195,
+      200,
+      202,
+      203,
+      206,
+      208,
+      209,
+      210,
+      211,
+      224,
+      225,
+      226,
+      227,
+      228,
+      229,
+      231,
+      236
+    ],
+    "areas": [
+      {
+        "wet_area": 19.28073202626649,
+        "immutable_area": 16.57060110569228,
+        "immutable_area_fraction": 0.8594383804057776,
+        "invariant_raw_body_pair_fraction_of_all": 0.04298036882807853
+      },
+      {
+        "wet_area": 17.75493192339306,
+        "immutable_area": 16.570601105692273,
+        "immutable_area_fraction": 0.9332956711514975,
+        "invariant_raw_body_pair_fraction_of_all": 0.04515625
+      }
+    ],
+    "source_sha256": {
+      "boat_material_boundary.py": "656bee50cbadedcd071a41c79106094e555d1da4e8438611345553c173584013",
+      "boat_world_boundary.py": "a0902fb0e44a0138c5d501d72a4b549ae56d543063cd1a7542ec060f973ef6ce",
+      "boat_parent_clip_proof.py": "b7e6d48d914fda1e11e0fe1c8d87cfebed5e5d8ccaa4585ee5266f46c1acd424"
+    }
+  },
+  "findings": [
+    "Level2 pressure pitch differs by about 100 Nm from the comparison discretization; raising quadrature changes this by less than 1 Nm.",
+    "Level3 substantially reduces surge/heave/pitch differences, but sway/yaw and directional-step sensitivity remain unresolved. No six-axis plateau established.",
+    "Common whole material cells cover about 86-93% of wet area across saved .05/.20 s states, but only 4.3-4.5% of all raw panel pairs are body-bulk pairs. Exact raw-pair caching alone therefore has little total leverage.",
+    "The condensed E=W+H.T@inv(V)@H remains globally coupled; no cached energy/factor is declared exact."
+  ],
+  "decision": "Keep the material geometry as an experimental reference. Do not replace moving baseline or implement a raw-pair cache on these results. Stable material coordinates can support guarded local operator linearization; pressure time derivatives must retain operator variation.",
+  "tests": {
+    "command": "pytest tests/test_boat_material_boundary.py tests/test_boat_parent_clip_proof.py tests/test_boat_geometry_template.py",
+    "passed": 9,
+    "seconds": 28.2
+  },
+  "current_source_sha256": {
+    "boat_material_boundary.py": "7f03c1e1a42a07e3db3a307a9fe8f063cfb8b4cd885ba0a1c34a8b82ba92f962",
+    "boat_parent_clip_proof.py": "b7e6d48d914fda1e11e0fe1c8d87cfebed5e5d8ccaa4585ee5266f46c1acd424",
+    "boat_world_boundary.py": "a0902fb0e44a0138c5d501d72a4b549ae56d543063cd1a7542ec060f973ef6ce",
+    "boat_pressure_audit.py": "c5df02b739f113d776d697b31683267bbab527fdc562effdc9194fdd6429c148"
+  }
+}

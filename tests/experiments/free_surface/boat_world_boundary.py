@@ -95,7 +95,8 @@ def material_coordinates(registry_points, rr, cg, position):
 
 
 def construct(output, *, body=None, pose=None, parent_xy=None, parents=None,
-              parent_eta=None, parent_psi=None, export_template=False):
+              parent_eta=None, parent_psi=None, export_template=False,
+              material_refinement=None):
     """Construct one checkpointed snapshot; coefficients stay on WORLD parents.
 
     Returns ``(mesh, arrays, report)``. Pose translations locate the body's CG;
@@ -223,7 +224,17 @@ def construct(output, *, body=None, pose=None, parent_xy=None, parents=None,
                 critical.update(vertices)
                 for vertex in vertices:
                     registry.relevant[vertex].add(roofs[parent][0])
-        mesh, meta = triangulate(registry, polygons)
+        if material_refinement is None:
+            mesh, meta = triangulate(registry, polygons)
+        else:
+            from .boat_material_boundary import triangulate_material
+            report['source_sha256']['boat_material_boundary.py'] = sha256(
+                Path(__file__).with_name('boat_material_boundary.py').read_bytes()).hexdigest()
+            mesh, meta = triangulate_material(registry, polygons, source,
+                body.mesh.faces, rr, cg, position, material_refinement)
+            report['material_overlay'] = meta['material_report']
+            arrays.update(body_material_cell=meta['body_material_cell'],
+                fully_wet_material_cells=meta['fully_wet_material_cells'])
         triangles = mesh.vertices[mesh.faces]
         tetra = np.einsum('fi,fi->f', triangles[:, 0], np.cross(triangles[:, 1], triangles[:, 2]))/6
         volume = tetra.sum()

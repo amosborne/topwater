@@ -276,9 +276,10 @@ area. Moving facet-fan centers spread waterline motion into 338 of 415 body
 nodes (7.08 cm median material displacement among moving nodes). Source and
 hashed reconstructions: `artifacts/audit_boat_material_motion.py` and
 `artifacts/boat-material-motion-compatible-chart.{json,npz}`. The next geometry
-candidate is a fixed material hull tessellation, clipping only its waterline
-fringe and retaining intended material edges. It must preserve physical moments,
-closure and pressure-offset continuity; no generic remeshing framework is needed.
+candidate, evaluated below, is a fixed material hull tessellation, clipping only
+its waterline fringe and retaining intended material edges. Physical moments,
+closure and pressure-offset continuity are required; no generic remeshing
+framework is needed.
 
 Rigid bulk/bulk free-space kernel pairs preserve distances, areas, normals and
 paired surface-curl products under common six-DOF motion. This permits exact
@@ -295,7 +296,7 @@ controls. It is a prospective far-field component, not an implemented near/far
 coupling. Incoming analytical waves, outgoing body radiation, interface pressure
 continuity and long-time periodic-boundary return still need separate checks.
 
-## Primary context
+## Operator integration and material mesh checks
 
 The next independent checkpoint separates finite-domain bias from body
 discretization using exactly the same flat-startup wetted triangles. At 608
@@ -342,6 +343,39 @@ comparison against uniform order twelve, not a speedup over the earlier
 lower-accuracy order-three pilot. Sequential GPU clock/thermal variation is
 uncontrolled. The short finite-tank window and coarse surface state still
 prevent a sustained-runtime claim.
+
+An exact fixed-material hull overlay now tests the proposed mesh change before
+building a fast update path. It clips convex wet parent pieces against dyadic
+material triangles, then removes artificial world-parent cuts within each cell.
+Full cells keep their original three corners. Shared material/waterline cuts
+propagate into neighboring body/free faces exactly, without coordinate welding.
+Actual moving states exposed disconnected wet components and concave fringe
+loops; components remain separate, while nonstar fringe loops use exact ears
+instead of an invalid centroid fan. Holes and ambiguous branches still reject.
+Nine geometry tests include the actual canonical boat, advancing incident sea,
+six-axis motion and the saved 0.2 s nonlinear state. They check closure,
+per-group area/moments, parent inheritance and invariant bulk material triangles.
+
+Level two has 272 body/570 total panels at the reference snapshot. Its pitch
+load is about 100 Nm above the old body-two reference; changing uniform outer
+order six to twelve changes pitch by only 0.30 Nm. Level three has 848 body/
+1194 total panels; its six fine-step loads are [736.05, 322.00, 29962.60,
+-285.70, 6.48, 449.35] N/Nm, compared with the uniform-order-twelve old mesh's
+[735.29, 337.28, 29961.15, -289.76, -0.64, 432.63]. All use the same prescribed
+physical state direction, not independently evolved surface rates. Spatial
+adequacy and sway/yaw differentiation sensitivity remain unresolved. Cold exact
+clipping costs dominate the 106 s level-three audit; this is no runtime baseline.
+
+Across accepted 0.05/0.20 s states, common whole material triangles retain
+86-93% of wet area. They account for only 4.3-4.5% of all raw panel pairs,
+limiting a cache of those pairs alone. No cache is implemented, and the
+condensed energy remains globally coupled. This reference earns a route toward
+stable material coordinates and guarded local operator linearization, not
+baseline adoption or a claimed large speedup. Full evidence and source hashes:
+`boat-material-mesh.json`; experimental implementation:
+`tests/experiments/free_surface/boat_material_boundary.py`.
+
+## Primary context
 
 Variational free-surface discretization with moving boundaries is established;
 its Hamiltonian can be nonautonomous when boundaries move:
