@@ -1566,3 +1566,15 @@ defect; an exact current center with an incorrect slope can have zero current
 field defect and wrong pressure. The derivative action converges against h/h2
 checks but has no reliable component speed advantage. Neither changes the
 moving baseline. Evidence: `docs/research/boat-operator-prediction.json`.
+
+`boat_operator_prediction --two-directions` adds four physical axis perturbations
+at .10 s and fits linear and separable quadratic models in fixed geometry
+coordinates. The first direction uses .15 s geometry, so that check is not fully
+held out. `--tangent-from <trained-audit.json> --target-time .20` reuses the model
+unchanged at the later state. `--mixed-curvature` extends a saved four-sample
+model with two opposite corner samples, comparing full quadratic and separable
+fits on the same six samples. Combine `--operator-from` with a matching target
+audit to replay fresh reference matrices on CPU; optional training still incurs
+new assemblies. Models remain experimental: large extrapolation, training cost
+and coupled trajectory error are unresolved. Evidence:
+`docs/research/boat-local-operator.json`.

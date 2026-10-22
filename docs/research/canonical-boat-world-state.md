@@ -403,6 +403,26 @@ This is not yet a differentiated pressure solver and remains experimental.
 Matrices, all six loads, timing samples and producer hashes:
 `boat-operator-prediction.json`.
 
+Two-direction local models now test whether curvature buys useful reuse on this
+specific boat/sea case. Four physical perturbations about .10 s fit a separable
+quadratic; two additional corner operators fit the mixed term. Training direction
+one uses .15 s geometry, so .15 is not a fully held-out check. At the later .20 s
+state the models are reused unchanged, with no new training assemblies.
+
+At .20 s, frozen/linear/separable/full-quadratic heave errors are approximately
+-721/-105/-27/-19 N relative to fresh operators on the same prescribed pressure
+direction. Adding the mixed term worsens pitch error from -3.3 to -9.0 Nm;
+it does not uniformly improve loads. A separable refit using the same six samples
+has -45 N heave error. This supports measuring interaction, not a conclusion
+that curvature alone explains the remaining error.
+
+Four-sample setup costs 5.619 s; adding the two corners and refitting costs another
+4.391 s. Normalized coordinates reach 118 and quadratic features 7004 at .20,
+far outside the tiny training steps. No amortized speed or coupled trajectory
+accuracy is established. Keep these models experimental. Full six-axis errors,
+h-pair sensitivities, cost breakdown and verified producer provenance are in
+`boat-local-operator.json`.
+
 ## Primary context
 
 Variational free-surface discretization with moving boundaries is established;

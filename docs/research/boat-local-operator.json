@@ -1,0 +1,1461 @@
+{
+  "qualified": false,
+  "scope": "Local operator prediction for the canonical 24 ft, 2500 kg boat and seeded observed SoCal sea. Prescribed saved states and fresh current fields; no coupled predicted trajectory, refresh controller, ocean qualification or throughput claim.",
+  "axes": [
+    "surge",
+    "sway",
+    "heave",
+    "roll",
+    "pitch",
+    "yaw"
+  ],
+  "load_units": [
+    "N",
+    "N",
+    "N",
+    "Nm",
+    "Nm",
+    "Nm"
+  ],
+  "training": "Anchor .10 s. First direction uses .15 geometry, not operator or force; second uses anchor velocity and surface rate. The .20 state is a later holdout. Four axis samples train the separable model; two added opposite corners produce a six-sample full quadratic and same-six-sample separable control.",
+  "decision": "Remain experimental. Full quadratic improves held-out loads but extrapolates far beyond tiny training perturbations and does not establish a refresh tolerance or runtime advantage.",
+  "runs": [
+    {
+      "report": "artifacts\\boat-two-direction-150ms.json",
+      "sha256": "1d310e9fb0057a435f61c58033471ce02acbbd36a446bfdfecadb251e163274a",
+      "arrays_sha256": "59ef3f6d734d9f08134f5902bbce66908d6e292bf5bfb20658a551bd5ce3101e",
+      "producer_archive": "artifacts\\boat-two-direction-150ms-source",
+      "source_sha256": {
+        "boat_operator_prediction.py": "a023eff94e30b245cb23947abe1dba5a6c2a49cd2e5f235c7170f476092e5d24",
+        "boat_geometry_template.py": "1fe910f6833181bd62f66be74850e34c5aede7a8e5456d34851f187a2d7f2f1d",
+        "boat_world_field.py": "cb976a016f8bcb01751b1cc8ac118902229cfffebb38fbfac562cb3826ed776e",
+        "boat_world_boundary.py": "a0902fb0e44a0138c5d501d72a4b549ae56d543063cd1a7542ec060f973ef6ce",
+        "body_pressure.py": "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+        "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+        "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+        "cuda_operator.py": "497e47a88cf187d6979736cab8a4da9a3b4e5cc54209582bf85f004905e466eb",
+        "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+        "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20"
+      },
+      "input_sha256": {
+        "artifacts\\boat-moving-body2-200ms-h50ms.json": "68951a31add686dea3c015df7951a302010d5ef189eda12076e4db4a9e2bdcf9",
+        "artifacts\\boat-moving-body2-200ms-h50ms.npz": "0fa15920c3549b9db730d85703b1a404d33e789182569c79550801f8bf558e74"
+      },
+      "target_time_seconds": 0.15,
+      "training": {
+        "complete": true,
+        "epsilon": 0.02,
+        "anchor_time_seconds": 0.1,
+        "scope": "Geometry-informed tangent diagnostic: target .15 geometry informs direction one; its operator/force values do not. Not a past-only predictor.",
+        "assembly_count": 4,
+        "raw_perpendicular_geometry_rms_m": 0.0016999337597267312,
+        "raw_perpendicular_to_first_ratio": 0.11023739082481195,
+        "subtracted_shape_coefficient": 0.844741533382547,
+        "perpendicular_parameter_amplification": 9.071332263199054,
+        "physical_perturbations": [
+          {
+            "maximum_position_step_m": 0.00027367623111509255,
+            "rotation_step_rad": 3.380255568432094e-05,
+            "maximum_parent_height_step_m": 0.0006057097722097338,
+            "plus_geometry_rms_step_m": 0.0003084987577392136
+          },
+          {
+            "maximum_position_step_m": 7.410027464855173e-05,
+            "rotation_step_rad": 3.621714850911043e-05,
+            "maximum_parent_height_step_m": 0.0007213087925928685,
+            "plus_geometry_rms_step_m": 0.00030840446920485625
+          }
+        ],
+        "gram": [
+          [
+            0.00023779687696447846,
+            6.01985230903239e-11
+          ],
+          [
+            6.019852308693577e-11,
+            0.00023779689709939108
+          ]
+        ],
+        "gram_condition": 1.0000005133335668,
+        "pressure_direction_out_of_subspace_fraction": 0.02853869169583409
+      },
+      "training_assembly_phases": [
+        {
+          "operation": "tangent0-sign1-energy",
+          "seconds": 0.7463290999876335
+        },
+        {
+          "operation": "tangent0-sign-1-energy",
+          "seconds": 0.7241337999876123
+        },
+        {
+          "operation": "tangent1-sign1-energy",
+          "seconds": 0.7266818000061903
+        },
+        {
+          "operation": "tangent1-sign-1-energy",
+          "seconds": 1.0270569999993313
+        }
+      ],
+      "fresh_load_world": [
+        -72.25672011173731,
+        295.5820400967393,
+        29357.391453274933,
+        -220.04461485127206,
+        -413.57898576488697,
+        536.446972969389
+      ],
+      "fresh_h_pair_difference": [
+        -6.200468783390534e-05,
+        9.96349550632658e-05,
+        0.0008018981206987519,
+        -7.856449826704193e-05,
+        -0.0005016315462853527,
+        -0.0006463944905590324
+      ],
+      "models": [
+        {
+          "name": "fresh",
+          "fine_load_error": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "h_pair_difference": [
+            -6.200468783390534e-05,
+            9.96349550632658e-05,
+            0.0008018981206987519,
+            -7.856449826704193e-05,
+            -0.0005016315462853527,
+            -0.0006463944905590324
+          ],
+          "geometry_prediction": {},
+          "true_current_interior_relative_defect": 3.668527993367331e-14,
+          "seconds": 0.1643628999881912
+        },
+        {
+          "name": "frozen",
+          "fine_load_error": [
+            -72.04408945741193,
+            -49.47178067590289,
+            -372.8219739526794,
+            81.81136201293225,
+            -358.3153949807074,
+            67.81305222574792
+          ],
+          "h_pair_difference": [
+            0.00020098694244552462,
+            0.00030240520356983325,
+            0.0007271414251590613,
+            -7.452992861090024e-05,
+            -0.00041691064052429283,
+            -0.0006682509545044013
+          ],
+          "geometry_prediction": {},
+          "true_current_interior_relative_defect": 0.02286980070743176,
+          "seconds": 0.16051509999670088
+        },
+        {
+          "name": "secant",
+          "fine_load_error": [
+            -10.163849642816672,
+            -15.91602711360656,
+            -85.06795998395683,
+            32.823949773584445,
+            -61.02070237824864,
+            14.742947092001486
+          ],
+          "h_pair_difference": [
+            -2.775185794234858e-05,
+            0.00012384956801270164,
+            0.0006535169413837139,
+            -2.973302116515697e-05,
+            -0.000707399161910871,
+            -0.0006927323422587506
+          ],
+          "geometry_prediction": {
+            "alpha": 2.3573784257706274,
+            "orthogonal_geometry_rms_m": 0.00480581711306474
+          },
+          "true_current_interior_relative_defect": 0.006846074258306863,
+          "seconds": 0.14627050000126474
+        },
+        {
+          "name": "two_direction",
+          "fine_load_error": [
+            -6.3252296729043564,
+            0.04356445615553639,
+            -22.204019713477464,
+            7.94374173172173,
+            -17.690304851603287,
+            13.736020994835712
+          ],
+          "h_pair_difference": [
+            -4.161800120527914e-06,
+            0.0001472137856808331,
+            0.0005315697853802703,
+            -1.559426038966194e-05,
+            -0.0008372067468371824,
+            -0.0006878283246578576
+          ],
+          "geometry_prediction": {
+            "coefficients": [
+              1.0142456264997428,
+              0.00026547274193275703
+            ],
+            "orthogonal_geometry_rms_m": 0.00022968253674311403
+          },
+          "true_current_interior_relative_defect": 0.0010720699626846604,
+          "seconds": 0.14912770001683384
+        }
+      ]
+    },
+    {
+      "report": "artifacts\\boat-two-direction-quadratic-150ms-fixed.json",
+      "sha256": "a7fe5096b688519d6d1c9ece86fa505701a0daac239945cb4feccc7cff7a8678",
+      "arrays_sha256": "2ca569c2e9904eb88b7168f3dbd5518b38b57525523d93b6f609e6299ebb6e96",
+      "producer_archive": "artifacts\\boat-two-direction-quadratic-150ms-fixed-source",
+      "source_sha256": {
+        "boat_operator_prediction.py": "7fec88c08966c6cdf131d01b3f39234c9901bc479c0cb033e3650fd779965c50",
+        "boat_geometry_template.py": "1fe910f6833181bd62f66be74850e34c5aede7a8e5456d34851f187a2d7f2f1d",
+        "boat_world_field.py": "cb976a016f8bcb01751b1cc8ac118902229cfffebb38fbfac562cb3826ed776e",
+        "boat_world_boundary.py": "a0902fb0e44a0138c5d501d72a4b549ae56d543063cd1a7542ec060f973ef6ce",
+        "body_pressure.py": "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+        "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+        "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+        "cuda_operator.py": "497e47a88cf187d6979736cab8a4da9a3b4e5cc54209582bf85f004905e466eb",
+        "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+        "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20"
+      },
+      "input_sha256": {
+        "artifacts\\boat-moving-body2-200ms-h50ms.json": "68951a31add686dea3c015df7951a302010d5ef189eda12076e4db4a9e2bdcf9",
+        "artifacts\\boat-moving-body2-200ms-h50ms.npz": "0fa15920c3549b9db730d85703b1a404d33e789182569c79550801f8bf558e74"
+      },
+      "target_time_seconds": 0.15,
+      "training": {
+        "complete": true,
+        "epsilon": 0.02,
+        "anchor_time_seconds": 0.1,
+        "scope": "Geometry-informed tangent diagnostic: target .15 geometry informs direction one; its operator/force values do not. Not a past-only predictor.",
+        "assembly_count": 4,
+        "raw_perpendicular_geometry_rms_m": 0.0016999337597267312,
+        "raw_perpendicular_to_first_ratio": 0.11023739082481195,
+        "subtracted_shape_coefficient": 0.844741533382547,
+        "perpendicular_parameter_amplification": 9.071332263199054,
+        "physical_perturbations": [
+          {
+            "maximum_position_step_m": 0.00027367623111509255,
+            "rotation_step_rad": 3.380255568432094e-05,
+            "maximum_parent_height_step_m": 0.0006057097722097338,
+            "plus_geometry_rms_step_m": 0.0003084987577392136
+          },
+          {
+            "maximum_position_step_m": 7.410027464855173e-05,
+            "rotation_step_rad": 3.621714850911043e-05,
+            "maximum_parent_height_step_m": 0.0007213087925928685,
+            "plus_geometry_rms_step_m": 0.00030840446920485625
+          }
+        ],
+        "quadratic_feature_condition": 2.000000805086173,
+        "quadratic_scope": "Separable quadratic in the same geometry coordinates; mixed alpha1*alpha2 term is unmeasured and omitted.",
+        "gram": [
+          [
+            0.00023779687696447846,
+            6.01985230903239e-11
+          ],
+          [
+            6.019852308693577e-11,
+            0.00023779689709939108
+          ]
+        ],
+        "gram_condition": 1.0000005133335668,
+        "pressure_direction_out_of_subspace_fraction": 0.02853869169583409,
+        "seconds": 5.619105399993714
+      },
+      "training_assembly_phases": [
+        {
+          "operation": "tangent0-sign1-energy",
+          "seconds": 2.7388221000146586
+        },
+        {
+          "operation": "tangent0-sign-1-energy",
+          "seconds": 0.7212126000085846
+        },
+        {
+          "operation": "tangent1-sign1-energy",
+          "seconds": 0.7242661000054795
+        },
+        {
+          "operation": "tangent1-sign-1-energy",
+          "seconds": 0.7355041999835521
+        }
+      ],
+      "fresh_load_world": [
+        -72.25672011173731,
+        295.5820400967393,
+        29357.391453274933,
+        -220.04461485127206,
+        -413.57898576488697,
+        536.446972969389
+      ],
+      "fresh_h_pair_difference": [
+        -6.200468783390534e-05,
+        9.96349550632658e-05,
+        0.0008018981206987519,
+        -7.856449826704193e-05,
+        -0.0005016315462853527,
+        -0.0006463944905590324
+      ],
+      "models": [
+        {
+          "name": "fresh",
+          "fine_load_error": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "h_pair_difference": [
+            -6.200468783390534e-05,
+            9.96349550632658e-05,
+            0.0008018981206987519,
+            -7.856449826704193e-05,
+            -0.0005016315462853527,
+            -0.0006463944905590324
+          ],
+          "geometry_prediction": {},
+          "true_current_interior_relative_defect": 3.668527993367331e-14,
+          "seconds": 0.14637070000753738
+        },
+        {
+          "name": "frozen",
+          "fine_load_error": [
+            -72.04408945741193,
+            -49.47178067590289,
+            -372.8219739526794,
+            81.81136201293225,
+            -358.3153949807074,
+            67.81305222574792
+          ],
+          "h_pair_difference": [
+            0.00020098694244552462,
+            0.00030240520356983325,
+            0.0007271414251590613,
+            -7.452992861090024e-05,
+            -0.00041691064052429283,
+            -0.0006682509545044013
+          ],
+          "geometry_prediction": {},
+          "true_current_interior_relative_defect": 0.02286980070743176,
+          "seconds": 0.1420419000205584
+        },
+        {
+          "name": "secant",
+          "fine_load_error": [
+            -10.163849642816672,
+            -15.91602711360656,
+            -85.06795998395683,
+            32.823949773584445,
+            -61.02070237824864,
+            14.742947092001486
+          ],
+          "h_pair_difference": [
+            -2.775185794234858e-05,
+            0.00012384956801270164,
+            0.0006535169413837139,
+            -2.973302116515697e-05,
+            -0.000707399161910871,
+            -0.0006927323422587506
+          ],
+          "geometry_prediction": {
+            "alpha": 2.3573784257706274,
+            "orthogonal_geometry_rms_m": 0.00480581711306474
+          },
+          "true_current_interior_relative_defect": 0.006846074258306863,
+          "seconds": 0.15916320000542328
+        },
+        {
+          "name": "exact_center_secant_slope",
+          "fine_load_error": [
+            -8.613377822848975,
+            -14.383497429556314,
+            -67.89038786819947,
+            33.805470789492574,
+            -65.10150555986911,
+            16.417263237247994
+          ],
+          "h_pair_difference": [
+            -2.4803690848784754e-05,
+            0.00013937559958776546,
+            0.0006437461779569276,
+            -3.169369881561579e-05,
+            -0.0007070162155287107,
+            -0.0006705670540441133
+          ],
+          "geometry_prediction": {},
+          "true_current_interior_relative_defect": 3.668527993367331e-14,
+          "seconds": 0.1709635999868624
+        },
+        {
+          "name": "secant_center_exact_slope",
+          "fine_load_error": [
+            -1.522547856693791,
+            -1.6595590516999437,
+            -16.175640484001633,
+            -0.9788524843305595,
+            3.8262197842195746,
+            -3.073508420981625
+          ],
+          "h_pair_difference": [
+            0.00011569871765004791,
+            1.5326913626267924e-05,
+            0.0009530155875836499,
+            -0.00016541006755232956,
+            -0.00043473370897118,
+            -0.0011613433515549332
+          ],
+          "geometry_prediction": {
+            "alpha": 2.3573784257706274,
+            "orthogonal_geometry_rms_m": 0.00480581711306474
+          },
+          "true_current_interior_relative_defect": 0.006846074258306863,
+          "seconds": 0.1857218999939505
+        },
+        {
+          "name": "exact_center_exact_slope",
+          "fine_load_error": [
+            6.111403195063758e-05,
+            -2.310791853687988e-05,
+            4.418540993356146e-05,
+            -2.9550988074333873e-05,
+            2.276349550811574e-05,
+            -0.00016461512404930545
+          ],
+          "h_pair_difference": [
+            0.00012133931352309446,
+            3.030526306702086e-05,
+            0.0009344568861706648,
+            -0.00016721725341994897,
+            -0.0004333305232648854,
+            -0.0011402502955206728
+          ],
+          "geometry_prediction": {},
+          "true_current_interior_relative_defect": 3.668527993367331e-14,
+          "seconds": 0.1950747000228148
+        },
+        {
+          "name": "two_direction",
+          "fine_load_error": [
+            -6.325229673076024,
+            0.04356445801306563,
+            -22.204019712742593,
+            7.943741729858971,
+            -17.69030484705945,
+            13.736020992073804
+          ],
+          "h_pair_difference": [
+            -4.161526703683194e-06,
+            0.00014721172226472845,
+            0.0005315688067639712,
+            -1.559241763970931e-05,
+            -0.0008372113707082462,
+            -0.0006878281343460912
+          ],
+          "geometry_prediction": {
+            "coefficients": [
+              1.0142456264997428,
+              0.00026547274193275703
+            ],
+            "orthogonal_geometry_rms_m": 0.00022968253674311403
+          },
+          "true_current_interior_relative_defect": 0.001072069962675237,
+          "seconds": 0.20554869997431524
+        },
+        {
+          "name": "two_direction_quadratic",
+          "fine_load_error": [
+            -0.34738587057620407,
+            0.9941084773362263,
+            -2.209546051093639,
+            0.3454689586369568,
+            -0.9987587698769858,
+            1.3225567932065587
+          ],
+          "h_pair_difference": [
+            -0.00010977161150549364,
+            0.0002033619699659539,
+            0.0005310551568982191,
+            -6.325076697066834e-06,
+            -0.0007217667507575243,
+            -0.000415345306691961
+          ],
+          "geometry_prediction": {
+            "coefficients": [
+              1.0142456264997428,
+              0.00026547274193275703
+            ],
+            "orthogonal_geometry_rms_m": 0.00022968253674311403
+          },
+          "true_current_interior_relative_defect": 9.171960049857027e-05,
+          "seconds": 0.2286226999713108
+        }
+      ]
+    },
+    {
+      "report": "artifacts\\boat-two-direction-quadratic-200ms.json",
+      "sha256": "1f9f27213f2fe13056a9624500a61049ac8aa08cc23197896858601aae720b1f",
+      "arrays_sha256": "4a9c7eb2c224559f26086d239ebf720de7cebf2c4575fbd9e266dea28cf410c8",
+      "producer_archive": "artifacts\\boat-two-direction-quadratic-200ms-source",
+      "source_sha256": {
+        "boat_operator_prediction.py": "de5177e92881762549c0498d3518b42443ac6d5b26fbea1cff71d84675761894",
+        "boat_geometry_template.py": "1fe910f6833181bd62f66be74850e34c5aede7a8e5456d34851f187a2d7f2f1d",
+        "boat_world_field.py": "cb976a016f8bcb01751b1cc8ac118902229cfffebb38fbfac562cb3826ed776e",
+        "boat_world_boundary.py": "a0902fb0e44a0138c5d501d72a4b549ae56d543063cd1a7542ec060f973ef6ce",
+        "body_pressure.py": "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+        "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+        "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+        "cuda_operator.py": "497e47a88cf187d6979736cab8a4da9a3b4e5cc54209582bf85f004905e466eb",
+        "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+        "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20"
+      },
+      "input_sha256": {
+        "artifacts\\boat-moving-body2-200ms-h50ms.json": "68951a31add686dea3c015df7951a302010d5ef189eda12076e4db4a9e2bdcf9",
+        "artifacts\\boat-moving-body2-200ms-h50ms.npz": "0fa15920c3549b9db730d85703b1a404d33e789182569c79550801f8bf558e74"
+      },
+      "target_time_seconds": 0.2,
+      "training": {
+        "reused_unchanged": true,
+        "new_training_assemblies": 0,
+        "source_path": "artifacts\\boat-two-direction-quadratic-150ms-fixed.json",
+        "source_sha256": "a7fe5096b688519d6d1c9ece86fa505701a0daac239945cb4feccc7cff7a8678",
+        "source_arrays_sha256": "2ca569c2e9904eb88b7168f3dbd5518b38b57525523d93b6f609e6299ebb6e96",
+        "original_training": {
+          "complete": true,
+          "epsilon": 0.02,
+          "anchor_time_seconds": 0.1,
+          "scope": "Geometry-informed tangent diagnostic: target .15 geometry informs direction one; its operator/force values do not. Not a past-only predictor.",
+          "assembly_count": 4,
+          "raw_perpendicular_geometry_rms_m": 0.0016999337597267312,
+          "raw_perpendicular_to_first_ratio": 0.11023739082481195,
+          "subtracted_shape_coefficient": 0.844741533382547,
+          "perpendicular_parameter_amplification": 9.071332263199054,
+          "physical_perturbations": [
+            {
+              "maximum_position_step_m": 0.00027367623111509255,
+              "rotation_step_rad": 3.380255568432094e-05,
+              "maximum_parent_height_step_m": 0.0006057097722097338,
+              "plus_geometry_rms_step_m": 0.0003084987577392136
+            },
+            {
+              "maximum_position_step_m": 7.410027464855173e-05,
+              "rotation_step_rad": 3.621714850911043e-05,
+              "maximum_parent_height_step_m": 0.0007213087925928685,
+              "plus_geometry_rms_step_m": 0.00030840446920485625
+            }
+          ],
+          "quadratic_feature_condition": 2.000000805086173,
+          "quadratic_scope": "Separable quadratic in the same geometry coordinates; mixed alpha1*alpha2 term is unmeasured and omitted.",
+          "gram": [
+            [
+              0.00023779687696447846,
+              6.01985230903239e-11
+            ],
+            [
+              6.019852308693577e-11,
+              0.00023779689709939108
+            ]
+          ],
+          "gram_condition": 1.0000005133335668,
+          "pressure_direction_out_of_subspace_fraction": 0.02853869169583409,
+          "seconds": 5.619105399993714
+        },
+        "pressure_direction_out_of_subspace_fraction": 0.06334053108533055
+      },
+      "training_assembly_phases": [],
+      "fresh_load_world": [
+        -434.0996959384328,
+        265.22361672942543,
+        28921.652756297615,
+        -177.71554836925657,
+        -648.412578393807,
+        552.9258660970397
+      ],
+      "fresh_h_pair_difference": [
+        0.001132147370299208,
+        -0.0004593210599068698,
+        0.0018213310358987655,
+        -0.00031797142673894996,
+        0.00252429915144603,
+        -0.006860292440251214
+      ],
+      "models": [
+        {
+          "name": "fresh",
+          "fine_load_error": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "h_pair_difference": [
+            0.001132147370299208,
+            -0.0004593210599068698,
+            0.0018213310358987655,
+            -0.00031797142673894996,
+            0.00252429915144603,
+            -0.006860292440251214
+          ],
+          "geometry_prediction": {},
+          "true_current_interior_relative_defect": 2.848411346638844e-14,
+          "seconds": 0.15445799997542053
+        },
+        {
+          "name": "frozen",
+          "fine_load_error": [
+            -127.57834563183394,
+            -76.37474886853863,
+            -720.5899225796202,
+            109.9882860948224,
+            -472.1053079186595,
+            76.3600452265182
+          ],
+          "h_pair_difference": [
+            0.0025072781311337167,
+            -0.0022025270079097936,
+            0.0015024830463516992,
+            -0.0002210795773294194,
+            0.004551854857709259,
+            -0.011150543399594426
+          ],
+          "geometry_prediction": {},
+          "true_current_interior_relative_defect": 0.059039796305340404,
+          "seconds": 0.15032739998423494
+        },
+        {
+          "name": "secant",
+          "fine_load_error": [
+            -29.99510230945009,
+            -24.769913934644876,
+            -246.07715901924894,
+            59.769515495295195,
+            -102.1069049089765,
+            36.082179143248595
+          ],
+          "h_pair_difference": [
+            0.0010474084421048246,
+            -0.0014343050489173947,
+            0.0018056435001199134,
+            -7.384591168602128e-05,
+            0.001664174094912596,
+            -0.008284469159093533
+          ],
+          "geometry_prediction": {
+            "alpha": 4.070214793676177,
+            "orthogonal_geometry_rms_m": 0.014570347062730747
+          },
+          "true_current_interior_relative_defect": 0.02114393177657881,
+          "seconds": 0.14368979999562725
+        },
+        {
+          "name": "two_direction",
+          "fine_load_error": [
+            -21.946065432050887,
+            4.086486586291699,
+            -105.03025993738265,
+            20.967108114127996,
+            -60.15355110716155,
+            47.704207174534986
+          ],
+          "h_pair_difference": [
+            0.0012361132875184921,
+            -0.0011366921944500064,
+            0.0013155063206795603,
+            -6.664193892902404e-05,
+            0.0014535757381963776,
+            -0.00775068431426007
+          ],
+          "geometry_prediction": {
+            "coefficients": [
+              2.367131222556512,
+              -0.2249244638504388
+            ],
+            "orthogonal_geometry_rms_m": 0.0011904093298617062,
+            "maximum_normalized_coordinate": 118.3565611278256,
+            "maximum_feature_magnitude": 7004.137781002359
+          },
+          "true_current_interior_relative_defect": 0.006451502026411184,
+          "seconds": 0.1627079999889247
+        },
+        {
+          "name": "two_direction_quadratic",
+          "fine_load_error": [
+            -2.616449663318349,
+            9.022383267653254,
+            -26.92304815795069,
+            1.7208675047813813,
+            -3.2784875059596743,
+            12.434096590613308
+          ],
+          "h_pair_difference": [
+            0.0011103603203537205,
+            -0.000783697868996569,
+            0.0008861895657901186,
+            -0.0001225917953888711,
+            0.002006046244787285,
+            -0.007089107201181832
+          ],
+          "geometry_prediction": {
+            "coefficients": [
+              2.367131222556512,
+              -0.2249244638504388
+            ],
+            "orthogonal_geometry_rms_m": 0.0011904093298617062,
+            "maximum_normalized_coordinate": 118.3565611278256,
+            "maximum_feature_magnitude": 7004.137781002359
+          },
+          "true_current_interior_relative_defect": 0.001226926430409657,
+          "seconds": 0.15709739999147132
+        }
+      ]
+    },
+    {
+      "report": "artifacts\\boat-two-direction-mixed-150ms.json",
+      "sha256": "582bc5dff70510294d3fb5cd26923316762f3b412efa805ecf6b479e5bf671f0",
+      "arrays_sha256": "bf39d90466658ffe08ded928422cbd90016409d252552767b198f537d32991c5",
+      "producer_archive": "artifacts\\boat-two-direction-mixed-150ms-source",
+      "source_sha256": {
+        "boat_operator_prediction.py": "115c5158b137c5660917bd652a183c6f39068f209224abea3dad1beba7b1f2be",
+        "boat_geometry_template.py": "1fe910f6833181bd62f66be74850e34c5aede7a8e5456d34851f187a2d7f2f1d",
+        "boat_world_field.py": "cb976a016f8bcb01751b1cc8ac118902229cfffebb38fbfac562cb3826ed776e",
+        "boat_world_boundary.py": "a0902fb0e44a0138c5d501d72a4b549ae56d543063cd1a7542ec060f973ef6ce",
+        "body_pressure.py": "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+        "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+        "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+        "cuda_operator.py": "497e47a88cf187d6979736cab8a4da9a3b4e5cc54209582bf85f004905e466eb",
+        "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+        "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20"
+      },
+      "input_sha256": {
+        "artifacts\\boat-moving-body2-200ms-h50ms.json": "68951a31add686dea3c015df7951a302010d5ef189eda12076e4db4a9e2bdcf9",
+        "artifacts\\boat-moving-body2-200ms-h50ms.npz": "0fa15920c3549b9db730d85703b1a404d33e789182569c79550801f8bf558e74"
+      },
+      "target_time_seconds": 0.15,
+      "training": {
+        "complete": true,
+        "epsilon": 0.02,
+        "anchor_time_seconds": 0.1,
+        "scope": "Geometry-informed tangent diagnostic: target .15 geometry informs direction one; its operator/force values do not. Not a past-only predictor.",
+        "assembly_count": 6,
+        "raw_perpendicular_geometry_rms_m": 0.0016999337597267312,
+        "raw_perpendicular_to_first_ratio": 0.11023739082481195,
+        "subtracted_shape_coefficient": 0.844741533382547,
+        "perpendicular_parameter_amplification": 9.071332263199054,
+        "physical_perturbations": [
+          {
+            "maximum_position_step_m": 0.00027367623111509255,
+            "rotation_step_rad": 3.380255568432094e-05,
+            "maximum_parent_height_step_m": 0.0006057097722097338,
+            "plus_geometry_rms_step_m": 0.0003084987577392136
+          },
+          {
+            "maximum_position_step_m": 7.410027464855173e-05,
+            "rotation_step_rad": 3.621714850911043e-05,
+            "maximum_parent_height_step_m": 0.0007213087925928685,
+            "plus_geometry_rms_step_m": 0.00030840446920485625
+          }
+        ],
+        "quadratic_feature_condition": 2.000000805086173,
+        "quadratic_scope": "Full two-direction quadratic from six physical perturbations; no later target data used.",
+        "gram": [
+          [
+            0.00023779687696447846,
+            6.01985230903239e-11
+          ],
+          [
+            6.019852308693577e-11,
+            0.00023779689709939108
+          ]
+        ],
+        "gram_condition": 1.0000005133335668,
+        "pressure_direction_out_of_subspace_fraction": 0.02853869169583409,
+        "seconds": 5.619105399993714,
+        "reused_unchanged": false,
+        "new_training_assemblies": 2,
+        "source_path": "artifacts\\boat-two-direction-quadratic-150ms-fixed.json",
+        "source_sha256": "a7fe5096b688519d6d1c9ece86fa505701a0daac239945cb4feccc7cff7a8678",
+        "source_arrays_sha256": "2ca569c2e9904eb88b7168f3dbd5518b38b57525523d93b6f609e6299ebb6e96",
+        "separable_refit_feature_condition": 3.4641026129084076,
+        "full_feature_condition": 4.372284083161612,
+        "training_orthogonal_geometry_rms_m": [
+          8.678875202495494e-08,
+          8.678875202495642e-08,
+          8.951015892585462e-08,
+          8.951015892584726e-08,
+          1.8852368732039241e-07,
+          1.882430128394988e-07
+        ],
+        "seconds_this_run": 4.390825899987249
+      },
+      "training_assembly_phases": [
+        {
+          "operation": "mixed-sign1-energy",
+          "seconds": 2.7452546000131406
+        },
+        {
+          "operation": "mixed-sign-1-energy",
+          "seconds": 0.7196098000276834
+        }
+      ],
+      "fresh_load_world": [
+        -72.25672011173731,
+        295.5820400967393,
+        29357.391453274933,
+        -220.04461485127206,
+        -413.57898576488697,
+        536.446972969389
+      ],
+      "fresh_h_pair_difference": [
+        -6.200468783390534e-05,
+        9.96349550632658e-05,
+        0.0008018981206987519,
+        -7.856449826704193e-05,
+        -0.0005016315462853527,
+        -0.0006463944905590324
+      ],
+      "models": [
+        {
+          "name": "fresh",
+          "fine_load_error": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "h_pair_difference": [
+            -6.200468783390534e-05,
+            9.96349550632658e-05,
+            0.0008018981206987519,
+            -7.856449826704193e-05,
+            -0.0005016315462853527,
+            -0.0006463944905590324
+          ],
+          "geometry_prediction": {},
+          "true_current_interior_relative_defect": 3.668527993367331e-14,
+          "seconds": 0.168782699998701
+        },
+        {
+          "name": "frozen",
+          "fine_load_error": [
+            -72.04408945741193,
+            -49.47178067590289,
+            -372.8219739526794,
+            81.81136201293225,
+            -358.3153949807074,
+            67.81305222574792
+          ],
+          "h_pair_difference": [
+            0.00020098694244552462,
+            0.00030240520356983325,
+            0.0007271414251590613,
+            -7.452992861090024e-05,
+            -0.00041691064052429283,
+            -0.0006682509545044013
+          ],
+          "geometry_prediction": {},
+          "true_current_interior_relative_defect": 0.02286980070743176,
+          "seconds": 0.12332420001621358
+        },
+        {
+          "name": "secant",
+          "fine_load_error": [
+            -10.163849642816672,
+            -15.91602711360656,
+            -85.06795998395683,
+            32.823949773584445,
+            -61.02070237824864,
+            14.742947092001486
+          ],
+          "h_pair_difference": [
+            -2.775185794234858e-05,
+            0.00012384956801270164,
+            0.0006535169413837139,
+            -2.973302116515697e-05,
+            -0.000707399161910871,
+            -0.0006927323422587506
+          ],
+          "geometry_prediction": {
+            "alpha": 2.3573784257706274,
+            "orthogonal_geometry_rms_m": 0.00480581711306474
+          },
+          "true_current_interior_relative_defect": 0.006846074258306863,
+          "seconds": 0.13715950000914745
+        },
+        {
+          "name": "exact_center_secant_slope",
+          "fine_load_error": [
+            -8.613377822848975,
+            -14.383497429556314,
+            -67.89038786819947,
+            33.805470789492574,
+            -65.10150555986911,
+            16.417263237247994
+          ],
+          "h_pair_difference": [
+            -2.4803690848784754e-05,
+            0.00013937559958776546,
+            0.0006437461779569276,
+            -3.169369881561579e-05,
+            -0.0007070162155287107,
+            -0.0006705670540441133
+          ],
+          "geometry_prediction": {},
+          "true_current_interior_relative_defect": 3.668527993367331e-14,
+          "seconds": 0.15105780001613311
+        },
+        {
+          "name": "secant_center_exact_slope",
+          "fine_load_error": [
+            -1.522547856693791,
+            -1.6595590516999437,
+            -16.175640484001633,
+            -0.9788524843305595,
+            3.8262197842195746,
+            -3.073508420981625
+          ],
+          "h_pair_difference": [
+            0.00011569871765004791,
+            1.5326913626267924e-05,
+            0.0009530155875836499,
+            -0.00016541006755232956,
+            -0.00043473370897118,
+            -0.0011613433515549332
+          ],
+          "geometry_prediction": {
+            "alpha": 2.3573784257706274,
+            "orthogonal_geometry_rms_m": 0.00480581711306474
+          },
+          "true_current_interior_relative_defect": 0.006846074258306863,
+          "seconds": 0.15090589999454096
+        },
+        {
+          "name": "exact_center_exact_slope",
+          "fine_load_error": [
+            6.111403195063758e-05,
+            -2.310791853687988e-05,
+            4.418540993356146e-05,
+            -2.9550988074333873e-05,
+            2.276349550811574e-05,
+            -0.00016461512404930545
+          ],
+          "h_pair_difference": [
+            0.00012133931352309446,
+            3.030526306702086e-05,
+            0.0009344568861706648,
+            -0.00016721725341994897,
+            -0.0004333305232648854,
+            -0.0011402502955206728
+          ],
+          "geometry_prediction": {},
+          "true_current_interior_relative_defect": 3.668527993367331e-14,
+          "seconds": 0.1901009000139311
+        },
+        {
+          "name": "two_direction",
+          "fine_load_error": [
+            -6.325229673076024,
+            0.04356445801306563,
+            -22.204019712742593,
+            7.943741729858971,
+            -17.69030484705945,
+            13.736020992073804
+          ],
+          "h_pair_difference": [
+            -4.161526703683194e-06,
+            0.00014721172226472845,
+            0.0005315688067639712,
+            -1.559241763970931e-05,
+            -0.0008372113707082462,
+            -0.0006878281343460912
+          ],
+          "geometry_prediction": {
+            "coefficients": [
+              1.0142456264997428,
+              0.00026547274193275703
+            ],
+            "orthogonal_geometry_rms_m": 0.00022968253674311403,
+            "maximum_normalized_coordinate": 50.71228132498714,
+            "maximum_feature_magnitude": 1285.8677385923197
+          },
+          "true_current_interior_relative_defect": 0.001072069962675237,
+          "seconds": 0.16329350002342835
+        },
+        {
+          "name": "two_direction_quadratic",
+          "fine_load_error": [
+            -0.4063386355650209,
+            0.7930504051636262,
+            -1.5247994007295347,
+            0.14545010712504336,
+            -1.2095432222431555,
+            1.344047512323641
+          ],
+          "h_pair_difference": [
+            -0.00010128189956049027,
+            0.0002195296475520081,
+            0.0005124869421706535,
+            -1.3337620316633547e-05,
+            -0.0007352128286584048,
+            -0.0004038783497435361
+          ],
+          "geometry_prediction": {
+            "coefficients": [
+              1.0142456264997428,
+              0.00026547274193275703
+            ],
+            "orthogonal_geometry_rms_m": 0.00022968253674311403,
+            "maximum_normalized_coordinate": 50.71228132498714,
+            "maximum_feature_magnitude": 1285.8677385923197
+          },
+          "true_current_interior_relative_defect": 9.152692222072161e-05,
+          "seconds": 0.16079090000130236
+        },
+        {
+          "name": "two_direction_quadratic_original",
+          "fine_load_error": [
+            -0.34738587057620407,
+            0.9941084773362263,
+            -2.209546051093639,
+            0.3454689586369568,
+            -0.9987587698769858,
+            1.3225567932065587
+          ],
+          "h_pair_difference": [
+            -0.00010977161150549364,
+            0.0002033619699659539,
+            0.0005310551568982191,
+            -6.325076697066834e-06,
+            -0.0007217667507575243,
+            -0.000415345306691961
+          ],
+          "geometry_prediction": {
+            "coefficients": [
+              1.0142456264997428,
+              0.00026547274193275703
+            ],
+            "orthogonal_geometry_rms_m": 0.00022968253674311403,
+            "maximum_normalized_coordinate": 50.71228132498714,
+            "maximum_feature_magnitude": 1285.8677385923197
+          },
+          "true_current_interior_relative_defect": 9.171960049857027e-05,
+          "seconds": 0.154791800014209
+        },
+        {
+          "name": "two_direction_quadratic_separable_refit",
+          "fine_load_error": [
+            -0.0021253246961805417,
+            2.202424675306588,
+            -7.4510200076620094,
+            1.7651172471737482,
+            1.237999297798524,
+            1.1748243651884422
+          ],
+          "h_pair_difference": [
+            -0.00014177498621847917,
+            0.00012182742375443922,
+            0.0006005113136779983,
+            2.701780317693192e-05,
+            -0.0006662870064246817,
+            -0.0004761840369837955
+          ],
+          "geometry_prediction": {
+            "coefficients": [
+              1.0142456264997428,
+              0.00026547274193275703
+            ],
+            "orthogonal_geometry_rms_m": 0.00022968253674311403,
+            "maximum_normalized_coordinate": 50.71228132498714,
+            "maximum_feature_magnitude": 1285.8677385923197
+          },
+          "true_current_interior_relative_defect": 0.0004487357720827391,
+          "seconds": 0.15570350000052713
+        }
+      ]
+    },
+    {
+      "report": "artifacts\\boat-two-direction-mixed-200ms-final.json",
+      "sha256": "96b670eba0d6c6f29e06f4ef7b8695e09235f82d3263cc2ac248b23a8ffd0d80",
+      "arrays_sha256": "d82f9b1c6b89055af5b314adf6c4121d7129655cff0483f2241db67b0ee98197",
+      "producer_archive": "artifacts\\boat-two-direction-mixed-200ms-final-source",
+      "source_sha256": {
+        "boat_operator_prediction.py": "fae2aca66d3f626e3afd612dcc42dcff0028472804b6ea9c54923cc007216db8",
+        "boat_geometry_template.py": "1fe910f6833181bd62f66be74850e34c5aede7a8e5456d34851f187a2d7f2f1d",
+        "boat_world_field.py": "cb976a016f8bcb01751b1cc8ac118902229cfffebb38fbfac562cb3826ed776e",
+        "boat_world_boundary.py": "a0902fb0e44a0138c5d501d72a4b549ae56d543063cd1a7542ec060f973ef6ce",
+        "body_pressure.py": "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+        "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+        "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+        "cuda_operator.py": "497e47a88cf187d6979736cab8a4da9a3b4e5cc54209582bf85f004905e466eb",
+        "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+        "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20"
+      },
+      "input_sha256": {
+        "artifacts\\boat-moving-body2-200ms-h50ms.json": "68951a31add686dea3c015df7951a302010d5ef189eda12076e4db4a9e2bdcf9",
+        "artifacts\\boat-moving-body2-200ms-h50ms.npz": "0fa15920c3549b9db730d85703b1a404d33e789182569c79550801f8bf558e74"
+      },
+      "target_time_seconds": 0.2,
+      "training": {
+        "complete": true,
+        "epsilon": 0.02,
+        "anchor_time_seconds": 0.1,
+        "scope": "Geometry-informed tangent diagnostic: target .15 geometry informs direction one; its operator/force values do not. Not a past-only predictor.",
+        "assembly_count": 6,
+        "raw_perpendicular_geometry_rms_m": 0.0016999337597267312,
+        "raw_perpendicular_to_first_ratio": 0.11023739082481195,
+        "subtracted_shape_coefficient": 0.844741533382547,
+        "perpendicular_parameter_amplification": 9.071332263199054,
+        "physical_perturbations": [
+          {
+            "maximum_position_step_m": 0.00027367623111509255,
+            "rotation_step_rad": 3.380255568432094e-05,
+            "maximum_parent_height_step_m": 0.0006057097722097338,
+            "plus_geometry_rms_step_m": 0.0003084987577392136
+          },
+          {
+            "maximum_position_step_m": 7.410027464855173e-05,
+            "rotation_step_rad": 3.621714850911043e-05,
+            "maximum_parent_height_step_m": 0.0007213087925928685,
+            "plus_geometry_rms_step_m": 0.00030840446920485625
+          }
+        ],
+        "quadratic_feature_condition": 2.000000805086173,
+        "quadratic_scope": "Full two-direction quadratic from six physical perturbations; no later target data used.",
+        "gram": [
+          [
+            0.00023779687696447846,
+            6.01985230903239e-11
+          ],
+          [
+            6.019852308693577e-11,
+            0.00023779689709939108
+          ]
+        ],
+        "gram_condition": 1.0000005133335668,
+        "pressure_direction_out_of_subspace_fraction": 0.06334053108533055,
+        "reused_unchanged": true,
+        "new_training_assemblies": 0,
+        "source_path": "artifacts\\boat-two-direction-mixed-150ms.json",
+        "source_sha256": "582bc5dff70510294d3fb5cd26923316762f3b412efa805ecf6b479e5bf671f0",
+        "source_arrays_sha256": "bf39d90466658ffe08ded928422cbd90016409d252552767b198f537d32991c5",
+        "separable_refit_feature_condition": 3.4641026129084076,
+        "full_feature_condition": 4.372284083161612,
+        "training_orthogonal_geometry_rms_m": [
+          8.678875202495494e-08,
+          8.678875202495642e-08,
+          8.951015892585462e-08,
+          8.951015892584726e-08,
+          1.8852368732039241e-07,
+          1.882430128394988e-07
+        ],
+        "seconds_this_run": 0.1842252000060398,
+        "original_axis_setup_seconds": 5.619105399993714,
+        "timing_scope": "Historical axis setup and this-run work are separate, not total six-sample training time."
+      },
+      "training_assembly_phases": [],
+      "fresh_load_world": [
+        -434.0996959384328,
+        265.22361672942543,
+        28921.652756297615,
+        -177.71554836925657,
+        -648.412578393807,
+        552.9258660970397
+      ],
+      "fresh_h_pair_difference": [
+        0.001132147370299208,
+        -0.0004593210599068698,
+        0.0018213310358987655,
+        -0.00031797142673894996,
+        0.00252429915144603,
+        -0.006860292440251214
+      ],
+      "models": [
+        {
+          "name": "fresh",
+          "fine_load_error": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "h_pair_difference": [
+            0.001132147370299208,
+            -0.0004593210599068698,
+            0.0018213310358987655,
+            -0.00031797142673894996,
+            0.00252429915144603,
+            -0.006860292440251214
+          ],
+          "geometry_prediction": {},
+          "true_current_interior_relative_defect": 2.848411346638844e-14,
+          "seconds": 0.13662490001297556
+        },
+        {
+          "name": "frozen",
+          "fine_load_error": [
+            -127.57834563183394,
+            -76.37474886853863,
+            -720.5899225796202,
+            109.9882860948224,
+            -472.1053079186595,
+            76.3600452265182
+          ],
+          "h_pair_difference": [
+            0.0025072781311337167,
+            -0.0022025270079097936,
+            0.0015024830463516992,
+            -0.0002210795773294194,
+            0.004551854857709259,
+            -0.011150543399594426
+          ],
+          "geometry_prediction": {},
+          "true_current_interior_relative_defect": 0.059039796305340404,
+          "seconds": 0.12733449999359436
+        },
+        {
+          "name": "secant",
+          "fine_load_error": [
+            -29.99510230945009,
+            -24.769913934644876,
+            -246.07715901924894,
+            59.769515495295195,
+            -102.1069049089765,
+            36.082179143248595
+          ],
+          "h_pair_difference": [
+            0.0010474084421048246,
+            -0.0014343050489173947,
+            0.0018056435001199134,
+            -7.384591168602128e-05,
+            0.001664174094912596,
+            -0.008284469159093533
+          ],
+          "geometry_prediction": {
+            "alpha": 4.070214793676177,
+            "orthogonal_geometry_rms_m": 0.014570347062730747
+          },
+          "true_current_interior_relative_defect": 0.02114393177657881,
+          "seconds": 0.14972880002460442
+        },
+        {
+          "name": "exact_center_secant_slope",
+          "fine_load_error": [
+            -27.004316489807366,
+            -18.272831564772503,
+            -199.48421032564147,
+            67.89832095451789,
+            -118.30960404225425,
+            46.139891233886146
+          ],
+          "h_pair_difference": [
+            0.0012384787307837541,
+            -0.0011143764767211906,
+            0.001601978401595261,
+            -0.00016568026580898731,
+            0.0021985537132422905,
+            -0.008042114345130358
+          ],
+          "geometry_prediction": {},
+          "true_current_interior_relative_defect": 2.848411346638844e-14,
+          "seconds": 0.1635144999891054
+        },
+        {
+          "name": "secant_center_exact_slope",
+          "fine_load_error": [
+            -2.7512546417189014,
+            -7.901023833613408,
+            -35.777558595927985,
+            -7.6625212805354295,
+            13.571327854150695,
+            -19.814672710773493
+          ],
+          "h_pair_difference": [
+            0.0014860729625070235,
+            -0.00168862318957963,
+            0.004086037766683148,
+            -0.00032462182866765943,
+            0.0023946392720972653,
+            -0.009826209767652472
+          ],
+          "geometry_prediction": {
+            "alpha": 4.070214793676177,
+            "orthogonal_geometry_rms_m": 0.014570347062730747
+          },
+          "true_current_interior_relative_defect": 0.02114393177657881,
+          "seconds": 0.15445550001459196
+        },
+        {
+          "name": "exact_center_exact_slope",
+          "fine_load_error": [
+            0.00018898851647008996,
+            -0.0002981831835313642,
+            0.0006160088705655653,
+            -4.996211316665722e-05,
+            0.0001635032931517344,
+            -0.0008764703031829413
+          ],
+          "h_pair_difference": [
+            0.0016991118682199158,
+            -0.0013540352421159696,
+            0.0036694434311357327,
+            -0.0004678151598227487,
+            0.003014743063431524,
+            -0.009489943702760684
+          ],
+          "geometry_prediction": {},
+          "true_current_interior_relative_defect": 2.848411346638844e-14,
+          "seconds": 0.1621455000131391
+        },
+        {
+          "name": "two_direction",
+          "fine_load_error": [
+            -21.946065432050887,
+            4.086486586291699,
+            -105.03025993738265,
+            20.967108114127996,
+            -60.15355110716155,
+            47.704207174534986
+          ],
+          "h_pair_difference": [
+            0.0012361132875184921,
+            -0.0011366921944500064,
+            0.0013155063206795603,
+            -6.664193892902404e-05,
+            0.0014535757381963776,
+            -0.00775068431426007
+          ],
+          "geometry_prediction": {
+            "coefficients": [
+              2.367131222556512,
+              -0.2249244638504388
+            ],
+            "orthogonal_geometry_rms_m": 0.0011904093298617062,
+            "maximum_normalized_coordinate": 118.3565611278256,
+            "maximum_feature_magnitude": 7004.137781002359
+          },
+          "true_current_interior_relative_defect": 0.006451502026411184,
+          "seconds": 0.17048430000431836
+        },
+        {
+          "name": "two_direction_quadratic",
+          "fine_load_error": [
+            -2.914559707789408,
+            8.114946072267685,
+            -18.882082259886374,
+            -0.5532095473729441,
+            -9.049170084967955,
+            12.1894994648585
+          ],
+          "h_pair_difference": [
+            0.001134494167217781,
+            -0.0005391310173763486,
+            0.0006866420153528452,
+            -0.00016122856266065355,
+            0.002029830324318027,
+            -0.006741067014786495
+          ],
+          "geometry_prediction": {
+            "coefficients": [
+              2.367131222556512,
+              -0.2249244638504388
+            ],
+            "orthogonal_geometry_rms_m": 0.0011904093298617062,
+            "maximum_normalized_coordinate": 118.3565611278256,
+            "maximum_feature_magnitude": 7004.137781002359
+          },
+          "true_current_interior_relative_defect": 0.0012279932706769142,
+          "seconds": 0.15097969997441396
+        },
+        {
+          "name": "two_direction_quadratic_original",
+          "fine_load_error": [
+            -2.616449663318349,
+            9.022383267653254,
+            -26.92304815795069,
+            1.7208675047813813,
+            -3.2784875059596743,
+            12.434096590613308
+          ],
+          "h_pair_difference": [
+            0.0011103603203537205,
+            -0.000783697868996569,
+            0.0008861895657901186,
+            -0.0001225917953888711,
+            0.002006046244787285,
+            -0.007089107201181832
+          ],
+          "geometry_prediction": {
+            "coefficients": [
+              2.367131222556512,
+              -0.2249244638504388
+            ],
+            "orthogonal_geometry_rms_m": 0.0011904093298617062,
+            "maximum_normalized_coordinate": 118.3565611278256,
+            "maximum_feature_magnitude": 7004.137781002359
+          },
+          "true_current_interior_relative_defect": 0.001226926430409657,
+          "seconds": 0.15630959998816252
+        },
+        {
+          "name": "two_direction_quadratic_separable_refit",
+          "fine_load_error": [
+            -2.086138120315468,
+            10.599283283123782,
+            -44.7939901406171,
+            6.5350869952956145,
+            10.611157404393452,
+            13.18139716488372
+          ],
+          "h_pair_difference": [
+            0.0010843617110367632,
+            -0.0013202809182075725,
+            0.0012172657552582677,
+            -9.184390478367277e-06,
+            0.0020364009724289645,
+            -0.007840085786369855
+          ],
+          "geometry_prediction": {
+            "coefficients": [
+              2.367131222556512,
+              -0.2249244638504388
+            ],
+            "orthogonal_geometry_rms_m": 0.0011904093298617062,
+            "maximum_normalized_coordinate": 118.3565611278256,
+            "maximum_feature_magnitude": 7004.137781002359
+          },
+          "true_current_interior_relative_defect": 0.0031646993347470287,
+          "seconds": 0.15388450000318699
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "The .15 check informs the training geometry direction and is not fully held out.",
+    "Actual projected coordinates are fitted; nonzero discarded geometry can contaminate a subspace curvature interpretation.",
+    "Maximum normalized coordinate reaches 118 and quadratic feature magnitude 7004 at .20; this is large extrapolation.",
+    "Initial four-sample setup costs 5.619 s; adding two corners costs another 4.391 s including checks. No amortized speed claim.",
+    "All methods use the same fresh prescribed surface/pressure direction, not their own advanced trajectory.",
+    "The finite exterior patch, spatial resolution and pressure recovery are still unqualified."
+  ],
+  "adversarial_review": "Independent read-only review found no source blocker. Mixed curvature improves heave but worsens pitch; field residual does not certify loads. Historical four-sample timing is separated from mixed extension and replay overhead.",
+  "verification": "Final CPU replay reproduced all ten models and both pressure-step loads bit-for-bit after metadata and target-index corrections; py_compile and git diff --check passed."
+}
