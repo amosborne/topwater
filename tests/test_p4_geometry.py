@@ -4,7 +4,7 @@ import pytest
 from numpy.polynomial.legendre import leggauss
 
 from .experiments.free_surface import p4_tetra
-from .experiments.free_surface.p4_geometry import integrals
+from .experiments.free_surface.p4_geometry import integrals, InvalidGeometryError
 from .experiments.free_surface.pocket import boundary
 
 
@@ -117,5 +117,5 @@ def test_curved_geometry_fixed_potential_shape_work_and_quadrature_refinement():
 
 def test_curved_cell_sampled_inversion_is_rejected():
     mesh, coordinates = curved_cell(-3.)
-    with pytest.raises(ValueError, match='Jacobian'):
+    with pytest.raises(InvalidGeometryError, match='Jacobian'):
         integrals(coordinates[mesh.elements[0]], np.zeros(35))

@@ -14,6 +14,10 @@ from scipy.sparse import coo_matrix
 from .p4_tetra import basis
 
 
+class InvalidGeometryError(ValueError):
+    """A sampled current P4 cell Jacobian is invalid; a trial may be rejected."""
+
+
 @lru_cache(None)
 def quadrature(order):
     x, w = leggauss(order)
@@ -35,7 +39,7 @@ def metrics(coordinates, order):
     jacobian = np.einsum('qaj,ai->qji', derivative, coordinates)
     determinant = np.linalg.det(jacobian)
     if np.any(determinant <= 0) or not np.all(np.isfinite(determinant)):
-        raise ValueError('nonpositive or invalid sampled P4 geometry Jacobian')
+        raise InvalidGeometryError('nonpositive or invalid sampled P4 geometry Jacobian')
     gradient = np.einsum('qaj,qij->qai', derivative, np.linalg.inv(jacobian))
     return values, gradient, weights*determinant, float(determinant.min())
 

@@ -9,13 +9,13 @@ import json
 from pathlib import Path
 
 import numpy as np
-from scipy.integrate import RK23
 from threadpoolctl import threadpool_limits
 
 from .canoe_radiation import ramped_motion
 from .p4_whole_geometry import P4WholeCanoeGeometry
 from .p4_prescribed_canoe import reaction
 from .p4_first_variation import _hash, _progress, _revision
+from .geometry_rk23 import GeometryRK23
 
 
 def run(*, amplitude=1e-4, omega=4., periods=1., ramp_periods=.25,
@@ -37,11 +37,11 @@ def run(*, amplitude=1e-4, omega=4., periods=1., ramp_periods=.25,
         motion = ramped_motion(time, amplitude, omega, ramp_periods)
         body = base.copy(); body[2] += motion[0]; body[9] = motion[1]
         acceleration = np.zeros(6); acceleration[2] = motion[2]
-        _progress(f'prescribed heave RHS{calls+1}, t={time:.12g}, begin')
+        calls += 1
+        _progress(f'prescribed heave RHS{calls}, t={time:.12g}, begin')
         current = reaction(owner, body, fluid[:count], fluid[count:], acceleration,
                            step=derivative_step)
         cache.update(time=time, fluid=fluid.copy(), result=current, motion=motion.copy())
-        calls += 1
         _progress(f'prescribed heave RHS{calls}, t={time:.12g}, complete')
         return np.r_[current['eta_rate'], current['pi_rate']]
 
@@ -63,7 +63,7 @@ def run(*, amplitude=1e-4, omega=4., periods=1., ramp_periods=.25,
         normal.append(current['full_weak_normal_velocity_relative_residual'])
         work.append(current['fluid_work_identity_absolute_residual'])
 
-    solver = RK23(evaluate, 0., np.zeros(2*count), duration, rtol=rtol, atol=atol,
+    solver = GeometryRK23(evaluate, 0., np.zeros(2*count), duration, rtol=rtol, atol=atol,
                   max_step=max_step, first_step=min(duration, max_step))
     record(0., solver.y)
     while solver.status == 'running':
@@ -84,7 +84,7 @@ def run(*, amplitude=1e-4, omega=4., periods=1., ramp_periods=.25,
         'p4_variational_canoe.py', 'p4_whole_geometry.py', 'p4_volume_map.py',
         'p4_canoe_contact.py', 'p4_geometry.py', 'p4_surface.py', 'p4_boundary_action.py',
         'p4_tetra.py', 'canoe_radiation.py', 'canonical_canoe.py', 'canoe_contact.py',
-        'p4_canoe_release.py']
+        'p4_canoe_release.py', 'geometry_rk23.py']
     report = dict(qualified=False, case='closed-tank nonlinear P4 prescribed heave',
         formulation='P4 canonical prescribed motion', integrated_fluid_variables='eta,Pi',
         initial_case='equilibrium hull, eta=psi=0, zero body velocity, C2 prescribed startup',
@@ -98,6 +98,7 @@ def run(*, amplitude=1e-4, omega=4., periods=1., ramp_periods=.25,
         duration=duration, max_step=max_step, rtol=rtol, atol=atol, derivative_step=derivative_step,
         boundary='closed finite tank, no sponge or PML', density=1000., gravity=9.81,
         rhs_evaluations=calls, accepted_steps=len(times)-1,
+        invalid_geometry_trial_rejections=solver.invalid_geometry_rejections,
         fresh_current_fluid_factorizations_per_rhs=3,
         minimum_rim_clearance_lower_bound_m=float(min(clearances)),
         load_units=['N']*3+['N m']*3,

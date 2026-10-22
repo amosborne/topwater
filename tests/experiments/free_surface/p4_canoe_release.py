@@ -16,7 +16,6 @@ import subprocess
 from time import perf_counter
 
 import numpy as np
-from scipy.integrate import RK23
 from threadpoolctl import threadpool_limits
 
 from topwater.frames import rotation_matrix
@@ -26,6 +25,7 @@ from .p4_variational_canoe import evaluate
 from .p4_whole_geometry import P4WholeCanoeGeometry
 from .p4_canoe_stage import verify_master_identity
 from .p4_tetra import indices, face_nodes
+from .geometry_rk23 import GeometryRK23
 
 
 @lru_cache(None)
@@ -104,6 +104,16 @@ def run(stage_path, *, duration=.001, max_step=.001, rtol=1e-4,
         atol=1e-10, derivative_step=1e-4):
     """Integrate the saved all-six-velocity/nonflat actual-stage initial state."""
     start = perf_counter()
+    sources = ['p4_canoe_release.py', 'p4_canoe_stage.py', 'geometry_rk23.py',
+        'p4_canoe_field.py', 'p4_variational_canoe.py', 'p4_whole_geometry.py',
+        'p4_volume_map.py', 'p4_canoe_contact.py', 'canoe_contact.py', 'p4_geometry.py',
+        'p4_surface.py', 'p4_boundary_action.py', 'p4_tetra.py', 'canonical_canoe.py',
+        'moving_canoe.py', 'pocket.py', 'p4_whole_canoe.py', 'p4_canoe.py']
+    source_hashes = {name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
+                     for name in sources}
+    source_hashes['topwater/frames.py'] = sha256(Path(rotation_matrix.__code__.co_filename).read_bytes()).hexdigest()
+    source_hashes['scipy/integrate/_ivp/rk.py'] = sha256(Path(
+        GeometryRK23.__mro__[1]._step_impl.__code__.co_filename).read_bytes()).hexdigest()
     if (not all(np.isfinite(value) and value > 0 for value in
                 (duration, max_step, rtol, atol, derivative_step)) or rtol >= 1):
         raise ValueError('finite positive run controls and rtol<1 required')
@@ -160,7 +170,7 @@ def run(stage_path, *, duration=.001, max_step=.001, rtol=1e-4,
 
     # Explicit first_step prevents the extra heuristic trial RHS for a tiny
     # smoke interval. Adaptive RK23 still rejects it if accuracy requires.
-    solver = RK23(rhs, 0., canonical, duration, rtol=rtol, atol=atol,
+    solver = GeometryRK23(rhs, 0., canonical, duration, rtol=rtol, atol=atol,
                   max_step=max_step, first_step=min(duration, max_step))
     times = []; states = []; canonical_states = []; energies = []; volumes = []
     bounds = []; rim_heights = []; surface_heights = []; margins = []
@@ -189,6 +199,8 @@ def run(stage_path, *, duration=.001, max_step=.001, rtol=1e-4,
         source_stage=str(stage_path), source_stage_metadata=metadata,
         source_npz_sha256=sha256(stage_path.read_bytes()).hexdigest(), source_revision=_revision(),
         runner_sha256=sha256(Path(__file__).read_bytes()).hexdigest(),
+        source_sha256=source_hashes,
+        geometry_rk23_sha256=sha256(Path(GeometryRK23._step_impl.__code__.co_filename).read_bytes()).hexdigest(),
         master_identity_assumption=master_identity,
         initial_source_checks=initial, saved_stage_rate_used_for_integration=False,
         reference_points_sha256=sha256(np.asarray(owner.mesh.points, dtype='<f8').tobytes()).hexdigest(),
@@ -199,6 +211,7 @@ def run(stage_path, *, duration=.001, max_step=.001, rtol=1e-4,
         duration=duration, simulated_seconds=solver.t, rtol=rtol, atol=atol,
         max_step=max_step, first_step=min(duration, max_step), derivative_step=derivative_step,
         rhs_evaluations=calls, accepted_steps=len(times)-1,
+        invalid_geometry_trial_rejections=solver.invalid_geometry_rejections,
         initial_excitation_energy_joules=float(energies[0]), maximum_hamiltonian_change_joules=energy_change,
         maximum_hamiltonian_change_over_excitation=energy_change/abs(float(energies[0])) if energies[0] else None,
         maximum_fluid_volume_change_m3=float(np.max(abs(volumes-volumes[0]))),
