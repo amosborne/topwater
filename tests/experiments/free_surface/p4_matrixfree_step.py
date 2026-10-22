@@ -24,11 +24,13 @@ from .p4_matrixfree_canoe import evaluate_current
 from .p4_whole_geometry import P4WholeCanoeGeometry
 
 
-def run(stage, old_matrix, output, *, step=1e-4, rtol=1e-4, atol=1e-10):
-    """Advance one accepted step, at most 13 RHS calls and a soft 120 s budget."""
+def run(stage, old_matrix, output, *, step=1e-4, rtol=1e-4, atol=1e-10, duration=None):
+    """Advance one step or a bounded segment, at most 13 RHS calls / soft 120 s."""
     output = fresh(output)
     if not all(np.isfinite(v) and v > 0 for v in (step, rtol, atol)) or rtol >= 1:
         raise ValueError('positive finite controls and relative tolerance below one required')
+    if duration is not None and (not np.isfinite(duration) or duration < step):
+        raise ValueError('optional segment duration must be finite and at least the first step')
     output.parent.mkdir(parents=True, exist_ok=True)
     stage = Path(stage)
     with np.load(stage, allow_pickle=False) as saved:
@@ -37,11 +39,12 @@ def run(stage, old_matrix, output, *, step=1e-4, rtol=1e-4, atol=1e-10):
         saved_physical = saved['physical'].copy()
     matrix, old, manifest = load_input(old_matrix)
     report = dict(qualified=False, complete=False,
-        scope='One accepted full nonlinear six-DOF RK23 step; not trajectory throughput or temporal validation',
+        scope='Bounded full nonlinear six-DOF RK23 segment; not trajectory throughput or temporal validation',
         stage_sha256=sha256(stage.read_bytes()).hexdigest(),
         old_matrix_npz_sha256=manifest['npz_sha256'],
         controls=dict(first_step=step, rtol=rtol, scalar_atol=atol, max_rhs=13, rhs_budget_seconds=120.),
         budget_scope='Elapsed budget checked before calls; an in-flight RHS is not preempted.',
+        requested_duration=duration,
         runtime=dict(python=platform.python_version(), numpy=np.__version__, scipy=scipy.__version__,
                      native_threadpools=threadpool_info()),
         rhs=[], embedded_errors=[], startup_seconds={},
@@ -50,6 +53,7 @@ def run(stage, old_matrix, output, *, step=1e-4, rtol=1e-4, atol=1e-10):
              'p4_whole_geometry.py', 'p4_metric_action.py', 'p4_canoe_field.py',
              'p4_coupled_solve.py', 'geometry_rk23.py')})
     arrays = dict(initial_canonical=initial)
+    trials = []
     solver = None
     try:
         before = perf_counter()
@@ -103,6 +107,7 @@ def run(stage, old_matrix, output, *, step=1e-4, rtol=1e-4, atol=1e-10):
             ('angular_momentum_kg_m2_per_s', slice(size+3, size+6)),
             ('surface_momentum_kg_m_per_s', slice(size+6, None))]
         contact = np.isin(owner.free_nodes, owner.chart_to_global[owner.chart.contact_nodes])
+        arrays['contact_free_mask'] = contact
 
         class AuditedRK23(GeometryRK23):
             def _estimate_error_norm(self, k, h, scale):
@@ -119,19 +124,26 @@ def run(stage, old_matrix, output, *, step=1e-4, rtol=1e-4, atol=1e-10):
                         for name, block in blocks}))
                 arrays['last_embedded_error'] = error.copy()
                 arrays['last_error_scale'] = scale.copy()
+                trials.append((error.copy(), scale.copy(), self.y+h*(k[:self.n_stages].T@self.B)))
                 return value
 
-        solver = AuditedRK23(rhs, 0., initial, step, first_step=step, max_step=step, rtol=rtol, atol=atol)
-        message = solver.step()
-        if solver.status == 'failed':
-            raise RuntimeError(message)
+        solver = AuditedRK23(rhs, 0., initial, step if duration is None else duration,
+                            first_step=step, max_step=step, rtol=rtol, atol=atol)
+        accepted_steps = 0
+        while solver.status == 'running':
+            message = solver.step()
+            if solver.status == 'failed':
+                raise RuntimeError(message)
+            accepted_steps += 1
+            if duration is None:
+                break
         if latest['time'] != solver.t or not np.array_equal(latest['canonical'], solver.y):
             raise RuntimeError('accepted endpoint has no matching exact-current diagnostics')
         current = latest['result']
         arrays.update(accepted_time=np.asarray(solver.t), accepted_canonical=solver.y.copy(),
             accepted_physical=current['physical_state'], accepted_hamiltonian=np.asarray(current['hamiltonian']),
             accepted_fluid_volume=np.asarray(current['fluid_volume']))
-        report.update(complete=True, accepted_steps=1, accepted_time=float(solver.t),
+        report.update(complete=True, accepted_steps=accepted_steps, accepted_time=float(solver.t),
             rhs_wall_seconds=perf_counter()-rhs_started,
             invalid_geometry_trial_rejections=solver.invalid_geometry_rejections,
             hamiltonian_change=float(current['hamiltonian']-arrays['initial_hamiltonian']),
@@ -141,6 +153,10 @@ def run(stage, old_matrix, output, *, step=1e-4, rtol=1e-4, atol=1e-10):
         raise
     finally:
         report['peak_rss_bytes'] = peak_rss_bytes()
+        if trials:
+            arrays.update(embedded_errors=np.stack([v[0] for v in trials]),
+                          error_scales=np.stack([v[1] for v in trials]),
+                          trial_canonical=np.stack([v[2] for v in trials]))
         if solver is not None:
             report['invalid_geometry_trial_rejections'] = solver.invalid_geometry_rejections
         np.savez(output.with_suffix('.npz'), **arrays)
@@ -155,6 +171,7 @@ if __name__ == '__main__':
     parser.add_argument('--old-matrix', required=True)
     parser.add_argument('--output', required=True)
     parser.add_argument('--step', type=float, default=1e-4)
+    parser.add_argument('--duration', type=float)
     args = parser.parse_args()
     with threadpool_limits(1):
-        print(json.dumps(run(args.stage, args.old_matrix, args.output, step=args.step), indent=2))
+        print(json.dumps(run(args.stage, args.old_matrix, args.output, step=args.step, duration=args.duration), indent=2))
