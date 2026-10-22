@@ -391,6 +391,29 @@ reproduce these probes; Windows checkout line-ending conversion can change raw
 source hashes, while the saved source copies retain the measured bytes.
 No new full nonlinear boat trajectory or Capytaine qualification is claimed.
 
+The next flat-water reconstruction check exposed and repaired a separate mesh
+construction defect. The old unconstrained Delaunay join lost waterline edges
+in three freshly rebuilt chine-crossing poses. Optional MeshPy/Triangle PSLG
+triangulation now retains every input vertex and both outer-wall and waterline
+edges, with Steiner points disabled and exact topology checks before closure.
+All five recorded poses rebuild successfully without changing the hull, masses
+or guards. Volume error is at most 5.7e-14 m3, per-parent wet-area error
+4.4e-16 m2, affine normal-work error 1.5e-15, and constant-gauge work error
+2.9e-16. Two warm complete builds per pose take approximately 13–23 ms, including
+reconstructing/validating the fixed tank and body; this is not a minimal hot-path
+benchmark. Cold startup includes JIT/environment caches and is not comparable
+to the earlier startup observation. Evidence:
+`artifacts/boat-chart-rebuild-constrained.{json,npz}`. The prior failed report
+is retained. Twenty-eight integrated contact checks pass with optional MeshPy;
+the legacy control still runs without it.
+
+This earns constrained flat-water reconstruction as the boat geometry diagnostic
+baseline. It does not implement nonflat clipping or evolved-state transfer.
+The [fixed-world state audit](canonical-boat-world-state.md) derives the moving
+basis terms and the conditions for a consistent fixed-parent P1 graph. The next
+geometry candidate clips that graph against this convex boat, preserving both
+parent identities and shared boundary topology before any fluid solve.
+
 ## MATLAB's established solvers: transferable architecture rather than a language migration
 
 The [MATLAB ODE Suite paper](https://www.mathworks.com/help/pdf_doc/otherdocs/ode_suite.pdf), Shampine/Reichelt1997, documents simplified Newton/chord iteration, quasi-constant-step multistep organization and Jacobian reuse. Its performance comparisons count function evaluations, derivative evaluations, LU factorizations and solves separately; fewer Jacobians alone do not establish less total work. Reuse of derivative/setup data is standard numerical practice, not something Topwater should reinvent under a new name.

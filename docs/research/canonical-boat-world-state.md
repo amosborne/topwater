@@ -160,13 +160,17 @@ the same restriction here; it is not a measured error for the new boat.
 
 ## Smallest physical force falsifier before adoption
 
-Use **one valid reconstructed snapshot of this boat in the seed-42 SoCal field,
-with nonzero surface potential**, followed by a small pitch displacement that
-exercises the problematic chine. Obtain the snapshot from the actual candidate
-initialization/ramp and retain its pose, surface fields and velocity. Reject rim
-immersion/loss of contact rather than quietly selecting a smaller sea. If the
-candidate basis cannot represent those fields, report the projection error and
-use nested surface enrichment; do not call unlike states a matched comparison.
+Use **one geometrically valid prescribed snapshot of this boat in the seed-42
+SoCal field, with nonzero surface potential**, followed by a small pitch
+displacement that exercises the problematic chine. A completed trajectory or
+ramp is not a prerequisite for this one-stage comparison: the current elliptic
+solve supplies the interior field from the prescribed surface traces and body
+velocity. Retain the explicit pose, surface fields and velocity. A declared
+wave-following initial pose is permissible; reducing the supplied sea to obtain
+a passing geometry is not. Reject rim immersion/loss of contact. If the candidate
+basis cannot represent the supplied traces, report the projection error, compare
+both force paths at the SAME represented trace and use nested enrichment to
+assess the approximation. Do not call unlike states a matched comparison.
 
 First derive the full variational stage, including `δS`, hole derivatives and
 the momentum-map derivative. Then compare its **six world accelerations and
