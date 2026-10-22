@@ -138,6 +138,29 @@ Using it in boundary work worsens agreement and would introduce hull slip.
 The symmetric operator's imposed weak flux and its auxiliary P0 density are
 distinct discrete quantities; substituting one for the other is unsupported.
 
+The separate `canonical_canoe` experiment derives a reference from the same
+discrete fluid action, retaining geometry dependence of the body/surface
+coupling and momentum maps. It differentiates the complete Hamiltonian at fixed
+canonical momenta by finite differences, so it is deliberately a slow reference,
+not an adopted timestepper. At n12/wet2 and initial scale 10, two derivative
+steps change decoded acceleration by `1.08e-8` and potential rate by `3.36e-8`.
+Its height rates match the current kinematics, while heave acceleration changes
+from `-0.05327` to `-0.05448 m/s²` and pitch acceleration from `0.4551` to
+`0.4569 rad/s²`. Tests independently check physical energy, the momentum
+map, waterline kinematics and the canoe's free rotational dynamics. Numerical
+Hamiltonian closure alone does not qualify pressure, waves or body response.
+An independent physical-energy derivative along the decoded reference motion
+is `-1.96e-8 W` at the finer directional step, compared with `+0.00993 W`
+for the current pressure-based stage. A stationary-action contraction matches
+the reference force gradient in all six body directions and two nonconstant
+surface-height directions. This permits direct geometry derivatives without
+differentiating the implicit field solution. Neither calculation is a validated
+time trajectory or an adopted simulation baseline.
+
+```text
+uv run --locked --with "cupy-cuda12x[ctk]==14.2.0" python -m tests.experiments.free_surface.canonical_canoe
+```
+
 After producing six fitted radiation reports per frequency,
 `validate_radiation <reports...> --output artifacts/radiation-family.json`
 compares all 36 added-mass and damping entries using the formal nondimensional

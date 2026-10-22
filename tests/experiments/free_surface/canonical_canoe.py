@@ -168,6 +168,7 @@ def run(n=12, wet_subdivisions=2, initial_scale=10., gpu=True):
         gradient = -derivative[size:]
         canonical_work = gradient@derivative[:size]+derivative[:size]@derivative[size:]
         rows.append(dict(configuration_step=step,
+            canonical_rate=derivative.tolist(),physical_rate=recovered_rate.tolist(),
             canonical_work_cancellation_watts=float(canonical_work),
             world_acceleration=recovered_rate[7:13].tolist(),
             current_rhs_world_acceleration=actual[7:13].tolist(),
@@ -179,6 +180,7 @@ def run(n=12, wet_subdivisions=2, initial_scale=10., gpu=True):
     revision = subprocess.run(['git', 'rev-parse', 'HEAD'], capture_output=True,
         text=True, check=True).stdout.strip()
     return dict(qualified=False, source_revision=revision, n=n,
+        initial_canonical_state=canonical.tolist(),initial_physical_state=initial.tolist(),
         wet_subdivisions=wet_subdivisions, initial_scale=initial_scale, gpu=gpu,
         initial_hamiltonian_joules=energy,
         physical_round_trip_maximum_error=float(np.max(np.abs(recovered-initial))),
@@ -205,4 +207,8 @@ if __name__ == '__main__':
     Path('artifacts').mkdir(exist_ok=True)
     Path(f'artifacts/canonical-canoe-{suffix}.json').write_text(
         json.dumps(report, indent=2)+'\n', encoding='utf-8')
-    print(json.dumps(report), flush=True)
+    summary={key:value for key,value in report.items()
+        if key not in ('initial_canonical_state','initial_physical_state','results')}
+    summary['results']=[{key:value for key,value in row.items()
+        if key not in ('canonical_rate','physical_rate')} for row in report['results']]
+    print(json.dumps(summary), flush=True)
