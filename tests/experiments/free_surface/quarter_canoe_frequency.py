@@ -408,7 +408,8 @@ def run_family(mesh_path, reference_path, output, budget, *, input_path=None):
             block = 4*rhs.T@potential
             reciprocity = float(np.linalg.norm(block-block.T)/np.linalg.norm(block))
             if (not np.all(np.isfinite(potential)) or not np.all(np.isfinite(block))
-                    or not np.isfinite(residual) or residual > 1e-8 or reciprocity > 1e-8):
+                    or not np.isfinite(residual) or not np.isfinite(reciprocity)
+                    or residual > 1e-8 or reciprocity > 1e-8):
                 report['algebra_failure'] = dict(omega=omega, parity=label,
                     residual=residual, reciprocity=reciprocity)
                 checkpoint(f'omega{omega:g}/{label}: algebra failed')
