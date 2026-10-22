@@ -32,7 +32,7 @@ def fluid_domain(wet, resolution=(8, 4, 4), domain_scale=1.):
                             walls, points[node_map.ravel()])
 
 
-def join_wetted_hull(wetted_triangles, segments, walls, grid):
+def join_wetted_hull(wetted_triangles, segments, walls, grid, *, constrained=False):
     """Join the canonical convex flat waterline to supplied local box surfaces.
 
     Shared by the all-BEM reference and the spatial-pocket experiment. This
@@ -51,10 +51,46 @@ def join_wetted_hull(wetted_triangles, segments, walls, grid):
         raise ValueError('this experiment requires a single convex waterline')
     outside = np.max(grid[:, :2]@equations[:, :2].T+equations[:, 2], axis=1) > 0
     surface = np.unique(np.vstack((grid[outside], line)), axis=0)
-    triangles = surface[Delaunay(surface[:, :2]).simplices]
-    centers = triangles.mean(axis=1)
-    keep = np.max(centers[:, :2]@equations[:, :2].T+equations[:, 2], axis=1) > 0
-    triangles = triangles[keep]
+    if constrained:
+        # Optional experimental dependency; the legacy canoe path stays NumPy/
+        # SciPy-only. Exact IDs below bind BOTH hole and wall-top boundaries.
+        import meshpy.triangle as triangle
+        wall_edges = np.stack((walls, np.roll(walls, -1, axis=1)), axis=2).reshape(-1, 2, 3)
+        outer = wall_edges[np.all(wall_edges[:, :, 2] == 0, axis=1)]
+        lookup = {tuple(p): i for i, p in enumerate(surface)}
+        edges = np.array([[lookup[tuple(p)] for p in edge]
+                          for edge in np.concatenate((outer, segments))])
+        edges = np.unique(np.sort(edges, axis=1), axis=0)
+        info = triangle.MeshInfo()
+        info.set_points(surface[:, :2].tolist())
+        info.set_facets(edges.tolist())
+        info.set_holes([line[:, :2].mean(axis=0).tolist()])
+        result = triangle.build(info, quality_meshing=False,
+                                allow_boundary_steiner=False, allow_volume_steiner=False)
+        xy = np.asarray(result.points)
+        if xy.shape != surface[:, :2].shape:
+            raise ValueError('constrained surface triangulation changed its vertex count')
+        # Triangle may permute input points. Only an EXACT coordinate bijection
+        # is accepted; no tolerance welding, inserted points or moved corners.
+        by_xy = {tuple(p): i for i, p in enumerate(surface[:, :2])}
+        try:
+            mapping = np.array([by_xy[tuple(p)] for p in xy])
+        except KeyError as error:
+            raise ValueError('constrained surface triangulation moved a vertex') from error
+        if len(np.unique(mapping)) != len(surface):
+            raise ValueError('constrained surface triangulation duplicated a vertex')
+        nodes = mapping[np.asarray(result.elements)]
+        actual, counts = np.unique(np.sort(np.concatenate((nodes[:, [0, 1]],
+            nodes[:, [1, 2]], nodes[:, [2, 0]])), axis=1), axis=0, return_counts=True)
+        if (np.any(counts > 2) or not np.array_equal(actual[counts == 1], edges)
+                or len(np.unique(nodes)) != len(surface)):
+            raise ValueError('constrained surface lost prescribed boundary edges or input vertices')
+        triangles = surface[nodes]
+    else:
+        triangles = surface[Delaunay(surface[:, :2]).simplices]
+        centers = triangles.mean(axis=1)
+        keep = np.max(centers[:, :2]@equations[:, :2].T+equations[:, 2], axis=1) > 0
+        triangles = triangles[keep]
     reverse = np.cross(triangles[:, 1]-triangles[:, 0],
                        triangles[:, 2]-triangles[:, 0])[:, 2] < 0
     triangles[reverse] = triangles[reverse, ::-1]

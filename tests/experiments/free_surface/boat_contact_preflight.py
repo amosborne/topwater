@@ -12,7 +12,6 @@ from time import perf_counter
 import numpy as np
 from scipy.spatial.transform import Rotation
 
-from topwater import sea_states
 from tests.reference_boat import BEAM, GRAVITY, equilibrium, reference_body
 from .canoe_contact import CanoeContact
 from .domain import tank
@@ -20,7 +19,7 @@ from .p4_canoe_contact import P4CanoeContact
 from .p4_fluid_ordering import fresh
 
 
-def make_chart(*, enriched=False, state=None):
+def make_chart(*, enriched=False, state=None, constrained=True):
     """Explicit 12 m x 6 m x 2 m surface box around the actual loaded boat.
 
     This box is solely a contact-geometry diagnostic, not an accepted wave tank.
@@ -33,7 +32,7 @@ def make_chart(*, enriched=False, state=None):
     box, top, top_nodes = tank(12, 6, 2, depth=2.)
     points = box.vertices*np.array([6/(2*np.pi), 3/np.pi, 1.])
     chart = CanoeContact.make(body, rest, points[box.faces[~top]],
-                              points[top_nodes.ravel()], subdivisions=1)
+                              points[top_nodes.ravel()], subdivisions=1, constrained=constrained)
     return body, rest, P4CanoeContact.make(chart) if enriched else chart
 
 
@@ -52,6 +51,8 @@ def pose(rest, displacement, rotation):
 
 
 def run(output):
+    from topwater import sea_states
+
     output = fresh(output)
     output.parent.mkdir(parents=True, exist_ok=True)
     waves = sea_states.realize(beam_m=BEAM, gravity=GRAVITY, seed=42)
@@ -67,7 +68,7 @@ def run(output):
             label = 'P4' if enriched else 'P1'
             before = perf_counter()
             try:
-                body, rest, chart = make_chart(enriched=enriched)
+                body, rest, chart = make_chart(enriched=enriched, constrained=False)
             except Exception as error:
                 report['construction'].append(dict(chart=label, complete=False,
                     seconds=perf_counter()-before, error_type=type(error).__name__, message=str(error)))
