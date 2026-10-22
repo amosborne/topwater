@@ -111,7 +111,7 @@ def _window(times, force, start, stop):
 
 
 def run(n=12, *, periods=.05, omega=4., amplitude=1e-4, ramp_periods=2.,
-        fit_periods=3, gpu=True, material_subdivisions=2, exterior_scale=1.,
+        fit_periods=3, gpu=True, wet_subdivisions=2, exterior_scale=1.,
         sponge_strength=4., sponge_buffer=.5, rtol=1e-4, derivative_step=1e-4,
         max_step=.01, capytaine=False, mode='heave'):
     if not all(np.isfinite(v) and v > 0 for v in
@@ -122,7 +122,7 @@ def run(n=12, *, periods=.05, omega=4., amplitude=1e-4, ramp_periods=2.,
     if mode not in MODES:
         raise ValueError(f'mode must be one of {MODES}')
     mode_index = MODES.index(mode)
-    domain = make_domain(n, gpu, material_subdivisions=material_subdivisions,
+    domain = make_domain(n, gpu, wet_subdivisions=wet_subdivisions,
                          exterior_scale=exterior_scale)
     size = len(domain.free_nodes)
     base = initial_state(domain, False)
@@ -196,7 +196,8 @@ def run(n=12, *, periods=.05, omega=4., amplitude=1e-4, ramp_periods=2.,
     maximum_edge = float(np.linalg.norm(triangles-np.roll(triangles, 1, axis=1), axis=2).max())
     report = dict(qualified=False, case='prescribed-motion nonlinear radiation experiment',
         mode=mode, mode_order=list(MODES), amplitude_unit='m' if mode_index < 3 else 'rad',
-        n=n, gpu=gpu, material_subdivisions=material_subdivisions, exterior_scale=exterior_scale,
+        n=n, gpu=gpu, wet_subdivisions=wet_subdivisions, exterior_scale=exterior_scale,
+        contact_mesh='physical-facet ALE; wet triangles subdivided after clipping',
         periods=periods, ramp_periods=ramp_periods, fit_periods=fit_periods, omega=omega,
         amplitude=amplitude,rtol=rtol, derivative_step=derivative_step, max_step=max_step,
         water_depth=4., wavelength=2*np.pi/k, maximum_surface_edge=maximum_edge,
@@ -256,7 +257,7 @@ if __name__ == '__main__':
     parser.add_argument('--amplitude', type=float, default=1e-4)
     parser.add_argument('--ramp-periods', type=float, default=2.)
     parser.add_argument('--fit-periods', type=int, default=3)
-    parser.add_argument('--material-subdivisions', type=int, default=2)
+    parser.add_argument('--wet-subdivisions', type=int, default=2)
     parser.add_argument('--exterior-scale', type=float, default=1.)
     parser.add_argument('--sponge-strength', type=float, default=4.)
     parser.add_argument('--sponge-buffer', type=float, default=.5)
@@ -269,7 +270,7 @@ if __name__ == '__main__':
     with threadpool_limits(1):
         report, states = run(**args)
     path = Path('artifacts'); path.mkdir(exist_ok=True)
-    suffix = (f"{args['mode']}-n{args['n']}-material{args['material_subdivisions']}-periods{args['periods']:g}"
+    suffix = (f"{args['mode']}-n{args['n']}-wet{args['wet_subdivisions']}-periods{args['periods']:g}"
         f"-omega{args['omega']:g}-amplitude{args['amplitude']:g}-extent{args['exterior_scale']:g}"
         f"-sponge{args['sponge_strength']:g}-rtol{args['rtol']:g}-step{args['max_step']:g}")
     np.savez(path/f'canoe-radiation-{suffix}.npz', **states)

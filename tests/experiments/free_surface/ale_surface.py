@@ -1,15 +1,17 @@
 """Nonlinear graph rates on the canoe's moving, body-fitted surface mesh."""
 import numpy as np
-from scipy.linalg import solve
+from scipy.sparse import coo_matrix
+from scipy.sparse.linalg import spsolve
 from tests.laplace_reference import triangle_samples
 
 
-def rates(points,faces,free_nodes,psi,flux,eta_jacobian,body_jacobian,velocity,*,damping=None):
+def rates(points,faces,free_nodes,psi,flux,height_jacobians,body_jacobian,velocity,*,damping=None):
     """Return ALE height/potential rates and nodal mesh velocity.
 
-    Each free node owns its height coordinate. Its horizontal mesh motion is
-    J_eta*height_rate + J_body*world_twist. Contact nodes slide on material
-    hull edges; all other free nodes retain fixed horizontal coordinates.
+    Each free node owns its height coordinate. Horizontal mesh motion may
+    depend on several heights: J_height*height_rate + J_body*world_twist.
+    The three sparse height maps include the redistributed wet hull as well
+    as free nodes. The free-node z map must be identity, with no body z term.
     ``flux`` is the free-surface weak load after removing prescribed hull flux.
     """
     lookup=np.full(len(points),-1,dtype=int)
@@ -39,22 +41,21 @@ def rates(points,faces,free_nodes,psi,flux,eta_jacobian,body_jacobian,velocity,*
         if damping.shape!=(len(free_nodes),) or not np.all(np.isfinite(damping)) or np.any(damping<0):
             raise ValueError('damping must be finite, nonnegative and indexed by free_nodes')
         sigma=np.einsum('qc,fc->fq',shape,damping[local])
-    mass=np.zeros((len(free_nodes),len(free_nodes)))
-    transport=np.zeros_like(mass)
+    indices=(np.repeat(local,3,axis=1).ravel(),np.tile(local,(1,3)).ravel())
+    size=(len(free_nodes),len(free_nodes))
+    mass=coo_matrix((element_mass.ravel(),indices),shape=size).tocsr()
+    transport=[coo_matrix(((element_mass*slope[:,axis,None,None]).ravel(),indices),
+        shape=size).tocsr() for axis in (0,1)]
     body_motion=np.einsum('nij,j->ni',body_jacobian,velocity)
-    contact_slope=np.einsum('fi,fci->fc',slope,eta_jacobian[faces,:2])
-    prescribed_transport=np.einsum('fi,fci->fc',slope,body_motion[faces,:2])
     right=flux.copy()
+    moving_mass=mass.copy()
+    for axis in (0,1):
+        moving_mass-=transport[axis]@height_jacobians[axis][free_nodes]
+        right+=transport[axis]@body_motion[free_nodes,axis]
     for i in range(3):
         np.add.at(right,local[:,i],-np.einsum('f,q,q,fq->f',area,weights,shape[:,i],sigma*z))
-        for j in range(3):
-            np.add.at(mass,(local[:,i],local[:,j]),element_mass[:,i,j])
-            np.add.at(transport,(local[:,i],local[:,j]),
-                element_mass[:,i,j]*contact_slope[:,j])
-            np.add.at(right,local[:,i],element_mass[:,i,j]*prescribed_transport[:,j])
-    height_rate=solve(mass-transport,right)
-    mesh_velocity=body_motion.copy()
-    mesh_velocity[free_nodes]+=eta_jacobian[free_nodes]*height_rate[:,None]
+    height_rate=spsolve(moving_mass.tocsc(),right)
+    mesh_velocity=body_motion+np.column_stack([jacobian@height_rate for jacobian in height_jacobians])
     graph_rate=np.einsum('qc,fc->fq',shape,height_rate[local])
     horizontal_motion=np.einsum('qc,fci->fqi',shape,mesh_velocity[faces,:2])
     # In the exterior sponge the surface rate includes -sigma*eta. Add it
@@ -70,7 +71,7 @@ def rates(points,faces,free_nodes,psi,flux,eta_jacobian,body_jacobian,velocity,*
     for corner in range(3):
         np.add.at(load,local[:,corner],
             np.einsum('f,q,q,fq->f',area,weights,shape[:,corner],bernoulli))
-    potential_rate=solve(mass,load,assume_a='pos')
+    potential_rate=spsolve(mass.tocsc(),load)
     if not np.all(np.isfinite(height_rate)) or not np.all(np.isfinite(potential_rate)):
         raise FloatingPointError('nonfinite moving free-surface rates')
     return height_rate,potential_rate,mesh_velocity

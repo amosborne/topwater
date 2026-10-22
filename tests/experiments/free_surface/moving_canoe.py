@@ -34,7 +34,7 @@ class CanoeDomain:
     gpu: bool
 
 
-def make_domain(n=12,gpu=True,material_subdivisions=2,exterior_scale=1.):
+def make_domain(n=12,gpu=True,wet_subdivisions=2,exterior_scale=1.):
     data=SimulationInputs.from_json(json.dumps(input_data(2)))
     rest,_=equilibrate_heave(data.body,data.initial_state)
     points,tets,near,top_nodes=grid(n,0.,0,exterior_scale=exterior_scale)
@@ -44,7 +44,7 @@ def make_domain(n=12,gpu=True,material_subdivisions=2,exterior_scale=1.):
     local_boundary=boundary(points,tets[near])
     top=np.all(points[local_boundary,2]==0,axis=1)
     contact=CanoeContact.make(data.body,rest,points[local_boundary[~top]],
-        points[np.unique(local_boundary[top])],subdivisions=material_subdivisions)
+        points[np.unique(local_boundary[top])],subdivisions=wet_subdivisions)
     lookup={tuple(point):i for i,point in enumerate(points)}
     additional=[];mapping=[]
     for point in contact.reference_points:
@@ -79,15 +79,34 @@ def geometry(domain,position,orientation,eta):
     wall_points=points[domain.wall_mapping].copy()
     points[domain.local_mapping]=local.points
     points[domain.wall_mapping]=wall_points
-    eta_jacobian=np.zeros_like(points);eta_jacobian[domain.free_nodes,2]=1
-    eta_jacobian[domain.local_mapping]=local.eta_jacobian
+    # The local hull map owns its interior/free nodes. Shared side/bottom
+    # walls retain the same column deformation as the exterior volume mesh.
+    local_rows=np.ones(len(local.points),dtype=bool)
+    local_rows[domain.contact.wall_nodes]=False
+    overridden=np.zeros(len(points),dtype=bool)
+    overridden[domain.local_mapping[local_rows]]=True
+    column_free=domain.column_free_indices[domain.column_index]
+    weight=np.maximum(domain.reference_points[:domain.volume_nodes,2]+1,0)
+    volume_rows=np.flatnonzero((column_free>=0)&(weight>0)&~overridden[:domain.volume_nodes])
+    height_jacobians=[]
+    for axis,jacobian in enumerate(local.height_jacobians):
+        entries=jacobian.tocoo()
+        keep=local_rows[entries.row]
+        row=domain.local_mapping[entries.row[keep]]
+        col=domain.local_free_indices[entries.col[keep]]
+        values=entries.data[keep]
+        if axis==2:
+            row=np.r_[row,volume_rows];col=np.r_[col,column_free[volume_rows]]
+            values=np.r_[values,weight[volume_rows]]
+        height_jacobians.append(coo_matrix((values,(row,col)),
+            shape=(len(points),len(domain.free_nodes))).tocsr())
     body_jacobian=np.zeros((len(points),3,6))
     body_jacobian[domain.local_mapping]=local.body_jacobian
-    return points,eta_jacobian,body_jacobian
+    return points,tuple(height_jacobians),body_jacobian
 
 
 def field(domain,position,orientation,eta,psi,velocity):
-    points,eta_jacobian,body_jacobian=geometry(domain,position,orientation,eta)
+    points,height_jacobians,body_jacobian=geometry(domain,position,orientation,eta)
     contact=domain.contact;mapping=domain.local_mapping
     panels=TrianglePanels(points[mapping][contact.faces],1)
     if domain.gpu:
@@ -117,7 +136,7 @@ def field(domain,position,orientation,eta,psi,velocity):
     z=panels.triangles[:,:,2]
     local_first_moment=np.sum(panels.areas*panels.normals[:,2]*
         (z.sum(axis=1)**2+(z*z).sum(axis=1)))/24
-    return dict(points=points,eta_jacobian=eta_jacobian,body_jacobian=body_jacobian,
+    return dict(points=points,height_jacobians=height_jacobians,body_jacobian=body_jacobian,
         potential=potential,flux=flux,acceleration_potentials=acceleration_potentials,
         fluid_volume=float(local_volume+tet_volume.sum()),
         fluid_energy=float(500*potential@energy@potential+9810*(local_first_moment+
@@ -126,15 +145,8 @@ def field(domain,position,orientation,eta,psi,velocity):
 
 def surface(domain,solution,psi,velocity,*,damping=None):
     height_rate,potential_rate,mesh_velocity=rates(solution['points'],domain.free_faces,
-        domain.free_nodes,psi,solution['flux'],solution['eta_jacobian'],
+        domain.free_nodes,psi,solution['flux'],solution['height_jacobians'],
         solution['body_jacobian'],velocity,damping=damping)
-    column_rate=np.zeros(len(domain.column_free_indices))
-    active=domain.column_free_indices>=0
-    column_rate[active]=height_rate[domain.column_free_indices[active]]
-    wall=domain.wall_mapping
-    volume_wall=wall[wall<domain.volume_nodes]
-    mesh_velocity[volume_wall,2]=np.maximum(domain.reference_points[volume_wall,2]+1,0)*\
-        column_rate[domain.column_index[volume_wall]]
     return height_rate,potential_rate,mesh_velocity
 
 
@@ -195,29 +207,31 @@ def rhs(domain,state,derivative_step=1e-4,*,diagnostics=None,damping=None):
     return result
 
 
-def initial_state(domain,perturbed=True):
+def initial_state(domain,perturbed=True,scale=1.):
+    if not np.isfinite(scale) or scale<=0:
+        raise ValueError('initial perturbation scale must be finite and positive')
     size=len(domain.free_nodes)
     position=domain.rest.position.copy()
     orientation=domain.rest.orientation.copy()
     velocity=np.zeros(6);eta=np.zeros(size);psi=np.zeros(size)
     if perturbed:
-        position+=np.array([.0001,-.0001,.0002])
-        orientation=moved_orientation(orientation,np.array([.001,-.0007,.0004]),1.)
-        velocity=np.array([.001,-.001,.002,.002,-.001,.001])
+        position+=scale*np.array([.0001,-.0001,.0002])
+        orientation=moved_orientation(orientation,scale*np.array([.001,-.0007,.0004]),1.)
+        velocity=scale*np.array([.001,-.001,.002,.002,-.001,.001])
         x,y=domain.reference_points[domain.free_nodes,:2].T
-        eta=.0001*np.cos(.5*x)*np.cos(y)
-        psi=.0001*np.cos(.5*x)
+        eta=scale*.0001*np.cos(.5*x)*np.cos(y)
+        psi=scale*.0001*np.cos(.5*x)
     return np.r_[position,orientation,velocity,eta,psi]
 
 
 def run(n=12,duration=.02,rtol=1e-4,gpu=True,derivative_step=1e-4,max_step=.005,
-        material_subdivisions=2,exterior_scale=1.):
+        wet_subdivisions=2,exterior_scale=1.,initial_scale=1.):
     from time import perf_counter
     from scipy.integrate import RK23
     if not np.isfinite(duration) or duration<=0 or not 0<rtol<1 or derivative_step<=0 or max_step<=0:
         raise ValueError('positive duration/derivative step and 0 < rtol < 1 required')
-    domain=make_domain(n,gpu,material_subdivisions,exterior_scale)
-    state=initial_state(domain)
+    domain=make_domain(n,gpu,wet_subdivisions,exterior_scale)
+    state=initial_state(domain,scale=initial_scale)
     calls=0;start=perf_counter();last={}
     def evaluate(time,value):
         nonlocal calls
@@ -239,7 +253,9 @@ def run(n=12,duration=.02,rtol=1e-4,gpu=True,derivative_step=1e-4,max_step=.005,
     diagnostics={};rhs(domain,states[-1],derivative_step,diagnostics=diagnostics)
     report=dict(qualified=False,case='nonlinear six-DOF canoe with moving contact',
         simulated_seconds=solver.t,n=n,gpu=gpu,rtol=rtol,derivative_step=derivative_step,max_step=max_step,
-        material_subdivisions=material_subdivisions,exterior_scale=exterior_scale,
+        initial_scale=initial_scale,
+        wet_subdivisions=wet_subdivisions,exterior_scale=exterior_scale,
+        contact_mesh='physical-facet ALE; wet triangles subdivided after clipping',
         accepted_steps=len(times)-1,rhs_evaluations=calls,
         maximum_position_change=np.max(np.abs(states[:,:3]-states[0,:3]),axis=0).tolist(),
         maximum_velocity_change=np.max(np.abs(states[:,7:13]-states[0,7:13]),axis=0).tolist(),
@@ -265,16 +281,17 @@ if __name__=='__main__':
     parser.add_argument('--rtol',type=float,default=1e-4)
     parser.add_argument('--derivative-step',type=float,default=1e-4)
     parser.add_argument('--max-step',type=float,default=.005)
-    parser.add_argument('--material-subdivisions',type=int,default=2)
+    parser.add_argument('--wet-subdivisions',type=int,default=2)
     parser.add_argument('--exterior-scale',type=float,default=1.)
+    parser.add_argument('--initial-scale',type=float,default=1.)
     parser.add_argument('--cpu',action='store_true')
     args=parser.parse_args()
     with threadpool_limits(1):
         report,states=run(args.n,args.duration,args.rtol,not args.cpu,args.derivative_step,args.max_step,
-            args.material_subdivisions,args.exterior_scale)
+            args.wet_subdivisions,args.exterior_scale,args.initial_scale)
     path=Path('artifacts');path.mkdir(exist_ok=True)
-    suffix=(f'n{args.n}-material{args.material_subdivisions}-exterior{args.exterior_scale:g}'
-        f'-duration{args.duration:g}-rtol{args.rtol:g}-step{args.max_step:g}')
+    suffix=(f'n{args.n}-wet{args.wet_subdivisions}-exterior{args.exterior_scale:g}'
+        f'-initial{args.initial_scale:g}-duration{args.duration:g}-rtol{args.rtol:g}-step{args.max_step:g}')
     np.savez(path/f'nonlinear-canoe-{suffix}.npz',**states)
     (path/f'nonlinear-canoe-{suffix}.json').write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps(report),flush=True)

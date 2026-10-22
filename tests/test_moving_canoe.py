@@ -24,7 +24,7 @@ def test_coupled_canoe_retains_independent_hydrostatic_equilibrium(domain):
 
 
 def test_nonlinear_six_dof_pressure_derivative_is_step_resolved(domain):
-    state=initial_state(domain)
+    state=initial_state(domain,scale=10.)
     with threadpool_limits(1):
         coarse=rhs(domain,state,2e-4)
         fine=rhs(domain,state,1e-4)

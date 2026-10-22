@@ -62,14 +62,18 @@ uv run --locked --group correlation --with "cupy-cuda12x[ctk]==14.2.0" python -m
 
 The coupled experiment advances all six body velocities, world position and
 quaternion, free-surface heights and potentials. Hull/free-surface contact nodes
-slide on material edges with exact shared coordinates. ALE graph kinematics
+slide on original physical edges and facets with exact shared coordinates.
+Triangles are subdivided after clipping; interior wet nodes redistribute within
+their physical facets as the waterline moves. Fine waterline heights remain
+independent. Sparse geometry Jacobians carry this coupled motion through the
+surface and pressure calculations. ALE graph kinematics
 and Bernoulli transport use the current surface geometry. Every stage rebuilds
 the current BEM/FEM operator, integrates total nonlinear pressure, and solves
 body acceleration with the current six acceleration-potential columns. Two
 offset field solves differentiate the known moving-node potential; no frozen
 added-mass or hydrostatic force is added to the pressure calculation.
 
-A one-second GPU trajectory with nonflat initial water, nonzero potential and
+On the earlier material-edge chart (`7be7048`), a one-second GPU trajectory with nonflat initial water, nonzero potential and
 all six initial body velocities completes on the n=12 mesh. Independent tests
 check moving-edge contact, exact uniform flow on tilted water, clipped
 hydrostatics, pressure transport and world/body mechanics. The complete stage
@@ -78,7 +82,7 @@ directional derivative step changes acceleration by less than 2e-11 relative.
 Accepted states, water volume and mechanical energy are saved by the runner.
 
 This remains an unfinished validation baseline. Contact topology is fixed;
-reaching a material vertex raises rather than silently changing or clamping the
+reaching an original physical vertex or folding a mesh triangle raises rather than silently changing or clamping the
 waterline. The tank is finite and reflecting. Remeshing, physical failure-event
 coverage, outgoing waves, space/time/energy convergence and finite-frequency
 Capytaine comparisons remain required. The same-hull instantaneous Capytaine
@@ -86,11 +90,15 @@ comparison has up to 5.94% diagonal error on n=12; finite-domain and spatial
 effects are not separated. Component and short-run timings do not qualify
 complete nonlinear performance. Optimization is deferred until validation.
 
-At n=24 with material subdivision 3, the same-hull instantaneous comparison
+On that earlier chart, at n=24 with material subdivision 3, the same-hull instantaneous comparison
 reaches a maximum diagonal difference of 1.35%. Both numerical representations
 are refined; this does not isolate either solver's error. The refined nonlinear
-moving case also completes. Use `--n 24 --material-subdivisions 3` in both
-commands to reproduce those checks.
+moving case also completes. Those numerical results have not been transferred
+to the new chart. Current commands use `--wet-subdivisions` for refinement after
+clipping, and output names use `wet` to distinguish the layouts. Independent
+geometry tests at subdivisions 2 and 3 cover ±1 cm heave and ±1° roll/pitch,
+matching clipped area and volume while retaining positive triangle areas.
+This establishes those finite poses, not arbitrary motion or remeshing.
 
 The radiation runner uses this same nonlinear geometry and pressure path while
 prescribing one body motion for validation:

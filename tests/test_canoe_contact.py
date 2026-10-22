@@ -84,7 +84,7 @@ def test_moved_canoe_nonflat_surface_and_analytic_ale_derivatives(canoe):
     np.testing.assert_array_equal(geometry.body_jacobian[contact.free_nodes, 2], 0.)
     # Wet-node redistribution is actual ALE motion in the physical facet.
     twist = np.array([.2, -.1, .3, .1, -.2, .3])
-    velocity = geometry.velocity(contact.free_nodes, eta_rate, twist)
+    velocity = geometry.velocity(eta_rate, twist)
     nodes = contact.faces[contact.body_faces]
     parent = world[contact.physical_faces[contact.body_source_faces]]
     normal = np.cross(parent[:, 1]-parent[:, 0], parent[:, 2]-parent[:, 0])

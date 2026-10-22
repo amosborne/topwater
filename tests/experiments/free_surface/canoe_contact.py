@@ -38,7 +38,7 @@ class ContactGeometry:
     height_jacobians: tuple[csr_matrix, csr_matrix, csr_matrix]
     body_jacobian: np.ndarray
 
-    def velocity(self, free_nodes, eta_rate, twist):
+    def velocity(self, eta_rate, twist):
         """Nodal ALE velocity, excluding separately owned exterior wall motion."""
         rate = np.einsum('nij,j->ni', self.body_jacobian, twist)
         return rate+np.column_stack([matrix@eta_rate for matrix in self.height_jacobians])
