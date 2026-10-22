@@ -46,8 +46,11 @@ def test_interface_restriction_matches_the_whole_triangle():
 @pytest.fixture(scope='module')
 def physical_refinement():
     with threadpool_limits(1):
-        return {(n, coupled): solve_case(n, coupled)
-                for n in (6, 12) for coupled in (False, True)}
+        reports = {(n, coupled): solve_case(n, coupled)
+                   for n in (6, 12) for coupled in (False, True)}
+        reports.update({(n, 'control'): solve_case(n, False, interface_control=True)
+                        for n in (6, 12)})
+        return reports
 
 
 def test_physical_harmonic_field_refines_without_claiming_qualification(physical_refinement):
@@ -65,3 +68,21 @@ def test_physical_harmonic_field_refines_without_claiming_qualification(physical
     assert fine_mixed['shared_interface_potential_max_abs'] < 1e-12
     assert fine_mixed['relative_shared_weak_flux_residual'] < 1e-11
     assert physical_refinement[12, False]['whole_free_surface_flux_relative_rms'] < .001
+
+
+def test_restricted_full_p4_control_keeps_the_same_interface_space(physical_refinement):
+    coarse, fine = (physical_refinement[n, 'control'] for n in (6, 12))
+    for n in (6, 12):
+        control = physical_refinement[n, 'control']
+        mixed = physical_refinement[n, True]
+        assert control['local_bem_faces'] == 0
+        assert control['tetrahedra'] > mixed['tetrahedra']
+        assert control['eliminated_interface_trace_dofs'] == mixed['eliminated_interface_trace_dofs']
+        assert control['shared_interface_potential_max_abs'] < 1e-12
+        assert control['relative_interface_equation_residual'] < 1e-11
+        assert control['qualified'] is False
+        assert 'does not isolate BEM energy error alone' in control['interface_control_scope']
+    for name in ('boundary_potential_relative_rms',
+                 'whole_free_surface_flux_relative_rms',
+                 'projected_weak_free_surface_flux_relative_error', 'energy_relative_error'):
+        assert fine[name] < .5*coarse[name]

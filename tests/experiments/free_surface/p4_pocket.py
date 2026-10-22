@@ -47,7 +47,9 @@ def boundary_terms(points, faces, nodes, values, weights, samples):
         areas=panels.areas, normal_flux=normal_flux, top=top)
 
 
-def solve_case(n, coupled, *, quadrature_order=12):
+def solve_case(n, coupled, *, interface_control=False, quadrature_order=12):
+    if coupled and interface_control:
+        raise ValueError('the interface control uses FEM on both sides, not BEM')
     points, tets, near, _ = grid(n, 0., 0)
     selected = tets[~near] if coupled else tets
     mesh = p4_tetra.make_mesh(points, selected)
@@ -55,20 +57,23 @@ def solve_case(n, coupled, *, quadrature_order=12):
     fem_faces = boundary(points, selected)
     local_nodes = local_faces = local_energy = interface = None
     local_load = np.zeros(len(mesh.points))
-    if coupled:
+    if coupled or interface_control:
         near_faces = boundary(points, tets[near])
-        interface_mask = shared_faces(near_faces, fem_faces)
+        exterior_faces = fem_faces if coupled else boundary(points, tets[~near])
+        interface_mask = shared_faces(near_faces, exterior_faces)
         interface = near_faces[interface_mask]
+        restriction, retained = p4_tetra.restrict_trace(mesh, interface)
+    if coupled:
         local_nodes, inverse = np.unique(near_faces, return_inverse=True)
         local_faces = inverse.reshape(-1, 3)
         local_energy, bem_diagnostics = assemble_energy(
             local_faces, TrianglePanels(points[local_nodes][local_faces], 1), 3)
-        restriction, retained = p4_tetra.restrict_trace(mesh, interface)
         physical_fem = fem_faces[~shared_faces(fem_faces, interface)]
         physical_local = near_faces[~interface_mask]
     else:
-        restriction = eye(len(mesh.points), format='csr')
-        retained = np.arange(len(mesh.points))
+        if not interface_control:
+            restriction = eye(len(mesh.points), format='csr')
+            retained = np.arange(len(mesh.points))
         physical_fem = fem_faces
         bem_diagnostics = None
 
@@ -131,8 +136,8 @@ def solve_case(n, coupled, *, quadrature_order=12):
     # |grad exp(kz)cos(kx*x+ky*y+phase)|² = k² exp(2kz).
     exact_energy = 8*np.pi**2*.7/2*(1-np.exp(-8*.7))
     computed_energy = float(potential@(energy@potential))
-    trace_error = balance_error = None
-    if coupled:
+    trace_error = balance_error = interface_residual = None
+    if coupled or interface_control:
         interface_nodes = p4_tetra.face_nodes(mesh, interface)
         coarse_values = np.einsum('qa,fa->fq', barycentric, full_potential[interface])
         fine_values = np.einsum('qa,fa->fq', p4_values, full_potential[interface_nodes])
@@ -141,11 +146,15 @@ def solve_case(n, coupled, *, quadrature_order=12):
         # balance the unknown interface rows, including known bottom Neumann data.
         interface_vertices = np.unique(interface)
         interface_unknown = np.intersect1d(unknown, interface_vertices)
+        interface_residual = float(np.linalg.norm(residual[interface_unknown])/np.linalg.norm(right))
+    if coupled:
         local_balance = local_map.T@(local_energy@(local_map@potential)) - restriction.T@local_load
         fem_balance = energy_fem@potential-restriction.T@(outer_load-local_load)
         balance_error = float(np.linalg.norm((local_balance+fem_balance)[interface_unknown])
                               / np.linalg.norm(local_balance[interface_unknown]))
-    return dict(n=n, kind='P1-BEM/tetra-P4' if coupled else 'full tetra-P4',
+    kind = ('P1-BEM/tetra-P4' if coupled else
+            'P1-interface full tetra-P4' if interface_control else 'full tetra-P4')
+    return dict(n=n, kind=kind,
         qualified=False, potential_dofs=len(active), unknown_dofs=len(unknown),
         free_surface_dofs=len(free), tetrahedra=len(selected),
         local_bem_faces=0 if not coupled else len(local_faces),
@@ -158,9 +167,14 @@ def solve_case(n, coupled, *, quadrature_order=12):
         relative_unknown_residual=float(np.linalg.norm(residual[unknown])/np.linalg.norm(right)),
         shared_interface_potential_max_abs=trace_error,
         relative_shared_weak_flux_residual=balance_error,
+        relative_interface_equation_residual=interface_residual,
         quadrature_order=quadrature_order, bem_diagnostics=bem_diagnostics,
         scope='Static harmonic accuracy only; no canoe, nonlinear evolution, outgoing '
-              'waves, interface-scattering or performance qualification.')
+              'waves, interface-scattering or performance qualification.',
+        interface_control_scope=(
+            'Only the interface trace is P1; local physical free-surface/bottom traces '
+            'remain P4. Mixed-minus-control also changes those physical trace spaces, '
+            'so it does not isolate BEM energy error alone.' if interface_control else None))
 
 
 if __name__ == '__main__':
@@ -171,8 +185,8 @@ if __name__ == '__main__':
     cases = []
     with threadpool_limits(1):
         for n in args.n:
-            for coupled in (False, True):
-                case = solve_case(n, coupled)
+            for coupled, control in ((False, False), (False, True), (True, False)):
+                case = solve_case(n, coupled, interface_control=control)
                 cases.append(case)
                 print(json.dumps(case), flush=True)
     args.output.parent.mkdir(exist_ok=True, parents=True)
