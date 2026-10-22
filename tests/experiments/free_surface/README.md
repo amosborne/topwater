@@ -1626,3 +1626,24 @@ three fresh operators at that exact cached endpoint, separating policy error
 from different advanced states. It found -26.63 N heave and -11.87 Nm pitch
 errors. These results do not earn baseline adoption. Full evidence and measured
 producer archives: `docs/research/boat-past-operator.json`.
+
+`--past-from <audit> --refit-past` explicitly refits the saved raw past stencils
+with changed model code. Only driver/model helper changes are exempt from
+source checks; physical helpers, pilot, chart, states and all reconstructed
+sample geometries must match. This differs from unchanged model replay.
+
+The three-feature `past_curved` model fits observed longitudinal curvature
+while reconstructing current E0/E+/- to roundoff. It uses a full 2x3 constraint
+SVD and checks past observability after eliminating those constraints. h/2 is
+held out. `boat_moving --operator-reuse past-curved` uses the same guards and
+refresh cadence as `past-linear`, retaining only the selected coefficients.
+Default-h anchor consistency is restored; cache-history/temporal and physical
+qualification remain unresolved. The same-state .2 s endpoint heave/pitch
+errors improve to -3.53 N/+2.54 Nm with the same 18 assemblies.
+
+The one-second all-fresh control stops at .25 s because fixed material pressure
+samples become dry in an offset mesh. The derived trial is preserved in
+`tests/data/boat-state-250ms.json`. This must be fixed before longer cache
+timing. No dry potential is filled or extrapolated. Current evidence, including
+the failed control and the short pair with no elapsed improvement:
+`docs/research/boat-curved-operator.json`.

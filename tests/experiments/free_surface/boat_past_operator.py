@@ -1,8 +1,8 @@
 """Past-only two-direction linear operator for bounded offline/coupled probes.
 
-One coefficient preserves the CURRENT odd pressure chord. Only previous
-operators fit the transverse coefficient. A same-data ordinary LS fit is a
-negative control. Neither model promises a pressure-error bound.
+The linear model preserves the CURRENT odd pressure chord. The longitudinal
+quadratic matches both current offsets. Previous operators fit the remaining
+transverse response. No model promises a pressure-error bound.
 """
 import numpy as np
 
@@ -28,10 +28,57 @@ def coordinates(data, points):
     return alpha, diagnostics
 
 
-def predict(data, arrays, *, ordinary=False):
+def curved_features(alpha):
+    return np.concatenate((alpha, .5*alpha[..., :1]**2), axis=-1)
+
+
+def predict(data, arrays, *, ordinary=False, curved=False):
     alpha, diagnostics = coordinates(data, arrays['points'])
-    key = 'past_ordinary_coefficients' if ordinary else 'past_constrained_coefficients'
-    return data['past_energy']+np.einsum('i,ijk->jk', alpha, data[key]), diagnostics
+    key = 'past_curved_coefficients' if curved else ('past_ordinary_coefficients' if ordinary else 'past_constrained_coefficients')
+    features = curved_features(alpha) if curved else alpha
+    diagnostics['maximum_feature_magnitude'] = float(np.max(abs(features)))
+    return data['past_energy']+np.einsum('i,ijk->jk', features, data[key]), diagnostics
+
+
+def _fit_curvature(features, rhs, energy):
+    """Two exact current constraints, then one observable past coefficient."""
+    features = curved_features(features)
+    current = features[4:6]
+    u, singular, vh = np.linalg.svd(current, full_matrices=True)
+    condition = float(singular[0]/singular[-1])
+    if not np.isfinite(condition) or condition*np.finfo(float).eps > 1e-8:
+        raise ValueError('current curvature constraints exceed the conditioning budget')
+    particular = (vh[:2].T@((u.T@rhs[4:6].reshape(2, -1))/singular[:, None])).reshape(3, *energy.shape)
+    null = vh[2]
+    beta = features[:3]@null
+    beta_norm = float(np.linalg.norm(beta))
+    previous_norm = float(np.linalg.norm(features[:3], 2))
+    observability = beta_norm/max(previous_norm, 1e-30)
+    if (not np.isfinite(beta_norm)
+            or beta_norm <= 1e-12 or observability < np.finfo(float).eps/1e-8):
+        raise ValueError('past coefficient is unobservable after current constraints')
+    residual = rhs[:3]-np.einsum('ij,jkl->ikl', features[:3], particular)
+    coefficient = np.einsum('i,ijk->jk', beta, residual)/(beta@beta)
+    coefficients = particular+null[:, None, None]*coefficient
+    if not np.isfinite(coefficients).all():
+        raise ValueError('nonfinite constrained curvature coefficients')
+    increments = np.einsum('ij,jkl->ikl', current, coefficients)
+    errors = increments-rhs[4:6]
+    floor = 128*np.finfo(float).eps*np.linalg.norm(energy)
+    relative = [float(np.linalg.norm(e)/max(np.linalg.norm(r), floor)) for e, r in zip(errors, rhs[4:6])]
+    absolute = [float(np.linalg.norm(e)) for e in errors]
+    allowances = [float(1e-9*np.linalg.norm(r)+floor) for r in rhs[4:6]]
+    total = [float(np.linalg.norm(energy+estimate-(energy+exact))/max(np.linalg.norm(energy+exact), 1e-30))
+             for estimate, exact in zip(increments, rhs[4:6])]
+    if any(error > allowance for error, allowance in zip(absolute, allowances)) or max(total) > 1e-12:
+        raise ValueError('curved fit does not reconstruct the current stencil to roundoff')
+    description = dict(current_constraint_singular_values=singular.tolist(),
+        current_constraint_condition=condition, null_direction=null.tolist(),
+        past_null_feature_norm=beta_norm, past_null_relative_observability=observability,
+        current_increment_relative_errors=relative, current_total_operator_relative_errors=[0., *total],
+        current_increment_absolute_errors=absolute, current_increment_absolute_allowances=allowances,
+        coefficient_norm_over_anchor_norm=float(np.linalg.norm(coefficients)/max(np.linalg.norm(energy), 1e-30)))
+    return coefficients, description
 
 
 def direction_diagnostics(data, plus, minus):
@@ -47,7 +94,7 @@ def direction_diagnostics(data, plus, minus):
     return result
 
 
-def fit(samples, energies, *, ordinary=True):
+def fit(samples, energies, *, ordinary=True, curved=True):
     """Six records: previous base/plus/minus, then current base/plus/minus."""
     previous, _, _, base, plus, minus = samples
     for arrays in samples:
@@ -99,6 +146,12 @@ def fit(samples, energies, *, ordinary=True):
         transverse_normalization_factor=amplification, gram_condition=condition,
         sample_coordinates=features.tolist())
     fits = dict(constrained=constrained)
+    if curved:
+        coefficients, curvature = _fit_curvature(features, rhs, energies[3])
+        data['past_curved_coefficients'] = coefficients
+        fits['curved'] = coefficients
+        description['curvature'] = curvature
+        description['scope'] += ' Longitudinal quadratic additionally matches both current offset operators; h/2 remains independent.'
     if ordinary:
         coefficients, _, rank, singular = np.linalg.lstsq(features, rhs.reshape(6, -1), rcond=None)
         feature_condition = float(singular[0]/singular[-1])
@@ -108,10 +161,11 @@ def fit(samples, energies, *, ordinary=True):
         fits['ordinary'] = data['past_ordinary_coefficients']
         description.update(ordinary_feature_singular_values=singular.tolist(), ordinary_feature_condition=feature_condition)
     for label, coefficients in fits.items():
-        error = rhs-np.einsum('ij,jkl->ikl', features, coefficients)
+        matrix = curved_features(features) if label == 'curved' else features
+        error = rhs-np.einsum('ij,jkl->ikl', matrix, coefficients)
         description[label+'_sample_relative_errors'] = [float(np.linalg.norm(e)/max(np.linalg.norm(r), 1e-30))
                                                         for e, r in zip(error, rhs)]
-        chord_error = (features[4]-features[5])@coefficients.reshape(2, -1)-(energies[4]-energies[5]).ravel()
+        chord_error = (matrix[4]-matrix[5])@coefficients.reshape(len(coefficients), -1)-(energies[4]-energies[5]).ravel()
         description[label+'_current_odd_chord_relative_error'] = float(np.linalg.norm(chord_error)
             /max(np.linalg.norm(energies[4]-energies[5]), 1e-30))
     return data, description
@@ -119,9 +173,12 @@ def fit(samples, energies, *, ordinary=True):
 
 class PastLocalOperator:
     """Bounded coupled falsifier; geometric limits still do not certify forces."""
-    def __init__(self, previous, current, time, rhs_index):
+    def __init__(self, previous, current, time, rhs_index, *, curved=False):
         self.data, self.diagnostics = fit([*previous[0], *current[0]], [*previous[1], *current[1]],
-                                          ordinary=False)
+                                          ordinary=False, curved=curved)
+        self.curved = curved
+        if curved:
+            del self.data['past_constrained_coefficients']
         self.basis = {key: current[0][0][key].copy() for key in _BASIS}
         self.time, self.rhs_index = float(time), rhs_index
         self.diagnostics.update(anchor_time_seconds=self.time, anchor_rhs_index=rhs_index,
@@ -144,9 +201,11 @@ class PastLocalOperator:
             error = diagnostics[label+'_residual_rms_m']
             if not np.isfinite(error) or error > LIMITS['maximum_'+label+'_residual_rms_m']:
                 raise InvalidReuse(label+' geometry leaves the local directions')
-        energy = self.data['past_energy']+np.einsum('i,ijk->jk', alpha,
-                                                  self.data['past_constrained_coefficients'])
+        features = curved_features(alpha) if self.curved else alpha
+        key = 'past_curved_coefficients' if self.curved else 'past_constrained_coefficients'
+        energy = self.data['past_energy']+np.einsum('i,ijk->jk', features, self.data[key])
         diagnostics.update(age_seconds=age, anchor_rhs_index=self.rhs_index)
+        diagnostics['maximum_feature_magnitude'] = float(np.max(abs(features)))
         return energy, diagnostics
 
     def check_direction(self, plus, minus):

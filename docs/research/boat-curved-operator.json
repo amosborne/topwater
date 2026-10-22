@@ -1,0 +1,817 @@
+{
+  "qualified": false,
+  "decision": "Curvature earns anchor consistency and substantially better short-run pressure at unchanged assembly count; remain experimental. No elapsed speed improvement established in this pair. Longer validation is blocked by the baseline material-derivative sampling failure, not by this model.",
+  "scope": "Canonical24ft2500kgboat and observedSoCal sea. Three-feature [a1,a2,.5a1^2] local model constrained by CURRENT E0/E+/-; one nullspace coefficient fit to previous three records. Not a full Hessian or force certificate.",
+  "offline": [
+    {
+      "path": "artifacts\\boat-past-curved-150ms-guarded.json",
+      "sha256": "87822b0d8ffccd95b7638cc6327c526cc9a81d12690666802353ef18f261f3e5",
+      "arrays_sha256": "1c3fede435ca6ec3201b7118ed57e5b1e824905a6c392036ce5af6a5a6dc5bdf",
+      "producer_archive": "artifacts\\boat-past-curved-150ms-guarded-source",
+      "source_sha256": {
+        "boat_operator_prediction.py": "99e3870488823026776b77f72120e6120b98f8e20a2302d42e07ab778a2d4d36",
+        "boat_geometry_template.py": "1fe910f6833181bd62f66be74850e34c5aede7a8e5456d34851f187a2d7f2f1d",
+        "boat_world_field.py": "cb976a016f8bcb01751b1cc8ac118902229cfffebb38fbfac562cb3826ed776e",
+        "boat_world_boundary.py": "a0902fb0e44a0138c5d501d72a4b549ae56d543063cd1a7542ec060f973ef6ce",
+        "body_pressure.py": "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+        "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+        "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+        "cuda_operator.py": "497e47a88cf187d6979736cab8a4da9a3b4e5cc54209582bf85f004905e466eb",
+        "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+        "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20",
+        "boat_pressure_stencil.py": "222336097691cbc1fb1e6ca1828fab907fb31c6cdac8713f140ed0b6e6e35935",
+        "boat_past_operator.py": "b98d15cc8eede04d8478ae7fbd84824caa0b251a6af7627219dfb85ef2a46c8b",
+        "boat_operator_reuse.py": "72dad4861675c4fb8b270acf24af5ba686b2c903ef2716bb0ccba97f5cde5f95"
+      },
+      "target_time_seconds": 0.15,
+      "training": {
+        "complete": true,
+        "scope": "Past-only fixed model; current center and odd operator chord constrained, pressure need not match. No future geometry or operator informs fit. Longitudinal quadratic additionally matches both current offset operators; h/2 remains independent.",
+        "raw_current_chord_rms_m": 0.0003771664295354358,
+        "raw_transverse_rms_m": 0.002697694342132505,
+        "raw_transverse_to_past_displacement_ratio": 0.17474476737023725,
+        "transverse_normalization_factor": 0.13981066114305926,
+        "gram_condition": 1.0000000000000002,
+        "sample_coordinates": [
+          [
+            -40.301520691701214,
+            7.152530370890415
+          ],
+          [
+            -39.69004186485699,
+            6.867303063229363
+          ],
+          [
+            -40.912770926555176,
+            7.437649459957776
+          ],
+          [
+            0.0,
+            0.0
+          ],
+          [
+            1.0002654763354661,
+            -4.10564988931543e-05
+          ],
+          [
+            -0.9997345236645336,
+            -4.105649889318047e-05
+          ]
+        ],
+        "curvature": {
+          "current_constraint_singular_values": [
+            1.4142137617140478,
+            0.7071066340646925
+          ],
+          "current_constraint_condition": 2.0000006980342695,
+          "null_direction": [
+            -2.1799059125299864e-08,
+            0.9999999966287272,
+            8.211300329644967e-05
+          ],
+          "past_null_feature_norm": 12.510597894963189,
+          "past_null_relative_observability": 0.008878834860240839,
+          "current_increment_relative_errors": [
+            8.661529369317867e-16,
+            4.432949011540074e-16
+          ],
+          "current_total_operator_relative_errors": [
+            0.0,
+            4.7649595254392905e-21,
+            2.8690583416895797e-22
+          ],
+          "coefficient_norm_over_anchor_norm": 0.0004957792703921488
+        },
+        "ordinary_feature_singular_values": [
+          70.91461346013205,
+          0.3486942627091056
+        ],
+        "ordinary_feature_condition": 203.3718963689741,
+        "constrained_sample_relative_errors": [
+          0.0002045548320663617,
+          0.002246565719140035,
+          0.0021718544584412463,
+          0.0,
+          0.0036426955022723496,
+          0.00363067219012659
+        ],
+        "constrained_current_odd_chord_relative_error": 1.6330701821036232e-16,
+        "curved_sample_relative_errors": [
+          0.00021491004645797837,
+          0.0032153896347747652,
+          0.0030468279267248676,
+          0.0,
+          8.661529369317867e-16,
+          4.432949011540074e-16
+        ],
+        "curved_current_odd_chord_relative_error": 5.408995995119447e-16,
+        "ordinary_sample_relative_errors": [
+          0.00017689602009981866,
+          0.0010943162794950824,
+          0.001125209768252904,
+          0.0,
+          0.050601874683789815,
+          0.055465502441165035
+        ],
+        "ordinary_current_odd_chord_relative_error": 0.05297315917456735,
+        "new_training_assemblies": 0,
+        "new_anchor_check_assemblies": 0,
+        "reused_unchanged": false,
+        "refit_cached_stencils": true,
+        "source_path": "artifacts\\boat-past-linear-150ms.json",
+        "source_sha256": "5df1ec8679656464a34676a56830e7517c92c58fa8147fd4e35469532dfc2878",
+        "source_arrays_sha256": "723cde66bd4b4293d483e3571d3e5da66f3e5dc317d02170db7748aa3a24de1a",
+        "historical_records": 6,
+        "historical_training_assemblies": 6,
+        "additional_half_step_reference_assemblies": 2,
+        "pressure_direction": {
+          "coefficients": [
+            0.6951263721175743,
+            0.14613379437870086
+          ],
+          "body_out_of_subspace_fraction": 0.0297985815589407,
+          "free_out_of_subspace_fraction": 0.014213708766788069
+        },
+        "seconds_this_run": 1.0973511000047438
+      },
+      "models": [
+        {
+          "name": "past_constrained",
+          "fine_load_error": [
+            -3.7252759994698863,
+            0.848678458710765,
+            -16.105856883932574,
+            5.259854643229801,
+            -8.950007002797065,
+            7.055987190975429
+          ],
+          "h_pair_difference": [
+            -1.0001539976656204e-05,
+            0.00014260785235364892,
+            0.0005484241555677727,
+            -1.6087884091575688e-05,
+            -0.0008117543447951903,
+            -0.000667400013412589
+          ],
+          "geometry": {
+            "coefficients": [
+              59.77925504344474,
+              7.291789656790584
+            ],
+            "body_residual_rms_m": 0.00020548396296765124,
+            "free_residual_rms_m": 0.00017944384334474367,
+            "maximum_feature_magnitude": 59.77925504344474
+          }
+        },
+        {
+          "name": "past_curved",
+          "fine_load_error": [
+            -0.2278851800498387,
+            1.6740728098119462,
+            -6.019820717803668,
+            1.0568044951244246,
+            0.7733503711078811,
+            -0.23279998743964825
+          ],
+          "h_pair_difference": [
+            -0.00011216998632335162,
+            0.00016220635416175355,
+            0.000590883479162585,
+            -2.4424946332146646e-07,
+            -0.0006743677140548243,
+            -0.0004544762175555661
+          ],
+          "geometry": {
+            "coefficients": [
+              59.77925504344474,
+              7.291789656790584
+            ],
+            "body_residual_rms_m": 0.00020548396296765124,
+            "free_residual_rms_m": 0.00017944384334474367,
+            "maximum_feature_magnitude": 1786.7796667746068
+          }
+        }
+      ],
+      "anchor_load_error": {
+        "0.001": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "0.0005": [
+          1.4748832654731814e-05,
+          -1.8864108596972073e-05,
+          1.3551358279073611e-05,
+          -2.138132595064235e-05,
+          2.7236089408688713e-05,
+          -5.025711016060086e-05
+        ]
+      }
+    },
+    {
+      "path": "artifacts\\boat-past-curved-200ms-guarded.json",
+      "sha256": "ff17ef9a77aee37f5e2a7a3879fd7baedcced0d0322ca3fc5b557a1e412a48aa",
+      "arrays_sha256": "594277e4ef32e03167ae81a55db8f84a8bc0dd4618419ed555c12c52405ec5be",
+      "producer_archive": "artifacts\\boat-past-curved-200ms-guarded-source",
+      "source_sha256": {
+        "boat_operator_prediction.py": "99e3870488823026776b77f72120e6120b98f8e20a2302d42e07ab778a2d4d36",
+        "boat_geometry_template.py": "1fe910f6833181bd62f66be74850e34c5aede7a8e5456d34851f187a2d7f2f1d",
+        "boat_world_field.py": "cb976a016f8bcb01751b1cc8ac118902229cfffebb38fbfac562cb3826ed776e",
+        "boat_world_boundary.py": "a0902fb0e44a0138c5d501d72a4b549ae56d543063cd1a7542ec060f973ef6ce",
+        "body_pressure.py": "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+        "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+        "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+        "cuda_operator.py": "497e47a88cf187d6979736cab8a4da9a3b4e5cc54209582bf85f004905e466eb",
+        "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+        "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20",
+        "boat_pressure_stencil.py": "222336097691cbc1fb1e6ca1828fab907fb31c6cdac8713f140ed0b6e6e35935",
+        "boat_past_operator.py": "b98d15cc8eede04d8478ae7fbd84824caa0b251a6af7627219dfb85ef2a46c8b",
+        "boat_operator_reuse.py": "72dad4861675c4fb8b270acf24af5ba686b2c903ef2716bb0ccba97f5cde5f95"
+      },
+      "target_time_seconds": 0.2,
+      "training": {
+        "complete": true,
+        "scope": "Past-only fixed model; current center and odd operator chord constrained, pressure need not match. No future geometry or operator informs fit. Longitudinal quadratic additionally matches both current offset operators; h/2 remains independent.",
+        "raw_current_chord_rms_m": 0.0003771664295354358,
+        "raw_transverse_rms_m": 0.002697694342132505,
+        "raw_transverse_to_past_displacement_ratio": 0.17474476737023725,
+        "transverse_normalization_factor": 0.13981066114305926,
+        "gram_condition": 1.0000000000000002,
+        "sample_coordinates": [
+          [
+            -40.301520691701214,
+            7.152530370890415
+          ],
+          [
+            -39.69004186485699,
+            6.867303063229363
+          ],
+          [
+            -40.912770926555176,
+            7.437649459957776
+          ],
+          [
+            0.0,
+            0.0
+          ],
+          [
+            1.0002654763354661,
+            -4.10564988931543e-05
+          ],
+          [
+            -0.9997345236645336,
+            -4.105649889318047e-05
+          ]
+        ],
+        "curvature": {
+          "current_constraint_singular_values": [
+            1.4142137617140478,
+            0.7071066340646925
+          ],
+          "current_constraint_condition": 2.0000006980342695,
+          "null_direction": [
+            -2.1799059125299864e-08,
+            0.9999999966287272,
+            8.211300329644967e-05
+          ],
+          "past_null_feature_norm": 12.510597894963189,
+          "past_null_relative_observability": 0.008878834860240839,
+          "current_increment_relative_errors": [
+            8.661529369317867e-16,
+            4.432949011540074e-16
+          ],
+          "current_total_operator_relative_errors": [
+            0.0,
+            4.7649595254392905e-21,
+            2.8690583416895797e-22
+          ],
+          "coefficient_norm_over_anchor_norm": 0.0004957792703921488
+        },
+        "ordinary_feature_singular_values": [
+          70.91461346013205,
+          0.3486942627091056
+        ],
+        "ordinary_feature_condition": 203.3718963689741,
+        "constrained_sample_relative_errors": [
+          0.0002045548320663617,
+          0.002246565719140035,
+          0.0021718544584412463,
+          0.0,
+          0.0036426955022723496,
+          0.00363067219012659
+        ],
+        "constrained_current_odd_chord_relative_error": 1.6330701821036232e-16,
+        "curved_sample_relative_errors": [
+          0.00021491004645797837,
+          0.0032153896347747652,
+          0.0030468279267248676,
+          0.0,
+          8.661529369317867e-16,
+          4.432949011540074e-16
+        ],
+        "curved_current_odd_chord_relative_error": 5.408995995119447e-16,
+        "ordinary_sample_relative_errors": [
+          0.00017689602009981866,
+          0.0010943162794950824,
+          0.001125209768252904,
+          0.0,
+          0.050601874683789815,
+          0.055465502441165035
+        ],
+        "ordinary_current_odd_chord_relative_error": 0.05297315917456735,
+        "new_training_assemblies": 0,
+        "new_anchor_check_assemblies": 0,
+        "reused_unchanged": true,
+        "refit_cached_stencils": true,
+        "source_path": "artifacts\\boat-past-curved-150ms-guarded.json",
+        "source_sha256": "87822b0d8ffccd95b7638cc6327c526cc9a81d12690666802353ef18f261f3e5",
+        "source_arrays_sha256": "1c3fede435ca6ec3201b7118ed57e5b1e824905a6c392036ce5af6a5a6dc5bdf",
+        "historical_records": 6,
+        "historical_training_assemblies": 6,
+        "additional_half_step_reference_assemblies": 2,
+        "pressure_direction": {
+          "coefficients": [
+            0.8908310462117459,
+            0.2946186712252835
+          ],
+          "body_out_of_subspace_fraction": 0.09373245579263023,
+          "free_out_of_subspace_fraction": 0.04007083942912666
+        },
+        "seconds_this_run": 0.903511200012872
+      },
+      "models": [
+        {
+          "name": "past_constrained",
+          "fine_load_error": [
+            -16.244225267573256,
+            6.0247794093281755,
+            -87.7304503414889,
+            16.753692317246077,
+            -38.67805390850299,
+            35.0692386450246
+          ],
+          "h_pair_difference": [
+            0.0012823468620126732,
+            -0.0011851709368784213,
+            0.0013840291394444648,
+            -9.453421398575301e-05,
+            0.0017370911182297277,
+            -0.007897250897030972
+          ],
+          "geometry": {
+            "coefficients": [
+              139.10229328250404,
+              29.336548600284814
+            ],
+            "body_residual_rms_m": 0.0014848317368272733,
+            "free_residual_rms_m": 0.0012083603489228948,
+            "maximum_feature_magnitude": 139.10229328250404
+          }
+        },
+        {
+          "name": "past_curved",
+          "fine_load_error": [
+            -2.982259161354932,
+            9.76559824059791,
+            -39.20891565688726,
+            4.033840695397544,
+            3.1659415515832734,
+            10.417241803736374
+          ],
+          "h_pair_difference": [
+            0.001166696756172314,
+            -0.0010786560741280482,
+            0.0011555605597095564,
+            -0.00010012373934387142,
+            0.0021979064640618162,
+            -0.007566105726141359
+          ],
+          "geometry": {
+            "coefficients": [
+              139.10229328250404,
+              29.336548600284814
+            ],
+            "body_residual_rms_m": 0.0014848317368272733,
+            "free_residual_rms_m": 0.0012083603489228948,
+            "maximum_feature_magnitude": 9674.723998225883
+          }
+        }
+      ],
+      "anchor_load_error": {
+        "0.001": [
+          5.115907697472721e-12,
+          1.0231815394945443e-12,
+          0.0,
+          1.7053025658242404e-12,
+          -3.637978807091713e-12,
+          1.8189894035458565e-12
+        ],
+        "0.0005": [
+          1.4748837770639511e-05,
+          -1.8864109961214126e-05,
+          1.3551354641094804e-05,
+          -2.1381325495895e-05,
+          2.7236089408688713e-05,
+          -5.025710868267197e-05
+        ]
+      }
+    }
+  ],
+  "coupled": [
+    {
+      "path": "artifacts\\boat-curved-fresh-200ms-q6.json",
+      "sha256": "b4b9c9a3d29cd5a082154019695a3c8b4424c897b77b32671c1b42c6ebffab09",
+      "arrays_sha256": "b788d58c813834109fc05a2c0bc0765720271380bca8a14ce55688ae5640015d",
+      "producer_archive": "artifacts\\boat-curved-fresh-200ms-q6-source",
+      "source_sha256": {
+        "boat_moving.py": "46c4fc8a35e74cfe5611e1d708dc2fe5f828c012069ba34b624884145e3261f6",
+        "boat_geometry_template.py": "1fe910f6833181bd62f66be74850e34c5aede7a8e5456d34851f187a2d7f2f1d",
+        "boat_world_boundary.py": "a0902fb0e44a0138c5d501d72a4b549ae56d543063cd1a7542ec060f973ef6ce",
+        "boat_parent_clip_proof.py": "b7e6d48d914fda1e11e0fe1c8d87cfebed5e5d8ccaa4585ee5266f46c1acd424",
+        "boat_world_field.py": "cb976a016f8bcb01751b1cc8ac118902229cfffebb38fbfac562cb3826ed776e",
+        "body_pressure.py": "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+        "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+        "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+        "cuda_operator.py": "497e47a88cf187d6979736cab8a4da9a3b4e5cc54209582bf85f004905e466eb",
+        "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+        "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20",
+        "boat_operator_reuse.py": "72dad4861675c4fb8b270acf24af5ba686b2c903ef2716bb0ccba97f5cde5f95",
+        "boat_past_operator.py": "9a753e81141ea6b43af1146f21cc8023aad8fae92b30ddfa9f8ac822f3c48f5f"
+      },
+      "seconds": 24.123577999998815,
+      "operator_counts": {
+        "fresh_rhs": 13,
+        "reused_rhs": 0,
+        "fresh_assemblies": 39,
+        "predicted_fields": 0,
+        "failed_reuse_attempts": 0
+      },
+      "operator_policy": {
+        "enabled": false,
+        "kind": null,
+        "quadrature_order": 6,
+        "limits": null,
+        "scope": "Past-only local model; atomic whole-RHS fallback. Geometry limits are heuristics, not force-error bounds. Stage history can affect refresh decisions."
+      },
+      "controls": {
+        "max_rhs": 40,
+        "soft_elapsed_budget_seconds": 120.0,
+        "derivative_step_seconds": 0.001,
+        "rtol": 0.001,
+        "first_step_seconds": 0.05,
+        "max_step_seconds": 0.05,
+        "topology_templates_retained": 4,
+        "absolute_tolerance_by_component": [
+          0.001,
+          0.001,
+          0.001,
+          0.0001,
+          0.0001,
+          0.0001,
+          0.0001,
+          0.001,
+          0.001,
+          0.001,
+          0.0001,
+          0.0001,
+          0.0001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01
+        ]
+      },
+      "accepted_steps": 4,
+      "rhs_count": 13,
+      "process_peak_rss_bytes": 581763072,
+      "reserved_gpu_pool_bytes": 68212736,
+      "gpu_context_seconds": 1.7579592000111006,
+      "first_rhs_seconds": 7.874784000014188,
+      "energy_seconds": 10.476616299914895,
+      "training_seconds": 0,
+      "valid_refresh_audits": []
+    },
+    {
+      "path": "artifacts\\boat-curved-cached-200ms-q6.json",
+      "sha256": "d37918359c676314f64243ea5c2cc528c9e6741ad6cb24841c248a5f9d5b093b",
+      "arrays_sha256": "872f625ff5e76acfc44f44d03b39c6dd46a9a418db6277e0995832a5cd6ae80f",
+      "producer_archive": "artifacts\\boat-curved-cached-200ms-q6-source",
+      "source_sha256": {
+        "boat_moving.py": "46c4fc8a35e74cfe5611e1d708dc2fe5f828c012069ba34b624884145e3261f6",
+        "boat_geometry_template.py": "1fe910f6833181bd62f66be74850e34c5aede7a8e5456d34851f187a2d7f2f1d",
+        "boat_world_boundary.py": "a0902fb0e44a0138c5d501d72a4b549ae56d543063cd1a7542ec060f973ef6ce",
+        "boat_parent_clip_proof.py": "b7e6d48d914fda1e11e0fe1c8d87cfebed5e5d8ccaa4585ee5266f46c1acd424",
+        "boat_world_field.py": "cb976a016f8bcb01751b1cc8ac118902229cfffebb38fbfac562cb3826ed776e",
+        "body_pressure.py": "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+        "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+        "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+        "cuda_operator.py": "497e47a88cf187d6979736cab8a4da9a3b4e5cc54209582bf85f004905e466eb",
+        "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+        "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20",
+        "boat_operator_reuse.py": "72dad4861675c4fb8b270acf24af5ba686b2c903ef2716bb0ccba97f5cde5f95",
+        "boat_past_operator.py": "9a753e81141ea6b43af1146f21cc8023aad8fae92b30ddfa9f8ac822f3c48f5f"
+      },
+      "seconds": 24.2082439000078,
+      "operator_counts": {
+        "fresh_rhs": 6,
+        "reused_rhs": 7,
+        "fresh_assemblies": 18,
+        "predicted_fields": 25,
+        "failed_reuse_attempts": 2
+      },
+      "operator_policy": {
+        "enabled": true,
+        "kind": "past-curved",
+        "quadrature_order": 6,
+        "limits": {
+          "maximum_age_seconds": 0.051,
+          "maximum_normalized_coordinate": 80.0,
+          "maximum_body_residual_rms_m": 0.00025,
+          "maximum_free_residual_rms_m": 0.00025,
+          "maximum_direction_residual_fraction": 0.05,
+          "refresh_age_seconds": 0.04
+        },
+        "scope": "Past-only local model; atomic whole-RHS fallback. Geometry limits are heuristics, not force-error bounds. Stage history can affect refresh decisions."
+      },
+      "controls": {
+        "max_rhs": 40,
+        "soft_elapsed_budget_seconds": 120.0,
+        "derivative_step_seconds": 0.001,
+        "rtol": 0.001,
+        "first_step_seconds": 0.05,
+        "max_step_seconds": 0.05,
+        "topology_templates_retained": 4,
+        "absolute_tolerance_by_component": [
+          0.001,
+          0.001,
+          0.001,
+          0.0001,
+          0.0001,
+          0.0001,
+          0.0001,
+          0.001,
+          0.001,
+          0.001,
+          0.0001,
+          0.0001,
+          0.0001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01
+        ]
+      },
+      "accepted_steps": 4,
+      "rhs_count": 13,
+      "process_peak_rss_bytes": 698900480,
+      "reserved_gpu_pool_bytes": 68212736,
+      "gpu_context_seconds": 1.867795500002103,
+      "first_rhs_seconds": 11.140445800003363,
+      "energy_seconds": 10.004111900052521,
+      "training_seconds": 0.5063280000176746,
+      "valid_refresh_audits": [
+        {
+          "time": 0.1375,
+          "available": true,
+          "anchor_rhs_index": 6,
+          "hydrodynamic_load_error_world": [
+            -0.24776878814736847,
+            1.4387149281263873,
+            -5.40550015350891,
+            1.1375162045870866,
+            0.012316601468228328,
+            -0.4346794096513804
+          ],
+          "acceleration_error_world": [
+            -9.910751525895548e-05,
+            0.0005754859712505805,
+            -0.0021622000614058834,
+            0.0008371497687324481,
+            3.5594190334053977e-06,
+            -3.375979254573169e-05
+          ],
+          "parent_height_rate_error_m_per_s": [
+            9.678957284667278e-06,
+            1.360759361881958e-05,
+            -2.1501907933874076e-05,
+            -3.921809494902839e-05,
+            -3.2897996466108026e-05,
+            8.44117505341413e-06,
+            2.083210103392963e-05,
+            0.00012201258667210446,
+            -3.7463065394038875e-06,
+            -5.890741871217124e-05,
+            4.7530173386295393e-05,
+            -1.6506575774233312e-05,
+            0.00010608647365006885,
+            -2.4323233401846167e-05,
+            -5.872197852814509e-05
+          ],
+          "parent_potential_rate_error_m2_per_s2": [
+            -1.0860323783834502e-05,
+            -6.888922336356629e-06,
+            1.1031425611651713e-05,
+            5.847403528491668e-06,
+            2.7639899218501185e-05,
+            -9.457304811277822e-06,
+            1.9941188640792973e-05,
+            -7.530961257851132e-05,
+            1.2691154569033358e-05,
+            1.3922951890954494e-05,
+            -0.00013886600168344643,
+            3.413715118849581e-05,
+            0.00011141780902734766,
+            -1.1918175676584042e-05,
+            6.15018361413977e-05
+          ]
+        }
+      ]
+    }
+  ],
+  "comparison": {
+    "maximum_position_component_error_m": 2.4545229462547002e-06,
+    "maximum_orientation_error_rad": 1.0662815690318845e-06,
+    "maximum_velocity_component_error_m_per_s": 3.161826802949852e-05,
+    "maximum_angular_velocity_component_error_rad_per_s": 8.901089086181535e-06,
+    "maximum_surface_height_error_m": 3.7655515583712162e-06,
+    "maximum_surface_potential_error_m2_per_s": 3.832552427418534e-06,
+    "different_state_endpoint_load_error": [
+      -0.12866936538046048,
+      2.032088638590153,
+      -3.521468250786711,
+      -0.570688328998699,
+      2.599791067501428,
+      0.678318834708648
+    ]
+  },
+  "same_state_endpoint": {
+    "path": "artifacts\\boat-curved-endpoint-200ms-q6.json",
+    "sha256": "dc5900686224546a0f94d0a90333f0bd1700a26979347d53d9c37eb45da0d0ed",
+    "arrays_sha256": "a572c29f68ac02e1137d2294aab6769aa4c5b07a7aa40466056cae7b6714bd95",
+    "producer_archive": "artifacts\\boat-curved-endpoint-200ms-q6-source",
+    "source_sha256": {
+      "boat_endpoint_audit.py": "9737113621535e5d8500f36d65b412e4e618ef1e13fcce798fe950220aad6a11",
+      "boat_geometry_template.py": "1fe910f6833181bd62f66be74850e34c5aede7a8e5456d34851f187a2d7f2f1d",
+      "boat_world_boundary.py": "a0902fb0e44a0138c5d501d72a4b549ae56d543063cd1a7542ec060f973ef6ce",
+      "boat_world_field.py": "cb976a016f8bcb01751b1cc8ac118902229cfffebb38fbfac562cb3826ed776e",
+      "body_pressure.py": "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+      "boat_pressure_stencil.py": "222336097691cbc1fb1e6ca1828fab907fb31c6cdac8713f140ed0b6e6e35935",
+      "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+      "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+      "cuda_operator.py": "497e47a88cf187d6979736cab8a4da9a3b4e5cc54209582bf85f004905e466eb",
+      "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+      "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20"
+    },
+    "cached_minus_fresh_load_world": [
+      -0.1873672234848982,
+      2.0207624814873952,
+      -3.5274871126493963,
+      -0.5249911745816007,
+      2.5398741646522467,
+      0.7085518782653253
+    ],
+    "cached_minus_fresh_rate": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      -7.494688939385652e-05,
+      0.0008083049925949742,
+      -0.0014109948450609089,
+      -0.0003747173119159064,
+      0.0002606865041270001,
+      6.299809040935522e-05,
+      1.6117019806971555e-05,
+      2.677857994731747e-05,
+      -3.1971465766722496e-05,
+      1.1413113978536726e-05,
+      -5.988453275451722e-05,
+      2.8230526617628593e-05,
+      3.0192145024365846e-05,
+      -1.5169586586316619e-05,
+      3.77450847341837e-05,
+      -1.192991989223957e-07,
+      2.9078412026595224e-06,
+      1.5053218888505526e-05,
+      -8.253173211708598e-06,
+      -1.550236311465003e-05,
+      -3.4309448416952604e-05,
+      -1.3888523640925854e-05,
+      -1.2411431400405348e-05,
+      1.1931960316236001e-05,
+      -7.382269820777054e-06,
+      3.8574956380044156e-05,
+      -9.159286086912743e-06,
+      -1.3348195524454098e-05,
+      8.037043454756088e-06,
+      -4.8901676543700034e-06,
+      4.033895609989457e-06,
+      -1.3353007644045789e-05,
+      1.0126462746118392e-06,
+      -1.560586723003965e-05,
+      2.914563521638769e-06,
+      5.735256112027187e-06
+    ],
+    "fresh_assemblies": 3
+  },
+  "longer_fresh_failure": {
+    "path": "artifacts\\boat-curved-fresh-1s-q6.json",
+    "sha256": "7b8ff751376bf22dc4c2826400beb5119a1dd39a0a7b772f6417fbed7a38d073",
+    "arrays_sha256": "293e7e7bfca57e71be08bf518b53e49944e93b80ad2adc97d9ee2994bc65c4bd",
+    "producer_archive": "artifacts\\boat-curved-fresh-1s-q6-source",
+    "source_sha256": {
+      "boat_moving.py": "46c4fc8a35e74cfe5611e1d708dc2fe5f828c012069ba34b624884145e3261f6",
+      "boat_geometry_template.py": "1fe910f6833181bd62f66be74850e34c5aede7a8e5456d34851f187a2d7f2f1d",
+      "boat_world_boundary.py": "a0902fb0e44a0138c5d501d72a4b549ae56d543063cd1a7542ec060f973ef6ce",
+      "boat_parent_clip_proof.py": "b7e6d48d914fda1e11e0fe1c8d87cfebed5e5d8ccaa4585ee5266f46c1acd424",
+      "boat_world_field.py": "cb976a016f8bcb01751b1cc8ac118902229cfffebb38fbfac562cb3826ed776e",
+      "body_pressure.py": "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+      "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+      "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+      "cuda_operator.py": "497e47a88cf187d6979736cab8a4da9a3b4e5cc54209582bf85f004905e466eb",
+      "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+      "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20",
+      "boat_operator_reuse.py": "72dad4861675c4fb8b270acf24af5ba686b2c903ef2716bb0ccba97f5cde5f95",
+      "boat_past_operator.py": "9a753e81141ea6b43af1146f21cc8023aad8fae92b30ddfa9f8ac822f3c48f5f"
+    },
+    "requested_seconds": 1.0,
+    "accepted_seconds": 0.2,
+    "failed_rhs_time": 0.25,
+    "failure": {
+      "type": "ValueError",
+      "message": "material samples lack wet original-facet coverage: [1170, 1171, 1735, 1922, 1923]"
+    },
+    "seconds": 16.841735600028187
+  },
+  "verification": [
+    "Seven targeted CPU tests pass: actual independently assembled boat-domain Laplace dilation/translation operators, current-stencil reconstruction, near-invariant increments, ownership and parabolic-path curvature nonidentifiability.",
+    "Numerical conditioning uses the existing1e-8 roundoff budget; this is distinct from physical error limits.",
+    "Adversarial review approved full SVD/nullspace fit and required additive increment roundoff allowance; measured producer copies preserve their original bytes."
+  ],
+  "limitations": [
+    "The 100ms holdout is outside the retained geometry/direction guards.",
+    "Identical anchor matrices restore default-h anchor RHS consistency; the adaptive cache remains history-dependent and temporal order is not established.",
+    "Total0.2s elapsed was24.12s fresh/24.21s curved; first-assembly and per-assembly costs varied substantially. No sustained throughput claim.",
+    "The longer all-fresh control failed at.25s because fixed material samples became dry at?1ms offsets; no longer cached run was launched against an unavailable control.",
+    "Spatial pressure and finite exterior/ocean/Capytaine qualification remain incomplete."
+  ],
+  "next": "Validate nodal ALE differentiation on one persistent wet P1 chart: phi_dot along chart nodes and actual nodal mesh velocity, using existing Bernoulli subtraction. This avoids evaluating fixed authored-material points after they become dry. Require strict chart/node ownership, independent harmonic moving-mesh identities and actualboat h/h2 checks before a longer run."
+}

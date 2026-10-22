@@ -53,11 +53,13 @@ def _local_models(origin, energy, weight, directions, gram, derivatives, quadrat
 
 
 def run(pilot, output, operator_from=None, two_directions=False, target_time=.15, tangent_from=None,
-        mixed_curvature=False, past_directions=False, past_from=None):
+        mixed_curvature=False, past_directions=False, past_from=None, refit_past=False):
     if target_time not in (.15, .20):
         raise ValueError('bounded target time must be .15 or .20 s')
     if mixed_curvature and tangent_from is None:
         raise ValueError('mixed-curvature extension requires the saved four-sample local model')
+    if refit_past and past_from is None:
+        raise ValueError('explicit past refitting requires saved raw past stencils')
     past_enabled = past_directions or past_from is not None
     if past_enabled and (two_directions or tangent_from is not None or mixed_curvature):
         raise ValueError('past-only and geometry-informed models are separate experiments')
@@ -66,6 +68,9 @@ def run(pilot, output, operator_from=None, two_directions=False, target_time=.15
     recorded = json.loads(pilot.read_text())
     if not recorded.get('complete'):
         raise ValueError('requires a complete saved moving pilot')
+    fixture = Path(__file__).resolve().parents[2]/'reference_boat.py'
+    if sha256(fixture.read_bytes()).hexdigest() != recorded['fixture_sha256']:
+        raise ValueError('current boat fixture including mass/inertia differs from pilot')
     with np.load(pilot.with_suffix('.npz'), allow_pickle=False) as data:
         times, states = data['accepted_times'], data['accepted_states']
     selected = []
@@ -455,7 +460,7 @@ def run(pilot, output, operator_from=None, two_directions=False, target_time=.15
         if past_enabled:
             from .boat_past_operator import fit, predict, direction_diagnostics
             training_started = perf_counter()
-            past_data, past_source = None, None
+            past_data, past_source, past_provenance = None, None, {}
             if past_from is not None:
                 past_from = Path(past_from)
                 trained = json.loads(past_from.read_text())
@@ -463,7 +468,8 @@ def run(pilot, output, operator_from=None, two_directions=False, target_time=.15
                         or trained['input_sha256'] != report['input_sha256'] or trained['chart'] != report['chart']):
                     raise ValueError('past model requires a complete matching training audit/chart')
                 for name, expected in trained['source_sha256'].items():
-                    if name != Path(__file__).name and report['source_sha256'][name] != expected:
+                    exempt = name == Path(__file__).name or (refit_past and name == 'boat_past_operator.py')
+                    if not exempt and report['source_sha256'][name] != expected:
                         raise ValueError(f'past model helper changed: {name}')
                 with np.load(past_from.with_suffix('.npz'), allow_pickle=False) as data:
                     past_source = dict(data)
@@ -471,11 +477,13 @@ def run(pilot, output, operator_from=None, two_directions=False, target_time=.15
                         or any(not np.allclose(past_source[key], arrays['points'], rtol=0, atol=1e-12)
                             for key, arrays in zip(('anchor0_points', 'anchor1_points'), base[:2]))):
                     raise ValueError('past model anchor states/points differ')
-                past_data = {key: value for key, value in past_source.items() if key.startswith('past_')}
-                report['past_training'] = dict(trained['past_training'], reused_unchanged=True,
-                    new_training_assemblies=0, new_anchor_check_assemblies=0,
+                if not refit_past:
+                    past_data = {key: value for key, value in past_source.items() if key.startswith('past_')}
+                past_provenance = dict(
                     source_path=str(past_from), source_sha256=sha256(past_from.read_bytes()).hexdigest(),
                     source_arrays_sha256=sha256(past_from.with_suffix('.npz').read_bytes()).hexdigest())
+                report['past_training'] = dict(trained['past_training'], reused_unchanged=True,
+                    new_training_assemblies=0, new_anchor_check_assemblies=0, **past_provenance)
 
             records, record_energies, current_offsets, current_offset_energies = [], [], {}, {}
             new_training, new_checks = 0, 0
@@ -517,11 +525,14 @@ def run(pilot, output, operator_from=None, two_directions=False, target_time=.15
                 past_data, description = fit(records, record_energies)
                 report['past_training'] = dict(description, new_training_assemblies=new_training,
                     new_anchor_check_assemblies=new_checks, reused_unchanged=False,
+                    refit_cached_stencils=refit_past, **past_provenance,
                     historical_records=6, historical_training_assemblies=6,
                     additional_half_step_reference_assemblies=2)
             saved.update(past_data)
             past_models = dict(past_constrained=lambda arrays: predict(past_data, arrays),
                                past_ordinary=lambda arrays: predict(past_data, arrays, ordinary=True))
+            if 'past_curved_coefficients' in past_data:
+                past_models['past_curved'] = lambda arrays: predict(past_data, arrays, curved=True)
             report['past_anchor_check'] = []
             for name in ('fresh', *past_models):
                 energy = energies[1] if name == 'fresh' else past_models[name](base[1])[0]
@@ -632,4 +643,5 @@ if __name__ == '__main__':
     parser.add_argument('--mixed-curvature', action='store_true')
     parser.add_argument('--past-directions', action='store_true')
     parser.add_argument('--past-from', help='Reuse one past-only model without retraining')
+    parser.add_argument('--refit-past', action='store_true', help='Refit changed model code from saved raw past operators; physical helpers must match')
     run(**vars(parser.parse_args()))

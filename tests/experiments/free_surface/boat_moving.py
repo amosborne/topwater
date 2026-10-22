@@ -37,7 +37,7 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
     if (not np.isfinite(duration) or duration <= 0 or refinement not in (0, 1, 2)
             or max_rhs < 4 or not np.isfinite(budget_seconds) or budget_seconds <= 0
             or not np.isfinite(max_step) or max_step <= 0 or quadrature_order not in (3, 6, 12)
-            or operator_reuse not in (None, 'one-direction', 'past-linear')):
+            or operator_reuse not in (None, 'one-direction', 'past-linear', 'past-curved')):
         raise ValueError('positive bounded duration/budget, >=4 RHS and refinement 0..2 required')
     output = fresh(output)
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -49,7 +49,7 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
             'parent_eta_m[N]', 'parent_psi_m2_per_s[N]'],
         boundary_refinement=dict(region='body', levels=refinement), rhs=[], geometry=[],
         operator_policy=dict(enabled=operator_reuse is not None, kind=operator_reuse, quadrature_order=quadrature_order,
-            limits=(PAST_LIMITS if operator_reuse == 'past-linear' else LIMITS) if operator_reuse else None,
+            limits=(LIMITS if operator_reuse == 'one-direction' else PAST_LIMITS) if operator_reuse else None,
             scope='Past-only local model; atomic whole-RHS fallback. Geometry limits are heuristics, not force-error bounds. Stage history can affect refresh decisions.'),
         controls=dict(max_rhs=max_rhs, soft_elapsed_budget_seconds=budget_seconds,
             derivative_step_seconds=.001, rtol=.001, first_step_seconds=min(max_step, duration),
@@ -186,7 +186,7 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
             return pressure, eta_rate, psi_rate, surface, [arrays, *moved], energies
 
         result, audit_candidate = None, None
-        refresh = (operator_reuse == 'past-linear' and operator_model is not None
+        refresh = (operator_reuse in ('past-linear', 'past-curved') and operator_model is not None
                    and abs(time-operator_model.time) >= PAST_LIMITS['refresh_age_seconds']-1e-14)
         if operator_model is not None:
             try:
@@ -229,14 +229,15 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
                 if operator_reuse == 'one-direction':
                     operator_model = LocalOperator(stencil_arrays, stencil_energies, time, len(report['rhs']))
                 elif previous_stencil is not None:
-                    operator_model = PastLocalOperator(previous_stencil, current_stencil, time, len(report['rhs']))
+                    operator_model = PastLocalOperator(previous_stencil, current_stencil, time, len(report['rhs']),
+                                                       curved=operator_reuse == 'past-curved')
                 else:
                     raise InvalidReuse('no previous completed fresh stencil')
                 row['operator_training'] = operator_model.diagnostics
             except (ValueError, np.linalg.LinAlgError, FloatingPointError) as error:
                 operator_model = None
                 row['operator_training_rejection'] = str(error)
-            if operator_reuse == 'past-linear':
+            if operator_reuse in ('past-linear', 'past-curved'):
                 previous_stencil = current_stencil
             row['operator_training_seconds'] = perf_counter()-training_started
         row.update(complete=True, seconds=perf_counter()-before, surface=surface,
@@ -309,7 +310,7 @@ if __name__ == '__main__':
     parser.add_argument('--budget-seconds', type=float, default=90.)
     parser.add_argument('--max-step', type=float, default=.01)
     parser.add_argument('--quadrature-order', type=int, default=3, choices=(3, 6, 12))
-    parser.add_argument('--operator-reuse', nargs='?', const='one-direction', choices=('one-direction', 'past-linear'))
+    parser.add_argument('--operator-reuse', nargs='?', const='one-direction', choices=('one-direction', 'past-linear', 'past-curved'))
     result = run(**vars(parser.parse_args()))
     print(json.dumps({key: result[key] for key in
         ('complete', 'seconds', 'accepted_simulated_seconds', 'accepted_steps', 'cold_geometry_count')}))

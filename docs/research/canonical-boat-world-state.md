@@ -463,14 +463,37 @@ this history-dependent policy has no established RK/FSAL consistency or temporal
 order. Full results, costs and measured producer provenance:
 `boat-past-operator.json`.
 
-Next test only the longitudinal curvature already observed in current E0/E+/-:
-use features `[a1, a2, .5*a1^2]`, enforce both current offset matrices exactly,
-then fit the one remaining coefficient to past records. Guard observability
-after eliminating current constraints, and verify all three anchor matrices.
-Keep h/2 independent. This could restore default-h anchor consistency without
-new assemblies, but is neither a full Hessian nor a force certificate. Passive
-trajectory data can still mix transverse response with other curvature. A
-longer controlled window is needed before combining adaptive quadrature.
+The longitudinal-curvature experiment now uses `[a1, a2, .5*a1^2]`, enforcing
+both current offsets with a full SVD and fitting the remaining nullspace
+coefficient to past records. Observability is checked after elimination; a
+parabolic similarity path with independent geometry directions but unobservable
+curvature correctly rejects. Anchor total/increment errors are checked with an
+additive roundoff allowance, including independently assembled near-invariant
+translation controls. This is neither a full Hessian nor a force certificate.
+
+At the .15 s holdout, heave/pitch errors improve to -6.02 N/+0.77 Nm, with no
+new training operators. The default-h anchor pressure agrees exactly with
+fresh; independent h/2 anchor differences are below 5.1e-5 N/Nm. Thus this
+model removes the previous direct anchor/FSAL mismatch. Cache decisions remain
+history-dependent, so temporal order is still unproven.
+
+The coupled .2 s curved pilot again uses 18 versus 39 fresh assemblies. The
+fresh/cached totals are 24.12/24.21 s in this pair; substantial startup and
+per-assembly variation prevents an elapsed speed claim. The same-state endpoint
+audit improves heave/pitch errors to -3.53 N/+2.54 Nm, and maximum accepted
+angular-velocity difference drops to 8.90e-6 rad/s. Keep opt-in. Evidence:
+`boat-curved-operator.json`.
+
+The requested longer all-fresh control fails at its .25 s trial (accepted .2 s):
+some current interior material pressure samples become dry at a 1 ms offset.
+This is a pressure-derivative sampling limitation, not a rim-immersion or
+loss-of-contact claim. No longer cached run is timed against a failed control.
+`tests/data/boat-state-250ms.json` records that derived RK23 trial, not a
+validated trajectory. Next validate nodal ALE rates on a strictly persistent
+wet chart, subtracting actual chart mesh velocity in Bernoulli. Such chart
+nodes remain wet while their material labels can slide along the hull; no dry
+potential extrapolation is warranted. Require harmonic moving-mesh identities
+and actual-boat h/h2 checks before returning to longer timing.
 
 The larger-cost avenue remains reduction before geometry approximation. At a
 fixed geometry, six rigid modes plus fifteen parent potential modes give only
