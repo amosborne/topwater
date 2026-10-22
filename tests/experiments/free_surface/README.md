@@ -107,14 +107,35 @@ below 3e-13. Inertia diagonal differences from the identical finite-box mixed
 solver remain between -5.58% and -0.564%. No outgoing-wave or spatial
 convergence follows from this static result.
 
-The contained `p4_geometry` cell calculation checks prerequisites for actual
+The contained `p4_geometry` calculation checks prerequisites for actual
 nonlinear P4 motion. Curved physical harmonic flow, independent boundary
 volume/gravity integrals, fixed-potential shape work, translation and gauge
 invariance pass. A rational kinetic-integral example checks quadrature
-refinement for both energy and its geometry gradient. These are cell checks;
-they do not implement P4 canoe contact, surface canonical maps or a nonlinear
-trajectory. Positive Jacobians at quadrature points do not certify positivity
-between those points.
+refinement for both energy and its geometry gradient. Its current curved
+volume assembly recovers a known physical harmonic field by solving interior
+unknowns on a six-tetrahedron curved domain. Positive Jacobians at quadrature
+points do not certify positivity between those points.
+
+`p4_canoe_contact` enriches the actual canonical hull's boundary chart. All
+surface heights are independent; new waterline nodes slide within the unchanged
+physical planar facets. Current-pose finite differences verify all six body
+Jacobians, while off-grid checks verify facet tangency and a shared curved
+waterline trace. The sampled chart guard stops excessive contact modes.
+`p4_surface` integrates the physical surface one-form from those geometry
+Jacobians. `p4_volume_map` supplies a fixed reference graph extension of
+boundary motion and its exact force pullback; it does not freeze the fluid
+operator. Their individual tests do not establish a complete nonlinear P4
+canoe stage, flooding detection, remeshing or trajectory qualification.
+
+`p4_radiation` completes the n=12/extent1/sponge4 rest-candidate family at
+omega=2,4,6 rad/s against the same immersed-geometry/CG/depth4 Capytaine reference.
+The full-family gates fail: maximum added-mass/damping tolerance ratios are
+2.31/16.78. Raising sponge quadrature from 8 to 12 changes matrix responses
+by less than 3e-6 relatively and does not resolve that discrepancy. This uses
+an analytic nonnegative physical sponge, differing from the old P1 nodal
+interpolant, so the comparison does not isolate potential order alone.
+The largest exposed LU arrays occupy 3.55 GB, with 7.21 GB cumulative process
+peak working set; these static resource diagnostics are not simulation timings.
 
 The prescribed nonlinear controller also passes an independent physical-work
 check on the moving canonical canoe with nonflat surface, all six velocities

@@ -2,10 +2,11 @@
 from itertools import permutations
 
 import numpy as np
+from scipy.sparse.linalg import splu
 
 from .experiments.free_surface.p4_tetra import make_mesh
 from .experiments.free_surface.p4_volume_map import make_map
-from .experiments.free_surface.p4_geometry import integrals
+from .experiments.free_surface.p4_geometry import integrals, stiffness
 
 
 def cube_mesh():
@@ -65,3 +66,25 @@ def test_actual_curved_fluid_energy_gradient_pulls_back_to_moving_boundary():
         errors.append(abs((values[1]-values[0])/(2*step)-expected))
     assert errors[-1] < 2e-8*max(1., abs(expected))
     assert errors[-1] < .4*errors[0]+1e-9
+
+
+def test_curved_global_fluid_solve_recovers_physical_harmonic_flow():
+    mesh = cube_mesh()
+    mapping = make_map(mesh)
+    coordinates = mesh.points.copy()
+    alpha = .2
+    coordinates[:, 2] += alpha*(coordinates[:, 0]**2-coordinates[:, 1]**2+coordinates[:, 0])
+    # Physical harmonic phi=z-alpha*(x²-y²+x)=reference_z, with exact
+    # nonuniform physical velocity on a genuinely curved domain.
+    exact = mesh.points[:, 2]
+    matrix = stiffness(mesh, coordinates)
+    solved = exact.copy()
+    inside, outside = mapping.interior, mapping.boundary
+    solved[inside] = splu(matrix[inside][:, inside].tocsc()).solve(-matrix[inside][:, outside]@exact[outside])
+    np.testing.assert_allclose(solved, exact, atol=3e-13, rtol=2e-13)
+    assert np.max(abs((matrix@exact)[inside])) < 2e-13
+    # Independent continuum integral over the reference unit cube (detJ=1).
+    expected = 500*(1+17*alpha**2/3)
+    assert abs(500*solved@(matrix@solved)-expected) < 2e-9
+    cell_energy = sum(integrals(coordinates[nodes], solved[nodes])['kinetic_energy'] for nodes in mesh.elements)
+    assert abs(cell_energy-expected) < 2e-9
