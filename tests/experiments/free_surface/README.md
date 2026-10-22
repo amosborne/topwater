@@ -1304,3 +1304,12 @@ claim. Peak process RSS is 552 MB and peak reserved CuPy pool storage 5.76 MB
 (CUDA context/library memory is outside that pool metric). Coarse parent-state
 unresolved flux is now 38%, so physical spatial/state convergence and fast
 production geometry remain open work.
+
+A frozen union-mesh gauge control (`artifacts/boat-pressure-body-union-gauge-probe.*`)
+adds ten to every parent potential without changing physical flux. Body trace
+changes are ten to within 1.63e-11; the resulting extrapolated gauge error is
+2.48 million times smaller than the remaining derivative trace error. The
+union mixed blocks have condition numbers about 42.8, compared with about 1e7
+before eliminating artificial hull cuts. A constant-mode/row correction is
+therefore unsupported by this evidence. Remaining bow-contact integration
+and pressure/state refinement still require checks.
