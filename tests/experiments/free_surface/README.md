@@ -47,10 +47,40 @@ factorization and the repeated solves; independent Capytaine work is outside
 that timer. Memory includes sparse storage/fill and lifetime process peak RSS,
 which can include earlier cases and the reference solver.
 
-Both reports remain `qualified=false`. No nonlinear time evolution, outgoing-wave
-condition or real-time result is established. The immediate optimization target
-is 100 times less operator-building work; adaptive and partial updates must
-preserve current load accuracy and count estimator, refresh and rejection costs.
+Both reports remain `qualified=false`. No moving-canoe time evolution,
+outgoing-wave condition or real-time result is established. The immediate
+priority is full nonlinear six-DOF evolution and Capytaine validation. Speed
+optimization follows that baseline; adaptive and partial updates must preserve
+accuracy and count estimator, refresh and rejection costs.
+
+## Nonlinear fluid prerequisite
+
+```text
+uv run --locked python -m tests.experiments.free_surface.shape_check --pocket
+uv run --locked --with "cupy-cuda12x[ctk]==14.2.0" python -m tests.experiments.free_surface.fluid_baseline --n 24 --periods 1 --rtol 1e-5
+```
+
+`pocket_evolution.py` assembles the current BEM/FEM operator at every nonlinear
+fluid stage. `fluid_baseline.py` advances it with adaptive RK23, saves accepted
+states and energy, counts rejected steps, and checks a deformed GPU stage
+against CPU plus gauge and volume invariance. `--cpu` needs no CuPy. The CUDA
+kernel uses float64 throughout and the same analytic source integrals and
+quadrature as the CPU reference. Cholesky failures and nonfinite rates raise.
+
+Independent quadratic wave terms and directional energy derivatives converge
+under spatial refinement. For the baseline wave, directional surface-work
+discrepancy decreases from 0.396% to 0.102% at n=12/24; this is neither exact
+discrete energy conservation nor a per-step energy loss. The n=24 GPU/CPU rate
+comparison differs by less than 2e-15 in the projected mass norm. At time
+tolerance 1e-5, a one-period run changes energy by -0.00753% and volume by less
+than 2e-15 cubic metres. These are short closed-tank checks, not long-duration
+qualification.
+
+Reports distinguish integration time from process time including imports,
+preparation, CPU/GPU verification, and state output. The verification warms
+the GPU. **These are body-free component timings, not full nonlinear canoe
+performance.** Moving wetted geometry, six-DOF pressure coupling and outgoing
+waves remain required. No operator-reuse or mesh optimization is adopted here.
 
 The production architecture is under review against the real-time requirement in
 `docs/numerics.md`. These dense experiments remain numerical references.

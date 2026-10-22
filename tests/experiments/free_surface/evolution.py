@@ -110,6 +110,16 @@ def rhs(data, eta, psi, order=3):
     )
     flux_load = energy[np.ix_(fs, fs)] @ psi + energy[np.ix_(fs, other)] @ wall_phi
     eta_t = cho_solve(data.projected_factor, flux_load)
+    load = bernoulli_load(data, eta, psi, eta_t)
+    psi_t = -g * eta + cho_solve(data.projected_factor, load)
+    fluid_energy = 0.5 * (psi @ flux_load + g * eta @ mass @ eta)
+    return eta_t, psi_t, float(np.ones(len(fs)) @ mass @ eta_t), float(fluid_energy)
+
+
+def bernoulli_load(data, eta, psi, eta_t):
+    """P1 weak nonlinear surface term on the fixed horizontal projection."""
+    faces, areas, gradient = data.surface_faces, data.projected_areas, data.horizontal_gradients
+    shape, weights = data.shape_values, data.quadrature_weights
     slope = np.einsum("fcj,fc->fj", gradient, eta[faces])
     psi_gradient = np.einsum("fcj,fc->fj", gradient, psi[faces])
     graph_flux = eta_t[faces] @ shape.T
@@ -120,18 +130,25 @@ def rhs(data, eta, psi, order=3):
         * (graph_flux + dot[:, None]) ** 2
         / (1 + np.sum(slope**2, axis=1))[:, None]
     )
-    load = np.zeros(len(fs))
+    load = np.zeros(len(eta))
     for corner in range(3):
         value = areas * np.einsum("q,q,fq->f", weights, shape[:, corner], nonlinear)
         np.add.at(load, faces[:, corner], value)
-    psi_t = -g * eta + cho_solve(data.projected_factor, load)
-    fluid_energy = 0.5 * (psi @ flux_load + g * eta @ mass @ eta)
-    return eta_t, psi_t, float(np.ones(len(fs)) @ mass @ eta_t), float(fluid_energy)
+    return load
 
 
 def run(resolution, amplitude, k=1.0):
     start = perf_counter()
     data = make_tank(resolution)
+    result = check_quadratic(data, rhs, amplitude, k)
+    result['resolution'] = resolution
+    result['seconds'] = perf_counter() - start
+    result['peak_rss_bytes'] = peak_rss_bytes()
+    return result
+
+
+def check_quadratic(data, evaluate, amplitude, k):
+    """Independent finite-depth wave terms for a supplied evolving-domain solve."""
     mesh, fs = data.mesh, data.surface_nodes
     x = mesh.vertices[fs, 0] + 2 * np.pi
     g = 9.81
@@ -141,8 +158,8 @@ def run(resolution, amplitude, k=1.0):
     theta = np.pi / 4
     eta = amplitude * np.cos(k * x) * np.cos(theta)
     psi = -amplitude * g / omega * np.cos(k * x) * np.sin(theta)
-    plus = rhs(data, eta, psi)
-    minus = rhs(data, -eta, -psi)
+    plus = evaluate(data, eta, psi)
+    minus = evaluate(data, -eta, -psi)
     kin = (plus[0] + minus[0]) / (2 * amplitude**2)
     dyn = (plus[1] + minus[1]) / (2 * amplitude**2)
     exact_kin = (
@@ -198,7 +215,6 @@ def run(resolution, amplitude, k=1.0):
     # natural k^2*g/omega scale, not by that cancellation.
     result = dict(
         qualified=False,
-        resolution=resolution,
         amplitude=amplitude,
         wavenumber=k,
         quadratic_kinematic_normalized_rms=float(
@@ -226,8 +242,6 @@ def run(resolution, amplitude, k=1.0):
         ),
         integrated_elevation_rates=[plus[2], minus[2]],
     )
-    result["seconds"] = perf_counter() - start
-    result["peak_rss_bytes"] = peak_rss_bytes()
     return result
 
 
