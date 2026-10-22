@@ -4,8 +4,13 @@
 
 Topwater is a planned open-source, three-dimensional time-domain potential-flow solver for freely floating bodies in directional waves. The initial target is one rigid boat with six free motions, an evolving free surface and changing wetted hull geometry, explicit viscous damping, and an external force and torque interface.
 
-**Status: calm-water hydrostatics, instantaneous fluid inertia, verified Laplace kernels and prototype boundary solves. The boundary
-field-accuracy gate remains unmet. Wave evolution and body dynamics are not implemented.**
+**Status: calm-water hydrostatics, instantaneous fluid inertia and Laplace
+kernels are implemented. Checkout-only experiments advance a nonlinear moving
+free surface and all six canoe motions. Fluid accuracy and finite-frequency
+Capytaine validation remain incomplete; there is no public simulation API.**
+
+The [nonlinear validation experiments](tests/experiments/free_surface/README.md)
+record the current candidate, measured failures and reproducible commands.
 
 ## Approach
 
@@ -56,7 +61,9 @@ Calm-water checks stop at **rim immersion** (flooding onset) or
 **complete loss of hull–water contact**, including invalid initial states.
 Rim clearance must use the local evolving free surface. An artificial closure
 must never hide flooding by supporting deck pressure. These failure detectors
-are implemented for a flat water surface; evolving-wave detection remains future work.
+are implemented in the calm-water API. The moving-surface experiment checks rim
+clearance against its local surface representation; general topology changes
+and failure-aware evolution remain unqualified.
 
 The definition, generator and analytical reference values live together in
 [tests/reference_hull.py](tests/reference_hull.py). Run the geometry checks with
