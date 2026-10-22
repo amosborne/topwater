@@ -7,78 +7,11 @@ extern "C" __global__ void energy_pairs(
     int pair=blockDim.x*blockIdx.x+threadIdx.x;
     if (pair>=nf*nf) return;
     int i=pair/nf, j=pair%nf;
-    double vsum=0., linear[3]={0.,0.,0.};
-    const double factor=4.*3.1415926535897932384626433832795;
-    for (int q=0;q<nq;++q) {
-        double r[3][3], distance[3], edge_gradient[3]={0.,0.,0.};
-        const double* x=points+(i*nq+q)*3;
-        #pragma unroll
-        for (int e=0;e<3;++e) {
-            double squared=0.;
-            #pragma unroll
-            for (int k=0;k<3;++k) {
-                r[e][k]=x[k]-tri[j*9+e*3+k];
-                squared+=r[e][k]*r[e][k];
-            }
-            distance[e]=sqrt(squared);
-        }
-        double height=0.;
-        #pragma unroll
-        for (int k=0;k<3;++k) height+=r[0][k]*normal[j*3+k];
-        if (i==j) height=0.;
-        double angle=0.;
-        if (i!=j) {
-            double denominator=distance[0]*distance[1]*distance[2];
-            #pragma unroll
-            for (int e=0;e<3;++e) {
-                double dot=0.;
-                #pragma unroll
-                for (int k=0;k<3;++k) dot+=r[e][k]*r[(e+1)%3][k];
-                denominator+=dot*distance[(e+2)%3];
-            }
-            angle=2.*atan2(2.*area[j]*height,denominator);
-        }
-        double terms=0.;
-        #pragma unroll
-        for (int e=0;e<3;++e) {
-            double d=0.,a=0.;
-            #pragma unroll
-            for (int k=0;k<3;++k) {
-                d-=r[e][k]*outward[j*9+e*3+k];
-                a+=r[e][k]*tangent[j*9+e*3+k];
-            }
-            double l=length[j*3+e],end=l-a,perp=d*d+height*height;
-            double denominator=perp/(distance[e]+fabs(a))
-                +perp/(distance[(e+1)%3]+fabs(end))
-                +2.*(fmax(-a,0.)+fmax(a-l,0.));
-            double logarithm=log1p(2.*l/denominator);
-            terms+=d*logarithm;
-            #pragma unroll
-            for (int k=0;k<3;++k) edge_gradient[k]+=outward[j*9+e*3+k]*logarithm;
-        }
-        double single=(terms-height*angle)/factor;
-        double dbl=angle*sign[j]/factor;
-        double weight=area[i]*weights[q];
-        vsum+=weight*single;
-        if (i!=j) {
-            double moment[3];
-            #pragma unroll
-            for (int k=0;k<3;++k)
-                moment[k]=(x[k]-center[j*3+k]-height*normal[j*3+k])*dbl
-                    -height*edge_gradient[k]*sign[j]/factor;
-            #pragma unroll
-            for (int c=0;c<3;++c) {
-                double value=dbl/3.;
-                #pragma unroll
-                for (int k=0;k<3;++k) value+=moment[k]*gradient[j*9+c*3+k];
-                linear[c]+=weight*value;
-            }
-        }
-    }
+    double vsum,linear[3];
+    energy_pair<double,const double*>(tri,normal,outward,tangent,length,area,area,
+        center,sign,gradient,points,weights,i,j,nq,vsum,linear);
     v[pair]=vsum;
-    #pragma unroll
-    for (int c=0;c<3;++c)
-        atomicAdd(h+i*nv+faces[j*3+c],linear[c]+(i==j?area[i]/6.:0.));
+    for (int c=0;c<3;++c) atomicAdd(h+i*nv+faces[j*3+c],linear[c]);
 }
 
 extern "C" __global__ void curl_energy(

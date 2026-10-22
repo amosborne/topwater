@@ -36,7 +36,8 @@ import cupy as cp
 from cupyx import errstate
 from cupyx.scipy.linalg import solve_triangular
 
-_source=Path(__file__).with_name('cuda_energy.cu').read_text()
+_source=(Path(__file__).with_name('cuda_pair.cuh').read_text()+'\n'+
+    Path(__file__).with_name('cuda_energy.cu').read_text())
 _pairs=cp.RawKernel(_source,'energy_pairs',options=('--std=c++11',))
 _curl=cp.RawKernel(_source,'curl_energy',options=('--std=c++11',))
 
