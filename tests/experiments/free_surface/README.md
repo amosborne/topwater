@@ -1502,3 +1502,26 @@ evidence/provenance: `docs/research/boat-moving-pilot.json`; raw states/reports:
 ```powershell
 uv run --locked --python C:/Users/alex/topwater/.venv/Scripts/python.exe --with 'cupy-cuda12x[ctk]==14.2.0' python -m tests.experiments.free_surface.boat_moving --duration 0.2 --max-step 0.1 --refinement 2 --max-rhs 25 --budget-seconds 90 --output artifacts/boat-moving-new.json
 ```
+
+`boat_domain_inertia.py` separates finite-tank and unbounded P1 inertia on
+the same actual boat triangles, with optional independent Capytaine and
+production P0 comparisons. Use `--quadrature-order 12 --capytaine` for the
+checked integration reference. Default order three deliberately retains the
+observed thin-panel factorization failure; a successful higher-order solve
+does not certify spatial convergence. The finite tank raises finest checked
+heave inertia by 9.05%; it can conceal P1 spatial underestimation by cancellation.
+
+`boat_adaptive_quadrature.py --geometry <unrefined-geometry.npz>` compares
+target-row order-six/order-three allocation with uniform orders twelve, six
+and three after two conforming body refinements. `--pressure-check` additionally
+compares the actual observed-sea nonlinear pressure at h=.001 and h/2. Selection
+uses complete target rows, preserving H*1 cancellation. This is an experimental
+integration policy, with no interaction truncation or matrix stabilization.
+`--moving-check` runs matched 0.2 s six-DOF/nonlinear-surface pilots against
+uniform order twelve. Both must finish before endpoint differences are valid.
+The checked candidate takes 14.64 s including startup and remains at 25.49
+wall/sim seconds when summing only post-startup RHS costs. This does not
+qualify the user's 20x ceiling or the open-ocean problem.
+The moving solver still uses its original default. Six-axis matrices, timings,
+pressure differences, known limitations and source hashes are in
+`docs/research/boat-operator-integration.json`.

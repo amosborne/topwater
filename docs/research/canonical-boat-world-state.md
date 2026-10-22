@@ -297,6 +297,52 @@ continuity and long-time periodic-boundary return still need separate checks.
 
 ## Primary context
 
+The next independent checkpoint separates finite-domain bias from body
+discretization using exactly the same flat-startup wetted triangles. At 608
+body panels, the finite 2 m-deep tank raises heave instantaneous added mass by
+9.05% relative to the unbounded mirrored P1 formulation. Against Capytaine on
+those same triangles, deep P1 diagonal errors range from -11.45% to -4.24%;
+production halfspace P0 errors range from -1.69% to +8.45%. Neither sequence
+has established a six-axis spatial plateau. Finite-domain and spatial errors
+can cancel, making the tank appear closer to Capytaine. These are
+infinite-frequency/instantaneous inertia checks, not finite-frequency or
+trajectory correlation. Raw matrices and provenance are retained in
+`boat-operator-integration.json`.
+
+That actual geometry also exposes inadequate default outer quadrature on
+extremely slender cut panels. After diagonal equilibration, the single-layer
+matrix's smallest eigenvalue is -0.0858 at order three, +0.0890 at order six,
+and +0.1292 at order twelve. Most negative-mode weight lies on thin body
+triangles. This is integration-induced negative energy, not merely raw matrix
+scaling; no diagonal shift or jitter is applied.
+
+A bounded allocation candidate uses order six on complete target rows with
+maximum-edge/height greater than ten and order three elsewhere. Keeping one
+rule throughout each target row preserves the closed-boundary mixed-trace
+constant cancellation. On the checked flat boat, assembly with precomputed
+row classification takes about 0.084 s versus 0.209 s with uniform order six
+in one three-sample comparison;
+all six added-mass diagonals differ by less than 0.07% from uniform order
+twelve. On the nonflat observed-sea snapshot, full nonlinear pressure differs
+by at most 1.48 N and 2.56 Nm, with similar h/h2 differentiation sensitivity.
+The experiment is `boat_adaptive_quadrature.py`. It keeps all interactions and
+physical geometry. Threshold switching, moving trajectories, spatial error
+and the exterior domain remain unqualified; moving defaults are unchanged.
+
+Matched coupled six-DOF/nonlinear-surface pilots now compare the candidate
+with uniform order twelve at the same 0.2 s endpoint, identical initial state
+and timestep controls. Each accepts two steps. Candidate-minus-reference
+endpoint differences are 0.0203 mm maximum position, 1.19e-5 rad physical
+rotation, 0.000351 m/s velocity, 0.000123 rad/s angular velocity, 0.263 mm
+parent height and 0.000286 m2/s parent potential. Startup-inclusive times are
+14.64 versus 34.09 s. Summing post-startup RHS costs gives 25.49 versus 98.79
+wall/sim seconds. Thus the candidate remains above the user's 20x ceiling
+in this run, even before ocean qualification. This is an integration-cost
+comparison against uniform order twelve, not a speedup over the earlier
+lower-accuracy order-three pilot. Sequential GPU clock/thermal variation is
+uncontrolled. The short finite-tank window and coarse surface state still
+prevent a sustained-runtime claim.
+
 Variational free-surface discretization with moving boundaries is established;
 its Hamiltonian can be nonautonomous when boundaries move:
 [Brink, Izsák and van der Vegt, Hamiltonian finite elements](https://link.springer.com/article/10.1007/s10915-017-0416-9).

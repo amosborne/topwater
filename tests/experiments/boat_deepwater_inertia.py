@@ -107,9 +107,6 @@ def run(output):
             scale = np.array([1., 1., 1., LENGTH, LENGTH, LENGTH])
             delta = actual.added_mass-reference
             nd_delta = delta/scale[:, None]/scale[None, :]/(WATER_DENSITY*LENGTH**3)
-            nd_reference = reference/scale[:, None]/scale[None, :]/(WATER_DENSITY*LENGTH**3)
-            floor = max(1e-10, .005*float(np.abs(nd_reference).max()))
-            ratio = np.abs(nd_delta)/(.05*np.abs(nd_reference)+floor)
             off = ~np.eye(6, dtype=bool)
             row.update(complete=True, added_mass=actual.added_mass.tolist(),
                 capytaine_added_mass=reference.tolist(), raw_matrix_difference=delta.tolist(),
@@ -118,9 +115,6 @@ def run(output):
                 offdiagonal_normalized_error_frobenius=float(np.linalg.norm(nd_delta[off])),
                 normalized_error_frobenius=float(np.linalg.norm(nd_delta)),
                 topwater=matrix_diagnostics(actual.added_mass), capytaine=matrix_diagnostics(reference),
-                informational_existing_family_gate=dict(absolute_floor=floor,
-                    tolerance_ratio_all36=ratio.tolist(), within_tolerance=bool(np.all(ratio <= 1)),
-                    caveat='Global floor does not establish small-coupling or spatial convergence accuracy'),
                 topwater_diagnostics=actual.diagnostics)
             if level:
                 row['previous_level_diagonal_relative_change'] = {
