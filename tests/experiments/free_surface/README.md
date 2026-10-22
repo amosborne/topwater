@@ -130,6 +130,13 @@ as operator shape work minus reconstructed physical-boundary work. Known affine
 flow controls improve under refinement, so this does not establish a universal
 sign error. Non-affine trace accuracy, velocity reconstruction and interface
 work remain under investigation; no conservation correction is applied.
+Raising outer quadrature from order 3 to 6 changes the coarse shape defect by
+less than `0.08%`. Recovering the auxiliary P0 flux also fails: its hull-normal
+RMS difference from the prescribed rigid velocity is `85.4%` on n12/wet2 and
+`89.0%` on n24/wet3, while affine controls confirm its sign convention.
+Using it in boundary work worsens agreement and would introduce hull slip.
+The symmetric operator's imposed weak flux and its auxiliary P0 density are
+distinct discrete quantities; substituting one for the other is unsupported.
 
 After producing six fitted radiation reports per frequency,
 `validate_radiation <reports...> --output artifacts/radiation-family.json`
