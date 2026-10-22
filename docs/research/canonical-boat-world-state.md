@@ -240,8 +240,9 @@ offset field assembly/solve approximately 10-13/13-17 ms. Fraction reference
 geometry remains 1.7-1.8 s per offset, so these are component observations, not
 a fast coupled simulation. A four-step directional check exposes a noise floor:
 1e-3/5e-4 s passes the weight-scaled numerical budget, but yaw torque still
-differs by 5.8% of its response. Neither target-quadrature refinement nor gauge
-correction cures the remaining contact sensitivity. Coarse parent rates omit
+differs by 5.8% of its response. Frozen controls rejected target-quadrature
+refinement for the pre-union jump and gauge correction for the post-union
+sensitivity. Coarse parent rates omit
 38% of the fine flux norm. The pressure formulation therefore remains a
 candidate: physical/state/quadrature convergence, production geometry,
 near/far coupling and actual six-DOF trajectory validation are still required.

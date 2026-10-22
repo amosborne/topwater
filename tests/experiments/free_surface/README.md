@@ -1313,3 +1313,10 @@ union mixed blocks have condition numbers about 42.8, compared with about 1e7
 before eliminating artificial hull cuts. A constant-mode/row correction is
 therefore unsupported by this evidence. Remaining bow-contact integration
 and pressure/state refinement still require checks.
+
+A second private frozen-mesh control enforces the exact zero principal-value
+double-layer contribution between triangles with the same physical plane owner.
+It changes traces by only 1.6e-11 and leaves the extrapolated remainder
+unchanged (`artifacts/boat-coplanar-plane-probe*`). No shader change is adopted.
+The remaining auxiliary P0 flux space still contains vanishing integration
+triangles; it is distinct from the now-stable mixed potential unknowns.
