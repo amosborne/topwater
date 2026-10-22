@@ -2,8 +2,8 @@
 
 Build the geometry once; every perturbed canonical state gets a fresh current
 fluid operator and solve. This does not recompute or certify the saved RHS.
-Master ordering relies explicitly on the same source/deterministic meshing and
-a fresh decoded physical-state match because the stage NPZ lacks master IDs.
+New seeds carry exact master identities; legacy seeds require deterministic
+meshing and an independent fresh decoded physical-state match.
 No trajectory, Capytaine, spatial-accuracy or performance qualification follows.
 """
 import argparse
@@ -19,6 +19,7 @@ from topwater.frames import rotation_matrix
 from .p4_whole_geometry import P4WholeCanoeGeometry
 from .p4_canoe_field import prepare
 from .p4_variational_canoe import decode
+from .p4_canoe_stage import verify_master_identity
 from .p4_geometry import quadrature as cell_quadrature
 from .p4_surface import quadrature as face_quadrature
 from .p4_tetra import face_nodes
@@ -111,6 +112,7 @@ def audit(stage_path):
     metadata_path = stage_path.with_suffix('.json')
     source_metadata = json.loads(metadata_path.read_text()) if metadata_path.exists() else None
     owner = P4WholeCanoeGeometry.make()
+    master_identity = verify_master_identity(owner, stage_path)
     size = 6+len(owner.free_nodes)
     if canonical.shape != (2*size,):
         raise ValueError('saved canonical dimensions differ from rebuilt master space')
@@ -166,9 +168,7 @@ def audit(stage_path):
         source_stage_metadata=source_metadata, audit_revision=_source_revision(),
         audit_script_sha256=sha256(Path(__file__).read_bytes()).hexdigest(),
         saved_rhs_recomputed=False,
-        master_identity_assumption='Stage NPZ lacks master IDs. Same source and deterministic mesher/master '
-            'ordering are assumed; dimensions, saved q and fresh physical decode are checked. Regenerated '
-            'hashes below record this audit ordering but cannot certify identity with the absent saved IDs.',
+        master_identity_assumption=master_identity,
         regenerated_elements_sha256=sha256(np.asarray(owner.mesh.elements, dtype='<i8').tobytes()).hexdigest(),
         regenerated_free_nodes_sha256=sha256(np.asarray(owner.free_nodes, dtype='<i8').tobytes()).hexdigest(),
         fresh_physical_base_maximum_absolute_errors=base_errors,

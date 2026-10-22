@@ -24,6 +24,7 @@ from .canoe_contact import ContactTopologyError
 from .p4_canoe_field import prepare
 from .p4_variational_canoe import evaluate
 from .p4_whole_geometry import P4WholeCanoeGeometry
+from .p4_canoe_stage import verify_master_identity
 from .p4_tetra import indices, face_nodes
 
 
@@ -121,6 +122,7 @@ def run(stage_path, *, duration=.001, max_step=.001, rtol=1e-4,
             or metadata['case'] != 'actual nonlinear P4 canonical-canoe stage'):
         raise ValueError('finite matching actual-stage NPZ and JSON initial data required')
     owner = P4WholeCanoeGeometry.make()
+    master_identity = verify_master_identity(owner, stage_path)
     size = 6+len(owner.free_nodes)
     if canonical.shape != (2*size,) or metadata['eta_modes'] != len(owner.free_nodes):
         raise ValueError('saved stage differs from rebuilt P4 surface master space')
@@ -187,9 +189,7 @@ def run(stage_path, *, duration=.001, max_step=.001, rtol=1e-4,
         source_stage=str(stage_path), source_stage_metadata=metadata,
         source_npz_sha256=sha256(stage_path.read_bytes()).hexdigest(), source_revision=_revision(),
         runner_sha256=sha256(Path(__file__).read_bytes()).hexdigest(),
-        master_identity_assumption='Saved NPZ lacks master IDs; same source and deterministic meshing '
-            'are assumed. Dimensions and fresh physical initial state are verified; regenerated hashes '
-            'record this run but cannot certify absent saved master IDs.',
+        master_identity_assumption=master_identity,
         initial_source_checks=initial, saved_stage_rate_used_for_integration=False,
         reference_points_sha256=sha256(np.asarray(owner.mesh.points, dtype='<f8').tobytes()).hexdigest(),
         elements_sha256=sha256(np.asarray(owner.mesh.elements, dtype='<i8').tobytes()).hexdigest(),

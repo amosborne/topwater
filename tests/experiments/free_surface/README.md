@@ -159,6 +159,28 @@ velocities and independently moving high contact modes has relative weak
 normal-flow residual 1.12e-13 and fluid work-identity error 4.44e-16 J.
 Independent fixed-potential/rate action differences reduce the tested force
 direction error from 4.67e-8 to 1.15e-8 when halving the difference step.
+The tracked `p4_canoe_stage` driver reproduces this finite-pose, all-six-velocity
+seed, including independent high contact modes and scalar-action differences.
+From a fresh checkout, generate a new seed and release it with:
+
+```text
+uv run --locked --with meshpy==2026.1.1 python -m tests.experiments.free_surface.p4_canoe_stage --output artifacts/p4-current-stage.json
+uv run --locked --with meshpy==2026.1.1 python -m tests.experiments.free_surface.p4_canoe_release artifacts/p4-current-stage.npz --duration .001 --max-step .001 --output artifacts/p4-current-release.json
+```
+
+These commands temporarily add the optional MeshPy preprocessor and build the
+actual mesh and current operators; they are substantial validation runs.
+The stage report records package versions. The stage NPZ includes explicit reference coordinates, element
+connectivity and ordered surface master IDs. Readers verify these arrays exactly;
+legacy frozen seeds retain their documented deterministic-ordering assumption.
+New outputs leave the frozen `p4-nonlinear-canoe-stage.*` evidence unchanged.
+For new independent checks, pass `p4_stage_audit
+artifacts/p4-current-stage.npz` and an explicit `--output`; run
+`p4_rest_geometry_checks --output <new-rest-report.json>` before
+`p4_first_variation --stage artifacts/p4-current-stage.npz --rest-checks
+<new-rest-report.json> --physical-audit <new-work-audit.json> --output
+<new-first-variation.json>`. These remain experimental diagnostics.
+
 `p4_stage_audit` then rebuilds five current fluid systems to check independent
 physical energy and volume along that saved full RHS. Direct velocity quadrature
 uses order 10, versus order 8 in the primal, and closed-boundary gravity/volume

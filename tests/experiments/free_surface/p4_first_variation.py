@@ -19,6 +19,7 @@ from topwater.hydrostatics import hydrostatics
 from .p4_whole_geometry import P4WholeCanoeGeometry
 from .p4_canoe_field import prepare
 from .p4_variational_canoe import encode, evaluate
+from .p4_canoe_stage import verify_master_identity
 
 
 def _hash(array, dtype):
@@ -73,6 +74,7 @@ def run(stage_path, rest_checks_path, physical_audit_path, *, derivative_step=1e
         raise ValueError('incompatible finite saved physical/canonical stage')
 
     owner = P4WholeCanoeGeometry.make()
+    master_identity = verify_master_identity(owner, stage_path)
     _progress('whole geometry built')
     hashes = dict(reference_points_sha256=_hash(owner.mesh.points, '<f8'),
         elements_sha256=_hash(owner.mesh.elements, '<i8'),
@@ -197,7 +199,7 @@ def run(stage_path, rest_checks_path, physical_audit_path, *, derivative_step=1e
         physical_audit_sha256=sha256(physical_audit_path.read_bytes()).hexdigest(),
         independent_hydrostatics_source_sha256=hydrostatics_hash,
         master_hashes=hashes, active_nodes=int(len(np.unique(owner.mesh.elements))), eta_modes=count,
-        master_ordering_assumption='Deterministic regenerated topology matches rest hashes and the independently audited exact source physical base match; source NPZ has no explicit master IDs.',
+        master_ordering_assumption=master_identity,
         rest_identities=rest_identity, derivative_step=derivative_step, amplitudes=levels,
         fine_over_coarse_error_ratios=ratios,
         surface_norm='Constant flat-rest projected consistent mass L^2; units m^2/s for height-rate norm.',
