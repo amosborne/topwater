@@ -30,12 +30,22 @@ def field(points):
     return value,gradient
 
 
-def grid(n,amplitude,shift):
-    if n not in (6,12,24) or not 0<=shift<n//3:
-        raise ValueError('this reference uses n=6,12,24 and an interior pocket')
+def grid(n,amplitude,shift,*,exterior_scale=1.):
+    if (n!=6 and (n<12 or n%12)) or not 0<=shift<n//3:
+        raise ValueError('use n=6 or a positive multiple of 12 and an interior pocket')
+    if not np.isfinite(exterior_scale) or exterior_scale<1:
+        raise ValueError('exterior_scale must be finite and at least one')
     nx=ny=n; nz=n//3
     x=np.linspace(-2*np.pi,2*np.pi,nx+1)
     y=np.linspace(-np.pi,np.pi,ny+1)
+    if exterior_scale!=1:
+        # Move only exterior coordinates: local pocket and body resolution stay
+        # fixed during outer-domain sensitivity checks. This is not an accuracy
+        # claim for the resulting coarser exterior cells.
+        for coordinates,count in ((x,nx),(y,ny)):
+            first,last=count//3,2*count//3
+            coordinates[:first]=coordinates[first]+exterior_scale*(coordinates[:first]-coordinates[first])
+            coordinates[last+1:]=coordinates[last]+exterior_scale*(coordinates[last+1:]-coordinates[last])
     sigma=np.linspace(0,1,nz+1)
     xx,yy,ss=np.meshgrid(x,y,sigma,indexing='ij')
     eta=amplitude*(np.cos(.4*xx+.7*yy+.2)+.4*np.sin(.8*xx-.3*yy))

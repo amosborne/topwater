@@ -113,6 +113,8 @@ def run(n=12, *, periods=.05, omega=4., amplitude=1e-4, ramp_periods=2.,
                  np.asarray(diagnostics['added_mass'])@acceleration)
         cache.update(time=time, fluid=fluid.copy(), force=force)
         calls += 1
+        if calls%20==0:
+            print(json.dumps(dict(progress=True,simulated_time=time,rhs_evaluations=calls)),flush=True)
         return rate[13:]
 
     fluid = np.zeros(2*size)
@@ -171,6 +173,11 @@ def run(n=12, *, periods=.05, omega=4., amplitude=1e-4, ramp_periods=2.,
         report['capytaine'] = dict(added_mass_heave=float(reference['added_mass'][0, 2, 2]),
             damping_heave=float(reference['radiation_damping'][0, 2, 2]),
             scope='Same rest wet panels and depth; unbounded horizontal reference.')
+        if fit is not None:
+            report['capytaine']['added_mass_relative_error']=(
+                fit['added_mass']/report['capytaine']['added_mass_heave']-1)
+            report['capytaine']['damping_relative_error']=(
+                fit['radiation_damping']/report['capytaine']['damping_heave']-1)
     motions = np.array([heave(t, amplitude, omega, ramp_periods) for t in times])
     full_states = np.broadcast_to(base, (len(times), len(base))).copy()
     full_states[:, 2] += motions[:, 0]
@@ -202,7 +209,9 @@ if __name__ == '__main__':
     with threadpool_limits(1):
         report, states = run(**args)
     path = Path('artifacts'); path.mkdir(exist_ok=True)
-    suffix = f"n{args['n']}-periods{args['periods']:g}-omega{args['omega']:g}-amplitude{args['amplitude']:g}-extent{args['exterior_scale']:g}-sponge{args['sponge_strength']:g}"
+    suffix = (f"n{args['n']}-material{args['material_subdivisions']}-periods{args['periods']:g}"
+        f"-omega{args['omega']:g}-amplitude{args['amplitude']:g}-extent{args['exterior_scale']:g}"
+        f"-sponge{args['sponge_strength']:g}-rtol{args['rtol']:g}-step{args['max_step']:g}")
     np.savez(path/f'canoe-radiation-{suffix}.npz', **states)
     (path/f'canoe-radiation-{suffix}.json').write_text(json.dumps(report, indent=2)+'\n')
     print(json.dumps(report), flush=True)

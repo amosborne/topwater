@@ -34,15 +34,17 @@ class CanoeDomain:
     gpu: bool
 
 
-def make_domain(n=12,gpu=True):
+def make_domain(n=12,gpu=True,material_subdivisions=2,exterior_scale=1.):
     data=SimulationInputs.from_json(json.dumps(input_data(2)))
     rest,_=equilibrate_heave(data.body,data.initial_state)
-    points,tets,near,top_nodes=grid(n,0.,0)
+    points,tets,near,top_nodes=grid(n,0.,0,exterior_scale=exterior_scale)
     near &= np.all(points[tets][:,:,2]>=-1.,axis=1)
+    if not np.any(near):
+        raise ValueError('moving canoe requires at least four vertical cells')
     local_boundary=boundary(points,tets[near])
     top=np.all(points[local_boundary,2]==0,axis=1)
     contact=CanoeContact.make(data.body,rest,points[local_boundary[~top]],
-        points[np.unique(local_boundary[top])])
+        points[np.unique(local_boundary[top])],subdivisions=material_subdivisions)
     lookup={tuple(point):i for i,point in enumerate(points)}
     additional=[];mapping=[]
     for point in contact.reference_points:
@@ -122,10 +124,10 @@ def field(domain,position,orientation,eta,psi,velocity):
             tet_volume@coordinates[:,:,2].mean(axis=1))))
 
 
-def surface(domain,solution,psi,velocity):
+def surface(domain,solution,psi,velocity,*,damping=None):
     height_rate,potential_rate,mesh_velocity=rates(solution['points'],domain.free_faces,
         domain.free_nodes,psi,solution['flux'],solution['eta_jacobian'],
-        solution['body_jacobian'],velocity)
+        solution['body_jacobian'],velocity,damping=damping)
     column_rate=np.zeros(len(domain.column_free_indices))
     active=domain.column_free_indices>=0
     column_rate[active]=height_rate[domain.column_free_indices[active]]
@@ -141,7 +143,7 @@ def moved_orientation(orientation,omega,dt):
         Rotation.from_quat(orientation,scalar_first=True)).as_quat(scalar_first=True)
 
 
-def rhs(domain,state,derivative_step=1e-4,*,diagnostics=None):
+def rhs(domain,state,derivative_step=1e-4,*,diagnostics=None,damping=None):
     """Fresh nonlinear fluid/pressure/body stage; world twist is held in FD.
 
     Two additional current-geometry field solves differentiate the known ALE
@@ -156,7 +158,7 @@ def rhs(domain,state,derivative_step=1e-4,*,diagnostics=None):
     velocity=state[7:13]
     eta=state[13:13+size];psi=state[13+size:]
     current=field(domain,position,orientation,eta,psi,velocity)
-    height_rate,potential_rate,mesh_velocity=surface(domain,current,psi,velocity)
+    height_rate,potential_rate,mesh_velocity=surface(domain,current,psi,velocity,damping=damping)
     offsets=[]
     for dt in (derivative_step,-derivative_step):
         moved=field(domain,position+dt*velocity[:3],
@@ -180,6 +182,7 @@ def rhs(domain,state,derivative_step=1e-4,*,diagnostics=None):
         diagnostics.update(pressure=pressure.diagnostics,
             acceleration=pressure.acceleration.tolist(),
             hydrodynamic_load=pressure.hydrodynamic_load.tolist(),
+            known_pressure_load=pressure.known_pressure_load.tolist(),
             added_mass=pressure.added_mass.tolist(),
             fluid_volume=current['fluid_volume'],
             mechanical_energy=current['fluid_energy']+domain.body.mass*9.81*position[2]+
@@ -204,12 +207,13 @@ def initial_state(domain,perturbed=True):
     return np.r_[position,orientation,velocity,eta,psi]
 
 
-def run(n=12,duration=.02,rtol=1e-4,gpu=True,derivative_step=1e-4,max_step=.005):
+def run(n=12,duration=.02,rtol=1e-4,gpu=True,derivative_step=1e-4,max_step=.005,
+        material_subdivisions=2,exterior_scale=1.):
     from time import perf_counter
     from scipy.integrate import RK23
     if not np.isfinite(duration) or duration<=0 or not 0<rtol<1 or derivative_step<=0 or max_step<=0:
         raise ValueError('positive duration/derivative step and 0 < rtol < 1 required')
-    domain=make_domain(n,gpu)
+    domain=make_domain(n,gpu,material_subdivisions,exterior_scale)
     state=initial_state(domain)
     calls=0;start=perf_counter();last={}
     def evaluate(time,value):
@@ -232,6 +236,7 @@ def run(n=12,duration=.02,rtol=1e-4,gpu=True,derivative_step=1e-4,max_step=.005)
     diagnostics={};rhs(domain,states[-1],derivative_step,diagnostics=diagnostics)
     report=dict(qualified=False,case='nonlinear six-DOF canoe with moving contact',
         simulated_seconds=solver.t,n=n,gpu=gpu,rtol=rtol,derivative_step=derivative_step,max_step=max_step,
+        material_subdivisions=material_subdivisions,exterior_scale=exterior_scale,
         accepted_steps=len(times)-1,rhs_evaluations=calls,
         maximum_position_change=np.max(np.abs(states[:,:3]-states[0,:3]),axis=0).tolist(),
         maximum_velocity_change=np.max(np.abs(states[:,7:13]-states[0,7:13]),axis=0).tolist(),
@@ -257,12 +262,16 @@ if __name__=='__main__':
     parser.add_argument('--rtol',type=float,default=1e-4)
     parser.add_argument('--derivative-step',type=float,default=1e-4)
     parser.add_argument('--max-step',type=float,default=.005)
+    parser.add_argument('--material-subdivisions',type=int,default=2)
+    parser.add_argument('--exterior-scale',type=float,default=1.)
     parser.add_argument('--cpu',action='store_true')
     args=parser.parse_args()
     with threadpool_limits(1):
-        report,states=run(args.n,args.duration,args.rtol,not args.cpu,args.derivative_step,args.max_step)
+        report,states=run(args.n,args.duration,args.rtol,not args.cpu,args.derivative_step,args.max_step,
+            args.material_subdivisions,args.exterior_scale)
     path=Path('artifacts');path.mkdir(exist_ok=True)
-    suffix=f'n{args.n}-duration{args.duration:g}-rtol{args.rtol:g}-step{args.max_step:g}'
+    suffix=(f'n{args.n}-material{args.material_subdivisions}-exterior{args.exterior_scale:g}'
+        f'-duration{args.duration:g}-rtol{args.rtol:g}-step{args.max_step:g}')
     np.savez(path/f'nonlinear-canoe-{suffix}.npz',**states)
     (path/f'nonlinear-canoe-{suffix}.json').write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps(report),flush=True)

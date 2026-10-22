@@ -1,5 +1,6 @@
 """Independent uniform-potential-flow checks on the moving canonical canoe."""
 import numpy as np
+import pytest
 from scipy.spatial.transform import Rotation
 
 from topwater.frames import rotation_matrix
@@ -20,7 +21,8 @@ def test_flat_constant_potential_is_stationary(canoe):
     np.testing.assert_allclose(velocity, 0., atol=1e-14)
 
 
-def test_uniform_flow_tilted_water_and_all_six_body_velocities(canoe):
+@pytest.mark.parametrize('damping',[0.,.4])
+def test_uniform_flow_tilted_water_and_all_six_body_velocities(canoe,damping):
     """A plane and constant 3-D fluid velocity have an exact ALE solution.
 
     The graph moves vertically at q=W-slope.U. Contact velocity comes directly
@@ -57,19 +59,25 @@ def test_uniform_flow_tilted_water_and_all_six_body_velocities(canoe):
     twist = np.array([.02, -.015, .01, .03, -.02, .015])
     height_rate, potential_rate, mesh_velocity = rates(
         geometry.points, faces, free, psi, flux,
-        geometry.eta_jacobian, geometry.body_jacobian, twist)
+        geometry.eta_jacobian, geometry.body_jacobian, twist,
+        damping=np.full(len(free),damping))
 
     exact_velocity = np.zeros((len(free), 3))
-    exact_velocity[:, 2] = q
+    exact_velocity[:, 2] = q-damping*eta
     p = geometry.points[contact.contact_nodes]
     rigid_velocity = twist[:3]+np.cross(twist[3:], p-position)
-    slide_rate = (q-rigid_velocity[:, 2]+rigid_velocity[:, :2]@slope)/(
+    contact_eta=eta[np.searchsorted(free,contact.contact_nodes)]
+    slide_rate = (q-damping*contact_eta-rigid_velocity[:, 2]+rigid_velocity[:, :2]@slope)/(
         edge[:, 2]-edge[:, :2]@slope)
     exact_velocity[np.searchsorted(free, contact.contact_nodes)] = (
         rigid_velocity+slide_rate[:, None]*edge)
     fluid_speed_squared = horizontal@horizontal+vertical**2
     expected_potential = (-9.81*eta-.5*fluid_speed_squared
         +exact_velocity[:, :2]@horizontal+vertical*exact_velocity[:, 2])
+    # Damping both canonical variables introduces artificial pressure in the
+    # absorption zone. Its Eulerian correction is sigma*(eta*u_z-psi); the
+    # physical uniform fluid velocity itself is unchanged at this instant.
+    expected_potential+=damping*(eta*vertical-psi)
     np.testing.assert_allclose(height_rate, exact_velocity[:, 2], atol=3e-13, rtol=3e-12)
     np.testing.assert_allclose(mesh_velocity[free], exact_velocity, atol=3e-13, rtol=3e-12)
     np.testing.assert_allclose(potential_rate, expected_potential, atol=3e-13, rtol=3e-12)
