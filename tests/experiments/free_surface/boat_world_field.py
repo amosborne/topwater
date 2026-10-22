@@ -110,23 +110,32 @@ def surface_rates(points, free_faces, free_nodes, parent_map, parent_psi, flux, 
         for j in range(3):
             np.add.at(mass, (faces[:, i], faces[:, j]), area*unit[i, j])
     reduced_mass = parent_map.T@mass@parent_map
-    try:
-        fine_factor, parent_factor = cho_factor(mass), cho_factor(reduced_mass)
-    except np.linalg.LinAlgError as error:
-        raise ValueError('singular exposed mass; parent state may have unsupported coefficients') from error
-    conditions = []
-    for matrix, factor in ((mass, fine_factor), (reduced_mass, parent_factor)):
-        reciprocal, info = dpocon(factor[0], float(np.linalg.norm(matrix, 1)), uplo='U')
+    conditions, factors, scales = [], [], []
+    for matrix in (mass, reduced_mass):
+        diagonal = np.diag(matrix)
+        if not np.isfinite(diagonal).all() or np.any(diagonal <= 0):
+            raise ValueError('singular exposed mass; parent state may have unsupported coefficients')
+        scale = np.sqrt(diagonal)
+        equilibrated = matrix/scale[:, None]/scale[None, :]
+        try:
+            factor = cho_factor(equilibrated)
+        except np.linalg.LinAlgError as error:
+            raise ValueError('singular exposed mass; parent state may have unsupported coefficients') from error
+        reciprocal, info = dpocon(factor[0], float(np.linalg.norm(equilibrated, 1)), uplo='U')
         if info or not np.isfinite(reciprocal) or reciprocal <= 0:
             raise ValueError('cannot estimate exposed surface mass conditioning')
         conditions.append(1/reciprocal)
+        factors.append(factor)
+        scales.append(scale)
     fine_condition, parent_condition = conditions
     # Algebraic roundoff budget, not a physical discretization-error tolerance.
     if (not np.isfinite([fine_condition, parent_condition]).all()
             or max(fine_condition, parent_condition)*np.finfo(float).eps > 1e-8):
         raise ValueError('exposed surface mass exceeds 1e-8 conditioning/roundoff budget')
-    physical_flux = cho_solve(fine_factor, flux)
-    eta_rate = cho_solve(parent_factor, parent_map.T@flux)
+    # Exact congruence solves, not mass lumping. Tiny cut areas change nodal
+    # units, but do not by themselves make the P1 mass inversion ill posed.
+    physical_flux = cho_solve(factors[0], flux/scales[0])/scales[0]
+    eta_rate = cho_solve(factors[1], (parent_map.T@flux)/scales[1])/scales[1]
     unresolved = physical_flux-parent_map@eta_rate
     shape, weights = triangle_samples(np.eye(3)[None], 3)
     shape = shape[0]
@@ -138,13 +147,16 @@ def surface_rates(points, free_faces, free_nodes, parent_map, parent_psi, flux, 
     load = np.zeros(len(free_nodes))
     for corner in range(3):
         np.add.at(load, faces[:, corner], area*np.einsum('q,q,fq->f', weights, shape[:, corner], bernoulli))
-    psi_rate = cho_solve(parent_factor, parent_map.T@load)
+    psi_rate = cho_solve(factors[1], (parent_map.T@load)/scales[1])/scales[1]
     flux_norm = float(physical_flux@mass@physical_flux)
     if not np.isfinite(eta_rate).all() or not np.isfinite(psi_rate).all():
         raise FloatingPointError('nonfinite fixed-world surface rates')
     diagnostics = dict(fine_mass_condition=fine_condition,
         parent_mass_condition=parent_condition, conditioning_roundoff_budget=1e-8,
-        condition_measure='LAPACK one-norm estimate from existing Cholesky factor',
+        condition_measure='LAPACK one-norm estimate of diagonally equilibrated mass from Cholesky factor',
+        maximum_fine_normal_flux_density=float(np.max(abs(physical_flux))),
+        maximum_fine_vertical_velocity=float(np.max(abs(uz))),
+        maximum_bernoulli_rate=float(np.max(abs(bernoulli))),
         unresolved_kinematic_mass_relative=float(np.sqrt(max(0., unresolved@mass@unresolved)/flux_norm)) if flux_norm else 0.,
         maximum_parent_height_rate=float(np.max(abs(eta_rate))),
         maximum_parent_potential_rate=float(np.max(abs(psi_rate))))

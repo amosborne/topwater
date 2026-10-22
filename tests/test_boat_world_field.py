@@ -6,10 +6,16 @@ import pytest
 from .experiments.free_surface.boat_world_field import surface_rates
 
 
-@pytest.mark.parametrize('clipped', [False, True])
+@pytest.mark.parametrize('clipped', [False, True, 'tiny-corner'])
 def test_affine_harmonic_rates_on_full_or_partly_exposed_parent(clipped):
     parent_xy = np.array([[0., 0.], [2., 0.], [0., 2.]])
-    if clipped:
+    if clipped == 'tiny-corner':
+        # A real cut-node patch can be tiny without the physical velocity being
+        # singular. This connected triangulation has areas spanning 14 orders.
+        small = 1e-7
+        xy = np.array([[0., 0.], [2., 0.], [0., 2.], [small, 0.], [0., small]])
+        faces = np.array([[0, 3, 4], [3, 1, 2], [3, 2, 4]])
+    elif clipped:
         # Remove a finite corner from the parent; integrate only exposed water.
         xy = np.array([[.5, 0.], [2., 0.], [0., 2.], [0., .5]])
         faces = np.array([[0, 1, 2], [0, 2, 3]])

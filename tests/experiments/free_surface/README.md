@@ -1369,3 +1369,46 @@ tested on the frozen union meshes: condition estimates become about 86, but
 body traces change only 3.6e-15 and derivative sensitivity is unchanged.
 That exact algebraic change is not adopted as a cure; probe source/results are
 `artifacts/boat-pressure-body-union-equilibration-probe.*`.
+
+Guarded geometry now reconstructs CURRENT intersections and polygon area
+centroids without repeating exact rational clipping. It caches topology and
+constraint ownership, not the boundary operator or old interpolation weights.
+Every parent includes dry closed-hull/prism witnesses, so a new wet component
+cannot be ignored merely because it has no existing wet vertices. Changed or
+uncertain incidences, plane aliases, rim/domain/support and closure checks
+request an exact rebuild. Floating guards are not a formal interval certificate.
+
+`boat_template_audit` compares the original +0.001 s chart with the independently
+built +0.0005 s snapshot: 14-19 ms current reconstruction versus approximately
+2 s cold construction/export, maximum coordinate error 1.8e-15 m. Opposite-side
+and base-to-offset topology changes reject as required. The earlier global
+plane guard rejected unrelated infinite roof extensions; the adopted guard
+uses actual clipping constraints, without relaxing numerical tolerances.
+Evidence: `artifacts/boat-geometry-template-relevant-proof.*`.
+
+`boat_template_field_audit` then assembles both CURRENT operators independently.
+On the same offset snapshot, potentials differ by 3.4e-13 and the largest
+six-axis pressure difference is 1.4e-7 N or Nm. These are roundoff reproduction
+checks, not six-mode spatial convergence or full-trajectory timings. GPU context
+setup precedes timed operations; the first energy/field calls include lazy
+initialization and are not used to infer a speedup.
+Evidence: `artifacts/boat-template-current-field-diagnostics.*`.
+
+That check exposed an unnecessary raw mass-matrix conditioning rejection.
+For each consistent triangular P1 mass matrix, half its diagonal is a lower
+spectral bound and twice its diagonal is an upper bound. Assembly preserves
+this inequality: diagonal congruence gives a fine-mass two-norm condition at
+most four regardless of positive cut areas. Both fine and reduced mass solves
+now use exact diagonal congruence, with no lumping or discarded local flux.
+The bound does not apply to the reduced parent matrix; its scaled conditioning
+and unsupported coefficients still reject. Diagnostics explicitly label the
+scaled one-norm estimate, which need not be at most four.
+
+Physical affine harmonic controls include a connected mesh with triangle areas
+spanning 14 orders of magnitude. The actual offset now passes algebraic checks,
+but still omits 38.8% of fine kinematic flux. Its largest local flux density is
+1688 m/s on a 5e-10 m2 patch near the bow; that patch supplies 0.009% of the
+surface flux squared integral. Scaling solves the algebraic units problem,
+not this cut-cell/local-resolution problem. No arbitrary local-velocity clip
+or physical qualification is introduced. Raw localization evidence is saved in
+`artifacts/boat-template-fine-flux-localization.json`.
