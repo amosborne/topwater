@@ -1,4 +1,4 @@
-"""One bounded adaptive nonlinear canoe step and its actual error components.
+"""Bounded adaptive nonlinear canoe evolution and its actual error components.
 
 This uses the complete exact-current matrix-free stage, without a surrogate
 operator or changed tolerances. It is not a trajectory or performance gate.

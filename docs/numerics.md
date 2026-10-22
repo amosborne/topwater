@@ -5,6 +5,51 @@ work to verify; it does not certify an operator, a wave solver or hydrodynamic
 correlation that has not been implemented. The canonical canoe and loading in
 `tests/reference_hull.py` remain the one shared hull reference.
 
+## Required operating envelope
+
+The user excludes breaking waves, slamming and incident wavelengths shorter
+than **twice the boat beam**. Beam is the complete physical hull's maximum
+body-frame transverse width, independent of heading, roll or numerical mesh
+refinement. Every nonzero incident component must satisfy `lambda >= 2*beam`;
+equality is allowed. Calm water and zero-amplitude components add no wave
+content. These are operating limits, not requests to model impacts or breaking.
+
+Use the configured physical dispersion relation and depth, with intrinsic
+wave frequency rather than boat encounter frequency. For gravity waves over
+constant depth, `k_max=pi/beam` and
+`omega_max^2=g*k_max*tanh(k_max*depth)` implement the wavelength cutoff without
+a wavenumber root solve. The infinite-depth limit replaces `tanh` by one.
+`WaveComponents` alone lacks depth, so this gate belongs at the scenario entry
+point that owns the wave model. Current checkout-only evolution cases are not
+a qualified public simulation API; the new scenario guards remain to be wired
+and verified before claiming enforcement.
+
+Breaking screening must consider actual wave height, steepness, depth and
+group focusing. The regular progressive-wave Miche limit
+`H/lambda = 0.142*tanh(k*depth)` is a useful rejection screen, not a guarantee
+for arbitrary directional groups or hull-disturbed crests. See the
+[BSEE breaking-wave study, section 5.1](https://www.bsee.gov/sites/bsee.gov/files/research-reports/776aa.pdf).
+A conservative margin below that limit is a Topwater modeling policy requiring
+validation; no arbitrary margin is promoted here as a naval-architecture rule.
+Individually admissible components can focus into an inadmissible realization.
+
+Slamming screening must use relative hull/local-water motion, emergence and
+re-entry geometry. [ITTC's 2024 seakeeping guidance, pages 18–19](https://www.ittc.info/media/11894/75-02-07-025.pdf)
+requires validation of critical re-entry velocity rather than a universal
+threshold. [ITTC's rare-event procedure](https://www.ittc.info/media/9709/75-02-07-023.pdf)
+also covers flare and horizontal bow impacts; whole-body loss of contact alone
+does not exclude slamming. Conservative bottom-emergence, disconnected-contact
+and chart-tangency stops are candidates, with ordinary smooth sidewall wetting
+kept distinct. A qualified flare/entry criterion is still required. Ambiguous
+onset is an unresolved guard, not evidence that the scenario is safe to continue.
+
+The incident cutoff constrains the requested forcing. Nonlinear harmonics,
+radiation/diffraction and near-hull pressure can have shorter spatial scales.
+Our fastest contact modes already exist in initially flat water. Reducing that
+solution space is a separate model approximation: retain enough near-hull
+resolution and verify body forces/motion against the full reference. Never
+silently discard supplied short-wave content or apply an unverified filter.
+
 ## Production runtime and near/far decomposition
 
 The user's target is 600 simulated seconds in at most 600 wall-clock seconds on

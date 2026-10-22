@@ -295,6 +295,35 @@ not the runtime solution. Physical endpoint refinement is a bounded decision
 check before a larger time-integration/discretization change, not another
 long unaffordable trajectory.
 
+The two-half-step comparison now reaches the identical endpoint with unchanged
+physics/tolerances, two accepted steps and seven RHS calls (39.77 s). Body
+position differences are below `3.89e-16 m`, quaternion angle difference
+`1.33e-14 rad`, and world velocity differences below `5.79e-11` in their
+respective m/s or rad/s units. Surface height differs by at most 11.16 nm;
+positive physical-area RMS is `3.08e-11 m` globally and `1.18e-10 m` on contact
+faces. Surface potential maximum difference is `1.30e-9 m^2/s`, global area
+RMS `3.00e-12 m^2/s`. Both surface norms use the verified **initial actual
+mapped** coordinates, not the unmoved reference mesh. Independent raw-data
+review reproduces these numbers and both embedded norms; all core numerical
+source hashes are unchanged. Evidence:
+`artifacts/p4-calm-exact-matrixfree-two-half-steps.{json,npz}` and
+`artifacts/p4-calm-exact-matrixfree-endpoint-refinement.json`. This establishes
+very small local physical differences, not long-time accuracy or permission
+to remove contact dynamics.
+
+The user's subsequent operating envelope is now explicit in `docs/numerics.md`:
+incident wavelength at least **two beams**, with breaking and slamming refused.
+For this 0.9 m beam canoe, `lambda_min=1.8 m`; finite-depth gravity dispersion
+at 4 m gives `omega_max=5.8518 rad/s` and `T_min=1.0737 s`. This bandwidth is
+far below the fastest calm contact mode. It motivates a bounded investigation
+of a reduced free-surface approximation while retaining near-hull pressure
+resolution. Filtering the existing modes is not automatically justified by an
+incident-wave limit: test generated harmonics, body radiation, forces and motion
+under surface-space enrichment. A fixed variational surface subspace is one
+candidate; a basis evaluated at moving coordinates requires its own geometry
+derivatives. No reduced model or new breaking/slamming heuristic is qualified
+by these measurements.
+
 The independent 80-cell actual nonlinear predictor audit also falsifies an
 operator-only reuse gate: halving the predictor interval from `1e-4` to
 `5e-5 s` reduces tangent-action error from `1.13e-5` to `2.84e-6`, but full
