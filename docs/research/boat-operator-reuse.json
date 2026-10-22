@@ -1,0 +1,175 @@
+{
+  "qualified": false,
+  "decision": "Reject this one-direction reuse policy for the baseline: no reused RHS and no reduction in operator assemblies. Do not loosen geometry guards to manufacture a speedup.",
+  "scope": "Matched 50 ms full nonlinear 6DOF plus evolving free-surface pilots for the canonical 24 ft/2500 kg boat and seeded observed SoCal sea in the diagnostic finite tank. Not a qualified open-ocean trajectory or throughput claim.",
+  "protocol": {
+    "duration_seconds": 0.05,
+    "maximum_step_seconds": 0.01,
+    "quadrature_order": 6,
+    "body_refinement": 2,
+    "maximum_rhs": 40,
+    "soft_budget_seconds": 120
+  },
+  "runs": [
+    {
+      "path": "artifacts\\boat-reuse-fresh-50ms-q6.json",
+      "sha256": "369de3be92aaa4f0f69829b26c16d656317b40848adc50abe238f809e466c53d",
+      "arrays_sha256": "5da5b82fff6e90c91e4f66df8ab143cacb2ecdf3376561eb0e26d40a79c18df7",
+      "producer_archive": "artifacts\\boat-reuse-fresh-50ms-q6-source",
+      "source_sha256": {
+        "boat_moving.py": "7a5064440772a606043d9db06eb7d752c90ec0b550f81f5ac31dd381a0ce56d2",
+        "boat_geometry_template.py": "1fe910f6833181bd62f66be74850e34c5aede7a8e5456d34851f187a2d7f2f1d",
+        "boat_world_boundary.py": "a0902fb0e44a0138c5d501d72a4b549ae56d543063cd1a7542ec060f973ef6ce",
+        "boat_parent_clip_proof.py": "b7e6d48d914fda1e11e0fe1c8d87cfebed5e5d8ccaa4585ee5266f46c1acd424",
+        "boat_world_field.py": "cb976a016f8bcb01751b1cc8ac118902229cfffebb38fbfac562cb3826ed776e",
+        "body_pressure.py": "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+        "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+        "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+        "cuda_operator.py": "497e47a88cf187d6979736cab8a4da9a3b4e5cc54209582bf85f004905e466eb",
+        "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+        "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20",
+        "boat_operator_reuse.py": "f7e6d51ecd8f9fcdee3daae8bd732bae7440b20d08928f45f0cb6e361d527227"
+      },
+      "fixture_sha256": "5d4cd16a436f30afc39d96d062ab060e706dcb736716ee7e0be16351672850cf",
+      "operator_policy": {
+        "enabled": false,
+        "quadrature_order": 6,
+        "limits": null,
+        "scope": "Past-only one-direction quadratic; atomic whole-RHS fallback. Geometry limits are heuristics, not force-error bounds. Stage history can affect refresh decisions."
+      },
+      "operator_counts": {
+        "fresh_rhs": 16,
+        "reused_rhs": 0,
+        "fresh_assemblies": 48,
+        "predicted_fields": 0,
+        "failed_reuse_attempts": 0
+      },
+      "seconds": 25.930805799987866,
+      "accepted_steps": 5,
+      "rhs_count": 16,
+      "cold_geometry_count": 3,
+      "process_peak_rss_bytes": 582729728,
+      "reserved_gpu_pool_bytes": 68212736,
+      "reject_reasons": {},
+      "training_rejections": {},
+      "phase_seconds": {
+        "energy": 12.396076800127048,
+        "field_solve": 1.7649811999872327,
+        "rhs_geometry": 6.935587799933273,
+        "model_training": 0
+      },
+      "endpoint_load_world": [
+        525.036046351123,
+        325.7303649814987,
+        29867.892240621968,
+        -273.34762256498425,
+        -101.57502137991742,
+        482.682657028907
+      ]
+    },
+    {
+      "path": "artifacts\\boat-reuse-cached-50ms-q6.json",
+      "sha256": "1e167eb854dc1d5294dc5326b8d83a238dd202725576c3e25d22b2c85a3165c7",
+      "arrays_sha256": "85c4dd365ba7b5bb3f8fb48b6ad32c95fa2405fdfb0afd0b11a900329bfc5abe",
+      "producer_archive": "artifacts\\boat-reuse-cached-50ms-q6-source",
+      "source_sha256": {
+        "boat_moving.py": "5930b2f2668d4d1651be19fabfba0a473fd7fc913ce453d5408909acdd33a51b",
+        "boat_geometry_template.py": "1fe910f6833181bd62f66be74850e34c5aede7a8e5456d34851f187a2d7f2f1d",
+        "boat_world_boundary.py": "a0902fb0e44a0138c5d501d72a4b549ae56d543063cd1a7542ec060f973ef6ce",
+        "boat_parent_clip_proof.py": "b7e6d48d914fda1e11e0fe1c8d87cfebed5e5d8ccaa4585ee5266f46c1acd424",
+        "boat_world_field.py": "cb976a016f8bcb01751b1cc8ac118902229cfffebb38fbfac562cb3826ed776e",
+        "body_pressure.py": "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+        "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+        "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+        "cuda_operator.py": "497e47a88cf187d6979736cab8a4da9a3b4e5cc54209582bf85f004905e466eb",
+        "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+        "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20",
+        "boat_operator_reuse.py": "f7e6d51ecd8f9fcdee3daae8bd732bae7440b20d08928f45f0cb6e361d527227"
+      },
+      "fixture_sha256": "5d4cd16a436f30afc39d96d062ab060e706dcb736716ee7e0be16351672850cf",
+      "operator_policy": {
+        "enabled": true,
+        "quadrature_order": 6,
+        "limits": {
+          "maximum_age_seconds": 0.01,
+          "maximum_normalized_coordinate": 12.0,
+          "maximum_body_residual_rms_m": 2e-05,
+          "maximum_free_residual_rms_m": 2e-05,
+          "maximum_direction_residual_fraction": 0.05
+        },
+        "scope": "Past-only one-direction quadratic; atomic whole-RHS fallback. Geometry limits are heuristics, not force-error bounds. Stage history can affect refresh decisions."
+      },
+      "operator_counts": {
+        "fresh_rhs": 16,
+        "reused_rhs": 0,
+        "fresh_assemblies": 48,
+        "predicted_fields": 4,
+        "failed_reuse_attempts": 14
+      },
+      "seconds": 28.419677400001092,
+      "accepted_steps": 5,
+      "rhs_count": 16,
+      "cold_geometry_count": 3,
+      "process_peak_rss_bytes": 600891392,
+      "reserved_gpu_pool_bytes": 68212736,
+      "reject_reasons": {
+        "body geometry leaves the local direction": 5,
+        "free geometry leaves the local direction": 5,
+        "body pressure direction leaves the local direction": 4
+      },
+      "training_rejections": {
+        "chart basis or boundary ownership changed": 1
+      },
+      "phase_seconds": {
+        "energy": 14.502833299979102,
+        "field_solve": 1.724500899988925,
+        "rhs_geometry": 7.186920499952976,
+        "model_training": 0.24236080012633465
+      },
+      "endpoint_load_world": [
+        525.0360463556802,
+        325.7303649731524,
+        29867.89224060057,
+        -273.3476225638025,
+        -101.57502133456364,
+        482.6826570089585
+      ]
+    }
+  ],
+  "comparison": {
+    "accepted_times_equal": true,
+    "maximum_state_difference": 2.6709212619380196e-10,
+    "maximum_component_differences": {
+      "position_m": 1.022008432743915e-12,
+      "quaternion": 4.631642291919036e-13,
+      "velocity_m_per_s": 2.201173965321601e-11,
+      "angular_velocity_rad_per_s": 1.996472258347648e-11,
+      "surface_height_m": 2.311317803815882e-11,
+      "surface_potential_m2_per_s": 2.6709212619380196e-10
+    },
+    "endpoint_load_difference_world": [
+      4.5572505769087e-09,
+      -8.34631919133244e-09,
+      -2.1398591343313456e-08,
+      1.1817746781161986e-09,
+      4.535377229331061e-08,
+      -1.9948515728174243e-08
+    ],
+    "meaning": "Near-roundoff agreement after all candidate attempts fell back to fresh; NOT validation of accepted operator reuse."
+  },
+  "limitations": [
+    "One paired run is not a robust timing distribution. Candidate performs extra work and saves zero assemblies; the timing ratio is not a claim about isolated overhead.",
+    "The 10 ms age limit also applies at the +/-1 ms pressure times; forward center age is effectively <=9 ms.",
+    "The small step was chosen to give this conservative policy an opportunity to reuse, not derived as an optimal physical timestep.",
+    "Body and free-surface geometry are measured separately. These geometric limits are heuristics, not force certificates.",
+    "RK rejected stages may train future predictions. Cache decisions depend on stage history; one endpoint comparison cannot establish integration order.",
+    "Current algebraic residuals refer to each used operator, including predicted operators; they do not measure true-force error.",
+    "The finite exterior, pressure spatial convergence, guards for physical sea limits and Capytaine time-domain correlation remain incomplete."
+  ],
+  "verification": [
+    "Six targeted CPU tests passed, including four independently assembled actual-boat operators checked against exact 3D Laplace dilation similarity, and ownership/direction/age rejection.",
+    "Independent read-only adversarial review found no source blocker after candidate numerical/offset failures were made atomic fresh retries.",
+    "All numerical source hashes verified against archived producer bytes; final source adds explicit uniform-quadrature ownership rejection."
+  ],
+  "next": "Offline current-anchored, past-only two-direction linear model: retain exact current center and odd pressure chord, fit transverse response from an older fresh stencil. Check held-out pressures before another coupled experiment; avoid an ill-identified passive quadratic."
+}

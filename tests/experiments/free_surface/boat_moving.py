@@ -23,15 +23,17 @@ from .boat_geometry_template import evaluate_template, InvalidTemplate
 from .boat_world_boundary import construct, body_material_samples, interpolate_body_trace
 from .boat_world_field import current_field, surface_rates, refine_boundary
 from .body_pressure import evaluate_body_pressure, quadrature
+from .boat_operator_reuse import LocalOperator, InvalidReuse, LIMITS
 from .incident_baseline_benchmark import coefficients
 from .p4_fluid_ordering import fresh
 
 
-def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_step=.01):
+def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_step=.01,
+        quadrature_order=3, operator_reuse=False):
     from .cuda_operator import prepare_energy, cp
     if (not np.isfinite(duration) or duration <= 0 or refinement not in (0, 1, 2)
             or max_rhs < 4 or not np.isfinite(budget_seconds) or budget_seconds <= 0
-            or not np.isfinite(max_step) or max_step <= 0):
+            or not np.isfinite(max_step) or max_step <= 0 or quadrature_order not in (3, 6, 12)):
         raise ValueError('positive bounded duration/budget, >=4 RHS and refinement 0..2 required')
     output = fresh(output)
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -42,6 +44,9 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
             'velocity_world_m_per_s[3]', 'angular_velocity_world_rad_per_s[3]',
             'parent_eta_m[N]', 'parent_psi_m2_per_s[N]'],
         boundary_refinement=dict(region='body', levels=refinement), rhs=[], geometry=[],
+        operator_policy=dict(enabled=operator_reuse, quadrature_order=quadrature_order,
+            limits=LIMITS if operator_reuse else None,
+            scope='Past-only one-direction quadratic; atomic whole-RHS fallback. Geometry limits are heuristics, not force-error bounds. Stage history can affect refresh decisions.'),
         controls=dict(max_rhs=max_rhs, soft_elapsed_budget_seconds=budget_seconds,
             derivative_step_seconds=.001, rtol=.001, first_step_seconds=min(max_step, duration),
             max_step_seconds=max_step, topology_templates_retained=4),
@@ -49,10 +54,10 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
             for name in ('boat_moving.py', 'boat_geometry_template.py', 'boat_world_boundary.py',
                          'boat_parent_clip_proof.py', 'boat_world_field.py', 'body_pressure.py',
                          'canoe.py', 'incident_baseline_benchmark.py',
-                         'cuda_operator.py', 'cuda_energy.cu', 'cuda_pair.cuh')})
+                         'cuda_operator.py', 'cuda_energy.cu', 'cuda_pair.cuh', 'boat_operator_reuse.py')})
     started = perf_counter()
     times, states, solver = [], [], None
-    templates, cold_count = [], 0
+    templates, cold_count, operator_model = [], 0, None
     saved = {}
     body = reference_body()
 
@@ -99,21 +104,32 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
             rejected_charts=reasons, diagnostics=diagnostics, faces=len(arrays['faces'])))
         return arrays
 
-    def field(arrays, twist, time, acceleration_columns):
+    def field(arrays, twist, time, acceleration_columns, model):
         elapsed_check()
         before = perf_counter()
-        energy = prepare_energy(arrays['faces'], TrianglePanels(arrays['points'][arrays['faces']], 1)).energy
+        prediction = None
+        if model is None:
+            assembly = prepare_energy(arrays['faces'], TrianglePanels(arrays['points'][arrays['faces']], 1),
+                                      order=quadrature_order)
+            if operator_reuse and (not assembly.uniform_quadrature or assembly.quadrature_order != quadrature_order):
+                raise ValueError('operator reuse requires the declared uniform quadrature owner')
+            energy = assembly.energy
+        else:
+            energy, prediction = model.predict(arrays, time)
         assembled = perf_counter()
         value = current_field(arrays, energy, values, twist,
                               acceleration_columns=acceleration_columns, time=time)
-        row['fields'].append(dict(energy_seconds=assembled-before,
+        row['fields'].append(dict(mode='fresh' if model is None else 'predicted', prediction=prediction,
+            energy_seconds=assembled-before,
             solve_seconds=perf_counter()-assembled, relative_residual=value['relative_field_residual']))
         if not np.isfinite(value['relative_field_residual']) or value['relative_field_residual'] > 1e-9:
+            if model is not None:
+                raise InvalidReuse('predicted field exceeds the algebraic residual budget')
             raise ValueError('current field exceeds the audited algebraic residual budget')
-        return value
+        return value, energy
 
     def rhs(time, state):
-        nonlocal row
+        nonlocal row, operator_model
         elapsed_check()
         if len(report['rhs']) >= max_rhs:
             raise RuntimeError('bounded moving-case RHS count exhausted')
@@ -127,34 +143,73 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
         pose = InitialState(state[:3], quaternion)
         twist, eta, psi = state[7:13], state[13:13+size], state[13+size:]
         arrays = geometry(pose, eta, psi, 'base')
-        current = field(arrays, twist, time, True)
-        eta_rate, psi_rate, surface = surface_rates(arrays['points'],
-            arrays['faces'][arrays['free_faces']], arrays['free_nodes'], current['parent_map'],
-            psi, current['flux'])
         samples, groups = body_material_samples(arrays, quadrature()[0])
         hints = np.broadcast_to(np.arange(len(arrays['body_faces']))[:, None], groups.shape)
-        traces = []
-        for sign in (1, -1):
-            offset = sign*.001
-            orientation = (Rotation.from_rotvec(offset*twist[3:])
-                *Rotation.from_quat(quaternion, scalar_first=True)).as_quat(scalar_first=True)
-            moved = geometry(InitialState(pose.position+offset*twist[:3], orientation),
-                eta+offset*eta_rate, psi+offset*psi_rate, f'offset-{sign}')
-            moved_field = field(moved, twist, time+offset, False)
-            traces.append(interpolate_body_trace(moved, moved_field['potential'], samples, groups,
-                                                  face_hints=hints))
         rotation = rotation_matrix(quaternion)
-        pressure = evaluate_body_pressure(arrays['points'], arrays['faces'], arrays['body_faces'],
-            pose.position, body.mass, rotation@body.inertia_cg@rotation.T, twist, current['potential'],
-            (traces[0]-traces[1])/.002,
-            twist[:3]+np.cross(twist[3:], arrays['points']-pose.position),
-            current['acceleration_potentials'], density=WATER_DENSITY, gravity=GRAVITY)
+
+        def stencil(model):
+            current, center_energy = field(arrays, twist, time, True, model)
+            eta_rate, psi_rate, surface = surface_rates(arrays['points'],
+                arrays['faces'][arrays['free_faces']], arrays['free_nodes'], current['parent_map'],
+                psi, current['flux'])
+            moved = []
+            for sign in (1, -1):
+                offset = sign*.001
+                orientation = (Rotation.from_rotvec(offset*twist[3:])
+                    *Rotation.from_quat(quaternion, scalar_first=True)).as_quat(scalar_first=True)
+                try:
+                    moved.append(geometry(InitialState(pose.position+offset*twist[:3], orientation),
+                        eta+offset*eta_rate, psi+offset*psi_rate, f'offset-{sign}'))
+                except ValueError as error:
+                    if model is not None:
+                        raise InvalidReuse('predicted direction has invalid offset geometry: '+str(error)) from error
+                    raise
+            if model is not None:
+                row['reuse_direction'] = model.check_direction(*moved)
+            traces, energies = [], [center_energy]
+            for sign, offset_arrays in zip((1, -1), moved):
+                moved_field, energy = field(offset_arrays, twist, time+sign*.001, False, model)
+                energies.append(energy)
+                traces.append(interpolate_body_trace(offset_arrays, moved_field['potential'], samples, groups,
+                                                      face_hints=hints))
+            pressure = evaluate_body_pressure(arrays['points'], arrays['faces'], arrays['body_faces'],
+                pose.position, body.mass, rotation@body.inertia_cg@rotation.T, twist, current['potential'],
+                (traces[0]-traces[1])/.002,
+                twist[:3]+np.cross(twist[3:], arrays['points']-pose.position),
+                current['acceleration_potentials'], density=WATER_DENSITY, gravity=GRAVITY)
+            return pressure, eta_rate, psi_rate, surface, [arrays, *moved], energies
+
+        result = None
+        if operator_model is not None:
+            try:
+                result = stencil(operator_model)
+                row['operator_mode'] = 'reused'
+                row['operator_anchor_rhs_index'] = operator_model.rhs_index
+            except (InvalidReuse, np.linalg.LinAlgError, FloatingPointError) as error:
+                row['reuse_rejection'] = str(error)
+                # Discard ALL candidate values, including their surface direction.
+                # A fresh base determines both fresh pressure-offset geometries.
+        if result is None:
+            result = stencil(None)
+            row['operator_mode'] = 'fresh'
+        pressure, eta_rate, psi_rate, surface, stencil_arrays, stencil_energies = result
         raw_quaternion = state[3:7]
         quaternion_rate = .5*np.r_[-twist[3:]@raw_quaternion[1:],
             raw_quaternion[0]*twist[3:]+np.cross(twist[3:], raw_quaternion[1:])]
         rate = np.r_[twist[:3], quaternion_rate, pressure.acceleration, eta_rate, psi_rate]
         if not np.isfinite(rate).all():
             raise FloatingPointError('nonfinite coupled boat state rate')
+        # Commit a model only after its entire fresh RHS has succeeded. RK-rejected
+        # stages may train later predictions; events retain that computational history.
+        if operator_reuse and row['operator_mode'] == 'fresh':
+            training_started = perf_counter()
+            try:
+                operator_model = LocalOperator(stencil_arrays, stencil_energies, time, len(report['rhs']))
+                row['operator_training'] = operator_model.diagnostics
+            except (InvalidReuse, np.linalg.LinAlgError, FloatingPointError) as error:
+                operator_model = None
+                row['operator_training_rejection'] = str(error)
+            row['operator_training_seconds'] = perf_counter()-training_started
         row.update(complete=True, seconds=perf_counter()-before, surface=surface,
             acceleration_world=pressure.acceleration.tolist(),
             hydrodynamic_load_world=pressure.hydrodynamic_load.tolist(), pressure=pressure.diagnostics)
@@ -202,6 +257,12 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
             accepted_simulated_seconds=float(times[-1]) if times else 0., accepted_steps=max(0, len(times)-1),
             cold_geometry_count=cold_count, process_peak_rss_bytes=peak_rss_bytes(),
             reserved_gpu_pool_bytes=cp.get_default_memory_pool().total_bytes())
+        report['operator_counts'] = dict(
+            fresh_rhs=sum(r.get('operator_mode') == 'fresh' for r in report['rhs']),
+            reused_rhs=sum(r.get('operator_mode') == 'reused' for r in report['rhs']),
+            fresh_assemblies=sum(f['mode'] == 'fresh' for r in report['rhs'] for f in r['fields']),
+            predicted_fields=sum(f['mode'] == 'predicted' for r in report['rhs'] for f in r['fields']),
+            failed_reuse_attempts=sum('reuse_rejection' in r for r in report['rhs']))
         if states:
             report['maximum_accepted_quaternion_norm_error'] = float(np.max(abs(
                 np.linalg.norm(np.array(states)[:, 3:7], axis=1)-1)))
@@ -218,6 +279,8 @@ if __name__ == '__main__':
     parser.add_argument('--max-rhs', type=int, default=13)
     parser.add_argument('--budget-seconds', type=float, default=90.)
     parser.add_argument('--max-step', type=float, default=.01)
+    parser.add_argument('--quadrature-order', type=int, default=3, choices=(3, 6, 12))
+    parser.add_argument('--operator-reuse', action='store_true')
     result = run(**vars(parser.parse_args()))
     print(json.dumps({key: result[key] for key in
         ('complete', 'seconds', 'accepted_simulated_seconds', 'accepted_steps', 'cold_geometry_count')}))

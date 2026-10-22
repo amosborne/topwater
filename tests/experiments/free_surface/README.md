@@ -1578,3 +1578,20 @@ audit to replay fresh reference matrices on CPU; optional training still incurs
 new assemblies. Models remain experimental: large extrapolation, training cost
 and coupled trajectory error are unresolved. Evidence:
 `docs/research/boat-local-operator.json`.
+
+`boat_moving --quadrature-order 6 --operator-reuse` is an opt-in, past-only
+one-direction reuse falsifier. Each complete fresh base/plus/minus stencil fits
+a quadratic in its actual geometry coordinate. Body/free residuals, pressure
+direction, extrapolation, age and basis ownership guard the entire candidate
+RHS. Any failed candidate is discarded before recomputing the fresh base and
+both offsets; no stale/fresh pressure differences are allowed. Fresh physical
+failures propagate. Only declared uniform quadrature owners support reuse.
+
+The matched 50 ms pilots (`--duration .05 --max-step .01 --refinement 2
+--max-rhs 40 --budget-seconds 120 --quadrature-order 6`, with/without reuse)
+required 48 assemblies each and accepted no reused RHS. Reuse took 28.42 s
+versus 25.93 s fresh in this pair. It remains disabled by default and earns no
+baseline change. The small step was a deliberate opportunity to reuse, not an
+optimal timestep or a throughput benchmark. Costs, guard rejection counts,
+physical state differences and archived producers:
+`docs/research/boat-operator-reuse.json`.

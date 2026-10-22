@@ -423,6 +423,30 @@ accuracy is established. Keep these models experimental. Full six-axis errors,
 h-pair sensitivities, cost breakdown and verified producer provenance are in
 `boat-local-operator.json`.
 
+The first past-only coupled reuse falsifier trains one geometry direction from
+the fresh base/plus/minus operators already required for pressure. Separate
+body/free geometry and direction guards, age, extrapolation and ownership apply
+to the entire RHS. Candidate failure discards all predicted values and rebuilds
+the base and both offsets from the fresh surface rate. No mixed-model derivative
+is used. Numerical model-fit failure leaves the successful fresh RHS intact.
+
+This policy fails to save work in matched 50 ms pilots with 10 ms maximum RK23
+steps and uniform order-six quadrature: all 16 RHS remain fresh (48 assemblies).
+There are five body-geometry, five free-geometry and four body-direction
+rejections; initial stencil ownership also prevents the first model from
+training. Candidate/fresh totals are 28.42/25.93 s; one pair cannot isolate
+overhead from runtime variation. Maximum accepted position difference is
+1.03e-12 m, but no reused derivative was accepted, so this only verifies
+fallback agreement. The small steps were chosen to give conservative reuse a
+chance, not to claim simulation throughput. Geometry limits remain unchanged;
+reuse stays opt-in and experimental. Full evidence: `boat-operator-reuse.json`.
+
+Next investigate a current-anchored, past-only two-direction linear model
+offline. Preserve the current pressure chord and estimate transverse response
+from older fresh operators. Passive samples along a curved trajectory may not
+identify transverse and quadratic response separately; avoid a poorly
+identified full quadratic fit merely to pass the geometry guard.
+
 ## Primary context
 
 Variational free-surface discretization with moving boundaries is established;
