@@ -86,6 +86,33 @@ comparison has up to 5.94% diagonal error on n=12; finite-domain and spatial
 effects are not separated. Component and short-run timings do not qualify
 complete nonlinear performance. Optimization is deferred until validation.
 
+At n=24 with material subdivision 3, the same-hull instantaneous comparison
+reaches a maximum diagonal difference of 1.35%. Both numerical representations
+are refined; this does not isolate either solver's error. The refined nonlinear
+moving case also completes. Use `--n 24 --material-subdivisions 3` in both
+commands to reproduce those checks.
+
+The radiation runner uses this same nonlinear geometry and pressure path while
+prescribing one body motion for validation:
+
+```text
+uv run --locked --group correlation --with "cupy-cuda12x[ctk]==14.2.0" python -m tests.experiments.free_surface.canoe_radiation --mode heave --periods 3 --ramp-periods 1 --fit-periods 2 --capytaine
+```
+
+All six prescribed modes are supported. The runner fits all six force/moment
+components, including signed couplings, after startup; it removes independent
+hydrostatic restoring when extracting added mass and damping. A smooth exterior
+sponge damps both canonical surface variables and is zero around the pocket.
+This is an artificial absorbing tank, not an exact outgoing boundary. The
+Capytaine reference uses the same immersed hull and 4 m water depth and saves
+the complete reference matrices. The small default run is only a smoke check.
+
+Finite-frequency qualification requires transient decay, amplitude halving,
+space/time refinement, and stable results when the sponge and outer domain
+change. `--exterior-scale` adds outer cells while preserving pocket coordinates
+and water-cell spacing, separating outer-boundary sensitivity from resolution.
+No finite-frequency qualification is claimed yet.
+
 ## Nonlinear fluid prerequisite
 
 ```text

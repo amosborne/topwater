@@ -17,7 +17,7 @@ from topwater.hydrostatics import hydrostatics
 from .moving_canoe import make_domain, initial_state, rhs, field
 
 
-def heave(time, amplitude, omega, ramp_periods=2.):
+def ramped_motion(time, amplitude, omega, ramp_periods=2.):
     """Displacement, velocity and acceleration, with a C2 quintic startup."""
     if amplitude <= 0 or omega <= 0 or ramp_periods <= 0:
         raise ValueError('positive amplitude, frequency and ramp periods required')
@@ -134,7 +134,7 @@ def run(n=12, *, periods=.05, omega=4., amplitude=1e-4, ramp_periods=2.,
 
     def evaluate(time, fluid):
         nonlocal calls
-        motion = heave(time, amplitude, omega, ramp_periods)
+        motion = ramped_motion(time, amplitude, omega, ramp_periods)
         state, acceleration = prescribed_state(base, fluid, motion, mode_index)
         diagnostics = {}
         rate = rhs(domain, state, derivative_step, diagnostics=diagnostics, damping=damping)
@@ -198,7 +198,7 @@ def run(n=12, *, periods=.05, omega=4., amplitude=1e-4, ramp_periods=2.,
         mode=mode, mode_order=list(MODES), amplitude_unit='m' if mode_index < 3 else 'rad',
         n=n, gpu=gpu, material_subdivisions=material_subdivisions, exterior_scale=exterior_scale,
         periods=periods, ramp_periods=ramp_periods, fit_periods=fit_periods, omega=omega,
-        amplitude=amplitude, rtol=rtol, derivative_step=derivative_step, max_step=max_step,
+        amplitude=amplitude,rtol=rtol, derivative_step=derivative_step, max_step=max_step,
         water_depth=4., wavelength=2*np.pi/k, maximum_surface_edge=maximum_edge,
         wavelength_over_maximum_edge=2*np.pi/k/maximum_edge,
         domain_half_widths=np.max(np.abs(domain.reference_points[:, :2]), axis=0).tolist(),
@@ -235,7 +235,7 @@ def run(n=12, *, periods=.05, omega=4., amplitude=1e-4, ramp_periods=2.,
                 diagonal=expected[mode_index,mode_index]
                 report['capytaine'][name+'_relative_error']=(
                     float(actual[mode_index]/diagonal-1) if diagonal else None)
-    motions = np.array([heave(t, amplitude, omega, ramp_periods) for t in times])
+    motions = np.array([ramped_motion(t, amplitude, omega, ramp_periods) for t in times])
     full_states = np.array([prescribed_state(base, fluid, motion, mode_index)[0]
                             for fluid, motion in zip(states, motions)])
     saved = dict(times=times, states=full_states, prescribed_motion=motions, hydrodynamic_load=forces)

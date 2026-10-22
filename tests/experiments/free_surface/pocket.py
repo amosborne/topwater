@@ -35,17 +35,19 @@ def grid(n,amplitude,shift,*,exterior_scale=1.):
         raise ValueError('use n=6 or a positive multiple of 12 and an interior pocket')
     if not np.isfinite(exterior_scale) or exterior_scale<1:
         raise ValueError('exterior_scale must be finite and at least one')
-    nx=ny=n; nz=n//3
-    x=np.linspace(-2*np.pi,2*np.pi,nx+1)
-    y=np.linspace(-np.pi,np.pi,ny+1)
-    if exterior_scale!=1:
-        # Move only exterior coordinates: local pocket and body resolution stay
-        # fixed during outer-domain sensitivity checks. This is not an accuracy
-        # claim for the resulting coarser exterior cells.
-        for coordinates,count in ((x,nx),(y,ny)):
-            first,last=count//3,2*count//3
-            coordinates[:first]=coordinates[first]+exterior_scale*(coordinates[:first]-coordinates[first])
-            coordinates[last+1:]=coordinates[last]+exterior_scale*(coordinates[last+1:]-coordinates[last])
+    nz=n//3
+    extra=int(np.ceil((exterior_scale-1)*(n//3)))
+    nx=ny=n+2*extra
+    x=np.linspace(-2*np.pi,2*np.pi,n+1)
+    y=np.linspace(-np.pi,np.pi,n+1)
+    if extra:
+        # Add cells outside the original box, preserving the pocket AND wave
+        # resolution during outer-boundary sensitivity checks.
+        def extend(coordinates):
+            spacing=coordinates[1]-coordinates[0]
+            return np.r_[coordinates[0]+spacing*np.arange(-extra,0),coordinates,
+                coordinates[-1]+spacing*np.arange(1,extra+1)]
+        x,y=extend(x),extend(y)
     sigma=np.linspace(0,1,nz+1)
     xx,yy,ss=np.meshgrid(x,y,sigma,indexing='ij')
     eta=amplitude*(np.cos(.4*xx+.7*yy+.2)+.4*np.sin(.8*xx-.3*yy))
@@ -57,7 +59,7 @@ def grid(n,amplitude,shift,*,exterior_scale=1.):
     offsets=steps@np.array([(ny+1)*(nz+1),nz+1,1])
     tets=(numbering[:-1,:-1,:-1].ravel()[:,None,None]+offsets).reshape(-1,4)
     i,j=np.indices((nx,ny))
-    pocket=(nx//3+shift<=i)&(i<2*nx//3+shift)&(ny//3<=j)&(j<2*ny//3)
+    pocket=(extra+n//3+shift<=i)&(i<extra+2*n//3+shift)&(extra+n//3<=j)&(j<extra+2*n//3)
     near=np.repeat(pocket.ravel(),nz*6)
     return points,tets,near,numbering[:,:,-1].ravel()
 

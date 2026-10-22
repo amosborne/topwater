@@ -16,6 +16,11 @@ and declared result output. A wave-only or fixed-coefficient load benchmark does
 not qualify the coupled solver. Timestep and resolution must earn their accuracy;
 they cannot be enlarged merely to meet the clock.
 
+Real time is preferred; the user accepts 10--20 wall seconds per simulated second
+for the complete validated case. The current implementation priority is full
+nonlinear six-DOF motion and Capytaine validation, followed by speed optimization.
+Body-free, static and kernel timings are component diagnostics only.
+
 Dense global free-surface BEM is a verification choice, not a user requirement.
 The next architecture candidate is a small detailed near-body potential-flow
 domain coupled to efficient nonlinear far-field wave propagation. Do not build a
@@ -325,7 +330,8 @@ host default where it affects the measured operation. The complete solver must
 meet the development-machine real-time target above; component baselines explain
 where its budget is spent. Explain regressions on comparable hardware, including
 any accuracy benefit. Benchmark data go under `artifacts/`,
-with concise accuracy/time/memory evidence in the PR.
+with concise accuracy/time/memory evidence alongside the experiment. Work is
+organized in branches and commits; pull requests are not part of this workflow.
 
 ### Initial kernel measurements (2026-10-21)
 

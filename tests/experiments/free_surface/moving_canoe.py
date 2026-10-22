@@ -158,6 +158,8 @@ def rhs(domain,state,derivative_step=1e-4,*,diagnostics=None,damping=None):
     velocity=state[7:13]
     eta=state[13:13+size];psi=state[13+size:]
     current=field(domain,position,orientation,eta,psi,velocity)
+    rim_clearance=domain.contact.rim_clearance(current['points'][domain.local_mapping],
+        position,orientation)
     height_rate,potential_rate,mesh_velocity=surface(domain,current,psi,velocity,damping=damping)
     offsets=[]
     for dt in (derivative_step,-derivative_step):
@@ -185,6 +187,7 @@ def rhs(domain,state,derivative_step=1e-4,*,diagnostics=None,damping=None):
             known_pressure_load=pressure.known_pressure_load.tolist(),
             added_mass=pressure.added_mass.tolist(),
             fluid_volume=current['fluid_volume'],
+            minimum_rim_clearance=rim_clearance,
             mechanical_energy=current['fluid_energy']+domain.body.mass*9.81*position[2]+
                 .5*domain.body.mass*velocity[:3]@velocity[:3]+
                 .5*velocity[3:]@(rotation@domain.body.inertia_cg@rotation.T)@velocity[3:],
