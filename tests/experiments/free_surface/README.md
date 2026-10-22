@@ -231,6 +231,20 @@ resolved in these body-free cases: dissipation alone did not make the sponge
 an accurate open boundary. This does not quantify canoe-load error, corner
 effects or damping of the hull's near field; no outgoing method is qualified.
 
+`pml_strip` tests a separate matched-coordinate candidate against an analytic
+full finite-depth wave field, including both propagating and evanescent port
+modes. It transforms the volume metric and surface measure together; it does
+not increase the old physical sponge strength. At fixed width 7.878 m and
+stretch strength 8/s, the omega=2,4,6 and 0/45-degree family has maximum fine-grid
+complex-reflection error 1.03e-8. The largest reflected amplitude, 6.33e-5,
+matches the predicted finite-wall return. Maximum quiet-region physical
+velocity L2 error is 0.0446%, and independently integrated transformed-form
+power balances within 1.40e-13. Two spatial levels and selected rational-metric
+quadrature controls are retained; three focused tests pass. These are
+frequency-domain propagating-wave controls only. Evanescent wall return,
+whole-canoe radiation and a causal nonlinear time-domain boundary remain
+required before adopting this candidate.
+
 The prescribed nonlinear controller also passes an independent physical-work
 check on the moving canonical canoe with nonflat surface, all six velocities
 and imposed accelerations. Without damping, its controller supplies 1.15926 W;
