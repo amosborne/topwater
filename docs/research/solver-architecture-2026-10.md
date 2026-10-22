@@ -181,6 +181,40 @@ Retry the same stage with refreshed cells/setup when the operator/force audit fa
 
 The immediate falsifier remains one actual-canoe direction at two displacement magnitudes: compare old, tangent and fresh operators **and their action forces at the same physical state**, recording which local gates fired, missed failures, and complete cost. Start with full same-state audits to calibrate gates, then reduce audit frequency only after evidence. A later activity-based near/far multi-rate scheme must preserve the globally coupled elliptic/added-mass solve; circuit partitions with long inactive intervals do not prove that distant fluid can simply stop responding.
 
+## Exact full nonlinear matrix-free stage, 2026-10-22
+
+The complete nonflat canoe seed now passes an exact-current matrix-free RHS
+comparison with the independently saved direct-solve action audit. All 3,168
+surface modes, finite body pose, six nonzero body velocities, physical boundary
+maps and nonlinear shape/chart terms are retained. The old calm fluid/body
+factorization is only a preconditioner. No current global volume matrix,
+current fluid LU or six auxiliary body-response fields are built.
+
+`artifacts/p4-nonlinear-exact-matrixfree-rhs.json` records five CG iterations,
+field relative difference `1.61e-14`, full canonical-rate relative difference
+`4.22e-14`, and maximum body momentum-rate difference `2.50e-12` in the
+corresponding SI force/torque components. Weak-normal relative residual is
+`4.72e-13`; fluid work mismatch is `5.13e-16 J`. Exact kinetic forces use the
+same current geometry and quadrature as the matrix action. Persistent GPU
+cache arrays occupy 471,097,296 bytes; this excludes allocator reserve and
+temporary arrays.
+
+This first cold run spent 2.53 s on current boundary geometry, 44.24 s on GPU
+cache construction including cold setup/compilation, 5.27 s on the coupled
+field, 3.84 s on kinetic energy/shape force and 6.42 s on remaining action
+terms. Geometry startup and old factorization cost another 42.97/30.59 s.
+These are one-state diagnostic timings, not trajectory throughput or a warm
+speedup claim. A warm full-stage profile is required before selecting the next
+kernel change. Accepted timestep and physical error remain decisive.
+
+The independent 80-cell actual nonlinear predictor audit also falsifies an
+operator-only reuse gate: halving the predictor interval from `1e-4` to
+`5e-5 s` reduces tangent-action error from `1.13e-5` to `2.84e-6`, but full
+shape-force error only falls from 0.891% to 0.446%. Both physical Jacobians and
+tangent tensors remain positive. The tangent energy has its matching base
+shape derivative; it is a separate approximation and is not used in the exact
+full-stage result. See `artifacts/metric-shape-tangent-cohort.json`.
+
 ## MATLAB's established solvers: transferable architecture rather than a language migration
 
 The [MATLAB ODE Suite paper](https://www.mathworks.com/help/pdf_doc/otherdocs/ode_suite.pdf), Shampine/Reichelt1997, documents simplified Newton/chord iteration, quasi-constant-step multistep organization and Jacobian reuse. Its performance comparisons count function evaluations, derivative evaluations, LU factorizations and solves separately; fewer Jacobians alone do not establish less total work. Reuse of derivative/setup data is standard numerical practice, not something Topwater should reinvent under a new name.
