@@ -1,5 +1,34 @@
 # Symmetric free-surface BEM experiment
 
+## Current nonlinear validation candidate
+
+The active candidate is `variational_canoe`, on `experiment/canonical-canoe`.
+It advances all six body coordinates and the nonlinear moving free surface
+using forces differentiated from the same discrete action as the fluid solve:
+
+```text
+uv run --locked --with "cupy-cuda12x[ctk]==14.2.0" python -m tests.experiments.free_surface.variational_canoe --duration 1 --initial-scale 10
+uv run --locked --with "cupy-cuda12x[ctk]==14.2.0" python -m tests.experiments.free_surface.linear_canoe_radiation --n 24 --exterior-scale 2 --omega 2 4 6
+```
+
+The older `moving_canoe` pressure formulation below remains a comparison
+control: its actual canoe energy-work imbalance did not improve with spatial
+refinement. Agreement with its trajectories is therefore insufficient.
+The variational candidate instead matches independent fixed-momentum energy
+differences, preserves constant-potential gauge invariance, and balances an
+independently evaluated physical energy derivative. Its complete nonlinear
+trajectory and timestep convergence remain under validation.
+
+`linear_canoe_radiation` solves the exact rest linearization of that action for
+all six radiation modes. It retains the full contact-node hull flux loads,
+consistent weak sponge projection, phase, reciprocity and dissipation checks.
+An actual nonlinear-stage amplitude-refinement test checks the fluid first
+variation. This provides a complete matrix diagnostic against Capytaine; it
+does not establish nonlinear force accuracy, outgoing-boundary convergence,
+long-run stability or full-case performance. Current coarse tank comparisons
+do not pass every coefficient gate. Nonlinear six-DOF and Capytaine validation
+take priority over speed optimization.
+
 ## Spatial-pocket accuracy and construction baseline
 
 Two checkout-only commands test an actual spatial decomposition:

@@ -113,7 +113,8 @@ def geometry(domain,position,orientation,eta):
     return points,tuple(height_jacobians),body_jacobian
 
 
-def field(domain,position,orientation,eta,psi,velocity):
+def operator_system(domain,position,orientation,eta):
+    """Assemble the current fluid energy and six consistent hull flux loads."""
     points,height_jacobians,body_jacobian=geometry(domain,position,orientation,eta)
     contact=domain.contact;mapping=domain.local_mapping
     panels=TrianglePanels(points[mapping][contact.faces],1)
@@ -129,6 +130,12 @@ def field(domain,position,orientation,eta,psi,velocity):
     # body_load integrates fluid-outward normals, including waterline rows.
     local_mesh=SimpleNamespace(vertices=points[mapping],faces=contact.faces)
     load[mapping]=body_load(local_mesh,panels,contact.body_faces,position)
+    return points,height_jacobians,body_jacobian,panels,energy,load
+
+
+def field(domain,position,orientation,eta,psi,velocity):
+    points,height_jacobians,body_jacobian,panels,energy,load=operator_system(
+        domain,position,orientation,eta)
     active=np.flatnonzero(energy.diagonal()>0)
     unknown=np.setdiff1d(active,domain.free_nodes)
     factor=splu(energy[unknown][:,unknown].tocsc())
