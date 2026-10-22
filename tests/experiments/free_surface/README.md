@@ -114,6 +114,14 @@ approximately `+0.00993 W` over three derivative steps: a resolved spatial/work
 consistency error requiring refinement. A successful trajectory does not yet
 qualify nonlinear conservation. The large negative tank gravity baseline is
 excluded from the drift normalization.
+At n=24/wet3 the same audit increases to approximately `+0.01248 W`, or
+`3.60%` per second. This refinement fails to establish energy/work convergence;
+the nonlinear baseline remains unqualified while pressure and surface work are
+investigated.
+Tightening the one-second release from `rtol=1e-4, max_step=0.01` to
+`rtol=1e-5, max_step=0.005` leaves energy drift at `1.19%`, while reducing
+volume drift to `1.34e-9 m³`. Final position differences are below `3e-8 m`;
+this temporal agreement does not resolve the spatial/work failure.
 
 After producing six fitted radiation reports per frequency,
 `validate_radiation <reports...> --output artifacts/radiation-family.json`
