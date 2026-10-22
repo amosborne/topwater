@@ -68,7 +68,7 @@ class CanoeContact:
     rim_vertices: np.ndarray
 
     @classmethod
-    def make(cls, body, state, walls, surface_grid, *, subdivisions=2):
+    def make(cls, body, state, walls, surface_grid, *, subdivisions=2, constrained=False):
         """Clip physical facets at flat water, then subdivide the wet mesh.
 
         ``walls`` wind out of the fluid. ``eta`` is absolute world height indexed
@@ -92,7 +92,8 @@ class CanoeContact:
             source = np.tile(source, 4)
         fine_edges = np.stack((wet, np.roll(wet, -1, axis=1)), axis=2).reshape(-1, 2, 3)
         segments = fine_edges[np.all(fine_edges[:, :, 2] == 0, axis=1)]
-        mesh, body_faces, free_faces = join_wetted_hull(wet, segments, walls, surface_grid)
+        mesh, body_faces, free_faces = join_wetted_hull(wet, segments, walls, surface_grid,
+                                                       constrained=constrained)
         lookup = {tuple(p): i for i, p in enumerate(mesh.vertices)}
         body_nodes = np.unique(mesh.faces[body_faces])
         free_nodes = np.unique(mesh.faces[free_faces])

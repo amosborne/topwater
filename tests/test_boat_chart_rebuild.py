@@ -7,15 +7,37 @@ from .experiments.free_surface.boat_chart_rebuild import diagnostics
 from .experiments.free_surface.boat_contact_preflight import make_chart, pose
 from .experiments.free_surface.canoe_contact import ContactTopologyError
 
-
-def test_rebuild_handles_recorded_chine_transition_and_preserves_normal_work():
-    body, rest, frozen = make_chart()
+def test_legacy_rebuild_retains_meshpy_free_chine_transition_control():
+    body, rest, frozen = make_chart(constrained=False)
     position, orientation = pose(rest, np.zeros(3), np.array([0., .01, 0.]))
     with pytest.raises(ContactTopologyError):
         frozen.evaluate(position, orientation, np.zeros(len(frozen.free_nodes)))
+    _, _, chart = make_chart(state=InitialState(position, orientation), constrained=False)
+    result = diagnostics(body, InitialState(position, orientation), chart)
+    assert abs(result['fluid_volume_error']) < 1e-10
+    assert result['wet_parent_area_max_error'] < 1e-12
+    assert abs(result['normal_work_error']) < 1e-12
+    assert abs(result['constant_gauge_work_error']) < 1e-12
+
+
+@pytest.mark.parametrize('translation,rotation', [
+    ([0., 0., 0.], [0., 0., 0.]),
+    ([0., 0., 0.], [0., .001, 0.]),
+    ([0., 0., .01], [0., 0., 0.]),
+    ([0., 0., 0.], [.01, 0., 0.]),
+    ([0., 0., 0.], [0., .01, 0.]),
+])
+def test_rebuild_handles_recorded_chine_transition_and_preserves_normal_work(translation, rotation):
+    pytest.importorskip('meshpy.triangle')
+    body, rest, frozen = make_chart()
+    position, orientation = pose(rest, np.array(translation), np.array(rotation))
+    if np.any(translation) or np.any(rotation):
+        with pytest.raises(ContactTopologyError):
+            frozen.evaluate(position, orientation, np.zeros(len(frozen.free_nodes)))
     state = InitialState(position, orientation)
     _, _, rebuilt = make_chart(state=state)
-    assert set(rebuilt.body_source_faces) != set(frozen.body_source_faces)
+    if rotation[1] == .01:
+        assert set(rebuilt.body_source_faces) != set(frozen.body_source_faces)
     result = diagnostics(body, state, rebuilt)
     assert abs(result['fluid_volume_error']) < 1e-10
     assert result['wet_parent_area_max_error'] < 1e-12

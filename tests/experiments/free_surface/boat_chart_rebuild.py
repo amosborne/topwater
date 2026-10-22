@@ -97,8 +97,9 @@ def run(output):
     output.parent.mkdir(parents=True, exist_ok=True)
     report = dict(qualified=False, complete=False, cases=[],
         scope='Flat-water fresh contact geometry and prescribed-world-trace controls only; no evolved-state transfer or fluid solve',
+        surface_triangulation='Constrained PSLG; exact input-point bijection and all prescribed boundary edges; no Steiner points',
         source_sha256={name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest() for name in
-            ('boat_chart_rebuild.py', 'boat_contact_preflight.py', 'canoe_contact.py')},
+            ('boat_chart_rebuild.py', 'boat_contact_preflight.py', 'canoe_contact.py', 'canoe.py')},
         fixture_sha256=sha256(Path(__file__).resolve().parents[2].joinpath('reference_boat.py').read_bytes()).hexdigest())
     arrays = {}
     try:
