@@ -41,10 +41,18 @@ def decode(data, momentum):
     return dict(field, physical_state=physical, qdot=qdot)
 
 
-def _configuration_state(geometry, q):
-    orientation = (Rotation.from_rotvec(q[3:6])*Rotation.from_quat(
+def _configuration_orientation(geometry, q):
+    return (Rotation.from_rotvec(q[3:6])*Rotation.from_quat(
         geometry.domain.rest.orientation, scalar_first=True)).as_quat(scalar_first=True)
-    return geometry.evaluate(q[:3], orientation, q[6:])
+
+
+def _configuration_state(geometry, q):
+    return geometry.evaluate(q[:3], _configuration_orientation(geometry, q), q[6:])
+
+
+def _boundary_configuration_pullback(geometry, q, force):
+    body, height = geometry.boundary_pullback(q[:3], _configuration_orientation(geometry, q), q[6:], force)
+    return np.r_[body_map(q[3:6]).T@body, height]
 
 
 def _pullback(state, q, force):
@@ -85,7 +93,11 @@ def action_rate(geometry, data, current, *, derivative_step=1e-4, kinetic=None):
     volume_order, boundary_order = data['volume_order'], data['boundary_order']
     q, qdot = data['q'], current['qdot']
     points, potential = data['state'].points, current['potential']
-    velocity = data['state'].velocity(qdot[6:], current['physical_state'][7:13])
+    # The boundary action never uses interior ALE velocity. Its derivative
+    # with respect to velocity consequently has physical boundary support only.
+    boundary = geometry.volume_map.boundary
+    velocity = np.zeros_like(points)
+    velocity[boundary] = data['state'].boundary_velocity(qdot[6:], current['physical_state'][7:13])
     position_force = np.zeros_like(points)
     velocity_force = np.zeros_like(points)
     boundary_flux = np.zeros(len(points))
@@ -117,8 +129,9 @@ def action_rate(geometry, data, current, *, derivative_step=1e-4, kinetic=None):
         1000*position_force-kinetic_gradient-gravity['gravity_gradient'])
     step = derivative_step
     plus, minus = q+step*qdot, q-step*qdot
-    jdot_force = (_pullback(_configuration_state(geometry, plus), plus, velocity_force)
-                  -_pullback(_configuration_state(geometry, minus), minus, velocity_force))/(2*step)
+    boundary_force = velocity_force[boundary]
+    jdot_force = (_boundary_configuration_pullback(geometry, plus, boundary_force)
+                  -_boundary_configuration_pullback(geometry, minus, boundary_force))/(2*step)
     momentum_rate += 1000*jdot_force
     # Explicit q dependence of rigid kinetic energy at fixed coordinate rates.
     rotation_step = 1e-5

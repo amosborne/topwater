@@ -25,6 +25,15 @@ from .p4_surface import quadrature as surface_quadrature
 from . import p4_tetra
 
 
+def _boundary_force_pullback(height_jacobians, body_jacobian, force):
+    force = np.asarray(force)
+    if force.shape != (len(body_jacobian), 3) or not np.all(np.isfinite(force)):
+        raise ValueError('finite physical boundary force vectors required')
+    body = np.einsum('nij,ni->j', body_jacobian, force)
+    height = sum(matrix.T@force[:, axis] for axis, matrix in enumerate(height_jacobians))
+    return body, height
+
+
 @dataclass(frozen=True)
 class GeometryState:
     owner: object
@@ -32,22 +41,26 @@ class GeometryState:
     boundary_height_jacobians: tuple
     boundary_body_jacobian: np.ndarray
 
-    def velocity(self, eta_rate, world_twist):
+    def boundary_velocity(self, eta_rate, world_twist):
+        """Current physical boundary velocity, without an interior ALE lift."""
         eta_rate, world_twist = np.asarray(eta_rate), np.asarray(world_twist)
         if (eta_rate.shape != (len(self.owner.free_nodes),) or world_twist.shape != (6,)
                 or not np.all(np.isfinite(eta_rate)) or not np.all(np.isfinite(world_twist))):
             raise ValueError('finite global eta rate and world six-twist required')
         value = np.einsum('nij,j->ni', self.boundary_body_jacobian, world_twist)
         value += np.column_stack([matrix@eta_rate for matrix in self.boundary_height_jacobians])
-        return self.owner.volume_map.lift(value)
+        return value
+
+    def velocity(self, eta_rate, world_twist):
+        return self.owner.volume_map.lift(self.boundary_velocity(eta_rate, world_twist))
+
+    def boundary_pullback(self, force):
+        return _boundary_force_pullback(self.boundary_height_jacobians,
+                                         self.boundary_body_jacobian, force)
 
     def pullback(self, nodal_force):
         """Return world-body and global-height forces: exact transpose chart."""
-        force = self.owner.volume_map.pullback(nodal_force)
-        body = np.einsum('nij,ni->j', self.boundary_body_jacobian, force)
-        height = sum(matrix.T@force[:, axis]
-                     for axis, matrix in enumerate(self.boundary_height_jacobians))
-        return body, height
+        return self.boundary_pullback(self.owner.volume_map.pullback(nodal_force))
 
 
 @dataclass(frozen=True)
@@ -143,7 +156,8 @@ class P4WholeCanoeGeometry:
         return cls(domain, mesh, faces, free_faces, body_faces, volume_map, chart,
                    chart_to_global, eta_columns, override, override_rows, free, row[free], preflight)
 
-    def evaluate(self, position, orientation, eta):
+    def boundary_data(self, position, orientation, eta):
+        """Single owner of physical boundary coordinates and chart Jacobians."""
         eta = np.asarray(eta)
         if eta.shape != (len(self.free_nodes),) or not np.all(np.isfinite(eta)):
             raise ValueError('finite eta at every global P4 free-surface master required')
@@ -165,9 +179,18 @@ class P4WholeCanoeGeometry:
             height.append(matrix)
         body = np.zeros((len(boundary_points), 3, 6))
         body[self.override_boundary_rows] = chart.body_jacobian[self.override_chart_nodes]
+        return boundary_points, tuple(height), body
+
+    def evaluate(self, position, orientation, eta):
+        boundary_points, height, body = self.boundary_data(position, orientation, eta)
         displacement = boundary_points-self.mesh.points[self.volume_map.boundary]
         points = self.mesh.points+self.volume_map.lift(displacement)
-        return GeometryState(self, points, tuple(height), body)
+        return GeometryState(self, points, height, body)
+
+    def boundary_pullback(self, position, orientation, eta, force):
+        """Transpose boundary chart only; force must be boundary-supported."""
+        _, height, body = self.boundary_data(position, orientation, eta)
+        return _boundary_force_pullback(height, body, force)
 
     def boundary_moments(self, state, *, order=9):
         """Closed physical volume/gravity and independent normal-work gradients."""
