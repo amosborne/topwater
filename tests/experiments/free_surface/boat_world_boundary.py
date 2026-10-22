@@ -337,12 +337,14 @@ def body_material_samples(arrays, barycentric):
     return points, groups
 
 
-def interpolate_body_trace(arrays, potential, material_points, groups):
+def interpolate_body_trace(arrays, potential, material_points, groups, *, face_hints=None):
     """P1 trace at matching material samples, rejecting missing wet coverage.
 
     Only same-original-facet-group wet triangles may contain a sample. Boundary
     classification allows coordinate summation roundoff, never extrapolation
     over a physically dry patch. Gauge alignment is the caller's responsibility.
+    Optional body-local face hints only skip search after CURRENT same-facet
+    strict interior containment succeeds; no old weights or values are reused.
     """
     potential = np.asarray(potential, dtype=float)
     points = np.asarray(material_points, dtype=float)
@@ -355,6 +357,11 @@ def interpolate_body_trace(arrays, potential, material_points, groups):
     flat, labels, values = points.reshape(-1, 3), groups.ravel(), result.ravel()
     triangles = arrays['body_material_vertices']
     face_values = potential[arrays['faces'][arrays['body_faces']]]
+    hints = None if face_hints is None else np.asarray(face_hints)
+    if hints is not None:
+        if hints.shape != groups.shape or hints.dtype.kind not in 'iu':
+            raise ValueError('one integer body-local face hint per material sample required')
+        hints = hints.ravel()
     scale = max(1., np.max(abs(arrays['source_body_vertices'])))
     coordinate_roundoff = 64*np.finfo(float).eps*scale
     for group in np.unique(labels):
@@ -368,6 +375,23 @@ def interpolate_body_trace(arrays, potential, material_points, groups):
         if np.any(abs((flat[rows]-original[0])@normal) > coordinate_roundoff):
             raise ValueError('material trace query leaves its original facet plane')
         axes = np.flatnonzero(np.arange(3) != np.argmax(abs(normal)))
+        if hints is not None:
+            valid = (hints[rows] >= 0)&(hints[rows] < len(triangles))
+            selected = rows[valid]
+            selected = selected[arrays['body_source_group'][hints[selected]] == group]
+            if len(selected):
+                projected = triangles[hints[selected]][:, :, axes]
+                inverse = np.linalg.inv(np.swapaxes(projected[:, 1:]-projected[:, :1], 1, 2))
+                uv = np.einsum('rij,rj->ri', inverse, flat[selected][:, axes]-projected[:, 0])
+                bary = np.column_stack((1-uv.sum(axis=1), uv))
+                tolerance = coordinate_roundoff*np.linalg.norm(inverse, ord=np.inf, axis=(1, 2))*2
+                # Interior confidence is stricter than the general search's
+                # roundoff boundary allowance. Uncertain/edge hints fall back.
+                inside = bary.min(axis=1) > tolerance
+                values[selected[inside]] = np.einsum('ri,ri->r', bary[inside], face_values[hints[selected[inside]]])
+            rows = rows[~np.isfinite(values[rows])]
+            if not len(rows):
+                continue
         best = np.full(len(rows), -np.inf)
         for face in np.flatnonzero(arrays['body_source_group'] == group):
             projected = triangles[face][:, axes]

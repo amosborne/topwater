@@ -51,7 +51,13 @@ def test_offset_trace_uses_material_coverage_and_preserves_gauge(tmp_path):
     points, groups = body_material_samples(arrays, np.full((1, 3), 1/3))
     phi = affine_material_potential(mesh.vertices, body, pose)
     expected = .4+points@np.array([.2, -.1, .3])
+    hints = np.broadcast_to(np.arange(len(arrays['body_faces']))[:, None], groups.shape)
     assert_allclose(interpolate_body_trace(arrays, phi, points, groups), expected, atol=2e-14, rtol=0)
+    assert_allclose(interpolate_body_trace(arrays, phi, points, groups, face_hints=hints),
+                    expected, atol=2e-14, rtol=0)
+    # Incorrect indices are only hints: facet/containment checks must fall back.
+    assert_allclose(interpolate_body_trace(arrays, phi, points, groups,
+                    face_hints=np.full(groups.shape, len(arrays['body_faces'])+1)), expected, atol=2e-14, rtol=0)
     assert_allclose(interpolate_body_trace(arrays, phi+7, points, groups), expected+7, atol=4e-14, rtol=0)
     original = arrays['source_body_vertices'][arrays['source_body_faces'][arrays['body_vertex_source_triangle']]]
     reconstructed = np.einsum('fak,fakj->faj', arrays['body_vertex_source_barycentric'], original)
@@ -70,10 +76,15 @@ def test_offset_trace_uses_material_coverage_and_preserves_gauge(tmp_path):
     moved_phi = affine_material_potential(moved_mesh.vertices, body, offset)
     assert_allclose(interpolate_body_trace(moved, moved_phi, points[deep], groups[deep]),
                     expected[deep], atol=2e-14, rtol=0)
+    assert_allclose(interpolate_body_trace(moved, moved_phi, points[deep], groups[deep],
+                    face_hints=hints[deep]), expected[deep], atol=2e-14, rtol=0)
     assert np.array_equal(moved['parent_psi'], arrays['parent_psi'])
     # This original transom point is physically dry, not an extrapolation site.
     with pytest.raises(ValueError, match='lack wet'):
         interpolate_body_trace(moved, moved_phi, body.mesh.vertices[2:3], np.array([8]))
+    with pytest.raises(ValueError, match='lack wet'):
+        interpolate_body_trace(moved, moved_phi, body.mesh.vertices[2:3], np.array([8]),
+                               face_hints=np.array([0]))
 
 
 @pytest.mark.parametrize('region', ['all', 'body', 'free'])
