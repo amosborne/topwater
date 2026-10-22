@@ -69,12 +69,13 @@ def _geometry_jacobians(points,faces):
     return packed,cp.asarray(values[-1]),curl,np.stack(curl_jacobians,axis=1)
 
 
-def vertex_gradient(points,faces,potential):
-    """Return d(.5*rho*phi.T*E*phi)/d(points), rho=1000, phi fixed.
+def vertex_gradient(points,faces,potential,*,assembly=None,density=1000.):
+    """Return d(.5*rho*phi.T*E*phi)/d(points), phi fixed.
 
     Faces have the same complete fluid-outward winding as TrianglePanels(..., 1).
-    Auxiliary q=V^-1 H phi is recomputed from the same symmetrized primal
-    operator and held stationary in the derivative. Source and target vertex
+    A matching current ``prepare_energy`` assembly shares its factor/H; otherwise
+    they are assembled here. Auxiliary q=V^-1 H phi is held stationary in the
+    derivative. Density defaults to the legacy freshwater control. Source and target vertex
     contributions, including shared vertices and the self jump, accumulate
     once each. No normal-flux, row-sum or gauge correction is applied.
     """
@@ -87,28 +88,34 @@ def vertex_gradient(points,faces,potential):
             np.any(faces>=len(points)) or potential.shape!=(len(points),) or
             not np.all(np.isfinite(potential))):
         raise ValueError('finite points/potential and valid integer triangular faces required')
+    density=float(density)
+    if not np.isfinite(density) or density <= 0:
+        raise ValueError('finite positive density required')
+    # Validate reuse BEFORE allocating or running the coordinate-derivative work.
+    auxiliary = None if assembly is None else assembly.auxiliary(points,faces,potential)
     geometry,weights,curl,curl_jac=_geometry_jacobians(points,faces)
     nf,nv,nq=len(faces),len(points),len(weights)
     face_array=cp.asarray(np.ascontiguousarray(faces,dtype=np.int64))
-    arguments=geometry[::2].copy()
-    arguments.insert(8,face_array)
-    arguments.append(weights)
-    v=cp.empty((nf,nf),dtype=cp.float64)
-    h=cp.zeros((nf,nv),dtype=cp.float64)
-    _pairs(((nf*nf+127)//128,),(128,),
-        (*arguments,np.int32(nf),np.int32(nv),np.int32(nq),v,h))
-    v=(v+v.T)*.5
     phi=cp.asarray(potential)
-    with errstate(linalg='raise'):
-        factor=cp.linalg.cholesky(v)
-        auxiliary=solve_triangular(factor,h@phi,lower=True)
-        auxiliary=solve_triangular(factor.T,auxiliary,lower=False)
+    if auxiliary is None:
+        arguments=geometry[::2].copy()
+        arguments.insert(8,face_array)
+        arguments.append(weights)
+        v=cp.empty((nf,nf),dtype=cp.float64)
+        h=cp.zeros((nf,nv),dtype=cp.float64)
+        _pairs(((nf*nf+127)//128,),(128,),
+            (*arguments,np.int32(nf),np.int32(nv),np.int32(nq),v,h))
+        v=(v+v.T)*.5
+        with errstate(linalg='raise'):
+            factor=cp.linalg.cholesky(v)
+            auxiliary=solve_triangular(factor,h@phi,lower=True)
+            auxiliary=solve_triangular(factor.T,auxiliary,lower=False)
     c=cp.asarray(np.einsum('fci,fc->fi',curl,potential[faces]))
     dc=cp.asarray(np.ascontiguousarray(np.einsum('fsci,fc->fsi',curl_jac,potential[faces])))
     gradient=cp.zeros((nv,3),dtype=cp.float64)
     _kernel(((nf*nf*18+127)//128,),(128,),
         (*geometry,weights,face_array,c,dc,phi,auxiliary,
-         np.int32(nf),np.int32(nv),np.int32(nq),gradient))
+         np.int32(nf),np.int32(nv),np.int32(nq),np.float64(density),gradient))
     result=gradient.get()
     if not np.all(np.isfinite(result)):
         raise FloatingPointError('nonfinite CUDA energy vertex gradient')

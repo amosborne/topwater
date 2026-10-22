@@ -37,7 +37,7 @@ extern "C" __global__ void vertex_gradient(
     const double *center0,const double *centerJ,const double *sign0,const double *signJ,
     const double *gradient0,const double *gradientJ,const double *points0,const double *pointsJ,
     const double *weights,const long long *faces,const double *curlphi0,const double *curlphiJ,
-    const double *phi,const double *aux,int nf,int nv,int nq,double *out) {
+    const double *phi,const double *aux,int nf,int nv,int nq,double density,double *out) {
     int work=blockDim.x*blockIdx.x+threadIdx.x;
     if (work>=nf*nf*18) return;
     int pair=work/18,lane=work%18,i=pair/nf,j=pair%nf;
@@ -55,9 +55,9 @@ extern "C" __global__ void vertex_gradient(
 
     Dual curl_product=0.;
     for(int k=0;k<3;++k) curl_product+=ci[i*3+k]*cj[j*3+k];
-    Dual scalar=500.*vsum*(curl_product-aux[i]*aux[j]);
+    Dual scalar=(.5*density)*vsum*(curl_product-aux[i]*aux[j]);
     for(int c=0;c<3;++c)
-        scalar+=1000.*aux[i]*linear[c]*phi[faces[j*3+c]];
+        scalar+=density*aux[i]*linear[c]*phi[faces[j*3+c]];
     int seed=lane%9,face=lane<9?i:j;
     atomicAdd(out+faces[face*3+seed/3]*3+seed%3,scalar.d);
 }

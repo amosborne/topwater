@@ -4,6 +4,7 @@ Use the optional CuPy CUDA runtime in the baseline command. No single-precision
 operator, row correction, physical approximation, or fast-math flag is used.
 """
 import ctypes
+from dataclasses import dataclass
 from importlib.metadata import distribution,distributions,PackageNotFoundError
 import os
 from pathlib import Path
@@ -42,7 +43,35 @@ _pairs=cp.RawKernel(_source,'energy_pairs',options=('--std=c++11',))
 _curl=cp.RawKernel(_source,'curl_energy',options=('--std=c++11',))
 
 
-def assemble_energy(faces,panels,order=3):
+@dataclass(frozen=True, eq=False)
+class EnergyAssembly:
+    """One CURRENT energy and its matching GPU single-layer factor/trace.
+
+    Retention is optional. This is not a stale-operator cache: force reuse checks
+    exact coordinates, face numbering, winding and quadrature before a solve.
+    """
+    energy: np.ndarray
+    diagnostics: dict
+    factor: object
+    mixed_trace: object
+    faces: np.ndarray
+    triangles: np.ndarray
+    normal_sign: np.ndarray
+    quadrature_order: int
+
+    def auxiliary(self, points, faces, potential):
+        if (self.quadrature_order != 3 or potential.shape != (len(self.energy),)
+                or not np.array_equal(faces, self.faces)
+                or not np.array_equal(points[faces], self.triangles)
+                or np.any(self.normal_sign != 1)):
+            raise ValueError('force reuse requires the same current order-three geometry and winding')
+        with errstate(linalg='raise'):
+            value = solve_triangular(self.factor, self.mixed_trace@cp.asarray(potential), lower=True)
+            return solve_triangular(self.factor.T, value, lower=False)
+
+
+def prepare_energy(faces,panels,order=3):
+    """Assemble once, retaining current V factor/H for matching shape forces."""
     points,weights=triangle_samples(panels.triangles,order)
     opposite=np.roll(panels.triangles,-2,axis=1)-np.roll(panels.triangles,-1,axis=1)
     gradient=np.cross(panels.geometric_normals[:,None],opposite)/(2*panels.areas[:,None,None])
@@ -56,9 +85,9 @@ def assemble_energy(faces,panels,order=3):
     _pairs(((nf*nf+127)//128,),(128,),(*geometry,np.int32(nf),np.int32(nv),np.int32(nq),v,h))
     asymmetry=float((cp.max(cp.abs(v-v.T))/cp.max(cp.abs(v))).get())
     v=(v+v.T)*.5
-    order=np.argsort(faces.ravel(),kind='stable').astype(np.int32)
+    incident_order=np.argsort(faces.ravel(),kind='stable').astype(np.int32)
     pointer=np.r_[0,np.cumsum(np.bincount(faces.ravel(),minlength=nv))].astype(np.int32)
-    incident=[cp.asarray(array) for array in (pointer,order//3,order%3)]
+    incident=[cp.asarray(array) for array in (pointer,incident_order//3,incident_order%3)]
     w=cp.empty((nv,nv),dtype=cp.float64)
     _curl(((nv*nv+127)//128,),(128,),
         (v,cp.asarray(curl),*incident,np.int32(nf),np.int32(nv),w))
@@ -67,5 +96,20 @@ def assemble_energy(faces,panels,order=3):
         z=solve_triangular(factor,h,lower=True)
     w+=z.T@z
     constant=float(cp.max(cp.abs(h@cp.ones(nv))).get())
-    return w.get(),dict(v_quadrature_asymmetry=asymmetry,h_constant_norm=constant,
-        operator_bytes=dict(single_layer_factor=v.nbytes,mixed_trace=h.nbytes,energy=w.nbytes))
+    diagnostics=dict(v_quadrature_asymmetry=asymmetry,h_constant_norm=constant,
+        operator_bytes=dict(single_layer_factor=factor.nbytes,mixed_trace=h.nbytes,energy=w.nbytes))
+    owned = [np.array(value, copy=True) for value in (faces, panels.triangles, panels.normal_sign)]
+    for value in owned:
+        value.setflags(write=False)
+    energy = w.get()
+    energy.setflags(write=False)
+    return EnergyAssembly(energy, diagnostics, factor, h, *owned, order)
+
+
+def assemble_energy(faces,panels,order=3):
+    """Legacy nonretaining interface; use prepare_energy for a field/force pair."""
+    current = prepare_energy(faces, panels, order)
+    # The legacy interface exposes no retained factor, and keeps its original
+    # writable host-array behavior without another matrix copy.
+    current.energy.setflags(write=True)
+    return current.energy, current.diagnostics

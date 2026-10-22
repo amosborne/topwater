@@ -1129,3 +1129,39 @@ Query clouds are workload controls, not fluid/hull meshes. These timings exclude
 the fluid operator, total pressure, body motion and initialization. Neither the
 energy bandwidth nor this kernel benchmark establishes spatial resolution,
 force/motion accuracy, safe conditions or end-to-end simulation throughput.
+
+## Current boat BEM factor sharing
+
+`boat_current_factor.py` uses the actual 2500 kg boat's flat-water boundary,
+prescribed nonzero six-axis velocity and the observed sea's potential trace.
+This finite-box snapshot is an operator/shape-kernel check, not a nonlinear
+sea initialization or deep-water simulation. The retained `prepare_energy`
+result owns the current energy, single-layer factor and mixed trace; matching
+force evaluation reuses that setup. Exact coordinate, face and quadrature checks
+reject stale geometry. The retained host energy is read-only. Legacy
+`assemble_energy` and default density 1000 retain their existing behavior;
+the boat check explicitly uses density 1025.
+
+```powershell
+$env:OPENBLAS_NUM_THREADS='1'; $env:OMP_NUM_THREADS='1'; $env:MKL_NUM_THREADS='1'
+uv run --locked --python 3.12 --with meshpy==2026.1.1 --with "cupy-cuda12x[ctk]==14.2.0" python -m tests.experiments.free_surface.boat_current_factor --output artifacts/boat-current-factor-reuse.json
+```
+
+At 492 panels/248 vertices, fresh and shared-setup gradients agree within
+1.3e-13 relative norm. Two directional energy differences give relative errors
+1.3e-8 and 5.3e-9, with fixed outer geometry and nonzero near-hull deformation.
+Density scaling and stale-setup rejection pass. The saved mixed field has
+relative residual 2.3e-14. One warmed force pair costs 0.500 s fresh versus
+0.445 s retained; these two observations are not a throughput distribution.
+Warm energy assembly costs approximately 0.016 s and the mixed solve 0.004 s.
+Retained GPU factor/trace storage is 2.91 MB, excluding runtime and other arrays.
+
+A subsequent CUDA-event profile places 0.402 s of a 0.449 s force call in the
+18-lane pair derivative kernel; host geometry Jacobians take about 0.044 s.
+This motivates testing the existing acceleration-potential/Bernoulli pressure
+route, which needs directional field updates instead of every vertex derivative.
+The old hybrid canoe pressure route failed spatial work convergence, so a pure
+BEM boat pressure path must earn force/work convergence. Neither route is
+qualified by this current kinetic-kernel check. Saved evidence:
+`artifacts/boat-current-factor-reuse.{json,npz}` and
+`artifacts/boat-current-force-profile.json`.
