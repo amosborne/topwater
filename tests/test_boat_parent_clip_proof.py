@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 from fractions import Fraction
 
-from .experiments.free_surface.boat_parent_clip_proof import build, hull_planes, PlanePoints
+from .experiments.free_surface.boat_parent_clip_proof import build, hull_planes, PlanePoints, polygon_centroid
 from .reference_boat import reference_body
 
 
@@ -37,3 +37,18 @@ def test_authored_coplanar_group_rejects_a_nonplanar_constituent():
     points[5, 2] += Fraction(1, 1000)
     with pytest.raises(AssertionError, match='noncoplanar facet group'):
         hull_planes(PlanePoints(), points, body.mesh.faces)
+
+
+def test_fan_center_is_invariant_to_collinear_vertex_insertion_and_has_continuous_cut_limit():
+    f = Fraction
+    points = [(f(x), f(y), f(2*x+3*y)) for x, y in [(0, 0), (1, 0), (1, 1), (0, 1)]]
+    center = polygon_centroid(points, [0, 1, 2, 3])
+    assert center == (f(1, 2), f(1, 2), f(5, 2))
+    epsilon = f(1, 10**6)
+    points.append((epsilon, f(0), 2*epsilon))
+    assert polygon_centroid(points, [0, 4, 1, 2, 3]) == center
+    points.append((f(0), epsilon, 3*epsilon))
+    # Cutting off a tiny corner changes area and centroid by O(epsilon²),
+    # whereas the old vertex mean tends to (.4,.4), an O(1) displacement.
+    cut = polygon_centroid(points, [4, 1, 2, 3, 5])
+    assert max(abs(a-b) for a, b in zip(cut, center)) < 3*epsilon**2
