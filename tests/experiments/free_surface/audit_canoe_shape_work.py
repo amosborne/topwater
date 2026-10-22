@@ -11,31 +11,15 @@ it does not by itself identify a pressure sign error or an incorrect FD step.
 import argparse
 import json
 from pathlib import Path
-from types import SimpleNamespace
 
 import numpy as np
 from threadpoolctl import threadpool_limits
 
-from topwater.rankine import TrianglePanels
 from tests.laplace_reference import triangle_samples
-from .canoe import body_load
+from .audit_canoe_energy import kinetic_and_load
 from .moving_canoe import make_domain, initial_state, field, surface, moved_orientation
 
 RHO = 1000.
-
-
-def kinetic_and_load(domain, solution, position, psi, velocity):
-    """Use E phi = B V + scatter_FS(flux), avoiding gravity cancellation."""
-    mapping = domain.local_mapping
-    points = solution['points'][mapping]
-    panels = TrianglePanels(points[domain.contact.faces], 1)
-    local = body_load(SimpleNamespace(vertices=points, faces=domain.contact.faces),
-        panels, domain.contact.body_faces, position)
-    load = np.zeros(len(solution['points']))
-    load[mapping] = local@velocity
-    load[domain.free_nodes] += solution['flux']
-    kinetic = .5*RHO*(solution['potential']@load)
-    return float(kinetic), load
 
 
 def boundary_work(domain, current, position, psi, velocity, height_rate, mesh_velocity):
@@ -107,7 +91,7 @@ def run(n=12, wet_subdivisions=2, initial_scale=10., gpu=True):
     eta, psi = state[13:13+size], state[13+size:]
     current = field(domain, position, orientation, eta, psi, velocity)
     height_rate, _, moving = surface(domain, current, psi, velocity)
-    kinetic, load = kinetic_and_load(domain, current, position, psi, velocity)
+    kinetic, load = kinetic_and_load(domain, current, position, velocity)
     hull, free = boundary_work(domain, current, position, psi, velocity, height_rate, moving)
     fe_shape = fem_volume_shape(domain, current, moving)
     rows = []
@@ -119,7 +103,7 @@ def run(n=12, wet_subdivisions=2, initial_scale=10., gpu=True):
             solution = field(domain, moved_position, moved_orientation(orientation, velocity[3:], dt),
                              eta+dt*height_rate, psi, velocity)
             solutions.append(solution)
-            energies.append(kinetic_and_load(domain, solution, moved_position, psi, velocity)[0])
+            energies.append(kinetic_and_load(domain, solution, moved_position, velocity)[0])
         kinetic_rate = (energies[0]-energies[1])/(2*h)
         trace_rate = (solutions[0]['potential']-solutions[1]['potential'])/(2*h)
         trace_work = RHO*trace_rate@load

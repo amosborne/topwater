@@ -122,6 +122,14 @@ Tightening the one-second release from `rtol=1e-4, max_step=0.01` to
 `rtol=1e-5, max_step=0.005` leaves energy drift at `1.19%`, while reducing
 volume drift to `1.34e-9 m³`. Final position differences are below `3e-8 m`;
 this temporal agreement does not resolve the spatial/work failure.
+The energy audit now separates fluid/body kinetic and gravity work, subtracting
+gravity references per element before summation. Body power agrees with
+`velocity · hydrodynamic_load`; the fluid side accounts for the discrepancy.
+`audit_canoe_shape_work` independently reproduces the entire coarse discrepancy
+as operator shape work minus reconstructed physical-boundary work. Known affine
+flow controls improve under refinement, so this does not establish a universal
+sign error. Non-affine trace accuracy, velocity reconstruction and interface
+work remain under investigation; no conservation correction is applied.
 
 After producing six fitted radiation reports per frequency,
 `validate_radiation <reports...> --output artifacts/radiation-family.json`
