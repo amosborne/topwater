@@ -1,5 +1,42 @@
 # Symmetric free-surface BEM experiment
 
+## Spatial-pocket accuracy and construction baseline
+
+Two checkout-only commands test an actual spatial decomposition:
+
+```text
+uv run --locked python -m tests.experiments.free_surface.pocket
+uv run --locked --group correlation python -m tests.experiments.free_surface.pocket_canoe
+```
+
+`pocket.py` joins a local BEM domain to a sparse tetrahedral FEM exterior by
+sharing potential nodes and summing weak fluxes over the full interface.
+An independent oblique harmonic field on a curved graph supplies the reference.
+Moving the artificial partition by pi/3 on the unchanged physical mesh gives
+whole-surface flux differences of 11.17% and 4.35% at two refinements, below
+the full-FEM errors of 23.05% and 7.85%. The executable check requires decreasing
+partition and mixed-minus-FEM errors below that baseline. This tests the coupling
+implementation; it does not qualify the remaining physical flux error.
+
+`pocket_canoe.py` uses the same canonical canoe, with a local domain ending 1 m
+below the surface and a sparse exterior extending to the 4 m bed. It retains all
+six reaction columns, a fresh 704-panel Capytaine instantaneous-inertia reference,
+individual diagonal errors and setup/assembly/factor/solve timings. The refined
+case differs by at most 3.4% on the six diagonal terms. Finite-box/depth effects
+remain mixed with spatial error; this is not an open-water correlation gate.
+Physical hull geometry stays fixed during coplanar panel refinement.
+
+The repeated six-RHS timings reuse unchanged operators and factors. They are
+not moving-stage timings. Full candidate time includes geometry, construction,
+factorization and the repeated solves; independent Capytaine work is outside
+that timer. Memory includes sparse storage/fill and lifetime process peak RSS,
+which can include earlier cases and the reference solver.
+
+Both reports remain `qualified=false`. No nonlinear time evolution, outgoing-wave
+condition or real-time result is established. The immediate optimization target
+is 100 times less operator-building work; adaptive and partial updates must
+preserve current load accuracy and count estimator, refresh and rejection costs.
+
 The production architecture is under review against the real-time requirement in
 `docs/numerics.md`. These dense experiments remain numerical references.
 The separate mesh-cost study isolates coplanar solver-panel subdivision from

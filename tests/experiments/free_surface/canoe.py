@@ -28,15 +28,24 @@ def fluid_domain(wet, resolution=(8, 4, 4), domain_scale=1.):
     box, top, node_map = tank(*resolution)
     points = box.vertices*domain_scale
     walls = points[box.faces[~top]]
-    line = np.unique(wet.waterline_segments.reshape(-1, 3), axis=0)
+    return join_wetted_hull(wet.wetted_triangles, wet.waterline_segments,
+                            walls, points[node_map.ravel()])
+
+
+def join_wetted_hull(wetted_triangles, segments, walls, grid):
+    """Join the canonical convex flat waterline to supplied local box surfaces.
+
+    Shared by the all-BEM reference and the spatial-pocket experiment. This
+    remains a restricted mesh construction, not a general remeshing interface.
+    """
+    line = np.unique(segments.reshape(-1, 3), axis=0)
     if not np.all(line[:, 2] == 0):
         raise ValueError('this experiment requires a horizontal waterline at z=0')
-    grid = points[node_map.ravel()]
     if np.any(line[:, :2].min(axis=0) <= grid[:, :2].min(axis=0)) or np.any(
             line[:, :2].max(axis=0) >= grid[:, :2].max(axis=0)):
         raise ValueError('waterline must lie strictly inside the tank')
     equations = ConvexHull(line[:, :2]).equations
-    midpoints = wet.waterline_segments[:, :, :2].mean(axis=1)
+    midpoints = segments[:, :, :2].mean(axis=1)
     distance = np.max(midpoints@equations[:, :2].T+equations[:, 2], axis=1)
     if np.any(np.abs(distance) > 64*np.finfo(float).eps*np.ptp(line, axis=0).max()):
         raise ValueError('this experiment requires a single convex waterline')
@@ -50,11 +59,11 @@ def fluid_domain(wet, resolution=(8, 4, 4), domain_scale=1.):
                        triangles[:, 2]-triangles[:, 0])[:, 2] < 0
     triangles[reverse] = triangles[reverse, ::-1]
     # Physical wet hull is body-outward; the complete domain is fluid-outward.
-    all_triangles = np.concatenate((walls, wet.wetted_triangles[:, ::-1], triangles))
+    all_triangles = np.concatenate((walls, wetted_triangles[:, ::-1], triangles))
     vertices, indices = np.unique(all_triangles.reshape(-1, 3), axis=0,
                                   return_inverse=True)
     mesh = HullMesh(vertices, indices.reshape(-1, 3))
-    body = np.arange(len(walls), len(walls)+len(wet.wetted_triangles))
+    body = np.arange(len(walls), len(walls)+len(wetted_triangles))
     free = np.arange(body[-1]+1, len(mesh.faces))
     return mesh, body, free
 

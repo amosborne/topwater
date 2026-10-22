@@ -60,6 +60,7 @@ jobs:
       - run: uv run --locked --group correlation pytest tests/test_capytaine_frequency_reference.py
       - run: uv run --locked --group correlation python -m tests.experiments.capytaine_mesh_cost --case 2 0 --case 2 1 --case 2 2 --case 3 0
       - run: uv run --locked --group correlation python -m tests.experiments.free_surface.canoe --study
+      - run: uv run --locked --group correlation python -m tests.experiments.free_surface.pocket_canoe
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -67,6 +68,7 @@ jobs:
           path: |
             artifacts/capytaine-*.json
             artifacts/free-surface-canoe.json
+            artifacts/free-surface-pocket-canoe.json
           if-no-files-found: warn
 
   experimental-free-surface:
@@ -81,6 +83,7 @@ jobs:
           enable-cache: true
       - run: uv sync --locked
       - run: uv run --locked python -m tests.experiments.free_surface.verify
+      - run: uv run --locked python -m tests.experiments.free_surface.pocket
       - run: uv run --locked python -m tests.experiments.free_surface.evolution --fine
       - run: uv run --locked python -m tests.experiments.free_surface.linear
       - run: uv run --locked python -m tests.experiments.free_surface.shape_check
