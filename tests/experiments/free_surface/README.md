@@ -99,6 +99,23 @@ neither calculation is an exact reference. Its side walls and bed differ
 from Capytaine's unbounded depth-four-metre reference, so this result is not
 a Capytaine correlation or a nonlinear solver selection.
 
+`p4_whole_canoe` joins that local volume to the original depth-four-metre
+exterior, sharing all P4 trace modes without a P1 restriction. Its 7076
+tetrahedra have 82429 active P4 nodes; three unused input vertices are excluded.
+The independent quartic-patch, linear-system and energy/work residuals are
+below 3e-13. Inertia diagonal differences from the identical finite-box mixed
+solver remain between -5.58% and -0.564%. No outgoing-wave or spatial
+convergence follows from this static result.
+
+The contained `p4_geometry` cell calculation checks prerequisites for actual
+nonlinear P4 motion. Curved physical harmonic flow, independent boundary
+volume/gravity integrals, fixed-potential shape work, translation and gauge
+invariance pass. A rational kinetic-integral example checks quadrature
+refinement for both energy and its geometry gradient. These are cell checks;
+they do not implement P4 canoe contact, surface canonical maps or a nonlinear
+trajectory. Positive Jacobians at quadrature points do not certify positivity
+between those points.
+
 The prescribed nonlinear controller also passes an independent physical-work
 check on the moving canonical canoe with nonflat surface, all six velocities
 and imposed accelerations. Without damping, its controller supplies 1.15926 W;
