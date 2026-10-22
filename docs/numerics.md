@@ -11,6 +11,12 @@ changing that baseline does not invalidate or replace earlier canoe evidence.
 
 The application is an unpowered boat adrift on open ocean: 18–30 ft length,
 7–11 ft maximum beam, with incident frequencies no higher than **0.6 Hz**.
+Optimization now targets the 24 ft, 2500 kg reference boat and the canonical
+observed Southern California sea in `tests/reference_case.py`. Substantially
+larger/smaller boats, more/less energetic seas and faster/slower wave regimes
+are outside this development scope; the broad dimensional bounds above do not
+promise a general-purpose solver. Other catalog observations and phase seeds
+are test inputs, not automatic solver qualifications.
 The user excludes breaking waves, slamming and incident wavelengths shorter
 than **twice the boat beam**. Beam is the complete physical hull's maximum
 body-frame transverse width, independent of heading, roll or numerical mesh

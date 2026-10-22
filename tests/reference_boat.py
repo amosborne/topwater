@@ -19,9 +19,9 @@ BEAM = 9*.3048
 DEPTH = 1.
 DEADRISE_DEGREES = 20.
 CHINE_BEAM_FRACTION = .8
-SHELL_MASS = 600.
-PAYLOAD_MASS = 400.
-MOTOR_MASS = 250.
+SHELL_MASS = 1600.
+PAYLOAD_MASS = 600.
+MOTOR_MASS = 300.
 PAYLOAD_POSITION = np.array([0., 0., .8])
 MOTOR_POSITION = np.array([-LENGTH/2, 0., .7])
 WATER_DENSITY = 1025.
@@ -73,7 +73,7 @@ def mesh_arrays(refinement=0):
 
 
 def shell_loading(vertices, physical_faces):
-    """Exact uniform-area triangular shell moments, normalized to 600 kg.
+    """Exact uniform-area triangular shell moments, normalized to 1600 kg.
 
     Input shell mass is an explicit budget, not inferred laminate thickness or
     density. The point loads have no intrinsic inertia; their offsets do.

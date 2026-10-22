@@ -48,7 +48,7 @@ def main():
     rim = vertices[np.r_[body.mesh.opening_rim, body.mesh.opening_rim[0]]]@project
     ax.plot(rim[:, 0], rim[:, 1], color='#173b50', linewidth=1.3)
     for point, label, offset in (
-        (PAYLOAD_POSITION, f'{PAYLOAD_MASS:g} kg console / gear / people', (5, 35)),
+        (PAYLOAD_POSITION, f'{PAYLOAD_MASS:g} kg people / gear / fuel', (5, 35)),
         (MOTOR_POSITION, f'{MOTOR_MASS:g} kg motor', (-15, 35)),
     ):
         location = ((point-body.cg)@rotation.T+rest.position)@project

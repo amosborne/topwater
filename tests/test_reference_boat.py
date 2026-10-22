@@ -49,11 +49,12 @@ def test_mass_tensor_matches_independent_triangle_quadrature():
     r = samples-cg
     inertia = np.sum(dm[:, None, None]*(np.sum(r*r, axis=1)[:, None, None]*np.eye(3)
                                         -np.einsum('ni,nj->nij', r, r)), axis=0)
-    assert body.mass == 1250
+    assert body.mass == 2500
     assert_allclose(body.cg, cg, atol=3e-16)
     assert_allclose(body.inertia_cg, inertia, atol=3e-12, rtol=2e-15)
     assert abs(body.inertia_cg[0, 2]) > 1  # Preserve longitudinal/vertical coupling.
-    assert_allclose(body.inertia_cg[[0, 1], [1, 2]], 0, atol=3e-14)
+    assert_allclose(body.inertia_cg[[0, 1], [1, 2]], 0,
+                    atol=8*np.finfo(float).eps*np.max(np.diag(body.inertia_cg)))
 
 
 def test_planar_subdivision_preserves_mass_geometry_and_rest():

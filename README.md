@@ -34,8 +34,8 @@ The initial scope is a single rigid body in deep water, with reproducible direct
 
 The application reference is a deliberately simple **24 ft x 9 ft** open V-hull
 with a physical transom, flared sides and a tapered bow. Its loading uses round
-assumptions: **600 kg uniform fiberglass shell**, **400 kg amidships** for the
-console, gear and adults, and a **250 kg motor** at the stern. The latter two
+assumptions: **1,600 kg distributed hull/structure**, **600 kg amidships** for the
+console, gear, adults and fuel, and a **300 kg motor** at the stern. The latter two
 are point masses. Shell integration and their offsets determine CG and the full
 inertia tensor; they are not independently guessed inputs.
 
@@ -51,6 +51,28 @@ as an analytical geometry, loading and solver verification control. Earlier
 canoe timings do not describe the new boat or qualify its simulation speed.
 Calm-water checks stop at rim immersion or complete loss of water contact;
 general moving-surface breaking, slamming and contact guards remain unqualified.
+
+## Observed Southern California seas
+
+The [sea-state catalog](docs/sea-states.md) contains nine actual San Clemente
+buoy observations with paired spectral energy and directional measurements.
+The canonical record has approximately **1.4 m significant wave height**.
+Realizations preserve measured band energy and generate random phases;
+unmeasured frequency tails remain unknown.
+
+```python
+from topwater.sea_states import realize, dumps_realization, loads_realization
+
+waves = realize(beam_m=9*.3048, seed=42)  # omit seed for a fresh realization
+saved = dumps_realization(waves)        # saves explicit components and seed
+replayed = loads_realization(saved)
+```
+
+The shared checkout fixture [tests/reference_case.py](tests/reference_case.py)
+combines this sea with the simple boat and fixed baseline seed 42. Its calm-water
+pose is a reference, not an initialized nonlinear wave simulation.
+Optimization targets this boat and sea family; substantially different boat
+sizes, sea energies and wave timescales are outside this development scope.
 
 ## Physical input API
 
