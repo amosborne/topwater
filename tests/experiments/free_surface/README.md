@@ -1,5 +1,27 @@
 # Free-surface solver validation experiments
 
+`hos_graph.graph_field` is a small CPU reference for the periodic deep-water
+nonlinear-graph Dirichlet-to-velocity component. It is not a boat solver or an
+open-water near/far coupling implementation. For flat-plane harmonic traces
+`f_m`, it uses `f_1=psi` and
+`f_m=-sum(eta**j * |D|**j f_(m-j)/j!)`, then Taylor-extends Cartesian velocity
+to the current graph through the chosen total HOS order. This follows the
+surface Taylor construction in [Shi, Zhu and Xu (2023)](https://doi.org/10.1016/j.joes.2023.07.003).
+Fourier modes describe space; this is an instantaneous elliptic component for
+time-domain evolution, not a frequency-domain body solver.
+
+Run `uv run --locked --python 3.12 pytest tests/test_hos_graph.py -q -s`.
+The manufactured 96 by 80 m periodic patch has two oblique exact harmonic
+potentials and a curved graph with nominal slope scale 0.12. The independent
+checks compare all three velocity components, upward unnormalised normal flux,
+and boundary trace obtained by direct exponential Fourier continuation (not
+the cancelling Taylor recursion). Order, grid and product-padding controls
+must be read together: padding cannot repair underresolved input and an
+unresolved unpadded calculation can look better through alias cancellation.
+The chosen patch scale/slope exercises moderate ocean-wave geometry; it is
+not the observed sea realization, a force comparison, or trajectory evidence.
+Higher HOS order is not guaranteed to converge for an arbitrary steep graph.
+
 ## Time-domain solver and validation
 
 Topwater's intended solver architecture is time-domain: advance the nonlinear
