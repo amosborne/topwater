@@ -5,7 +5,7 @@ Uniform outer quadrature preserves the closed-boundary constant identity.
 This is not a tolerance-controlled Galerkin assembler: see README.md.
 """
 import numpy as np
-from scipy.linalg import solve
+from scipy.linalg import cholesky, solve_triangular
 from scipy.sparse import coo_matrix
 from tests.laplace_reference import triangle_samples
 from .kernel import assemble_pairs, symmetrize_single_layer
@@ -35,8 +35,11 @@ def assemble_energy(faces, panels, order=3):
         w += b.T@(v@b)
     # V is no longer needed after W. Its transpose is a Fortran-contiguous
     # view of the same owned symmetric buffer, so LAPACK can consume it.
-    auxiliary = solve(v.T, h, assume_a='pos', overwrite_a=True, overwrite_b=False)
-    w += h.T@auxiliary
+    factor = cholesky(v.T, lower=True, overwrite_a=True)
+    # V = L L.T, so H.T V^-1 H = (L^-1 H).T (L^-1 H).
+    # Forming this Gram matrix needs only one triangular solve.
+    auxiliary = solve_triangular(factor, h, lower=True)
+    w += auxiliary.T@auxiliary
     return w, dict(
         v_quadrature_asymmetry=asymmetry,
         h_constant_norm=float(np.max(np.abs(h@np.ones(nv)))),

@@ -122,7 +122,10 @@ No operator, factorization or potential mean is cached across moving stages.
 The flat linear verification can reuse a frozen operator because its geometry
 does not change. Assembly consumes the owned single-layer buffer after forming
 the curl contribution and accumulates the remaining contribution into that same
-energy buffer. Dense assembly and factorization still dominate moving stages.
+energy buffer. With `V = L @ L.T`, the remaining contribution is formed as
+`Z.T @ Z`, where `Z = solve_triangular(L, H)`. This is the same Schur complement
+with one triangular solve instead of two. Dense assembly and factorization still
+dominate moving stages.
 
 The potential space is globally continuous P1; auxiliary flux uses P0 panels.
 Use the existing positive Rankine kernel and outward **fluid** normals. The
