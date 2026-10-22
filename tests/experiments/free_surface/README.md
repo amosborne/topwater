@@ -288,6 +288,16 @@ power, so this diagnostic uses field/reflection errors without a power ratio.
 Whole-canoe radiation, domain convergence and a causal nonlinear time-domain
 boundary remain required before adopting this candidate.
 
+`pml_corner` extends the coordinate coefficients to signed x/y layers and
+their intersections. Known finite-depth plane waves satisfy independently
+integrated volume, surface and conormal flux balances for all 35 degree-four
+test polynomials in the physical pocket, one layer and all four corners at
+omega=2,4,6. Two focused tests pass, including a deliberately incorrect corner
+Jacobian that fails the balance. This checks the 3D equations, without a mesh
+solve; discrete propagation and full six-mode canoe correlation remain open.
+Compact-layer refinement and speed work are deferred while those correctness
+checks and finite nonlinear motion are completed.
+
 The prescribed nonlinear controller also passes an independent physical-work
 check on the moving canonical canoe with nonflat surface, all six velocities
 and imposed accelerations. Without damping, its controller supplies 1.15926 W;
