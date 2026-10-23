@@ -1,0 +1,261 @@
+{
+  "complete": true,
+  "qualified": false,
+  "scope": "Actual canonical24ft convex input hull and observed-sea0.237m-range P1 graph; manufactured acceleration potentials, not ocean radiation or moving6DOF.",
+  "fields": [
+    "affine",
+    "xy",
+    "xz",
+    "yz",
+    "x^2-y^2",
+    "x^2-z^2"
+  ],
+  "normalization": "Coordinates centered at suppliedCG and scaled by inputbeam; unitSI acceleration-potential coefficients. Max force/moment metrics span all3 translation/rotation rows and all5 quadratic fields separately; no mixed-unit norm or production tolerance.",
+  "cases": [
+    {
+      "report": "artifacts\\boat-local-surface-basis-body1.json",
+      "sha256": "10fab6ecec89baded6f22a345c4390489344f97c9155429cdb2c03bf9b2df569",
+      "producer_archive": "artifacts\\boat-local-surface-basis-body1.source",
+      "common_body_refinement": 1,
+      "total_seconds": 5.953326799994102,
+      "peak_process_rss_bytes": 560476160,
+      "initial_geometry_seconds": 0.42908480000915006,
+      "graph_height_range_m": 0.2367989093404211,
+      "prior_two_field_report": "artifacts\\boat-local-surface-split.json",
+      "prior_report_sha256": "ce2ebad55ca9ddf1d2c7930ebe507b267236d3a8d95840f4967ead0cc0fafae5",
+      "linear_pressure_recombination_max_error": 1.0928147275990341e-11,
+      "rows": [
+        {
+          "kind": "base",
+          "level": 0,
+          "panels": 472,
+          "body_panels": 188,
+          "free_panels": 158,
+          "assembly_seconds": 0.05083230001037009,
+          "mixed_factor_solve_seconds": 0.0002440999960526824,
+          "max_quadratic_force_error_n": 650.9037045400883,
+          "max_quadratic_moment_error_nm": 117.68281205851599,
+          "quadrature_change_force_n": 4.053142569325246,
+          "quadrature_change_moment_nm": 6.310719753607827,
+          "quadratic_body_potential_relative_l2": [
+            0.07401588915549243,
+            0.029035447487627642,
+            0.06413194802009124,
+            0.09004818897579263,
+            0.09907139959519692
+          ]
+        },
+        {
+          "kind": "local_free",
+          "level": 1,
+          "panels": 766,
+          "body_panels": 226,
+          "free_panels": 414,
+          "assembly_seconds": 0.10932049999246374,
+          "mixed_factor_solve_seconds": 0.0004394999996293336,
+          "max_quadratic_force_error_n": 498.1835189356434,
+          "max_quadratic_moment_error_nm": 148.96581858561967,
+          "quadrature_change_force_n": 4.25823734208825,
+          "quadrature_change_moment_nm": 5.452937077910747,
+          "quadratic_body_potential_relative_l2": [
+            0.052341559268782166,
+            0.028570714556623175,
+            0.05499750972350221,
+            0.08851919693972136,
+            0.0898467602805084
+          ]
+        },
+        {
+          "kind": "local_free",
+          "level": 2,
+          "panels": 1374,
+          "body_panels": 302,
+          "free_panels": 946,
+          "assembly_seconds": 0.3162583000084851,
+          "mixed_factor_solve_seconds": 0.0004044999950565398,
+          "max_quadratic_force_error_n": 475.8023931451262,
+          "max_quadratic_moment_error_nm": 154.03095831021255,
+          "quadrature_change_force_n": 4.28381399830414,
+          "quadrature_change_moment_nm": 5.3675562658463605,
+          "quadratic_body_potential_relative_l2": [
+            0.050095478009268904,
+            0.02859536594460597,
+            0.054804607152965784,
+            0.08824921449405014,
+            0.08867686054701855
+          ]
+        },
+        {
+          "kind": "uniform_free",
+          "level": 1,
+          "panels": 998,
+          "body_panels": 226,
+          "free_panels": 632,
+          "assembly_seconds": 0.16925649999757297,
+          "mixed_factor_solve_seconds": 0.00035539999953471124,
+          "max_quadratic_force_error_n": 198.03073050681905,
+          "max_quadratic_moment_error_nm": 102.35287617810718,
+          "quadrature_change_force_n": 3.467276490366203,
+          "quadrature_change_moment_nm": 3.7180666595222647,
+          "quadratic_body_potential_relative_l2": [
+            0.02876599699732242,
+            0.02620453195293692,
+            0.051061048285668216,
+            0.08323974287120496,
+            0.07710121356698245
+          ]
+        },
+        {
+          "kind": "uniform_free",
+          "level": 2,
+          "panels": 2998,
+          "body_panels": 302,
+          "free_panels": 2528,
+          "assembly_seconds": 1.488519600010477,
+          "mixed_factor_solve_seconds": 0.0003124999930150807,
+          "max_quadratic_force_error_n": 150.82610890132582,
+          "max_quadratic_moment_error_nm": 99.46622600061619,
+          "quadrature_change_force_n": 3.4961869959479372,
+          "quadrature_change_moment_nm": 3.377641786262302,
+          "quadratic_body_potential_relative_l2": [
+            0.0263237624481815,
+            0.026356155923492903,
+            0.05111761371004361,
+            0.0821349484268087,
+            0.0752470603049694
+          ]
+        }
+      ]
+    },
+    {
+      "report": "artifacts\\boat-local-surface-basis-body2.json",
+      "sha256": "4b44ef2d2b83ff7ebe6f576e9715dd2146b3751ad04babbc2b0ee65c588d06dd",
+      "producer_archive": "artifacts\\boat-local-surface-basis-body2.source",
+      "common_body_refinement": 2,
+      "total_seconds": 13.521434299997054,
+      "peak_process_rss_bytes": 577556480,
+      "initial_geometry_seconds": 0.4948327000020072,
+      "graph_height_range_m": 0.2367989093404211,
+      "prior_two_field_report": "artifacts\\boat-local-surface-body2.json",
+      "prior_report_sha256": "9b6e369753feb65698a3286473f999fb138cb605e9c420aea9f9a67001dfdab9",
+      "linear_pressure_recombination_max_error": 9.904965736495797e-12,
+      "rows": [
+        {
+          "kind": "base",
+          "level": 0,
+          "panels": 1074,
+          "body_panels": 752,
+          "free_panels": 196,
+          "assembly_seconds": 0.24495649998425506,
+          "mixed_factor_solve_seconds": 0.0022063999786041677,
+          "max_quadratic_force_error_n": 545.733769342004,
+          "max_quadratic_moment_error_nm": 77.24532204639993,
+          "quadrature_change_force_n": 2.806464896172656,
+          "quadrature_change_moment_nm": 4.416472820224044,
+          "quadratic_body_potential_relative_l2": [
+            0.0710802396331099,
+            0.015755728282200822,
+            0.05175175214644401,
+            0.03476261054615782,
+            0.057270922088029884
+          ]
+        },
+        {
+          "kind": "local_free",
+          "level": 1,
+          "panels": 1520,
+          "body_panels": 828,
+          "free_panels": 566,
+          "assembly_seconds": 0.39157279999926686,
+          "mixed_factor_solve_seconds": 0.0031066999945323914,
+          "max_quadratic_force_error_n": 411.2990658548051,
+          "max_quadratic_moment_error_nm": 94.08710106778818,
+          "quadrature_change_force_n": 3.2404487327967217,
+          "quadrature_change_moment_nm": 3.514088525725356,
+          "quadratic_body_potential_relative_l2": [
+            0.04756731906919157,
+            0.014047957135876792,
+            0.04191624231693771,
+            0.033237882089667825,
+            0.04533510001832681
+          ]
+        },
+        {
+          "kind": "local_free",
+          "level": 2,
+          "panels": 2584,
+          "body_panels": 980,
+          "free_panels": 1478,
+          "assembly_seconds": 1.5201084000000264,
+          "mixed_factor_solve_seconds": 0.004082499974174425,
+          "max_quadratic_force_error_n": 393.48675531290155,
+          "max_quadratic_moment_error_nm": 96.20429164040408,
+          "quadrature_change_force_n": 3.3085043133423824,
+          "quadrature_change_moment_nm": 3.3843701723337745,
+          "quadratic_body_potential_relative_l2": [
+            0.04498837763200136,
+            0.01397233284177724,
+            0.041742257267454314,
+            0.03306593815680135,
+            0.04388356559115523
+          ]
+        },
+        {
+          "kind": "uniform_free",
+          "level": 1,
+          "panels": 1752,
+          "body_panels": 828,
+          "free_panels": 784,
+          "assembly_seconds": 0.901416499982588,
+          "mixed_factor_solve_seconds": 0.002510399994207546,
+          "max_quadratic_force_error_n": 111.2312030191797,
+          "max_quadratic_moment_error_nm": 38.24834333477065,
+          "quadrature_change_force_n": 2.4872341130330824,
+          "quadrature_change_moment_nm": 1.886353657381278,
+          "quadratic_body_potential_relative_l2": [
+            0.017258047720417332,
+            0.00964077552564305,
+            0.0373035128602007,
+            0.022002065935709532,
+            0.01927649939368875
+          ]
+        },
+        {
+          "kind": "uniform_free",
+          "level": 2,
+          "panels": 4284,
+          "body_panels": 980,
+          "free_panels": 3136,
+          "assembly_seconds": 4.181708900025114,
+          "mixed_factor_solve_seconds": 0.004036800004541874,
+          "max_quadratic_force_error_n": 68.34667829976206,
+          "max_quadratic_moment_error_nm": 35.4752900498288,
+          "quadrature_change_force_n": 2.550113385392251,
+          "quadrature_change_moment_nm": 1.5022359562290148,
+          "quadratic_body_potential_relative_l2": [
+            0.012058570326084988,
+            0.009299878752789467,
+            0.037562607245212834,
+            0.01995301909653955,
+            0.016906921582989873
+          ]
+        }
+      ]
+    }
+  ],
+  "verification": "Two independent tests passed0.50s: tetrahedral analytic volume moments establish boundary energy/all6pressureloads for all6fields; central potential differences verify field gradients. Independent q3/q4 exact-reference integration gate passes in every case. Basis pressures recombine to archived oblique pressures within1.1e-11N/Nm; no energy/L2 recombination claim.",
+  "review": "Independent source reviewer approved exact fine-node Dirichlet bypass, harmonic fields, weak loads, signs, all6 contractions, body-interpolation split and6field shape handling. No reviewer jobs.",
+  "conclusions": [
+    "The contact-adjacent face rule is NOT promoted. At commonbody2, localfree2 uses2584panels and has max quadratic force/moment errors393.49N/96.20Nm. Uniformfree1 uses1752panels and gives111.23N/38.25Nm; it is better on these maximum load metrics with fewer panels. The same dominance occurs at body1. This rejects this proximity-only marking rule for the tested snapshot, not local adaptivity itself.",
+    "q3->q6 changes(~2.5-4.3N and1.5-6.3Nm) are smaller than principal spatial differences. No claim that all weak individual moments are quadrature-converged.",
+    "Signed body interpolation and nodal-solution differences can cancel. This can be legitimate Galerkin functional convergence; cancellation is exposed, not automatically rejected or accepted as accuracy. Complete totals and splits are in owned reports.",
+    "Physicalgraph/hull unchanged; body refinement also induces conforming contact-free splits. Geometry/state resolution and radiation remain unqualified. No moving-baseline path or switch was added."
+  ],
+  "next": "Use output information rather than distance alone when testing adaptive trace spaces; separately test a mathematically valid current-graph source/HOS coupling before any nonlinear trajectory.",
+  "nonlinear_source_candidate": {
+    "status": "Research only; no implementation or adoption",
+    "formulation": "phi=L_eta E(psi-R|Gamma_eta)+R, with body normal equation solved simultaneously.",
+    "image_completion": "Opposite images strictly above ENTIRE auxiliarygraph remove netcharge and deep uniformflux; imageplane differs from HOSplane and actualgraphtrace is imposed explicitly.",
+    "required_gate": "Elevated-image-plane invariance and exact zero-plane flat-body heave/roll loads, then nonflat manufactured actualhull loads; consistent periodization/domain control and HOS order/spatial control remain required."
+  }
+}
