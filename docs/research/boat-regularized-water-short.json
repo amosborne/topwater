@@ -1,0 +1,283 @@
+{
+  "status": "First physical weak kinematic feedback run completed; fixed hull/prescribed ports only; not promoted",
+  "evidence": {
+    "artifacts\\boat-regularized-water-boundary.json": "1e135cec9a00e2ee014548d11114e70216089612364825a40327dd2134fd3966",
+    "artifacts\\boat-regularized-water-query-diagnostic.json": "371663d6599346ac48bbcd900e3c0a5b3f2965cae04500c15f09e6535820b8fe"
+  },
+  "equations": [
+    "eta_coef_t=M^-1*(Kphysical*c+far_flux_moments)",
+    "projected_physical_psi_coef_t=-g*eta_coef",
+    "c,sigma recomputed from current physical state through the previously verified pressure/source Schur solve"
+  ],
+  "state_contract": {
+    "integrator": "SciPy RK23",
+    "rtol": 0.001,
+    "eta_atol_m": 0.001,
+    "projected_physical_psi_atol_m2_per_s": 0.01,
+    "real_state_count": 18152,
+    "error_norm": "RMS over ALL real eta and projected physical-psi coefficients in all four cases",
+    "body_state_count": 0,
+    "prescribed_velocity_amplitudes": [
+      0.01,
+      0.005,
+      0.01,
+      0.005
+    ],
+    "first_step": null
+  },
+  "physical_flux": {
+    "assembly_seconds": 19.874919699999737,
+    "active_nodes": 2269,
+    "covered_nodes": 150,
+    "corrected_rows": 128,
+    "source_pairs": 53726400,
+    "hidden_area_pairs": 45561600,
+    "waterline_pairs": 8164800,
+    "retained_operator_bytes": 41186888,
+    "constructor_array_bound_bytes": 152651448,
+    "order": 4,
+    "scalar_source_diagnostics": {
+      "fallback_pairs": 0,
+      "exact_zero_distance_products": 0
+    },
+    "scope": "Fixed flat physical weak loads; no symmetry repair or point-velocity claim"
+  },
+  "initial_kinematic_rhs_vs_harmonic_rms_m_per_s": [
+    4.724810168481461e-05,
+    1.0176759214265097e-05,
+    0.00016518769256147788,
+    1.810775436589755e-07
+  ],
+  "runs": [
+    {
+      "max_step_seconds": 0.01,
+      "achieved_duration_seconds": 0.1,
+      "accepted_steps": 11,
+      "rhs_evaluations": 35,
+      "last_evaluation_time": 0.1,
+      "integration_seconds": 0.7521358000230975,
+      "pressure_output_seconds": 0.009448700002394617,
+      "integration_only_wall_per_sim_second": 7.5213580002309754,
+      "minimum_accepted_step": 1.3877787807814457e-17,
+      "maximum_accepted_step": 0.010000000000000002,
+      "eta_max_coefficient_m": 0.018697875533112997,
+      "physical_mass_eta_rms_error_vs_external_harmonic_max": [
+        4.085488078577315e-06,
+        9.855325542026423e-07,
+        1.4730907134628181e-05,
+        2.9174127055001103e-08
+      ],
+      "six_force_phase_amplitude_error_max": [
+        [
+          1.121936593285614,
+          0.159345621358214
+        ],
+        [
+          2.062566079465179,
+          0.15830882799120155
+        ],
+        [
+          8.631158201747906,
+          1.139899394565588
+        ],
+        [
+          1.9469656458248064,
+          0.08372602431778473
+        ],
+        [
+          18.20419722157849,
+          2.4240331709546954
+        ],
+        [
+          3.929694353886556,
+          0.5044457627400131
+        ]
+      ],
+      "principal_force_phase_relative_error_max": [
+        0.06700672136714508,
+        0.01457445572900596
+      ]
+    },
+    {
+      "max_step_seconds": 0.005,
+      "achieved_duration_seconds": 0.1,
+      "accepted_steps": 20,
+      "rhs_evaluations": 62,
+      "last_evaluation_time": 0.1,
+      "integration_seconds": 0.65271229998325,
+      "pressure_output_seconds": 0.006777400005375966,
+      "integration_only_wall_per_sim_second": 6.5271229998325,
+      "minimum_accepted_step": 0.0049999999999999906,
+      "maximum_accepted_step": 0.0050000000000000044,
+      "eta_max_coefficient_m": 0.018767587394975686,
+      "physical_mass_eta_rms_error_vs_external_harmonic_max": [
+        4.090637376053971e-06,
+        9.859913119654807e-07,
+        1.4731221316955132e-05,
+        2.9176659015995417e-08
+      ],
+      "six_force_phase_amplitude_error_max": [
+        [
+          1.12614332262867,
+          0.15993376647242885
+        ],
+        [
+          2.070514850628534,
+          0.1593360956509139
+        ],
+        [
+          8.66468837148579,
+          1.1444434649661512
+        ],
+        [
+          1.9547155052624547,
+          0.08468341828027794
+        ],
+        [
+          18.271874788165547,
+          2.4331764383213264
+        ],
+        [
+          3.9444347931059904,
+          0.5063552573540336
+        ]
+      ],
+      "principal_force_phase_relative_error_max": [
+        0.0672670278855176,
+        0.014741112345455512
+      ]
+    }
+  ],
+  "step_halving_eta_physical_rms_max": [
+    9.090495565941624e-09,
+    1.4452512646537392e-09,
+    6.239838540310703e-09,
+    2.933990081054671e-11
+  ],
+  "step_halving_force_absolute_max": [
+    [
+      0.0035630475692909336,
+      0.000588021909878611,
+      0.0022367655430737265,
+      1.2066224348836196e-05
+    ],
+    [
+      0.006518654840590887,
+      0.0010332970124457552,
+      0.004549702073318063,
+      2.1135769971536433e-05
+    ],
+    [
+      0.028052639417769143,
+      0.004543410410011717,
+      0.018515139540028258,
+      9.291845565267964e-05
+    ],
+    [
+      0.006374915653581503,
+      0.0010127782358181903,
+      0.004407524015254349,
+      2.0792953249859636e-05
+    ],
+    [
+      0.05641873619749305,
+      0.009141521209699022,
+      0.037405450010162156,
+      0.00018710152458667473
+    ],
+    [
+      0.012057104868985924,
+      0.001909100493174165,
+      0.008479787369783054,
+      3.879448758040138e-05
+    ]
+  ],
+  "setup_seconds": 31.135012700018706,
+  "total_seconds": 34.16300139998202,
+  "peak_process_rss_bytes": 609542144,
+  "boundary_failure_cause": {
+    "reason": "targets must lie strictly inside their owned panel interiors",
+    "query": [
+      3.488937550599717,
+      0.08699999999999976,
+      0.0
+    ],
+    "original_parent": 1303,
+    "original_triangle": [
+      [
+        3.3646529385932107,
+        0.08699999999999974,
+        0.0
+      ],
+      [
+        3.6140108569465346,
+        0.08699999999999974,
+        0.0
+      ],
+      [
+        3.6140108569465346,
+        0.3352544517279057,
+        0.0
+      ]
+    ],
+    "signed_edge_distances": [
+      1.3877787807814457e-17,
+      0.12507330634681768,
+      0.08768739494696175
+    ],
+    "height": 0.0,
+    "context": {
+      "segment": [
+        [
+          3.488937550599717,
+          0.08699999999999974
+        ],
+        [
+          3.488937550599717,
+          0.08699999999999997
+        ]
+      ],
+      "reconstructed_parent": [
+        [
+          3.3646529385932107,
+          0.08699999999999974
+        ],
+        [
+          3.6140108569465346,
+          0.08699999999999974
+        ],
+        [
+          3.6140108569465346,
+          0.3352544517279057
+        ]
+      ],
+      "hat_center": [
+        3.3646529385932107,
+        0.08699999999999974
+      ],
+      "nodal_values": [
+        0.5015814503616323,
+        0.5015814503616323
+      ],
+      "parent_local": 4
+    }
+  },
+  "interpretation": [
+    "This is actual evolution of BOTH water states, with no eta reset or externally fitted force. Body velocity and far chi remain prescribed; no body states advance.",
+    "The continuous scalarS query was1.39e-17m inside an original edge on a positive2.22e-16m waterline segment. A narrow common-plane scalar evaluator retains exact d=0 product limits and all nonzero distances; no geometry deletion, jitter or legacy gradient-guard change.",
+    "Thirteen focused tests pass without the earlier near-edge reference warning; microscopic continuity is checked against an independent near-disk/far-annulus bound rather than unreliable adaptive signed-fan quadrature.",
+    "Both0.1s runs complete. Eta harmonic-reference physical-mass RMS drift reaches14.73microm, while max-step halving changes eta by at most9.1nm. Small water norm does NOT establish force accuracy.",
+    "Principal heave/roll forcephase errors grow to6.73%/1.47% against the finite-panel harmonic reference, larger than temporal refinement changes. Kinematic/spatial/closure/reference discrepancies remain.",
+    "Per-run integration timings concern four PARALLEL linear radiation phase cases on a fixed hull; they are not full nonlinear6DOF or end-to-end speed qualification. Max-step contracts and startup cache states differ, so no speedup ratio is claimed.",
+    "The retained dense reference matrix is41MB at2269physicalcoefficients but grows quadratically; the next spatial refinement would exceed the512MiB operator budget. Replace it with the existing FFTbase plus affected-row correction rather than add a second runtime path."
+  ],
+  "next_gate": "Bounded1s feedback test at the same controls, then FFTbase/contact-correction representation permitting the concrete fine-spatial check within memory budget. No full-minute accuracy or baseline promotion.",
+  "limits": [
+    "Fixed geometry and prescribed body velocity/far chi; body pressure does not advance six body states",
+    "Both eta and projected physical psi evolve; no external force/eta reset is applied during integration",
+    "Short-time comparison with a finite-panel harmonic reference includes spatial/Robin/far-closure error, not pure temporal error",
+    "Local RK tolerance acceptance is not body-motion or water-field accuracy qualification",
+    "Integration-only timing is NOT full nonlinear6DOF simulation throughput; source preparation/output are separately reported",
+    "No moving geometry, global energy certificate,60second0.1degree/1cm accuracy or baseline promotion"
+  ]
+}

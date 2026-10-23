@@ -1,5 +1,5 @@
 """Independent integrable fan reference at scalar edges/vertices."""
-from math import asinh, pi, sqrt
+from math import asinh, log, pi, sqrt
 import numpy as np
 from numpy.testing import assert_allclose
 from scipy.integrate import quad
@@ -27,8 +27,19 @@ def test_vertex_edge_and_near_edge_against_independent_positive_fans():
     points = np.array([[0, 0], [.31, 0], [.31, 1e-14], [.31, -1e-14], [.2, .3]])
     actual, metadata = plane_single_layer(points, panels)
     assert_allclose(actual[0, 0], sqrt(2)*asinh(1)/(4*pi), rtol=3e-15)
-    expected = [fan_reference(p, triangle) for p in points]
-    assert_allclose(actual[:, 0], expected, atol=3e-13, rtol=3e-12)
+    # Ordinary edge/interior fans are well resolved. A microscopic signed fan
+    # near the edge asks Quadpack to resolve an unnecessary narrow peak.
+    expected = [fan_reference(points[i], triangle) for i in (0, 1, 4)]
+    assert_allclose(actual[[0, 1, 4], 0], expected, atol=3e-13, rtol=3e-12)
+    # Independent kernel-continuity envelope: split the plane into r<2*delta
+    # (two disks contribute <=2.5*delta) and the far annulus, where the kernel
+    # difference integrates to <=2*delta*log(D/(2*delta)). No near-edge adaptive
+    # quadrature result or purported certified Quadpack bound is required.
+    for i in (2, 3):
+        delta = np.linalg.norm(points[i]-points[1])
+        diameter = np.linalg.norm(triangle[:, :2]-points[1], axis=1).max()
+        bound = delta*(2.5+2*log(diameter/(2*delta)))
+        assert abs(actual[i, 0]-expected[1]) < bound+3e-15
     assert not metadata['certified_error_bound']
     # No small-distance projection: the opposite sides retain their distinct
     # input values, though continuity makes their potentials extremely close.

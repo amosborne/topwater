@@ -38,7 +38,13 @@ def _evaluate(points, triangles, tangent, outward, lengths, diameter, atol, rtol
                     zero_products += 1
                     # A rounded-zero projection is still subject to the
                     # original-float Decimal recovery when error is material.
-                    projection_error += abs(rx)+abs(ry)
+                    radius = abs(rx)+abs(ry)
+                    if radius > 0:
+                        # d*log(d) has a finite modulus of continuity, not a
+                        # bounded derivative at zero. Include its log factor
+                        # when a computed zero may hide projection roundoff.
+                        delta = 64*eps*radius
+                        projection_error += radius*(2+2*log1p(lengths[j, edge]/delta))
                     continue
                 a = rx*tangent[j, edge, 0]+ry*tangent[j, edge, 1]
                 length, b = lengths[j, edge], abs(d)
@@ -56,7 +62,7 @@ def _evaluate(points, triangles, tangent, outward, lengths, diameter, atol, rtol
                 term = d*edge_log
                 total += term
                 absolute += abs(term)
-                projection_error += (abs(rx)+abs(ry))*(1+abs(edge_log))
+                projection_error += (abs(rx)+abs(ry))*(2+abs(edge_log))
             value = total/(4*pi)
             estimate = 64*eps*(absolute+projection_error)/(4*pi)
             result[i, j], error[i, j] = value, estimate

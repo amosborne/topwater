@@ -7,10 +7,10 @@ from time import perf_counter
 import numpy as np
 from numpy.polynomial.legendre import leggauss
 from scipy import sparse
-from topwater.rankine import single_layer_interior
 from tests.laplace_reference import triangle_samples
 from .cut_hat_geometry import cut_hat
 from .physical_p1_patch import PhysicalP1Patch
+from .plane_single_layer import plane_single_layer
 
 
 class PhysicalWeakFlux:
@@ -84,15 +84,20 @@ class PhysicalWeakFlux:
         gradient = np.linalg.solve(triangle[:, 1:]-triangle[:, :1],
             np.broadcast_to((np.eye(3)[1:]-np.eye(3)[:1]), (len(triangle), 2, 3)))
         pairs = 0
+        scalar_counts = dict(fallback_pairs=0, exact_zero_distance_products=0)
 
-        def single(points, parents):
+        def single(points):
             nonlocal pairs
             work = len(points)*len(patch.panels)
             if pairs+work > maximum_pairs:
                 raise RuntimeError('physical weak source-pair budget exhausted')
             pairs += work
-            return single_layer_interior(np.column_stack((points, np.zeros(len(points)))),
-                                         patch.panels, parents)
+            # A is a continuous scalar single layer on the COMMON plane.
+            # Unlike a gradient trace, its finite edge/vertex values are valid.
+            values,diagnostics=plane_single_layer(points,patch.panels)
+            for name in scalar_counts:
+                scalar_counts[name]+=diagnostics[name]
+            return values
 
         # Hidden area: integrate original target-basis gradients, retaining
         # every positive piece with a nonzero active test gradient.
@@ -107,14 +112,14 @@ class PhysicalWeakFlux:
             integrated = np.zeros(len(patch.panels))
             for first in range(0, len(weights), 64):
                 p = points[0, first:first+64, :2]
-                integrated += patch.hidden_areas[cut_id]*weights[first:first+64] @ single(p, np.full(len(p), parent))
+                integrated += patch.hidden_areas[cut_id]*weights[first:first+64] @ single(p)
             for vertex in local:
                 row = active_to_affected[active[vertex]]
                 correction_x[row] += 2*gradient[parent, 0, vertex]*integrated
                 correction_y[row] += 2*gradient[parent, 1, vertex]*integrated
         area_pairs = pairs
-        # Use per-hat waterline clipping to preserve the actual parent-side
-        # owner, including explicit rejection by S if a line lies on an edge.
+        # Keep original parent provenance for the test function. Scalar S
+        # itself is defined at every common-plane query, including boundaries.
         nodes, weights = leggauss(order)
         t, weights = (nodes+1)/2, weights/2
         for affected_id, active in enumerate(affected):
@@ -135,8 +140,7 @@ class PhysicalWeakFlux:
                 if np.max(abs(triangle[parent]-target_triangle)) > 64*np.finfo(float).eps*max(1., abs(target_triangle).max()):
                     raise ValueError('waterline original-parent provenance differs')
                 value = (1-t)*nodal[0]+t*nodal[1]
-                integrated = (np.linalg.norm(segment[1]-segment[0])*weights*value) @ single(
-                    point, np.full(len(point), parent))
+                integrated = (np.linalg.norm(segment[1]-segment[0])*weights*value) @ single(point)
                 correction_x[affected_id] -= 2*normal[0]*integrated
                 correction_y[affected_id] -= 2*normal[1]*integrated
         source_rows = np.repeat(np.arange(len(triangle)), 3)
@@ -156,6 +160,7 @@ class PhysicalWeakFlux:
             corrected_rows=len(affected), source_pairs=pairs, hidden_area_pairs=area_pairs,
             waterline_pairs=pairs-area_pairs, retained_operator_bytes=self.matrix.nbytes,
             constructor_array_bound_bytes=estimated_peak, order=order,
+            scalar_source_diagnostics=scalar_counts,
             scope='Fixed flat physical weak loads; no symmetry repair or point-velocity claim')
 
     def apply(self, active_coefficients):
