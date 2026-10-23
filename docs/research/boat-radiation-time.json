@@ -344,6 +344,34 @@
         "heave_damping": 1769.1886745076615,
         "roll_damping": 0.266034702608654
       }
+    },
+    {
+      "complete": true,
+      "grid_size": 513,
+      "box_length_m": 256.0,
+      "body_panel_count": 68,
+      "setup_seconds": 7.093429300002754,
+      "evolution_seconds": 183.16937350001535,
+      "total_seconds": 190.34458639999502,
+      "peak_process_rss_bytes": 1507250176,
+      "cupy_pool_used_bytes": 503206400,
+      "cupy_pool_reserved_bytes": 575149568,
+      "execution": "GPU float64/complex128 evolution, CPU fixed geometry/operator preparation",
+      "timing_scope": "Run total includes static setup, lazy CUDA import/context/transfers, first-use compilation/plans, synchronized evolution, output download, fits and NPZ; source archiving and final JSON are outside this total.",
+      "memory_scope": "Process peak RSS; CUDA pool figures are retained/reserved at end, exclude other CUDA allocations, and are not peak/total VRAM.",
+      "report": "artifacts\\boat-radiation-time-half-step.json",
+      "sha256": "a88f0a41a88be94ae184f407812c8e5a179b180a96f0adbc174b7a4adbcf31ea",
+      "producer_archive": "artifacts\\boat-radiation-time-half-step.source",
+      "arrays_sha256": "c7c5d3921f775b61bd933e97e0a2046272cd3fa1d9ffa6d01d9ffd31767e677a",
+      "time_step_seconds": 0.025,
+      "fit_start_seconds": 40.0,
+      "fit_end_seconds": 60.0,
+      "heave_added_mass": 19569.10145206147,
+      "roll_added_mass": 1486.9181347244105,
+      "heave_damping": 1885.2569902625369,
+      "roll_damping": 0.0935058565944021,
+      "heave_force_fit_rms": 0.09418039559946657,
+      "roll_force_fit_rms": 6.650292274095123e-05
     }
   ],
   "parity": {
@@ -437,11 +465,12 @@
     "Do not attribute86.27s CPUcoarse versus34.36s GPUcoarse solely to GPU: pressure condensation also changed. Use matched whole-run controls, not products of component ratios.",
     "All maps/factors stay fixed for these60s trajectories. No improvement to the full nonlinear moving baseline is claimed; that remains40.36wall seconds/simsecond without minute accuracy/open-water qualification.",
     "Uniform body68->272 at unchanged256m/513 changes rollA1486.918->1490.751, against own-panel Capytaine1828.222. The ~18.46% deficit remains. HeaveA18828.402 versus own19972.733; more body panels alone do not solve the discrepancy. Total184.389s, peakRSS5.315GB and ending CUDA pool1.864GB; no promotion.",
-    "Two-phase same-state harmonic-versus-biharmonic extension audit: roll force change at acceleration peak0.03094Nm versus ~1.07Nm missing reactive amplitude. Exact archived parent driver reproduces the final force and prior audit rows exactly. This pair does not explain most of the discrepancy; it cannot rule out history feedback, other extensions or exterior interpolation error."
+    "Two-phase same-state harmonic-versus-biharmonic extension audit: roll force change at acceleration peak0.03094Nm versus ~1.07Nm missing reactive amplitude. Exact archived parent driver reproduces the final force and prior audit rows exactly. This pair does not explain most of the discrepancy; it cannot rule out history feedback, other extensions or exterior interpolation error.",
+    "Half timestep.05->.025 at unchanged256m/513/body68 changes rollA1486.9184335->1486.9181347 and heaveA19569.09190->19569.10145. Temporal integration error does not explain the~342kgm2 roll gap. Total190.345s; no nonlinear timing claim."
   ],
   "next_falsifiers": [
-    "Isolate surface-hole/Fourier coupling and off-collocation body residuals before investing in more body panels; uniform refinement did not improve roll materially.",
-    "One sponge-strength and half-timestep control remain outstanding; neither substitutes for full nonlinear moving graph/body validation."
+    "Surface513->1025 at same256m/body68/.025 timestep tests whether the compact-trace interpolation observation carries into actual60s radiation. Initial attempt lost monitoring handle and process without terminal report; preserve its source/log as incomplete, do not treat as a result. Retry has independent output ownership.",
+    "Sponge-strength sensitivity and actual nonlinear current-graph/body coupling remain outstanding. Global surface refinement alone is not a speed architecture."
   ],
   "nonlinear_limit": "Flat odd images only enforce zero plane trace atz=0; actual eta requires an actual graph/body BVP with two-way exterior matching. Feeding nonlinear HOS heights into this fixed flat-image coupling is invalid.",
   "precursor_source_commits": [
@@ -720,5 +749,6 @@
       "Two phases screen instantaneous force sensitivity, not history feedback or total trajectory error"
     ],
     "numerical_producers": "Archived parent driver; all imported producers must match parent hashes exactly"
-  }
+  },
+  "surface_work_control": "docs/research/boat-surface-work.json"
 }

@@ -1,0 +1,462 @@
+{
+  "complete": true,
+  "qualified": false,
+  "report": "artifacts\\boat-surface-work-fine.json",
+  "sha256": "498a4a20788e501e812fd6cf8ef581f6fe1c0d4ff2ba20c771a13dbb3fd395cc",
+  "producer_archive": "artifacts\\boat-surface-work-fine.source",
+  "scope": "Static aperiodic physical-exterior compact trace; no trajectory or throughput qualification",
+  "identity": "integral_body(q * total_fixed_body_potential) + integral_surface(trace * radiated_normal_velocity) = 0",
+  "normalization": "Normalized operator coefficients, not physical energy: dimensionless unit trace and rigid normal modes (dimensionless translations, metre rotations). No density multiplier.",
+  "work_units": [
+    "m^2",
+    "m^2",
+    "m^2",
+    "m^3",
+    "m^3",
+    "m^3"
+  ],
+  "modes": [
+    "Surge",
+    "Sway",
+    "Heave",
+    "Roll",
+    "Pitch",
+    "Yaw"
+  ],
+  "bump_center_xy_m": [
+    -0.4805169962756791,
+    2.833358715715071
+  ],
+  "bump_radius_m": 1.0985434862860284,
+  "support_y_clearance_m": 0.5492717431430142,
+  "elapsed_seconds": 44.94961810001405,
+  "peak_memory": "Not measured for this verification job; no memory claim.",
+  "rows": [
+    {
+      "panel_count": 68,
+      "panel_sha256": "0f1cc91a5ed4b165a0374751d684e8e0b4c1a50c7d5455dfe1fb40f71af9b258",
+      "body_work": [
+        -0.00028021002820918117,
+        -0.013696583090028101,
+        0.12091904979672187,
+        0.018647596829158383,
+        0.04488421800883417,
+        0.0068348170501499345
+      ],
+      "surface_work": [
+        -6.264756887985194e-05,
+        0.012779083543550392,
+        -0.1185838376181342,
+        -0.01729952686982707,
+        -0.03372229506052609,
+        -0.0026621032226508312
+      ],
+      "green_work": [
+        0.00020053942450609142,
+        0.013746272314627564,
+        -0.12079443460125223,
+        -0.01874216440868913,
+        -0.04330198895853506,
+        -0.005265817434628166
+      ],
+      "surface_minus_green": [
+        -0.0002631869933859434,
+        -0.0009671887710771716,
+        0.0022105969831180405,
+        0.0014426375388620592,
+        0.009579693898008973,
+        0.0026037142119773346
+      ],
+      "pressure_minus_green": [
+        7.967060370308974e-05,
+        -4.968922459946262e-05,
+        -0.00012461519546963506,
+        9.456757953074657e-05,
+        -0.0015822290502991096,
+        -0.0015689996155217687
+      ],
+      "relative_to_mode_work": [
+        -1.2235736146926353,
+        -0.06698747712819712,
+        0.019312194253208428,
+        0.07229188681425149,
+        0.24868257582456216,
+        0.6105084886518751
+      ],
+      "quadrature_change": {
+        "body_work": [
+          1.1918276153315144e-11,
+          9.253684658816486e-10,
+          -7.161857967785679e-09,
+          -1.2789211148445112e-09,
+          -3.035210249802134e-09,
+          -5.241246880949291e-10
+        ],
+        "surface_work": [
+          4.285132077191771e-12,
+          -8.785087917545509e-10,
+          7.0550018049786445e-09,
+          1.2105633925840742e-09,
+          2.264707241184105e-09,
+          2.516715191282215e-10
+        ]
+      },
+      "fourier_controls": [
+        {
+          "grid_size": 129,
+          "box_length_m": 256.0,
+          "nonzero_trace_nodes": 1,
+          "body_work": [
+            0.006872523521575195,
+            -0.044191213317524194,
+            0.5048754462906799,
+            0.06654422981044672,
+            0.5288954861203106,
+            0.046495034199205434
+          ],
+          "harmonic_fill_equivalence_certified_by_support_gap": false,
+          "surface_rectangle_work": [
+            -0.0005907322465875957,
+            0.016620673947305552,
+            -0.1738757193240636,
+            -0.022596641785023196,
+            -0.06878149458581592,
+            -0.0061228120725110415
+          ],
+          "surface_rectangle_change_from_disk": [
+            -0.0005280846777077437,
+            0.00384159040375516,
+            -0.0552918817059294,
+            -0.005297114915196126,
+            -0.03505919952528983,
+            -0.0034607088498602103
+          ],
+          "body_work_change_from_aperiodic": [
+            0.007152733549784376,
+            -0.030494630227496093,
+            0.3839563964939581,
+            0.04789663298128834,
+            0.4840112681114764,
+            0.0396602171490555
+          ],
+          "body_potential_relative_error": 17.586084093762498,
+          "body_normal_relative_error": 6.650437511220536
+        },
+        {
+          "grid_size": 257,
+          "box_length_m": 256.0,
+          "nonzero_trace_nodes": 3,
+          "body_work": [
+            -0.00042452730138348377,
+            -0.008317123357058717,
+            0.055807769523037336,
+            0.011798229382982688,
+            -0.028609775475485315,
+            0.005095988068442958
+          ],
+          "harmonic_fill_equivalence_certified_by_support_gap": false,
+          "surface_rectangle_work": [
+            -2.7298858572791064e-05,
+            0.011265902764967597,
+            -0.10700328668660802,
+            -0.015189216191547887,
+            -0.02829453315736174,
+            -0.001924517202016507
+          ],
+          "surface_rectangle_change_from_disk": [
+            3.534871030706088e-05,
+            -0.0015131807785827948,
+            0.01158055093152617,
+            0.0021103106782791835,
+            0.005427761903164352,
+            0.0007375860206343243
+          ],
+          "body_work_change_from_aperiodic": [
+            -0.0001443172731743026,
+            0.0053794597329693845,
+            -0.06511128027368454,
+            -0.006849367446175696,
+            -0.07349399348431948,
+            -0.0017388289817069765
+          ],
+          "body_potential_relative_error": 13.984387002082745,
+          "body_normal_relative_error": 5.080464313409525
+        },
+        {
+          "grid_size": 513,
+          "box_length_m": 256.0,
+          "nonzero_trace_nodes": 16,
+          "body_work": [
+            -0.000168025712294822,
+            -0.016809627651598276,
+            0.11872245920753657,
+            0.023477529847697364,
+            0.053965601233098195,
+            0.010483236431967866
+          ],
+          "harmonic_fill_equivalence_certified_by_support_gap": true,
+          "surface_rectangle_work": [
+            -8.400200457746956e-05,
+            0.012332451865551715,
+            -0.11547169299180254,
+            -0.01669601507632141,
+            -0.033690828496148566,
+            -0.0026896195608131857
+          ],
+          "surface_rectangle_change_from_disk": [
+            -2.135443569761762e-05,
+            -0.00044663167799867745,
+            0.0031121446263316505,
+            0.0006035117935056615,
+            3.146656437752471e-05,
+            -2.7516338162354454e-05
+          ],
+          "body_work_change_from_aperiodic": [
+            0.00011218431591435916,
+            -0.0031130445615701746,
+            -0.002196590589185296,
+            0.004829933018538981,
+            0.009081383224264022,
+            0.0036484193818179314
+          ],
+          "body_potential_relative_error": 4.527744121544636,
+          "body_normal_relative_error": 3.8298685179974234
+        },
+        {
+          "grid_size": 1025,
+          "box_length_m": 256.0,
+          "nonzero_trace_nodes": 60,
+          "body_work": [
+            -0.0002602717434583661,
+            -0.014209347028496007,
+            0.12354490116046869,
+            0.019339788087711914,
+            0.048512751721105266,
+            0.007638550141353846
+          ],
+          "harmonic_fill_equivalence_certified_by_support_gap": true,
+          "surface_rectangle_work": [
+            -6.35705044522009e-05,
+            0.012782111928598423,
+            -0.11855929295554261,
+            -0.017304215165646057,
+            -0.03380298400640658,
+            -0.002678723002425819
+          ],
+          "surface_rectangle_change_from_disk": [
+            -9.229355723489513e-07,
+            3.0283850480303243e-06,
+            2.454466259158017e-05,
+            -4.688295818986582e-06,
+            -8.068894588048742e-05,
+            -1.6619779774987905e-05
+          ],
+          "body_work_change_from_aperiodic": [
+            1.9938284750815047e-05,
+            -0.0005127639384679052,
+            0.002625851363746823,
+            0.000692191258553531,
+            0.0036285337122710926,
+            0.0008037330912039117
+          ],
+          "body_potential_relative_error": 0.07534894732237775,
+          "body_normal_relative_error": 0.16382092329267156
+        },
+        {
+          "grid_size": 2049,
+          "box_length_m": 256.0,
+          "nonzero_trace_nodes": 244,
+          "body_work": [
+            -0.00027985976347046516,
+            -0.013741922855305998,
+            0.12080742997057443,
+            0.0187325470227771,
+            0.04483048276948368,
+            0.006851455835823825
+          ],
+          "harmonic_fill_equivalence_certified_by_support_gap": true,
+          "surface_rectangle_work": [
+            -6.256464748062102e-05,
+            0.012780919859737628,
+            -0.11859667394531331,
+            -0.01730200959731742,
+            -0.03372296753313415,
+            -0.002662148686778052
+          ],
+          "surface_rectangle_change_from_disk": [
+            8.292139923092394e-08,
+            1.8363161872359673e-06,
+            -1.2836327179119311e-05,
+            -2.482727490350778e-06,
+            -6.724726080570287e-07,
+            -4.5464127220763706e-08
+          ],
+          "body_work_change_from_aperiodic": [
+            3.50264738716011e-07,
+            -4.533976527789675e-05,
+            -0.00011161982614743549,
+            8.495019361871511e-05,
+            -5.3735239350490016e-05,
+            1.6638785673890773e-05
+          ],
+          "body_potential_relative_error": 0.03352000208723502,
+          "body_normal_relative_error": 0.04140818040671729
+        }
+      ]
+    },
+    {
+      "panel_count": 272,
+      "panel_sha256": "799cbe09baa94bda5406ba65ca1aa1b01aaa168f412661ffe97772bee39808d1",
+      "body_work": [
+        -0.0003444086670638321,
+        -0.013537654086871234,
+        0.11508961334746928,
+        0.018625124038507555,
+        0.0360931190596886,
+        0.006444373501682634
+      ],
+      "surface_work": [
+        -0.0001171769705223018,
+        0.013047383905930163,
+        -0.11378402420031913,
+        -0.017848708520790957,
+        -0.03218479379829442,
+        -0.004935716883214701
+      ],
+      "green_work": [
+        0.00011538488048397317,
+        0.01351587293771507,
+        -0.11513256373899639,
+        -0.01863858149757719,
+        -0.03498451113130213,
+        -0.005626403284206743
+      ],
+      "surface_minus_green": [
+        -0.00023256185100627497,
+        -0.00046848903178490706,
+        0.0013485395386772514,
+        0.0007898729767862323,
+        0.002799717333007712,
+        0.0006906864009920419
+      ],
+      "pressure_minus_green": [
+        0.00022902378657985894,
+        2.1781149156163346e-05,
+        4.295039152710234e-05,
+        1.3457459069634442e-05,
+        -0.0011086079283864694,
+        -0.0008179702174758909
+      ],
+      "relative_to_mode_work": [
+        -1.3402265440102423,
+        -0.0362152982928211,
+        0.0113441092482292,
+        0.041686461583362026,
+        0.1082844975223901,
+        0.2341044661787559
+      ],
+      "quadrature_change": {
+        "body_work": [
+          1.8047235093073682e-11,
+          9.46583944907986e-10,
+          -6.952538419979781e-09,
+          -1.338480097590189e-09,
+          -2.444550062374873e-09,
+          -4.831394928225818e-10
+        ],
+        "surface_work": [
+          7.181933812851898e-12,
+          -9.072444861341067e-10,
+          6.8391417112900754e-09,
+          1.2736707556693094e-09,
+          2.160729234423897e-09,
+          3.787426587631426e-10
+        ]
+      }
+    },
+    {
+      "panel_count": 1088,
+      "panel_sha256": "96bde809c9acb26a2fe25473fa6c17397f27eaa9731b89ba53f34b3702cfa45e",
+      "body_work": [
+        -0.00035047361217112793,
+        -0.013221569756939588,
+        0.11187857618034107,
+        0.01814204215356006,
+        0.034217349652941265,
+        0.006253975982764882
+      ],
+      "surface_work": [
+        -3.367813114457586e-06,
+        0.013069861647158388,
+        -0.11153249160025709,
+        -0.017902093524672914,
+        -0.032425247369580024,
+        -0.005689804915732973
+      ],
+      "green_work": [
+        0.0001497319361012775,
+        0.013211746752034886,
+        -0.11191609309132047,
+        -0.018147508856996935,
+        -0.033581155650889996,
+        -0.005918035095437981
+      ],
+      "surface_minus_green": [
+        -0.0001530997492157351,
+        -0.0001418851048764977,
+        0.0003836014910633817,
+        0.0002454153323240213,
+        0.0011559082813099725,
+        0.0002282301797050081
+      ],
+      "pressure_minus_green": [
+        0.00020074167606985043,
+        9.823004904702462e-06,
+        3.751691097940435e-05,
+        5.466703436873832e-06,
+        -0.0006361940020512685,
+        -0.00033594088732690104
+      ],
+      "relative_to_mode_work": [
+        -1.009609320067193,
+        -0.011474288800055176,
+        0.0030933945702536587,
+        0.013226109103713095,
+        0.05237408219918035,
+        0.0902099829910906
+      ],
+      "quadrature_change": {
+        "body_work": [
+          1.8867657815887368e-11,
+          9.240810755484219e-10,
+          -6.7563008243620715e-09,
+          -1.303514816919371e-09,
+          -2.3081420247317297e-09,
+          -4.645097266900433e-10
+        ],
+        "surface_work": [
+          7.069803044958123e-13,
+          -9.116981128376445e-10,
+          6.7250189306200525e-09,
+          1.2831369543275795e-09,
+          2.187694046751343e-09,
+          4.260030097777423e-10
+        ]
+      }
+    }
+  ],
+  "verification": "Two independent checks passed0.58s: full polar-area normalization against adaptive radial quadrature, and body normal derivative against two potential finite differences.",
+  "review": "Independent source reviewer approved work signs, area normalization, source/return/Green contractions and support certificate. No reviewer numerical jobs.",
+  "conclusions": [
+    "Aperiodic roll reciprocal-work defect decreases7.23%->4.17%->1.32% for68/272/1088panels. The raw body collocation/centroid discretization is converging, not exact; all6 raw mode results remain visible.",
+    "At256m/513grid only16nodes sample the compact trace. Body lift error4.53(potential)/3.83(normal) falls to.0753/.1638 at1025 and.0335/.0414 at2049. Roll return-work error falls.00483->.000692->.00008495 relative to aperiodic. This shows undersampling of this trace, not a proof of the time-domain roll-deficit cause.",
+    "The compact patch contains scales below supported incident wavelengths. This is an operator falsifier, not a new requirement to resolve every artificial trace or an incident-sea model.",
+    "At513andfiner the support clearance exceeds one grid spacing, certifying zero harmonic-fill boundary values. Coarser full-trace Fourier tests need not equal runtime E."
+  ],
+  "limits": [
+    "P0 centroid hull traces and loads retain their raw collocation/quadrature error",
+    "FFT controls change sampled plane representation and include periodic-image error",
+    "FFT controls use the exact full compact trace, not runtime harmonic fill; a support gap greater than one grid spacing certifies identical zero hidden and fill-boundary samples",
+    "A compact verification trace is not an incident sea-state component"
+  ]
+}
