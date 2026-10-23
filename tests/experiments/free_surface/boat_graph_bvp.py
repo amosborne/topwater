@@ -29,7 +29,8 @@ from .boat_image_plane import elevated_potential
 from .boat_radiation_time import harmonic_maps
 from .boat_spatial_work import source_matrix, subdivide
 from .boat_parent_clip_proof import coplanar_groups
-from .cuda_graph import GraphDirichlet, body_maps, cp
+from .cuda_graph import GraphDirichlet, body_maps, cp, _resize
+from .boat_source_projection import project_trace
 
 
 @dataclass(frozen=True)
@@ -68,8 +69,14 @@ class GraphBody:
                            origin[1]+np.arange(size)*length/size)
         self.surface_points = np.column_stack((x.ravel(), y.ravel(), eta.ravel()))
         self.surface_points.setflags(write=False)
-        trace = elevated_potential(self.surface_points, panels, image_plane_height)
-        self.trace = cp.asarray(trace)
+        self.source_size = 2*size-1
+        source_eta = cp.asnumpy(_resize(cp.asarray(eta), (self.source_size, self.source_size)))
+        sx, sy = np.meshgrid(origin[0]+np.arange(self.source_size)*length/self.source_size,
+                             origin[1]+np.arange(self.source_size)*length/self.source_size)
+        self.source_points = np.column_stack((sx.ravel(), sy.ravel(), source_eta.ravel()))
+        self.source_points.setflags(write=False)
+        trace = elevated_potential(self.source_points, panels, image_plane_height)
+        self.trace = self.project_source_trace(trace)
         cp.cuda.get_current_stream().synchronize()
         self.source_trace_seconds = perf_counter()-before
         self.evaluations = 0
@@ -78,6 +85,9 @@ class GraphBody:
         self.precondition = LinearOperator((count, count),
             matvec=lambda value: lu_solve(self.preconditioner, value), dtype=np.float64)
         self.setup_seconds = perf_counter()-started
+
+    def project_source_trace(self, values):
+        return project_trace(values, self.source_size, self.shape[0])
 
     def spectrum(self, trace):
         spectra = self.graph.coefficients(trace.reshape(self.shape))

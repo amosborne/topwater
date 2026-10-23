@@ -56,7 +56,10 @@ def prescribed_pressure(context, density, spectrum, state, acceleration, extensi
     source_at_surface = source_velocity_bulk(context, density, context.surface_points)
     rigid_at_surface = state.linear_velocity+np.cross(omega, context.surface_points-state.position)
     known_transport = np.sum(rigid_at_surface*source_at_surface, axis=1)
-    trace = extension.extend(chi_exterior)+cp.asarray(known_transport)
+    source_at_samples = source_velocity_bulk(context, density, context.source_points)
+    rigid_at_samples = state.linear_velocity+np.cross(omega, context.source_points-state.position)
+    transport_samples = np.sum(rigid_at_samples*source_at_samples, axis=1)
+    trace = extension.extend(chi_exterior)+context.project_source_trace(transport_samples)
     grid = context.shape[0]
     kx0, ky0 = cp.meshgrid(2*np.pi*cp.fft.fftfreq(grid, d=context.length/grid),
                            2*np.pi*cp.fft.fftfreq(grid, d=context.length/grid))
@@ -87,5 +90,5 @@ def prescribed_pressure(context, density, spectrum, state, acceleration, extensi
                 exterior_gradient_max_difference_m_per_s=float(np.max(np.linalg.norm(derivative_alias[extension.exterior], axis=1))),
                 exterior_gradient_rms_difference_m_per_s=float(np.sqrt(np.mean(derivative_alias[extension.exterior]**2))),
                 exterior_transport_max_difference_m2_per_s2=float(np.max(abs(transport_alias[extension.exterior]))),
-                scope='Analytic graph derivative of R minus Fourier derivative of its sampled trace; diagnostic, no correction'),
+                scope='Partial tangential diagnostic: analytic graph derivative of R minus derivative of projected source trace. Global exterior maximum includes periodic seams; not a bound on full transport forcing error.'),
             variable='Z=phi_t+Vbody dot grad(R); known harmonic-lift transport removed'))

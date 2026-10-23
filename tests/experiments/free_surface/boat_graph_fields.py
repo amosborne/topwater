@@ -26,8 +26,7 @@ def _actual_harmonic_values(context, spectrum, points):
 
 def actual_graph_values(context, density, spectrum, indices):
     """True finite field at owned graph nodes, not formal surface Taylor values."""
-    value, exponent = _actual_harmonic_values(context, spectrum, context.surface_points[indices])
-    return value+cp.asnumpy(context.trace[indices]@cp.asarray(density)), exponent
+    return actual_field_values(context, density, spectrum, context.surface_points[indices])
 
 
 def actual_field_values(context, density, spectrum, points):

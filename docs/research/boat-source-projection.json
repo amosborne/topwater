@@ -1,0 +1,110 @@
+{
+  "status": "Rejected as the main pressure correction; not promoted",
+  "experiment": "Fourier-project doubled-resolution analytic R and TR source traces onto unchanged N129 solver. Same E129, physical inputs, body, image and expansion height; no corrected body gradient or patched rows.",
+  "assessment": "No coherent all-six improvement; body maximum worsens2.1582->2.2990Pa, pressure-call cost0.529->2.441s. Whole prescribed screen8.93->16.70s. Do not expand global source sampling further without new evidence.",
+  "limits": [
+    "All timings are prescribed seven-context diagnostics, not trajectory speed.",
+    "FD differentiates the chosen finite model; continuum AP is a different pressure approximation. Agreement does not prove PDE accuracy.",
+    "Off-grid probes match for baseline/projected N129; N257 probes differ.",
+    "Projection removes high modes, so actual nodal traces must be queried independently from analytic sources, not the projected coupling matrix."
+  ],
+  "records": [
+    {
+      "raw_report": "artifacts\\boat-current-pressure-offgrid-audit.json",
+      "sha256": "db535882512a53b5fd6708f5d97cb43988d960da20eee3ab93c38f03242a351c",
+      "input_sha256": "d4727637dd8b52ab90b0969c58341fbb033b844befae09340dae74a841d076d1",
+      "grid": 129,
+      "body_panels": 84,
+      "hos_order": 4,
+      "image_height_m": 0.45902726862203064,
+      "reference_height_m": 0.36733855903704704,
+      "center_panels_sha256": "6b5405b32026f18d9cbf571cd2bbd8dd10d1322bf248f924ed2560cbf76b72c5",
+      "exterior_nodes": 16576,
+      "screen_seconds": 8.928334399999585,
+      "pressure_call_seconds": 0.5285108999814838,
+      "body_pressure_difference_pa": 2.158197634131284,
+      "six_functional_difference": [
+        0.6379789771454512,
+        -0.08438661642571788,
+        -0.8270464683773753,
+        0.03739155399489391,
+        4.045128718509659,
+        -1.1166784852171077
+      ],
+      "offgrid_acceleration_defect_pa": 1.4016698933582945,
+      "offgrid_flow_defect_m2_per_s": 0.0016800330833880994,
+      "source_producers": {
+        "tests\\experiments\\free_surface\\boat_graph_bvp.py": "b5e3ba74df1bd363488a6495647b0555f9a98a0740e550060407f8508cbaf088",
+        "tests\\experiments\\free_surface\\boat_graph_fields.py": "8dfee102122480459da38c1466c88b8b1fd9675b77bcb45460d5bfb5fb36e5c5",
+        "tests\\experiments\\free_surface\\boat_graph_time_derivative.py": "404da7e6487411372b5f9050f3c5a75d103d60f8ebb2e700c0f686fd143e5ce3",
+        "tests\\experiments\\free_surface\\boat_transport_pressure.py": "da45750819fc44868e9f53551fb649ab063a7ed827f27038456a29d61ae8d6f4",
+        "tests\\experiments\\free_surface\\cuda_graph.py": "14d0895914660b3530db5c880b97aa977148a1792903eb7c51853c4f8b4f4cec"
+      }
+    },
+    {
+      "raw_report": "artifacts\\boat-current-pressure-surface-fine.json",
+      "sha256": "3ce930af0596caa3b7582d87a04e53c99cbc9f27a4d59da7874b3d49a9bc2d5a",
+      "input_sha256": "d4727637dd8b52ab90b0969c58341fbb033b844befae09340dae74a841d076d1",
+      "grid": 257,
+      "body_panels": 84,
+      "hos_order": 4,
+      "image_height_m": 0.45902726862203064,
+      "reference_height_m": 0.36733855903704704,
+      "center_panels_sha256": "6b5405b32026f18d9cbf571cd2bbd8dd10d1322bf248f924ed2560cbf76b72c5",
+      "exterior_nodes": 65802,
+      "screen_seconds": 25.19568979999167,
+      "pressure_call_seconds": 2.129445200000191,
+      "body_pressure_difference_pa": 2.3670831671470296,
+      "six_functional_difference": [
+        0.20377421232788606,
+        -1.472172628887165,
+        -1.9638398719944234,
+        1.1518585816817222,
+        1.9037199169915766,
+        0.6878109914132438
+      ],
+      "offgrid_acceleration_defect_pa": 0.9024758424423055,
+      "offgrid_flow_defect_m2_per_s": 0.0010502927253387695,
+      "source_producers": {
+        "tests\\experiments\\free_surface\\boat_graph_bvp.py": "b5e3ba74df1bd363488a6495647b0555f9a98a0740e550060407f8508cbaf088",
+        "tests\\experiments\\free_surface\\boat_graph_fields.py": "8dfee102122480459da38c1466c88b8b1fd9675b77bcb45460d5bfb5fb36e5c5",
+        "tests\\experiments\\free_surface\\boat_graph_time_derivative.py": "2a45d4091a1216a1ba52ae9a407f28d0c2c1f0b5723f3b0ced837158e8a325d0",
+        "tests\\experiments\\free_surface\\boat_transport_pressure.py": "da45750819fc44868e9f53551fb649ab063a7ed827f27038456a29d61ae8d6f4",
+        "tests\\experiments\\free_surface\\cuda_graph.py": "14d0895914660b3530db5c880b97aa977148a1792903eb7c51853c4f8b4f4cec"
+      }
+    },
+    {
+      "raw_report": "artifacts\\boat-current-pressure-source-projected.json",
+      "sha256": "276802b4ebdc1e0b816a4dd40cbc73ade5eb997e9278f00de8ce18a297229d2d",
+      "input_sha256": "d4727637dd8b52ab90b0969c58341fbb033b844befae09340dae74a841d076d1",
+      "grid": 129,
+      "body_panels": 84,
+      "hos_order": 4,
+      "image_height_m": 0.45902726862203064,
+      "reference_height_m": 0.36733855903704704,
+      "center_panels_sha256": "6b5405b32026f18d9cbf571cd2bbd8dd10d1322bf248f924ed2560cbf76b72c5",
+      "exterior_nodes": 16576,
+      "screen_seconds": 16.699282999994466,
+      "pressure_call_seconds": 2.4405383999983314,
+      "body_pressure_difference_pa": 2.2989605523630416,
+      "six_functional_difference": [
+        0.398873150754838,
+        -1.525730854888252,
+        -2.1168048686558905,
+        1.1799955224463474,
+        2.7491245024784803,
+        0.5281720107243473
+      ],
+      "offgrid_acceleration_defect_pa": 1.2344535825161818,
+      "offgrid_flow_defect_m2_per_s": 0.001569110441351329,
+      "source_producers": {
+        "tests\\experiments\\free_surface\\boat_graph_bvp.py": "d85a009e71a7a8cac436400947cc9b1f7742182d7357e359667d6c4eb2d747dd",
+        "tests\\experiments\\free_surface\\boat_graph_fields.py": "c62d27b4ff71a2e5154c5bf0f5294a2d463ff9c8ba710d5310d2256c066c55cd",
+        "tests\\experiments\\free_surface\\boat_graph_time_derivative.py": "2a45d4091a1216a1ba52ae9a407f28d0c2c1f0b5723f3b0ced837158e8a325d0",
+        "tests\\experiments\\free_surface\\boat_source_projection.py": "8528f059ea42779365d3b16711a3b8d4f0451f676e68aad8fad798894028c256",
+        "tests\\experiments\\free_surface\\boat_transport_pressure.py": "b901bb8ead02bc8483095a2de206a7fc67f308d62973e285107a23bbd5d7cc55",
+        "tests\\experiments\\free_surface\\cuda_graph.py": "14d0895914660b3530db5c880b97aa977148a1792903eb7c51853c4f8b4f4cec"
+      }
+    }
+  ]
+}
