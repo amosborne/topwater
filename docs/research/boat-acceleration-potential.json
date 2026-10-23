@@ -1,0 +1,70 @@
+{
+  "status": "Derived/reviewed opportunity; not implemented or speed-qualified",
+  "purpose": "Replace time-differenced operator/geometry pressure recovery with a current-domain harmonic BVP.",
+  "notation": {
+    "phi": "Current harmonic velocity potential",
+    "u": "grad(phi)",
+    "chi": "Eulerian partial_t phi",
+    "U": "World CG velocity",
+    "Omega": "World angular velocity",
+    "r": "x minus world CG",
+    "V": "U+Omega cross r",
+    "A": "World CG acceleration",
+    "alpha": "World angular acceleration",
+    "n": "Fluid-outward hull normal"
+  },
+  "eulerian_acceleration_potential": {
+    "interior": "laplacian(chi)=0",
+    "physical_free_surface": "chi=-g eta-0.5|u|^2 in fixed Bernoulli gauge",
+    "forced_graph": "chi=psi_t-u_z eta_t",
+    "body": "dn chi = n dot (A+alpha cross r+Omega cross (Omega cross r)) + (Omega cross n) dot (V-u) - n dot Hessian(phi) V"
+  },
+  "rigid_transport": {
+    "variable": "zeta=chi+V dot u",
+    "harmonicity": "laplacian(V dot grad(phi))=2 grad(V):Hessian(phi)=0 because grad(V) is skew and Hessian(phi) symmetric",
+    "body": "dn zeta = n dot (A+alpha cross r-Omega cross U)",
+    "surface": "zeta=chi_surface+V dot u",
+    "pressure": "p=-rho(zeta-V dot u+0.5|u|^2+g z)",
+    "second_derivation": "In body coordinates Phi_b(a,t)=phi(X(t)+R(t)a,t), zeta=partial_t Phi_b at fixed a. Differentiate fixed body normal condition; d(R^T U)/dt=R^T(A-Omega cross U), d(Omega_body)/dt=R^T alpha."
+  },
+  "fourier_transport_split": {
+    "reason": "Omega cross r is not periodic. Direct transformed free-surface data can introduce artificial seams into fixed-world FFT/HOS.",
+    "decomposition": "Current phi=H+R, H the known harmonic Fourier lift and R the current aperiodic paired-body source field. Let T=V dot grad and Z=zeta-T H=chi+T R.",
+    "body": "dn Z = n dot(A+alpha cross r-Omega cross U) - (Omega cross n) dot u_H - n dot Hessian(H) V",
+    "surface": "Z=chi_surface+V dot u_R",
+    "body_pressure": "p=-rho(Z-V dot u_R+0.5|u|^2+g z)",
+    "cheap_fourier_normal_derivative": "For d=(i kx,i ky,|k|), mode normal derivative of TH is P times [(Omega cross n) dot d + (n dot d)(V dot d)]. No source Hessian required.",
+    "remaining_limit": "Body-source boundary terms remain aperiodic; boundary/domain and HOS truncation controls remain necessary. Do not mix exact continued flat-term gradients with different formal surface-Taylor orders without reporting the defect."
+  },
+  "implicit_body_coupling": {
+    "current_system": "Aop sigma = b_known + W acceleration, with W the six current rigid normal modes",
+    "body_system": "M acceleration + C sigma = f_known, C=rho W^T D S_eff",
+    "eliminated_system": "(Aop+W M^-1 C) sigma = b_known+W M^-1 f_known; acceleration=M^-1(f_known-C sigma)",
+    "ownership": "Apply the rank-six correction using the same current source/graph response; no symmetry or SPD repair. Known load includes the lift, kinetic/gravity pressure exactly once, body gravity and world gyro load.",
+    "qualification": "An alternative to seven decomposed acceleration BVPs; no implementation or runtime claim yet."
+  },
+  "warnings": [
+    "PDE-consistent AP is not algebraically identical to differentiating the finite P0/HOS approximation; require spatial/force convergence, not roundoff matching to FD.",
+    "Existing owned full-stage h/h2 pressure gate is the independent reference for a prescribed case. Begin with pure translation, then oblique rotation with the transport split.",
+    "Keep artificial damping/sponge state rates separate from physical free-surface pressure unless the forcing model is explicit.",
+    "This does not fix the unresolved finite-frequency spatial roll defect, P1/Fourier mismatch, or newly exposed exterior-state transfer."
+  ],
+  "independent_review": "Two agents independently derived chi and rigid-transport BCs, including the centripetal cancellation and minus Omega cross U sign. No numerical test of AP yet.",
+  "primary_sources": [
+    {
+      "url": "https://doi.org/10.2534/jjasnaoe1968.1995.178_179",
+      "title": "Tanizawa1995, A Nonlinear Simulation Method of3-D Body Motions in Waves (1stReport)",
+      "supports": "Established acceleration-potential/current-domain nonlinear body coupling; alternative Laplace formulation. Do not confuse Prandtl nonlinear acceleration potential with harmonic phi_t."
+    },
+    {
+      "url": "https://research.chalmers.se/publication/520500/file/520500_Fulltext.pdf",
+      "title": "Coslovich2020 thesis, section2.5",
+      "supports": "Modal n+1 acceleration solves and body-fixed free-surface complications."
+    },
+    {
+      "url": "https://doi.org/10.1016/j.apor.2023.103535",
+      "title": "2023 fully nonlinear immersed-boundary potential-flow paper",
+      "supports": "Related transformed/body-frame potential approach; no claim it implements this exact rigid transport/Fourier split."
+    }
+  ]
+}
