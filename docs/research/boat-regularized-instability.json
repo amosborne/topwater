@@ -1,0 +1,249 @@
+{
+  "status": "One-second evolving-water experiment REJECTED as numerically unstable; contact-row assembly defect isolated",
+  "evidence": {
+    "artifacts\\boat-regularized-water-one-second.json": "5f5213ca29dca4ddc92a9e7d9453502167daec195418254baf0494380fac35bb",
+    "artifacts\\boat-regularized-instability.json": "0fe661bf24ea5b21cfbcbf39d0a8b0788cb162a2d9ad988b90043d7f8b4fc1ce"
+  },
+  "one_second_runs": [
+    {
+      "max_step_seconds": 0.01,
+      "achieved_duration_seconds": 1.0,
+      "accepted_steps": 101,
+      "rhs_evaluations": 305,
+      "last_evaluation_time": 1.0,
+      "integration_seconds": 3.05038600001717,
+      "pressure_output_seconds": 0.004254100000252947,
+      "integration_only_wall_per_sim_second": 3.05038600001717,
+      "minimum_accepted_step": 0.002675810514617072,
+      "maximum_accepted_step": 0.010000000000000009,
+      "eta_max_coefficient_m": 377468097518.3649,
+      "physical_mass_eta_rms_error_vs_external_harmonic_max": [
+        49112440.346383855,
+        7799292.371007936,
+        34388061.046743125,
+        156458.41410946552
+      ],
+      "six_force_phase_amplitude_error_max": [
+        [
+          24878222477535.113,
+          3236968039325.639
+        ],
+        [
+          42862364689576.24,
+          5576929972202.03
+        ],
+        [
+          190439398150176.44,
+          24778548620069.29
+        ],
+        [
+          42144503504062.984,
+          5483527249548.606
+        ],
+        [
+          382668444656103.1,
+          49789952884647.234
+        ],
+        [
+          78890545693939.27,
+          10264647132520.363
+        ]
+      ],
+      "principal_force_phase_relative_error_max": [
+        1478448128385.7695,
+        954535053927.8842
+      ]
+    },
+    {
+      "max_step_seconds": 0.005,
+      "achieved_duration_seconds": 1.0,
+      "accepted_steps": 200,
+      "rhs_evaluations": 602,
+      "last_evaluation_time": 1.0,
+      "integration_seconds": 5.864181399985682,
+      "pressure_output_seconds": 0.006770600011805072,
+      "integration_only_wall_per_sim_second": 5.864181399985682,
+      "minimum_accepted_step": 0.004999999999999227,
+      "maximum_accepted_step": 0.0050000000000000044,
+      "eta_max_coefficient_m": 391464221132.09216,
+      "physical_mass_eta_rms_error_vs_external_harmonic_max": [
+        50933478.44358703,
+        8088646.682609341,
+        35660918.04172615,
+        162271.9343088346
+      ],
+      "six_force_phase_amplitude_error_max": [
+        [
+          25800153524485.656,
+          3357059862014.1553
+        ],
+        [
+          44450747653379.92,
+          5783834605559.947
+        ],
+        [
+          197496654506644.22,
+          25697835134859.836
+        ],
+        [
+          43706284144693.35,
+          5686966632996.336
+        ],
+        [
+          396849277717440.8,
+          51637164880827.04
+        ],
+        [
+          81814052124183.06,
+          10645466519188.045
+        ]
+      ],
+      "principal_force_phase_relative_error_max": [
+        1533236095335.3948,
+        989948395380.016
+      ]
+    }
+  ],
+  "eigensolver_status": "converged",
+  "eigen_matvecs": 685,
+  "observed_late_eta_growth_per_s": 34.079519961614906,
+  "modes": [
+    {
+      "real_growth_per_s": 34.08565734420508,
+      "oscillation_rad_per_s": 0.0,
+      "inverted_operator_residual": 3.6882337659323746e-14,
+      "weak_kinematic_relative_residual": 1.2487294227625105e-14,
+      "weak_dynamic_relative_residual": 1.0810615792940233e-14,
+      "body_normal_residual_max": 6.821210263296962e-13,
+      "physical_trace_residual_max": 1.5543122344752192e-15,
+      "physical_contact_parent_eta_energy_fraction": 0.8952572669504718,
+      "physical_contact_parent_area_fraction": 0.017080427073701252,
+      "base_rayleigh_real": -155.88192168130138,
+      "base_rayleigh_imag": 0.0,
+      "body_feedback_rayleigh_real": 37.44848268165083,
+      "body_feedback_rayleigh_imag": 0.0,
+      "expected_total_rayleigh_real": -118.43343899964951,
+      "expected_total_rayleigh_imag": 0.0
+    },
+    {
+      "real_growth_per_s": 3.723857886507896,
+      "oscillation_rad_per_s": -9.370994770153189,
+      "inverted_operator_residual": 3.2193836490456796e-14,
+      "weak_kinematic_relative_residual": 1.9274642952429175e-14,
+      "weak_dynamic_relative_residual": 4.890766613727266e-15,
+      "body_normal_residual_max": 2.428351918216984e-13,
+      "physical_trace_residual_max": 1.990096062414554e-15,
+      "physical_contact_parent_eta_energy_fraction": 0.13088867055261494,
+      "physical_contact_parent_area_fraction": 0.017080427073701252,
+      "base_rayleigh_real": 6.421467675768396,
+      "base_rayleigh_imag": 1.048361517103562,
+      "body_feedback_rayleigh_real": 1.1165981166201522,
+      "body_feedback_rayleigh_imag": 6.066063106598692,
+      "expected_total_rayleigh_real": 7.538065792388517,
+      "expected_total_rayleigh_imag": 7.114424623702181
+    },
+    {
+      "real_growth_per_s": 3.723857886507896,
+      "oscillation_rad_per_s": 9.370994770153189,
+      "inverted_operator_residual": 3.2193836490456796e-14,
+      "weak_kinematic_relative_residual": 1.9274642952429175e-14,
+      "weak_dynamic_relative_residual": 4.890766613727266e-15,
+      "body_normal_residual_max": 2.428351918216984e-13,
+      "physical_trace_residual_max": 1.990096062414554e-15,
+      "physical_contact_parent_eta_energy_fraction": 0.13088867055261494,
+      "physical_contact_parent_area_fraction": 0.017080427073701252,
+      "base_rayleigh_real": 6.421467675768396,
+      "base_rayleigh_imag": -1.048361517103562,
+      "body_feedback_rayleigh_real": 1.1165981166201522,
+      "body_feedback_rayleigh_imag": -6.066063106598692,
+      "expected_total_rayleigh_real": 7.538065792388517,
+      "expected_total_rayleigh_imag": -7.114424623702181
+    },
+    {
+      "real_growth_per_s": 0.32805755401075964,
+      "oscillation_rad_per_s": -12.617379295683705,
+      "inverted_operator_residual": 5.939035115510347e-10,
+      "weak_kinematic_relative_residual": 6.055750743641716e-10,
+      "weak_dynamic_relative_residual": 2.734955425090704e-09,
+      "body_normal_residual_max": 4.0358889938901253e-13,
+      "physical_trace_residual_max": 9.53863793957747e-16,
+      "physical_contact_parent_eta_energy_fraction": 0.04080823563168937,
+      "physical_contact_parent_area_fraction": 0.017080427073701252,
+      "base_rayleigh_real": 9.188907494862155,
+      "base_rayleigh_imag": 0.09252642351293192,
+      "body_feedback_rayleigh_real": 7.028282974311298,
+      "body_feedback_rayleigh_imag": 0.7513525990517844,
+      "expected_total_rayleigh_real": 16.217190472212465,
+      "expected_total_rayleigh_imag": 0.8438790193206926
+    }
+  ],
+  "independent_contact_rows": [
+    {
+      "active_row": 1246,
+      "full_node": 1504,
+      "center": [
+        2.616579183533239,
+        0.8317633551837176
+      ],
+      "physical_hat_mass": 2.500974302116347e-05,
+      "physical_mass_diagonal": 1.0431165535573697e-06,
+      "assembled_real": -0.29445410574649544,
+      "assembled_imag": 0.0,
+      "orders": [
+        {
+          "order": 8,
+          "direct_real": 0.028009649652077417,
+          "direct_imag": 0.0,
+          "absolute_difference": 0.32246375539857286,
+          "relative_difference": 11.512595102190305
+        },
+        {
+          "order": 16,
+          "direct_real": 0.02800662880923599,
+          "direct_imag": 0.0,
+          "absolute_difference": 0.32246073455573143,
+          "relative_difference": 11.513729008662077
+        }
+      ]
+    },
+    {
+      "active_row": 1247,
+      "full_node": 1505,
+      "center": [
+        2.865937101886563,
+        0.8317633551837176
+      ],
+      "physical_hat_mass": 0.012853766607733385,
+      "physical_mass_diagonal": 0.004522922260791088,
+      "assembled_real": -11.562594485611232,
+      "assembled_imag": 0.0,
+      "orders": [
+        {
+          "order": 8,
+          "direct_real": -11.63808389891707,
+          "direct_imag": 0.0,
+          "absolute_difference": 0.07548941330583858,
+          "relative_difference": 0.006486412536763282
+        },
+        {
+          "order": 16,
+          "direct_real": -11.638152806327986,
+          "direct_imag": 0.0,
+          "absolute_difference": 0.07555832071675361,
+          "relative_difference": 0.006492294952139695
+        }
+      ]
+    }
+  ],
+  "conclusions": [
+    "The bounded0.1s success did not establish stability. At1s BOTHmax-step settings produce unphysical growth; RK completion is not physical qualification.",
+    "The leading real growth rate34.085657/s has original weak residuals around1e-14 and matches observed34.07952/s. Its mode concentrates89.5%ofphysical eta energy on1.71%ofexposed-water contact-parent area.",
+    "An influential positive-cut row gives assembled?.294454 while direct EXTERIOR-area+waterline quadrature gives+.02800965/order8 and+.02800663/order16. The.32246discrepancy is far larger than the3e-6integration-order change.",
+    "This identifies a consequential contact-row assembly error consistent with subtractive quadrature error amplified by small physical support. It does not establish binary64 cancellation alone as the cause or explain every growing mode.",
+    "Two independently checked rows do not prove every other row correct. Remaining complex growing modes3.72plus/minus9.37i remain explicit; fixing the leading mode is not a stability certificate.",
+    "The principled correction evaluates ALLcontact test rows directly over PHYSICAL exterior area plus waterline and ASSIGNS their outputs. Full-support exterior hats keep the existing FFT operator. No cut threshold, discarded positive piece, eigenvalue repair, row-sum patch or matrix symmetrization.",
+    "Separately, FFTbase plus retained contact rows removes the dense A-squared storage obstruction to the concrete finer spatial test. That is not yet a validated nonlinear speedup."
+  ],
+  "next_gate": "Verify corrected contact-row actions on the actual recorded growing mode and outside-support rows; repeat the bounded homogeneous eigenscreen BEFORE another1s test. Preserve unresolved reciprocal/body/far-closure issues if any growing modes remain.",
+  "qualification": "No accepted new baseline, nonlinear6DOF trajectory,60second accuracy or end-to-end speed qualification."
+}
