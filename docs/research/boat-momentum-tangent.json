@@ -1,0 +1,119 @@
+{
+    "status":  "Experimental, opt-in integration under root review; no trajectory or continuum qualification",
+    "date":  "2026-10-22",
+    "branch":  "experiment/kernel-linearization",
+    "prior_raw_kernel_checkpoint":  "3a965a2",
+    "scope":  "Exact derivative of the current uniformly quadrature-assembled P1/P0 variational operator on a guarded owned chart. Analytic JX/dS/dB, exact-current Edot phi, current mixed solve, and material incident Neumann derivative. Zero body acceleration; current acceleration potentials retain added mass.",
+    "source_files":  [
+                         "tests/experiments/free_surface/boat_momentum_tangent.py",
+                         "tests/experiments/free_surface/boat_momentum_tangent_audit.py",
+                         "tests/experiments/free_surface/boat_incident_tangent.py"
+                     ],
+    "validation":  {
+                       "timing":  "Single bounded audit, not a speed qualification. Warm analytic incident 28-35 ms. Complete current field-rate helper 47-56 ms generic /161 ms difficult, including current boundary ownership recheck. Four fresh offset operators+fields about149/412 ms, excluding offset geometry. Initial Numba compile separately labeled in reports.",
+                       "difficult":  "1088 faces, 546 nodes, q3; actual 0.9644647283463897 s state, explicit owned chart 33 and bitwise geometry replay",
+                       "primitive":  "Existing exact directional energy action and the current physical boundary owner; no offset operator in the candidate",
+                       "analytic_incident":  "Generic incident derivative error \u003c=7.4e-11 against h, \u003c=2.5e-11 against h/2. Generic known-load error \u003c=4.53e-6 N/Nm, pressure load \u003c=2.30e-6 N/Nm, acceleration \u003c=4.72e-10",
+                       "fd_incident":  "Maximum generic known-load error 3.12e-6 N/Nm and acceleration error 4.6e-10 against both h/h2 controls",
+                       "generic":  "472 faces, 238 nodes, q3, body refinement 1; actual generic state at 0 and 0.02 s, four fresh offset solves as h/h2 oracle",
+                       "difficult_convergence":  "Known-load error 0.002912 to 0.000734 N/Nm, pressure 0.003011 to 0.000755, acceleration 3.25e-7 to 8.13e-8 when h halves from 1e-5 s; consistent with second-order finite-difference truncation"
+                   },
+    "limitations":  [
+                        "No trajectory or spatial convergence qualification",
+                        "No operator approximation, cache policy, jitter or gauge/row correction",
+                        "Prototype locally refactors current E_UU because current_field does not expose its existing factor",
+                        "Audit retains offset geometry and fresh fields solely as the reference",
+                        "Legacy flux-only contact report lacked explicit chart identity and was rejected before GPU work; later explicit owned chart report used"
+                    ],
+    "reports":  [
+                    {
+                        "input_states_sha256":  "9cbc1174c7e5a4b755b42efcc65357a4829d65f798af50a01c719e7b51789c7d",
+                        "input_geometry_arrays_sha256":  "f872b266001e5d63befbc997b131c9c621f61658363f667f475c48346c5747f8",
+                        "report_sha256":  "43405ef905f571c280b7eb67c3e1061653466c0d4fab484710c73f25bdef0349",
+                        "source_archive":  "artifacts/momentum-tangent-generic-q3-body1-source",
+                        "report":  "artifacts/momentum-tangent-generic-q3-body1.json",
+                        "input_geometry_json_sha256":  "5dbd583d5200eb6d70be05981052ddae8ae5d300780b495247b116e01b08c7d6",
+                        "source_sha256":  {
+                                              "boat_momentum_tangent.py":  "d3163671ab5aabc1531d167d4f2b31ffb11c8e34e33e79e2b78e5d2341d63509",
+                                              "boat_momentum_tangent_audit.py":  "27ba11599281ac58babcaa0e8343e3091be6222d4bbc8d6d18ecc819b9d5784f",
+                                              "cuda_directional.py":  "fd309582b8390937bc8d139f777f5e37cca29ecbf3e74d36ecc24f6081cdb496",
+                                              "cuda_directional.cu":  "9ae28a2cc2c6925531dbae3121835f8f109c3cdbc8241833dae980a6a80a0648",
+                                              "cuda_pair.cuh":  "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20",
+                                              "boat_chart_tangent.py":  "1aa2869e141f7e6dbd7b7976da31c9d796be18b95a89a32ce8461f8a6f636c21",
+                                              "boat_action_tangent.py":  "7baa117908aa4e244448dcc3c5e035895f0767adaf3f2b927a00ddf5da59f291",
+                                              "boat_world_field.py":  "dba2612dd64de85ca27e390f4c0fa2c04bda2bc466ecfd7487503cb346ce67f3",
+                                              "boat_geometry_template.py":  "4bd82128a54120432af7e258bfeb14bb5db31ab599c10eb0463fc164988b6172",
+                                              "boat_ale_pressure.py":  "3ef82f1615082f2b21509d91a1ba9f4ce5d4b4b77c7c9794d4b0c97e6901c3da",
+                                              "body_pressure.py":  "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+                                              "incident_baseline_benchmark.py":  "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+                                              "boat_body_action.py":  "fb228cb2a39d8e4152877cef7b9a00b7f45a6a3437c3a6c52def7cf41ea68e7d",
+                                              "cuda_shape_gradient.py":  "6cfa9fb82e8921d15d32ff8b9dc1aea2d36b6704a64fe38370844cc0f8e0ca49",
+                                              "cuda_shape.cu":  "d1dbcba8727b75492bd509f3be6e1de6d3b4e47a28a1f713bbaefe03ac02d926",
+                                              "cuda_dual.cuh":  "a251a46a1d695a15c9bb6e07ceac87241dcee589e85017ca8dbf8e9113dac97d",
+                                              "cuda_wide_dual.cuh":  "51722f63b91ee78d5e15f5986fbc25a33f623b3c2f77859af1c36877838c7f55",
+                                              "cuda_operator.py":  "22348f0038fee5a96f66b27abb135c3d3fd2252114d52c67e63f6fd81bb289b7",
+                                              "cuda_energy.cu":  "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f"
+                                          }
+                    },
+                    {
+                        "input_states_sha256":  "9cbc1174c7e5a4b755b42efcc65357a4829d65f798af50a01c719e7b51789c7d",
+                        "input_geometry_arrays_sha256":  "f872b266001e5d63befbc997b131c9c621f61658363f667f475c48346c5747f8",
+                        "report_sha256":  "dc06a750512268cad4a18544845c6594370d31ed737886867391c0a8f577df63",
+                        "source_archive":  "artifacts/momentum-tangent-analytic-generic-q3-body1-source",
+                        "report":  "artifacts/momentum-tangent-analytic-generic-q3-body1.json",
+                        "input_geometry_json_sha256":  "5dbd583d5200eb6d70be05981052ddae8ae5d300780b495247b116e01b08c7d6",
+                        "source_sha256":  {
+                                              "boat_momentum_tangent.py":  "d3163671ab5aabc1531d167d4f2b31ffb11c8e34e33e79e2b78e5d2341d63509",
+                                              "boat_momentum_tangent_audit.py":  "bad5858d2f36a37d2c0365bdbd61e7f5415672556aa8ab40814e5c78c6699645",
+                                              "cuda_directional.py":  "fd309582b8390937bc8d139f777f5e37cca29ecbf3e74d36ecc24f6081cdb496",
+                                              "cuda_directional.cu":  "9ae28a2cc2c6925531dbae3121835f8f109c3cdbc8241833dae980a6a80a0648",
+                                              "cuda_pair.cuh":  "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20",
+                                              "boat_chart_tangent.py":  "1aa2869e141f7e6dbd7b7976da31c9d796be18b95a89a32ce8461f8a6f636c21",
+                                              "boat_action_tangent.py":  "7baa117908aa4e244448dcc3c5e035895f0767adaf3f2b927a00ddf5da59f291",
+                                              "boat_world_field.py":  "dba2612dd64de85ca27e390f4c0fa2c04bda2bc466ecfd7487503cb346ce67f3",
+                                              "boat_geometry_template.py":  "4bd82128a54120432af7e258bfeb14bb5db31ab599c10eb0463fc164988b6172",
+                                              "boat_ale_pressure.py":  "3ef82f1615082f2b21509d91a1ba9f4ce5d4b4b77c7c9794d4b0c97e6901c3da",
+                                              "body_pressure.py":  "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+                                              "incident_baseline_benchmark.py":  "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+                                              "boat_body_action.py":  "fb228cb2a39d8e4152877cef7b9a00b7f45a6a3437c3a6c52def7cf41ea68e7d",
+                                              "cuda_shape_gradient.py":  "6cfa9fb82e8921d15d32ff8b9dc1aea2d36b6704a64fe38370844cc0f8e0ca49",
+                                              "cuda_shape.cu":  "d1dbcba8727b75492bd509f3be6e1de6d3b4e47a28a1f713bbaefe03ac02d926",
+                                              "cuda_dual.cuh":  "a251a46a1d695a15c9bb6e07ceac87241dcee589e85017ca8dbf8e9113dac97d",
+                                              "cuda_wide_dual.cuh":  "51722f63b91ee78d5e15f5986fbc25a33f623b3c2f77859af1c36877838c7f55",
+                                              "cuda_operator.py":  "22348f0038fee5a96f66b27abb135c3d3fd2252114d52c67e63f6fd81bb289b7",
+                                              "cuda_energy.cu":  "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+                                              "boat_incident_tangent.py":  "572d19c35e6c52af3f1a7e4f2b688434f55a08ca5118bce8cdeaa702be7fcfdd"
+                                          }
+                    },
+                    {
+                        "input_states_sha256":  "ff3acff99f3dd1f5cf0c9122915875cdbe6935ade7bd0866b52a7e425b43068e",
+                        "input_geometry_arrays_sha256":  "226ef76eb84637af3afd0c87a3df334fdc77027b6c834f1d570f975b4e862181",
+                        "report_sha256":  "693d3a226881c1b0216dabfe9c24efe732e3e8e91d3b74bbec233e1779601d1b",
+                        "source_archive":  "artifacts/momentum-tangent-analytic-contact964-q3-source",
+                        "report":  "artifacts/momentum-tangent-analytic-contact964-q3.json",
+                        "input_geometry_json_sha256":  "8ae1e7f3c34f2921634d55c40b6962c299ca7f84b10a46d7d6227e9ca13db303",
+                        "source_sha256":  {
+                                              "boat_momentum_tangent.py":  "d3163671ab5aabc1531d167d4f2b31ffb11c8e34e33e79e2b78e5d2341d63509",
+                                              "boat_momentum_tangent_audit.py":  "bad5858d2f36a37d2c0365bdbd61e7f5415672556aa8ab40814e5c78c6699645",
+                                              "cuda_directional.py":  "fd309582b8390937bc8d139f777f5e37cca29ecbf3e74d36ecc24f6081cdb496",
+                                              "cuda_directional.cu":  "9ae28a2cc2c6925531dbae3121835f8f109c3cdbc8241833dae980a6a80a0648",
+                                              "cuda_pair.cuh":  "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20",
+                                              "boat_chart_tangent.py":  "1aa2869e141f7e6dbd7b7976da31c9d796be18b95a89a32ce8461f8a6f636c21",
+                                              "boat_action_tangent.py":  "7baa117908aa4e244448dcc3c5e035895f0767adaf3f2b927a00ddf5da59f291",
+                                              "boat_world_field.py":  "dba2612dd64de85ca27e390f4c0fa2c04bda2bc466ecfd7487503cb346ce67f3",
+                                              "boat_geometry_template.py":  "4bd82128a54120432af7e258bfeb14bb5db31ab599c10eb0463fc164988b6172",
+                                              "boat_ale_pressure.py":  "3ef82f1615082f2b21509d91a1ba9f4ce5d4b4b77c7c9794d4b0c97e6901c3da",
+                                              "body_pressure.py":  "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+                                              "incident_baseline_benchmark.py":  "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+                                              "boat_body_action.py":  "fb228cb2a39d8e4152877cef7b9a00b7f45a6a3437c3a6c52def7cf41ea68e7d",
+                                              "cuda_shape_gradient.py":  "6cfa9fb82e8921d15d32ff8b9dc1aea2d36b6704a64fe38370844cc0f8e0ca49",
+                                              "cuda_shape.cu":  "d1dbcba8727b75492bd509f3be6e1de6d3b4e47a28a1f713bbaefe03ac02d926",
+                                              "cuda_dual.cuh":  "a251a46a1d695a15c9bb6e07ceac87241dcee589e85017ca8dbf8e9113dac97d",
+                                              "cuda_wide_dual.cuh":  "51722f63b91ee78d5e15f5986fbc25a33f623b3c2f77859af1c36877838c7f55",
+                                              "cuda_operator.py":  "22348f0038fee5a96f66b27abb135c3d3fd2252114d52c67e63f6fd81bb289b7",
+                                              "cuda_energy.cu":  "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+                                              "boat_incident_tangent.py":  "572d19c35e6c52af3f1a7e4f2b688434f55a08ca5118bce8cdeaa702be7fcfdd"
+                                          }
+                    }
+                ]
+}
