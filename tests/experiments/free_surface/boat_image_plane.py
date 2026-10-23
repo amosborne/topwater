@@ -20,12 +20,24 @@ from topwater import SimulationInputs
 from topwater.bem import assemble_dirichlet_halfspace
 from topwater.constants import WATER_DENSITY, GRAVITY
 from topwater.hydrostatics import hydrostatics
-from topwater.rankine import TrianglePanels
+from topwater.rankine import TrianglePanels, panel_influence
 from tests.benchmark_rankine import peak_rss_bytes
 from .boat_spatial_work import source_matrix, subdivide
 from .boat_radiation_time import harmonic_maps
 from .boat_graph_images import image_height
 from .panel_gradient_reference import checked_influence
+
+
+def elevated_potential(points, panels, height):
+    """Paired-source potential only; retain the public kernel's accuracy guards."""
+    value = np.empty((len(points), len(panels)))
+    for first in range(0, len(points), 128):
+        last = min(first+128, len(points))
+        reflected = points[first:last].copy()
+        reflected[:, 2] = 2*height-reflected[:, 2]
+        value[first:last] = (panel_influence(points[first:last], panels).single_layer
+                            -panel_influence(reflected, panels).single_layer)
+    return value
 
 
 def elevated_trace(points, panels, height):

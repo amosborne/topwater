@@ -24,7 +24,7 @@ from tests.benchmark_rankine import peak_rss_bytes
 from .body_internal_field import internal_field
 from .boat_graph_images import image_height
 from .boat_hos_continuation import tilted_geometry, tangent_graph
-from .boat_image_plane import elevated_trace
+from .boat_image_plane import elevated_potential
 from .boat_radiation_time import harmonic_maps
 from .boat_spatial_work import source_matrix, subdivide
 from .cuda_graph import GraphDirichlet, body_maps, cp
@@ -53,8 +53,8 @@ class GraphBody:
         size = self.shape[0]
         x, y = np.meshgrid(origin[0]+np.arange(size)*length/size,
                            origin[1]+np.arange(size)*length/size)
-        trace, _ = elevated_trace(np.column_stack((x.ravel(), y.ravel(), eta.ravel())),
-                                   panels, image_plane_height)
+        trace = elevated_potential(np.column_stack((x.ravel(), y.ravel(), eta.ravel())),
+                                    panels, image_plane_height)
         self.trace = cp.asarray(trace)
         cp.cuda.get_current_stream().synchronize()
         self.source_trace_seconds = perf_counter()-before

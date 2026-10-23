@@ -4,7 +4,7 @@ from numpy.testing import assert_allclose
 
 from topwater.rankine import TrianglePanels
 from tests.laplace_reference import triangle_samples
-from tests.experiments.free_surface.boat_image_plane import elevated_trace
+from tests.experiments.free_surface.boat_image_plane import elevated_trace, elevated_potential
 
 
 def test_elevated_pair_matches_independent_source_quadrature():
@@ -23,6 +23,7 @@ def test_elevated_pair_matches_independent_source_quadrature():
     derivative = np.sum(measure*(-real_delta[..., 2]/real_distance**3
                                  +image_delta[..., 2]/image_distance**3), axis=-1)
     assert_allclose(value, reference, rtol=2e-12, atol=2e-14)
+    assert_allclose(elevated_potential(targets, panels, height), reference, rtol=2e-12, atol=2e-14)
     assert_allclose(vertical, derivative, rtol=2e-12, atol=2e-14)
 
 

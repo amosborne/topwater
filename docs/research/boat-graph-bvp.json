@@ -812,6 +812,42 @@
       },
       "peak_process_rss_bytes": 1947885568,
       "cupy_pool_reserved_bytes": 3271787008
+    },
+    {
+      "report": "artifacts\\boat-graph-bvp-potential-only513.json",
+      "report_sha256": "8b86209ecff8936619f0aa12552d7ba51a3d1a6c81bccc1b5d90b145f1fd4f2e",
+      "source_archive": "artifacts\\boat-graph-bvp-potential-only513.source",
+      "archive_hashes_verified": true,
+      "complete": true,
+      "total_seconds": 11.915587800001958,
+      "setup": {
+        "geometry_and_fields_seconds": 2.665301000000909,
+        "source_operators_seconds": 1.814242299995385,
+        "lift_map_seconds": 0.3271152999950573,
+        "source_trace_seconds": 4.108699300006265,
+        "context_seconds": 6.250145500001963,
+        "verification_tangent_plane_seconds": 0.031072499987203628
+      },
+      "peak_process_rss_bytes": 1948028928,
+      "cupy_pool_reserved_bytes": 3271787008
+    },
+    {
+      "report": "artifacts\\box-graph-bvp-current129.json",
+      "report_sha256": "94dac97bdf5b0ecbf06b4ea243418851020824acd9befce80ae005dfdf341e96",
+      "source_archive": "artifacts\\box-graph-bvp-current129.source",
+      "archive_hashes_verified": true,
+      "complete": true,
+      "total_seconds": 3.2264180000056513,
+      "setup": {
+        "geometry_and_fields_seconds": 0.7672277000092436,
+        "source_operators_seconds": 1.7532732999825384,
+        "lift_map_seconds": 0.18245049999677576,
+        "source_trace_seconds": 0.1699905999994371,
+        "context_seconds": 2.105777999997372,
+        "verification_tangent_plane_seconds": 0.015053800016175956
+      },
+      "peak_process_rss_bytes": 611528704,
+      "cupy_pool_reserved_bytes": 144235520
     }
   ],
   "gpu_map_optimization": {
@@ -824,5 +860,17 @@
     "process_peak_rss_ratio": 4.421008583600739,
     "validation": "Five focused GPU checks passed5.30s, independent complex P/N parity and all four full-case load columns; source reviewer approved. One serial old/new timing comparison, not a statistical speed estimate.",
     "decision": "Keep direct GPU map construction as the sole candidate path; CPU formula is an independent verification reference. Dense GPU map storage remains."
-  }
+  },
+  "potential_only_trace_optimization": {
+    "decision": "Retain as sole candidate trace path; derivative implementation stays in independent verification harness.",
+    "scope": "Delete unused derivative work; public scalar kernel guards retained. No nonlinear trajectory speed claim.",
+    "max_absolute_pressure_functional_change": 0.0,
+    "distinct_boat_max_absolute_pressure_functional_change": 2.2577495428777183e-12,
+    "trace_build_old_seconds": 7.04039089998696,
+    "trace_build_new_seconds": 4.108699300006265,
+    "whole_static_job_speed_ratio": 1.2750612353344137,
+    "combined_static_job_speed_ratio": 2.155803644029328,
+    "validation": "Seven focused controls passed5.09s; independent quadrature, GPU/CPU parity, identical four N513 load columns, distinct boat input; source reviewer approved. One serial timing comparison only."
+  },
+  "next_physical_gate": "Define exterior-state ownership and verify total potential time derivative on a prescribed moving-pose path with independent h/h2 snapshots and all six loads/work. Hold image/expansion parameters fixed over a certified short stencil. Static success does not repair the earlier flat radiation discrepancy; do not rerun identical dynamics expecting different physics."
 }
