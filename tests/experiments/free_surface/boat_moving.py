@@ -19,7 +19,7 @@ from topwater.frames import rotation_matrix
 from topwater.hydrostatics import FloodingError, LossOfContactError
 from topwater.rankine import TrianglePanels
 from tests.benchmark_rankine import peak_rss_bytes
-from tests.reference_boat import GRAVITY, WATER_DENSITY, reference_body
+from tests.reference_boat import GRAVITY, WATER_DENSITY, reference_body, equilibrium
 from .boat_geometry_template import evaluate_template, InvalidTemplate, InvalidFan
 from .boat_world_boundary import construct, body_material_samples, interpolate_body_trace
 from .boat_world_field import current_field, surface_rates, refine_boundary
@@ -34,7 +34,8 @@ from .p4_fluid_ordering import fresh
 
 
 def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_step=.01,
-        quadrature_order=3, operator_reuse=None, charted_pressure=False, common_pressure_chart=False):
+        quadrature_order=3, operator_reuse=None, charted_pressure=False, common_pressure_chart=False,
+        action_coupling=False, initial_xy=None):
     from .cuda_operator import prepare_energy, cp
     if isinstance(operator_reuse, bool):
         operator_reuse = 'one-direction' if operator_reuse else None
@@ -45,6 +46,10 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
         raise ValueError('positive bounded duration/budget, >=4 RHS and refinement 0..2 required')
     if common_pressure_chart and not charted_pressure:
         raise ValueError('common pressure chart requires charted pressure')
+    if action_coupling and (operator_reuse or common_pressure_chart):
+        raise ValueError('experimental action coupling requires fresh operators and one owned chart')
+    if initial_xy is not None and (np.shape(initial_xy) != (2,) or not np.isfinite(initial_xy).all()):
+        raise ValueError('initial_xy must contain two finite world coordinates')
     output = fresh(output)
     output.parent.mkdir(parents=True, exist_ok=True)
     report = dict(complete=False, qualified=False,
@@ -63,6 +68,8 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
             limits=(LIMITS if operator_reuse == 'one-direction' else PAST_LIMITS) if operator_reuse else None,
             scope='Past-only local model; atomic whole-RHS fallback. Geometry limits are heuristics, not force-error bounds. Stage history can affect refresh decisions.'),
         controls=dict(max_rhs=max_rhs, soft_elapsed_budget_seconds=budget_seconds,
+            action_coupling=action_coupling,
+            initial_horizontal_position_m=None if initial_xy is None else list(initial_xy),
             common_pressure_chart=common_pressure_chart,
             pressure_derivative=('charted nodal with explicit material fallback on chart failure'
                                  if charted_pressure else 'material quadrature'),
@@ -75,6 +82,13 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
                          'canoe.py', 'incident_baseline_benchmark.py',
                          'cuda_operator.py', 'cuda_energy.cu', 'cuda_pair.cuh', 'boat_operator_reuse.py',
                          'boat_past_operator.py', 'boat_ale_pressure.py', 'boat_motion_metrics.py')})
+    if action_coupling:
+        report['source_sha256'].update({name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
+            for name in ('boat_action_stencil.py', 'boat_body_action.py', 'boat_parent_action.py',
+                'cuda_shape_gradient.py', 'cuda_shape.cu', 'cuda_dual.cuh', 'cuda_wide_dual.cuh')})
+        report['controls'].update(pressure_derivative='diagnostic only, matched action offsets',
+            derivative_step_seconds=1e-5/2, minimum_chart_derivative_step_seconds=1e-5/2**13,
+            action_difference_policy='Compute h and h/2; use h/2 without a claimed error bound.')
     started = perf_counter()
     times, states, solver = [], [], None
     templates, cold_count, operator_model = [], 0, None
@@ -129,7 +143,7 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
             rejected_charts=reasons, diagnostics=diagnostics, faces=len(arrays['faces'])))
         return arrays
 
-    def field(arrays, twist, time, acceleration_columns, model):
+    def field(arrays, twist, time, acceleration_columns, model, *, retain_assembly=False):
         elapsed_check()
         before = perf_counter()
         prediction = None
@@ -151,7 +165,7 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
             if model is not None:
                 raise InvalidReuse('predicted field exceeds the algebraic residual budget')
             raise ValueError('current field exceeds the audited algebraic residual budget')
-        return value, energy
+        return value, assembly if retain_assembly else energy
 
     def rhs(time, state):
         nonlocal row, operator_model, previous_stencil
@@ -232,6 +246,14 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
                          step_seconds=step, diagnostics=diagnostics))
 
         result, audit_candidate = None, None
+        if action_coupling:
+            from .boat_action_stencil import evaluate as action_stencil
+            current, assembly = field(arrays, twist, time, True, None, retain_assembly=True)
+            result = action_stencil(body, arrays, current, assembly, state, values, time,
+                lambda current_pose, height, potential, label: geometry(current_pose, height,
+                    potential, label, chart=base_context['chart']),
+                lambda moved, current_time: field(moved, twist, current_time, False, None))
+            row['operator_mode'] = 'fresh'
         refresh = (operator_reuse in ('past-linear', 'past-curved') and operator_model is not None
                    and abs(time-operator_model.time) >= PAST_LIMITS['refresh_age_seconds']-1e-14)
         if operator_model is not None:
@@ -365,7 +387,11 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
         before = perf_counter()
         cp.cuda.get_current_stream().synchronize()
         report['gpu_context_seconds'] = perf_counter()-before
-        initial_geometry, metadata = cold()
+        if initial_xy is None:
+            initial_geometry, metadata = cold()
+        else:
+            rest = equilibrium()[0]
+            initial_geometry, metadata = cold(pose=InitialState(np.r_[initial_xy, rest.position[2]], rest.orientation))
         report['fixture_sha256'] = metadata['fixture_sha256']
         values = coefficients(sea_states.loads_realization(json.dumps(metadata['actual_sea_realization'])))
         size = len(initial_geometry['parent_nodes'])
@@ -428,6 +454,8 @@ if __name__ == '__main__':
     parser.add_argument('--operator-reuse', nargs='?', const='one-direction', choices=('one-direction', 'past-linear', 'past-curved'))
     parser.add_argument('--charted-pressure', action='store_true')
     parser.add_argument('--common-pressure-chart', action='store_true')
+    parser.add_argument('--action-coupling', action='store_true')
+    parser.add_argument('--initial-xy', nargs=2, type=float)
     result = run(**vars(parser.parse_args()))
     print(json.dumps({key: result[key] for key in
         ('complete', 'seconds', 'accepted_simulated_seconds', 'accepted_steps', 'cold_geometry_count')}))

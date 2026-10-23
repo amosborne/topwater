@@ -1764,3 +1764,25 @@ mass, constant gauge and removal of the shared potential-time load. The q12
 dynamic geometric mismatch remains substantial despite passing those controls;
 see `docs/research/boat-body-action.json`. Neither load formulation has earned
 trajectory or continuum qualification.
+
+`boat_moving --action-coupling` is an opt-in complete action-coupled six-DOF
+pilot. Each RHS builds the current operator/gradient, all parent and body shape
+terms, and four fresh offset fields. It records h/h2 differences and matched
+pressure loads; h/2 is selected without claiming an error bound. Operator reuse
+and material-chart fallback are excluded in this mode.
+
+The symmetric default starting position currently fails the owned derivative
+chart before advancing. `--initial-xy .123 .087` explicitly selects a generic
+world position for a diagnostic run; it changes the initial physical case and
+does not resolve or conceal the default failure. Retain initial position and
+the exact sea realization in comparisons. A completed short pilot is not a
+motion-convergence or usable-throughput qualification.
+
+`boat_action_cancellation_audit --reference <parent-audit> --body-reference
+<body-audit> --output <report>` alternates full and algebraically combined
+incident/port geometry derivatives at an identical owned state, checking all
+parent rates and body pose loads against archived producers. The experimental
+action driver uses the combined version: all actual fluid solves retain full
+incident forcing. Its seam6/12 diagnostic is independent quadrature checking,
+not a comparison of the combined term with standalone port work. See
+`docs/research/boat-action-moving.json` for parity, timings and failed cases.

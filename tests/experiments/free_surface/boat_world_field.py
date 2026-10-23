@@ -214,7 +214,7 @@ def surface_rates(points, free_faces, free_nodes, parent_map, parent_psi, flux, 
     return eta_rate, psi_rate, diagnostics
 
 
-def boundary_data(arrays, values, twist, *, time=0.):
+def boundary_data(arrays, values, twist, *, time=0., incident_load=True):
     """Current prescribed trace map and physical loads; no operator or solve."""
     points, faces, fixed = arrays['points'], arrays['faces'], arrays['free_nodes']
     mesh = HullMesh(points, faces)
@@ -228,6 +228,8 @@ def boundary_data(arrays, values, twist, *, time=0.):
     if not np.allclose(mapping.sum(axis=1), 1., rtol=0, atol=1e-14):
         raise ValueError('parent weights fail partition of unity')
     right = load@twist
+    if not incident_load:
+        return dict(parent_map=mapping, body_load=load, right=right)
     outer = np.r_[arrays['wall_faces'], arrays['bottom_faces']]
     samples, weights = triangle_samples(points[faces[outer]], 3)
     shape, _ = triangle_samples(np.eye(3)[None], 3)

@@ -86,7 +86,8 @@ def port_seam_load(arrays, field, values, time, order=12):
     return -WATER_DENSITY*np.einsum('e,q,eq,eq,eqi->i', length, weights, psi, flux, trace)
 
 
-def action_rates(arrays, field, gradient, values, twist, time, geometry):
+def action_rates(arrays, field, gradient, values, twist, time, geometry, *,
+                 combine_incident_ports=False, port_covector=None):
     """Candidate all-parent rates from one CURRENT fixed-nodal energy gradient.
 
     geometry(pose, eta) must replay the same owned/refined chart at fixed psi.
@@ -133,9 +134,13 @@ def action_rates(arrays, field, gradient, values, twist, time, geometry):
         raise ValueError('no valid owned mass-transport stencil')
     time_mass = [parent_mass(current) for current in timed]
     cdot = [(time_mass[0]-time_mass[1])/(2*dt), (time_mass[2]-time_mass[3])/dt]
-    covector = port_transport_covector(arrays, field['potential'], values, time)
+    covector = (port_transport_covector(arrays, field['potential'], values, time)
+        if port_covector is None else np.asarray(port_covector))
+    if covector.shape != points.shape or not np.isfinite(covector).all():
+        raise ValueError('finite current port covector required')
     count = len(eta)
-    names = ('kinetic', 'body_load', 'incident_load', 'moving_trace', 'mass_transport', 'port_work', 'gravity')
+    names = ('kinetic', 'body_load', 'moving_trace', 'mass_transport', 'gravity')
+    names += ('incident_port',) if combine_incident_ports else ('incident_load', 'port_work')
     terms = {name: np.zeros((2, count)) for name in names}
     steps = []
     for index in range(count):
@@ -150,7 +155,8 @@ def action_rates(arrays, field, gradient, values, twist, time, geometry):
         else:
             raise ValueError('no valid owned parent-height stencil')
         steps.append(h)
-        loads = [boundary_data(current, values, twist, time=time) for current in moved]
+        loads = [boundary_data(current, values, twist, time=time,
+            incident_load=not combine_incident_ports) for current in moved]
         masses = [parent_mass(current) for current in moved]
         for level in range(2):
             step = h/2**level
@@ -163,13 +169,16 @@ def action_rates(arrays, field, gradient, values, twist, time, geometry):
             dc = (masses[2*level]-masses[2*level+1])/(2*step)
             terms['kinetic'][level, index] = -np.sum(gradient*moving)
             terms['body_load'][level, index] = WATER_DENSITY*(field['potential']@dbody)
-            terms['incident_load'][level, index] = WATER_DENSITY*(field['potential']@dincident)
             terms['moving_trace'][level, index] = -WATER_DENSITY*(field['flux']@dtrace)
             terms['gravity'][level, index] = -WATER_DENSITY*GRAVITY*(mass@eta)[index]
             terms['mass_transport'][level, index] = WATER_DENSITY*(psi@dc@eta_rate-(cdot[level].T@psi)[index])
-            terms['port_work'][level, index] = -WATER_DENSITY*(field['potential']@dincident+np.sum(covector*moving))
-    raw = sum(value for name, value in terms.items() if name != 'port_work')
-    corrected = raw+terms['port_work']
+            if combine_incident_ports:
+                terms['incident_port'][level, index] = -WATER_DENSITY*np.sum(covector*moving)
+            else:
+                terms['incident_load'][level, index] = WATER_DENSITY*(field['potential']@dincident)
+                terms['port_work'][level, index] = -WATER_DENSITY*(field['potential']@dincident+np.sum(covector*moving))
+    corrected = sum(terms.values())
+    raw = None if combine_incident_ports else corrected-terms['port_work']
     return dict(eta_rate=eta_rate, psi_rate=np.stack([solve(load/WATER_DENSITY) for load in corrected]),
         parent_mass=mass, mass_time_derivative=np.stack(cdot), raw_action_weak=raw,
         corrected_action_weak=corrected, terms=terms, height_steps_m=np.array(steps),

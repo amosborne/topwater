@@ -19,13 +19,18 @@ def fluid_gravity(arrays):
     return WATER_DENSITY*GRAVITY*volume*center[2]
 
 
-def body_derivatives(arrays, field, gradient, values, twist, time, eta_rate, geometry):
+def body_derivatives(arrays, field, gradient, values, twist, time, eta_rate, geometry, *,
+                     combine_incident_ports=False, port_covector=None):
     """Complete fixed-world pose derivatives at h and h/2, no fluid solves."""
     pose = InitialState(arrays['pose_position'], arrays['pose_orientation'])
     rotation = Rotation.from_quat(pose.orientation, scalar_first=True)
     eta, psi = arrays['parent_nodes'][:, 2], arrays['parent_psi']
-    covector = port_transport_covector(arrays, field['potential'], values, time)
-    names = ('kinetic', 'boundary_load', 'moving_trace', 'surface_one_form', 'gravity', 'port_work')
+    covector = (port_transport_covector(arrays, field['potential'], values, time)
+        if port_covector is None else np.asarray(port_covector))
+    if covector.shape != arrays['points'].shape or not np.isfinite(covector).all():
+        raise ValueError('finite current port covector required')
+    names = ('kinetic', 'boundary_load', 'moving_trace', 'surface_one_form', 'gravity')
+    names += ('incident_port',) if combine_incident_ports else ('port_work',)
     terms = {name: np.zeros((2, 6)) for name in names}
     steps, evaluations = [], 0
     for index in range(6):
@@ -49,7 +54,8 @@ def body_derivatives(arrays, field, gradient, values, twist, time, eta_rate, geo
         else:
             raise ValueError('no valid owned body derivative stencil')
         steps.append(h)
-        loads = [boundary_data(current, values, twist, time=time) for current in moved]
+        loads = [boundary_data(current, values, twist, time=time,
+            incident_load=not combine_incident_ports) for current in moved]
         masses = [parent_mass(current) for current in moved]
         gravity = [fluid_gravity(current) for current in moved]
         for level in range(2):
@@ -66,7 +72,10 @@ def body_derivatives(arrays, field, gradient, values, twist, time, eta_rate, geo
             terms['moving_trace'][level, index] = -WATER_DENSITY*(field['flux']@dtrace)
             terms['surface_one_form'][level, index] = WATER_DENSITY*(psi@dc@eta_rate)
             terms['gravity'][level, index] = -(gravity[2*level]-gravity[2*level+1])/(2*step)
-            terms['port_work'][level, index] = -WATER_DENSITY*(field['potential']@dincident+np.sum(covector*moving))
+            if combine_incident_ports:
+                terms['incident_port'][level, index] = -WATER_DENSITY*np.sum(covector*moving)
+            else:
+                terms['port_work'][level, index] = -WATER_DENSITY*(field['potential']@dincident+np.sum(covector*moving))
     return dict(terms=terms, pose_load=np.sum(list(terms.values()), axis=0),
                 steps=np.array(steps), geometry_evaluations=evaluations)
 

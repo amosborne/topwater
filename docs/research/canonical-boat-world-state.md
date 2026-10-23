@@ -832,9 +832,46 @@ Evidence and exact source/input ownership are in `boat-body-action.json`.
 The discrepancy's spatial convergence remains unresolved; neither formulation
 has earned physical qualification. The action equations provide a candidate
 consistent with the current discrete energy, not a calibrated pressure fix.
-Next exercise the complete action coupling in an explicitly experimental moving
-pilot, retaining these pressure diagnostics and no production adoption claim.
-Gradient cost and eventual motion/Capytaine convergence remain required gates.
+## Experimental action-coupled motion
+
+The complete action equations now run behind `boat_moving --action-coupling`,
+retaining matched pressure diagnostics and fresh current/offset operators.
+The default symmetric initial position fails the owned mass-transport chart
+before advancing. The explicit generic position x=0.123 m, y=0.087 m permits
+the diagnostic pilot; it changes the physical initial condition and does not
+resolve the default failure.
+
+At q3/body1, 20 ms completes in 32.8 s with seven RHS calls. Increasing the
+step ceiling to 50 ms completes 0.2 s in 74.3 s with 13 RHS calls. A one-second
+attempt with a 0.2 s ceiling exhausts its 40-RHS bound after accepting 0.6463 s
+in 205.1 s, with eight accepted steps and 18 cold chart builds. Neither that
+partial ratio nor the short complete runs approach the 20x runtime ceiling.
+These small motions and unqualified coarse discretization establish execution
+and cost only, not motion accuracy.
+
+Geometry/load derivatives now dominate the RHS. Incident-load derivatives
+cancel exactly with the corresponding open-port virtual work, leaving
+-rho times the current port covector contracted with the geometry derivative.
+Skip incident-wave evaluation only in those geometry stencils; every actual
+fluid solve retains full incident forcing. The reference derivative mode
+continues to evaluate both terms separately. Four alternating frozen-state
+calls take 6.20/4.98/5.18/6.30 s (reference/combined/combined/reference), with
+all parent rates agreeing within 9e-16 and six body pose loads within 1.3e-7
+N or N m. Separate diagnostic terms are not misrepresented as standalone port
+work after cancellation.
+
+A matched complete 20 ms coupled run drops from 32.8 to 28.2 s, an observed
+1.16x gain. Accepted states differ by at most 5.7e-10 in their respective units;
+angular differences stay below 1.2e-10 degree. This earns the cancellation in
+the experimental action path, with single-run timing caveats. Provenance,
+controls, partial failures, cost breakdown and memory metrics are retained in
+`boat-action-moving.json`.
+
+Next replace repeated owned geometry reconstructions with a batched tangent of
+the same plane-intersection/fan/midpoint recipes, validated against the current
+finite differences. Current-chart guards and offset fluid solves must remain.
+Action-side affine consistency, spatial/motion convergence and Capytaine
+correlation remain required before physical adoption.
 
 ## Primary context
 
