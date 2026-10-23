@@ -86,6 +86,47 @@ def test_integer_owner_rejects_changed_frozen_coefficients():
         owner.check_planes(planes)
 
 
+def test_first_integer_use_freezes_independent_rows_and_rechecks_replacement():
+    registry = _registry([(1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0),
+                          (1, 1, 1, 1)], True)
+    external = [list(row) for row in registry.planes]
+    registry.planes = external
+    point = registry.intersection((0, 1, 2))
+    frozen = registry.integer_geometry.frozen_planes
+    assert registry.planes is frozen
+    assert all(isinstance(row, tuple) for row in frozen)
+    external[0][3] = F(7)
+    assert frozen[0][3] == 0
+    with pytest.raises(TypeError):
+        registry.planes[0][3] = F(1)
+    # Equal replacement is validated and restored to the immutable owner.
+    registry.planes = [list(row) for row in frozen]
+    assert registry.intersection((0, 1, 2)) == point
+    assert registry.planes is frozen
+    # Even already-cached intersection/sign queries reject changed planes.
+    registry._sign((0, 1, 2), point, 0)
+    for query in (lambda: registry.intersection((0, 1, 2)),
+                  lambda: registry._sign((0, 1, 2), point, 0),
+                  lambda: registry.exact_signs([point])):
+        changed = [list(row) for row in frozen]
+        changed[0][3] = F(1)
+        registry.planes = changed
+        before = (dict(registry.cache), dict(registry.sign_cache),
+                  registry.sign_requests, registry.sign_cache_hits)
+        with pytest.raises(ValueError, match='unchanged frozen'):
+            query()
+        assert before == (registry.cache, registry.sign_cache,
+                          registry.sign_requests, registry.sign_cache_hits)
+
+
+def test_witness_only_integer_use_also_freezes_before_first_intersection():
+    registry = _registry([(1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0)], True)
+    registry.exact_signs([(F(0), F(0), F(0))])
+    assert not registry.cache
+    with pytest.raises(RuntimeError, match='freeze every plane'):
+        registry.plane([(0, 0, 0), (1, 0, 0), (0, 1, 0)], ('late', 0))
+
+
 def test_dense_witness_signs_include_exact_fan_points_without_sign_cache_changes():
     planes = [(1, 0, 0, F(1, 3)), (0, 1, 0, F(-2, 7)), (0, 0, 1, 0),
               (F(10**50), F(10**50+1), 1, F(1, 2**1100))]

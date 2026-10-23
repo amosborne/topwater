@@ -39,6 +39,8 @@ class IntegerIntersections:
         self.homogeneous = {}
 
     def check_planes(self, planes):
+        if planes is self.frozen_planes:
+            return
         if tuple(tuple(plane) for plane in planes) != self.frozen_planes:
             raise ValueError('integer intersection owner requires unchanged frozen planes')
 

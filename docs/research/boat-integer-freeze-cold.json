@@ -1,0 +1,270 @@
+{
+  "complete": true,
+  "qualified": false,
+  "scope": "Exact integer immutable-owner freeze versus original73bbdad integer owner; matched serial timings, no fluid/force/trajectory qualification.",
+  "versions": {
+    "python": "3.12.8 (tags/v3.12.8:2dc476b, Dec  3 2024, 19:30:04) [MSC v.1942 64 bit (AMD64)]",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1"
+  },
+  "threads": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1"
+  },
+  "source_sha256": {
+    "boat_integer_freeze_cold_audit.py": "4347765abaada3369420b01f765acae58774b2e3e7466f456ab65c5535d301d1",
+    "boat_integer_intersections.py": "fffc7b7186da80e1d6bbcade1c5336404f072d8b1ee1d78b43a15783a0fdc09b",
+    "boat_world_boundary.py": "e5b69c97f3087d15c4543c0d7041559fd7fbe67e2fa8422855ea27612bc52a98",
+    "boat_parent_clip_proof.py": "05eab898249567e1e23ce81ee3755b1c73c99f378afc1d82ef0e749f15b6266b",
+    "boat_geometry_template.py": "99f1d1945a9b30c1bded34d63f47345bad3d1e098bf35c50fd97a9497dd944ce",
+    "reference_boat.py": "5d4cd16a436f30afc39d96d062ab060e706dcb736716ee7e0be16351672850cf",
+    "test_boat_integer_intersections.py": "1c60c9a6ffae5f330a0f7c64e4d75d8a143cffde65bc94b432360049048ee394"
+  },
+  "input_sha256": {
+    "C:\\Users\\alex\\topwater\\artifacts\\boat-contact-traces-964ms.json": "e54857fab34830e812608c0d2185908edbacf480e4a593250cfd43a0736e89da",
+    "C:\\Users\\alex\\topwater\\artifacts\\boat-contact-traces-964ms.npz": "920118a92892adb2a5e1693d5d991ef517d9d4e0020709ce41502e8c743f970a",
+    "C:\\Users\\alex\\topwater\\artifacts\\boat-common-chart-body2-q6-1s-geometry-33.npz": "226ef76eb84637af3afd0c87a3df334fdc77027b6c834f1d570f975b4e862181",
+    "C:\\Users\\alex\\topwater\\artifacts\\boat-common-chart-body2-q6-1s-geometry-0.npz": "7b5569c9c8bfc6dc5570ef6d4fe9b631fc80c78b2413e8871dbd7a9939ea91c6",
+    "C:\\Users\\alex\\topwater\\artifacts\\boat-common-chart-body2-q6-1s.json": "8b419c48a2a9802f4d23fa41b83d2b5f327d5a6678a5adbeb915b0f12cbc2ceb"
+  },
+  "cases": [
+    {
+      "name": "generic-t0",
+      "rows": [
+        {
+          "index": 0,
+          "immutable_freeze": false,
+          "total_cold_seconds": 0.7585784000111744,
+          "constructor_seconds": 0.7496206999931019,
+          "parent_clipping_seconds": 0.3594485000066925,
+          "integer_homogeneous_entries": 2421,
+          "integer_maximum_bits": 380,
+          "integer_homogeneous_shallow_container_bytes": 1036924,
+          "memory_scope": "Conservative sum of homogeneous dictionary/key/tuple/int storage; not process peak RSS; includes repeated integer references.",
+          "exact_arrays_template_registry_polygons_equal": true,
+          "all_arrays_equal_archived_first_stage": true,
+          "plane_count": 40,
+          "point_count": 144,
+          "exact_intersection_cache": 2421,
+          "registered_triples": 271,
+          "sign_requests": 127804,
+          "sign_cache_hits": 104301,
+          "registered_fraction_max_numerator_bits": 374,
+          "registered_fraction_max_denominator_bits": 376,
+          "limits": {
+            "maximum_planes": 128,
+            "maximum_point_owners": 12000,
+            "maximum_intersection_cache": 50000,
+            "soft_parent_budget_seconds": 25
+          }
+        },
+        {
+          "index": 1,
+          "immutable_freeze": true,
+          "total_cold_seconds": 0.6770486000168603,
+          "constructor_seconds": 0.6609556000039447,
+          "parent_clipping_seconds": 0.3105255999835208,
+          "integer_homogeneous_entries": 2421,
+          "integer_maximum_bits": 380,
+          "integer_homogeneous_shallow_container_bytes": 1036924,
+          "memory_scope": "Conservative sum of homogeneous dictionary/key/tuple/int storage; not process peak RSS; includes repeated integer references.",
+          "exact_arrays_template_registry_polygons_equal": true,
+          "all_arrays_equal_archived_first_stage": true,
+          "plane_count": 40,
+          "point_count": 144,
+          "exact_intersection_cache": 2421,
+          "registered_triples": 271,
+          "sign_requests": 127804,
+          "sign_cache_hits": 104301,
+          "registered_fraction_max_numerator_bits": 374,
+          "registered_fraction_max_denominator_bits": 376,
+          "limits": {
+            "maximum_planes": 128,
+            "maximum_point_owners": 12000,
+            "maximum_intersection_cache": 50000,
+            "soft_parent_budget_seconds": 25
+          }
+        },
+        {
+          "index": 2,
+          "immutable_freeze": true,
+          "total_cold_seconds": 0.6953584000002593,
+          "constructor_seconds": 0.68318530000397,
+          "parent_clipping_seconds": 0.31034910000744276,
+          "integer_homogeneous_entries": 2421,
+          "integer_maximum_bits": 380,
+          "integer_homogeneous_shallow_container_bytes": 1036924,
+          "memory_scope": "Conservative sum of homogeneous dictionary/key/tuple/int storage; not process peak RSS; includes repeated integer references.",
+          "exact_arrays_template_registry_polygons_equal": true,
+          "all_arrays_equal_archived_first_stage": true,
+          "plane_count": 40,
+          "point_count": 144,
+          "exact_intersection_cache": 2421,
+          "registered_triples": 271,
+          "sign_requests": 127804,
+          "sign_cache_hits": 104301,
+          "registered_fraction_max_numerator_bits": 374,
+          "registered_fraction_max_denominator_bits": 376,
+          "limits": {
+            "maximum_planes": 128,
+            "maximum_point_owners": 12000,
+            "maximum_intersection_cache": 50000,
+            "soft_parent_budget_seconds": 25
+          }
+        },
+        {
+          "index": 3,
+          "immutable_freeze": false,
+          "total_cold_seconds": 0.8188894000195432,
+          "constructor_seconds": 0.8009204000118189,
+          "parent_clipping_seconds": 0.4268698999949265,
+          "integer_homogeneous_entries": 2421,
+          "integer_maximum_bits": 380,
+          "integer_homogeneous_shallow_container_bytes": 1036924,
+          "memory_scope": "Conservative sum of homogeneous dictionary/key/tuple/int storage; not process peak RSS; includes repeated integer references.",
+          "exact_arrays_template_registry_polygons_equal": true,
+          "all_arrays_equal_archived_first_stage": true,
+          "plane_count": 40,
+          "point_count": 144,
+          "exact_intersection_cache": 2421,
+          "registered_triples": 271,
+          "sign_requests": 127804,
+          "sign_cache_hits": 104301,
+          "registered_fraction_max_numerator_bits": 374,
+          "registered_fraction_max_denominator_bits": 376,
+          "limits": {
+            "maximum_planes": 128,
+            "maximum_point_owners": 12000,
+            "maximum_intersection_cache": 50000,
+            "soft_parent_budget_seconds": 25
+          }
+        }
+      ],
+      "first_stage_array_sha256": "f872b266001e5d63befbc997b131c9c621f61658363f667f475c48346c5747f8",
+      "first_stage_report_sha256": "45d47df21d16ad74203165208cf64d3c5d47c3a6e7539af2ea50af7f4bcf6db0",
+      "median_old_over_new": 1.1494169003881793
+    },
+    {
+      "name": "actual-964ms",
+      "rows": [
+        {
+          "index": 0,
+          "immutable_freeze": false,
+          "total_cold_seconds": 0.8399661000003107,
+          "constructor_seconds": 0.8307581999979448,
+          "parent_clipping_seconds": 0.37641990001429804,
+          "integer_homogeneous_entries": 2421,
+          "integer_maximum_bits": 385,
+          "integer_homogeneous_shallow_container_bytes": 1075772,
+          "memory_scope": "Conservative sum of homogeneous dictionary/key/tuple/int storage; not process peak RSS; includes repeated integer references.",
+          "exact_arrays_template_registry_polygons_equal": true,
+          "all_arrays_equal_archived_first_stage": true,
+          "plane_count": 40,
+          "point_count": 141,
+          "exact_intersection_cache": 2421,
+          "registered_triples": 265,
+          "sign_requests": 126137,
+          "sign_cache_hits": 102314,
+          "registered_fraction_max_numerator_bits": 379,
+          "registered_fraction_max_denominator_bits": 381,
+          "limits": {
+            "maximum_planes": 128,
+            "maximum_point_owners": 12000,
+            "maximum_intersection_cache": 50000,
+            "soft_parent_budget_seconds": 25
+          }
+        },
+        {
+          "index": 1,
+          "immutable_freeze": true,
+          "total_cold_seconds": 0.789514500007499,
+          "constructor_seconds": 0.7751629000122193,
+          "parent_clipping_seconds": 0.35808890001499094,
+          "integer_homogeneous_entries": 2421,
+          "integer_maximum_bits": 385,
+          "integer_homogeneous_shallow_container_bytes": 1075772,
+          "memory_scope": "Conservative sum of homogeneous dictionary/key/tuple/int storage; not process peak RSS; includes repeated integer references.",
+          "exact_arrays_template_registry_polygons_equal": true,
+          "all_arrays_equal_archived_first_stage": true,
+          "plane_count": 40,
+          "point_count": 141,
+          "exact_intersection_cache": 2421,
+          "registered_triples": 265,
+          "sign_requests": 126137,
+          "sign_cache_hits": 102314,
+          "registered_fraction_max_numerator_bits": 379,
+          "registered_fraction_max_denominator_bits": 381,
+          "limits": {
+            "maximum_planes": 128,
+            "maximum_point_owners": 12000,
+            "maximum_intersection_cache": 50000,
+            "soft_parent_budget_seconds": 25
+          }
+        },
+        {
+          "index": 2,
+          "immutable_freeze": true,
+          "total_cold_seconds": 0.7429529000073671,
+          "constructor_seconds": 0.7248989000217989,
+          "parent_clipping_seconds": 0.3078278000175487,
+          "integer_homogeneous_entries": 2421,
+          "integer_maximum_bits": 385,
+          "integer_homogeneous_shallow_container_bytes": 1075772,
+          "memory_scope": "Conservative sum of homogeneous dictionary/key/tuple/int storage; not process peak RSS; includes repeated integer references.",
+          "exact_arrays_template_registry_polygons_equal": true,
+          "all_arrays_equal_archived_first_stage": true,
+          "plane_count": 40,
+          "point_count": 141,
+          "exact_intersection_cache": 2421,
+          "registered_triples": 265,
+          "sign_requests": 126137,
+          "sign_cache_hits": 102314,
+          "registered_fraction_max_numerator_bits": 379,
+          "registered_fraction_max_denominator_bits": 381,
+          "limits": {
+            "maximum_planes": 128,
+            "maximum_point_owners": 12000,
+            "maximum_intersection_cache": 50000,
+            "soft_parent_budget_seconds": 25
+          }
+        },
+        {
+          "index": 3,
+          "immutable_freeze": false,
+          "total_cold_seconds": 0.885351900011301,
+          "constructor_seconds": 0.8636117000132799,
+          "parent_clipping_seconds": 0.3980249000014737,
+          "integer_homogeneous_entries": 2421,
+          "integer_maximum_bits": 385,
+          "integer_homogeneous_shallow_container_bytes": 1075772,
+          "memory_scope": "Conservative sum of homogeneous dictionary/key/tuple/int storage; not process peak RSS; includes repeated integer references.",
+          "exact_arrays_template_registry_polygons_equal": true,
+          "all_arrays_equal_archived_first_stage": true,
+          "plane_count": 40,
+          "point_count": 141,
+          "exact_intersection_cache": 2421,
+          "registered_triples": 265,
+          "sign_requests": 126137,
+          "sign_cache_hits": 102314,
+          "registered_fraction_max_numerator_bits": 379,
+          "registered_fraction_max_denominator_bits": 381,
+          "limits": {
+            "maximum_planes": 128,
+            "maximum_point_owners": 12000,
+            "maximum_intersection_cache": 50000,
+            "soft_parent_budget_seconds": 25
+          }
+        }
+      ],
+      "first_stage_array_sha256": "a3f0af458c1018eb52f3ad0fc545a536d7b65f2854f4973695a3af0f00995152",
+      "first_stage_report_sha256": "45d47df21d16ad74203165208cf64d3c5d47c3a6e7539af2ea50af7f4bcf6db0",
+      "median_old_over_new": 1.1258431990102202
+    }
+  ],
+  "original73bbdad_sha256": {
+    "boat_parent_clip_proof": "2cb598944b2a77f34026c81851f1d0f2e68c7d939b75a086459a113dc11509e2",
+    "boat_integer_intersections": "ac44203de7a3e7c27851c10628c8de1b0020a10987568286f4ce7df1c8470a3d"
+  },
+  "oracle_scope": "Original73bbdad registry class; original helper check_planes executes same deep comparison because registry retains original list, never identity-fastpath.",
+  "seconds": 6.794081400003051
+}

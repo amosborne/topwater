@@ -58,10 +58,12 @@ class PlanePoints:
             from .boat_integer_intersections import IntegerIntersections
             self.integer_geometry = IntegerIntersections(self.planes)
         self.integer_geometry.check_planes(self.planes)
+        # One immutable owner after validation; subsequent checks are identity.
+        self.planes = self.integer_geometry.frozen_planes
         return self.integer_geometry
 
     def plane(self, points, label):
-        if self.cache:
+        if self.cache or self.integer_geometry is not None:
             raise RuntimeError('freeze every plane before computing intersections')
         a, b, c = [tuple(x if isinstance(x, F) else F(float(x)) for x in p) for p in points]
         n = cross(sub(b, a), sub(c, a))
@@ -88,6 +90,8 @@ class PlanePoints:
 
     def _sign(self, triple, point, plane):
         """Exact cached predicate; masks retain signs, never large Fractions."""
+        if self.integer_geometry is not None and self.planes is not self.integer_geometry.frozen_planes:
+            self._integer_owner()
         self.sign_requests += 1
         bit = 1 << plane
         known, zero, positive = ((0, 0, 0) if self.sign_cache is None else
@@ -107,6 +111,8 @@ class PlanePoints:
         return sign
 
     def intersection(self, triple):
+        if self.integer_geometry is not None and self.planes is not self.integer_geometry.frozen_planes:
+            self._integer_owner()
         triple = tuple(sorted(triple))
         if triple in self.cache:
             return self.cache[triple]
