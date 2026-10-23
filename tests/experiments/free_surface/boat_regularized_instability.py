@@ -14,7 +14,6 @@ import numpy as np
 from numpy.polynomial.legendre import leggauss
 from scipy.linalg import lu_factor,lu_solve
 from scipy.sparse.linalg import LinearOperator,eigs,ArpackNoConvergence,splu
-from scipy.fft import rfft2,irfft2
 
 from topwater import SimulationInputs
 from topwater.constants import GRAVITY
@@ -23,6 +22,7 @@ from .physical_p1_patch import PhysicalP1Patch
 from .plane_p1_field import PlaneP1Field
 from .plane_single_layer import plane_single_layer
 from .cut_hat_geometry import cut_hat
+from .regularized_snapshot import SavedPhysicalFlux
 
 
 def owned(path):
@@ -68,25 +68,10 @@ def run(args,report):
         np.testing.assert_array_equal(current,previous)
     if interior_shape!=(len(y)-2,len(x)-2) or contact_rows.shape!=(len(contact_indices),count):
         raise ValueError('recorded flux operator dimensions differ')
-    position=np.full(len(patch.nodes),-1,dtype=int);position[patch.interior_nodes]=np.arange(len(patch.interior_nodes))
-    active_positions=position[active]
-    embed=np.zeros(fft_shape);dy,dx=np.indices(kernel.shape)
-    embed[(dy-interior_shape[0]+1)%fft_shape[0],(dx-interior_shape[1]+1)%fft_shape[1]]=kernel
-    spectrum=rfft2(embed)
-
-    def flux_real(values):
-        vector=values.ndim==1
-        if vector: values=values[:,None]
-        expanded=patch.expand(values)[patch.interior_nodes].reshape(*interior_shape,-1)
-        padded=np.zeros((*fft_shape,values.shape[1]));padded[:interior_shape[0],:interior_shape[1]]=expanded
-        result=irfft2(rfft2(padded,axes=(0,1))*spectrum[:,:,None],s=fft_shape,axes=(0,1))[
-            :interior_shape[0],:interior_shape[1]].reshape(-1,values.shape[1])[active_positions].copy()
-        result[contact_indices]=contact_rows@values
-        return result[:,0] if vector else result
-
-    def flux(values):
-        if np.iscomplexobj(values): return flux_real(values.real)+1j*flux_real(values.imag)
-        return flux_real(values)
+    flux=SavedPhysicalFlux(patch,dict(weak_full_shape=interior_shape,weak_fft_shape=fft_shape,
+        weak_full_kernel=kernel,physical_contact_active_rows=contact_indices,
+        physical_contact_rows=contact_rows,operator_audit_coefficients=audit_coefficients,
+        operator_audit_loads=audit_loads))
 
     cpu_audit=flux(audit_coefficients)
     np.testing.assert_allclose(cpu_audit,audit_loads,rtol=1e-11,atol=1e-12)
