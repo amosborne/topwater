@@ -15,7 +15,7 @@ import scipy
 from scipy.integrate import RK23
 
 from topwater import InitialState, SimulationInputs, sea_states
-from topwater.constants import GRAVITY
+from topwater.constants import GRAVITY, WATER_DENSITY
 from topwater.frames import rotation_matrix
 from topwater.rankine import TrianglePanels
 from tests.benchmark_rankine import peak_rss_bytes
@@ -28,12 +28,16 @@ from .boat_action_stencil import evaluate as action_rhs
 from .boat_motion_metrics import (attitude_degrees, ANGLE_ERROR_TARGET_DEGREES,
                                  POSITION_ERROR_TARGET_METERS, ACCURACY_DURATION_SECONDS)
 from .incident_baseline_benchmark import coefficients
+from .boat_integration_controls import (RELATIVE_TOLERANCE, BODY_ABSOLUTE_TOLERANCE,
+    SURFACE_HEIGHT_ABSOLUTE_TOLERANCE_M, SURFACE_POTENTIAL_ABSOLUTE_TOLERANCE_M2_PER_S, ERROR_NORM)
+from .boat_benchmark_contract import measurement_environment, array_identity
 from .p4_fluid_ordering import fresh
 
 
 METHODS = dict(integrator='RK23', geometry='exact integer with guarded chart replay',
     geometry_derivative='analytic chart', momentum_derivative='exact current',
     shape_gradient='sample-local reverse', formulation='restricted action')
+FIELD_RESIDUAL_LIMIT = 1e-9
 SOURCES = ('boat_moving.py', 'boat_geometry_template.py', 'boat_world_boundary.py',
     'boat_parent_clip_proof.py', 'boat_integer_intersections.py', 'boat_world_field.py',
     'body_pressure.py', 'incident_baseline_benchmark.py', 'cuda_operator.py',
@@ -41,11 +45,13 @@ SOURCES = ('boat_moving.py', 'boat_geometry_template.py', 'boat_world_boundary.p
     'boat_action_stencil.py', 'boat_parent_action.py', 'boat_chart_tangent.py',
     'boat_action_tangent.py', 'boat_momentum_tangent.py', 'boat_incident_tangent.py',
     'cuda_directional.py', 'cuda_directional.cu', 'cuda_dual.cuh',
-    'cuda_reverse_gradient.py', 'cuda_scalar_reverse.cu', 'cuda_panel_geometry.py')
+    'cuda_reverse_gradient.py', 'cuda_scalar_reverse.cu', 'cuda_panel_geometry.py',
+    'boat_integration_controls.py', 'boat_benchmark_contract.py')
 
 
 def run(inputs, output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90.,
-        max_step=.01, quadrature_order=3, tolerance_scale=1.):
+        max_step=.01, quadrature_order=3, tolerance_scale=1.,
+        resource_status='uncontrolled', resource_context='Uncharacterized shared-machine load'):
     """Evolve supplied physical inputs using the one adopted solver path."""
     from .cuda_operator import prepare_energy, cp
     if not isinstance(inputs, SimulationInputs):
@@ -79,7 +85,7 @@ def run(inputs, output, duration=.02, refinement=1, max_rhs=13, budget_seconds=9
         rhs=[], geometry=[],
         controls=dict(max_rhs=max_rhs, soft_elapsed_budget_seconds=budget_seconds,
             dense_output='Saved SciPy accepted-step RkDenseOutput coefficients',
-            rtol=.001*tolerance_scale, tolerance_scale=tolerance_scale,
+            rtol=RELATIVE_TOLERANCE*tolerance_scale, tolerance_scale=tolerance_scale,
             first_step_seconds=min(max_step, duration), max_step_seconds=max_step,
             topology_templates_retained=4),
         source_sha256={name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest() for name in SOURCES},
@@ -163,7 +169,7 @@ def run(inputs, output, duration=.02, refinement=1, max_rhs=13, budget_seconds=9
         residual = current['relative_field_residual']
         row['fields'].append(dict(energy_seconds=assembled-before_field,
             solve_seconds=perf_counter()-assembled, relative_residual=residual))
-        if not np.isfinite(residual) or residual > 1e-9:
+        if not np.isfinite(residual) or residual > FIELD_RESIDUAL_LIMIT:
             raise ValueError('current field exceeds the audited algebraic residual budget')
         def geometry_tangent():
             coarse, derivative = chart_tangent(chart, pose=pose, parent_eta=eta, parent_psi=psi)
@@ -200,11 +206,19 @@ def run(inputs, output, duration=.02, refinement=1, max_rhs=13, budget_seconds=9
         times, states = [0.], [initial.copy()]
         # Exploratory physical-unit integration controls, not acceptance limits.
         # They must be refined before interpreting a trajectory quantitatively.
-        atol = np.r_[np.full(3, .001), np.full(4, .0001), np.full(3, .001),
-            np.full(3, .0001), np.full(size, .001), np.full(size, .01)]*tolerance_scale
+        atol = np.r_[BODY_ABSOLUTE_TOLERANCE, np.full(size, SURFACE_HEIGHT_ABSOLUTE_TOLERANCE_M),
+            np.full(size, SURFACE_POTENTIAL_ABSOLUTE_TOLERANCE_M2_PER_S)]*tolerance_scale
         report['controls']['absolute_tolerance_by_component'] = atol.tolist()
         solver = RK23(rhs, 0., initial, duration, first_step=min(max_step, duration),
-            max_step=max_step, rtol=.001*tolerance_scale, atol=atol)
+            max_step=max_step, rtol=RELATIVE_TOLERANCE*tolerance_scale, atol=atol)
+        report['benchmark_contract'] = dict(physics=report['scope'], input_sha256=report['input_sha256'],
+            constants=dict(gravity_m_per_s2=GRAVITY, water_density_kg_per_m3=WATER_DENSITY),
+            state_layout=report['state_layout'], state_count=len(initial), error_norm=ERROR_NORM,
+            duration_seconds=duration, integrator='RK23',
+            solve_controls=dict(method='current Cholesky/direct action coupling', true_field_residual_limit=FIELD_RESIDUAL_LIMIT),
+            tolerances=dict(rtol=float(solver.rtol), absolute_by_component=solver.atol.tolist()),
+            max_step_seconds=max_step, first_step_seconds=min(max_step, duration),
+            spatial=dict(**report['discretization'], initial_discrete_geometry_sha256=array_identity(initial_geometry)))
         while solver.status == 'running':
             message = solver.step()
             if solver.status == 'failed':
@@ -227,6 +241,10 @@ def run(inputs, output, duration=.02, refinement=1, max_rhs=13, budget_seconds=9
             reserved_gpu_pool_bytes=cp.get_default_memory_pool().total_bytes())
         report['operator_counts'] = dict(rhs=len(report['rhs']),
             assemblies=sum(len(row['fields']) for row in report['rhs']))
+        report['achieved_duration_seconds'] = report['accepted_simulated_seconds']
+        report['benchmark_seconds'] = report['seconds']
+        report['measurement_environment'] = measurement_environment(cp, resource_status, resource_context,
+            'Cold geometry exports; RHS reports and accepted-step NPZ checkpoints in measured loop; final output excluded')
         if solver is not None and report['complete']:
             attempts = (solver.nfev-1)//solver.n_stages
             report['integration_stats'] = dict(rhs_calls=solver.nfev, attempted_steps=attempts,
@@ -254,6 +272,8 @@ if __name__ == '__main__':
     parser.add_argument('--max-step', type=float, default=.01)
     parser.add_argument('--quadrature-order', type=int, default=3, choices=(3, 6, 12))
     parser.add_argument('--tolerance-scale', type=float, default=1.)
+    parser.add_argument('--resource-status', choices=['uncontrolled', 'contended', 'uncontended'], default='uncontrolled')
+    parser.add_argument('--resource-context', default='Uncharacterized shared-machine load')
     options = vars(parser.parse_args())
     options['inputs'] = SimulationInputs.from_json(options['inputs'].read_text())
     result = run(**options)

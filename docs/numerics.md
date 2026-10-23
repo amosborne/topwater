@@ -121,6 +121,27 @@ silently discard supplied short-wave content or apply an unverified filter.
 
 ## Production runtime and near/far decomposition
 
+Integration defaults have one owner in
+`tests/experiments/free_surface/boat_integration_controls.py`: relative tolerance
+`1e-3`; absolute body tolerances `1e-3` for position [m] and velocity [m/s],
+and `1e-4` for quaternion components and angular velocity [rad/s]. Surface height
+uses `1e-3 m`, potential `1e-2 m^2/s`. These are exploratory local controls,
+not the requested 60-second motion error limits. Both drivers use this owner.
+Record effective RK23 tolerances after construction. Its RMS error norm covers
+the entire supplied state vector: equal body tolerances do not make a 13-state
+forced-body test comparable to a coupled body/free-surface simulation.
+
+Performance comparisons must use `boat_benchmark_contract.py`. It emits no
+speedup when physical case, initial numerical geometry/boundary, state layout,
+duration, effective tolerances, spatial/solve controls, integration step controls,
+hardware/software/thread settings, timing/output scope or startup policy differ.
+Incomplete runs, uncontrolled resource contention and uncharacterized persistent
+caches also disqualify a ratio. Source hashes remain provenance: implementation
+changes are expected. Existing reports without a contract cannot be reconstructed
+into eligible benchmarks. Accuracy/refinement experiments may differ deliberately,
+but must remain labeled as such; they do not establish implementation speedups.
+Absolute elapsed times under shared-machine contention are observations only.
+
 The user's target is 600 simulated seconds in at most 600 wall-clock seconds on
 the development machine (Core Ultra 7 155H, approximately 32 GiB RAM, RTX 2000 Ada
 Laptop GPU with 8 GiB VRAM). GPU use is allowed. Speed is the first priority,
