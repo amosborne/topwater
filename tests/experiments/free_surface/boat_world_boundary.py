@@ -1,14 +1,8 @@
-"""One coarse full-boat nonflat boundary, using the exact parent reference.
+"""Exact convex-body/fluid boundary cut by fixed WORLD P1 surface parents.
 
-Actual seed42 incident elevations are sampled at fixed WORLD P1 parent nodes.
-The body stays at its independently solved mean-water rest pose. This is a
-geometry snapshot, not an initialized incident/scattered field or a simulation.
-Fraction arithmetic is a bounded reference, not the production meshing path.
-
-Run: python -m tests.experiments.free_surface.boat_world_boundary --output artifacts/boat-world-boundary-seed42.json
-Frozen successful reference: artifacts/boat-world-boundary-seed42-symmetry.{json,npz}.
+Body, physical pose and wave realization are explicit caller-owned inputs.
+This constructs geometry; it does not initialize an incident/scattered field.
 """
-import argparse
 from fractions import Fraction as F
 from hashlib import sha256
 import json
@@ -21,9 +15,10 @@ import numpy as np
 from topwater import sea_states
 from topwater.frames import rotation_matrix
 from topwater.hydrostatics import FloodingError, LossOfContactError
-from tests.reference_boat import BEAM, GRAVITY, equilibrium, reference_body
+from topwater.constants import GRAVITY
 from .boat_chart_rebuild import affine, normal_work
-from .boat_parent_clip_proof import PlanePoints, GROUPS, columns, hull_planes, cell_polygons, triangulate, sub, cross, dot
+from .boat_parent_clip_proof import (PlanePoints, coplanar_groups, columns, hull_planes,
+                                    cell_polygons, triangulate, sub, cross, dot)
 from .p4_fluid_ordering import fresh
 
 
@@ -95,14 +90,16 @@ def material_coordinates(registry_points, rr, cg, position):
                   for j in range(3)) for point in registry_points]
 
 
-def construct(output, *, body=None, pose=None, parent_xy=None, parents=None,
-              parent_eta=None, parent_psi=None, export_template=False,
-              material_refinement=None, cache_signs=True, integer_predicates=False):
+def construct(output, *, body, pose, waves, parent_xy=None, parents=None,
+              parent_eta=None, parent_psi=None, export_template=False):
     """Construct one checkpointed snapshot; coefficients stay on WORLD parents.
 
     Returns ``(mesh, arrays, report)``. Pose translations locate the body's CG;
-    orientations use the existing world quaternion convention. Supplied bodies
-    must retain the canonical boat's authored 18-triangle physical groups.
+    orientations use the existing world quaternion convention. The input hull
+    must be exactly convex; artificial closures never carry water pressure.
+    Artificial closure vertices must all exceed the global parent-graph height
+    maximum. This is a conservative dry-closure certificate; an uncertified
+    closure is rejected even when the actual rim remains dry.
     """
     output = fresh(output)
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -113,17 +110,13 @@ def construct(output, *, body=None, pose=None, parent_xy=None, parents=None,
                     soft_parent_budget_seconds=25),
         budget_scope='Elapsed checks between parents; an in-flight parent/edge pass is not preempted',
         source_sha256={name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest() for name in
-                       ('boat_world_boundary.py', 'boat_parent_clip_proof.py', 'boat_integer_intersections.py')},
-        integer_predicates=bool(integer_predicates),
-        fixture_sha256=sha256(Path(__file__).resolve().parents[2].joinpath('reference_boat.py').read_bytes()).hexdigest())
+                       ('boat_world_boundary.py', 'boat_parent_clip_proof.py', 'boat_integer_intersections.py')})
     arrays, polygons = {}, []
     registry = None
     try:
-        supplied_body = body is not None
-        body = reference_body() if body is None else body
-        rest = equilibrium()[0] if pose is None else pose
-        if body.mesh.faces.shape != (18, 3):
-            raise ValueError('this reference requires the authored base boat facets')
+        rest = pose
+        groups, physical_count = coplanar_groups(body.mesh.vertices, body.mesh.faces,
+                                                body.mesh.artificial_faces)
         rotation = rotation_matrix(rest.orientation)
         source = [[F(float(x)) for x in p] for p in body.mesh.vertices]
         cg = [F(float(x)) for x in body.cg]
@@ -150,7 +143,6 @@ def construct(output, *, body=None, pose=None, parent_xy=None, parents=None,
                 or np.any(parents < 0) or np.any(parents >= len(xy))):
             raise ValueError('invalid fixed parent nodes/connectivity')
         parents = [tuple(row) for row in parents]
-        waves = sea_states.realize(beam_m=BEAM, gravity=GRAVITY, seed=42)
         k = waves.angular_frequencies**2/GRAVITY
         phase = (xy[:, :1]*np.cos(waves.directions)+xy[:, 1:]*np.sin(waves.directions))*k+waves.phases
         eta = np.cos(phase)@waves.amplitudes if parent_eta is None else np.asarray(parent_eta, dtype=float)
@@ -168,29 +160,43 @@ def construct(output, *, body=None, pose=None, parent_xy=None, parents=None,
             body_vertices=np.asarray(world, dtype=float), source_body_vertices=body.mesh.vertices,
             source_body_faces=body.mesh.faces, source_body_cg=body.cg,
             source_body_rim=body.mesh.opening_rim,
+            source_body_artificial_faces=body.mesh.artificial_faces,
+            source_group_offsets=np.r_[0, np.cumsum([len(group) for group in groups])],
+            source_group_faces=np.array([face for group in groups for face in group], dtype=np.int64),
+            source_physical_group_count=np.array(physical_count),
             pose_position=rest.position, pose_orientation=rest.orientation)
+        body_input = dict(vertices=body.mesh.vertices.tolist(), faces=body.mesh.faces.tolist(),
+            artificial_faces=body.mesh.artificial_faces.tolist(), opening_rim=body.mesh.opening_rim.tolist(),
+            mass=body.mass, cg=body.cg.tolist(), inertia_cg=body.inertia_cg.tolist())
+        body_bytes = json.dumps(body_input, sort_keys=True, separators=(',', ':'), allow_nan=False).encode()
+        wave_bytes = sea_states.dumps_realization(waves).encode()
         report.update(body_mass=body.mass, actual_sea_realization=json.loads(sea_states.dumps_realization(waves)),
-            pose=('actual mean-water equilibrium, unchanged by the selected wave snapshot'
-                  if pose is None else 'supplied physical CG position and world quaternion'),
-            supplied_inputs=dict(body=supplied_body, pose=pose is not None,
-                                 parent_xy=parent_xy is not None, parent_eta=parent_eta is not None,
-                                 parent_psi=parent_psi is not None),
+            input_sha256=dict(body=sha256(body_bytes).hexdigest(), waves=sha256(wave_bytes).hexdigest()),
+            pose='supplied physical CG position and world quaternion',
             potential_trace_control='P1 nodal trace of incident Airy potential at actual graph height; mean-water values saved separately; no nonlinear field initialization claim',
             affine_pose_roundoff_max=float(np.max(abs(np.asarray(world, dtype=float)
                 -((body.mesh.vertices-body.cg)@rotation.T+rest.position)))))
         registry = PlanePoints(max_points=12000, max_intersections=50000,
-                               capture_constraints=export_template, cache_signs=cache_signs,
-                               integer_predicates=integer_predicates)
-        hull = hull_planes(registry, world, body.mesh.faces)
+                               capture_constraints=export_template, cache_signs=True,
+                               integer_predicates=True)
+        hull = hull_planes(registry, world, body.mesh.faces, groups=groups)
         cells, roofs, outer = columns(registry, roof, parents)
         if len(registry.planes) > 128:
             raise RuntimeError('reference plane cap reached before clipping')
         report['planes'] = len(registry.planes)
-        report['rim_clearance'] = rim_clearance(registry, world, body.mesh.opening_rim, cells, roofs)
+        if len(body.mesh.opening_rim):
+            report['rim_clearance'] = rim_clearance(registry, world, body.mesh.opening_rim, cells, roofs)
+        if len(body.mesh.artificial_faces):
+            cap_vertices = np.unique(body.mesh.faces[body.mesh.artificial_faces])
+            cap_clearance = min(world[cap_vertices, 2])-max(roof[:, 2])
+            if cap_clearance <= 0:
+                raise ValueError('cannot certify every artificial closure dry above the parent graph')
+            # Sufficient global certificate, not a claim of exact local minimum.
+            report['artificial_closure_clearance_lower_bound'] = float(cap_clearance)
         bbox_lo = [min(world[:, j]) for j in (0, 1)]
         bbox_hi = [max(world[:, j]) for j in (0, 1)]
-        if (min(world[:, 2]) <= -2 or any(bbox_lo[j] <= (-6, -3)[j]
-                or bbox_hi[j] >= (6, 3)[j] for j in (0, 1))):
+        if (min(world[:, 2]) <= -2 or any(bbox_lo[j] <= min(roof[:, j])
+                or bbox_hi[j] >= max(roof[:, j]) for j in (0, 1))):
             raise ValueError('actual hull reaches the bed or outer walls')
         body_seen = set()
         solid_volume, column_volume = 0., 0.
@@ -204,7 +210,7 @@ def construct(output, *, body=None, pose=None, parent_xy=None, parents=None,
             # Strict disjointness only: equality can carry a FINITE body facet.
             far = any(max(points[:, j]) < bbox_lo[j] or min(points[:, j]) > bbox_hi[j] for j in (0, 1))
             pieces, volume, first, duplicates = cell_polygons(registry, hull, constraints,
-                outer[parent_id], parent_id, body_seen, outside_bbox=far)
+                outer[parent_id], parent_id, body_seen, physical_groups=range(physical_count), outside_bbox=far)
             polygons.extend(pieces)
             solid_volume += volume; solid_first += first
             float_points = np.asarray(points, dtype=float)
@@ -228,17 +234,7 @@ def construct(output, *, body=None, pose=None, parent_xy=None, parents=None,
                 critical.update(vertices)
                 for vertex in vertices:
                     registry.relevant[vertex].add(roofs[parent][0])
-        if material_refinement is None:
-            mesh, meta = triangulate(registry, polygons)
-        else:
-            from .boat_material_boundary import triangulate_material
-            report['source_sha256']['boat_material_boundary.py'] = sha256(
-                Path(__file__).with_name('boat_material_boundary.py').read_bytes()).hexdigest()
-            mesh, meta = triangulate_material(registry, polygons, source,
-                body.mesh.faces, rr, cg, position, material_refinement)
-            report['material_overlay'] = meta['material_report']
-            arrays.update(body_material_cell=meta['body_material_cell'],
-                fully_wet_material_cells=meta['fully_wet_material_cells'])
+        mesh, meta = triangulate(registry, polygons)
         triangles = mesh.vertices[mesh.faces]
         tetra = np.einsum('fi,fi->f', triangles[:, 0], np.cross(triangles[:, 1], triangles[:, 2]))/6
         volume = tetra.sum()
@@ -291,7 +287,7 @@ def construct(output, *, body=None, pose=None, parent_xy=None, parents=None,
         for face in body_faces:
             ids, bary = [], []
             for node in mesh.faces[face]:
-                for source_id in GROUPS[meta['source'][face]]:
+                for source_id in groups[meta['source'][face]]:
                     weights = source_weights(material[node], [source[i] for i in body.mesh.faces[source_id]])
                     if min(weights) >= 0:
                         ids.append(source_id); bary.append(weights)
@@ -310,7 +306,7 @@ def construct(output, *, body=None, pose=None, parent_xy=None, parents=None,
                 source_sha256=sha256(Path(__file__).with_name('boat_geometry_template.py').read_bytes()).hexdigest())
         report.update(complete=True, seconds=perf_counter()-start, nodes=len(mesh.vertices), triangles=len(mesh.faces),
             body_triangles=len(body_faces), free_triangles=len(free), wall_triangles=len(walls), bottom_triangles=len(bottom),
-            source_physical_triangle_groups=[list(group) for group in GROUPS[:-1]],
+            source_physical_triangle_groups=[list(group) for group in groups[:physical_count]],
             volume_error=volume_error, first_moment_max_error=first_error,
             affine_rigid_work_error=work_error, parent_height_and_state_inheritance_exact=True,
             geometry_roundoff_checks_passed=True,
@@ -340,10 +336,6 @@ def construct(output, *, body=None, pose=None, parent_xy=None, parents=None,
         np.savez(output.with_suffix('.npz'), **arrays)
         output.write_text(json.dumps(report, indent=2, allow_nan=False)+'\n')
     return mesh, arrays, report
-
-
-def run(output):
-    return construct(output)[2]
 
 
 def body_material_samples(arrays, barycentric):
@@ -391,10 +383,11 @@ def interpolate_body_trace(arrays, potential, material_points, groups, *, face_h
     scale = max(1., np.max(abs(arrays['source_body_vertices'])))
     coordinate_roundoff = 64*np.finfo(float).eps*scale
     for group in np.unique(labels):
-        if group not in range(len(GROUPS)-1):
+        if group not in range(int(arrays['source_physical_group_count'])):
             raise ValueError('unknown original physical facet group')
         rows = np.flatnonzero(labels == group)
-        source_face = arrays['source_body_faces'][GROUPS[int(group)][0]]
+        source_id = arrays['source_group_faces'][arrays['source_group_offsets'][int(group)]]
+        source_face = arrays['source_body_faces'][source_id]
         original = arrays['source_body_vertices'][source_face]
         normal = np.cross(original[1]-original[0], original[2]-original[0])
         normal /= np.linalg.norm(normal)
@@ -436,9 +429,3 @@ def interpolate_body_trace(arrays, potential, material_points, groups, *, face_h
         missing = np.flatnonzero(~np.isfinite(values))
         raise ValueError(f'material samples lack wet original-facet coverage: {missing[:8].tolist()}')
     return result
-
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--output', required=True)
-    print(json.dumps(run(parser.parse_args().output), indent=2))

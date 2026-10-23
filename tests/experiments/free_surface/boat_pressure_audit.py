@@ -17,7 +17,8 @@ from topwater.frames import rotation_matrix
 from topwater.rankine import TrianglePanels
 from tests.reference_boat import BEAM, LENGTH, GRAVITY, WATER_DENSITY, reference_body
 from tests.benchmark_rankine import peak_rss_bytes
-from .boat_world_boundary import construct, body_material_samples, interpolate_body_trace
+from .boat_world_boundary import body_material_samples, interpolate_body_trace
+from tests.reference_boat import boundary_snapshot
 from .boat_world_field import current_field, surface_rates, refine_boundary
 from .body_pressure import evaluate_body_pressure, quadrature
 from .incident_baseline_benchmark import coefficients
@@ -25,7 +26,7 @@ from .p4_fluid_ordering import fresh
 
 
 def run(output, step=1e-4, refinement=0, refinement_region='all', direction_from=None,
-        material_refinement=None, quadrature_order=3):
+        quadrature_order=3):
     from .cuda_operator import prepare_energy, cp
     if not np.isfinite(step) or step <= 0:
         raise ValueError('positive finite directional step required')
@@ -35,8 +36,6 @@ def run(output, step=1e-4, refinement=0, refinement_region='all', direction_from
         raise ValueError('refinement region must be all, body or free')
     if quadrature_order not in (3, 6, 12):
         raise ValueError('bounded audit supports quadrature orders 3, 6 and 12')
-    if material_refinement is not None and refinement:
-        raise ValueError('material-cell overlay replaces fan subdivision in this audit')
     output = fresh(output)
     output.parent.mkdir(parents=True, exist_ok=True)
     report = dict(complete=False, qualified=False, timings=[], derivatives=[], mixed_residuals=[], geometry_checkpoints=[],
@@ -46,11 +45,8 @@ def run(output, step=1e-4, refinement=0, refinement_region='all', direction_from
                          'boat_parent_clip_proof.py', 'body_pressure.py', 'canoe.py',
                          'cuda_operator.py', 'cuda_energy.cu', 'cuda_pair.cuh')},
         gpu_pool_reserved_peak_bytes=0, boundary_refinement=refinement,
-        refinement_region=refinement_region, material_refinement=material_refinement,
+        refinement_region=refinement_region,
         quadrature_order=quadrature_order)
-    if material_refinement is not None:
-        report['source_sha256']['boat_material_boundary.py'] = sha256(
-            Path(__file__).with_name('boat_material_boundary.py').read_bytes()).hexdigest()
     start = perf_counter()
     saved = {}
 
@@ -75,8 +71,7 @@ def run(output, step=1e-4, refinement=0, refinement_region='all', direction_from
             raise ValueError('mixed field residual exceeds 1e-9 algebraic budget')
 
     def geometry(label, **inputs):
-        _, arrays, geometry_report = construct(checkpoint(label),
-            material_refinement=material_refinement, **inputs)
+        _, arrays, geometry_report = boundary_snapshot(checkpoint(label), **inputs)
         for level in range(refinement):
             arrays = refine_boundary(arrays, region=refinement_region)
             path = fresh(checkpoint(label+f'-refined{level+1}'))
@@ -211,6 +206,5 @@ if __name__ == '__main__':
     parser.add_argument('--refinement', type=int, default=0)
     parser.add_argument('--refinement-region', choices=('all', 'body', 'free'), default='all')
     parser.add_argument('--direction-from', help='Complete audit JSON supplying the same prescribed parent rates')
-    parser.add_argument('--material-refinement', type=int, choices=(0, 1, 2, 3))
     parser.add_argument('--quadrature-order', type=int, choices=(3, 6, 12), default=3)
     print(json.dumps(run(**vars(parser.parse_args())), indent=2))

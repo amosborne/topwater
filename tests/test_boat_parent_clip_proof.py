@@ -6,7 +6,7 @@ from fractions import Fraction
 from .experiments.free_surface.boat_parent_clip_proof import (
     build, hull_planes, PlanePoints, polygon_centroid, merge_body_polygons,
 )
-from .reference_boat import reference_body
+from .reference_boat import reference_body, GROUPS
 
 
 @pytest.mark.parametrize('heights,expected_groups', [
@@ -37,8 +37,8 @@ def test_authored_coplanar_group_rejects_a_nonplanar_constituent():
     # Vertex5 belongs to the second triangle of the aft V-plane, but not the
     # first triangle used to define that plane. Convexity alone is insufficient.
     points[5, 2] += Fraction(1, 1000)
-    with pytest.raises(AssertionError, match='noncoplanar facet group'):
-        hull_planes(PlanePoints(), points, body.mesh.faces)
+    with pytest.raises(ValueError, match='noncoplanar facet group'):
+        hull_planes(PlanePoints(), points, body.mesh.faces, groups=GROUPS)
 
 
 def test_fan_center_is_invariant_to_collinear_vertex_insertion_and_has_continuous_cut_limit():

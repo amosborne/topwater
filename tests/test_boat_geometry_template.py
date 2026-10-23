@@ -7,7 +7,7 @@ from numpy.testing import assert_allclose
 from scipy.spatial.transform import Rotation
 
 from topwater import InitialState
-from .experiments.free_surface.boat_world_boundary import construct
+from .reference_boat import boundary_snapshot
 from .experiments.free_surface.boat_geometry_template import evaluate_template, InvalidTemplate
 
 
@@ -16,7 +16,7 @@ def test_moving_boat_concave_wet_facet_replays_without_changing_coverage(tmp_pat
     case = json.loads(Path(__file__).with_name('data').joinpath(name).read_text())
     state = np.array(case['state'])
     pose = InitialState(state[:3], state[3:7]/np.linalg.norm(state[3:7]))
-    _, arrays, report = construct(tmp_path/'concave.json', pose=pose,
+    _, arrays, report = boundary_snapshot(tmp_path/'concave.json', pose=pose,
         parent_eta=state[13:28], parent_psi=state[28:], export_template=True)
     if name == 'boat-state-275ms.json':
         assert report['body_polygon_merge']['additional_nonstar_polygon_pieces'] > 0
@@ -32,7 +32,7 @@ def test_moving_boat_concave_wet_facet_replays_without_changing_coverage(tmp_pat
 
 
 def test_cold_template_replays_current_boat_and_rejects_changed_incidence(tmp_path):
-    _, arrays, report = construct(tmp_path/'reference.json', export_template=True)
+    _, arrays, report = boundary_snapshot(tmp_path/'reference.json', export_template=True)
     pose = InitialState(arrays['pose_position'], arrays['pose_orientation'])
     current, diagnostics = evaluate_template(arrays, pose=pose,
         parent_eta=arrays['parent_nodes'][:, 2], parent_psi=arrays['parent_psi'])

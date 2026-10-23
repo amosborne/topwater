@@ -8,7 +8,7 @@ import numpy as np
 
 from topwater import InitialState
 from tests.reference_boat import reference_body
-from .boat_world_boundary import construct
+from tests.reference_boat import boundary_snapshot
 from .boat_geometry_template import evaluate_template, InvalidTemplate
 from .p4_fluid_ordering import fresh
 
@@ -33,7 +33,7 @@ def run(input_stem, output):
 
     def cold(name, arrays):
         before = perf_counter()
-        _, result, metadata = construct(output.with_name(output.stem+'-'+name+'.json'), body=body,
+        _, result, metadata = boundary_snapshot(output.with_name(output.stem+'-'+name+'.json'), body=body,
             pose=InitialState(arrays['pose_position'], arrays['pose_orientation']),
             parent_xy=arrays['parent_nodes'][:, :2], parents=arrays['parents'],
             parent_eta=arrays['parent_nodes'][:, 2], parent_psi=arrays['parent_psi'], export_template=True)

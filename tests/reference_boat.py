@@ -27,6 +27,10 @@ MOTOR_POSITION = np.array([-LENGTH/2, 0., .7])
 WATER_DENSITY = 1025.
 GRAVITY = 9.81
 
+# Authored grouping only for the two-parent fixture proof and regression checks.
+GROUPS = ((0, 1), (2,), (3, 4), (5,), (9, 10), (11,), (12, 13),
+          (14,), (15, 16, 17), (6, 7, 8))
+
 
 def mesh_arrays(refinement=0):
     """Return vertices, outward triangles, ordered rim and artificial face IDs.
@@ -133,3 +137,48 @@ def equilibrium(refinement=0):
 
     trim = brentq(lambda angle: at(angle)[1].moment[1], -.1, .1, xtol=1e-13)
     return at(trim)
+
+
+def boundary_snapshot(output, **geometry_options):
+    """Canonical seed42 geometry fixture; generic construction has no defaults."""
+    from hashlib import sha256
+    import json
+    from pathlib import Path
+    from topwater import sea_states
+    from .experiments.free_surface.boat_world_boundary import construct
+
+    body = geometry_options.pop('body', None)
+    pose = geometry_options.pop('pose', None)
+    mesh, arrays, report = construct(output,
+        body=reference_body() if body is None else body,
+        pose=equilibrium()[0] if pose is None else pose,
+        waves=sea_states.realize(beam_m=BEAM, gravity=GRAVITY, seed=42), **geometry_options)
+    report['fixture_sha256'] = sha256(Path(__file__).read_bytes()).hexdigest()
+    Path(output).write_text(json.dumps(report, indent=2, allow_nan=False)+'\n')
+    return mesh, arrays, report
+
+
+def simulation_inputs():
+    """Explicit canonical moving-case inputs, including the original WORLD twist."""
+    from topwater import SimulationInputs, sea_states
+    from topwater.frames import rotation_matrix
+
+    rest = equilibrium()[0]
+    rotation = rotation_matrix(rest.orientation)
+    initial = InitialState(position=np.r_[.123, .087, rest.position[2]],
+        orientation=rest.orientation, linear_velocity=[.03, -.02, .01],
+        angular_velocity=rotation.T@np.array([.01, -.015, .02]))
+    return SimulationInputs(reference_body(),
+        sea_states.realize(beam_m=BEAM, gravity=GRAVITY, seed=42), initial)
+
+
+if __name__ == '__main__':
+    import argparse
+    from pathlib import Path
+
+    parser = argparse.ArgumentParser(description='Write explicit canonical boat/sea inputs.')
+    parser.add_argument('--output', required=True)
+    output = Path(parser.parse_args().output)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    with output.open('x') as stream:
+        stream.write(simulation_inputs().to_json()+'\n')

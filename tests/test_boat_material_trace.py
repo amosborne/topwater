@@ -8,8 +8,9 @@ from topwater import InitialState
 from topwater.frames import rotation_matrix
 from .reference_boat import equilibrium, reference_body
 from .experiments.free_surface.boat_world_boundary import (
-    construct, body_material_samples, interpolate_body_trace,
+    body_material_samples, interpolate_body_trace,
 )
+from .reference_boat import boundary_snapshot
 from .experiments.free_surface.boat_world_field import refine_boundary
 
 
@@ -51,7 +52,7 @@ def test_two_marked_edges_use_conforming_oriented_three_triangle_split():
 
 def test_offset_trace_uses_material_coverage_and_preserves_gauge(tmp_path):
     body, pose = reference_body(), equilibrium()[0]
-    mesh, arrays, report = construct(tmp_path/'current.json')
+    mesh, arrays, report = boundary_snapshot(tmp_path/'current.json')
     assert report['complete'] and report['geometry_roundoff_checks_passed']
     points, groups = body_material_samples(arrays, np.full((1, 3), 1/3))
     phi = affine_material_potential(mesh.vertices, body, pose)
@@ -69,11 +70,12 @@ def test_offset_trace_uses_material_coverage_and_preserves_gauge(tmp_path):
     assert_allclose(reconstructed, arrays['body_material_vertices'], atol=1e-15, rtol=0)
 
     offset = InitialState(position=pose.position+[0, 0, .001], orientation=pose.orientation)
-    moved_mesh, moved, moved_report = construct(tmp_path/'offset.json', body=body, pose=offset,
+    moved_mesh, moved, moved_report = boundary_snapshot(tmp_path/'offset.json', body=body, pose=offset,
         parent_xy=arrays['parent_nodes'][:, :2], parents=arrays['parents'],
         parent_eta=arrays['parent_nodes'][:, 2], parent_psi=arrays['parent_psi'])
-    assert moved_report['supplied_inputs'] == dict(body=True, pose=True, parent_xy=True,
-                                                parent_eta=True, parent_psi=True)
+    assert moved_report['input_sha256'] == report['input_sha256']
+    np.testing.assert_array_equal(moved['pose_position'], offset.position)
+    np.testing.assert_array_equal(moved['parent_nodes'], arrays['parent_nodes'])
     # Deep material points remain wet in BOTH snapshots. Matching node labels
     # would be invalid even if the independent meshes happen to have equal size.
     deep = points[..., 2] < .1
@@ -94,7 +96,7 @@ def test_offset_trace_uses_material_coverage_and_preserves_gauge(tmp_path):
 
 @pytest.mark.parametrize('region', ['all', 'body', 'free'])
 def test_refinement_preserves_physical_moments_and_affine_material_world_traces(tmp_path, region):
-    mesh, arrays, _ = construct(tmp_path/'coarse.json')
+    mesh, arrays, _ = boundary_snapshot(tmp_path/'coarse.json')
     refined = refine_boundary(arrays, region=region)
     selected = (mesh.faces if region == 'all' else mesh.faces[arrays[region+'_faces']])
     marked = np.unique(np.sort(np.concatenate([selected[:, [0, 1]],

@@ -11,14 +11,14 @@ from .experiments.free_surface.boat_body_action import fluid_gravity
 from .experiments.free_surface.boat_chart_tangent import chart_tangent
 from .experiments.free_surface.boat_geometry_template import evaluate_template
 from .experiments.free_surface.boat_parent_action import parent_mass
-from .experiments.free_surface.boat_world_boundary import construct
+from .reference_boat import boundary_snapshot
 from .experiments.free_surface.boat_world_field import boundary_data, refine_boundary
 
 
 def test_actual_chart_load_mass_gravity_all_directions_and_refinement(tmp_path):
     rest = equilibrium()[0]
     pose = InitialState(np.r_[.123, .087, rest.position[2]], rest.orientation)
-    _, reference, _ = construct(tmp_path/'tangent.json', pose=pose, export_template=True)
+    _, reference, _ = boundary_snapshot(tmp_path/'tangent.json', pose=pose, export_template=True)
     coarse, tangent = chart_tangent(reference, pose=pose, parent_eta=reference['parent_nodes'][:, 2],
         parent_psi=reference['parent_psi'])
     # Two levels exercise repeated midpoint lineage, including green free

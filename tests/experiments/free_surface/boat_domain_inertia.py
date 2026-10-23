@@ -17,7 +17,7 @@ from topwater.frames import rotation_matrix
 from topwater.inertia import instantaneous_added_mass
 from topwater.rankine import TrianglePanels
 from tests.reference_boat import LENGTH, WATER_DENSITY, equilibrium, reference_body
-from .boat_world_boundary import construct
+from tests.reference_boat import boundary_snapshot
 from .boat_world_field import refine_boundary
 from .canoe import body_load
 from .p4_fluid_ordering import fresh
@@ -74,7 +74,7 @@ def run(output, quadrature_order=3, capytaine=False):
     try:
         cp.cuda.get_current_stream().synchronize()
         initial_path = output.with_name(output.stem+'-flat-geometry.json')
-        _, arrays, metadata = construct(initial_path, parent_eta=np.zeros(15), parent_psi=np.zeros(15))
+        _, arrays, metadata = boundary_snapshot(initial_path, parent_eta=np.zeros(15), parent_psi=np.zeros(15))
         report['flat_geometry'] = dict(path=str(initial_path),
             sha256=sha256(initial_path.with_suffix('.npz').read_bytes()).hexdigest(),
             fixture_sha256=metadata['fixture_sha256'])

@@ -7,6 +7,7 @@ import pytest
 
 from topwater import InitialState
 from .reference_boat import equilibrium
+from .reference_boat import boundary_snapshot
 from .experiments.free_surface import boat_parent_clip_proof as proof
 from .experiments.free_surface import boat_world_boundary as boundary
 from .experiments.free_surface.boat_integer_intersections import IntegerIntersections
@@ -149,7 +150,7 @@ def test_actual_adjacent_transom_chine_geometry_is_bit_identical(monkeypatch, he
     old_mesh, old_report = proof.build(heights)
     original = proof.PlanePoints
     with monkeypatch.context() as context:
-        context.setattr(proof, 'PlanePoints', lambda **options: original(**dict(options, integer_predicates=True)))
+        context.setattr(proof, 'PlanePoints', lambda **options: original(**options, integer_predicates=True))
         new_mesh, new_report = proof.build(heights)
     np.testing.assert_array_equal(new_mesh.vertices, old_mesh.vertices)
     np.testing.assert_array_equal(new_mesh.faces, old_mesh.faces)
@@ -162,16 +163,22 @@ def test_complete_cold_arrays_and_template_are_bit_identical(monkeypatch, tmp_pa
     pose = equilibrium()[0]
     if generic:
         pose = InitialState(pose.position+np.array([.123, .087, 0.]), pose.orientation)
-    _, old, _ = boundary.construct(tmp_path/'old.json', pose=pose, export_template=True)
     original = boundary.PlanePoints
+    def fraction_factory(**options):
+        options['integer_predicates'] = False
+        return original(**options)
+    with monkeypatch.context() as context:
+        context.setattr(boundary, 'PlanePoints', fraction_factory)
+        _, old, _ = boundary_snapshot(tmp_path/'old.json', pose=pose, export_template=True)
     captured = []
     def factory(**options):
-        registry = original(**dict(options, integer_predicates=True))
+        options['integer_predicates'] = True
+        registry = original(**options)
         captured.append(registry)
         return registry
     with monkeypatch.context() as context:
         context.setattr(boundary, 'PlanePoints', factory)
-        _, new, _ = boundary.construct(tmp_path/'new.json', pose=pose, export_template=True)
+        _, new, _ = boundary_snapshot(tmp_path/'new.json', pose=pose, export_template=True)
     assert old.keys() == new.keys()
     for key in old:
         np.testing.assert_array_equal(new[key], old[key], err_msg=key)

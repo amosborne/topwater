@@ -4,14 +4,14 @@ from numpy.testing import assert_allclose
 import pytest
 
 from topwater.rankine import TrianglePanels
-from .experiments.free_surface.boat_world_boundary import construct
+from .reference_boat import boundary_snapshot
 from .experiments.free_surface.operator import assemble_energy
 from .experiments.free_surface.boat_past_operator import fit, predict, PastLocalOperator
 from .experiments.free_surface.boat_operator_reuse import InvalidReuse, area_weights
 
 
 def test_past_fit_separates_dilation_from_rigid_translation(tmp_path):
-    _, base, _ = construct(tmp_path/'boat.json', export_template=True)
+    _, base, _ = boundary_snapshot(tmp_path/'boat.json', export_template=True)
     shift = np.array([.0005, -.0003, .0002])
     epsilon = 1e-4
 

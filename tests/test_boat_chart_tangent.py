@@ -10,15 +10,15 @@ from topwater import InitialState
 from tests.reference_boat import equilibrium
 from .experiments.free_surface.boat_chart_tangent import chart_tangent
 from .experiments.free_surface.boat_geometry_template import InvalidTemplate, evaluate_template
-from .experiments.free_surface.boat_world_boundary import construct
+from .reference_boat import boundary_snapshot
 
 
 @pytest.fixture(scope='module')
 def generic_chart(tmp_path_factory):
     base = equilibrium()[0]
     pose = InitialState(np.array([.123, .087, base.position[2]]), base.orientation)
-    _, reference, _ = construct(tmp_path_factory.mktemp('chart-tangent')/'generic.json',
-        pose=pose, export_template=True, cache_signs=True)
+    _, reference, _ = boundary_snapshot(tmp_path_factory.mktemp('chart-tangent')/'generic.json',
+        pose=pose, export_template=True)
     return reference, pose
 
 
@@ -78,7 +78,7 @@ def test_all_21_columns_and_mixed_direction_match_owned_h_h2(generic_chart):
 
 
 def test_rejects_default_symmetry_derivative_separation(tmp_path):
-    _, reference, _ = construct(tmp_path/'default.json', export_template=True, cache_signs=True)
+    _, reference, _ = boundary_snapshot(tmp_path/'default.json', export_template=True)
     pose = InitialState(reference['pose_position'], reference['pose_orientation'])
     # The center itself replays; its separating all-direction tangent must reject.
     evaluate_template(reference, pose=pose, parent_eta=reference['parent_nodes'][:, 2],

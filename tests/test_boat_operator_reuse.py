@@ -5,12 +5,12 @@ import pytest
 
 from topwater.rankine import TrianglePanels
 from .experiments.free_surface.boat_operator_reuse import LocalOperator, InvalidReuse
-from .experiments.free_surface.boat_world_boundary import construct
+from .reference_boat import boundary_snapshot
 from .experiments.free_surface.operator import assemble_energy
 
 
 def test_local_model_preserves_laplace_similarity_and_rejects_unlearned_motion(tmp_path):
-    _, base, _ = construct(tmp_path/'boat.json', export_template=True)
+    _, base, _ = boundary_snapshot(tmp_path/'boat.json', export_template=True)
 
     def scaled(scale):
         return dict(base, points=scale*base['points'])

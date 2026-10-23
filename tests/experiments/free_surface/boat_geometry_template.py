@@ -28,6 +28,8 @@ def chart_key(reference):
     names += ['source_body_vertices', 'source_body_faces', 'source_body_cg', 'parents',
               'body_faces', 'free_faces', 'wall_faces', 'bottom_faces', 'free_nodes',
               'body_source_group', 'free_source_parent', 'free_parent_indices']
+    names += ['source_body_rim', 'source_body_artificial_faces', 'source_group_offsets',
+              'source_group_faces', 'source_physical_group_count']
     digest = sha256()
     for name in [*names, 'parent_xy']:
         value = (reference['parent_nodes'][:, :2] if name == 'parent_xy' else reference[name])
@@ -216,8 +218,14 @@ def evaluate_template(reference, *, pose, parent_eta, parent_psi):
         raise InvalidTemplate('changed or uncertain nonincident plane sign')
     # Conservative sufficient guard: otherwise let the exact reference decide.
     rim = world[reference['source_body_rim']]
-    if np.min(rim[:, 2])-np.max(roof[:, 2]) <= plane_error:
+    if len(rim) and np.min(rim[:, 2])-np.max(roof[:, 2]) <= plane_error:
         raise InvalidTemplate('cannot certify rim clearance from global height bound')
+    artificial = reference['source_body_artificial_faces']
+    if len(artificial):
+        cap_vertices = np.unique(reference['source_body_faces'][artificial])
+        cap_clearance = float(np.min(world[cap_vertices, 2])-np.max(roof[:, 2]))
+        if cap_clearance <= plane_error:
+            raise InvalidTemplate('cannot certify every artificial closure dry above the parent graph')
     if (np.min(world[:, 2]) <= -2+plane_error
             or np.any(world[:, :2].min(axis=0) <= roof[:, :2].min(axis=0)+plane_error)
             or np.any(world[:, :2].max(axis=0) >= roof[:, :2].max(axis=0)-plane_error)):
@@ -268,7 +276,11 @@ def evaluate_template(reference, *, pose, parent_eta, parent_psi):
     tank_volume = area@(p[:, :, 2].mean(axis=1)+2)
     if not len(result['body_faces']) or tank_volume-fluid_volume <= 64*eps*max(1., tank_volume):
         raise InvalidTemplate('cannot certify nonzero displaced body volume')
-    return result, dict(maximum_owner_condition=float(max(condition)),
+    diagnostics = dict(maximum_owner_condition=float(max(condition)),
         maximum_intersection_uncertainty_m=float(max(radius)),
-        rim_clearance_lower_bound_m=float(np.min(rim[:, 2])-np.max(roof[:, 2])),
         displaced_volume_m3=float(tank_volume-fluid_volume), witnesses=len(witnesses))
+    if len(rim):
+        diagnostics['rim_clearance_lower_bound_m'] = float(np.min(rim[:, 2])-np.max(roof[:, 2]))
+    if len(artificial):
+        diagnostics['artificial_closure_clearance_lower_bound_m'] = cap_clearance
+    return result, diagnostics

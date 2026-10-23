@@ -6,7 +6,7 @@ from topwater import InitialState
 from topwater.frames import rotation_matrix
 from .reference_boat import GRAVITY, WATER_DENSITY, equilibrium, reference_body
 from .experiments.free_surface.boat_geometry_template import evaluate_template
-from .experiments.free_surface.boat_world_boundary import construct
+from .reference_boat import boundary_snapshot
 from .experiments.free_surface.body_pressure import evaluate_body_pressure
 
 
@@ -17,7 +17,7 @@ def test_uniform_horizontal_coflow_has_only_hydrostatic_pressure(tmp_path):
     # the manufactured field is translation invariant.
     pose = InitialState(pose.position+np.array([.123, .087, 0.]), pose.orientation)
     eta = np.zeros(15)
-    _, arrays, _ = construct(tmp_path/'coflow.json', pose=pose, parent_eta=eta,
+    _, arrays, _ = boundary_snapshot(tmp_path/'coflow.json', pose=pose, parent_eta=eta,
         parent_psi=np.zeros(15), export_template=True)
     velocity = np.array([.3, -.2, 0.])
     h = 1e-5

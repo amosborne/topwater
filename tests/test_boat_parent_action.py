@@ -6,12 +6,12 @@ from topwater import InitialState
 from .reference_boat import WATER_DENSITY
 from .experiments.free_surface import boat_parent_action as action
 from .experiments.free_surface import boat_world_field as world
-from .experiments.free_surface.boat_world_boundary import construct
+from .reference_boat import boundary_snapshot
 from .experiments.free_surface.boat_geometry_template import evaluate_template
 
 
 def test_constant_incident_flow_endpoint_work_and_potential_gauge(tmp_path, monkeypatch):
-    _, arrays, _ = construct(tmp_path/'port.json', export_template=True)
+    _, arrays, _ = boundary_snapshot(tmp_path/'port.json', export_template=True)
     velocity = np.array([.2, -.1, 0.])
     def uniform_flow(points, values, time):
         result = np.zeros((len(points), 9))

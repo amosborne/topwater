@@ -17,14 +17,8 @@ import numpy as np
 from scipy.spatial import ConvexHull
 
 from topwater import HullMesh
-from tests.reference_boat import reference_body
 from .boat_chart_rebuild import affine, normal_work
 from .p4_fluid_ordering import fresh
-
-
-# Authored base-facet groups, retaining the original triangle mapping.
-GROUPS = ((0, 1), (2,), (3, 4), (5,), (9, 10), (11,), (12, 13),
-          (14,), (15, 16, 17), (6, 7, 8))
 
 
 def dot(a, b):
@@ -221,12 +215,47 @@ def _solid_moments(registry, vertices):
     return hull.volume, (volume[:, None]*triangles.sum(axis=1)/4).sum(axis=0)
 
 
-def hull_planes(registry, vertices, faces):
-    """Validate authored planar groups AND convexity before using halfspaces."""
-    hull = [registry.plane(vertices[faces[group[0]]], ('hull', group)) for group in GROUPS]
-    for (plane, _), group in zip(hull, GROUPS):
-        assert all(not registry.value(plane, tuple(p)) for p in vertices[faces[list(group)]].reshape(-1, 3)), 'noncoplanar facet group'
-    assert all(sign*registry.value(i, tuple(p)) <= 0 for i, sign in hull for p in vertices), 'boat is not convex'
+def coplanar_groups(vertices, faces, artificial_faces=()):
+    """Exact oriented facet groups, physical first then artificial closures.
+
+    Input coordinates are rationalized exactly, without tolerance merging.
+    First-face order within each class preserves source triangle identities.
+    """
+    points = [tuple(x if isinstance(x, F) else F(float(x)) for x in p) for p in vertices]
+    artificial = set(map(int, artificial_faces))
+    groups, physical_count = [], 0
+    for closure in (False, True):
+        by_plane = {}
+        for index, face in enumerate(faces):
+            if (index in artificial) != closure:
+                continue
+            a, b, c = [points[int(i)] for i in face]
+            normal = cross(sub(b, a), sub(c, a))
+            first = next((x for x in normal if x), None)
+            if first is None:
+                raise ValueError('degenerate source hull face')
+            coefficients = tuple(x/first for x in (*normal, dot(normal, a)))
+            sign = 1 if first > 0 else -1
+            if any(sign*(dot(coefficients[:3], p)-coefficients[3]) > 0 for p in points):
+                raise ValueError('hull must be exactly convex with outward faces')
+            key = coefficients, sign
+            by_plane.setdefault(key, []).append(index)
+        groups.extend(tuple(ids) for ids in by_plane.values())
+        if not closure:
+            physical_count = len(groups)
+    return tuple(groups), physical_count
+
+
+def hull_planes(registry, vertices, faces, *, groups=None):
+    """Register exact coplanar groups and reject nonconvex halfspace geometry."""
+    if groups is None:
+        groups, _ = coplanar_groups(vertices, faces)
+    hull = [registry.plane(vertices[faces[group[0]]], ('hull', group)) for group in groups]
+    for (plane, _), group in zip(hull, groups):
+        if any(registry.value(plane, tuple(p)) for p in vertices[faces[list(group)]].reshape(-1, 3)):
+            raise ValueError('noncoplanar facet group')
+    if any(sign*registry.value(i, tuple(p)) > 0 for i, sign in hull for p in vertices):
+        raise ValueError('hull must be exactly convex with outward faces')
     return hull
 
 
@@ -252,7 +281,8 @@ def columns(registry, roof, parents, depth=2):
     return cells, roofs, outer
 
 
-def cell_polygons(registry, hull, constraints, exposed, parent_id, body_seen, *, outside_bbox=False):
+def cell_polygons(registry, hull, constraints, exposed, parent_id, body_seen, *, physical_groups,
+                  outside_bbox=False):
     """One column's exposed boundary; physical hull groups retain their IDs."""
     polygons, duplicates = [], 0
     if outside_bbox:
@@ -270,7 +300,8 @@ def cell_polygons(registry, hull, constraints, exposed, parent_id, body_seen, *,
                 polygons.append((polygon, boundary, direction, 'column', parent_id))
     solid = registry.polytope([*constraints, *hull])
     volume, first = _solid_moments(registry, solid)
-    for group_id, (plane, sign) in enumerate(hull[:-1]):
+    for group_id in physical_groups:
+        plane, sign = hull[group_id]
         polygon = registry.polygon(solid, plane, -sign)
         if polygon:
             key = plane, tuple(sorted(polygon))
@@ -472,6 +503,8 @@ def build(heights=(0., 0., 0., 0.)):
     has finite area in BOTH prisms. It must be emitted once, not counted twice.
     Heights are authored P1 graph controls, not a generated or rescaled sea.
     """
+    from tests.reference_boat import reference_body, GROUPS
+
     started = perf_counter()
     body = reference_body()
     # Rationalize SOURCE coordinates first, then apply the exact affine pose.
@@ -485,14 +518,15 @@ def build(heights=(0., 0., 0., 0.)):
     roof = np.column_stack((xy, [F(float(x)) for x in heights]))
     parents = ((0, 1, 2), (1, 3, 2))
     registry = PlanePoints()
-    hull = hull_planes(registry, vertices, body.mesh.faces)
+    hull = hull_planes(registry, vertices, body.mesh.faces, groups=GROUPS)
     cells, roofs, outer = columns(registry, roof, parents)
     polygons, solid_volume, solid_first, column_volume, column_first = [], 0., np.zeros(3), 0., np.zeros(3)
     duplicate_body_faces = 0
     body_seen = set()
     for parent_id, constraints in enumerate(cells):
         pieces, volume, first, duplicate = cell_polygons(registry, hull, constraints,
-                                                         outer[parent_id], parent_id, body_seen)
+                                                         outer[parent_id], parent_id, body_seen,
+                                                         physical_groups=range(len(GROUPS)-1))
         polygons.extend(pieces)
         duplicate_body_faces += duplicate
         solid_volume += volume; solid_first += first
