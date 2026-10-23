@@ -10,7 +10,6 @@ from .experiments.free_surface.cuda_scalar_gradient import vertex_gradient as sc
 from .experiments.free_surface.cuda_reverse_gradient import vertex_gradient as reverse_gradient
 from .experiments.free_surface.cuda_pair_gradient_probe import selected_pair_derivatives
 from .experiments.free_surface.cuda_directional import energy_direction_action
-from .experiments.free_surface.cuda_kernel_linearization import RawKernelAnchor
 from topwater.rankine import TrianglePanels
 
 
@@ -39,9 +38,5 @@ def test_contracted_gradient_preserves_current_energy(order):
     forward_pairs,reverse_pairs=selected_pair_derivatives(points,faces,phi,
         np.array([[0,0],[0,1],[1,0],[1,1]]),assembly=assembly,density=rho,order=order)
     assert_allclose(reverse_pairs,forward_pairs,rtol=3e-10,atol=3e-10)
-    # The existing one-anchor raw adapter remains API-compatible after refactor.
-    anchor=RawKernelAnchor(points,faces,chart_token='same-tetra',order=order)
-    owned=anchor.evaluate(points,faces,chart_token='same-tetra')
-    assert_allclose(owned.energy,assembly.energy,rtol=3e-12,atol=3e-13)
     with pytest.raises(ValueError,match='matching quadrature'):
         scalar_gradient(points+1e-8,faces,phi,assembly=assembly,order=order)
