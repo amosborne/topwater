@@ -75,6 +75,8 @@ def cut_hat(center, hx, hy, footprint_ccw):
                     faces.append(ids)
     faces = np.asarray(faces)
     parents = nodes[faces]
+    parent_cells = np.column_stack((faces[:, 0] % 3-1, faces[:, 0]//3-1))
+    parent_orientation = ((faces[:, 1]//3) > (faces[:, 0]//3)).astype(int)
     parent_values = (faces == 4).astype(float)
     gradients = np.linalg.solve(parents[:, 1:]-parents[:, :1],
         (parent_values[:, 1:]-parent_values[:, :1])[..., None])[..., 0]
@@ -152,6 +154,7 @@ def cut_hat(center, hx, hy, footprint_ccw):
     segment_values = parent_values[segment_ids, :1]+np.sum(
         (segments-parents[segment_ids, :1])*gradients[segment_ids, None, :], axis=2)
     return dict(parents=parents, parent_values=parent_values, parent_gradients=gradients,
+        parent_cells=parent_cells,parent_orientation=parent_orientation,
         interior=interior, exterior=exterior, tangencies=tangencies,
         waterline=dict(segments=segments, parent_id=segment_ids,
             hole_outward_normals=np.asarray(normals).reshape(-1, 2),

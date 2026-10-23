@@ -1,0 +1,641 @@
+{
+  "status": "Actual-waterline weak restriction checked; coupled reference mismatch remains; no baseline promotion",
+  "evidence": {
+    "raw": "artifacts\\boat-weak-contact-rows.json",
+    "sha256": "0c8d308e29f2ce03925cb6f2ac6c094b7810bccfe7232136393f2628e279460d",
+    "input_sha256": "d4727637dd8b52ab90b0969c58341fbb033b844befae09340dae74a841d076d1",
+    "panel_sha256": "0f1cc91a5ed4b165a0374751d684e8e0b4c1a50c7d5455dfe1fb40f71af9b258",
+    "body_density_reconstruction_max_error": 0.0
+  },
+  "identity": "exterior=full-2*integral_hidden(grad Ni dot A)+2*integral_waterline(Ni A dot n_hole), A=sum_t grad(f_t)*S_t",
+  "cases": [
+    {
+      "name": "straight waterline",
+      "physical_hat_mass": 0.011730738288570235,
+      "full_hat_mass": 0.015476053326204088,
+      "waterline_segments": 3,
+      "quadrature": [
+        {
+          "order": 4,
+          "seconds": 4.111174000019673,
+          "full_local": [
+            0.016384637938184805,
+            -0.006469790175636206,
+            0.0029009251424188254,
+            -7.242917923408647e-06
+          ],
+          "hidden_gradient": [
+            -0.0796512546802198,
+            0.003615178504557394,
+            -0.007397620445425837,
+            7.133747516343162e-06
+          ],
+          "waterline": [
+            -0.084553098165905,
+            0.006033499364969577,
+            -0.00807625230003146,
+            8.840241741885336e-06
+          ],
+          "corrected_local": [
+            0.011482794452499598,
+            -0.0040514693152240225,
+            0.0022222932878132023,
+            -5.536423697866474e-06
+          ],
+          "direct_local": [
+            0.011482391429267191,
+            -0.004056354343678497,
+            0.00221965699745475,
+            -5.5297668075099904e-06
+          ],
+          "hidden_direct": [
+            0.004902633732129569,
+            -0.002419170763685492,
+            0.0006788734353326099,
+            -1.7070118103207214e-06
+          ],
+          "local_restriction_absolute_difference": [
+            2.666918555173535e-06,
+            4.885032990186938e-06
+          ],
+          "hidden_ibp_absolute_difference": [
+            8.263478023712679e-07,
+            8.499034309118909e-07
+          ],
+          "full_direct_closure_absolute_difference": [
+            2.4258145095849793e-06,
+            5.734935013878003e-06
+          ],
+          "omission_of_waterline_absolute_effect": [
+            0.0849379318129829,
+            0.006033505841296778
+          ],
+          "total_reference_moment_real": [
+            0.0006145147087132246,
+            -9.898920844590771e-05
+          ],
+          "total_reference_moment_imag": [
+            0.00010429550564863775,
+            -2.1198036872380102e-07
+          ],
+          "total_absolute_moment_defect": [
+            0.0014491478848088603,
+            0.0014566893159317295
+          ],
+          "area_normalized_moment_defect": [
+            0.12353424389501791,
+            0.12417712168645385
+          ],
+          "source_pairs_so_far": 17015040
+        },
+        {
+          "order": 8,
+          "seconds": 16.478370800003177,
+          "full_local": [
+            0.016384637938184805,
+            -0.006469790175636206,
+            0.0029009251424188254,
+            -7.242917923408647e-06
+          ],
+          "hidden_gradient": [
+            -0.07965092955872306,
+            0.0036148891893233643,
+            -0.007397602575375818,
+            7.133692731520299e-06
+          ],
+          "waterline": [
+            -0.08455307788767269,
+            0.006033510345156572,
+            -0.008076251882643676,
+            8.840241373644667e-06
+          ],
+          "corrected_local": [
+            0.011482489609235175,
+            -0.004051169019802998,
+            0.0022222758351509667,
+            -5.5363692812842786e-06
+          ],
+          "direct_local": [
+            0.011482389345506125,
+            -0.00405245068155053,
+            0.002221603953806007,
+            -5.5346808166448364e-06
+          ],
+          "hidden_direct": [
+            0.00490222092757873,
+            -0.0024187194883290484,
+            0.0006787056302383796,
+            -1.7066621229787276e-06
+          ],
+          "local_restriction_absolute_difference": [
+            6.793212473253392e-07,
+            1.2816628597257675e-06
+          ],
+          "hidden_ibp_absolute_difference": [
+            9.188491691580556e-08,
+            9.833256132175278e-08
+          ],
+          "full_direct_closure_absolute_difference": [
+            6.161797384665122e-07,
+            1.3799951421356564e-06
+          ],
+          "omission_of_waterline_absolute_effect": [
+            0.08493791158693947,
+            0.006033516821471448
+          ],
+          "total_reference_moment_real": [
+            0.0006145147556075289,
+            -9.89892882593816e-05
+          ],
+          "total_reference_moment_imag": [
+            0.00010429550520458619,
+            -2.1198036749525998e-07
+          ],
+          "total_absolute_moment_defect": [
+            0.0014474341015927486,
+            0.0014547848527438835
+          ],
+          "area_normalized_moment_defect": [
+            0.12338815051419622,
+            0.12401477357664209
+          ],
+          "source_pairs_so_far": 84591360
+        }
+      ]
+    },
+    {
+      "name": "waterline corner",
+      "physical_hat_mass": 0.015164854946855072,
+      "full_hat_mass": 0.015476053326204088,
+      "waterline_segments": 2,
+      "quadrature": [
+        {
+          "order": 4,
+          "seconds": 3.5124661000154447,
+          "full_local": [
+            0.014717595335795093,
+            0.001929831251471848,
+            0.005279207423921792,
+            -5.841371902310627e-06
+          ],
+          "hidden_gradient": [
+            -0.017449395947886893,
+            -0.0024337071303450896,
+            -0.0019207900189122831,
+            3.709241154607178e-06
+          ],
+          "waterline": [
+            -0.017734354381823074,
+            -0.002487950040073627,
+            -0.0020186063854829095,
+            3.819047486080947e-06
+          ],
+          "corrected_local": [
+            0.014432636901858913,
+            0.0018755883417433104,
+            0.005181391057351165,
+            -5.731565570836858e-06
+          ],
+          "direct_local": [
+            0.014407964342382376,
+            0.0018732736335740645,
+            0.005173313273479408,
+            -5.721677816825181e-06
+          ],
+          "hidden_direct": [
+            0.000284893722296786,
+            5.4186263796453905e-05,
+            9.781716082140986e-05,
+            -1.0980964379681917e-07
+          ],
+          "local_restriction_absolute_difference": [
+            2.5961236168604e-05,
+            2.314729287941277e-06
+          ],
+          "hidden_ibp_absolute_difference": [
+            6.471651340577128e-08,
+            5.6645932180719e-08
+          ],
+          "full_direct_closure_absolute_difference": [
+            2.6022496874826676e-05,
+            2.3713747017458137e-06
+          ],
+          "omission_of_waterline_absolute_effect": [
+            0.017848868229655337,
+            0.0024879529712247507
+          ],
+          "total_reference_moment_real": [
+            0.0005044829967815077,
+            5.059955078442367e-05
+          ],
+          "total_reference_moment_imag": [
+            0.00013697360449941966,
+            -1.4927499298825768e-07
+          ],
+          "total_absolute_moment_defect": [
+            8.225189007699402e-05,
+            0.00021026371266960855
+          ],
+          "area_normalized_moment_defect": [
+            0.005423849444339831,
+            0.013865197748773298
+          ],
+          "source_pairs_so_far": 97977600
+        },
+        {
+          "order": 8,
+          "seconds": 16.607492699986324,
+          "full_local": [
+            0.014717595335795093,
+            0.001929831251471848,
+            0.005279207423921792,
+            -5.841371902310627e-06
+          ],
+          "hidden_gradient": [
+            -0.01744942079743776,
+            -0.002433728922771684,
+            -0.0019207896969178776,
+            3.7092398586914545e-06
+          ],
+          "waterline": [
+            -0.01773434309361017,
+            -0.002487940130635183,
+            -0.0020186065339185093,
+            3.819048078241519e-06
+          ],
+          "corrected_local": [
+            0.014432673039622677,
+            0.0018756200436083489,
+            0.00518139058692116,
+            -5.7315636827605615e-06
+          ],
+          "direct_local": [
+            0.014426396957372778,
+            0.001875019187215675,
+            0.005179340914362313,
+            -5.729057940642369e-06
+          ],
+          "hidden_direct": [
+            0.0002849189950846516,
+            5.4208310601684685e-05,
+            9.781688044856555e-05,
+            -1.0980839274119149e-07
+          ],
+          "local_restriction_absolute_difference": [
+            6.6023000542228974e-06,
+            6.008616174799903e-07
+          ],
+          "hidden_ibp_absolute_difference": [
+            3.3013736727850093e-09,
+            2.897261819317984e-09
+          ],
+          "full_direct_closure_absolute_difference": [
+            6.605424633861961e-06,
+            6.037588535034934e-07
+          ],
+          "omission_of_waterline_absolute_effect": [
+            0.017848857030652053,
+            0.0024879430617988896
+          ],
+          "total_reference_moment_real": [
+            0.0005044835348063216,
+            5.059971014122559e-05
+          ],
+          "total_reference_moment_imag": [
+            0.00013697359954200125,
+            -1.4927497687874786e-07
+          ],
+          "total_absolute_moment_defect": [
+            8.433128264478505e-05,
+            0.0002125249137794493
+          ],
+          "area_normalized_moment_defect": [
+            0.005560968630449967,
+            0.01401430574339409
+          ],
+          "source_pairs_so_far": 151200000
+        }
+      ]
+    },
+    {
+      "name": "fully exterior",
+      "physical_hat_mass": 0.01547605332620409,
+      "full_hat_mass": 0.015476053326204088,
+      "waterline_segments": 0,
+      "quadrature": [
+        {
+          "order": 4,
+          "seconds": 1.9655304999905638,
+          "full_local": [
+            0.007080795803587369,
+            -0.0009739886994336354,
+            0.002277021386859155,
+            -5.79805109739603e-06
+          ],
+          "hidden_gradient": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "waterline": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "corrected_local": [
+            0.007080795803587369,
+            -0.0009739886994336354,
+            0.002277021386859155,
+            -5.79805109739603e-06
+          ],
+          "direct_local": [
+            0.007078032775643929,
+            -0.0009780056386977697,
+            0.0022740514116480256,
+            -5.789993624099664e-06
+          ],
+          "hidden_direct": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "local_restriction_absolute_difference": [
+            4.056485692191713e-06,
+            4.016947345263499e-06
+          ],
+          "hidden_ibp_absolute_difference": [
+            0.0,
+            0.0
+          ],
+          "full_direct_closure_absolute_difference": [
+            4.056485692191713e-06,
+            4.016947345263499e-06
+          ],
+          "omission_of_waterline_absolute_effect": [
+            0.0,
+            0.0
+          ],
+          "total_reference_moment_real": [
+            0.0007145523354699888,
+            -0.00011154240614196706
+          ],
+          "total_reference_moment_imag": [
+            0.00013843890908259697,
+            -2.9748193075328535e-07
+          ],
+          "total_absolute_moment_defect": [
+            5.110829091885844e-05,
+            2.766029298434262e-05
+          ],
+          "area_normalized_moment_defect": [
+            0.003302411140721631,
+            0.0017872963087758394
+          ],
+          "source_pairs_so_far": 157006080
+        },
+        {
+          "order": 8,
+          "seconds": 9.251251700014109,
+          "full_local": [
+            0.007080795803587369,
+            -0.0009739886994336354,
+            0.002277021386859155,
+            -5.79805109739603e-06
+          ],
+          "hidden_gradient": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "waterline": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "corrected_local": [
+            0.007080795803587369,
+            -0.0009739886994336354,
+            0.002277021386859155,
+            -5.79805109739603e-06
+          ],
+          "direct_local": [
+            0.007080059059265918,
+            -0.0009749808267408172,
+            0.0022762728408555794,
+            -5.796026130155773e-06
+          ],
+          "hidden_direct": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "local_restriction_absolute_difference": [
+            1.0502920139940769e-06,
+            9.921293736947795e-07
+          ],
+          "hidden_ibp_absolute_difference": [
+            0.0,
+            0.0
+          ],
+          "full_direct_closure_absolute_difference": [
+            1.0502920139940769e-06,
+            9.921293736947795e-07
+          ],
+          "omission_of_waterline_absolute_effect": [
+            0.0,
+            0.0
+          ],
+          "total_reference_moment_real": [
+            0.0007145522866702564,
+            -0.00011154232739507292
+          ],
+          "total_reference_moment_imag": [
+            0.00013843890954793372,
+            -2.9748193466107884e-07
+          ],
+          "total_absolute_moment_defect": [
+            5.1108333196344606e-05,
+            2.766037209652806e-05
+          ],
+          "area_normalized_moment_defect": [
+            0.0033024138725218696,
+            0.0017873014206854312
+          ],
+          "source_pairs_so_far": 180230400
+        }
+      ]
+    },
+    {
+      "name": "fully covered",
+      "physical_hat_mass": 0.0,
+      "full_hat_mass": 0.015476053326204088,
+      "waterline_segments": 0,
+      "quadrature": [
+        {
+          "order": 4,
+          "seconds": 2.615224200009834,
+          "full_local": [
+            0.008199300246002093,
+            0.00011142868879121814,
+            -0.0005862388895065891,
+            1.5676908891754622e-06
+          ],
+          "hidden_gradient": [
+            0.008199165303022561,
+            0.00011142876617891215,
+            -0.0005862543411811359,
+            1.5677156870753526e-06
+          ],
+          "waterline": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "corrected_local": [
+            1.349429795318574e-07,
+            -7.738769400419867e-11,
+            1.5451674546741907e-08,
+            -2.4797899890403852e-11
+          ],
+          "direct_local": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "hidden_direct": [
+            0.008216518279702713,
+            0.00011098300730918122,
+            -0.0005807356813131825,
+            1.5570480789885347e-06
+          ],
+          "local_restriction_absolute_difference": [
+            1.3582474727100993e-07,
+            8.126371282597158e-11
+          ],
+          "hidden_ibp_absolute_difference": [
+            1.8209376881157885e-05,
+            4.4588649655051247e-07
+          ],
+          "full_direct_closure_absolute_difference": [
+            1.8076116422939358e-05,
+            4.4580853832032593e-07
+          ],
+          "omission_of_waterline_absolute_effect": [
+            0.0,
+            0.0
+          ],
+          "total_reference_moment_real": [
+            0.0,
+            0.0
+          ],
+          "total_reference_moment_imag": [
+            0.0,
+            0.0
+          ],
+          "total_absolute_moment_defect": [
+            1.3582474727100993e-07,
+            8.126371282597158e-11
+          ],
+          "area_normalized_moment_defect": null,
+          "source_pairs_so_far": 191842560
+        },
+        {
+          "order": 8,
+          "seconds": 10.663889499992365,
+          "full_local": [
+            0.008199300246002093,
+            0.00011142868879121814,
+            -0.0005862388895065891,
+            1.5676908891754622e-06
+          ],
+          "hidden_gradient": [
+            0.00819918955582267,
+            0.00011142869674980521,
+            -0.0005862511559563592,
+            1.5677092394749771e-06
+          ],
+          "waterline": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "corrected_local": [
+            1.1069017942337556e-07,
+            -7.958587063569382e-12,
+            1.2266449770097394e-08,
+            -1.835029951494598e-11
+          ],
+          "direct_local": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "hidden_direct": [
+            0.008203495397441578,
+            0.00011131784824565279,
+            -0.0005848799141964489,
+            1.5650587401784136e-06
+          ],
+          "local_restriction_absolute_difference": [
+            1.1136777635717343e-07,
+            2.0001814926067097e-11
+          ],
+          "hidden_ibp_absolute_difference": [
+            4.5189131449100635e-06,
+            1.1088018767728747e-07
+          ],
+          "full_direct_closure_absolute_difference": [
+            4.409774313247721e-06,
+            1.1087179420199193e-07
+          ],
+          "omission_of_waterline_absolute_effect": [
+            0.0,
+            0.0
+          ],
+          "total_reference_moment_real": [
+            0.0,
+            0.0
+          ],
+          "total_reference_moment_imag": [
+            0.0,
+            0.0
+          ],
+          "total_absolute_moment_defect": [
+            1.1136777635717343e-07,
+            2.0001814926067097e-11
+          ],
+          "area_normalized_moment_defect": null,
+          "source_pairs_so_far": 238291200
+        }
+      ]
+    }
+  ],
+  "interpretation": [
+    "Original source P1 mesh and four real phase columns retained. Every integration query owns its original parent; no hidden-water mass or state is introduced.",
+    "Local, far-Fourier and current body-source contributions use the same physical exterior test support. Current saved body density reconstructs exactly.",
+    "Gauss4 to8 direct-DNO closure improves approximately fourfold; S-only hidden integration-by-parts agreement improves faster at contact. These are convergence diagnostics, not certified error bounds.",
+    "Covered row physical mass is exactly zero. Residual weak heave moment is 1.11e-7 at order8 and is not repaired or area-normalized; no claim of exact algebraic cancellation.",
+    "Straight-waterline total moment defect remains about1.45e-3 in both modal amplitudes while quadrature changes are much smaller. Boundary restriction alone does not resolve the current near-waterline reference mismatch.",
+    "This static reference run took about74seconds for238million source pairs. It is neither a simulation nor a throughput comparison; CPU load could not be queried due CIM access restrictions.",
+    "No moving cut-state transfer, physical mass solve, curved surface, full pressure/body work or nonlinear60second trajectory has been qualified."
+  ],
+  "next_gate": "Decompose the straight-waterline mismatch into trace/local/body-source contributions and compare their refinement on the identical physical support, separating finite-panel reference uncertainty from local P1 and hull coupling error.",
+  "limits": [
+    "Float cut integration geometry, not a moving-contact topology certificate",
+    "Waterline aligned with original P1 source edges remains explicitly unsupported by strict-interior query API",
+    "No physical hidden mass, no nodal/mass-inverse rate or moving-waterline state transfer",
+    "Source/weak restriction checks do not establish full pressure/body power conservation",
+    "Independent fine Poisson-core validation and external reference convergence remain open",
+    "No nonlinear trajectory,60-second body accuracy or throughput qualification"
+  ]
+}

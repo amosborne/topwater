@@ -179,8 +179,45 @@ def single_layer_trace(panels, indices, *, controls=None):
     return result
 
 
+def single_layer_interior(targets, panels, indices, *, controls=None):
+    """Scalar S at explicitly owned strict triangle-interior targets.
+
+    This supports on-panel integration points, not normal-gradient limits.
+    Edges/vertices, off-plane targets and incorrect owners are rejected. S is
+    continuous and receives no jump. Existing centroid trace contracts remain
+    unchanged. Returned storage is (targets,source panels), in bounded blocks.
+    """
+    indices = np.asarray(indices)
+    if (not isinstance(panels, TrianglePanels) or indices.ndim != 1
+            or indices.dtype.kind not in 'iu' or np.any(indices < 0)
+            or np.any(indices >= len(panels))):
+        raise ValueError('valid interior source-panel owners required')
+    return _evaluate_block(targets, panels, controls=controls, self_indices=indices,
+                            single_interior=True).single_layer
+
+
+def single_layer_tangent(targets, panels, indices, *, controls=None):
+    """Surface gradient of S along explicitly owned strict panel interiors.
+
+    Return (targets,sources,3) vectors projected into each target owner's plane.
+    This differentiates the continuous scalar trace; it supplies NO normal
+    derivative, domain-side jump or edge/vertex limit.
+    """
+    indices = np.asarray(indices)
+    if (not isinstance(panels, TrianglePanels) or indices.ndim != 1
+            or indices.dtype.kind not in 'iu' or np.any(indices < 0)
+            or np.any(indices >= len(panels))):
+        raise ValueError('valid interior source-panel owners required')
+    result = _evaluate_block(targets, panels, controls=controls, self_indices=indices,
+                             gradients=True, single_trace=True, single_interior=True)
+    tangent = result.gradient_single_layer
+    normal = panels.geometric_normals[indices]
+    tangent -= np.einsum('mni,mi->mn', tangent, normal)[:, :, None]*normal[:, None, :]
+    return tangent
+
+
 def _evaluate_block(targets, panels, *, controls=None, gradients=False, self_indices=None,
-                    outputs=None, single_trace=False):
+                    outputs=None, single_trace=False, single_interior=False):
     """Evaluate one target block against cached panels.
 
     S and K are (M,N), with no trace jump in K. Optional bulk gradients are
@@ -203,13 +240,27 @@ def _evaluate_block(targets, panels, *, controls=None, gradients=False, self_ind
             raise ValueError("self_indices contains an invalid panel index")
         rows = np.flatnonzero(indices >= 0)
         columns = indices[rows]
-        error = np.linalg.norm(targets[rows]-panels.centroids[columns], axis=1)
-        if np.any(error > 64*np.finfo(float).eps*panels.diameters[columns]):
-            raise ValueError("self_indices must identify centroid targets")
+        if single_interior:
+            if gradients != single_trace or len(rows) != len(targets):
+                raise ValueError('interior scalar/tangent values require an owner for every target')
+            offset = targets[rows, None, :]-panels.triangles[columns]
+            allowance = 64*np.finfo(float).eps*panels.diameters[columns]
+            height = np.einsum('mi,mi->m', offset[:, 0], panels.geometric_normals[columns])
+            if np.any(abs(height) > allowance):
+                raise ValueError('interior targets must lie on their owned panel plane')
+            edge_distance = -np.einsum('mei,mei->me', offset, panels.edge_outward[columns])
+            if np.any(edge_distance <= allowance[:, None]):
+                raise ValueError('targets must lie strictly inside their owned panel interiors')
+        else:
+            error = np.linalg.norm(targets[rows]-panels.centroids[columns], axis=1)
+            if np.any(error > 64*np.finfo(float).eps*panels.diameters[columns]):
+                raise ValueError("self_indices must identify centroid targets")
 
     from ._rankine_kernel import analytic_block
 
     shape = (len(targets), len(panels))
+    if single_interior and 8*(2+3*int(gradients))*shape[0]*shape[1] > controls.max_operator_bytes:
+        raise MemoryError('interior source arrays exceed max_operator_bytes; excludes projection scratch')
     single, double = ((np.empty(shape), np.empty(shape)) if outputs is None else outputs)
     gradient_single = np.empty((*shape, 3 if gradients else 0))
     gradient_double = np.empty((*shape, 3 if gradients and not single_trace else 0))
