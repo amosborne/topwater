@@ -1,0 +1,117 @@
+{
+  "status": "Integration-control experiment, not an implementation speedup or minute accuracy qualification",
+  "reason": "Earlier prototype used rtol1e-5 and body atols1e-7/1e-8, versus baseline rtol1e-3 and1e-3/1e-4. Physics, state dimension, horizon, startup and resource context also differ from baseline; no causal wall-time ratio follows.",
+  "comparison": {
+    "duration_seconds": 0.1,
+    "samples": 101,
+    "max_surge_sway_heave_difference_m": [
+      5.935341131080296e-07,
+      2.471597285863547e-07,
+      1.2196365719030489e-06
+    ],
+    "max_roll_pitch_yaw_difference_degrees": [
+      3.4737180641286614e-05,
+      4.905546671807315e-05,
+      1.528343716472591e-06
+    ],
+    "rhs_counts": [
+      40,
+      7
+    ],
+    "accepted_steps": [
+      13,
+      2
+    ],
+    "scope": "Fine verification control vs baseline body tolerance settings within the SAME forced-boundary physical pilot; max-step caps also differ. Not an apples-to-apples performance comparison."
+  },
+  "records": [
+    {
+      "path": "artifacts/boat-forced-motion-fine.json",
+      "sha256": "6faa15e6ec7f6f788a780a7aa1a539d8a8e324f997c276462949f4925dc1a383",
+      "input_sha256": "d4727637dd8b52ab90b0969c58341fbb033b844befae09340dae74a841d076d1",
+      "controls": {
+        "inputs": "artifacts\\boat-clean-canonical-inputs.json",
+        "output": "artifacts\\boat-forced-motion-fine.json",
+        "duration": 0.1,
+        "max_step": 0.008,
+        "derivative_step": 0.005,
+        "grid": 129,
+        "length": 64.0,
+        "body_refinement": 1,
+        "order": 4,
+        "max_rhs": 64,
+        "budget_seconds": 150.0
+      },
+      "setup": {
+        "reference_height_m": 0.39468765335030426,
+        "image_height_m": 0.4864178157786592,
+        "representation_padding_m": 0.027432000000000005,
+        "derivative_step_seconds": 0.005,
+        "exterior_mask_sha256": "467ca294e5f2c184de86ccd392f3512f96e10b7edd4887b48bfff4f542dc2304",
+        "policy": "Fixed image/expansion heights and exterior mask; fail on invalidation, no automatic refresh",
+        "physical_scope": "Freely moving body, fixed forced graph and analytic exterior trace; no evolving free surface"
+      },
+      "integration_seconds": 104.47592610001448,
+      "simulated_seconds": 0.1
+    },
+    {
+      "path": "artifacts/boat-forced-motion-baseline-tolerances.json",
+      "sha256": "9ce729620f3c2a1909d4213eac91357b6130e46ca33849ffe73e604691a5a398",
+      "input_sha256": "d4727637dd8b52ab90b0969c58341fbb033b844befae09340dae74a841d076d1",
+      "controls": {
+        "inputs": "artifacts\\boat-clean-canonical-inputs.json",
+        "output": "artifacts\\boat-forced-motion-baseline-tolerances.json",
+        "duration": 0.1,
+        "max_step": 0.05,
+        "derivative_step": 0.005,
+        "grid": 129,
+        "length": 64.0,
+        "body_refinement": 1,
+        "order": 4,
+        "max_rhs": 40,
+        "budget_seconds": 90.0,
+        "rtol": 0.001,
+        "absolute_tolerance_scale": 1.0,
+        "resource_context": "User reports another CPU/GPU workload; elapsed times are contended"
+      },
+      "setup": {
+        "reference_height_m": 0.39468765335030426,
+        "image_height_m": 0.4864178157786592,
+        "representation_padding_m": 0.027432000000000005,
+        "derivative_step_seconds": 0.005,
+        "exterior_mask_sha256": "467ca294e5f2c184de86ccd392f3512f96e10b7edd4887b48bfff4f542dc2304",
+        "policy": "Fixed image/expansion heights and exterior mask; fail on invalidation, no automatic refresh",
+        "physical_scope": "Freely moving body, fixed forced graph and analytic exterior trace; no evolving free surface"
+      },
+      "integration_seconds": 9.55930220001028,
+      "simulated_seconds": 0.1
+    }
+  ],
+  "resource_context": "User reports another CPU/GPU project. Timings contended; no speedup ratio.",
+  "safeguards": [
+    "One shared body/defaultfluid tolerance owner; actual effective RK23 controls and full state/error norm recorded.",
+    "Strict comparison contract rejects mismatched physics/numerics/duration/measurement protocol, incomplete reports and uncontrolled resources/cache state.",
+    "CPU regression tests cover actual prior tolerance/physics/duration mistakes and malformed contracts; short actual baseline/forced driver smokes verify common body defaults and distinct case identities."
+  ],
+  "actual_cross_physics_guard": {
+    "comparable": false,
+    "reasons": [
+      "reference: resource load is not declared uncontended",
+      "reference: startup cache state is not controlled",
+      "candidate: resource load is not declared uncontended",
+      "candidate: startup cache state is not controlled",
+      "contract differs: boundary_data_sha256",
+      "contract differs: panel_integration",
+      "contract differs: physics",
+      "contract differs: solve_controls",
+      "contract differs: spatial",
+      "contract differs: state_count",
+      "contract differs: state_layout",
+      "contract differs: tolerances",
+      "measurement environment differs or is missing: thread_pools",
+      "measurement environment differs or is missing: thread_environment",
+      "measurement environment differs or is missing: output_policy",
+      "measurement environment differs or is missing: cache_policy"
+    ]
+  }
+}

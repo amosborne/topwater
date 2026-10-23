@@ -31,6 +31,11 @@ from .boat_spatial_work import source_matrix, subdivide
 from .boat_parent_clip_proof import coplanar_groups
 from .cuda_graph import GraphDirichlet, body_maps, cp
 
+CURRENT_BVP_RTOL = 1e-9
+CURRENT_BVP_RESIDUAL_LIMIT = 2e-9
+CURRENT_BVP_RESTART = 40
+CURRENT_BVP_MAXITER = 5
+
 
 @dataclass(frozen=True)
 class GraphSolution:
@@ -100,12 +105,12 @@ class GraphBody:
         started, initial_evaluations = perf_counter(), self.evaluations
         residual_history = []
         density, info = gmres(self.operator, right, M=self.precondition,
-            rtol=1e-9, atol=0., restart=min(40, len(right)), maxiter=5,
+            rtol=CURRENT_BVP_RTOL, atol=0., restart=min(CURRENT_BVP_RESTART, len(right)), maxiter=CURRENT_BVP_MAXITER,
             callback=lambda value: residual_history.append(float(value)), callback_type='pr_norm')
         defect = float(np.linalg.norm(self.apply(density)-right))
         norm = float(np.linalg.norm(right))
         residual = defect/norm if norm else defect
-        if info != 0 or not np.isfinite(residual) or residual > 2e-9:
+        if info != 0 or not np.isfinite(residual) or residual > CURRENT_BVP_RESIDUAL_LIMIT:
             raise RuntimeError(f'current body GMRES failed: info={info}, true_relative_residual={residual}')
         return density, dict(gmres_iterations=len(residual_history),
             operator_applications=self.evaluations-initial_evaluations,

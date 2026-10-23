@@ -6,6 +6,7 @@ from scipy.sparse.linalg import LinearOperator, gmres
 from topwater.constants import GRAVITY, WATER_DENSITY
 from topwater.frames import rotation_matrix
 from .cuda_graph import cp
+from .boat_graph_bvp import (CURRENT_BVP_RTOL, CURRENT_BVP_RESIDUAL_LIMIT, CURRENT_BVP_RESTART, CURRENT_BVP_MAXITER)
 
 
 def body_dynamics(body, state):
@@ -55,13 +56,13 @@ def coupled_pressure(context, body, state, normal_rhs, known_phi_t, velocity):
     right = normal_rhs+modes@np.linalg.solve(mass, known_load)
     history = []
     density_dot, info = gmres(operator, right, M=context.precondition,
-        rtol=1e-9, atol=0., restart=min(40, len(panels)), maxiter=5,
+        rtol=CURRENT_BVP_RTOL, atol=0., restart=min(CURRENT_BVP_RESTART, len(panels)), maxiter=CURRENT_BVP_MAXITER,
         callback=lambda residual: history.append(float(residual)), callback_type='pr_norm')
     potential, normal, force = response(density_dot)
     acceleration = np.linalg.solve(mass, known_load-force)
     field_defect = normal-normal_rhs-modes@acceleration
     relative_residual = float(np.linalg.norm(apply(density_dot)-right)/max(np.linalg.norm(right), 1e-30))
-    if info != 0 or not np.isfinite(relative_residual) or relative_residual > 2e-9:
+    if info != 0 or not np.isfinite(relative_residual) or relative_residual > CURRENT_BVP_RESIDUAL_LIMIT:
         raise RuntimeError(f'coupled current solve failed: info={info}, residual={relative_residual}')
     pressure = known_pressure-WATER_DENSITY*potential
     load = weighted.T@pressure

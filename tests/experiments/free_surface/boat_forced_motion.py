@@ -19,17 +19,21 @@ from scipy.spatial import ConvexHull
 from topwater import InitialState, SimulationInputs, sea_states
 from topwater.constants import GRAVITY, WATER_DENSITY
 from topwater.frames import rotation_matrix
+from topwater.numerics import LaplaceControls
 from tests.benchmark_rankine import peak_rss_bytes
 from tests.forced_graph_case import boundary_data
 from .boat_parent_clip_proof import coplanar_groups
 from .boat_graph_geometry import constant_twist_pose, wet_snapshot, fourier_dry_certificate
 from .boat_graph_images import image_height
 from .graph_geometry_reference import fourier_points
-from .boat_graph_bvp import GraphBody
+from .boat_graph_bvp import (GraphBody, CURRENT_BVP_RTOL, CURRENT_BVP_RESIDUAL_LIMIT,
+                             CURRENT_BVP_RESTART, CURRENT_BVP_MAXITER)
 from .boat_graph_fields import body_velocity
 from .boat_frozen_field import frozen_field
 from .boat_coupled_pressure import coupled_pressure, body_dynamics
 from .boat_motion_metrics import attitude_degrees
+from .boat_integration_controls import RELATIVE_TOLERANCE, BODY_ABSOLUTE_TOLERANCE, ERROR_NORM
+from .boat_benchmark_contract import measurement_environment, array_identity
 from .cuda_graph import ExteriorTrace, cp
 
 
@@ -69,6 +73,8 @@ class ForcedBody:
         beam = float(np.ptp(self.body.mesh.vertices[:, 1]))
         sea_states.validate_envelope(inputs.waves, beam_m=beam, gravity=GRAVITY)
         initial = self.stencil(inputs.initial_state, self.step)
+        self.initial_panel_count = len(initial[0].panels)
+        self.initial_panel_sha256 = initial[0].diagnostics['triangle_sha256']
         self.mask = initial[0].mask.copy()
         self.extension = ExteriorTrace(self.mask.reshape(boundary['eta'].shape))
         # Fixed representation over this bounded pilot. These margins are setup
@@ -261,10 +267,27 @@ def run(inputs, args, report):
         return result.rate
 
     solver = None
+    atol = BODY_ABSOLUTE_TOLERANCE*args.absolute_tolerance_scale
     try:
-        solver = RK23(rhs, 0., vector, args.duration, rtol=1e-5,
-            atol=np.r_[np.full(3, 1e-7), np.full(4, 1e-8), np.full(3, 1e-7), np.full(3, 1e-8)],
+        solver = RK23(rhs, 0., vector, args.duration, rtol=args.rtol, atol=atol,
             max_step=args.max_step, first_step=min(args.max_step, args.duration))
+        report['integration_tolerances'] = dict(rtol=float(solver.rtol), absolute_by_component=solver.atol.tolist(),
+            scope='Effective local integration controls; neither full-minute accuracy nor physical qualification')
+        report['benchmark_contract'] = dict(physics='Fixed forced graph plus freely moving nonlinear body; no evolved sea',
+            input_sha256=report['input_sha256'], boundary_data_sha256=array_identity(boundary),
+            constants=dict(gravity_m_per_s2=GRAVITY, water_density_kg_per_m3=WATER_DENSITY),
+            state_layout=['position_world_m[3]', 'raw_orientation_wxyz[4]', 'velocity_world_m_per_s[3]',
+                          'angular_velocity_world_rad_per_s[3]'], state_count=13, error_norm=ERROR_NORM,
+            duration_seconds=args.duration, integrator='RK23', tolerances=report['integration_tolerances'],
+            max_step_seconds=args.max_step, first_step_seconds=min(args.max_step, args.duration),
+            spatial=dict(grid=args.grid, length_m=args.length, hos_order=args.order, body_refinement=args.body_refinement,
+                         initial_panel_count=model.initial_panel_count, initial_panel_sha256=model.initial_panel_sha256,
+                         derivative_step_seconds=args.derivative_step,
+                         representation={k:model.setup[k] for k in ['reference_height_m','image_height_m','exterior_mask_sha256']}),
+            solve_controls=dict(rtol=CURRENT_BVP_RTOL, atol=0., true_residual_limit=CURRENT_BVP_RESIDUAL_LIMIT,
+                                restart_cap=CURRENT_BVP_RESTART, restart_policy='min(cap,current_panel_count)',
+                                maxiter=CURRENT_BVP_MAXITER),
+            panel_integration=json.loads(LaplaceControls().to_json()))
         while solver.status == 'running':
             message = solver.step()
             if solver.status == 'failed':
@@ -279,6 +302,10 @@ def run(inputs, args, report):
             simulated_seconds=float(times[-1]), accepted_steps=len(times)-1,
             completed_rhs_evaluations=len(report['rhs']),
             rhs_evaluations=solver.nfev if solver is not None else report.get('rhs_attempts', 0))
+        report['achieved_duration_seconds'] = float(times[-1])
+        report['benchmark_seconds'] = report['setup_seconds']+report['integration_seconds']
+        report['measurement_environment'] = measurement_environment(cp, args.resource_status, args.resource_context,
+            'Boundary NPZ in setup; stdout per RHS; final state NPZ/report and held-out audit excluded')
         state_path = args.output.with_name(args.output.stem+'-states.npz')
         np.savez(state_path, times=np.asarray(times), states=np.asarray(states), dense_q=np.asarray(dense))
         report['states_sha256'] = sha256(state_path.read_bytes()).hexdigest()
@@ -312,13 +339,17 @@ if __name__ == '__main__':
     parser.add_argument('--order', type=int, choices=range(2, 9), default=4)
     parser.add_argument('--max-rhs', type=int, default=40)
     parser.add_argument('--budget-seconds', type=float, default=90.)
+    parser.add_argument('--rtol', type=float, default=RELATIVE_TOLERANCE)
+    parser.add_argument('--absolute-tolerance-scale', type=float, default=1.,
+                        help='scale shared local body-unit atols; nondefault controls create a different benchmark contract')
     parser.add_argument('--resource-context', default='Uncharacterized shared-machine load',
                         help='declared competing workload/idle context for timing interpretation')
+    parser.add_argument('--resource-status', choices=['uncontrolled', 'contended', 'uncontended'], default='uncontrolled')
     args = parser.parse_args()
     if (args.output.exists() or args.output.with_suffix('.source').exists()
             or args.grid < 17 or args.grid % 2 != 1 or args.max_rhs < 4
             or not all(np.isfinite(x) and x > 0 for x in [args.duration, args.max_step,
-                args.derivative_step, args.length, args.budget_seconds])):
+                args.derivative_step, args.length, args.budget_seconds, args.rtol, args.absolute_tolerance_scale])):
         parser.error('fresh outputs, odd grid>=17, >=4 RHS and finite positive controls required')
     archive_started = perf_counter()
     archive = args.output.with_suffix('.source'); archive.mkdir(parents=True)
