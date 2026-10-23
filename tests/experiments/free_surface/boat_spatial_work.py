@@ -21,7 +21,7 @@ from topwater.bem import assemble_dirichlet_halfspace
 from topwater.boundary import BoundarySystem
 from topwater.constants import GRAVITY, WATER_DENSITY
 from topwater.hydrostatics import hydrostatics
-from topwater.rankine import TrianglePanels
+from topwater.rankine import TrianglePanels, single_layer_trace
 from tests.laplace_reference import triangle_samples
 from tests.laplace_reference import point_source
 from .panel_gradient_reference import checked_influence
@@ -119,12 +119,12 @@ def source_matrix(panels):
     """Target-normal derivative of S_D, including the fluid-side +1/2 jump."""
     count = len(panels)
     matrix = np.empty((count, count))
-    for row in range(count):
-        other = np.arange(count) != row
-        subset = TrianglePanels(panels.triangles[other], panels.normal_sign[other])
-        real = checked_influence(panels.centroids[row:row+1], subset)
-        matrix[row, other] = real.gradient_single_layer[0]@panels.normals[row]
-        matrix[row, row] = .5  # Real-panel principal normal derivative is zero.
+    for first in range(0, count, 128):
+        last = min(first+128, count)
+        indices = np.arange(first, last)
+        real = single_layer_trace(panels, indices)
+        matrix[first:last] = np.einsum('tnj,tj->tn', real.gradient_single_layer, panels.normals[first:last])
+        matrix[indices, indices] = .5  # Retain the exact existing normal jump.
     mirror = panels.centroids*np.array([1., 1., -1.])
     for first in range(0, count, 128):
         last = min(first+128, count)
