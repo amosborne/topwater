@@ -174,8 +174,19 @@ class WeakPatch:
 
     def apply(self,values):
         values=cp.asarray(values)
-        if values.shape!=self.shape or values.dtype!=cp.float64 or not bool(cp.isfinite(values).all()):
-            raise ValueError('one finite float64 coefficient per interior patch node required')
-        padded=cp.zeros(self.fft_shape,dtype=cp.float64)
+        if (values.ndim not in (2,3) or values.shape[:2]!=self.shape
+                or (values.ndim==3 and values.shape[2]<1)
+                or values.dtype!=cp.float64 or not bool(cp.isfinite(values).all())):
+            raise ValueError('finite float64 (ny,nx[,cases]) interior coefficients required')
+        single=values.ndim==2
+        if single: values=values[:,:,None]
+        padded=cp.zeros((*self.fft_shape,values.shape[2]),dtype=cp.float64)
         padded[:self.shape[0],:self.shape[1]]=values
-        return cp.fft.irfft2(cp.fft.rfft2(padded)*self._spectrum,s=self.fft_shape)[:self.shape[0],:self.shape[1]]
+        spectrum=cp.fft.rfft2(padded,axes=(0,1))
+        result=cp.fft.irfft2(spectrum*self._spectrum[:,:,None],s=self.fft_shape,
+                            axes=(0,1))[:self.shape[0],:self.shape[1]]
+        return result[:,:,0] if single else result
+
+    def apply_host(self,values):
+        """Intentional GPU-to-host boundary for the CPU physical weak RHS."""
+        return cp.asnumpy(self.apply(values))

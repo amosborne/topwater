@@ -14,7 +14,7 @@ from .plane_single_layer import plane_single_layer
 
 
 class PhysicalWeakFlux:
-    """One retained dense active-to-active weak-load map.
+    """Full-plane FFT action plus physical contact-row correction only.
 
     ``kernel_owner`` is the caller's precomputed full-plane WeakPatch.
     Its interior dimensions/spacings must match patch.
@@ -30,7 +30,9 @@ class PhysicalWeakFlux:
                for v in (maximum_pairs, maximum_bytes)):
             raise ValueError('positive integer work/storage budgets required')
         self.patch = patch
+        self.kernel_owner = kernel_owner
         self.order = order
+        self.maximum_bytes = maximum_bytes
         x, y = patch.x, patch.y
         ny, nx = len(y)-2, len(x)-2
         values = kernel_owner.kernel
@@ -62,20 +64,14 @@ class PhysicalWeakFlux:
         geometry_bytes = sum(getattr(patch, name).nbytes for name in
             ('cut_triangles', 'basis_values', 'parent_id', 'cut_areas',
              'hidden_triangles', 'hidden_basis_values', 'hidden_parent_id', 'hidden_areas'))
-        estimated_peak = 2*geometry_bytes+8*(active_count*count+2*active_count**2
-            +2*len(affected)*len(patch.panels)+64*len(patch.panels)
-            +3*len(affected)*len(patch.nodes)+128*count+32*len(patch.panels))
+        estimated_peak = 2*geometry_bytes+8*(2*len(affected)*len(patch.panels)
+            +64*len(patch.panels)+3*len(affected)*len(patch.nodes)
+            +2*len(affected)*active_count+32*len(patch.panels)+4*len(patch.nodes))
         if estimated_peak > maximum_bytes:
-            raise MemoryError('weak physical constructor dense/pair scratch bound exceeds byte budget')
+            raise MemoryError('weak physical constructor correction/pair scratch bound exceeds byte budget')
         interior_position = np.full(len(patch.nodes), -1, dtype=int)
         interior_position[patch.interior_nodes] = np.arange(count)
-        ai = interior_position[patch.active_nodes]
-        rows_y, rows_x = ai//nx, ai%nx
-        cols_y, cols_x = np.indices((ny, nx))
-        base = np.empty((active_count, count))
-        for first in range(0, active_count, 64):
-            base[first:first+64] = values[rows_y[first:first+64, None]-cols_y.ravel()[None, :]+ny-1,
-                rows_x[first:first+64, None]-cols_x.ravel()[None, :]+nx-1]
+        self._active_interior = interior_position[patch.active_nodes]
         correction_x = np.zeros((len(affected), len(patch.panels)))
         correction_y = np.zeros_like(correction_x)
         active_to_affected = np.full(active_count, -1, dtype=int)
@@ -149,22 +145,46 @@ class PhysicalWeakFlux:
                                shape=(len(triangle), len(patch.nodes))).tocsr()
         gy = sparse.coo_matrix((gradient[:, 1].ravel(), (source_rows, source_cols)), shape=gx.shape).tocsr()
         correction = (gx.T @ correction_x.T+gy.T @ correction_y.T).T
-        base[affected] -= correction[:, patch.interior_nodes]
-        del correction, correction_x, correction_y, gx, gy
-        self.matrix = np.ascontiguousarray((patch.E[patch.interior_nodes].T @ base.T).T)
-        if not np.isfinite(self.matrix).all():
-            raise ValueError('nonfinite physical weak matrix')
-        self.matrix.setflags(write=False)
+        del correction_x, correction_y, gx, gy
+        self.correction = np.ascontiguousarray((patch.E.T @ correction.T).T)
+        del correction
+        if not np.isfinite(self.correction).all():
+            raise ValueError('nonfinite physical weak correction')
+        self.affected_rows = affected
+        self.shape = (active_count, active_count)
+        for array in (self.correction, self.affected_rows, self._active_interior):
+            array.setflags(write=False)
+        retained = self.correction.nbytes+self.affected_rows.nbytes+self._active_interior.nbytes
         self.diagnostics = dict(assembly_seconds=perf_counter()-started,
             active_nodes=active_count, covered_nodes=len(patch.covered_nodes),
             corrected_rows=len(affected), source_pairs=pairs, hidden_area_pairs=area_pairs,
-            waterline_pairs=pairs-area_pairs, retained_operator_bytes=self.matrix.nbytes,
+            waterline_pairs=pairs-area_pairs, retained_operator_bytes=retained,
             constructor_array_bound_bytes=estimated_peak, order=order,
             scalar_source_diagnostics=scalar_counts,
-            scope='Fixed flat physical weak loads; no symmetry repair or point-velocity claim')
+            storage_scope='Owned correction/row maps; excludes caller-owned patch/kernel, FFT workspace and apply scratch',
+            scope='Fixed flat physical weak loads; FFT full-plane rows minus contact correction, no left E transpose')
 
     def apply(self, active_coefficients):
         values = np.asarray(active_coefficients)
-        if values.ndim not in (1, 2) or values.shape[0] != self.matrix.shape[1] or not np.isfinite(values).all():
+        if (values.ndim not in (1, 2) or values.shape[0] != self.shape[1]
+                or np.iscomplexobj(values) or not np.isfinite(values).all()):
             raise ValueError('finite active coefficient vector/matrix required')
-        return self.matrix @ values
+        vector = values.ndim == 1
+        if vector:
+            values = values[:, None]
+        cases = values.shape[1]
+        if cases < 1:
+            raise ValueError('at least one coefficient column required')
+        scratch = 8*cases*(len(self.patch.nodes)+len(self.patch.interior_nodes)
+            +2*self.shape[0]+len(self.affected_rows))
+        if scratch+self.diagnostics['retained_operator_bytes'] > self.maximum_bytes:
+            raise MemoryError('physical weak host apply scratch exceeds byte budget; excludes FFT workspace')
+        full = self.patch.expand(values)
+        interior = full[self.patch.interior_nodes].reshape(*self.kernel_owner.shape, cases)
+        weak = np.asarray(self.kernel_owner.apply_host(interior))
+        if weak.shape != interior.shape or not np.isfinite(weak).all():
+            raise FloatingPointError('full-plane weak action returned invalid loads')
+        weak = weak.reshape(-1, cases)
+        result = weak[self._active_interior].copy()
+        result[self.affected_rows] -= self.correction @ values
+        return result[:, 0] if vector else result

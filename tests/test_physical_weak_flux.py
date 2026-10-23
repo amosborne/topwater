@@ -1,5 +1,4 @@
 """Independent exterior target integration and signed-lag indexing controls."""
-from types import SimpleNamespace
 import numpy as np
 from numpy.polynomial.legendre import leggauss
 from numpy.testing import assert_allclose
@@ -13,6 +12,18 @@ from tests.experiments.free_surface.physical_weak_flux import PhysicalWeakFlux
 
 def box(a, b, c, d):
     return np.array([[a, b], [c, b], [c, d], [a, d]])
+
+
+class DenseReferenceOwner:
+    """Independent test-only dense Toeplitz action, no GPU FFT dependency."""
+    def __init__(self, kernel, shape, spacing):
+        self.kernel, self.shape, self.spacing = kernel, shape, spacing
+        ny, nx = shape
+        self.matrix = np.array([[kernel[i//nx-j//nx+ny-1, i%nx-j%nx+nx-1]
+                                 for j in range(ny*nx)] for i in range(ny*nx)])
+
+    def apply_host(self, values):
+        return (self.matrix @ values.reshape(np.prod(self.shape), -1)).reshape(values.shape)
 
 
 def reference_kernel(shape, hx, hy, order=8):
@@ -34,7 +45,7 @@ def reference_kernel(shape, hx, hy, order=8):
             A = field.vector_potential(p, field.point_owners(p))[:, :, 0].reshape(6, -1, 2)
             result[-dy+ny-1, -dx+nx-1] = 2*np.einsum('t,q,ti,tqi->',
                 areas, weights, geometry['parent_gradients'], A)
-    return SimpleNamespace(kernel=result, spacing=(hx, hy), shape=shape)
+    return DenseReferenceOwner(result, shape, (hx, hy))
 
 
 def exterior_row(field, center, hx, hy, footprint, order):
@@ -75,11 +86,16 @@ def test_physical_rows_against_independent_exterior_work_and_scaling():
     assert_allclose(operator.apply(coefficients), expected, atol=3e-4, rtol=3e-3)
     scale = 1.7
     enlarged = PhysicalP1Patch(scale*x, scale*y, scale*footprint)
-    scaled_owner = SimpleNamespace(kernel=scale*owner.kernel, spacing=(scale*hx, scale*hy), shape=owner.shape)
+    scaled_owner = DenseReferenceOwner(scale*owner.kernel, owner.shape, (scale*hx, scale*hy))
     scaled = PhysicalWeakFlux(enlarged, scale*footprint, scaled_owner, order=8)
-    assert_allclose(scaled.matrix, scale*operator.matrix, atol=2e-13, rtol=2e-12)
+    identity = np.eye(len(coefficients))
+    assert_allclose(scaled.apply(identity), scale*operator.apply(identity), atol=2e-13, rtol=2e-12)
+    assert_allclose(operator.apply(np.column_stack((coefficients, -2*coefficients))),
+                    np.column_stack((operator.apply(coefficients), -2*operator.apply(coefficients))), atol=3e-16)
     assert operator.diagnostics['source_pairs'] > 0
-    assert not operator.matrix.flags.writeable
+    assert not operator.correction.flags.writeable
+    assert not operator.affected_rows.flags.writeable
+    assert not hasattr(operator, 'matrix')
 
 
 def test_exterior_signed_toeplitz_order_and_budget_rejection():
@@ -89,10 +105,10 @@ def test_exterior_signed_toeplitz_order_and_budget_rejection():
     # Deliberately nonradial/asymmetric values expose reversal/index errors;
     # this test does not claim the synthetic kernel is a physical operator.
     kernel = np.arange(15, dtype=float).reshape(3, 5)
-    owner = SimpleNamespace(kernel=kernel, spacing=(.3, .23), shape=(2, 3))
+    owner = DenseReferenceOwner(kernel, (2, 3), (.3, .23))
     operator = PhysicalWeakFlux(patch, footprint, owner)
     expected = np.array([[kernel[(i//3-j//3)+1, (i%3-j%3)+2] for j in range(6)] for i in range(6)])
-    assert_allclose(operator.matrix, expected, atol=0, rtol=0)
+    assert_allclose(operator.apply(np.eye(6)), expected, atol=0, rtol=0)
     assert operator.diagnostics['source_pairs'] == 0
     with pytest.raises(MemoryError):
         PhysicalWeakFlux(patch, footprint, owner, maximum_bytes=1)
@@ -102,3 +118,23 @@ def test_exterior_signed_toeplitz_order_and_budget_rejection():
         PhysicalWeakFlux(physical, cut, owner, maximum_pairs=1)
     with pytest.raises(ValueError, match='footprint'):
         PhysicalWeakFlux(physical, cut+np.array([.01, 0]), owner)
+
+
+def test_hidden_trial_fill_without_hidden_target_rows_matches_dense_control():
+    axis = np.arange(-3, 4)*.3
+    footprint = box(-.61, -.53, .58, .57)
+    patch = PhysicalP1Patch(axis, axis, footprint)
+    assert len(patch.covered_nodes) > 0
+    # A nonradial kernel deliberately makes an erroneous left E transpose
+    # visible: hidden target rows must not be returned or folded into actives.
+    kernel = np.arange(81, dtype=float).reshape(9, 9)/100
+    owner = DenseReferenceOwner(kernel, (5, 5), (.3, .3))
+    operator = PhysicalWeakFlux(patch, footprint, owner, order=4)
+    active = np.searchsorted(patch.interior_nodes, patch.active_nodes)
+    E = patch.E[patch.interior_nodes].toarray()
+    old_dense = owner.matrix[active] @ E
+    old_dense[operator.affected_rows] -= operator.correction
+    coefficients = np.linspace(-.7, .8, len(patch.active_nodes))
+    assert_allclose(operator.apply(coefficients), old_dense @ coefficients, atol=3e-15, rtol=3e-14)
+    assert operator.shape == (len(coefficients), len(coefficients))
+    assert operator.correction.shape == (len(operator.affected_rows), len(coefficients))
