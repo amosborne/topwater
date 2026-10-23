@@ -22,6 +22,13 @@ def checkpoint(args, report, arrays):
     args.output.write_text(json.dumps(report, indent=2, allow_nan=False))
 
 
+def relative(numerator, denominator):
+    """Exact-zero denominators remain visible in per-mode diagnostics."""
+    if denominator == 0:
+        return 0. if numerator == 0 else None
+    return float(numerator/denominator)
+
+
 def run(args, report):
     snapshot = RegularizedSnapshot(args.water, args.phase, args.mode)
     odd, body_probe = owned(args.odd), owned(args.body_probe)
@@ -97,6 +104,9 @@ def run(args, report):
     if not np.isfinite(mu).all() or not np.isfinite(vectors).all():
         raise FloatingPointError('nonfinite full eigensystem')
     lam = np.sqrt(-GRAVITY*mu.astype(complex))
+    arrays.update(mu=mu, lambda_plus=lam)
+    report['stage'] = 'raw full eigenspectrum saved; selected diagnostics pending'
+    checkpoint(args, report, arrays)
     chosen = np.argsort(lam.real)[-min(8, count):][::-1]
     infinity_norm = np.linalg.norm(dense, ord=np.inf)
     records, selected = [], []
@@ -119,17 +129,19 @@ def run(args, report):
         denominator = np.vdot(physical, mass@physical)
         ray4 = np.vdot(physical, weak4)/denominator
         ray8 = np.vdot(physical, weak8)/denominator
+        dense_den = (infinity_norm+abs(mu[index]))*np.linalg.norm(vector)
+        kin_den = np.linalg.norm(weak8)+abs(lam[index])*np.linalg.norm(mass@eta)
+        dyn_den = GRAVITY*np.linalg.norm(mass@eta)+abs(lam[index])*np.linalg.norm(mass@physical)
         records.append(dict(index=int(index), mu_real=float(mu[index].real), mu_imag=float(mu[index].imag),
             lambda_plus_real=float(lam[index].real), lambda_plus_imag=float(lam[index].imag),
-            dense_right_relative_residual=float(np.linalg.norm(residual)/
-                ((infinity_norm+abs(mu[index]))*np.linalg.norm(vector))),
-            original_weak_kinematic_relative_residual=float(np.linalg.norm(kinematic)/
-                (np.linalg.norm(weak8)+abs(lam[index])*np.linalg.norm(mass@eta))),
-            original_weak_dynamic_relative_residual=float(np.linalg.norm(dynamic)/
-                (GRAVITY*np.linalg.norm(mass@eta)+abs(lam[index])*np.linalg.norm(mass@physical))),
+            dense_right_relative_residual=relative(np.linalg.norm(residual), dense_den),
+            original_weak_kinematic_relative_residual=relative(np.linalg.norm(kinematic), kin_den),
+            original_weak_dynamic_relative_residual=relative(np.linalg.norm(dynamic), dyn_den),
             body_collocation_residual_max=float(abs(nmap@physical+jd@sigma).max()),
             q4_q8_action_difference_mass_norm=float(norm_qchange),
-            q4_q8_action_difference_relative=float(norm_qchange/norm_rate),
+            q4_q8_action_difference_relative=relative(norm_qchange, norm_rate),
+            zero_denominators=[name for name, value in [('dense_residual', dense_den),
+                ('weak_kinematic', kin_den), ('weak_dynamic', dyn_den), ('q_action', norm_rate)] if value == 0],
             q4_rayleigh_real=float(ray4.real), q4_rayleigh_imag=float(ray4.imag),
             q8_rayleigh_real=float(ray8.real), q8_rayleigh_imag=float(ray8.imag)))
         selected.append(physical)
