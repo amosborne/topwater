@@ -1,0 +1,416 @@
+{
+  "complete": true,
+  "qualified": false,
+  "branch": "experiment/spatial-interface",
+  "scope": "Fixed-mean-hull LINEAR time-domain prescribed heave/roll on actual canonical24ft inputs. No rigid-body advancement, moving wet geometry, nonlinear free surface or nonlinear timing qualification.",
+  "equation": "sigma=J^-1(WV-N E psi); eta_t=|D| E psi+T sigma-sponge*eta; psi_t=-g*eta-sponge*psi. F is minus derivative of rho W^T Areas total_body_potential, using the same fixed E and actual sponge-including psi_t.",
+  "reference": {
+    "report": "artifacts/boat-spatial-capytaine.json",
+    "sha256": "28437953c57f4366c4cc243ff21acb8504e4c0e2a879e418599451804c88bddd",
+    "frequency_hz": 0.1,
+    "heave_added_mass": 20308.51840286106,
+    "roll_added_mass": 1828.5980014473307,
+    "heave_damping": 1760.07054893872,
+    "roll_damping": 0.25433448155600147
+  },
+  "controls": {
+    "ramp_seconds": 20,
+    "duration_seconds": 60,
+    "time_step_seconds": 0.05,
+    "integrator": "RK4",
+    "extension": "One fixed harmonic Dirichlet fill; no hidden water states",
+    "pressure": "Exact fixed-map generalized impulse derivative; independent static potential finite differences retained only in tests"
+  },
+  "cases": [
+    {
+      "report": "artifacts\\boat-radiation-time-pilot.json",
+      "sha256": "99f204274934efd10e22d5f9c63a5640f6d554cf6a7661827f971d3c0e6b4cd0",
+      "producer_archive": "artifacts\\boat-radiation-time-pilot.source",
+      "arrays_sha256": "b3c82081917b5c7962edd1d2a005a208f162285e86f2227b2c156e165c79384f",
+      "complete": true,
+      "grid_size": 129,
+      "box_length_m": 128.0,
+      "spacing_m": 0.9922480620155039,
+      "body_panel_count": 68,
+      "setup_seconds": 0.6118537999864202,
+      "evolution_seconds": 85.64818459999515,
+      "total_seconds": 86.26786980000907,
+      "fit_start_seconds": 40.0,
+      "fit_end_seconds": 60.0,
+      "heave_added_mass": 17844.974546857353,
+      "roll_added_mass": 1309.7260136981263,
+      "heave_damping": 975.3304568156757,
+      "roll_damping": -0.02688886671638386,
+      "heave_added_mass_relative_error": -0.1213059371015782,
+      "roll_added_mass_relative_error": -0.28375399477551577,
+      "heave_damping_relative_error": -0.4458571803250862,
+      "heave_force_fit_rms": 0.08034128742515198,
+      "roll_force_fit_rms": 0.0001424964383347954,
+      "energy_proxy_diagnostic_40_60": {
+        "body_work_j": [
+          -0.9752820053400676,
+          6.764903552828571e-06
+        ],
+        "nominal_sponge_work_j": [
+          -0.8168062877831338,
+          -1.0237899176121832e-05
+        ],
+        "energy_change_j": [
+          -0.021836770958938878,
+          -1.51196729701146e-05
+        ],
+        "remainder_j": [
+          -0.18031248851587267,
+          1.8831297588358025e-06
+        ],
+        "scope": "Mixed-domain sampled boundary energy, not a certified physical conservation error"
+      }
+    },
+    {
+      "report": "artifacts\\boat-radiation-time-grid.json",
+      "sha256": "cd7643df67350a1b8bb253af665c4109d27ef1993c10ed97d666d2c83bf0ee65",
+      "producer_archive": "artifacts\\boat-radiation-time-grid.source",
+      "arrays_sha256": "6434b36b2e172973e9de7926b1b7945cf3ea49c03e66813a35772a9dc5c3f9f3",
+      "complete": true,
+      "grid_size": 257,
+      "box_length_m": 128.0,
+      "spacing_m": 0.4980544747081712,
+      "body_panel_count": 68,
+      "setup_seconds": 1.5140985999896657,
+      "evolution_seconds": 369.5094295000017,
+      "total_seconds": 371.0444398999971,
+      "fit_start_seconds": 40.0,
+      "fit_end_seconds": 60.0,
+      "heave_added_mass": 19789.647928757717,
+      "roll_added_mass": 1491.0418438806983,
+      "heave_damping": 1111.2582861494002,
+      "roll_damping": -0.03506181719697631,
+      "heave_added_mass_relative_error": -0.025549400690413983,
+      "roll_added_mass_relative_error": -0.1845983410784971,
+      "heave_damping_relative_error": -0.3686285547931803,
+      "heave_force_fit_rms": 0.09041065783612393,
+      "roll_force_fit_rms": 0.00018599335810952068,
+      "energy_proxy_diagnostic_40_60": {
+        "body_work_j": [
+          -1.1112038392744912,
+          8.821051274653298e-06
+        ],
+        "nominal_sponge_work_j": [
+          -1.0728536630360785,
+          -1.636489439764555e-05
+        ],
+        "energy_change_j": [
+          -0.028071560861269163,
+          -2.369459069383878e-05
+        ],
+        "remainder_j": [
+          -0.0664217370996818,
+          1.4913549784600683e-06
+        ],
+        "scope": "Mixed-domain sampled boundary energy, not a certified physical conservation error"
+      }
+    },
+    {
+      "report": "artifacts\\boat-radiation-time-gpu-pilot.json",
+      "sha256": "3e9acdf42669cdb79c24367f29480b6a857ae8d8fc092d4d37d0590e9ec041f4",
+      "producer_archive": "artifacts\\boat-radiation-time-gpu-pilot.source",
+      "arrays_sha256": "5ad568dea3ec2bad6a31cb67e94ac6175ba14004ee9c3af345f88bf165713506",
+      "complete": true,
+      "grid_size": 129,
+      "box_length_m": 128.0,
+      "spacing_m": 0.9922480620155039,
+      "body_panel_count": 68,
+      "setup_seconds": 2.925936300016474,
+      "evolution_seconds": 31.370026999997208,
+      "total_seconds": 34.355349199991906,
+      "fit_start_seconds": 40.0,
+      "fit_end_seconds": 60.0,
+      "heave_added_mass": 17844.974546857353,
+      "roll_added_mass": 1309.7260136981263,
+      "heave_damping": 975.330456815676,
+      "roll_damping": -0.02688886671638366,
+      "heave_added_mass_relative_error": -0.1213059371015782,
+      "roll_added_mass_relative_error": -0.28375399477551577,
+      "heave_damping_relative_error": -0.44585718032508603,
+      "heave_force_fit_rms": 0.08034128742515151,
+      "roll_force_fit_rms": 0.00014249643833474747,
+      "peak_process_rss_bytes": 707215360,
+      "cupy_pool_used_bytes": 31857664,
+      "cupy_pool_reserved_bytes": 36835328,
+      "execution": "GPU float64/complex128 evolution, CPU fixed geometry/operator preparation",
+      "timing_scope": "Run total includes static setup, lazy CUDA import/context/transfers, first-use compilation/plans, synchronized evolution, output download, fits and NPZ; source archiving and final JSON are outside this total.",
+      "memory_scope": "Process peak RSS; CUDA pool figures are retained/reserved at end, exclude other CUDA allocations, and are not peak/total VRAM.",
+      "energy_proxy_diagnostic_40_60": {
+        "body_work_j": [
+          -0.9752820053400679,
+          6.764903552827879e-06
+        ],
+        "nominal_sponge_work_j": [
+          -0.8168062877831335,
+          -1.0237899176121826e-05
+        ],
+        "energy_change_j": [
+          -0.021836770958938656,
+          -1.5119672970111131e-05
+        ],
+        "remainder_j": [
+          -0.18031248851587311,
+          1.883129758838574e-06
+        ],
+        "scope": "Mixed-domain sampled boundary energy, not a certified physical conservation error"
+      }
+    },
+    {
+      "report": "artifacts\\boat-radiation-time-domain.json",
+      "sha256": "965bc1fef24c4405aa322c57e72dbab1fa920f3f2a674991d1113d173439a9e4",
+      "producer_archive": "artifacts\\boat-radiation-time-domain.source",
+      "arrays_sha256": "862f4d6c5cabac78389b91823ec8031b47dddc62d25bff14dc3d692b14e6d84e",
+      "complete": true,
+      "grid_size": 257,
+      "box_length_m": 256.0,
+      "spacing_m": 0.9961089494163424,
+      "body_panel_count": 68,
+      "setup_seconds": 3.5987168999854475,
+      "evolution_seconds": 89.67375109999557,
+      "total_seconds": 93.30832360000932,
+      "fit_start_seconds": 40.0,
+      "fit_end_seconds": 60.0,
+      "heave_added_mass": 17618.162151592795,
+      "roll_added_mass": 1305.9161776162791,
+      "heave_damping": 1651.6515273650416,
+      "roll_damping": 0.07160505524137016,
+      "heave_added_mass_relative_error": -0.13247427497661518,
+      "roll_added_mass_relative_error": -0.28583746860564774,
+      "heave_damping_relative_error": -0.06159924762053006,
+      "heave_force_fit_rms": 0.08279795222296425,
+      "roll_force_fit_rms": 5.092272205333543e-05,
+      "peak_process_rss_bytes": 851468288,
+      "cupy_pool_used_bytes": 124211712,
+      "cupy_pool_reserved_bytes": 143418880,
+      "execution": "GPU float64/complex128 evolution, CPU fixed geometry/operator preparation",
+      "timing_scope": "Run total includes static setup, lazy CUDA import/context/transfers, first-use compilation/plans, synchronized evolution, output download, fits and NPZ; source archiving and final JSON are outside this total.",
+      "memory_scope": "Process peak RSS; CUDA pool figures are retained/reserved at end, exclude other CUDA allocations, and are not peak/total VRAM.",
+      "energy_proxy_diagnostic_40_60": {
+        "body_work_j": [
+          -1.651670674825438,
+          -1.7888728086909375e-05
+        ],
+        "nominal_sponge_work_j": [
+          -1.3109773707728483,
+          -1.8303821284736962e-05
+        ],
+        "energy_change_j": [
+          0.03095178295288714,
+          -6.751580460564316e-06
+        ],
+        "remainder_j": [
+          -0.30974152109970254,
+          -6.336487262736729e-06
+        ],
+        "scope": "Mixed-domain sampled boundary energy, not a certified physical conservation error"
+      }
+    },
+    {
+      "report": "artifacts\\boat-radiation-time-domain-gemv.json",
+      "sha256": "5d2c29c918764d1a050b5f2c534e9a4215fa5016e5e4af2449a98317697ac299",
+      "producer_archive": "artifacts\\boat-radiation-time-domain-gemv.source",
+      "arrays_sha256": "ec647086faa60372a80825d45186e0113749982579bd36c2e1bd9e9b553227e3",
+      "complete": true,
+      "grid_size": 257,
+      "box_length_m": 256.0,
+      "spacing_m": 0.9961089494163424,
+      "body_panel_count": 68,
+      "setup_seconds": 3.6422806000045966,
+      "evolution_seconds": 35.34021749999374,
+      "total_seconds": 39.051456199988024,
+      "fit_start_seconds": 40.0,
+      "fit_end_seconds": 60.0,
+      "heave_added_mass": 17618.162151592795,
+      "roll_added_mass": 1305.916177616279,
+      "heave_damping": 1651.6515273650416,
+      "roll_damping": 0.07160505524136634,
+      "heave_added_mass_relative_error": -0.13247427497661518,
+      "roll_added_mass_relative_error": -0.28583746860564785,
+      "heave_damping_relative_error": -0.06159924762053006,
+      "heave_force_fit_rms": 0.08279795222296256,
+      "roll_force_fit_rms": 5.092272205331069e-05,
+      "peak_process_rss_bytes": 830226432,
+      "cupy_pool_used_bytes": 124211712,
+      "cupy_pool_reserved_bytes": 142362112,
+      "execution": "GPU float64/complex128 evolution, CPU fixed geometry/operator preparation",
+      "timing_scope": "Run total includes static setup, lazy CUDA import/context/transfers, first-use compilation/plans, synchronized evolution, output download, fits and NPZ; source archiving and final JSON are outside this total.",
+      "memory_scope": "Process peak RSS; CUDA pool figures are retained/reserved at end, exclude other CUDA allocations, and are not peak/total VRAM.",
+      "energy_proxy_diagnostic_40_60": {
+        "body_work_j": [
+          -1.6516706748254377,
+          -1.7888728086908498e-05
+        ],
+        "nominal_sponge_work_j": [
+          -1.3109773707728485,
+          -1.830382128473697e-05
+        ],
+        "energy_change_j": [
+          0.030951782952887363,
+          -6.7515804605608465e-06
+        ],
+        "remainder_j": [
+          -0.3097415210997019,
+          -6.336487262732375e-06
+        ],
+        "scope": "Mixed-domain sampled boundary energy, not a certified physical conservation error"
+      }
+    },
+    {
+      "report": "artifacts\\boat-radiation-time-domain-grid.json",
+      "sha256": "12820f89a59dfd5e210a7dcaa8e0c248227b9d2cdfa2ad3d55faf9e69d481a82",
+      "producer_archive": "artifacts\\boat-radiation-time-domain-grid.source",
+      "arrays_sha256": "cb623a5c2f985b14675edf15fb8b7d0c6a4fc1cb7e46305bb230ea3e9bbff993",
+      "complete": true,
+      "grid_size": 513,
+      "box_length_m": 256.0,
+      "spacing_m": 0.49902534113060426,
+      "body_panel_count": 68,
+      "setup_seconds": 7.412771599978441,
+      "evolution_seconds": 85.86637790000532,
+      "total_seconds": 93.35849460001918,
+      "fit_start_seconds": 40.0,
+      "fit_end_seconds": 60.0,
+      "heave_added_mass": 19569.09189650382,
+      "roll_added_mass": 1486.9184334894146,
+      "heave_damping": 1885.2465171418783,
+      "roll_damping": 0.09363166775959142,
+      "heave_added_mass_relative_error": -0.03640967261565808,
+      "roll_added_mass_relative_error": -0.1868532983670974,
+      "heave_damping_relative_error": 0.07111985839353782,
+      "heave_force_fit_rms": 0.09415343332279417,
+      "roll_force_fit_rms": 6.661611998326687e-05,
+      "peak_process_rss_bytes": 1506639872,
+      "cupy_pool_used_bytes": 503206400,
+      "cupy_pool_reserved_bytes": 574976000,
+      "execution": "GPU float64/complex128 evolution, CPU fixed geometry/operator preparation",
+      "timing_scope": "Run total includes static setup, lazy CUDA import/context/transfers, first-use compilation/plans, synchronized evolution, output download, fits and NPZ; source archiving and final JSON are outside this total.",
+      "memory_scope": "Process peak RSS; CUDA pool figures are retained/reserved at end, exclude other CUDA allocations, and are not peak/total VRAM.",
+      "energy_proxy_diagnostic_40_60": {
+        "body_work_j": [
+          -1.8852679984227751,
+          -2.3391520574627703e-05
+        ],
+        "nominal_sponge_work_j": [
+          -1.7295437471605861,
+          -2.9450388956871974e-05
+        ],
+        "energy_change_j": [
+          0.04018611246545323,
+          -1.0891381870537648e-05
+        ],
+        "remainder_j": [
+          -0.1155381387967358,
+          -4.832513488293376e-06
+        ],
+        "scope": "Mixed-domain sampled boundary energy, not a certified physical conservation error"
+      }
+    }
+  ],
+  "parity": {
+    "boat-radiation-gpu-parity": {
+      "complete": true,
+      "qualified": false,
+      "scope": "Explicit archived-CPU vs GPU fixed-hull linear60second parity; no nonlinear timing claim",
+      "max_absolute_differences": {
+        "times": 0.0,
+        "forces": 1.2789769243681803e-13,
+        "final_state": 6.938893903907228e-18,
+        "peak_eta": 4.4994390158148434e-18,
+        "nominal_sponge_power": 4.0245584642661925e-16,
+        "boundary_energy_proxy": 5.384581669432009e-15
+      }
+    },
+    "boat-radiation-gemv-parity": {
+      "complete": true,
+      "qualified": false,
+      "scope": "Same fixed-hull60s GPU radiation job; not nonlinear performance",
+      "max_absolute_differences": {
+        "times": 0.0,
+        "forces": 1.1368683772161603e-13,
+        "boundary_energy_proxy": 8.881784197001252e-16,
+        "nominal_sponge_power": 2.7755575615628914e-17,
+        "peak_eta": 4.9060148304969076e-18,
+        "final_state": 9.107298248878237e-18,
+        "exterior": 0.0,
+        "hidden": 0.0
+      },
+      "old_total_seconds": 93.30832360000932,
+      "new_total_seconds": 39.051456199988024,
+      "ratio": 2.389368609512644,
+      "reports_sha256": {
+        "boat-radiation-time-domain": "965bc1fef24c4405aa322c57e72dbab1fa920f3f2a674991d1113d173439a9e4",
+        "boat-radiation-time-domain-gemv": "5d2c29c918764d1a050b5f2c534e9a4215fa5016e5e4af2449a98317697ac299"
+      }
+    }
+  },
+  "product_probe": {
+    "path": "artifacts/boat-radiation-products.json",
+    "sha256": "4f4a8f126ece4dd60fb844dd707a3a814040dd6f42140dab5a4b759d3f0484bb",
+    "producer_script_sha256": "e32597287c4c0de36f90b449d1a94d19843fe610addcc047beb000825d861bb4",
+    "results": [
+      {
+        "name": "normal_map",
+        "shape": [
+          68,
+          66049
+        ],
+        "max_abs_difference": 5.498177254438657e-17,
+        "median_device_ms": {
+          "together": 6.30732798576355,
+          "separate": 0.8601599931716919
+        }
+      },
+      {
+        "name": "impulse_trace",
+        "shape": [
+          6,
+          66049
+        ],
+        "max_abs_difference": 2.970609122813869e-14,
+        "median_device_ms": {
+          "together": 1.931264042854309,
+          "separate": 0.19660799950361252
+        }
+      },
+      {
+        "name": "flux_map",
+        "shape": [
+          66037,
+          68
+        ],
+        "max_abs_difference": 2.7755575615628914e-17,
+        "median_device_ms": {
+          "together": 1.590783953666687,
+          "separate": 0.5975039899349213
+        }
+      }
+    ],
+    "scope": "20-sample CUDA-event device medians on actual257grid maps; not whole-run gains"
+  },
+  "verification": "CPU3 independent controls passed0.90s; GPU4 controls passed22.64s including initial compilation and3.88s after contraction change; final setup cleanup gate4passed3.60s. Analytic oblique field, harmonic polynomial fill, nonzero ramp/sponge pressure finite differences and independent NumPy/SciPy whole RHS.",
+  "review": "Two independent source reviewers approved fixed extension derivative, source/force signs, strict reference identity, projected impulse algebra, GPU LU/pivots and contraction equivalence. Reviewers ran no numerical jobs.",
+  "conclusions": [
+    "The first time-domain physical check failed despite valid discrete algebra. The2x2 box/grid controls separate substantial surface resolution error from domain/absorption bias; none qualifies the physical solver.",
+    "Doubling box at~1m spacing changes heave damping975->1652 versus Capytaine1760 while reactive-load errors remain. Halving spacing at256m gives heaveA19569 versus20309 androllA1487 versus1829, leaving~19%roll error.",
+    "Roll damping force is only~0.00127Nm at prescribed0.005rad/s, versus~5.745Nm reactive force. Report absolute fit residuals; negative/coefficient percentages alone are not instability or user-motion-accuracy evidence.",
+    "CompleteCPU/GPU60s histories agree to roundoff. Column GEMVs replaced narrow2-columnGEMMs in the ONLY runtime path; same-case93.31->39.05s observed(2.389x), all histories agree to roundoff. Old CPU/GEMM paths are in Git; independent controls remain in tests.",
+    "Do not attribute86.27s CPUcoarse versus34.36s GPUcoarse solely to GPU: pressure condensation also changed. Use matched whole-run controls, not products of component ratios.",
+    "All maps/factors stay fixed for these60s trajectories. No improvement to the full nonlinear moving baseline is claimed; that remains40.36wall seconds/simsecond without minute accuracy/open-water qualification."
+  ],
+  "next_falsifiers": [
+    "Same-state smooth-extension sensitivity at two phases separated by a quarter period (final60s alone is acceleration?0 and cannot rule out reactive sensitivity). Keep any alternative fill in verification only.",
+    "Body68->272 at unchanged256m/513grid against its OWN exact-panel Capytaine reference, before adding physical approximations or more global surface resolution.",
+    "Then one sponge-strength and half-timestep control on the best spatial case; none substitutes for full nonlinear moving graph/body validation."
+  ],
+  "nonlinear_limit": "Flat odd images only enforce zero plane trace atz=0; actual eta requires an actual graph/body BVP with two-way exterior matching. Feeding nonlinear HOS heights into this fixed flat-image coupling is invalid.",
+  "precursor_source_commits": [
+    "b0befda",
+    "0481851"
+  ],
+  "source_authority": "Each report owns its exact producer hashes and pre-run source archive; current Git source also includes subsequent metadata and unused-host-storage cleanup."
+}

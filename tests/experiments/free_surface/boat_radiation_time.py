@@ -94,12 +94,12 @@ class Radiation:
         self.fill_weights = np.linalg.solve(matrix, rhs)
         self.fill_boundary = np.array(boundary)
         potential, self.normal_map, self.wave = harmonic_maps(panels, size, self.spacing, origin)
-        self.single = assemble_dirichlet_halfspace(panels).single_layer
+        single = assemble_dirichlet_halfspace(panels).single_layer
         self.factor = lu_factor(source_matrix(panels))
         weighted_modes = panels.areas[:, None]*self.modes
-        adjoint = lu_solve(self.factor, self.single.T@weighted_modes, trans=1)
+        adjoint = lu_solve(self.factor, single.T@weighted_modes, trans=1)
         self.impulse_trace = WATER_DENSITY*(weighted_modes.T@potential-adjoint.T@self.normal_map)
-        self.impulse_velocity = WATER_DENSITY*weighted_modes.T@self.single@lu_solve(self.factor, self.modes)
+        self.impulse_drive = WATER_DENSITY*weighted_modes.T@single@lu_solve(self.factor, self.velocity)
         del potential
         surface = np.column_stack((xy[self.exterior], np.zeros(len(self.exterior))))
         self.flux_map = np.empty((len(surface), len(panels)))
@@ -116,7 +116,7 @@ class Radiation:
         self.cp, self.device_lu_solve = cp, device_lu_solve
         self.factor = (cp.array(self.factor[0], order='F'), cp.asarray(self.factor[1]))
         for name in ('fill_weights', 'normal_map', 'velocity',
-                     'impulse_trace', 'impulse_velocity', 'flux_map', 'wave', 'sponge', 'body_velocity'):
+                     'impulse_trace', 'impulse_drive', 'flux_map', 'wave', 'sponge', 'body_velocity'):
             setattr(self, name, cp.asarray(getattr(self, name)))
         self.device_exterior = cp.asarray(self.exterior)
         self.device_hidden = cp.asarray(self.hidden)
@@ -140,21 +140,26 @@ class Radiation:
         full[self.device_hidden] = self.fill_weights@full[self.device_fill_boundary]
         return full.reshape(self.size, self.size, -1)
 
+    def apply_columns(self, matrix, values):
+        # For these narrow maps on the target GPU, independent column GEMVs
+        # measured faster than a two-column GEMM; the equations are identical.
+        return self.cp.stack([matrix@values[:, col] for col in range(values.shape[1])], axis=1)
+
     def rhs(self, time, state, omega, ramp):
         cp = self.cp
         state = cp.asarray(state)
         eta, psi = state
         spectrum = cp.fft.fft2(self.extend(psi), axes=(0, 1)).reshape(self.size*self.size, 2)
         speed, acceleration = drive(time, omega, ramp)
-        density = self.device_lu_solve(self.factor, self.velocity*speed-(self.normal_map@spectrum).real)
+        density = self.device_lu_solve(self.factor, self.velocity*speed-self.apply_columns(self.normal_map, spectrum).real)
         flat_flux = cp.fft.ifft2((spectrum.reshape(self.size, self.size, 2)
                                   *self.wave[:, :, None]), axes=(0, 1)).real.reshape(-1, 2)[self.device_exterior]
-        flux = flat_flux+self.flux_map@density
+        flux = flat_flux+self.apply_columns(self.flux_map, density)
         eta_rate = flux-self.sponge[:, None]*eta
         psi_rate = -GRAVITY*eta-self.sponge[:, None]*psi
         rate_spectrum = cp.fft.fft2(self.extend(psi_rate), axes=(0, 1)).reshape(-1, 2)
-        force = -(self.impulse_trace@rate_spectrum).real-self.impulse_velocity@self.body_velocity*acceleration
-        impulse = (self.impulse_trace@spectrum).real+self.impulse_velocity@self.body_velocity*speed
+        force = -self.apply_columns(self.impulse_trace, rate_spectrum).real-self.impulse_drive*acceleration
+        impulse = self.apply_columns(self.impulse_trace, spectrum).real+self.impulse_drive*speed
         energy = .5*WATER_DENSITY*self.spacing**2*cp.sum(GRAVITY*eta*eta+psi*flux, axis=0)
         energy += .5*cp.sum(impulse*self.body_velocity*speed, axis=0)
         nominal_sponge_power = -WATER_DENSITY*self.spacing**2*cp.sum(
@@ -234,10 +239,13 @@ def run(inputs, output, size, length, refinement, duration, step, ramp, sponge_s
              nominal_sponge_power=sponge_power, peak_eta=peaks, final_state=state,
              exterior=system.exterior, hidden=system.hidden)
     fit_and_output_seconds = perf_counter()-before
+    from tests.benchmark_rankine import peak_rss_bytes
     return dict(complete=True, qualified=False,
         scope='LINEAR fixed-hull time-domain radiation; not nonlinear moving-boat throughput or open-water qualification',
         input_sha256=sha256(inputs.to_json().encode()).hexdigest(), panel_sha256=panel_hash,
         grid_size=size, box_length_m=length, exterior_nodes=len(system.exterior), hidden_nodes=len(system.hidden),
+        body_refinement=refinement, body_panel_count=len(system.panels),
+        operator_lifetime='All body and plane maps/factors fixed for the entire linear trajectory; no moving-geometry updates',
         extension='Fixed 2D harmonic Dirichlet fill; no hidden eta/psi states', integrator='fixed-step RK4',
         time_step_seconds=step, duration_seconds=duration, ramp_seconds=ramp, frequency_hz=.1,
         sponge_strength_per_second=sponge_strength, sponge_start_fraction_of_half_box=.6,
@@ -251,6 +259,10 @@ def run(inputs, output, size, length, refinement, duration, step, ramp, sponge_s
         output_transfer_seconds=output_transfer_seconds, fit_and_output_seconds=fit_and_output_seconds,
         timing_scope='Run total includes static setup, lazy CUDA import/context/transfers, first-use compilation/plans, synchronized evolution, output download, fits and NPZ; source archiving and final JSON are outside this total.',
         total_seconds=perf_counter()-started, rhs_evaluations=system.evaluations,
+        peak_process_rss_bytes=peak_rss_bytes(),
+        cupy_pool_used_bytes=cp.get_default_memory_pool().used_bytes(),
+        cupy_pool_reserved_bytes=cp.get_default_memory_pool().total_bytes(),
+        memory_scope='Process peak RSS; CUDA pool figures are retained/reserved at end, exclude other CUDA allocations, and are not peak/total VRAM.',
         minimum_boundary_energy_proxy=energies.min(axis=0).tolist(), fits=fits,
         limits=['Periodic lift plus nonperiodic radiation; domain and sponge controls outstanding',
                 'Sampled surface hole and raw body collocation require spatial refinement',
@@ -282,7 +294,8 @@ if __name__ == '__main__':
         parser.error('reference and physical inputs differ')
     archive = args.output.with_suffix('.source')
     archive.mkdir(parents=True, exist_ok=False)
-    sources = [*Path('src/topwater').glob('*.py'), Path('tests/laplace_reference.py'), Path(__file__),
+    sources = [*Path('src/topwater').glob('*.py'), Path('tests/laplace_reference.py'),
+               Path('tests/benchmark_rankine.py'), Path('tests/reference_hull.py'), Path(__file__),
                *[Path(__file__).with_name(name) for name in
                  ('boat_spatial_work.py', 'panel_gradient_reference.py', 'cuda_operator.py',
                   'cuda_energy.cu', 'cuda_pair.cuh')]]
