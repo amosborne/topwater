@@ -44,6 +44,9 @@ class GraphBody:
     def __init__(self, panels, eta, length, origin, reference_height, image_plane_height, order):
         started = perf_counter()
         self.panels, self.shape = panels, eta.shape
+        self.length = length
+        self.origin = np.array(origin, dtype=float, copy=True)
+        self.origin.setflags(write=False)
         self.reference_height, self.image_height = reference_height, image_plane_height
         shifted = TrianglePanels(panels.triangles-[0., 0., image_plane_height], -1)
         self.matrix = cp.asarray(source_matrix(shifted))
@@ -63,8 +66,9 @@ class GraphBody:
         size = self.shape[0]
         x, y = np.meshgrid(origin[0]+np.arange(size)*length/size,
                            origin[1]+np.arange(size)*length/size)
-        trace = elevated_potential(np.column_stack((x.ravel(), y.ravel(), eta.ravel())),
-                                    panels, image_plane_height)
+        self.surface_points = np.column_stack((x.ravel(), y.ravel(), eta.ravel()))
+        self.surface_points.setflags(write=False)
+        trace = elevated_potential(self.surface_points, panels, image_plane_height)
         self.trace = cp.asarray(trace)
         cp.cuda.get_current_stream().synchronize()
         self.source_trace_seconds = perf_counter()-before

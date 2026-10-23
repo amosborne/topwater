@@ -20,15 +20,18 @@ from topwater import InitialState, SimulationInputs
 from topwater.constants import GRAVITY, WATER_DENSITY
 from topwater.frames import rotation_matrix
 from topwater.hydrostatics import hydrostatics
-from topwater.rankine import TrianglePanels, single_layer_trace
+from topwater.rankine import TrianglePanels
 from tests.benchmark_rankine import peak_rss_bytes
 from .boat_graph_bvp import GraphBody
+from .boat_graph_fields import body_velocity, actual_graph_values, actual_field_values, source_velocity_bulk
+from .boat_transport_pressure import prescribed_pressure
 from .boat_graph_images import image_height
 from .boat_hos_continuation import tilted_geometry, tangent_graph
 from .boat_spatial_work import subdivide
 from .boat_parent_clip_proof import coplanar_groups
 from .cuda_graph import ExteriorTrace, body_maps, harmonic_velocity, cp
 from .panel_gradient_reference import checked_influence
+from .graph_geometry_reference import fourier_points
 
 
 def prescribed_pose(initial, time):
@@ -87,22 +90,6 @@ class BulkField:
             +np.einsum('tni,n->ti', self.gradient, density)
 
 
-def body_velocity(context, density, spectrum, length):
-    """Owned domain-side gradient at current collocation centroids, no offset."""
-    panels = context.panels
-    velocity = cp.asnumpy(harmonic_velocity(context.potential, spectrum,
-                                           context.graph.padded_shape[0], length))
-    for first in range(0, len(panels), 128):
-        last = min(first+128, len(panels))
-        real = single_layer_trace(panels, np.arange(first, last))
-        reflected = panels.centroids[first:last].copy()
-        reflected[:, 2] = 2*context.image_height-reflected[:, 2]
-        image = checked_influence(reflected, panels)
-        gradient = real.gradient_single_layer-image.gradient_single_layer*np.array([1., 1., -1.])
-        velocity[first:last] += np.einsum('tnj,n->tj', gradient, density)
-    return velocity
-
-
 def run(inputs, args, report):
     started = perf_counter()
     mesh = inputs.body.mesh
@@ -137,11 +124,31 @@ def run(inputs, args, report):
         if not np.array_equal(mask, inside):
             raise ValueError('physical exterior labels changed; state transfer is not implemented')
     extension = ExteriorTrace(inside.reshape(args.grid, args.grid))
+    trace_nodes = extension.exterior[np.argsort(np.linalg.norm(
+        grid_xy[extension.exterior]-cg[:2], axis=1))[:16]]
+    shifts = args.length/args.grid*np.array([[.5, 0.], [-.5, 0.], [0., .5], [0., -.5]])
+    off_xy = np.unique(np.concatenate([grid_xy[trace_nodes]+shift for shift in shifts]), axis=0)
+    off_height = fourier_points(eta, off_xy, args.length, origin)[0]
+    off_points = np.column_stack((off_xy, off_height))
+    valid = np.ones(len(off_points), dtype=bool)
+    for pose, *_ in snapshots.values():
+        hull = ConvexHull((inputs.body.mesh.vertices-inputs.body.cg)@rotation_matrix(pose.orientation).T
+                          +pose.position)
+        valid &= np.max(off_points@hull.equations[:, :3].T+hull.equations[:, 3], axis=1) > 64*np.finfo(float).eps*args.length
+    off_points = off_points[valid]
+    off_points = off_points[np.argsort(np.linalg.norm(off_points[:, :2]-cg[:2], axis=1))[:16]]
+    if not len(off_points):
+        raise ValueError('no safe physical-exterior half-cell trace probes across the stencil')
     image = max(image_height(p.triangles, eta, [args.length]*2, origin)[0]
                 for _, p, *_ in snapshots.values())
     true_image_bound = max(float(np.max(p.triangles[..., 2]+level
         +(p.triangles[..., :2]-cg[:2])@slope))/2 for _, p, *_ in snapshots.values())
     image = max(image, float(np.nextafter(true_image_bound, np.inf)))
+    minimum_image = image
+    if args.image_height is not None:
+        if not np.isfinite(args.image_height) or args.image_height < minimum_image:
+            raise ValueError('fixed image height must satisfy every stencil image/graph bound')
+        image = args.image_height
     height = max(float(p.triangles[..., 2].max()) for _, p, *_ in snapshots.values())
     depth = level+(center_panels.centroids[:, :2]-cg[:2])@slope-center_panels.centroids[:, 2]
     beam = float(np.ptp(inputs.body.mesh.vertices[:, 1]))
@@ -162,6 +169,7 @@ def run(inputs, args, report):
         body_panels=len(center_panels), grid_size=args.grid, box_length_m=args.length,
         hos_order=args.order, body_refinement=args.body_refinement,
         image_height_m=image, reference_height_m=height, probe_count=len(probes),
+        minimum_sufficient_image_height_m=minimum_image,
         minimum_image_gap_above_true_plane_m=min(float(np.min(2*image-p.triangles[..., 2]
             -level-(p.triangles[..., :2]-cg[:2])@slope)) for _, p, *_ in snapshots.values()),
         exterior_nodes=len(extension.exterior), hidden_nodes=len(extension.hidden),
@@ -202,6 +210,7 @@ def run(inputs, args, report):
             raise ValueError('bulk or body-centroid target crossed represented Fourier graph')
         fixed_field = BulkField(context, probes, args.length, origin)
         fixed = fixed_field.value(density, spectrum)
+        actual_trace, maximum_trace_exponent = actual_graph_values(context, density, spectrum, trace_nodes)
         if time == 0:
             center, center_solution = context, (density, spectrum)
             center_field = fixed_field
@@ -221,9 +230,19 @@ def run(inputs, args, report):
                 operator_on_center=context.apply(center_solution[0]))
             del moving_field
         records[time] = record
+        record['actual_graph_values'] = actual_trace
+        record['desired_graph_values'] = cp.asnumpy(trace[trace_nodes])
+        record['actual_trace_defect'] = actual_trace-record['desired_graph_values']
+        off_actual, _ = actual_field_values(context, density, spectrum, off_points)
+        off_desired = fourier_points(cp.asnumpy(trace).reshape(context.shape), off_points[:, :2],
+                                    args.length, origin)[0]
+        record['off_actual'] = off_actual
+        record['off_desired'] = off_desired
+        record['off_defect'] = off_actual-off_desired
         report['snapshots'].append(dict(time_seconds=time, **diagnostics,
             context_seconds=context.setup_seconds,
             minimum_target_depth_below_represented_graph_m=represented_depth,
+            maximum_actual_trace_raw_exponent=maximum_trace_exponent,
             panel_sha256=sha256(panels.triangles.tobytes()).hexdigest()))
         print(json.dumps(report['snapshots'][-1]), flush=True)
         if time != 0:
@@ -248,8 +267,38 @@ def run(inputs, args, report):
         limit_rows.append(dict(offset_fraction=fraction, velocity_max_error_m_per_s=float(error.max())))
         del field
     report['surface_trace']['one_sided_bulk_limit'] = limit_rows
+    chi_exterior = .1*wave_frequency*np.sin(grid_xy[extension.exterior]@k)
+    direct_pressure = prescribed_pressure(center, *center_solution, initial,
+        np.r_[.3*initial.linear_velocity, .3*omega], extension, chi_exterior)
+    report['current_domain_pressure'] = dict(**direct_pressure['diagnostics'],
+        body_pressure_pa=direct_pressure['pressure'].tolist(),
+        pressure_functionals=direct_pressure['pressure_functionals'].tolist())
+    transport_solution = direct_pressure['transport_solution']
+    actual_transport, _ = actual_graph_values(center, transport_solution.density, transport_solution.spectrum, trace_nodes)
+    actual_chi = actual_transport-direct_pressure['known_source_transport'][trace_nodes]
+    desired_chi = .1*wave_frequency*np.sin(grid_xy[trace_nodes]@k)
+    acceleration_trace_defect = actual_chi-desired_chi
+    report['actual_graph_trace'] = dict(node_indices=trace_nodes.tolist(),
+        positions_world_m=center.surface_points[trace_nodes].tolist(),
+        current_flow_trace_defect=records[0.]['actual_trace_defect'].tolist(),
+        current_acceleration_trace_defect=acceleration_trace_defect.tolist(),
+        scope='Actual finite harmonic sum plus analytic layer trace at fixed exterior grid nodes; no formal Taylor surface evaluation')
+    off_transport, _ = actual_field_values(center, transport_solution.density, transport_solution.spectrum, off_points)
+    off_source_velocity = source_velocity_bulk(center, center_solution[0], off_points)
+    off_rigid = initial.linear_velocity+np.cross(omega, off_points-cg)
+    off_chi = off_transport-np.sum(off_rigid*off_source_velocity, axis=1)
+    off_desired_chi = fourier_points(cp.asnumpy(extension.extend(chi_exterior)).reshape(center.shape),
+                                    off_points[:, :2], args.length, origin)[0]
+    off_acceleration_defect = off_chi-off_desired_chi
+    report['off_grid_graph_trace'] = dict(positions_world_m=off_points.tolist(),
+        current_flow_defect=records[0.]['off_defect'].tolist(),
+        current_acceleration_defect=off_acceleration_defect.tolist(),
+        prescribed_data_interpolation_error=(records[0.]['off_desired']-.1*np.cos(off_points[:, :2]@k)).tolist(),
+        scope='Half-cell probes strictly outside the full hull throughout the stencil; desired state is its owned full-trace Fourier interpolant')
     for step in [args.step, args.step/2, args.step/4]:
         plus, minus = records[step], records[-step]
+        defect_rate = (plus['actual_trace_defect']-minus['actual_trace_defect'])/(2*step)
+        graph_fd_chi = (plus['actual_graph_values']-minus['actual_graph_values'])/(2*step)
         bdot = (plus['right']-minus['right'])/(2*step)
         adot_sigma = (plus['operator_on_center']-minus['operator_on_center'])/(2*step)
         density_dot, diagnostics = center.solve_density(bdot-adot_sigma)
@@ -294,6 +343,16 @@ def run(inputs, args, report):
                 incomplete_body_response-body_response))),
             bulk_to_surface_dynamic_pressure_max_error_pa=np.max(abs(dynamic_pressure_difference), axis=1).tolist(),
             body_pressure_force_and_moment=(weighted.T@body_pressure).tolist(),
+            current_domain_minus_fd_pressure_max_pa=float(np.max(abs(direct_pressure['pressure']-body_pressure))),
+            current_domain_minus_fd_pressure_functionals=(direct_pressure['pressure_functionals']
+                -weighted.T@body_pressure).tolist(),
+            actual_graph_trace_diagnostics=dict(flow_defect_rate=defect_rate.tolist(),
+                acceleration_defect=acceleration_trace_defect.tolist(),
+                fd_minus_current_acceleration=(graph_fd_chi-actual_chi).tolist()),
+            off_grid_trace_diagnostics=dict(
+                flow_defect_rate=((plus['off_defect']-minus['off_defect'])/(2*step)).tolist(),
+                acceleration_defect=off_acceleration_defect.tolist(),
+                fd_minus_current_acceleration=((plus['off_actual']-minus['off_actual'])/(2*step)-off_chi).tolist()),
             implicit_minus_resolved_body_load=(weighted.T@(body_pressure-resolved_body_pressure)).tolist(),
             body_pressure_pa=body_pressure.tolist(),
             bulk_pressure_pa=bernoulli.tolist(), fixed_phi_t_m2_per_s2=implicit_fixed.tolist())
@@ -312,6 +371,8 @@ if __name__ == '__main__':
     parser.add_argument('--order', type=int, choices=range(2, 9), default=4)
     parser.add_argument('--body-refinement', type=int, choices=[1, 2], default=1)
     parser.add_argument('--step', type=float, default=.04)
+    parser.add_argument('--image-height', type=float,
+                        help='hold a valid image height across spatial-resolution controls')
     args = parser.parse_args()
     if (args.output.exists() or args.output.with_suffix('.source').exists()
             or args.grid < 17 or args.grid % 2 != 1 or not np.isfinite(args.length) or args.length <= 0
@@ -335,6 +396,7 @@ if __name__ == '__main__':
             'Prescribed small-pose stencil, fixed forced graph/Dirichlet data; not free-surface evolution or sixDOF advancement',
             'Centroid surface-pressure integration and bulk probes; no spatial/load-convergence or physical hull-force qualification',
             'Implicit derivative and offset solves share the elliptic discretization; this is consistency, not PDE accuracy',
+            'Current-domain transport pressure is PDE-consistent, not an exact derivative of the finite source/HOS span; spatial controls are required',
             'Exterior labels and clipping recipes must persist; newly exposed state transfer is not implemented',
             'Image/expansion heights are fixed across the entire stencil; no representation-switch derivative',
             'Aperiodic source/periodic HOS discrepancy and earlier finite-frequency radiation defect remain open'])

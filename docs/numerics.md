@@ -30,6 +30,11 @@ indices, dimensions or loading assumptions. Keep example construction and sea
 selection in fixtures. This requires no hull-specific solver branches or
 extensibility framework.
 
+The reference boat's mass distribution, dimensions and tessellation are fixture
+choices, not additional supported-hull requirements. Geometry-dependent caches
+and numerical setup must follow the supplied hull and current configuration;
+their validity cannot depend on matching the reference mesh.
+
 Before promoting an optimization, verify the same path with a geometrically
 different supported convex hull and with an equivalent retriangulation or
 vertex/face renumbering. Compare geometry and physical results to the appropriate
