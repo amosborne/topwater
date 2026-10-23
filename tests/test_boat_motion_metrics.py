@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 from numpy.testing import assert_allclose
 from scipy.spatial.transform import Rotation
-from scipy.integrate import RK23
+from scipy.integrate import RK23, RK45
 
 from .experiments.free_surface.boat_motion_metrics import attitude_degrees, body_poses, motion_errors
 
@@ -24,24 +24,29 @@ def test_heading_wrap_does_not_change_small_attitude_error():
     assert_allclose((b-a+180)%360-180, [0., 0., .04], atol=2e-14)
 
 
-def test_saved_kinematics_recover_actual_rk23_body_dense_output():
+@pytest.mark.parametrize('method', [RK23, RK45])
+def test_saved_dense_coefficients_and_legacy_rk23_recover_body_output(method):
     def rhs(t, y):
         q, omega = y[3:7], y[10:13]
         qdot = .5*np.r_[-omega@q[1:], q[0]*omega+np.cross(omega, q[1:])]
         return np.r_[y[7:10], qdot, [np.cos(t), -.3, .1*t], [.4, .2*t, -.3]]
     initial = np.r_[[.1, -.2, .3], [1., 0., 0., 0.], [.2, .3, -.1], [.1, -.2, .4]]
-    solver = RK23(rhs, 0., initial, .2, first_step=.02, max_step=.04, rtol=1e-4, atol=1e-7)
-    times, states, samples, expected = [0.], [initial.copy()], [], []
+    solver = method(rhs, 0., initial, .2, first_step=.02, max_step=.04, rtol=1e-4, atol=1e-7)
+    times, states, coefficients, samples, expected = [0.], [initial.copy()], [], [], []
     while solver.status == 'running':
         solver.step()
         interior = np.linspace(solver.t_old, solver.t, 5)
         samples.extend(interior)
-        expected.extend(solver.dense_output()(interior)[:7].T)
+        dense = solver.dense_output()
+        expected.extend(dense(interior)[:7].T)
+        coefficients.append(dense.Q.copy())
         times.append(solver.t); states.append(solver.y.copy())
-    assert_allclose(body_poses(times, states, samples), expected, rtol=0, atol=3e-16)
-    assert_allclose(body_poses(times, states, times), np.array(states)[:, :7], rtol=0, atol=3e-16)
+    assert_allclose(body_poses(times, states, samples, dense_q=coefficients), expected, rtol=0, atol=3e-16)
+    if method == RK23:
+        assert_allclose(body_poses(times, states, samples), expected, rtol=0, atol=3e-16)
+        assert_allclose(body_poses(times, states, times), np.array(states)[:, :7], rtol=0, atol=3e-16)
     with pytest.raises(ValueError, match='contained'):
-        body_poses(times, states, [-1e-9])
+        body_poses(times, states, [-1e-9], dense_q=coefficients)
 
 
 def test_motion_error_uses_one_declared_heading_frame():

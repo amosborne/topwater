@@ -912,6 +912,29 @@ are in `boat-action-tangent.json`. Next investigate filtered cold construction
 and fewer RHS calls; action-side affine consistency, spatial/motion convergence
 and Capytaine correlation remain required before physical adoption.
 
+## Time-integration sensitivity
+
+Higher order alone does not earn a faster baseline. On the identical one-second
+q3/body1 action case, loose RK45 completes in 83.8 s with 61 RHS evaluations,
+eight accepted steps and two rejected attempts. The RK23 control takes 107.7 s,
+79 RHS evaluations, 16 accepted steps and ten rejected attempts. Both use the
+same componentwise absolute tolerances, rtol=0.001 and 0.2 s step ceiling.
+Despite the lower cost, loose RK45 differs from RK23 by up to 0.346 degree roll
+and 0.445 degree yaw, so it fails the requested 0.1 degree comparison.
+
+Tenfold tighter RK45 tolerances complete in 185.1 s with 163 RHS evaluations,
+18 accepted steps and nine rejected attempts. This run differs from loose
+RK45 by 0.312 degree roll and 0.413 degree yaw, but from RK23 by at most
+[0.0347, 0.0364, 0.0324] degree in roll/pitch/yaw and 4.9 mm per translation.
+Keep RK23 as the experimental baseline. This is supporting temporal evidence
+on one short coarse case, not a certified error bound or physical convergence.
+
+New runs save the actual SciPy accepted-step dense polynomial coefficients;
+RK45 is not reconstructed using the legacy RK23 Hermite cubic. Comparisons
+reject missing non-RK23 coefficients and require explicit notes for changed
+driver code or integration controls. `boat-time-integration.json` retains all
+three run summaries, ownership and comparisons. No integrator speedup is adopted.
+
 ## Primary context
 
 Variational free-surface discretization with moving boundaries is established;

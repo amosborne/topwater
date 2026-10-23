@@ -1797,3 +1797,11 @@ one owned replay before constructing either the primal operator or tangent.
 nonlinear h/h2 controls. `docs/research/boat-action-tangent.json` retains timing,
 failed guards and the complete one-second 107.7 s pilot. Neither accuracy nor
 the 20x runtime ceiling has been earned.
+
+`boat_moving --integrator RK45 --tolerance-scale .1` is a temporal control,
+not the baseline. The same one-second loose RK45 run is faster but differs by
+more than 0.1 degree; tighter RK45 agrees with the RK23 control within 0.037
+degree and costs more. RK23 remains default. New accepted states include their
+actual dense-output coefficients; `boat_motion_compare` uses them and requires
+an explicit `--integration-change-note` when ODE controls differ. Evidence:
+`docs/research/boat-time-integration.json`.

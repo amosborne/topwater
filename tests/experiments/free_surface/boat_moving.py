@@ -11,7 +11,7 @@ from time import perf_counter
 
 import numpy as np
 import scipy
-from scipy.integrate import RK23
+from scipy.integrate import RK23, RK45
 from scipy.spatial.transform import Rotation
 
 from topwater import InitialState, sea_states
@@ -35,7 +35,7 @@ from .p4_fluid_ordering import fresh
 
 def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_step=.01,
         quadrature_order=3, operator_reuse=None, charted_pressure=False, common_pressure_chart=False,
-        action_coupling=False, initial_xy=None, action_tangent=None):
+        action_coupling=False, initial_xy=None, action_tangent=None, integrator='RK23', tolerance_scale=1.):
     from .cuda_operator import prepare_energy, cp
     if action_tangent is None:
         action_tangent = action_coupling
@@ -54,6 +54,10 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
         raise ValueError('initial_xy must contain two finite world coordinates')
     if action_tangent and not action_coupling:
         raise ValueError('analytic action tangent requires action coupling')
+    if integrator not in ('RK23', 'RK45'):
+        raise ValueError('integrator must be RK23 or RK45')
+    if not np.isfinite(tolerance_scale) or tolerance_scale <= 0:
+        raise ValueError('positive finite tolerance scale required')
     output = fresh(output)
     output.parent.mkdir(parents=True, exist_ok=True)
     report = dict(complete=False, qualified=False,
@@ -72,13 +76,15 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
             limits=(LIMITS if operator_reuse == 'one-direction' else PAST_LIMITS) if operator_reuse else None,
             scope='Past-only local model; atomic whole-RHS fallback. Geometry limits are heuristics, not force-error bounds. Stage history can affect refresh decisions.'),
         controls=dict(max_rhs=max_rhs, soft_elapsed_budget_seconds=budget_seconds,
+            integrator=integrator, dense_output='Saved SciPy accepted-step RkDenseOutput coefficients',
             action_coupling=action_coupling,
             action_tangent=action_tangent,
             initial_horizontal_position_m=None if initial_xy is None else list(initial_xy),
             common_pressure_chart=common_pressure_chart,
             pressure_derivative=('charted nodal with explicit material fallback on chart failure'
                                  if charted_pressure else 'material quadrature'),
-            derivative_step_seconds=.001, rtol=.001, first_step_seconds=min(max_step, duration),
+            derivative_step_seconds=.001, rtol=.001*tolerance_scale, tolerance_scale=tolerance_scale,
+            first_step_seconds=min(max_step, duration),
             minimum_chart_derivative_step_seconds=.001/64,
             max_step_seconds=max_step, topology_templates_retained=4),
         source_sha256={name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
@@ -99,7 +105,7 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
             for name in ('boat_chart_tangent.py', 'boat_action_tangent.py')})
         report['controls']['action_difference_policy'] = 'Analytic current shape derivatives; h/h2 time-offset fields, use h/2 without a claimed error bound.'
     started = perf_counter()
-    times, states, solver = [], [], None
+    times, states, dense_q, solver = [], [], [], None
     templates, cold_count, operator_model = [], 0, None
     previous_stencil = None
     saved = {}
@@ -424,16 +430,17 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
         # Exploratory physical-unit integration controls, not acceptance limits.
         # They must be refined before interpreting a trajectory quantitatively.
         atol = np.r_[np.full(3, .001), np.full(4, .0001), np.full(3, .001),
-            np.full(3, .0001), np.full(size, .001), np.full(size, .01)]
+            np.full(3, .0001), np.full(size, .001), np.full(size, .01)]*tolerance_scale
         report['controls']['absolute_tolerance_by_component'] = atol.tolist()
-        solver = RK23(rhs, 0., initial, duration, first_step=min(max_step, duration),
-            max_step=max_step, rtol=.001, atol=atol)
+        solver = (RK23 if integrator == 'RK23' else RK45)(rhs, 0., initial, duration, first_step=min(max_step, duration),
+            max_step=max_step, rtol=.001*tolerance_scale, atol=atol)
         while solver.status == 'running':
             message = solver.step()
             if solver.status == 'failed':
                 raise RuntimeError(message)
             times.append(float(solver.t)); states.append(solver.y.copy())
-            saved.update(accepted_times=np.array(times), accepted_states=np.array(states))
+            dense_q.append(solver.dense_output().Q.copy())
+            saved.update(accepted_times=np.array(times), accepted_states=np.array(states), accepted_dense_q=np.array(dense_q))
             np.savez(output.with_suffix('.npz'), **saved)
         if not np.array_equal(saved['last_rhs_state'], solver.y):
             raise RuntimeError('accepted endpoint lacks matching FSAL diagnostics')
@@ -442,7 +449,7 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
         report['failure'] = dict(type=type(error).__name__, message=str(error))
         raise
     finally:
-        saved.update(accepted_times=np.array(times), accepted_states=np.array(states))
+        saved.update(accepted_times=np.array(times), accepted_states=np.array(states), accepted_dense_q=np.array(dense_q))
         report.update(seconds=perf_counter()-started,
             accepted_simulated_seconds=float(times[-1]) if times else 0., accepted_steps=max(0, len(times)-1),
             cold_geometry_count=cold_count, process_peak_rss_bytes=peak_rss_bytes(),
@@ -453,6 +460,10 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
             fresh_assemblies=sum(f['mode'] == 'fresh' for r in report['rhs'] for f in r['fields']),
             predicted_fields=sum(f['mode'] == 'predicted' for r in report['rhs'] for f in r['fields']),
             failed_reuse_attempts=sum('reuse_rejection' in r for r in report['rhs']))
+        if solver is not None and report['complete']:
+            attempts = (solver.nfev-1)//solver.n_stages
+            report['integration_stats'] = dict(rhs_calls=solver.nfev, attempted_steps=attempts,
+                rejected_steps=attempts-max(0, len(times)-1), stages_per_attempt=solver.n_stages)
         if states:
             angles = np.array([attitude_degrees(state[3:7]) for state in states])
             rolls = angles[:, 0]
@@ -480,6 +491,8 @@ if __name__ == '__main__':
     parser.add_argument('--action-coupling', action='store_true')
     parser.add_argument('--initial-xy', nargs=2, type=float)
     parser.add_argument('--action-tangent', action=argparse.BooleanOptionalAction, default=None)
+    parser.add_argument('--integrator', choices=('RK23', 'RK45'), default='RK23')
+    parser.add_argument('--tolerance-scale', type=float, default=1.)
     result = run(**vars(parser.parse_args()))
     print(json.dumps({key: result[key] for key in
         ('complete', 'seconds', 'accepted_simulated_seconds', 'accepted_steps', 'cold_geometry_count')}))

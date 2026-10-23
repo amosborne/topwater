@@ -1,0 +1,891 @@
+{
+  "qualified": false,
+  "scope": "One-second canonical nonlinear tank temporal sensitivity and cost. No physical, spatial, long-time or open-ocean qualification.",
+  "decision": "Keep RK23 default. Loose RK45 was faster but disagreed beyond0.1degree; tighter RK45 agreed with RK23 within0.037degree but cost more. No integrator speedup adopted.",
+  "reports": {
+    "boat-action-tangent-stable-generic-q3-body1-1s": {
+      "path": "artifacts\\boat-action-tangent-stable-generic-q3-body1-1s.json",
+      "sha256": "3eb9ea138dd5d73bccaafe293848f6c87e2ccb1e148de9abfcaadfffc2816494",
+      "arrays_sha256": "041c38ba925c553aaea90a0d27ec22b2051b9da4b0def05269f30afe804745f6",
+      "source_sha256": {
+        "boat_moving.py": "076edcc5ddac3ecf592cded613efc7076b9e5f3fa70c420c163aa63c199ba31a",
+        "boat_geometry_template.py": "4bd82128a54120432af7e258bfeb14bb5db31ab599c10eb0463fc164988b6172",
+        "boat_world_boundary.py": "e5b69c97f3087d15c4543c0d7041559fd7fbe67e2fa8422855ea27612bc52a98",
+        "boat_parent_clip_proof.py": "1cca90c54c909b92a7b2671a17f2734122bfd489b70d0c1b21915448626dc7e4",
+        "boat_world_field.py": "dba2612dd64de85ca27e390f4c0fa2c04bda2bc466ecfd7487503cb346ce67f3",
+        "body_pressure.py": "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+        "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+        "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+        "cuda_operator.py": "22348f0038fee5a96f66b27abb135c3d3fd2252114d52c67e63f6fd81bb289b7",
+        "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+        "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20",
+        "boat_operator_reuse.py": "72dad4861675c4fb8b270acf24af5ba686b2c903ef2716bb0ccba97f5cde5f95",
+        "boat_past_operator.py": "9a753e81141ea6b43af1146f21cc8023aad8fae92b30ddfa9f8ac822f3c48f5f",
+        "boat_ale_pressure.py": "76ceab24ef23c2a7d20359b15e15394d75df924f20b49eb61b0326da6c31c857",
+        "boat_motion_metrics.py": "b6510e87b867b467250719c49eca9eabc512173f0c37c09efb92e36513a8cc83",
+        "boat_action_stencil.py": "582ef80fc8e222807f0e77f91d95baae8096ab3178235ad3af32e95275de4cb5",
+        "boat_body_action.py": "adba82f9f139bc13156b0c353a0d8f7b5a9449628ea8271feb2c761951c2616e",
+        "boat_parent_action.py": "652cef1314f02afc13461944e17001da19e4ff56d105e4d8b6c9293e0ed79499",
+        "cuda_shape_gradient.py": "6cfa9fb82e8921d15d32ff8b9dc1aea2d36b6704a64fe38370844cc0f8e0ca49",
+        "cuda_shape.cu": "d1dbcba8727b75492bd509f3be6e1de6d3b4e47a28a1f713bbaefe03ac02d926",
+        "cuda_dual.cuh": "a251a46a1d695a15c9bb6e07ceac87241dcee589e85017ca8dbf8e9113dac97d",
+        "cuda_wide_dual.cuh": "8319bb59c910b3ac9b373021204575c76be9a50c3e1376ff7b68bc6c5a49ea5a",
+        "boat_chart_tangent.py": "bb1499beac7e34c29cfdda1ad5e284b6f41179d6a8916d9713948b39737d006f",
+        "boat_action_tangent.py": "9740cb271bb095ff57b5d5df5fed73b984b878360bc45a1147e0084d60ee66cd"
+      },
+      "controls": {
+        "max_rhs": 160,
+        "soft_elapsed_budget_seconds": 180.0,
+        "action_coupling": true,
+        "action_tangent": true,
+        "initial_horizontal_position_m": [
+          0.123,
+          0.087
+        ],
+        "common_pressure_chart": false,
+        "pressure_derivative": "diagnostic only, matched action offsets",
+        "derivative_step_seconds": 5e-06,
+        "rtol": 0.001,
+        "first_step_seconds": 0.2,
+        "minimum_chart_derivative_step_seconds": 1.220703125e-09,
+        "max_step_seconds": 0.2,
+        "topology_templates_retained": 4,
+        "action_difference_policy": "Analytic current shape derivatives; h/h2 time-offset fields, use h/2 without a claimed error bound.",
+        "absolute_tolerance_by_component": [
+          0.001,
+          0.001,
+          0.001,
+          0.0001,
+          0.0001,
+          0.0001,
+          0.0001,
+          0.001,
+          0.001,
+          0.001,
+          0.0001,
+          0.0001,
+          0.0001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01
+        ]
+      },
+      "complete": true,
+      "seconds": 107.6748751999985,
+      "accepted_simulated_seconds": 1.0,
+      "accepted_steps": 16,
+      "rhs_calls": 79,
+      "cold_geometry_count": 31,
+      "integration_stats": null
+    },
+    "boat-action-rk45-generic-q3-body1-1s": {
+      "path": "artifacts\\boat-action-rk45-generic-q3-body1-1s.json",
+      "sha256": "6bab04e58b1ab2ec69b3fab7681943fd74b559ff05d42640615bfe15f44d7dbd",
+      "arrays_sha256": "14c5389d3ea8629b9939247f9898e40c9ccc4678411b682f1a66d39a0080b0a1",
+      "source_sha256": {
+        "boat_moving.py": "31669b8898ed3cc71803157f676b3c20cbf2ce522af320af25ffafc58b6e2d63",
+        "boat_geometry_template.py": "4bd82128a54120432af7e258bfeb14bb5db31ab599c10eb0463fc164988b6172",
+        "boat_world_boundary.py": "e5b69c97f3087d15c4543c0d7041559fd7fbe67e2fa8422855ea27612bc52a98",
+        "boat_parent_clip_proof.py": "1cca90c54c909b92a7b2671a17f2734122bfd489b70d0c1b21915448626dc7e4",
+        "boat_world_field.py": "dba2612dd64de85ca27e390f4c0fa2c04bda2bc466ecfd7487503cb346ce67f3",
+        "body_pressure.py": "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+        "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+        "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+        "cuda_operator.py": "22348f0038fee5a96f66b27abb135c3d3fd2252114d52c67e63f6fd81bb289b7",
+        "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+        "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20",
+        "boat_operator_reuse.py": "72dad4861675c4fb8b270acf24af5ba686b2c903ef2716bb0ccba97f5cde5f95",
+        "boat_past_operator.py": "9a753e81141ea6b43af1146f21cc8023aad8fae92b30ddfa9f8ac822f3c48f5f",
+        "boat_ale_pressure.py": "76ceab24ef23c2a7d20359b15e15394d75df924f20b49eb61b0326da6c31c857",
+        "boat_motion_metrics.py": "fc4edb2b1726de032e340bc5838128308913239a8b43942963351806f0543a18",
+        "boat_action_stencil.py": "582ef80fc8e222807f0e77f91d95baae8096ab3178235ad3af32e95275de4cb5",
+        "boat_body_action.py": "adba82f9f139bc13156b0c353a0d8f7b5a9449628ea8271feb2c761951c2616e",
+        "boat_parent_action.py": "652cef1314f02afc13461944e17001da19e4ff56d105e4d8b6c9293e0ed79499",
+        "cuda_shape_gradient.py": "6cfa9fb82e8921d15d32ff8b9dc1aea2d36b6704a64fe38370844cc0f8e0ca49",
+        "cuda_shape.cu": "d1dbcba8727b75492bd509f3be6e1de6d3b4e47a28a1f713bbaefe03ac02d926",
+        "cuda_dual.cuh": "a251a46a1d695a15c9bb6e07ceac87241dcee589e85017ca8dbf8e9113dac97d",
+        "cuda_wide_dual.cuh": "8319bb59c910b3ac9b373021204575c76be9a50c3e1376ff7b68bc6c5a49ea5a",
+        "boat_chart_tangent.py": "bb1499beac7e34c29cfdda1ad5e284b6f41179d6a8916d9713948b39737d006f",
+        "boat_action_tangent.py": "9740cb271bb095ff57b5d5df5fed73b984b878360bc45a1147e0084d60ee66cd"
+      },
+      "controls": {
+        "max_rhs": 160,
+        "soft_elapsed_budget_seconds": 180.0,
+        "integrator": "RK45",
+        "dense_output": "Saved SciPy accepted-step RkDenseOutput coefficients",
+        "action_coupling": true,
+        "action_tangent": true,
+        "initial_horizontal_position_m": [
+          0.123,
+          0.087
+        ],
+        "common_pressure_chart": false,
+        "pressure_derivative": "diagnostic only, matched action offsets",
+        "derivative_step_seconds": 5e-06,
+        "rtol": 0.001,
+        "first_step_seconds": 0.2,
+        "minimum_chart_derivative_step_seconds": 1.220703125e-09,
+        "max_step_seconds": 0.2,
+        "topology_templates_retained": 4,
+        "action_difference_policy": "Analytic current shape derivatives; h/h2 time-offset fields, use h/2 without a claimed error bound.",
+        "absolute_tolerance_by_component": [
+          0.001,
+          0.001,
+          0.001,
+          0.0001,
+          0.0001,
+          0.0001,
+          0.0001,
+          0.001,
+          0.001,
+          0.001,
+          0.0001,
+          0.0001,
+          0.0001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01
+        ]
+      },
+      "complete": true,
+      "seconds": 83.78025640000124,
+      "accepted_simulated_seconds": 1.0,
+      "accepted_steps": 8,
+      "rhs_calls": 61,
+      "cold_geometry_count": 31,
+      "integration_stats": {
+        "rhs_calls": 61,
+        "attempted_steps": 10,
+        "rejected_steps": 2,
+        "stages_per_attempt": 6
+      }
+    },
+    "boat-action-rk45-tight-generic-q3-body1-1s": {
+      "path": "artifacts\\boat-action-rk45-tight-generic-q3-body1-1s.json",
+      "sha256": "a0b5de4de00639eb62704445330b6b19110524e7946cbe075792a3bb8f18aba7",
+      "arrays_sha256": "11b80f979dc51ece178c22bc3f226a37b5345b8a9c5d38c832666f0ec94199e6",
+      "source_sha256": {
+        "boat_moving.py": "a5893fc25971f5351e89ce5a8b204f0078a6fd99489acdc7ad871f534b8b550a",
+        "boat_geometry_template.py": "4bd82128a54120432af7e258bfeb14bb5db31ab599c10eb0463fc164988b6172",
+        "boat_world_boundary.py": "e5b69c97f3087d15c4543c0d7041559fd7fbe67e2fa8422855ea27612bc52a98",
+        "boat_parent_clip_proof.py": "1cca90c54c909b92a7b2671a17f2734122bfd489b70d0c1b21915448626dc7e4",
+        "boat_world_field.py": "dba2612dd64de85ca27e390f4c0fa2c04bda2bc466ecfd7487503cb346ce67f3",
+        "body_pressure.py": "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+        "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+        "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+        "cuda_operator.py": "22348f0038fee5a96f66b27abb135c3d3fd2252114d52c67e63f6fd81bb289b7",
+        "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+        "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20",
+        "boat_operator_reuse.py": "72dad4861675c4fb8b270acf24af5ba686b2c903ef2716bb0ccba97f5cde5f95",
+        "boat_past_operator.py": "9a753e81141ea6b43af1146f21cc8023aad8fae92b30ddfa9f8ac822f3c48f5f",
+        "boat_ale_pressure.py": "76ceab24ef23c2a7d20359b15e15394d75df924f20b49eb61b0326da6c31c857",
+        "boat_motion_metrics.py": "fc4edb2b1726de032e340bc5838128308913239a8b43942963351806f0543a18",
+        "boat_action_stencil.py": "582ef80fc8e222807f0e77f91d95baae8096ab3178235ad3af32e95275de4cb5",
+        "boat_body_action.py": "adba82f9f139bc13156b0c353a0d8f7b5a9449628ea8271feb2c761951c2616e",
+        "boat_parent_action.py": "652cef1314f02afc13461944e17001da19e4ff56d105e4d8b6c9293e0ed79499",
+        "cuda_shape_gradient.py": "6cfa9fb82e8921d15d32ff8b9dc1aea2d36b6704a64fe38370844cc0f8e0ca49",
+        "cuda_shape.cu": "d1dbcba8727b75492bd509f3be6e1de6d3b4e47a28a1f713bbaefe03ac02d926",
+        "cuda_dual.cuh": "a251a46a1d695a15c9bb6e07ceac87241dcee589e85017ca8dbf8e9113dac97d",
+        "cuda_wide_dual.cuh": "8319bb59c910b3ac9b373021204575c76be9a50c3e1376ff7b68bc6c5a49ea5a",
+        "boat_chart_tangent.py": "bb1499beac7e34c29cfdda1ad5e284b6f41179d6a8916d9713948b39737d006f",
+        "boat_action_tangent.py": "9740cb271bb095ff57b5d5df5fed73b984b878360bc45a1147e0084d60ee66cd"
+      },
+      "controls": {
+        "max_rhs": 250,
+        "soft_elapsed_budget_seconds": 240.0,
+        "integrator": "RK45",
+        "dense_output": "Saved SciPy accepted-step RkDenseOutput coefficients",
+        "action_coupling": true,
+        "action_tangent": true,
+        "initial_horizontal_position_m": [
+          0.123,
+          0.087
+        ],
+        "common_pressure_chart": false,
+        "pressure_derivative": "diagnostic only, matched action offsets",
+        "derivative_step_seconds": 5e-06,
+        "rtol": 0.0001,
+        "tolerance_scale": 0.1,
+        "first_step_seconds": 0.2,
+        "minimum_chart_derivative_step_seconds": 1.220703125e-09,
+        "max_step_seconds": 0.2,
+        "topology_templates_retained": 4,
+        "action_difference_policy": "Analytic current shape derivatives; h/h2 time-offset fields, use h/2 without a claimed error bound.",
+        "absolute_tolerance_by_component": [
+          0.0001,
+          0.0001,
+          0.0001,
+          1e-05,
+          1e-05,
+          1e-05,
+          1e-05,
+          0.0001,
+          0.0001,
+          0.0001,
+          1e-05,
+          1e-05,
+          1e-05,
+          0.0001,
+          0.0001,
+          0.0001,
+          0.0001,
+          0.0001,
+          0.0001,
+          0.0001,
+          0.0001,
+          0.0001,
+          0.0001,
+          0.0001,
+          0.0001,
+          0.0001,
+          0.0001,
+          0.0001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.001
+        ]
+      },
+      "complete": true,
+      "seconds": 185.1084903999872,
+      "accepted_simulated_seconds": 1.0,
+      "accepted_steps": 18,
+      "rhs_calls": 163,
+      "cold_geometry_count": 38,
+      "integration_stats": {
+        "rhs_calls": 163,
+        "attempted_steps": 27,
+        "rejected_steps": 9,
+        "stages_per_attempt": 6
+      }
+    }
+  },
+  "comparisons": {
+    "boat-motion-rk23-rk45-1s": {
+      "path": "artifacts\\boat-motion-rk23-rk45-1s-owned.json",
+      "sha256": "eca88a339d664049c80ac392fab9d29f3ba3e51638ff8845ea1b0cd2913270cc",
+      "source_sha256": {
+        "boat_motion_compare.py": "889c0a7ea040584b75549331766a1bba4ba2fae6308ec5218e0474b8719b2043",
+        "boat_motion_metrics.py": "9244c3e4869a0347d62eebd434a4a38ccf0c92f58a29dbcc6a5c0222649649ed"
+      },
+      "inputs": [
+        {
+          "path": "artifacts\\boat-action-tangent-stable-generic-q3-body1-1s.json",
+          "sha256": "3eb9ea138dd5d73bccaafe293848f6c87e2ccb1e148de9abfcaadfffc2816494",
+          "arrays_sha256": "041c38ba925c553aaea90a0d27ec22b2051b9da4b0def05269f30afe804745f6",
+          "initial_geometry_metadata_sha256": "b49b194758a23bd850906b0e65765836dcb0eda7e02b55ea012c5d96e1ef742c",
+          "complete": true,
+          "accepted_seconds": 1.0,
+          "seconds": 107.6748751999985,
+          "operator_counts": {
+            "fresh_rhs": 79,
+            "reused_rhs": 0,
+            "fresh_assemblies": 395,
+            "predicted_fields": 0,
+            "failed_reuse_attempts": 0
+          },
+          "refinement": {
+            "region": "body",
+            "levels": 1
+          },
+          "quadrature_order": 3,
+          "integrator": "RK23"
+        },
+        {
+          "path": "artifacts\\boat-action-rk45-generic-q3-body1-1s.json",
+          "sha256": "6bab04e58b1ab2ec69b3fab7681943fd74b559ff05d42640615bfe15f44d7dbd",
+          "arrays_sha256": "14c5389d3ea8629b9939247f9898e40c9ccc4678411b682f1a66d39a0080b0a1",
+          "initial_geometry_metadata_sha256": "2864c4c8e988688ed1cd0f5731a7bb2c414af9408b475b2542efef2625d8cf16",
+          "complete": true,
+          "accepted_seconds": 1.0,
+          "seconds": 83.78025640000124,
+          "operator_counts": {
+            "fresh_rhs": 61,
+            "reused_rhs": 0,
+            "fresh_assemblies": 305,
+            "predicted_fields": 0,
+            "failed_reuse_attempts": 0
+          },
+          "refinement": {
+            "region": "body",
+            "levels": 1
+          },
+          "quadrature_order": 3,
+          "integrator": "RK45"
+        }
+      ],
+      "samples": [
+        {
+          "kind": "exact_common_knots",
+          "count": 3,
+          "first_time_seconds": 0.0,
+          "last_time_seconds": 1.0,
+          "maximum_translation_error_m": [
+            0.003413341863181138,
+            0.0022772412421790816,
+            0.0020130717905608997
+          ],
+          "maximum_roll_pitch_yaw_error_degrees": [
+            0.13180351031508053,
+            0.06562934457269876,
+            0.4450387747764353
+          ],
+          "within_translation_target": [
+            true,
+            true,
+            true
+          ],
+          "within_angular_target": [
+            false,
+            true,
+            false
+          ]
+        },
+        {
+          "kind": "dense_common_grid",
+          "count": 521,
+          "first_time_seconds": 0.0,
+          "last_time_seconds": 1.0,
+          "maximum_translation_error_m": [
+            0.003413341863181138,
+            0.0025731154202715545,
+            0.0027580785621020842
+          ],
+          "maximum_roll_pitch_yaw_error_degrees": [
+            0.3464735246014925,
+            0.06609080534062173,
+            0.4450387747764353
+          ],
+          "within_translation_target": [
+            true,
+            true,
+            true
+          ],
+          "within_angular_target": [
+            false,
+            true,
+            false
+          ]
+        }
+      ],
+      "limitations": [
+        "Matching this unqualified finer run does not establish physical accuracy.",
+        "Short weakly excited motion cannot qualify behavior over representative wave/roll periods.",
+        "Accepted-step polynomials are integrator dense output, not extra temporal accuracy.",
+        "Sampling them is a numerical comparison, not a rigorous continuous-time error bound.",
+        "Combined body/quadrature change does not isolate either source of sensitivity.",
+        "Failed-run totals and differently achieved horizons are not a matched full-run speedup."
+      ],
+      "integration_control_changes": {
+        "integrator": {
+          "reference": "RK23",
+          "candidate": "RK45"
+        }
+      }
+    },
+    "boat-motion-rk45-tight-loose-1s": {
+      "path": "artifacts\\boat-motion-rk45-tight-loose-1s-owned.json",
+      "sha256": "79e382fd56dd42ccbbbdcd0b6af3ea0155ce8fe533512ba155607bc4f9c78b75",
+      "source_sha256": {
+        "boat_motion_compare.py": "889c0a7ea040584b75549331766a1bba4ba2fae6308ec5218e0474b8719b2043",
+        "boat_motion_metrics.py": "9244c3e4869a0347d62eebd434a4a38ccf0c92f58a29dbcc6a5c0222649649ed"
+      },
+      "inputs": [
+        {
+          "path": "artifacts\\boat-action-rk45-tight-generic-q3-body1-1s.json",
+          "sha256": "a0b5de4de00639eb62704445330b6b19110524e7946cbe075792a3bb8f18aba7",
+          "arrays_sha256": "11b80f979dc51ece178c22bc3f226a37b5345b8a9c5d38c832666f0ec94199e6",
+          "initial_geometry_metadata_sha256": "81fabd9d7b3424771f122f8d56ff6b562b29423205f6616573875cda63707478",
+          "complete": true,
+          "accepted_seconds": 1.0,
+          "seconds": 185.1084903999872,
+          "operator_counts": {
+            "fresh_rhs": 163,
+            "reused_rhs": 0,
+            "fresh_assemblies": 815,
+            "predicted_fields": 0,
+            "failed_reuse_attempts": 0
+          },
+          "refinement": {
+            "region": "body",
+            "levels": 1
+          },
+          "quadrature_order": 3,
+          "integrator": "RK45"
+        },
+        {
+          "path": "artifacts\\boat-action-rk45-generic-q3-body1-1s.json",
+          "sha256": "6bab04e58b1ab2ec69b3fab7681943fd74b559ff05d42640615bfe15f44d7dbd",
+          "arrays_sha256": "14c5389d3ea8629b9939247f9898e40c9ccc4678411b682f1a66d39a0080b0a1",
+          "initial_geometry_metadata_sha256": "2864c4c8e988688ed1cd0f5731a7bb2c414af9408b475b2542efef2625d8cf16",
+          "complete": true,
+          "accepted_seconds": 1.0,
+          "seconds": 83.78025640000124,
+          "operator_counts": {
+            "fresh_rhs": 61,
+            "reused_rhs": 0,
+            "fresh_assemblies": 305,
+            "predicted_fields": 0,
+            "failed_reuse_attempts": 0
+          },
+          "refinement": {
+            "region": "body",
+            "levels": 1
+          },
+          "quadrature_order": 3,
+          "integrator": "RK45"
+        }
+      ],
+      "samples": [
+        {
+          "kind": "exact_common_knots",
+          "count": 2,
+          "first_time_seconds": 0.0,
+          "last_time_seconds": 1.0,
+          "maximum_translation_error_m": [
+            0.002993110670315921,
+            0.0017883188157003793,
+            0.002871623158942016
+          ],
+          "maximum_roll_pitch_yaw_error_degrees": [
+            0.11102887625668245,
+            0.04991672703209815,
+            0.4126723519995039
+          ],
+          "within_translation_target": [
+            true,
+            true,
+            true
+          ],
+          "within_angular_target": [
+            false,
+            true,
+            false
+          ]
+        },
+        {
+          "kind": "dense_common_grid",
+          "count": 524,
+          "first_time_seconds": 0.0,
+          "last_time_seconds": 1.0,
+          "maximum_translation_error_m": [
+            0.002993110670315921,
+            0.0020358725759058866,
+            0.0028824855969231677
+          ],
+          "maximum_roll_pitch_yaw_error_degrees": [
+            0.3122138615588881,
+            0.058259159131210936,
+            0.4126723519995039
+          ],
+          "within_translation_target": [
+            true,
+            true,
+            true
+          ],
+          "within_angular_target": [
+            false,
+            true,
+            false
+          ]
+        }
+      ],
+      "limitations": [
+        "Matching this unqualified finer run does not establish physical accuracy.",
+        "Short weakly excited motion cannot qualify behavior over representative wave/roll periods.",
+        "Accepted-step polynomials are integrator dense output, not extra temporal accuracy.",
+        "Sampling them is a numerical comparison, not a rigorous continuous-time error bound.",
+        "Combined body/quadrature change does not isolate either source of sensitivity.",
+        "Failed-run totals and differently achieved horizons are not a matched full-run speedup."
+      ],
+      "integration_control_changes": {
+        "rtol": {
+          "reference": 0.0001,
+          "candidate": 0.001
+        },
+        "absolute_tolerance_by_component": {
+          "reference": [
+            0.0001,
+            0.0001,
+            0.0001,
+            1e-05,
+            1e-05,
+            1e-05,
+            1e-05,
+            0.0001,
+            0.0001,
+            0.0001,
+            1e-05,
+            1e-05,
+            1e-05,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001
+          ],
+          "candidate": [
+            0.001,
+            0.001,
+            0.001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.001,
+            0.001,
+            0.001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01
+          ]
+        }
+      }
+    },
+    "boat-motion-rk45-tight-rk23-1s": {
+      "path": "artifacts\\boat-motion-rk45-tight-rk23-1s-owned.json",
+      "sha256": "d3ce6aa451b38234338214ef94ac7f81ccd331d15896424806658720a20d89a0",
+      "source_sha256": {
+        "boat_motion_compare.py": "889c0a7ea040584b75549331766a1bba4ba2fae6308ec5218e0474b8719b2043",
+        "boat_motion_metrics.py": "9244c3e4869a0347d62eebd434a4a38ccf0c92f58a29dbcc6a5c0222649649ed"
+      },
+      "inputs": [
+        {
+          "path": "artifacts\\boat-action-rk45-tight-generic-q3-body1-1s.json",
+          "sha256": "a0b5de4de00639eb62704445330b6b19110524e7946cbe075792a3bb8f18aba7",
+          "arrays_sha256": "11b80f979dc51ece178c22bc3f226a37b5345b8a9c5d38c832666f0ec94199e6",
+          "initial_geometry_metadata_sha256": "81fabd9d7b3424771f122f8d56ff6b562b29423205f6616573875cda63707478",
+          "complete": true,
+          "accepted_seconds": 1.0,
+          "seconds": 185.1084903999872,
+          "operator_counts": {
+            "fresh_rhs": 163,
+            "reused_rhs": 0,
+            "fresh_assemblies": 815,
+            "predicted_fields": 0,
+            "failed_reuse_attempts": 0
+          },
+          "refinement": {
+            "region": "body",
+            "levels": 1
+          },
+          "quadrature_order": 3,
+          "integrator": "RK45"
+        },
+        {
+          "path": "artifacts\\boat-action-tangent-stable-generic-q3-body1-1s.json",
+          "sha256": "3eb9ea138dd5d73bccaafe293848f6c87e2ccb1e148de9abfcaadfffc2816494",
+          "arrays_sha256": "041c38ba925c553aaea90a0d27ec22b2051b9da4b0def05269f30afe804745f6",
+          "initial_geometry_metadata_sha256": "b49b194758a23bd850906b0e65765836dcb0eda7e02b55ea012c5d96e1ef742c",
+          "complete": true,
+          "accepted_seconds": 1.0,
+          "seconds": 107.6748751999985,
+          "operator_counts": {
+            "fresh_rhs": 79,
+            "reused_rhs": 0,
+            "fresh_assemblies": 395,
+            "predicted_fields": 0,
+            "failed_reuse_attempts": 0
+          },
+          "refinement": {
+            "region": "body",
+            "levels": 1
+          },
+          "quadrature_order": 3,
+          "integrator": "RK23"
+        }
+      ],
+      "samples": [
+        {
+          "kind": "exact_common_knots",
+          "count": 2,
+          "first_time_seconds": 0.0,
+          "last_time_seconds": 1.0,
+          "maximum_translation_error_m": [
+            0.00042023119286521693,
+            0.0004889224264787023,
+            0.0015883982691632381
+          ],
+          "maximum_roll_pitch_yaw_error_degrees": [
+            0.034306257550724695,
+            0.015712617540600604,
+            0.03236642277690294
+          ],
+          "within_translation_target": [
+            true,
+            true,
+            true
+          ],
+          "within_angular_target": [
+            true,
+            true,
+            true
+          ]
+        },
+        {
+          "kind": "dense_common_grid",
+          "count": 532,
+          "first_time_seconds": 0.0,
+          "last_time_seconds": 1.0,
+          "maximum_translation_error_m": [
+            0.00042023119286521693,
+            0.0005501130355779205,
+            0.004829548593592192
+          ],
+          "maximum_roll_pitch_yaw_error_degrees": [
+            0.03460413062492762,
+            0.036363307891946306,
+            0.03236642277690294
+          ],
+          "within_translation_target": [
+            true,
+            true,
+            true
+          ],
+          "within_angular_target": [
+            true,
+            true,
+            true
+          ]
+        }
+      ],
+      "limitations": [
+        "Matching this unqualified finer run does not establish physical accuracy.",
+        "Short weakly excited motion cannot qualify behavior over representative wave/roll periods.",
+        "Accepted-step polynomials are integrator dense output, not extra temporal accuracy.",
+        "Sampling them is a numerical comparison, not a rigorous continuous-time error bound.",
+        "Combined body/quadrature change does not isolate either source of sensitivity.",
+        "Failed-run totals and differently achieved horizons are not a matched full-run speedup."
+      ],
+      "integration_control_changes": {
+        "integrator": {
+          "reference": "RK45",
+          "candidate": "RK23"
+        },
+        "rtol": {
+          "reference": 0.0001,
+          "candidate": 0.001
+        },
+        "absolute_tolerance_by_component": {
+          "reference": [
+            0.0001,
+            0.0001,
+            0.0001,
+            1e-05,
+            1e-05,
+            1e-05,
+            1e-05,
+            0.0001,
+            0.0001,
+            0.0001,
+            1e-05,
+            1e-05,
+            1e-05,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001
+          ],
+          "candidate": [
+            0.001,
+            0.001,
+            0.001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.001,
+            0.001,
+            0.001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.001,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01,
+            0.01
+          ]
+        }
+      }
+    }
+  },
+  "dense_output": "New runs save the actual accepted SciPy RK polynomial coefficients. Legacy RK23 uses its exactly recoverable Hermite cubic. RK45 without owned coefficients is rejected.",
+  "limitations": [
+    "Agreement with one tighter RK45 run is supporting temporal evidence for this one-second discretization, not an independently certified error bound.",
+    "The largest angular differences and all three translations are compared in the same heading frame.",
+    "All cases remain above20wallsec/simsec; higher temporal order alone did not earn adoption.",
+    "Numerical motion targets do not establish continuum/physical or long-duration accuracy."
+  ]
+}

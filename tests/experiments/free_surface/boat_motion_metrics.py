@@ -27,9 +27,11 @@ def attitude_degrees(orientation):
         np.arctan2(matrix[1, 0], matrix[0, 0])])
 
 
-def body_poses(times, states, sample_times):
-    """Reconstruct RK23's accepted-step body cubic from saved kinematics.
+def body_poses(times, states, sample_times, *, dense_q=None):
+    """Evaluate owned RK body polynomials; legacy RK23 from saved kinematics.
 
+    Supplied dense_q stores SciPy accepted-step RK polynomial coefficients.
+    Without it, only the legacy RK23 cubic can be recovered from kinematics.
     Position derivatives are saved velocities; raw quaternion derivatives are
     (0, world_omega) * q / 2. Do not canonicalize endpoint quaternion signs or
     interpolate Euler angles. The unique Hermite cubic matches RK23 dense
@@ -43,6 +45,16 @@ def body_poses(times, states, sample_times):
             or np.any(np.diff(times) <= 0) or np.any(sample_times < times[0])
             or np.any(sample_times > times[-1])):
         raise ValueError('finite increasing accepted states and contained sample times required')
+    if dense_q is not None:
+        coefficients = np.asarray(dense_q)
+        if (coefficients.ndim != 3 or coefficients.shape[:2] != (len(times)-1, states.shape[1])
+                or coefficients.shape[2] not in (3, 4) or not np.isfinite(coefficients).all()):
+            raise ValueError('matching finite accepted RK23/RK45 dense coefficients required')
+        steps = np.clip(np.searchsorted(times, sample_times, side='right')-1, 0, len(times)-2)
+        h = times[steps+1]-times[steps]
+        x = (sample_times-times[steps])/h
+        powers = x[:, None]**np.arange(1, coefficients.shape[2]+1)
+        return states[steps, :7]+h[:, None]*np.einsum('nck,nk->nc', coefficients[steps, :7], powers)
     q, omega = states[:, 3:7], states[:, 10:13]
     qdot = .5*np.column_stack((-np.sum(omega*q[:, 1:], axis=1),
         q[:, :1]*omega+np.cross(omega, q[:, 1:])))
