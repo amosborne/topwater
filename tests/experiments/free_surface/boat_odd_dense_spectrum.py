@@ -22,7 +22,7 @@ def checkpoint(args, report, arrays):
     args.output.write_text(json.dumps(report, indent=2, allow_nan=False))
 
 
-def relative(numerator, denominator):
+def relative_residual(numerator, denominator):
     """Exact-zero denominators remain visible in per-mode diagnostics."""
     if denominator == 0:
         return 0. if numerator == 0 else None
@@ -134,12 +134,12 @@ def run(args, report):
         dyn_den = GRAVITY*np.linalg.norm(mass@eta)+abs(lam[index])*np.linalg.norm(mass@physical)
         records.append(dict(index=int(index), mu_real=float(mu[index].real), mu_imag=float(mu[index].imag),
             lambda_plus_real=float(lam[index].real), lambda_plus_imag=float(lam[index].imag),
-            dense_right_relative_residual=relative(np.linalg.norm(residual), dense_den),
-            original_weak_kinematic_relative_residual=relative(np.linalg.norm(kinematic), kin_den),
-            original_weak_dynamic_relative_residual=relative(np.linalg.norm(dynamic), dyn_den),
+            dense_right_relative_residual=relative_residual(np.linalg.norm(residual), dense_den),
+            original_weak_kinematic_relative_residual=relative_residual(np.linalg.norm(kinematic), kin_den),
+            original_weak_dynamic_relative_residual=relative_residual(np.linalg.norm(dynamic), dyn_den),
             body_collocation_residual_max=float(abs(nmap@physical+jd@sigma).max()),
             q4_q8_action_difference_mass_norm=float(norm_qchange),
-            q4_q8_action_difference_relative=relative(norm_qchange, norm_rate),
+            q4_q8_action_difference_relative=relative_residual(norm_qchange, norm_rate),
             zero_denominators=[name for name, value in [('dense_residual', dense_den),
                 ('weak_kinematic', kin_den), ('weak_dynamic', dyn_den), ('q_action', norm_rate)] if value == 0],
             q4_rayleigh_real=float(ray4.real), q4_rayleigh_imag=float(ray4.imag),
@@ -173,11 +173,11 @@ if __name__ == '__main__':
     archive.mkdir(parents=True)
     hashes = {}
     for source in [*Path('src/topwater').glob('*.py'), *Path('tests').glob('*.py'), *Path(__file__).parent.glob('*.py')]:
-        relative = source.resolve().relative_to(Path.cwd())
-        target = archive/relative
+        source_relative = source.resolve().relative_to(Path.cwd())
+        target = archive/source_relative
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(source, target)
-        hashes[str(relative)] = sha256(source.read_bytes()).hexdigest()
+        hashes[str(source_relative)] = sha256(source.read_bytes()).hexdigest()
     report = dict(complete=False, producer_sha256=hashes, parents={name: sha256(getattr(args, name).read_bytes()).hexdigest()
         for name in ('water', 'phase', 'mode', 'odd', 'body_probe')})
     started = perf_counter()
