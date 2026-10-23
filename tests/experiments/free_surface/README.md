@@ -1815,3 +1815,17 @@ maximum sampled differences 0.0101 degree and 0.066 mm. This earns the simpler
 current-derivative path as the experimental default, without a full-minute
 accuracy or guaranteed throughput claim. Evidence: `boat-momentum-tangent.json`;
 active investigations: [issue #30](https://github.com/amosborne/topwater/issues/30).
+
+The moving driver defaults to exact integer cold predicates;
+`--no-integer-geometry` retains the Fraction oracle. The experimental action
+path defaults to the sample-local reverse shape gradient;
+`--shape-gradient forward` retains the independent forward derivative.
+Ordinary pressure runs retain their forward setting. Frozen-state exact
+geometry parity and independent derivative checks precede these defaults.
+A serial one-second nonlinear matrix measured 116.2 s before these two changes,
+90.8 s with integer geometry, and 88.9 s with both. A reverse-order control
+measured 69.0 s reverse versus 89.5 s forward with integer geometry in both.
+Timing varies materially; the observed reduction is not a guaranteed factor.
+Dense motion differences were below 0.000001 degree and 0.00000002 m on these
+short screens. No minute-long accuracy or open-water qualification follows.
+Evidence: `docs/research/boat-speed-matrix.json`; issue #30 owns active status.

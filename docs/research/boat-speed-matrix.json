@@ -1,0 +1,422 @@
+{
+  "complete": true,
+  "qualified": false,
+  "producer_commit": "51e52e8",
+  "scope": "Three serial fresh-process full nonlinear one-second diagnostic-tank runs; not full-minute accuracy.",
+  "manifest": {
+    "path": "artifacts\\boat-speed-matrix-q3-body1-1s.json",
+    "sha256": "da962402c708f13b53ca972dbd5d1e1d64a6ce8e76d29955a4e6cda5a410d627"
+  },
+  "cases": [
+    {
+      "case": "control",
+      "path": "artifacts\\boat-speed-matrix-control-q3-body1-1s.json",
+      "sha256": "e67d26dbe4a791d2eb0a2b2bb15cfc21ded98eaefa05531427598589038fa661",
+      "arrays_sha256": "bc4f692302768e674f7000d5e78cf4e89c45a2563d0824a46a49cb70a6ffe24b",
+      "seconds": 116.1891261000128,
+      "operator_counts": {
+        "fresh_rhs": 64,
+        "reused_rhs": 0,
+        "fresh_assemblies": 64,
+        "predicted_fields": 0,
+        "failed_reuse_attempts": 0
+      },
+      "accepted_steps": 14,
+      "cold_builds": 29,
+      "process_peak_rss_bytes": 602136576,
+      "reserved_gpu_pool_bytes": 52727296,
+      "summed_cold_seconds": 46.85727690006024,
+      "summed_action_timings_seconds": {
+        "gradient_seconds": 41.294704000029014,
+        "analytic_geometry_seconds": 3.7010959999461193,
+        "analytic_action_terms_seconds": 2.4480591001629364,
+        "incident_rate_seconds": 2.593276799947489,
+        "momentum_tangent_seconds": 4.827950899925781,
+        "total_seconds": 55.88831079992815
+      }
+    },
+    {
+      "case": "integer",
+      "path": "artifacts\\boat-speed-matrix-integer-q3-body1-1s.json",
+      "sha256": "da8e3e035dfde13c507ca554a7dae7ffcb34d4f0314d91e43f1995be91ca8e79",
+      "arrays_sha256": "2eac67c6a9e9c4c21ce91b5cf09b50a2b010c034309d68eac0764b3520a9bcab",
+      "seconds": 90.81780479999725,
+      "operator_counts": {
+        "fresh_rhs": 64,
+        "reused_rhs": 0,
+        "fresh_assemblies": 64,
+        "predicted_fields": 0,
+        "failed_reuse_attempts": 0
+      },
+      "accepted_steps": 14,
+      "cold_builds": 29,
+      "process_peak_rss_bytes": 603529216,
+      "reserved_gpu_pool_bytes": 54841344,
+      "summed_cold_seconds": 24.04327159994864,
+      "summed_action_timings_seconds": {
+        "gradient_seconds": 41.38244459993439,
+        "analytic_geometry_seconds": 3.45183919990086,
+        "analytic_action_terms_seconds": 2.32526020007208,
+        "incident_rate_seconds": 2.567051799793262,
+        "momentum_tangent_seconds": 4.981951600057073,
+        "total_seconds": 55.65571060020011
+      }
+    },
+    {
+      "case": "combined",
+      "path": "artifacts\\boat-speed-matrix-combined-q3-body1-1s.json",
+      "sha256": "7c534bbd15bdd5abac6e3372ecee09b662010e923319c92af9eb6bae6db4355e",
+      "arrays_sha256": "36d76b35add87328d6ead56a859fd48be3613695ab1f966735071bd8d3e166bf",
+      "seconds": 88.92011729997466,
+      "operator_counts": {
+        "fresh_rhs": 64,
+        "reused_rhs": 0,
+        "fresh_assemblies": 64,
+        "predicted_fields": 0,
+        "failed_reuse_attempts": 0
+      },
+      "accepted_steps": 14,
+      "cold_builds": 29,
+      "process_peak_rss_bytes": 603578368,
+      "reserved_gpu_pool_bytes": 54841344,
+      "summed_cold_seconds": 40.39183440004126,
+      "summed_action_timings_seconds": {
+        "gradient_seconds": 9.616120600083377,
+        "analytic_geometry_seconds": 5.954547699977411,
+        "analytic_action_terms_seconds": 3.8149771000025794,
+        "incident_rate_seconds": 4.0656368999916594,
+        "momentum_tangent_seconds": 6.773916599864606,
+        "total_seconds": 31.82660650004982
+      }
+    }
+  ],
+  "motion_comparisons": [
+    {
+      "case": "integer",
+      "report": "artifacts\\boat-motion-matrix-integer-1s.json",
+      "sha256": "c6fca4ad128e5ebad020f2fce3653f958e8d8fbec415f22d6604cc0044d67411",
+      "arrays_sha256": "31058c43453a9a2dd9e5121c95851906aeaa334b07b985bdb315585cbdd1e413",
+      "samples": [
+        {
+          "kind": "exact_common_knots",
+          "count": 3,
+          "first_time_seconds": 0.0,
+          "last_time_seconds": 1.0,
+          "maximum_translation_error_m": [
+            5.398329283590186e-10,
+            4.839042486159961e-09,
+            9.63916868546022e-09
+          ],
+          "maximum_roll_pitch_yaw_error_degrees": [
+            2.759824724307691e-07,
+            1.6288987580992398e-07,
+            3.185701302754751e-07
+          ],
+          "within_translation_target": [
+            true,
+            true,
+            true
+          ],
+          "within_angular_target": [
+            true,
+            true,
+            true
+          ]
+        },
+        {
+          "kind": "dense_common_grid",
+          "count": 525,
+          "first_time_seconds": 0.0,
+          "last_time_seconds": 1.0,
+          "maximum_translation_error_m": [
+            5.398329283590186e-10,
+            4.839042486159961e-09,
+            9.63916868546022e-09
+          ],
+          "maximum_roll_pitch_yaw_error_degrees": [
+            3.0719158417014114e-07,
+            1.6288987580992398e-07,
+            3.185701302754751e-07
+          ],
+          "within_translation_target": [
+            true,
+            true,
+            true
+          ],
+          "within_angular_target": [
+            true,
+            true,
+            true
+          ]
+        }
+      ],
+      "qualified": false
+    },
+    {
+      "case": "combined",
+      "report": "artifacts\\boat-motion-matrix-combined-1s.json",
+      "sha256": "a6cce3bddfeb9ad6af40009d2aacf9c9abd570e1d926d22699e733ebe8eb56b6",
+      "arrays_sha256": "bc33b4ac226d8a06c324ff3bea47bd2ce23cd77632fab9511504cf832175a010",
+      "samples": [
+        {
+          "kind": "exact_common_knots",
+          "count": 3,
+          "first_time_seconds": 0.0,
+          "last_time_seconds": 1.0,
+          "maximum_translation_error_m": [
+            6.078887393456966e-11,
+            5.263093988405743e-10,
+            1.2087540413041609e-09
+          ],
+          "maximum_roll_pitch_yaw_error_degrees": [
+            2.95650579573703e-08,
+            1.6544476011404186e-08,
+            3.80508140551683e-08
+          ],
+          "within_translation_target": [
+            true,
+            true,
+            true
+          ],
+          "within_angular_target": [
+            true,
+            true,
+            true
+          ]
+        },
+        {
+          "kind": "dense_common_grid",
+          "count": 525,
+          "first_time_seconds": 0.0,
+          "last_time_seconds": 1.0,
+          "maximum_translation_error_m": [
+            6.078887393456966e-11,
+            5.263093988405743e-10,
+            1.2087540413041609e-09
+          ],
+          "maximum_roll_pitch_yaw_error_degrees": [
+            3.785223157137807e-08,
+            1.6544476011404186e-08,
+            3.80508140551683e-08
+          ],
+          "within_translation_target": [
+            true,
+            true,
+            true
+          ],
+          "within_angular_target": [
+            true,
+            true,
+            true
+          ]
+        }
+      ],
+      "qualified": false
+    },
+    {
+      "case": "total",
+      "report": "artifacts\\boat-motion-matrix-total-1s.json",
+      "sha256": "91739d268227b870ea02df7eda4fe230dcbdc950822b48e6230bf3ed78564259",
+      "arrays_sha256": "9e57540132139b3db9dcc91835e2a010a6c6851ee91ca673aeaf1184bf05c816",
+      "samples": [
+        {
+          "kind": "exact_common_knots",
+          "count": 3,
+          "first_time_seconds": 0.0,
+          "last_time_seconds": 1.0,
+          "maximum_translation_error_m": [
+            4.79044054424449e-10,
+            4.312733087319387e-09,
+            8.430414644156059e-09
+          ],
+          "maximum_roll_pitch_yaw_error_degrees": [
+            2.464174144733988e-07,
+            1.463453997985198e-07,
+            2.805193162203068e-07
+          ],
+          "within_translation_target": [
+            true,
+            true,
+            true
+          ],
+          "within_angular_target": [
+            true,
+            true,
+            true
+          ]
+        },
+        {
+          "kind": "dense_common_grid",
+          "count": 525,
+          "first_time_seconds": 0.0,
+          "last_time_seconds": 1.0,
+          "maximum_translation_error_m": [
+            4.79044054424449e-10,
+            4.312733087319387e-09,
+            8.430414644156059e-09
+          ],
+          "maximum_roll_pitch_yaw_error_degrees": [
+            2.6933935259876307e-07,
+            1.463453997985198e-07,
+            2.805193162203068e-07
+          ],
+          "within_translation_target": [
+            true,
+            true,
+            true
+          ],
+          "within_angular_target": [
+            true,
+            true,
+            true
+          ]
+        }
+      ],
+      "qualified": false
+    }
+  ],
+  "decision": {
+    "integer_geometry": "Adopt as experimental moving-driver default after independent adversarial review; retain Fraction oracle switch. Exact cold parity is independently tested on frozen identical inputs, not inferred from trajectories.",
+    "reverse_gradient": "Adopt as experimental action-mode default after reverse-order whole-run control, owned motion comparison and independent review. Retain explicit forward derivative oracle; ordinary pressure mode remains forward. Observed whole-run reductions 2.1%-23.0%, not a universal factor."
+  },
+  "limits": [
+    "No 60-second accuracy or open-ocean qualification.",
+    "Dense accepted-polynomial sampling is not a rigorous continuous error bound.",
+    "Same number of cold builds does not prove cross-trajectory bitwise geometry equality.",
+    "CuPy reserved memory is not peak total VRAM.",
+    "Absolute timing variability is material; serial order alone does not establish a persistent speed ratio."
+  ],
+  "verification": {
+    "prior_targeted_tests": 68,
+    "ownership_followup_tests": 1,
+    "motion_comparator_sources_archived": true,
+    "adoption_targeted_tests": 24,
+    "default_smoke": {
+      "path": "artifacts/boat-speed-default-smoke.json",
+      "sha256": "49a0ae1e08fdde38a55c18b9bd17ce98300e3654c040b077073cf4d9532ae2b1",
+      "complete": true,
+      "effective_integer_geometry": true,
+      "effective_shape_gradient": "reverse",
+      "scope": "0.02-second wiring smoke only; not performance or accuracy qualification."
+    }
+  },
+  "reverse_order_control": {
+    "manifest": "artifacts\\boat-speed-reverse-order-q3-body1-1s.json",
+    "sha256": "e56cb1a8e65d5e6b5990ee9f29affb15cf2b79492a76df71b8ca9892caa16802",
+    "cases": [
+      {
+        "case": "reverse",
+        "path": "artifacts\\boat-speed-reverse-order-reverse-q3-body1-1s.json",
+        "sha256": "77ed6f28d3f6e84a566bf2e31930d96d5fa5180fb776eec65646037ff7efd78a",
+        "arrays_sha256": "79357eb8b372929b4936045070291a254b07e4221a58f70808b7f99fd1a01b9d",
+        "seconds": 68.95956810002099,
+        "operator_counts": {
+          "fresh_rhs": 64,
+          "reused_rhs": 0,
+          "fresh_assemblies": 64,
+          "predicted_fields": 0,
+          "failed_reuse_attempts": 0
+        },
+        "accepted_steps": 14,
+        "cold_builds": 29,
+        "process_peak_rss_bytes": 602591232,
+        "reserved_gpu_pool_bytes": 54841344,
+        "summed_cold_seconds": 27.030393199936952,
+        "summed_action_timings_seconds": {
+          "gradient_seconds": 8.74931609997293,
+          "analytic_geometry_seconds": 5.046552700106986,
+          "analytic_action_terms_seconds": 3.241102900065016,
+          "incident_rate_seconds": 3.0506184999539983,
+          "momentum_tangent_seconds": 6.089515100000426,
+          "total_seconds": 27.564367399871117
+        }
+      },
+      {
+        "case": "forward",
+        "path": "artifacts\\boat-speed-reverse-order-forward-q3-body1-1s.json",
+        "sha256": "a06f25889e7669bbdebee690d9190d1002bb4b1b8f0221f991cc5ee5042c810c",
+        "arrays_sha256": "2125fc6b0c70581b9bc1e3c370ba0baec3d66929c49e19417428f6144ff306ea",
+        "seconds": 89.53145280000172,
+        "operator_counts": {
+          "fresh_rhs": 64,
+          "reused_rhs": 0,
+          "fresh_assemblies": 64,
+          "predicted_fields": 0,
+          "failed_reuse_attempts": 0
+        },
+        "accepted_steps": 14,
+        "cold_builds": 29,
+        "process_peak_rss_bytes": 601866240,
+        "reserved_gpu_pool_bytes": 54841344,
+        "summed_cold_seconds": 26.76904959991225,
+        "summed_action_timings_seconds": {
+          "gradient_seconds": 36.16674280000734,
+          "analytic_geometry_seconds": 3.930694100126857,
+          "analytic_action_terms_seconds": 2.4820985000696965,
+          "incident_rate_seconds": 2.73240589996567,
+          "momentum_tangent_seconds": 4.712747900135582,
+          "total_seconds": 51.057850999961374
+        }
+      }
+    ],
+    "motion_comparison": {
+      "path": "artifacts\\boat-motion-reverse-order-1s.json",
+      "sha256": "b28aecb9255be1615b64db8cdc44e5e1d6999a5537e1cf443429a9769f3987ae",
+      "arrays_sha256": "f18a1e8bd4612b1b271f2dcee4d1178cfd89d109f5221441a1e4c7d5c140bbc3",
+      "samples": [
+        {
+          "kind": "exact_common_knots",
+          "count": 3,
+          "first_time_seconds": 0.0,
+          "last_time_seconds": 1.0,
+          "maximum_translation_error_m": [
+            8.486403108021179e-10,
+            7.603099982933514e-09,
+            1.5165661670923924e-08
+          ],
+          "maximum_roll_pitch_yaw_error_degrees": [
+            4.3737205146499036e-07,
+            2.5641085699135147e-07,
+            5.002927139230451e-07
+          ],
+          "within_translation_target": [
+            true,
+            true,
+            true
+          ],
+          "within_angular_target": [
+            true,
+            true,
+            true
+          ]
+        },
+        {
+          "kind": "dense_common_grid",
+          "count": 525,
+          "first_time_seconds": 0.0,
+          "last_time_seconds": 1.0,
+          "maximum_translation_error_m": [
+            8.486403108021179e-10,
+            7.603099982933514e-09,
+            1.5165661670923924e-08
+          ],
+          "maximum_roll_pitch_yaw_error_degrees": [
+            4.807524760508386e-07,
+            2.5641085699135147e-07,
+            5.002927139230451e-07
+          ],
+          "within_translation_target": [
+            true,
+            true,
+            true
+          ],
+          "within_angular_target": [
+            true,
+            true,
+            true
+          ]
+        }
+      ]
+    }
+  }
+}
