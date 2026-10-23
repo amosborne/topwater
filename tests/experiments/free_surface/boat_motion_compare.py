@@ -7,11 +7,12 @@ from pathlib import Path
 import numpy as np
 
 from .boat_motion_metrics import (attitude_degrees, body_poses, motion_errors,
-    ANGLE_ERROR_TARGET_DEGREES, POSITION_ERROR_TARGET_METERS)
+    ANGLE_ERROR_TARGET_DEGREES, POSITION_ERROR_TARGET_METERS, ACCURACY_DURATION_SECONDS)
 from .p4_fluid_ordering import fresh
 
 
-def run(reference, candidate, output, driver_change_note=None, integration_change_note=None):
+def run(reference, candidate, output, driver_change_note=None, integration_change_note=None,
+        derivative_change_note=None):
     output = fresh(output)
     output.parent.mkdir(parents=True, exist_ok=True)
     inputs, trajectories = [], []
@@ -47,17 +48,34 @@ def run(reference, candidate, output, driver_change_note=None, integration_chang
                'boat_geometry_template.py', 'body_pressure.py', 'incident_baseline_benchmark.py',
                'boat_ale_pressure.py', 'cuda_operator.py', 'cuda_energy.cu', 'cuda_pair.cuh',
                'canoe.py')
+    derivative_changes = {}
     for name in ('action_coupling', 'action_tangent'):
         if ra['controls'].get(name, False) != rb['controls'].get(name, False):
             raise ValueError('action policy differs: '+name)
-    if ra['controls'].get('action_coupling', False):
+    for name in ('momentum_tangent',):
+        if ra['controls'].get(name, False) != rb['controls'].get(name, False):
+            derivative_changes[name] = dict(reference=ra['controls'].get(name, False), candidate=rb['controls'].get(name, False))
+    if any(report['controls'].get('action_coupling', False) for report in (ra, rb)):
         physics += ('boat_action_stencil.py', 'boat_body_action.py', 'boat_parent_action.py',
                     'cuda_shape_gradient.py', 'cuda_shape.cu', 'cuda_dual.cuh', 'cuda_wide_dual.cuh')
-    if ra['controls'].get('action_tangent', False):
+    if any(report['controls'].get('action_tangent', False) for report in (ra, rb)):
         physics += ('boat_chart_tangent.py', 'boat_action_tangent.py')
+    if any(report['controls'].get('momentum_tangent', False) for report in (ra, rb)):
+        physics += ('boat_momentum_tangent.py', 'boat_incident_tangent.py', 'cuda_directional.py', 'cuda_directional.cu')
+    derivative_owners = ('boat_action_stencil.py', 'boat_ale_pressure.py', 'boat_momentum_tangent.py',
+                         'boat_incident_tangent.py', 'cuda_directional.py', 'cuda_directional.cu')
     for name in physics:
-        if ra['source_sha256'][name] != rb['source_sha256'][name]:
-            raise ValueError('physical helper differs between pilots: '+name)
+        for report in (ra, rb):
+            if ((name not in derivative_owners[2:] or report['controls'].get('momentum_tangent', False))
+                    and name not in report['source_sha256']):
+                raise ValueError('required physical helper provenance absent: '+name)
+        hashes = tuple(report['source_sha256'].get(name) for report in (ra, rb))
+        if hashes[0] != hashes[1]:
+            if name not in derivative_owners:
+                raise ValueError('physical helper differs between pilots: '+name)
+            derivative_changes[name] = dict(reference=hashes[0], candidate=hashes[1])
+    if derivative_changes and not derivative_change_note:
+        raise ValueError('physical helpers or action policies differ; explicit reviewed derivative implementation change note required')
     driver_changed = ra['source_sha256']['boat_moving.py'] != rb['source_sha256']['boat_moving.py']
     if driver_changed and not driver_change_note:
         raise ValueError('driver source changed; explicit reviewed change note required')
@@ -70,9 +88,11 @@ def run(reference, candidate, output, driver_change_note=None, integration_chang
             integration_changes[name] = dict(reference=ra['controls'][name], candidate=rb['controls'][name])
     if integration_changes and not integration_change_note:
         raise ValueError('integration controls differ; explicit reviewed change note required')
-    for name in ('derivative_step_seconds', 'pressure_derivative', 'minimum_chart_derivative_step_seconds'):
+    for name in ('derivative_step_seconds', 'minimum_chart_derivative_step_seconds', 'pressure_derivative'):
         if ra['controls'][name] != rb['controls'][name]:
-            raise ValueError('integration control differs: '+name)
+            if not derivative_change_note:
+                raise ValueError('derivative control differs; explicit reviewed derivative implementation change note required')
+            derivative_changes[name] = dict(reference=ra['controls'][name], candidate=rb['controls'][name])
     if ra['controls'].get('common_pressure_chart', False) != rb['controls'].get('common_pressure_chart', False):
         raise ValueError('common pressure chart policy differs')
     if ra['boundary_refinement']['region'] != rb['boundary_refinement']['region']:
@@ -89,12 +109,16 @@ def run(reference, candidate, output, driver_change_note=None, integration_chang
         scope='Shared accepted motion comparison using owned RK dense polynomials; not an independently converged or open-water reference.',
         inputs=inputs, heading_frame='Fixed shared initial boat heading; surge forward, sway port, heave world up.',
         heading_degrees=float(heading), overlap_seconds=float(end-ta[0]),
+        required_accuracy_duration_seconds=ACCURACY_DURATION_SECONDS,
+        covers_required_duration=bool(end-ta[0] >= ACCURACY_DURATION_SECONDS),
         driver_changed=driver_changed, reviewed_driver_change_note=driver_change_note,
         integration_control_changes=integration_changes, reviewed_integration_change_note=integration_change_note,
+        derivative_changes=derivative_changes, reviewed_derivative_change_note=derivative_change_note,
         source_sha256={name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
             for name in ('boat_motion_compare.py', 'boat_motion_metrics.py')},
         samples=[], limitations=[
             'Matching this unqualified finer run does not establish physical accuracy.',
+            'Subminute comparisons are screening evidence only; requested motion accuracy applies throughout 60 seconds.',
             'Short weakly excited motion cannot qualify behavior over representative wave/roll periods.',
             'Accepted-step polynomials are integrator dense output, not extra temporal accuracy.',
             'Sampling them is a numerical comparison, not a rigorous continuous-time error bound.',
@@ -129,4 +153,5 @@ if __name__ == '__main__':
     parser.add_argument('--output', required=True)
     parser.add_argument('--driver-change-note')
     parser.add_argument('--integration-change-note')
+    parser.add_argument('--derivative-change-note')
     run(**vars(parser.parse_args()))

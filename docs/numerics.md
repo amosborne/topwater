@@ -7,6 +7,10 @@ correlation that has not been implemented. The canoe and loading in
 is a simple 24 ft center-console boat in an observed Southern California sea;
 changing that baseline does not invalidate or replace earlier canoe evidence.
 
+The active speed/accuracy investigation register is [GitHub issue #30](https://github.com/amosborne/topwater/issues/30).
+Update its statuses and next experiments as evidence changes; research files
+retain detailed derivations and measured results, rather than a competing backlog.
+
 ## Required operating envelope
 
 The application is an unpowered boat adrift on open ocean: 18–30 ft length,
@@ -31,7 +35,9 @@ motion matter as well as angles. This intended-use boundary does not supply a
 numerical safety threshold or authorize an automatic human-safety classifier.
 Keep the existing flooding/contact and incident-wave checks. Numerical accuracy
 is a separate target: 0.1 degree convergence in each of roll, pitch and yaw, and
-a practical 1 cm target in each of surge, sway and heave. These targets do not
+a practical 1 cm target in each of surge, sway and heave, throughout a full
+60-second simulation. Compare the motion histories over that interval, not only
+the final pose; shorter runs are screening evidence. These targets do not
 certify a case as safe for occupants.
 
 Use the configured physical dispersion relation and depth, with intrinsic

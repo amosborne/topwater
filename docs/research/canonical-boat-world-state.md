@@ -1,5 +1,8 @@
 # Fixed-world surface state for the canonical boat
 
+Active investigation status and next experiments: [GitHub issue #30](https://github.com/amosborne/topwater/issues/30).
+This document retains technical reasoning and historical evidence.
+
 Scope: the 24 ft × 9 ft, 2,500 kg boat, water density 1,025 kg/m³,
 gravity 9.81 m/s², and selected observed SoCal sea with seed 42. This is an
 architecture/force-audit proposal; no new fluid solve or implementation has
@@ -15,7 +18,9 @@ with real time preferred; reduced work counts alone do not meet it.
 
 The user has now supplied an output accuracy target: 0.1 degree numerical
 convergence in EACH of roll/pitch/yaw, with a practical equivalent 1 cm target
-for EACH translation (surge fore/aft, sway sideways, heave vertical). A 0.1 degree
+for EACH translation (surge fore/aft, sway sideways, heave vertical), throughout
+a full 60-second simulation. Shorter traces only screen candidate changes;
+endpoint agreement alone does not satisfy the requirement. A 0.1 degree
 rotation over a 4 m lever arm displaces a point about 7 mm. The user's final
 scope clarification is ordinary motion tolerable for a person aboard; there
 is NO fixed roll-angle cutoff. The earlier 20-30 degree discussion can guide
@@ -936,6 +941,22 @@ driver code or integration controls. `boat-time-integration.json` retains all
 three run summaries, ownership and comparisons. No integrator speedup is adopted.
 
 ## Primary context
+
+The opt-in `--momentum-tangent` path differentiates the current mixed solve:
+`E_UU phi_dot_U = (b_dot - E_dot phi - E phi_dot_prescribed)_U`.
+It uses current analytic chart/map/body-load derivatives and the material
+incident-load derivative, retaining zero body acceleration for the known load
+and the existing current added-mass responses. This removes all four offset
+fluid solves and geometries. Owned early and difficult-state h/h2 audits agree
+with the exact derivative; the difficult finite-difference reference converges
+toward it when h halves. Evidence is in `boat-momentum-tangent.json`.
+
+The complete one-second candidate takes 117.9 s, 64 RHS/assemblies and 29 cold
+builds. It agrees with the archived RK23 trace within 0.0101 degree and 0.066 mm
+on the sampled common grid, but costs more than that historical 107.7 s run.
+Keep it opt-in pending a contemporary matched control; reduced assembly counts
+alone do not earn a speedup. Neither trace establishes full-minute accuracy.
+Issue #30 owns the next experiment and adoption status.
 
 Variational free-surface discretization with moving boundaries is established;
 its Hamiltonian can be nonautonomous when boundaries move:

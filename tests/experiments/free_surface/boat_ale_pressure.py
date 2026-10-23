@@ -32,6 +32,14 @@ def differentiate(base, plus, minus, phi_plus, phi_minus, step, center, twist):
             raise ValueError('finite nodal fields, geometry, center and twist required')
     rate = (np.asarray(phi_plus)-phi_minus)/(2*step)
     velocity = (plus['points']-minus['points'])/(2*step)
+    return rate, velocity, normal_slip(base, velocity, center, twist)
+
+
+def normal_slip(base, velocity, center, twist):
+    """Compare current chart and rigid hull normal velocities at quadrature."""
+    for value, shape in ((velocity, base['points'].shape), (center, (3,)), (twist, (6,))):
+        if np.shape(value) != shape or not np.isfinite(value).all():
+            raise ValueError('finite chart velocity, center and twist required')
     triangles = base['points'][base['faces'][base['body_faces']]]
     normals = np.cross(triangles[:, 1]-triangles[:, 0], triangles[:, 2]-triangles[:, 0])
     normals /= np.linalg.norm(normals, axis=1)[:, None]
@@ -41,6 +49,6 @@ def differentiate(base, plus, minus, phi_plus, phi_minus, step, center, twist):
                               velocity[base['faces'][base['body_faces']]])
     rigid_velocity = twist[:3]+np.cross(twist[3:], samples-center)
     slip = np.einsum('fqj,fj->fq', chart_velocity-rigid_velocity, normals)
-    return rate, velocity, dict(
+    return dict(
         maximum_body_normal_velocity_error_m_per_s=float(np.max(np.abs(slip))),
         rms_body_normal_velocity_error_m_per_s=float(np.sqrt(np.mean(slip**2))))

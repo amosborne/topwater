@@ -26,7 +26,7 @@ from .boat_world_field import current_field, surface_rates, refine_boundary
 from .body_pressure import evaluate_body_pressure, quadrature
 from .boat_ale_pressure import differentiate
 from .boat_motion_metrics import (attitude_degrees, ANGLE_ERROR_TARGET_DEGREES,
-                                 POSITION_ERROR_TARGET_METERS)
+                                 POSITION_ERROR_TARGET_METERS, ACCURACY_DURATION_SECONDS)
 from .boat_operator_reuse import LocalOperator, InvalidReuse, LIMITS
 from .boat_past_operator import PastLocalOperator, LIMITS as PAST_LIMITS
 from .incident_baseline_benchmark import coefficients
@@ -35,7 +35,8 @@ from .p4_fluid_ordering import fresh
 
 def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_step=.01,
         quadrature_order=3, operator_reuse=None, charted_pressure=False, common_pressure_chart=False,
-        action_coupling=False, initial_xy=None, action_tangent=None, integrator='RK23', tolerance_scale=1.):
+        action_coupling=False, initial_xy=None, action_tangent=None, integrator='RK23', tolerance_scale=1.,
+        momentum_tangent=False):
     from .cuda_operator import prepare_energy, cp
     if action_tangent is None:
         action_tangent = action_coupling
@@ -54,6 +55,8 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
         raise ValueError('initial_xy must contain two finite world coordinates')
     if action_tangent and not action_coupling:
         raise ValueError('analytic action tangent requires action coupling')
+    if momentum_tangent and not action_tangent:
+        raise ValueError('exact momentum tangent requires analytic action tangent')
     if integrator not in ('RK23', 'RK45'):
         raise ValueError('integrator must be RK23 or RK45')
     if not np.isfinite(tolerance_scale) or tolerance_scale <= 0:
@@ -65,6 +68,8 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
         scipy_version=scipy.__version__, requested_duration_seconds=duration,
         motion_requirement=dict(roll_pitch_yaw_error_target_degrees=ANGLE_ERROR_TARGET_DEGREES,
             surge_sway_heave_error_target_meters=POSITION_ERROR_TARGET_METERS,
+            accuracy_duration_seconds=ACCURACY_DURATION_SECONDS,
+            error_scope='Motion history throughout the full required duration, not endpoint only.',
             translation_comparison_frame='Common reference heading for horizontal surge/sway; world up for heave.',
             operating_scope='Ordinary motion tolerable for a person aboard; no fixed roll-angle cutoff.',
             status='Requested numerical motion convergence and operating scope; not yet validated.'),
@@ -79,6 +84,7 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
             integrator=integrator, dense_output='Saved SciPy accepted-step RkDenseOutput coefficients',
             action_coupling=action_coupling,
             action_tangent=action_tangent,
+            momentum_tangent=momentum_tangent,
             initial_horizontal_position_m=None if initial_xy is None else list(initial_xy),
             common_pressure_chart=common_pressure_chart,
             pressure_derivative=('charted nodal with explicit material fallback on chart failure'
@@ -104,6 +110,13 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
         report['source_sha256'].update({name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
             for name in ('boat_chart_tangent.py', 'boat_action_tangent.py')})
         report['controls']['action_difference_policy'] = 'Analytic current shape derivatives; h/h2 time-offset fields, use h/2 without a claimed error bound.'
+    if momentum_tangent:
+        report['source_sha256'].update({name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
+            for name in ('boat_momentum_tangent.py', 'boat_incident_tangent.py',
+                         'cuda_directional.py', 'cuda_directional.cu')})
+        report['controls'].update(action_difference_policy='Analytic current shape and mixed-field time derivatives.',
+            pressure_derivative='diagnostic only, exact current nodal ALE rate',
+            derivative_step_seconds=None, minimum_chart_derivative_step_seconds=None)
     started = perf_counter()
     times, states, dense_q, solver = [], [], [], None
     templates, cold_count, operator_model = [], 0, None
@@ -281,7 +294,7 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
                 lambda current_pose, height, potential, label: geometry(current_pose, height,
                     potential, label, chart=base_context['chart']),
                 lambda moved, current_time: field(moved, twist, current_time, False, None),
-                geometry_tangent=tangent_geometry if action_tangent else None)
+                geometry_tangent=tangent_geometry if action_tangent else None, momentum_tangent=momentum_tangent)
             row['operator_mode'] = 'fresh'
         refresh = (operator_reuse in ('past-linear', 'past-curved') and operator_model is not None
                    and abs(time-operator_model.time) >= PAST_LIMITS['refresh_age_seconds']-1e-14)
@@ -493,6 +506,7 @@ if __name__ == '__main__':
     parser.add_argument('--action-tangent', action=argparse.BooleanOptionalAction, default=None)
     parser.add_argument('--integrator', choices=('RK23', 'RK45'), default='RK23')
     parser.add_argument('--tolerance-scale', type=float, default=1.)
+    parser.add_argument('--momentum-tangent', action='store_true')
     result = run(**vars(parser.parse_args()))
     print(json.dumps({key: result[key] for key in
         ('complete', 'seconds', 'accepted_simulated_seconds', 'accepted_steps', 'cold_geometry_count')}))

@@ -1680,7 +1680,8 @@ it remains a rejection, not permission to solve on invalid triangles.
 Evidence: `docs/research/boat-chart-step.json`.
 
 The requested output budget is 0.1 degree in EACH of roll/pitch/yaw and 1 cm in
-EACH of surge/sway/heave. Scope is ordinary motion tolerable for a person
+EACH of surge/sway/heave throughout a full 60-second simulation, rather than
+only at its endpoint. Subminute runs are screening tests. Scope is ordinary motion tolerable for a person
 aboard, without a fixed roll-angle cutoff. The bounded driver records these
 requirements and accepted quaternion-derived attitude. Heading comparisons wrap
 at360 degrees. These are convergence targets, not achieved accuracy or a

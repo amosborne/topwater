@@ -7,6 +7,7 @@ from topwater.frames import rotation_matrix
 
 ANGLE_ERROR_TARGET_DEGREES = .1
 POSITION_ERROR_TARGET_METERS = .01
+ACCURACY_DURATION_SECONDS = 60.
 
 
 def attitude_degrees(orientation):

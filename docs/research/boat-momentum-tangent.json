@@ -1,0 +1,362 @@
+{
+  "status": "Opt-in exact derivative integration; local audits and one-second motion screening pass, speed adoption and full-minute qualification pending.",
+  "date": "2026-10-22",
+  "branch": "experiment/kernel-linearization",
+  "prior_raw_kernel_checkpoint": "3a965a2",
+  "scope": "Exact derivative of the current uniformly quadrature-assembled P1/P0 variational operator on a guarded owned chart. Analytic JX/dS/dB, exact-current Edot phi, current mixed solve, and material incident Neumann derivative. Zero body acceleration; current acceleration potentials retain added mass.",
+  "source_files": [
+    "tests/experiments/free_surface/boat_momentum_tangent.py",
+    "tests/experiments/free_surface/boat_momentum_tangent_audit.py",
+    "tests/experiments/free_surface/boat_incident_tangent.py"
+  ],
+  "validation": {
+    "timing": "Single bounded audit, not a speed qualification. Warm analytic incident 28-35 ms. Complete current field-rate helper 47-56 ms generic /161 ms difficult, including current boundary ownership recheck. Four fresh offset operators+fields about149/412 ms, excluding offset geometry. Initial Numba compile separately labeled in reports.",
+    "difficult": "1088 faces, 546 nodes, q3; actual 0.9644647283463897 s state, explicit owned chart 33 and bitwise geometry replay",
+    "primitive": "Existing exact directional energy action and the current physical boundary owner; no offset operator in the candidate",
+    "analytic_incident": "Generic incident derivative error <=7.4e-11 against h, <=2.5e-11 against h/2. Generic known-load error <=4.53e-6 N/Nm, pressure load <=2.30e-6 N/Nm, acceleration <=4.72e-10",
+    "fd_incident": "Maximum generic known-load error 3.12e-6 N/Nm and acceleration error 4.6e-10 against both h/h2 controls",
+    "generic": "472 faces, 238 nodes, q3, body refinement 1; actual generic state at 0 and 0.02 s, four fresh offset solves as h/h2 oracle",
+    "difficult_convergence": "Known-load error 0.002912 to 0.000734 N/Nm, pressure 0.003011 to 0.000755, acceleration 3.25e-7 to 8.13e-8 when h halves from 1e-5 s; consistent with second-order finite-difference truncation"
+  },
+  "limitations": [
+    "No trajectory or spatial convergence qualification",
+    "No operator approximation, cache policy, jitter or gauge/row correction",
+    "Prototype locally refactors current E_UU because current_field does not expose its existing factor",
+    "Audit retains offset geometry and fresh fields solely as the reference",
+    "Legacy flux-only contact report lacked explicit chart identity and was rejected before GPU work; later explicit owned chart report used"
+  ],
+  "reports": [
+    {
+      "input_states_sha256": "9cbc1174c7e5a4b755b42efcc65357a4829d65f798af50a01c719e7b51789c7d",
+      "input_geometry_arrays_sha256": "f872b266001e5d63befbc997b131c9c621f61658363f667f475c48346c5747f8",
+      "report_sha256": "43405ef905f571c280b7eb67c3e1061653466c0d4fab484710c73f25bdef0349",
+      "source_archive": "artifacts/momentum-tangent-generic-q3-body1-source",
+      "report": "artifacts/momentum-tangent-generic-q3-body1.json",
+      "input_geometry_json_sha256": "5dbd583d5200eb6d70be05981052ddae8ae5d300780b495247b116e01b08c7d6",
+      "source_sha256": {
+        "boat_momentum_tangent.py": "d3163671ab5aabc1531d167d4f2b31ffb11c8e34e33e79e2b78e5d2341d63509",
+        "boat_momentum_tangent_audit.py": "27ba11599281ac58babcaa0e8343e3091be6222d4bbc8d6d18ecc819b9d5784f",
+        "cuda_directional.py": "fd309582b8390937bc8d139f777f5e37cca29ecbf3e74d36ecc24f6081cdb496",
+        "cuda_directional.cu": "9ae28a2cc2c6925531dbae3121835f8f109c3cdbc8241833dae980a6a80a0648",
+        "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20",
+        "boat_chart_tangent.py": "1aa2869e141f7e6dbd7b7976da31c9d796be18b95a89a32ce8461f8a6f636c21",
+        "boat_action_tangent.py": "7baa117908aa4e244448dcc3c5e035895f0767adaf3f2b927a00ddf5da59f291",
+        "boat_world_field.py": "dba2612dd64de85ca27e390f4c0fa2c04bda2bc466ecfd7487503cb346ce67f3",
+        "boat_geometry_template.py": "4bd82128a54120432af7e258bfeb14bb5db31ab599c10eb0463fc164988b6172",
+        "boat_ale_pressure.py": "3ef82f1615082f2b21509d91a1ba9f4ce5d4b4b77c7c9794d4b0c97e6901c3da",
+        "body_pressure.py": "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+        "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+        "boat_body_action.py": "fb228cb2a39d8e4152877cef7b9a00b7f45a6a3437c3a6c52def7cf41ea68e7d",
+        "cuda_shape_gradient.py": "6cfa9fb82e8921d15d32ff8b9dc1aea2d36b6704a64fe38370844cc0f8e0ca49",
+        "cuda_shape.cu": "d1dbcba8727b75492bd509f3be6e1de6d3b4e47a28a1f713bbaefe03ac02d926",
+        "cuda_dual.cuh": "a251a46a1d695a15c9bb6e07ceac87241dcee589e85017ca8dbf8e9113dac97d",
+        "cuda_wide_dual.cuh": "51722f63b91ee78d5e15f5986fbc25a33f623b3c2f77859af1c36877838c7f55",
+        "cuda_operator.py": "22348f0038fee5a96f66b27abb135c3d3fd2252114d52c67e63f6fd81bb289b7",
+        "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f"
+      }
+    },
+    {
+      "input_states_sha256": "9cbc1174c7e5a4b755b42efcc65357a4829d65f798af50a01c719e7b51789c7d",
+      "input_geometry_arrays_sha256": "f872b266001e5d63befbc997b131c9c621f61658363f667f475c48346c5747f8",
+      "report_sha256": "dc06a750512268cad4a18544845c6594370d31ed737886867391c0a8f577df63",
+      "source_archive": "artifacts/momentum-tangent-analytic-generic-q3-body1-source",
+      "report": "artifacts/momentum-tangent-analytic-generic-q3-body1.json",
+      "input_geometry_json_sha256": "5dbd583d5200eb6d70be05981052ddae8ae5d300780b495247b116e01b08c7d6",
+      "source_sha256": {
+        "boat_momentum_tangent.py": "d3163671ab5aabc1531d167d4f2b31ffb11c8e34e33e79e2b78e5d2341d63509",
+        "boat_momentum_tangent_audit.py": "bad5858d2f36a37d2c0365bdbd61e7f5415672556aa8ab40814e5c78c6699645",
+        "cuda_directional.py": "fd309582b8390937bc8d139f777f5e37cca29ecbf3e74d36ecc24f6081cdb496",
+        "cuda_directional.cu": "9ae28a2cc2c6925531dbae3121835f8f109c3cdbc8241833dae980a6a80a0648",
+        "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20",
+        "boat_chart_tangent.py": "1aa2869e141f7e6dbd7b7976da31c9d796be18b95a89a32ce8461f8a6f636c21",
+        "boat_action_tangent.py": "7baa117908aa4e244448dcc3c5e035895f0767adaf3f2b927a00ddf5da59f291",
+        "boat_world_field.py": "dba2612dd64de85ca27e390f4c0fa2c04bda2bc466ecfd7487503cb346ce67f3",
+        "boat_geometry_template.py": "4bd82128a54120432af7e258bfeb14bb5db31ab599c10eb0463fc164988b6172",
+        "boat_ale_pressure.py": "3ef82f1615082f2b21509d91a1ba9f4ce5d4b4b77c7c9794d4b0c97e6901c3da",
+        "body_pressure.py": "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+        "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+        "boat_body_action.py": "fb228cb2a39d8e4152877cef7b9a00b7f45a6a3437c3a6c52def7cf41ea68e7d",
+        "cuda_shape_gradient.py": "6cfa9fb82e8921d15d32ff8b9dc1aea2d36b6704a64fe38370844cc0f8e0ca49",
+        "cuda_shape.cu": "d1dbcba8727b75492bd509f3be6e1de6d3b4e47a28a1f713bbaefe03ac02d926",
+        "cuda_dual.cuh": "a251a46a1d695a15c9bb6e07ceac87241dcee589e85017ca8dbf8e9113dac97d",
+        "cuda_wide_dual.cuh": "51722f63b91ee78d5e15f5986fbc25a33f623b3c2f77859af1c36877838c7f55",
+        "cuda_operator.py": "22348f0038fee5a96f66b27abb135c3d3fd2252114d52c67e63f6fd81bb289b7",
+        "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+        "boat_incident_tangent.py": "572d19c35e6c52af3f1a7e4f2b688434f55a08ca5118bce8cdeaa702be7fcfdd"
+      }
+    },
+    {
+      "input_states_sha256": "ff3acff99f3dd1f5cf0c9122915875cdbe6935ade7bd0866b52a7e425b43068e",
+      "input_geometry_arrays_sha256": "226ef76eb84637af3afd0c87a3df334fdc77027b6c834f1d570f975b4e862181",
+      "report_sha256": "693d3a226881c1b0216dabfe9c24efe732e3e8e91d3b74bbec233e1779601d1b",
+      "source_archive": "artifacts/momentum-tangent-analytic-contact964-q3-source",
+      "report": "artifacts/momentum-tangent-analytic-contact964-q3.json",
+      "input_geometry_json_sha256": "8ae1e7f3c34f2921634d55c40b6962c299ca7f84b10a46d7d6227e9ca13db303",
+      "source_sha256": {
+        "boat_momentum_tangent.py": "d3163671ab5aabc1531d167d4f2b31ffb11c8e34e33e79e2b78e5d2341d63509",
+        "boat_momentum_tangent_audit.py": "bad5858d2f36a37d2c0365bdbd61e7f5415672556aa8ab40814e5c78c6699645",
+        "cuda_directional.py": "fd309582b8390937bc8d139f777f5e37cca29ecbf3e74d36ecc24f6081cdb496",
+        "cuda_directional.cu": "9ae28a2cc2c6925531dbae3121835f8f109c3cdbc8241833dae980a6a80a0648",
+        "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20",
+        "boat_chart_tangent.py": "1aa2869e141f7e6dbd7b7976da31c9d796be18b95a89a32ce8461f8a6f636c21",
+        "boat_action_tangent.py": "7baa117908aa4e244448dcc3c5e035895f0767adaf3f2b927a00ddf5da59f291",
+        "boat_world_field.py": "dba2612dd64de85ca27e390f4c0fa2c04bda2bc466ecfd7487503cb346ce67f3",
+        "boat_geometry_template.py": "4bd82128a54120432af7e258bfeb14bb5db31ab599c10eb0463fc164988b6172",
+        "boat_ale_pressure.py": "3ef82f1615082f2b21509d91a1ba9f4ce5d4b4b77c7c9794d4b0c97e6901c3da",
+        "body_pressure.py": "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+        "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+        "boat_body_action.py": "fb228cb2a39d8e4152877cef7b9a00b7f45a6a3437c3a6c52def7cf41ea68e7d",
+        "cuda_shape_gradient.py": "6cfa9fb82e8921d15d32ff8b9dc1aea2d36b6704a64fe38370844cc0f8e0ca49",
+        "cuda_shape.cu": "d1dbcba8727b75492bd509f3be6e1de6d3b4e47a28a1f713bbaefe03ac02d926",
+        "cuda_dual.cuh": "a251a46a1d695a15c9bb6e07ceac87241dcee589e85017ca8dbf8e9113dac97d",
+        "cuda_wide_dual.cuh": "51722f63b91ee78d5e15f5986fbc25a33f623b3c2f77859af1c36877838c7f55",
+        "cuda_operator.py": "22348f0038fee5a96f66b27abb135c3d3fd2252114d52c67e63f6fd81bb289b7",
+        "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+        "boat_incident_tangent.py": "572d19c35e6c52af3f1a7e4f2b688434f55a08ca5118bce8cdeaa702be7fcfdd"
+      }
+    }
+  ],
+  "moving_screen": {
+    "pilot": {
+      "path": "artifacts\\boat-action-momentum-tangent-generic-q3-body1-1s.json",
+      "sha256": "0003c88520986a19e68f6b01061ca2e51b08993cb80ca02b22717731198bf9de",
+      "data": {
+        "complete": true,
+        "qualified": false,
+        "seconds": 117.91812200000277,
+        "accepted_simulated_seconds": 1.0,
+        "accepted_steps": 14,
+        "cold_geometry_count": 29,
+        "operator_counts": {
+          "fresh_rhs": 64,
+          "reused_rhs": 0,
+          "fresh_assemblies": 64,
+          "predicted_fields": 0,
+          "failed_reuse_attempts": 0
+        },
+        "integration_stats": {
+          "rhs_calls": 64,
+          "attempted_steps": 21,
+          "rejected_steps": 7,
+          "stages_per_attempt": 3
+        },
+        "motion_requirement": {
+          "roll_pitch_yaw_error_target_degrees": 0.1,
+          "surge_sway_heave_error_target_meters": 0.01,
+          "accuracy_duration_seconds": 60.0,
+          "error_scope": "Motion history throughout the full required duration, not endpoint only.",
+          "translation_comparison_frame": "Common reference heading for horizontal surge/sway; world up for heave.",
+          "operating_scope": "Ordinary motion tolerable for a person aboard; no fixed roll-angle cutoff.",
+          "status": "Requested numerical motion convergence and operating scope; not yet validated."
+        },
+        "source_sha256": {
+          "boat_moving.py": "2efa4bd73bad6c83d656b953cc1116aa2fc8f2435d96c48574cbe9abf10fdd03",
+          "boat_geometry_template.py": "4bd82128a54120432af7e258bfeb14bb5db31ab599c10eb0463fc164988b6172",
+          "boat_world_boundary.py": "e5b69c97f3087d15c4543c0d7041559fd7fbe67e2fa8422855ea27612bc52a98",
+          "boat_parent_clip_proof.py": "1cca90c54c909b92a7b2671a17f2734122bfd489b70d0c1b21915448626dc7e4",
+          "boat_world_field.py": "dba2612dd64de85ca27e390f4c0fa2c04bda2bc466ecfd7487503cb346ce67f3",
+          "body_pressure.py": "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+          "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+          "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+          "cuda_operator.py": "22348f0038fee5a96f66b27abb135c3d3fd2252114d52c67e63f6fd81bb289b7",
+          "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+          "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20",
+          "boat_operator_reuse.py": "72dad4861675c4fb8b270acf24af5ba686b2c903ef2716bb0ccba97f5cde5f95",
+          "boat_past_operator.py": "9a753e81141ea6b43af1146f21cc8023aad8fae92b30ddfa9f8ac822f3c48f5f",
+          "boat_ale_pressure.py": "2154016e415a38b80d50b8c73e718220bbc494a1f86127627bea80f9e830fb63",
+          "boat_motion_metrics.py": "34f7e377c4daa8e6d85bb54123f55be2f73cdd927686a910d563a518dd4faafa",
+          "boat_action_stencil.py": "399f6c0f21d64565bc18939b715fd2cf34e53c05d86f7a5879c9391d1e63f4d6",
+          "boat_body_action.py": "adba82f9f139bc13156b0c353a0d8f7b5a9449628ea8271feb2c761951c2616e",
+          "boat_parent_action.py": "652cef1314f02afc13461944e17001da19e4ff56d105e4d8b6c9293e0ed79499",
+          "cuda_shape_gradient.py": "6cfa9fb82e8921d15d32ff8b9dc1aea2d36b6704a64fe38370844cc0f8e0ca49",
+          "cuda_shape.cu": "d1dbcba8727b75492bd509f3be6e1de6d3b4e47a28a1f713bbaefe03ac02d926",
+          "cuda_dual.cuh": "a251a46a1d695a15c9bb6e07ceac87241dcee589e85017ca8dbf8e9113dac97d",
+          "cuda_wide_dual.cuh": "8319bb59c910b3ac9b373021204575c76be9a50c3e1376ff7b68bc6c5a49ea5a",
+          "boat_chart_tangent.py": "bb1499beac7e34c29cfdda1ad5e284b6f41179d6a8916d9713948b39737d006f",
+          "boat_action_tangent.py": "9740cb271bb095ff57b5d5df5fed73b984b878360bc45a1147e0084d60ee66cd",
+          "boat_momentum_tangent.py": "d3163671ab5aabc1531d167d4f2b31ffb11c8e34e33e79e2b78e5d2341d63509",
+          "boat_incident_tangent.py": "572d19c35e6c52af3f1a7e4f2b688434f55a08ca5118bce8cdeaa702be7fcfdd",
+          "cuda_directional.py": "801b1b54985c625e7c84f5b39854f8b0222531552d71ba2a10311254846447cc",
+          "cuda_directional.cu": "d2a83408a86b4d6fc5c11e665dbe06ce32398832f676d78d883b2cee04ba1713"
+        }
+      }
+    },
+    "comparison": {
+      "path": "artifacts\\boat-motion-momentum-tangent-1s.json",
+      "sha256": "64446ae0fdfb5a4992970a65e9dc7c43b9a8bd4048e7d788eab8a71d5af2b7cc",
+      "data": {
+        "qualified": false,
+        "scope": "Shared accepted motion comparison using owned RK dense polynomials; not an independently converged or open-water reference.",
+        "inputs": [
+          {
+            "path": "artifacts\\boat-action-tangent-stable-generic-q3-body1-1s.json",
+            "sha256": "3eb9ea138dd5d73bccaafe293848f6c87e2ccb1e148de9abfcaadfffc2816494",
+            "arrays_sha256": "041c38ba925c553aaea90a0d27ec22b2051b9da4b0def05269f30afe804745f6",
+            "initial_geometry_metadata_sha256": "b49b194758a23bd850906b0e65765836dcb0eda7e02b55ea012c5d96e1ef742c",
+            "complete": true,
+            "accepted_seconds": 1.0,
+            "seconds": 107.6748751999985,
+            "operator_counts": {
+              "fresh_rhs": 79,
+              "reused_rhs": 0,
+              "fresh_assemblies": 395,
+              "predicted_fields": 0,
+              "failed_reuse_attempts": 0
+            },
+            "refinement": {
+              "region": "body",
+              "levels": 1
+            },
+            "quadrature_order": 3,
+            "integrator": "RK23"
+          },
+          {
+            "path": "artifacts\\boat-action-momentum-tangent-generic-q3-body1-1s.json",
+            "sha256": "0003c88520986a19e68f6b01061ca2e51b08993cb80ca02b22717731198bf9de",
+            "arrays_sha256": "e8d5ee14a17e52c72db759825a51ec439cc752dbe4db62ba5c72d6a25b466704",
+            "initial_geometry_metadata_sha256": "2cb383674952eb568b726f6fe9dbd71e22978db7b0c550f2b66dfcc53b97494a",
+            "complete": true,
+            "accepted_seconds": 1.0,
+            "seconds": 117.91812200000277,
+            "operator_counts": {
+              "fresh_rhs": 64,
+              "reused_rhs": 0,
+              "fresh_assemblies": 64,
+              "predicted_fields": 0,
+              "failed_reuse_attempts": 0
+            },
+            "refinement": {
+              "region": "body",
+              "levels": 1
+            },
+            "quadrature_order": 3,
+            "integrator": "RK23"
+          }
+        ],
+        "heading_frame": "Fixed shared initial boat heading; surge forward, sway port, heave world up.",
+        "heading_degrees": 0.0,
+        "overlap_seconds": 1.0,
+        "required_accuracy_duration_seconds": 60.0,
+        "covers_required_duration": false,
+        "driver_changed": true,
+        "reviewed_driver_change_note": "Explicit opt-in exact momentum derivative, honest step metadata, accepted dense coefficients, and RK method controls; original RK23 tolerances and physical initial state retained.",
+        "integration_control_changes": {},
+        "reviewed_integration_change_note": null,
+        "derivative_changes": {
+          "momentum_tangent": {
+            "reference": false,
+            "candidate": true
+          },
+          "boat_ale_pressure.py": {
+            "reference": "76ceab24ef23c2a7d20359b15e15394d75df924f20b49eb61b0326da6c31c857",
+            "candidate": "2154016e415a38b80d50b8c73e718220bbc494a1f86127627bea80f9e830fb63"
+          },
+          "boat_action_stencil.py": {
+            "reference": "582ef80fc8e222807f0e77f91d95baae8096ab3178235ad3af32e95275de4cb5",
+            "candidate": "399f6c0f21d64565bc18939b715fd2cf34e53c05d86f7a5879c9391d1e63f4d6"
+          },
+          "boat_momentum_tangent.py": {
+            "reference": null,
+            "candidate": "d3163671ab5aabc1531d167d4f2b31ffb11c8e34e33e79e2b78e5d2341d63509"
+          },
+          "boat_incident_tangent.py": {
+            "reference": null,
+            "candidate": "572d19c35e6c52af3f1a7e4f2b688434f55a08ca5118bce8cdeaa702be7fcfdd"
+          },
+          "cuda_directional.py": {
+            "reference": null,
+            "candidate": "801b1b54985c625e7c84f5b39854f8b0222531552d71ba2a10311254846447cc"
+          },
+          "cuda_directional.cu": {
+            "reference": null,
+            "candidate": "d2a83408a86b4d6fc5c11e665dbe06ce32398832f676d78d883b2cee04ba1713"
+          },
+          "derivative_step_seconds": {
+            "reference": 5e-06,
+            "candidate": null
+          },
+          "minimum_chart_derivative_step_seconds": {
+            "reference": 1.220703125e-09,
+            "candidate": null
+          },
+          "pressure_derivative": {
+            "reference": "diagnostic only, matched action offsets",
+            "candidate": "diagnostic only, exact current nodal ALE rate"
+          }
+        },
+        "reviewed_derivative_change_note": "Same restricted action and current BEM. Replace four h/h2 offset fields/geometries by exact current Edot phi mixed solve, analytic dB/dS/JX and material incident quadrature derivative; normal-slip diagnostic extracted without arithmetic changes. Independent owned-state audits bound this implementation change; no physical convergence claim.",
+        "source_sha256": {
+          "boat_motion_compare.py": "de3da2be1a9bfd8935ee0554d422fc02069eb2aadf9cbeae306f6618bd32c9f2",
+          "boat_motion_metrics.py": "34f7e377c4daa8e6d85bb54123f55be2f73cdd927686a910d563a518dd4faafa"
+        },
+        "samples": [
+          {
+            "kind": "exact_common_knots",
+            "count": 3,
+            "first_time_seconds": 0.0,
+            "last_time_seconds": 1.0,
+            "maximum_translation_error_m": [
+              7.625449001236184e-06,
+              6.592832110668967e-05,
+              2.5340592131772866e-05
+            ],
+            "maximum_roll_pitch_yaw_error_degrees": [
+              0.010022824306872735,
+              0.0036055293238916875,
+              0.0011539077850954982
+            ],
+            "within_translation_target": [
+              true,
+              true,
+              true
+            ],
+            "within_angular_target": [
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "kind": "dense_common_grid",
+            "count": 527,
+            "first_time_seconds": 0.0,
+            "last_time_seconds": 1.0,
+            "maximum_translation_error_m": [
+              7.876890784713764e-06,
+              6.592832110668967e-05,
+              2.5340592131772866e-05
+            ],
+            "maximum_roll_pitch_yaw_error_degrees": [
+              0.010022824306872735,
+              0.0036055293238916875,
+              0.0011539077850954982
+            ],
+            "within_translation_target": [
+              true,
+              true,
+              true
+            ],
+            "within_angular_target": [
+              true,
+              true,
+              true
+            ]
+          }
+        ],
+        "limitations": [
+          "Matching this unqualified finer run does not establish physical accuracy.",
+          "Subminute comparisons are screening evidence only; requested motion accuracy applies throughout 60 seconds.",
+          "Short weakly excited motion cannot qualify behavior over representative wave/roll periods.",
+          "Accepted-step polynomials are integrator dense output, not extra temporal accuracy.",
+          "Sampling them is a numerical comparison, not a rigorous continuous-time error bound.",
+          "Combined body/quadrature change does not isolate either source of sensitivity.",
+          "Failed-run totals and differently achieved horizons are not a matched full-run speedup."
+        ],
+        "reference_maximum_absolute_roll_degrees": 2.1721413730773995
+      }
+    }
+  },
+  "decision": "Keep exact-current momentum derivative opt-in pending contemporary matched wall-time control. Local same-state consistency and one-second trajectory screening pass; no speed adoption or 60-second accuracy qualification.",
+  "integration_branch": "experiment/canonical-boat-sea",
+  "active_tracker": "https://github.com/amosborne/topwater/issues/30"
+}
