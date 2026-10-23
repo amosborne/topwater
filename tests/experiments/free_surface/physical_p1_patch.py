@@ -43,6 +43,8 @@ class PhysicalP1Patch:
         nx, ny = len(self.x), len(self.y)
         xx, yy = np.meshgrid(self.x, self.y)
         self.nodes = np.column_stack((xx.ravel(), yy.ravel()))
+        if np.iscomplexobj(footprint_ccw):
+            raise ValueError('finite real convex CCW footprint required')
         footprint = np.asarray(footprint_ccw, dtype=float)
         if (footprint.ndim != 2 or footprint.shape[1] != 2 or len(footprint) < 3
                 or not np.isfinite(footprint).all()):
@@ -116,6 +118,8 @@ class PhysicalP1Patch:
             np.einsum('tvi,tvj->tij', b, b)+sums[:, :, None]*sums[:, None, :])
         if np.any((local_mass == 0) & (np.einsum('tvi,tvj->tij', b, b) > 0)):
             raise ValueError('positive cut mass underflow')
+        if np.any((np.diagonal(local_mass, axis1=1, axis2=2) == 0) & np.any(b > 0, axis=1)):
+            raise ValueError('positive cut diagonal underflow; not an algebraic covered node')
         rows = np.broadcast_to(ids[:, :, None], local_mass.shape).ravel()
         cols = np.broadcast_to(ids[:, None, :], local_mass.shape).ravel()
         full_mass = sparse.coo_matrix((local_mass.ravel(), (rows, cols)), shape=(nx*ny, nx*ny)).tocsr()

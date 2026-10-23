@@ -1,0 +1,283 @@
+{
+  "status": "Physical-psi/source derivative and pressure gate implemented; kinematic evolution remains open; no baseline promotion",
+  "evidence": {
+    "artifacts\\boat-regularized-phase-rhs-retry.json": "d20a59d621b3eb3e1df4d9b24b70d207475f977e1b4851b739d550bfc31a4ab0",
+    "artifacts\\boat-regularized-acceleration-refinement.json": "3ae89a5c3e236bbb126cafea864cf22d091934232ac3a4db258fac986b23c54e"
+  },
+  "input_sha256": "d4727637dd8b52ab90b0969c58341fbb033b844befae09340dae74a841d076d1",
+  "panel_sha256": "0f1cc91a5ed4b165a0374751d684e8e0b4c1a50c7d5455dfe1fb40f71af9b258",
+  "space": {
+    "source_triangles": 5040,
+    "active_physical_coefficients": 2269,
+    "covered_auxiliary_coefficients": 150,
+    "mass": "Exact degree2 consistent mass on exposed water only; retain every positive cut support. Only exactly zero-support coefficients receive algebraic harmonic fill."
+  },
+  "current_state": [
+    "M*c+Cw*sigma=physical_psi_moments-far_chi_moments",
+    "N*c+JN*sigma=rigid_normal-far_normal"
+  ],
+  "time_derivative": [
+    "M*c_t+Cw*sigma_t=-g*eta_moments-far_chi_t_moments",
+    "N*c_t+JN*sigma_t=rigid_acceleration_normal-far_normal_t",
+    "pressure_force=-rho*B*(P*c_t+Seven*sigma_t+far_potential_t)"
+  ],
+  "phase_orders": [
+    {
+      "order": 4,
+      "construction_and_reference_seconds": 26.075546600011876,
+      "source_schur_condition_number": 38.695164712602924,
+      "body_potential_relative_l2": [
+        0.0016300774446319673,
+        0.004573326022506913
+      ],
+      "six_dof_force_absolute_error": [
+        [
+          0.3773112613249723,
+          0.1069558124820618
+        ],
+        [
+          0.7871762633881675,
+          3.094609932688096
+        ],
+        [
+          16.60933897159758,
+          1.9469068965574388
+        ],
+        [
+          1.2449742686247953,
+          4.918111620384291
+        ],
+        [
+          4.335015043279711,
+          3.820186494713206
+        ],
+        [
+          3.1254679934238254,
+          0.16961263143310454
+        ]
+      ],
+      "principal_force_relative_error": [
+        0.0012894414892510265,
+        0.004280556772261245
+      ],
+      "omission_cross_principal_force_relative_error": [
+        0.12138614691717972,
+        0.18651284418849784
+      ],
+      "omission_source_pressure_principal_force_relative_error": [
+        0.8878233468596917,
+        1.0028723138568025
+      ],
+      "state_weak_trace_residual_max": 5.551115123125783e-17,
+      "dynamic_weak_trace_residual_max": 4.163336342344337e-17,
+      "derivative_normal_residual_max": 2.886579864025407e-15,
+      "derivative_vs_rotated_state_max": 2.226580031461367e-12,
+      "sigma_derivative_vs_rotated_state_max": 6.148248576920423e-12,
+      "straight_physical_trace_weighted_rms_error": [
+        0.00047025833637052663,
+        0.0002040826507430617
+      ],
+      "straight_actual_velocity_moment_absolute_error": [
+        0.00038877321950510113,
+        0.00014426343216385684
+      ],
+      "reference_robin_moment_defect": [
+        5.36630867944354e-05,
+        5.276460542838501e-05
+      ],
+      "straight_candidate_vs_robin_moment_error": [
+        0.00043741659038066605,
+        0.00019702791280190455
+      ]
+    },
+    {
+      "order": 8,
+      "construction_and_reference_seconds": 97.04625889999443,
+      "source_schur_condition_number": 38.6985310523764,
+      "body_potential_relative_l2": [
+        0.0016302034282388036,
+        0.004573351928061691
+      ],
+      "six_dof_force_absolute_error": [
+        [
+          0.3778846358832715,
+          0.10785833803451313
+        ],
+        [
+          0.7880987502625517,
+          3.0951111291088687
+        ],
+        [
+          16.611901239503368,
+          1.9467409330159924
+        ],
+        [
+          1.2460260026596097,
+          4.918327164278742
+        ],
+        [
+          4.3390146702658035,
+          3.8262017699341793
+        ],
+        [
+          3.1265307309062957,
+          0.16677793380977157
+        ]
+      ],
+      "principal_force_relative_error": [
+        0.0012896404071339085,
+        0.0042807443743224285
+      ],
+      "omission_cross_principal_force_relative_error": [
+        0.12137584062519051,
+        0.18650365307678018
+      ],
+      "omission_source_pressure_principal_force_relative_error": [
+        0.887845855073784,
+        1.0028881678628658
+      ],
+      "state_weak_trace_residual_max": 5.551115123125783e-17,
+      "dynamic_weak_trace_residual_max": 3.469446951953614e-17,
+      "derivative_normal_residual_max": 2.9976021664879227e-15,
+      "derivative_vs_rotated_state_max": 3.393105241222827e-12,
+      "sigma_derivative_vs_rotated_state_max": 6.040501432380552e-12,
+      "straight_physical_trace_weighted_rms_error": [
+        0.0004702874149028305,
+        0.00020402819703115344
+      ],
+      "straight_actual_velocity_moment_absolute_error": [
+        0.0003886052889998672,
+        0.0001442512518724664
+      ],
+      "reference_robin_moment_defect": [
+        5.36630867944354e-05,
+        5.276460542838501e-05
+      ],
+      "straight_candidate_vs_robin_moment_error": [
+        0.00043724518305339683,
+        0.00019701573253623898
+      ]
+    }
+  ],
+  "acceleration_screen": {
+    "order": 8,
+    "dry_mass_normalized_reciprocity_defect": 0.03709032532721094,
+    "dry_mass_normalized_symmetric_part_eigenvalues": [
+      0.03138084941745974,
+      0.0476710393329114,
+      0.11183855933755356,
+      0.9328459409811303,
+      1.5075206570872837,
+      3.8000633897488836
+    ],
+    "symmetric_part_eigenvalues_raw_units": [
+      78.4576867044591,
+      100.70119131205455,
+      1157.7552040935964,
+      1559.8750997517948,
+      9343.55006576784,
+      14626.641492325969
+    ],
+    "actual_dry_plus_added_condition_number": 12.279589038352354,
+    "mass_normalized_dry_plus_added_condition_number": 4.653042582854432,
+    "independent_halfspace_principal_relative_difference": [
+      -0.22094809270205196,
+      -0.16727523977838152,
+      -0.02089623510395916,
+      -0.21261109863741173,
+      -0.17471264403647638,
+      -0.18468306916739038
+    ],
+    "source_halfspace_principal_relative_difference": [
+      -0.19978778534595815,
+      -0.0500738252323086,
+      0.032644461064026915,
+      -0.05569934293275798,
+      -0.13073500063017077,
+      -0.0796275900603789
+    ]
+  },
+  "body_only_halfspace_refinement": [
+    {
+      "level": 0,
+      "panels": 68,
+      "direct_diagonal": [
+        103.30051307865148,
+        716.6147574096314,
+        9671.11258241798,
+        1312.6628477588504,
+        17547.70892587055,
+        1478.2720439356394
+      ],
+      "source_diagonal": [
+        100.568899430725,
+        628.1991884065566,
+        9169.68336848689,
+        1094.5413940157075,
+        16659.939504233847,
+        1309.5353715310985
+      ]
+    },
+    {
+      "level": 1,
+      "panels": 272,
+      "direct_diagonal": [
+        95.1255773438707,
+        639.1595464859494,
+        8727.342817884208,
+        1176.3126835659725,
+        17736.381882497582,
+        1485.1026427372863
+      ],
+      "source_diagonal": [
+        95.35678844663443,
+        597.1331057389868,
+        8463.598459677742,
+        1048.142783722813,
+        17127.112022920483,
+        1381.7643558254922
+      ]
+    },
+    {
+      "level": 2,
+      "panels": 1088,
+      "direct_diagonal": [
+        91.19138793965764,
+        599.688458609172,
+        8291.66518535035,
+        1083.2757664174298,
+        17011.59815009608,
+        1403.3450775189378
+      ],
+      "source_diagonal": [
+        92.70684792770813,
+        579.4206107380473,
+        8146.807265847666,
+        1015.7530376839887,
+        16627.767703596724,
+        1344.510653740505
+      ]
+    }
+  ],
+  "interpretation": [
+    "Both real and imaginary heave/roll phases use independent external physical-potential moments and derived external eta moments. Current chi and source density are SOLVED, not prescribed.",
+    "At order8 principal force discrepancies are.129%/.428% against the finite68panel external reference; body potential discrepancies.163%/.457%. These are not continuum or body-motion accuracy bounds.",
+    "Omitting Cw*sigma_t raises principal force discrepancies to12.14%/18.65%; omitting Seven*sigma_t from pressure gives88.78%/100.29%. The gate detects both missing terms.",
+    "Quadrature4 to8 changes principal force errors by about2e-7. Rotated-state derivative agreement is algebraic for this linear harmonic input; independent field/force checks are the physical evidence.",
+    "Straight-waterline actual-velocity moment discrepancies remain.000389/.000144, much larger than its quadrature change. External Robin inconsistency is separately5.37e-5/5.28e-5. Pressure agreement has NOT qualified the kinematic fluid response.",
+    "Six-RHS acceleration screen has positive symmetric fluid-mass diagnostic eigenvalues and normalized dry-plus-added condition4.65; raw dry-mass-normalized reciprocity defect is3.71%. No matrix symmetrization, row repair or passivity claim.",
+    "On the identical planar hull, direct/indirect constant-panel whole-plane halfspace roll inertia differs16.6% at68panels,10.9% at272 and6.23% at1088. The68panel external reference is not a converged accuracy oracle.",
+    "Mixed finite-patch versus halfspace acceleration differences also include different far closure: local physical-potential moments with prescribed far chi versus physical psi=0 on the whole plane. Body refinement alone cannot isolate that discrepancy.",
+    "The132.14s phase CLI includes independent external evaluations, integration-reference construction and controls. It is not a trajectory or simulation-speed measurement; peak process RSS was471691264bytes.",
+    "The unchanged baseline remains one execution path. These CPU verification operators and data do not adopt a new moving solver."
+  ],
+  "checks": "8focused original-parent/body-map/cut-mass/hidden-fill tests passed in1.26s with complete imported-source archive; adversarial mathematical/source review found no blocking algebraic issue.",
+  "next_gate": "Implement physical weak kinematic feedback and one bounded short evolving-water case with the same pressure coupling, retaining unresolved reciprocity/far-domain and body-discretization uncertainty. Do not add reference variants or body-refinement levels before that evolution falsifier.",
+  "qualification": [
+    "Both physical pressure terms are tested, but eta is externally supplied; kinematic evolution does not generate the state",
+    "Far-field chi and its derivative are prescribed reference data; no open-water boundary qualification",
+    "All imposed harmonic rates are rotations of state: phase agreement is algebraic; independent fields/forces supply physical evidence",
+    "Float cut geometry and algebraic hidden-chi extension are verification references, not moving topology certificates",
+    "No nonlinear moving geometry, complete energy proof, full6DOF trajectory,60second accuracy or simulation throughput qualification"
+  ]
+}
