@@ -1,8 +1,10 @@
-"""One bounded source-trace refinement on the SAME actual waterline test hat.
+"""Frozen-reference trace controls on the SAME actual waterline test hat.
 
-S-only exterior integration avoids a fine full-patch weak kernel. The fixed
-body solution, physical support, far trace and external reference are retained.
-This is a spatial diagnostic, not a new motion-error or throughput criterion.
+S-only exterior integration avoids a fine full-patch weak kernel. The physical
+control refines only the trace, retaining the current body solution and far
+field. The regularized control retains a KNOWN even-image source field and
+rebuilds both far and local chi=psi-2*S_Gamma*sigma. Neither is a new coupled
+BVP, motion-error criterion, time-domain formulation or throughput result.
 """
 import argparse
 from hashlib import sha256
@@ -18,12 +20,14 @@ from threadpoolctl import threadpool_limits
 
 from topwater import SimulationInputs
 from topwater.constants import GRAVITY
-from topwater.rankine import TrianglePanels
+from topwater.rankine import TrianglePanels,panel_influence,single_layer_trace
 from tests.benchmark_rankine import peak_rss_bytes
 from tests.capytaine_reference import body_from_triangles
 from .boat_hos_continuation import window
 from .boat_local_radiation_trace import phases,amplitude,far_trace_spectrum
 from .boat_local_trace_enrichment import tensor_values
+from .boat_radiation_time import harmonic_maps
+from .compact_p1_trace import CompactP1Trace
 from .boat_weak_contact_rows import owned,triangle_rule,fourier_values
 from .cut_hat_geometry import cut_hat
 from .plane_p1_field import PlaneP1Field
@@ -47,7 +51,7 @@ def run(args,report):
     with np.load(paths['snapshot'].with_suffix('.npz')) as z:
         x=z['patch_x'].copy();y=z['patch_y'].copy();delta=z['residual'].copy();density=z['enriched_density'].copy()
     with np.load(paths['audit'].with_suffix('.npz')) as z:
-        triangles=z['triangles'].copy();external_sources=z['sources_0'].copy()
+        triangles=z['triangles'].copy();external_sources=z['sources_0'].copy();reference_body=z['body_0'].copy()
     panel_hash=sha256(triangles.tobytes()).hexdigest()
     if any(p['panel_sha256']!=panel_hash for p in (contact,snapshot,field,audit)):
         raise ValueError('body panels differ')
@@ -64,11 +68,25 @@ def run(args,report):
     with np.load(paths['field'].with_suffix('.npz')) as z: trace=z['surface_0'].reshape(grid,grid,2)
     beam=float(np.ptp(inputs.body.mesh.vertices[:,1]))
     inner=np.max(abs(triangles[:,:,:2]-cg[:2]),axis=(0,1))+.5*beam;outer=inner+beam
+    omega=2*np.pi*field['frequency_hz'];panels=TrianglePanels(triangles,-1)
+    external_density=phases(-external_sources/(-1j*omega))
+    regularized=args.trace_representation=='reference-even-image-subtracted'
+
+    def plane_source_trace(points):
+        result=np.empty((len(points),4))
+        for first in range(0,len(points),128):
+            p=np.column_stack((points[first:first+128],np.zeros(len(points[first:first+128]))))
+            result[first:first+len(p)]=2*panel_influence(p,panels).single_layer@external_density
+        return result
+
+    if regularized:
+        axis=np.arange(grid)*length/grid
+        gx,gy=np.meshgrid(origin[0]+axis,origin[1]+axis)
+        correction=plane_source_trace(np.column_stack((gx.ravel(),gy.ravel())))
+        trace=trace-amplitude(correction).reshape(grid,grid,2)
     far=far_trace_spectrum(trace,origin,length,cg[:2],inner,beam)
     kx,ky=np.meshgrid(2*np.pi*np.fft.fftfreq(grid,d=length/grid),2*np.pi*np.fft.fftfreq(grid,d=length/grid))
     far_vertical=far*np.hypot(kx,ky)[:,:,None]
-    omega=2*np.pi*field['frequency_hz'];panels=TrianglePanels(triangles,-1)
-    external_density=phases(-external_sources/(-1j*omega))
     settings=dict(audit['rows'][0]['green_settings']);settings.pop('green_function')
     cache=Path('artifacts/capytaine-surface-audit-cache');cache.mkdir(exist_ok=True)
     body=body_from_triangles(triangles,cg,inputs.body.mass)
@@ -95,18 +113,39 @@ def run(args,report):
         lw=(np.linalg.norm(line['segments'][:,1]-line['segments'][:,0],axis=1)[:,None]*weights).ravel()*lv
         ln=np.repeat(line['hole_outward_normals'],order,axis=0)
         source=np.zeros(4);transplanted=np.zeros(4)
-        for first in range(0,len(ep),128):
-            last=min(first+128,len(ep));p=np.column_stack((ep[first:last],np.zeros(last-first)))
-            mapping=2*checked_influence(p,panels).gradient_single_layer[:,:,2]
-            source+=(ew[first:last]*ev[first:last])@(mapping@density)
-            transplanted+=(ew[first:last]*ev[first:last])@(mapping@external_density)
+        if not regularized:
+            for first in range(0,len(ep),128):
+                last=min(first+128,len(ep));p=np.column_stack((ep[first:last],np.zeros(last-first)))
+                mapping=2*checked_influence(p,panels).gradient_single_layer[:,:,2]
+                source+=(ew[first:last]*ev[first:last])@(mapping@density)
+                transplanted+=(ew[first:last]*ev[first:last])@(mapping@external_density)
         r=(ew*ev)@reference(ep,velocity=True)
         quadrature[order]=dict(ep=ep,ew=ew,ev=ev,eg=eg,lp=lp,lw=lw,ln=ln,
             far=(ew*ev)@fourier_values(far_vertical,ep,origin,length),source=source,
             reference=r,reference_lift=r-amplitude(transplanted[None])[0],
-            reference_trace=reference(ep),far_trace=fourier_values(far,ep,origin,length))
+            reference_trace=reference(ep),far_trace=fourier_values(far,ep,origin,length),
+            physical_trace_correction=plane_source_trace(ep) if regularized else np.zeros((len(ep),4)))
     report.update(input_sha256=identity,panel_sha256=panel_hash,physical_hat_mass=mass,
-        physical_test_centre=case['centre'],physical_test_spacing=[hx,hy],rows=[])
+        physical_test_centre=case['centre'],physical_test_spacing=[hx,hy],
+        trace_representation=args.trace_representation,known_reference_density_not_solved=regularized,rows=[])
+
+    def sampled_trace(fx,fy):
+        xx,yy=np.meshgrid(fx,fy)
+        points=np.column_stack((xx.ravel(),yy.ravel()))
+        exact=phases(reference(points))
+        if regularized: exact-=plane_source_trace(points)
+        exact=exact.reshape(len(fy),len(fx),4)
+        taper=window(xx-cg[0],inner[0],outer[0])*window(yy-cg[1],inner[1],outer[1])
+        values=(exact-tensor_values(far,fx,fy,origin,length))*taper[:,:,None]
+        values[[0,-1],:]=0.;values[:,[0,-1]]=0.
+        return values
+
+    base_values=sampled_trace(x,y) if regularized else delta
+    if regularized:
+        even_body=single_layer_trace(panels,np.arange(len(panels))).single_layer
+        even_body+=panel_influence(panels.centroids*[1.,1.,-1.],panels).single_layer
+        pbody,_,_=harmonic_maps(panels.centroids,panels.normals,grid,length/grid,origin)
+        far_body=(pbody@far.reshape(-1,4)).real
     saved={}
     for refinement in args.refinements:
         scale=2**refinement
@@ -114,18 +153,20 @@ def run(args,report):
         fy=np.linspace(y[0],y[-1],(len(y)-1)*scale+1)
         np.testing.assert_array_equal(fx[::scale],x)
         np.testing.assert_array_equal(fy[::scale],y)
-        if refinement==0: values=delta
+        if refinement==0: values=base_values
         else:
-            xx,yy=np.meshgrid(fx,fy)
-            exact=phases(reference(np.column_stack((xx.ravel(),yy.ravel())))).reshape(len(fy),len(fx),4)
-            taper=window(xx-cg[0],inner[0],outer[0])*window(yy-cg[1],inner[1],outer[1])
-            values=(exact-tensor_values(far,fx,fy,origin,length))*taper[:,:,None]
-            values[[0,-1],:]=0.;values[:,[0,-1]]=0.
-            np.testing.assert_allclose(values[::scale,::scale],delta,atol=2e-12,rtol=2e-12)
+            values=sampled_trace(fx,fy)
+            np.testing.assert_allclose(values[::scale,::scale],base_values,atol=2e-12,rtol=2e-12)
         owner=PlaneP1Field(fx,fy,values,args.maximum_pairs)
         row=dict(refinement=refinement,source_triangles=len(owner.panels),
             source_spacing=[float(fx[1]-fx[0]),float(fy[1]-fy[0])],quadrature=[])
         report['rows'].append(row)
+        if regularized:
+            local_body=np.column_stack([CompactP1Trace(fx,fy,values[:,:,c]).bulk(panels.centroids)[0] for c in range(4)])
+            physical_body=amplitude(far_body+local_body+even_body@external_density)
+            row['known_density_body_potential_relative_l2']=np.sqrt(
+                np.sum(panels.areas[:,None]*abs(physical_body-reference_body)**2,axis=0)
+                /np.sum(panels.areas[:,None]*abs(reference_body)**2,axis=0)).tolist()
         for order in args.orders:
             print(json.dumps(dict(refinement=refinement,order=order,start=True)),flush=True)
             started=perf_counter();q=quadrature[order]
@@ -138,7 +179,7 @@ def run(args,report):
             total=amplitude((q['far']+local+q['source'])[None])[0]
             nodal=values.reshape(-1,4)[owner.faces[eo,0]]
             point_trace=nodal+np.einsum('mi,mic->mc',q['ep']-owner.panels.triangles[eo,0,:2],owner.gradient[eo])
-            trace_error=amplitude(point_trace+q['far_trace'])-q['reference_trace']
+            trace_error=amplitude(point_trace+q['far_trace']+q['physical_trace_correction'])-q['reference_trace']
             previous=next((v for v in case['quadrature'] if v['order']==order),None)
             entry=dict(order=order,seconds=perf_counter()-started,area=area.tolist(),waterline=waterline.tolist(),
                 local_moment=local.tolist(),lift_moment_real=lift.real.tolist(),lift_moment_imag=lift.imag.tolist(),
@@ -147,7 +188,7 @@ def run(args,report):
                 total_defect_absolute=abs(total-q['reference']).tolist(),
                 trace_weighted_rms_error=np.sqrt((q['ew']*q['ev'])@abs(trace_error)**2/mass).tolist(),
                 old_full_minus_hidden_difference=abs(amplitude((local-np.array(previous['corrected_local']))[None])[0]).tolist()
-                    if previous is not None and refinement==0 else None,source_pairs_so_far=owner.pairs)
+                    if previous is not None and refinement==0 and not regularized else None,source_pairs_so_far=owner.pairs)
             row['quadrature'].append(entry)
             saved[f'refinement_{refinement}_q{order}_local']=local
             saved[f'refinement_{refinement}_x']=fx;saved[f'refinement_{refinement}_y']=fy
@@ -157,6 +198,8 @@ def run(args,report):
             print(json.dumps(dict(refinement=refinement,**entry)),flush=True)
     report.update(complete=True,qualified=False,scope=__doc__,peak_process_rss_bytes=peak_rss_bytes(),
         limits=['Fixed body density is intentionally not re-solved: isolate the trace lift, not a new coupled BVP',
+            'Even-image subtraction uses known external density for verification only; physical psi=chi+2*S_Gamma*sigma and its dynamic coupling cannot be dropped',
+            'Even images have zero vertical source flux on the flat plane only; no curved-surface zero-flux claim',
             'Target quadrature is fixed on the same physical cut cells; order sensitivity is diagnostic, not a certified bound',
             'Inferred reference lift includes external finite-panel and native kernel approximation uncertainty',
             'No time integration, body-motion accuracy, throughput or baseline promotion claim'])
@@ -168,6 +211,8 @@ if __name__=='__main__':
     parser.add_argument('--refinements',type=int,nargs='+',default=[0,1])
     parser.add_argument('--orders',type=int,nargs='+',default=[8,16])
     parser.add_argument('--maximum-pairs',type=int,default=900_000_000)
+    parser.add_argument('--trace-representation',choices=['physical','reference-even-image-subtracted'],default='physical',
+        help='Verification control only: retain known reference source trace analytically')
     args=parser.parse_args()
     if (args.output.exists() or args.output.with_suffix('.source').exists() or not args.refinements
             or min(args.refinements)<0 or max(args.refinements)>1 or not args.orders
