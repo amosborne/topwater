@@ -37,6 +37,20 @@ class PlaneP1Field:
             raise ValueError('cut parent provenance differs from the source mesh')
         return indices
 
+    def point_owners(self,points):
+        """Locate original structured parents; the kernel rejects edge queries."""
+        points=np.asarray(points)
+        if points.ndim!=2 or points.shape[1]!=2 or np.iscomplexobj(points) or not np.isfinite(points).all():
+            raise ValueError('finite real planar integration points required')
+        col=np.searchsorted(self.x,points[:,0],side='right')-1
+        row=np.searchsorted(self.y,points[:,1],side='right')-1
+        nx,ny=len(self.x)-1,len(self.y)-1
+        if np.any(col<0) or np.any(col>=nx) or np.any(row<0) or np.any(row>=ny):
+            raise ValueError('integration points must lie inside the original patch')
+        a=(points[:,0]-self.x[col])/(self.x[col+1]-self.x[col])
+        b=(points[:,1]-self.y[row])/(self.y[row+1]-self.y[row])
+        return row*nx+col+(b>a)*nx*ny
+
     def _evaluate(self,points,owners,tangent):
         points=np.asarray(points,dtype=float);owners=np.asarray(owners)
         if points.ndim!=2 or points.shape[1:]!=(2,) or owners.shape!=(len(points),):

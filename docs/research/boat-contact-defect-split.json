@@ -1,0 +1,103 @@
+{
+  "status": "Waterline lift/trace error isolated; uniform refinement useful but not promoted",
+  "evidence": {
+    "artifacts\\boat-contact-defect-split-retry.json": "813bd75c4978fc533ecb79aa6ec1cb3bd4904171e1199cfef4f3e76eeaf51a45",
+    "artifacts\\boat-contact-trace-refinement.json": "7ca0e0aa8052256696f6ebc3d47738520b3dfb89896e3bed310938a876ebb5a1"
+  },
+  "source_split": {
+    "lift_moment_defect_absolute": [
+      0.0014116376665012642,
+      0.001453091861890909
+    ],
+    "density_response_defect_absolute": [
+      4.11777377702148e-05,
+      1.6933794099700936e-06
+    ],
+    "total_absolute_moment_defect": [
+      0.0014474341015927486,
+      0.0014547848527438835
+    ]
+  },
+  "native_rankine_relative_difference_at_sign_probe": 0.0027305355772822143,
+  "refinement": [
+    {
+      "relative_level": 0,
+      "source_triangles": 20160,
+      "quadrature": [
+        {
+          "order": 8,
+          "lift_defect_absolute": [
+            0.0014115181022764315,
+            0.001453054128054794
+          ],
+          "trace_weighted_rms_error": [
+            0.003970708310164305,
+            0.004365173428497724
+          ],
+          "old_full_minus_hidden_difference": [
+            1.2079054451264708e-07,
+            3.773385240997021e-08
+          ],
+          "source_pairs_so_far": 41771520
+        },
+        {
+          "order": 16,
+          "lift_defect_absolute": [
+            0.0014111395945630156,
+            0.0014526329288828876
+          ],
+          "trace_weighted_rms_error": [
+            0.003970632930057217,
+            0.004365102992064163
+          ],
+          "old_full_minus_hidden_difference": null,
+          "source_pairs_so_far": 207889920
+        }
+      ]
+    },
+    {
+      "relative_level": 1,
+      "source_triangles": 80640,
+      "quadrature": [
+        {
+          "order": 8,
+          "lift_defect_absolute": [
+            0.0005791657981856693,
+            0.0005862971513237215
+          ],
+          "trace_weighted_rms_error": [
+            0.0009952946827577092,
+            0.0011444753789147798
+          ],
+          "old_full_minus_hidden_difference": null,
+          "source_pairs_so_far": 167086080
+        },
+        {
+          "order": 16,
+          "lift_defect_absolute": [
+            0.0005788152259392621,
+            0.0005858691749242261
+          ],
+          "trace_weighted_rms_error": [
+            0.0009952499211922045,
+            0.0011443277940858699
+          ],
+          "old_full_minus_hidden_difference": null,
+          "source_pairs_so_far": 831559680
+        }
+      ]
+    }
+  ],
+  "interpretation": [
+    "Positive-Rankine unit-velocity reference density=-Capytaine_sources/(-i*omega); native free-space negative convention checked numerically.",
+    "On the same straight cut hat the lift defect dominates density-response defect by about34x/heave and858x/roll. Inferred reference lift is an algebraic diagnostic, not an independent oracle.",
+    "The exterior S-only weak moment matches the earlier full-minus-hidden formula within1.21e-7 at original resolution/order8.",
+    "Refining only the trace from20160 to80640 source triangles reduces order16 lift error from[.0014111,.0014526] to[.0005788,.0005859], about2.44x/2.48x. Held-out physical trace RMS improves about4x.",
+    "Order8/16 moment changes are about4e-7, much smaller than the approximately8e-4 refinement improvement. These are convergence diagnostics, not certified error bounds.",
+    "The body source solution and physical test hat remain fixed: this isolates a lift error, not a new coupled BVP. No motion-accuracy acceptance criterion is imposed on these moments.",
+    "Native Rankine approximation difference at the sign probe is.273%; finite-panel and Green quadrature uncertainty remain. No reference variant is silently chosen as truth.",
+    "Refinement study consumed118s for a static diagnostic, not a simulation timing or speed comparison. Pair counts bound only the CPU S-reference contraction."
+  ],
+  "next_gate": "Test whether analytically retaining the even-image source trace and approximating chi=psi-2*S_Gamma*sigma removes difficult near-contact cancellation at unchanged trace resolution. Known archived density is verification-only; physical psi/density time coupling and curved-surface work remain mandatory before runtime adoption.",
+  "checks": "4 focused owner/multicolumn/trace tests pass; archived producer graph at artifacts/plane-p1-owner-check-retry.source. Adversarial source and representation review found no algebraic blocker."
+}

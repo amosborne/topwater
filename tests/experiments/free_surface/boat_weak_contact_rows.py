@@ -26,7 +26,7 @@ from tests.capytaine_reference import body_from_triangles
 from tests.benchmark_rankine import peak_rss_bytes
 from tests.laplace_reference import triangle_samples
 from .boat_weak_exterior_moments import owned
-from .boat_local_radiation_trace import amplitude,far_trace_spectrum
+from .boat_local_radiation_trace import phases,amplitude,far_trace_spectrum
 from .compact_p1_weak import WeakPatch
 from .compact_p1_trace import CompactP1Trace
 from .boat_radiation_time import harmonic_maps
@@ -148,11 +148,23 @@ def run(args,report):
     omega=2*np.pi*field_meta['frequency_hz'];body=body_from_triangles(triangles,cg,inputs.body.mass)
     settings=dict(audit['rows'][0]['green_settings']);settings.pop('green_function')
     cache=Path('artifacts/capytaine-surface-audit-cache');cache.mkdir(exist_ok=True)
-    solver=cpt.BEMSolver(green_function=cpt.Delhommeau(**settings,tabulation_cache_dir=str(cache)))
+    green=cpt.Delhommeau(**settings,tabulation_cache_dir=str(cache))
+    solver=cpt.BEMSolver(green_function=green)
+    # Check the owned native free-space Green convention before transplanting
+    # its source coefficients into our positive-Rankine halfspace map.
+    sign_probe=np.array([[cg[0]+2*beam,cg[1],0.]])
+    native_rankine,_=green.evaluate(sign_probe,body.mesh,free_surface=np.inf,
+        early_dot_product=False,diagonal_term_in_double_layer=False)
+    positive_rankine=checked_influence(sign_probe,panels).single_layer
+    if not (np.all(native_rankine.real<0) and np.all(positive_rankine>0)):
+        raise ValueError('external native Rankine sign does not match the source conversion')
+    external_halfspace_density=phases(-external_sources/(-1j*omega))
     external=[SimpleNamespace(body=body,sources=external_sources[:,c],free_surface=0.,water_depth=np.inf,
         encounter_wavenumber=omega**2/GRAVITY,forward_speed=0.) for c in range(2)]
     report.update(input_sha256=identity,panel_sha256=panel_hash,patch_shape=shape,
         body_density_reconstruction_max_error=float(np.max(abs(reconstructed-density))),
+        external_rankine_sign='native negative S; positive halfspace unit-velocity density=-sources/(-i*omega)',
+        native_rankine_relative_difference=float(np.linalg.norm(native_rankine+positive_rankine)/np.linalg.norm(positive_rankine)),
         maximum_source_pairs=args.maximum_pairs,orders=args.orders,cases=[])
     saved=dict(polygon=polygon,x=x,y=y)
     for case_id,((name,(row,col)),(geometry,parents)) in enumerate(zip(cases,geometries,strict=True)):
@@ -183,7 +195,8 @@ def run(args,report):
                 n=np.repeat(line['hole_outward_normals'],order,axis=0)
                 waterline=2*np.einsum('m,mi,mic->c',w,n,a)
             corrected=full-hidden_gradient+waterline
-            source=np.zeros(4);global_far=np.zeros(4);reference=np.zeros(2,dtype=complex)
+            source=np.zeros(4);transplanted_source=np.zeros(4)
+            global_far=np.zeros(4);reference=np.zeros(2,dtype=complex)
             if len(ep):
                 direct=(ew*ev)@trace_field.normal_flux(ep,parents[eids])
                 global_far=(ew*ev)@fourier_values(vertical_spectrum,ep,origin,length)
@@ -191,6 +204,7 @@ def run(args,report):
                     last=min(first+128,len(ep));p=np.column_stack((ep[first:last],np.zeros(last-first)))
                     vertical=2*checked_influence(p,panels).gradient_single_layer[:,:,2]
                     source+=(ew[first:last]*ev[first:last])@(vertical@density)
+                    transplanted_source+=(ew[first:last]*ev[first:last])@(vertical@external_halfspace_density)
                 with threadpool_limits(1):
                     for c,result in enumerate(external):
                         velocity=np.concatenate([solver.compute_velocity(np.column_stack((ep[first:first+256],np.zeros(len(ep[first:first+256])))),result)[:,2]
@@ -199,7 +213,18 @@ def run(args,report):
             else: direct=np.zeros(4)
             difference=amplitude((corrected-direct)[None])[0]
             total=amplitude((global_far+corrected+source)[None])[0]
+            reference_source=amplitude(transplanted_source[None])[0]
+            reference_lift=reference-reference_source
+            lift_defect=amplitude((global_far+corrected)[None])[0]-reference_lift
+            density_defect=amplitude((source-transplanted_source)[None])[0]
+            np.testing.assert_allclose(lift_defect+density_defect,total-reference,atol=1e-14,rtol=1e-12)
             entry=dict(order=order,seconds=perf_counter()-started,
+                global_far=global_far.tolist(),current_source=source.tolist(),
+                transplanted_reference_source=transplanted_source.tolist(),
+                inferred_reference_lift_real=reference_lift.real.tolist(),inferred_reference_lift_imag=reference_lift.imag.tolist(),
+                lift_moment_defect_real=lift_defect.real.tolist(),lift_moment_defect_imag=lift_defect.imag.tolist(),
+                density_response_defect_real=density_defect.real.tolist(),density_response_defect_imag=density_defect.imag.tolist(),
+                lift_moment_defect_absolute=abs(lift_defect).tolist(),density_response_defect_absolute=abs(density_defect).tolist(),
                 full_local=full.tolist(),hidden_gradient=hidden_gradient.tolist(),waterline=waterline.tolist(),
                 corrected_local=corrected.tolist(),direct_local=direct.tolist(),hidden_direct=hidden_direct.tolist(),
                 local_restriction_absolute_difference=abs(difference).tolist(),
@@ -217,6 +242,8 @@ def run(args,report):
             saved[f'geometry_{case_id}_exterior']=geometry['exterior']['triangles']
             saved[f'geometry_{case_id}_waterline']=line['segments']
             saved[f'case_{case_id}_q{order}_local']=np.array([full,hidden_gradient,waterline,corrected,direct,hidden_direct])
+            saved[f'case_{case_id}_q{order}_global_source']=np.array([global_far,source,transplanted_source])
+            saved[f'case_{case_id}_q{order}_reference']=np.array([reference,reference_lift])
             np.savez(args.output.with_suffix('.npz'),**saved)
             report['arrays_sha256']=sha256(args.output.with_suffix('.npz').read_bytes()).hexdigest()
             print(json.dumps(dict(case=name,**entry)),flush=True)
@@ -224,6 +251,7 @@ def run(args,report):
     report.update(complete=True,qualified=False,scope=__doc__,source_pairs=trace_field.pairs,
         reference_field_seconds=trace_field.seconds,peak_process_rss_bytes=peak_rss_bytes(),
         limits=['Float cut integration geometry, not a moving-contact topology certificate',
+            'Reference lift is inferred by subtracting transplanted source work from the actual reference velocity; this decomposition is not an independent lift oracle',
             'Waterline aligned with original P1 source edges remains explicitly unsupported by strict-interior query API',
             'No physical hidden mass, no nodal/mass-inverse rate or moving-waterline state transfer',
             'Source/weak restriction checks do not establish full pressure/body power conservation',
