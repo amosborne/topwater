@@ -1,7 +1,7 @@
-"""Experimental full action RHS using one current gradient and owned offsets.
+"""Experimental full action RHS with current derivative or owned offsets.
 
-No operator reuse or material-chart fallback. Both h/h2 controls are retained;
-choosing h/2 here is diagnostic and does not establish an accuracy bound.
+No operator reuse or material-chart fallback. The independent h/h2 reference
+retains both controls; choosing h/2 does not establish an accuracy bound.
 """
 from dataclasses import dataclass
 from time import perf_counter

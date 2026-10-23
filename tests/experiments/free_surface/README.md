@@ -1806,3 +1806,12 @@ degree and costs more. RK23 remains default. New accepted states include their
 actual dense-output coefficients; `boat_motion_compare` uses them and requires
 an explicit `--integration-change-note` when ODE controls differ. Evidence:
 `docs/research/boat-time-integration.json`.
+
+The experimental analytic action path now defaults to exact current mixed-field
+and momentum time derivatives. `--no-momentum-tangent` retains its independent
+h/h2 field-stencil reference. A contemporary serial one-second comparison
+measured 212.4 s for the reference and 130.8 s for the exact derivative, with
+maximum sampled differences 0.0101 degree and 0.066 mm. This earns the simpler
+current-derivative path as the experimental default, without a full-minute
+accuracy or guaranteed throughput claim. Evidence: `boat-momentum-tangent.json`;
+active investigations: [issue #30](https://github.com/amosborne/topwater/issues/30).

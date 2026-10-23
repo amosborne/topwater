@@ -1,5 +1,5 @@
 {
-  "status": "Opt-in exact derivative integration; local audits and one-second motion screening pass, speed adoption and full-minute qualification pending.",
+  "status": "Exact momentum derivative adopted as experimental analytic action-path default after contemporary matched one-second cost/motion checks; full-minute and physical qualification remain unproven.",
   "date": "2026-10-22",
   "branch": "experiment/kernel-linearization",
   "prior_raw_kernel_checkpoint": "3a965a2",
@@ -356,7 +356,305 @@
       }
     }
   },
-  "decision": "Keep exact-current momentum derivative opt-in pending contemporary matched wall-time control. Local same-state consistency and one-second trajectory screening pass; no speed adoption or 60-second accuracy qualification.",
+  "decision": "Default to exact-current momentum derivative when analytic action tangent is enabled. Retain --no-momentum-tangent independent h/h2 reference. Observed matched speedup1.624x; no guaranteed throughput or60saccuracy claim.",
   "integration_branch": "experiment/canonical-boat-sea",
-  "active_tracker": "https://github.com/amosborne/topwater/issues/30"
+  "active_tracker": "https://github.com/amosborne/topwater/issues/30",
+  "contemporary_matched": {
+    "reference": {
+      "path": "artifacts\\boat-action-fd-contemporary-q3-body1-1s.json",
+      "sha256": "29b9c6b01ffb309608450fa209b4fb4cd5292e8576916f1357c09e8bb03e9b5f",
+      "data": {
+        "complete": true,
+        "qualified": false,
+        "seconds": 212.39021869999124,
+        "accepted_simulated_seconds": 1.0,
+        "accepted_steps": 16,
+        "cold_geometry_count": 31,
+        "operator_counts": {
+          "fresh_rhs": 79,
+          "reused_rhs": 0,
+          "fresh_assemblies": 395,
+          "predicted_fields": 0,
+          "failed_reuse_attempts": 0
+        },
+        "process_peak_rss_bytes": 593297408,
+        "reserved_gpu_pool_bytes": 53708288,
+        "integration_stats": {
+          "rhs_calls": 79,
+          "attempted_steps": 26,
+          "rejected_steps": 10,
+          "stages_per_attempt": 3
+        },
+        "source_sha256": {
+          "boat_moving.py": "2efa4bd73bad6c83d656b953cc1116aa2fc8f2435d96c48574cbe9abf10fdd03",
+          "boat_geometry_template.py": "4bd82128a54120432af7e258bfeb14bb5db31ab599c10eb0463fc164988b6172",
+          "boat_world_boundary.py": "e5b69c97f3087d15c4543c0d7041559fd7fbe67e2fa8422855ea27612bc52a98",
+          "boat_parent_clip_proof.py": "1cca90c54c909b92a7b2671a17f2734122bfd489b70d0c1b21915448626dc7e4",
+          "boat_world_field.py": "dba2612dd64de85ca27e390f4c0fa2c04bda2bc466ecfd7487503cb346ce67f3",
+          "body_pressure.py": "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+          "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+          "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+          "cuda_operator.py": "22348f0038fee5a96f66b27abb135c3d3fd2252114d52c67e63f6fd81bb289b7",
+          "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+          "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20",
+          "boat_operator_reuse.py": "72dad4861675c4fb8b270acf24af5ba686b2c903ef2716bb0ccba97f5cde5f95",
+          "boat_past_operator.py": "9a753e81141ea6b43af1146f21cc8023aad8fae92b30ddfa9f8ac822f3c48f5f",
+          "boat_ale_pressure.py": "2154016e415a38b80d50b8c73e718220bbc494a1f86127627bea80f9e830fb63",
+          "boat_motion_metrics.py": "34f7e377c4daa8e6d85bb54123f55be2f73cdd927686a910d563a518dd4faafa",
+          "boat_action_stencil.py": "399f6c0f21d64565bc18939b715fd2cf34e53c05d86f7a5879c9391d1e63f4d6",
+          "boat_body_action.py": "adba82f9f139bc13156b0c353a0d8f7b5a9449628ea8271feb2c761951c2616e",
+          "boat_parent_action.py": "652cef1314f02afc13461944e17001da19e4ff56d105e4d8b6c9293e0ed79499",
+          "cuda_shape_gradient.py": "6cfa9fb82e8921d15d32ff8b9dc1aea2d36b6704a64fe38370844cc0f8e0ca49",
+          "cuda_shape.cu": "d1dbcba8727b75492bd509f3be6e1de6d3b4e47a28a1f713bbaefe03ac02d926",
+          "cuda_dual.cuh": "a251a46a1d695a15c9bb6e07ceac87241dcee589e85017ca8dbf8e9113dac97d",
+          "cuda_wide_dual.cuh": "8319bb59c910b3ac9b373021204575c76be9a50c3e1376ff7b68bc6c5a49ea5a",
+          "boat_chart_tangent.py": "bb1499beac7e34c29cfdda1ad5e284b6f41179d6a8916d9713948b39737d006f",
+          "boat_action_tangent.py": "9740cb271bb095ff57b5d5df5fed73b984b878360bc45a1147e0084d60ee66cd"
+        },
+        "cold_geometry_seconds": 78.60710580000887,
+        "summed_action_timings_seconds": {
+          "analytic_action_terms_seconds": 4.635415099997772,
+          "analytic_geometry_seconds": 7.775756400107639,
+          "gradient_seconds": 55.19910439979867,
+          "offset_field_seconds": 24.189057600160595,
+          "time_geometry_seconds": 13.509084600023925,
+          "total_seconds": 107.53695479987073
+        }
+      }
+    },
+    "candidate": {
+      "path": "artifacts\\boat-action-momentum-contemporary-q3-body1-1s.json",
+      "sha256": "0dda0b528260dce44ab624dd77a4c0fa11421f026768214debe9a3e1f282477c",
+      "data": {
+        "complete": true,
+        "qualified": false,
+        "seconds": 130.7594915999798,
+        "accepted_simulated_seconds": 1.0,
+        "accepted_steps": 14,
+        "cold_geometry_count": 29,
+        "operator_counts": {
+          "fresh_rhs": 64,
+          "reused_rhs": 0,
+          "fresh_assemblies": 64,
+          "predicted_fields": 0,
+          "failed_reuse_attempts": 0
+        },
+        "process_peak_rss_bytes": 601616384,
+        "reserved_gpu_pool_bytes": 52727296,
+        "integration_stats": {
+          "rhs_calls": 64,
+          "attempted_steps": 21,
+          "rejected_steps": 7,
+          "stages_per_attempt": 3
+        },
+        "source_sha256": {
+          "boat_moving.py": "2efa4bd73bad6c83d656b953cc1116aa2fc8f2435d96c48574cbe9abf10fdd03",
+          "boat_geometry_template.py": "4bd82128a54120432af7e258bfeb14bb5db31ab599c10eb0463fc164988b6172",
+          "boat_world_boundary.py": "e5b69c97f3087d15c4543c0d7041559fd7fbe67e2fa8422855ea27612bc52a98",
+          "boat_parent_clip_proof.py": "1cca90c54c909b92a7b2671a17f2734122bfd489b70d0c1b21915448626dc7e4",
+          "boat_world_field.py": "dba2612dd64de85ca27e390f4c0fa2c04bda2bc466ecfd7487503cb346ce67f3",
+          "body_pressure.py": "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+          "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+          "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+          "cuda_operator.py": "22348f0038fee5a96f66b27abb135c3d3fd2252114d52c67e63f6fd81bb289b7",
+          "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+          "cuda_pair.cuh": "364b6e85e9865c7c06c2f0e3b89ee37a9ef68faba85edf9aeb4d49d9c9999c20",
+          "boat_operator_reuse.py": "72dad4861675c4fb8b270acf24af5ba686b2c903ef2716bb0ccba97f5cde5f95",
+          "boat_past_operator.py": "9a753e81141ea6b43af1146f21cc8023aad8fae92b30ddfa9f8ac822f3c48f5f",
+          "boat_ale_pressure.py": "2154016e415a38b80d50b8c73e718220bbc494a1f86127627bea80f9e830fb63",
+          "boat_motion_metrics.py": "34f7e377c4daa8e6d85bb54123f55be2f73cdd927686a910d563a518dd4faafa",
+          "boat_action_stencil.py": "399f6c0f21d64565bc18939b715fd2cf34e53c05d86f7a5879c9391d1e63f4d6",
+          "boat_body_action.py": "adba82f9f139bc13156b0c353a0d8f7b5a9449628ea8271feb2c761951c2616e",
+          "boat_parent_action.py": "652cef1314f02afc13461944e17001da19e4ff56d105e4d8b6c9293e0ed79499",
+          "cuda_shape_gradient.py": "6cfa9fb82e8921d15d32ff8b9dc1aea2d36b6704a64fe38370844cc0f8e0ca49",
+          "cuda_shape.cu": "d1dbcba8727b75492bd509f3be6e1de6d3b4e47a28a1f713bbaefe03ac02d926",
+          "cuda_dual.cuh": "a251a46a1d695a15c9bb6e07ceac87241dcee589e85017ca8dbf8e9113dac97d",
+          "cuda_wide_dual.cuh": "8319bb59c910b3ac9b373021204575c76be9a50c3e1376ff7b68bc6c5a49ea5a",
+          "boat_chart_tangent.py": "bb1499beac7e34c29cfdda1ad5e284b6f41179d6a8916d9713948b39737d006f",
+          "boat_action_tangent.py": "9740cb271bb095ff57b5d5df5fed73b984b878360bc45a1147e0084d60ee66cd",
+          "boat_momentum_tangent.py": "d3163671ab5aabc1531d167d4f2b31ffb11c8e34e33e79e2b78e5d2341d63509",
+          "boat_incident_tangent.py": "572d19c35e6c52af3f1a7e4f2b688434f55a08ca5118bce8cdeaa702be7fcfdd",
+          "cuda_directional.py": "801b1b54985c625e7c84f5b39854f8b0222531552d71ba2a10311254846447cc",
+          "cuda_directional.cu": "d2a83408a86b4d6fc5c11e665dbe06ce32398832f676d78d883b2cee04ba1713"
+        },
+        "cold_geometry_seconds": 54.22760410013143,
+        "summed_action_timings_seconds": {
+          "analytic_action_terms_seconds": 2.9784377000760287,
+          "analytic_geometry_seconds": 4.312531199888326,
+          "gradient_seconds": 42.57870260014897,
+          "incident_rate_seconds": 4.130043300014222,
+          "momentum_tangent_seconds": 5.036059300095076,
+          "total_seconds": 60.419694199983496
+        }
+      }
+    },
+    "comparison": {
+      "path": "artifacts\\boat-motion-momentum-contemporary-1s.json",
+      "sha256": "782e6677bae27a16b8dde3762f3ba2e8d644c82d339dcb87efbf45f45b2999f5",
+      "data": {
+        "qualified": false,
+        "scope": "Shared accepted motion comparison using owned RK dense polynomials; not an independently converged or open-water reference.",
+        "inputs": [
+          {
+            "path": "artifacts\\boat-action-fd-contemporary-q3-body1-1s.json",
+            "sha256": "29b9c6b01ffb309608450fa209b4fb4cd5292e8576916f1357c09e8bb03e9b5f",
+            "arrays_sha256": "e4d155addc6be535657c1fe38d89929bb068610c26cf5fa9fef0bb2d90928d86",
+            "initial_geometry_metadata_sha256": "42dc90b4b76877c7c1ae7e6cf439c25a7db2cd2c8e6980e39502f6f848e57a9d",
+            "complete": true,
+            "accepted_seconds": 1.0,
+            "seconds": 212.39021869999124,
+            "operator_counts": {
+              "fresh_rhs": 79,
+              "reused_rhs": 0,
+              "fresh_assemblies": 395,
+              "predicted_fields": 0,
+              "failed_reuse_attempts": 0
+            },
+            "refinement": {
+              "region": "body",
+              "levels": 1
+            },
+            "quadrature_order": 3,
+            "integrator": "RK23"
+          },
+          {
+            "path": "artifacts\\boat-action-momentum-contemporary-q3-body1-1s.json",
+            "sha256": "0dda0b528260dce44ab624dd77a4c0fa11421f026768214debe9a3e1f282477c",
+            "arrays_sha256": "e6985542cc882a093da56a10200c796964ce603f36a899ec5d3ca3361ee3d6cf",
+            "initial_geometry_metadata_sha256": "fa2cc7514335d95e44c80ef921841d7efa0a0385834d886f1e1c05179e93a589",
+            "complete": true,
+            "accepted_seconds": 1.0,
+            "seconds": 130.7594915999798,
+            "operator_counts": {
+              "fresh_rhs": 64,
+              "reused_rhs": 0,
+              "fresh_assemblies": 64,
+              "predicted_fields": 0,
+              "failed_reuse_attempts": 0
+            },
+            "refinement": {
+              "region": "body",
+              "levels": 1
+            },
+            "quadrature_order": 3,
+            "integrator": "RK23"
+          }
+        ],
+        "heading_frame": "Fixed shared initial boat heading; surge forward, sway port, heave world up.",
+        "heading_degrees": 0.0,
+        "overlap_seconds": 1.0,
+        "required_accuracy_duration_seconds": 60.0,
+        "covers_required_duration": false,
+        "driver_changed": false,
+        "reviewed_driver_change_note": null,
+        "integration_control_changes": {},
+        "reviewed_integration_change_note": null,
+        "derivative_changes": {
+          "momentum_tangent": {
+            "reference": false,
+            "candidate": true
+          },
+          "boat_momentum_tangent.py": {
+            "reference": null,
+            "candidate": "d3163671ab5aabc1531d167d4f2b31ffb11c8e34e33e79e2b78e5d2341d63509"
+          },
+          "boat_incident_tangent.py": {
+            "reference": null,
+            "candidate": "572d19c35e6c52af3f1a7e4f2b688434f55a08ca5118bce8cdeaa702be7fcfdd"
+          },
+          "cuda_directional.py": {
+            "reference": null,
+            "candidate": "801b1b54985c625e7c84f5b39854f8b0222531552d71ba2a10311254846447cc"
+          },
+          "cuda_directional.cu": {
+            "reference": null,
+            "candidate": "d2a83408a86b4d6fc5c11e665dbe06ce32398832f676d78d883b2cee04ba1713"
+          },
+          "derivative_step_seconds": {
+            "reference": 5e-06,
+            "candidate": null
+          },
+          "minimum_chart_derivative_step_seconds": {
+            "reference": 1.220703125e-09,
+            "candidate": null
+          },
+          "pressure_derivative": {
+            "reference": "diagnostic only, matched action offsets",
+            "candidate": "diagnostic only, exact current nodal ALE rate"
+          }
+        },
+        "reviewed_derivative_change_note": "Same current source and action. Explicit momentum_tangent toggles four h/h2 offset fields to exact current mixed-field time derivative and analytic incident derivative. Both closures independently audited on owned early/difficult states; no spatial, physical or full-minute qualification inferred.",
+        "source_sha256": {
+          "boat_motion_compare.py": "de3da2be1a9bfd8935ee0554d422fc02069eb2aadf9cbeae306f6618bd32c9f2",
+          "boat_motion_metrics.py": "34f7e377c4daa8e6d85bb54123f55be2f73cdd927686a910d563a518dd4faafa"
+        },
+        "samples": [
+          {
+            "kind": "exact_common_knots",
+            "count": 3,
+            "first_time_seconds": 0.0,
+            "last_time_seconds": 1.0,
+            "maximum_translation_error_m": [
+              7.649440161267007e-06,
+              6.513762238474774e-05,
+              2.7024958968557833e-05
+            ],
+            "maximum_roll_pitch_yaw_error_degrees": [
+              0.01003415196834112,
+              0.0035874060268099583,
+              0.0012196097937930972
+            ],
+            "within_translation_target": [
+              true,
+              true,
+              true
+            ],
+            "within_angular_target": [
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "kind": "dense_common_grid",
+            "count": 527,
+            "first_time_seconds": 0.0,
+            "last_time_seconds": 1.0,
+            "maximum_translation_error_m": [
+              7.900600791699297e-06,
+              6.513762238474774e-05,
+              2.7024958968557833e-05
+            ],
+            "maximum_roll_pitch_yaw_error_degrees": [
+              0.01003415196834112,
+              0.0035874060268099583,
+              0.0012196097937930972
+            ],
+            "within_translation_target": [
+              true,
+              true,
+              true
+            ],
+            "within_angular_target": [
+              true,
+              true,
+              true
+            ]
+          }
+        ],
+        "limitations": [
+          "Matching this unqualified finer run does not establish physical accuracy.",
+          "Subminute comparisons are screening evidence only; requested motion accuracy applies throughout 60 seconds.",
+          "Short weakly excited motion cannot qualify behavior over representative wave/roll periods.",
+          "Accepted-step polynomials are integrator dense output, not extra temporal accuracy.",
+          "Sampling them is a numerical comparison, not a rigorous continuous-time error bound.",
+          "Combined body/quadrature change does not isolate either source of sensitivity.",
+          "Failed-run totals and differently achieved horizons are not a matched full-run speedup."
+        ],
+        "reference_maximum_absolute_roll_degrees": 2.1721370093277947
+      }
+    },
+    "observed_wall_time_ratio": 1.6242814659278166,
+    "limits": "One serial matched pair, not a distribution. Archived FD107.7s versus contemporary212.4s demonstrates runtime variability; adoption uses exact discrete derivatives plus independent controls and lower matched total cost."
+  }
 }

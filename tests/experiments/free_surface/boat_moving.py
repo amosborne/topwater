@@ -36,10 +36,12 @@ from .p4_fluid_ordering import fresh
 def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_step=.01,
         quadrature_order=3, operator_reuse=None, charted_pressure=False, common_pressure_chart=False,
         action_coupling=False, initial_xy=None, action_tangent=None, integrator='RK23', tolerance_scale=1.,
-        momentum_tangent=False):
+        momentum_tangent=None):
     from .cuda_operator import prepare_energy, cp
     if action_tangent is None:
         action_tangent = action_coupling
+    if momentum_tangent is None:
+        momentum_tangent = action_tangent
     if isinstance(operator_reuse, bool):
         operator_reuse = 'one-direction' if operator_reuse else None
     if (not np.isfinite(duration) or duration <= 0 or refinement not in (0, 1, 2)
@@ -506,7 +508,7 @@ if __name__ == '__main__':
     parser.add_argument('--action-tangent', action=argparse.BooleanOptionalAction, default=None)
     parser.add_argument('--integrator', choices=('RK23', 'RK45'), default='RK23')
     parser.add_argument('--tolerance-scale', type=float, default=1.)
-    parser.add_argument('--momentum-tangent', action='store_true')
+    parser.add_argument('--momentum-tangent', action=argparse.BooleanOptionalAction, default=None)
     result = run(**vars(parser.parse_args()))
     print(json.dumps({key: result[key] for key in
         ('complete', 'seconds', 'accepted_simulated_seconds', 'accepted_steps', 'cold_geometry_count')}))

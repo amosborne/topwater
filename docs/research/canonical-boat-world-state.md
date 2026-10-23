@@ -942,7 +942,7 @@ three run summaries, ownership and comparisons. No integrator speedup is adopted
 
 ## Primary context
 
-The opt-in `--momentum-tangent` path differentiates the current mixed solve:
+The exact momentum-tangent path differentiates the current mixed solve:
 `E_UU phi_dot_U = (b_dot - E_dot phi - E phi_dot_prescribed)_U`.
 It uses current analytic chart/map/body-load derivatives and the material
 incident-load derivative, retaining zero body acceleration for the known load
@@ -954,9 +954,13 @@ toward it when h halves. Evidence is in `boat-momentum-tangent.json`.
 The complete one-second candidate takes 117.9 s, 64 RHS/assemblies and 29 cold
 builds. It agrees with the archived RK23 trace within 0.0101 degree and 0.066 mm
 on the sampled common grid, but costs more than that historical 107.7 s run.
-Keep it opt-in pending a contemporary matched control; reduced assembly counts
-alone do not earn a speedup. Neither trace establishes full-minute accuracy.
-Issue #30 owns the next experiment and adoption status.
+That historical comparison alone did not earn adoption. A contemporary serial
+matched pair now completes the FD control in 212.4 s and exact derivative in
+130.8 s, an observed 1.624x improvement. Maximum sampled differences remain
+0.0101 degree and 0.066 mm. Runtime variation precludes a guaranteed speed
+factor; neither trace establishes full-minute accuracy. Independent review
+earns the exact derivative as the experimental analytic action-path default;
+`--no-momentum-tangent` retains the h/h2 reference. Issue #30 owns active status.
 
 Variational free-surface discretization with moving boundaries is established;
 its Hamiltonian can be nonautonomous when boundaries move:
