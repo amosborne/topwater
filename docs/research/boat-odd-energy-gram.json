@@ -1,0 +1,321 @@
+{
+  "status": "Energy identities approach agreement under quadrature refinement; raw positivity/convergence remains unresolved",
+  "producer_commits": "3f053c8+c0b244d+19969ce (integrateded95170+59d43ca+2d636ab)",
+  "evidence": {
+    "artifacts\\odd-energy-gram-owned.json": "903f6ca2f789ecb223dc46e13796b9b3332b256803d43ab1c979a41a25d7ce6c",
+    "artifacts\\odd-energy-gram-body16.json": "6682cebd2deae089a86d24434060ce11724e62375a3c45a508c625658923753f",
+    "artifacts\\odd-energy-gram-body16-comparison.json": "ff1388ee0b0d94634011c42df77d850c8d3930d65f226a1eaaaad9697e8026fe",
+    "artifacts\\odd-trace-max-error-geometry.json": "423ea409ee3770583a56f717eb5921d328a89c4b92cf5e1a57fbdb8899983936"
+  },
+  "field": "Coarse68 worst odd mode, fixed complex-amplitude physical eta spatial RMS1mm; Hpsi and odd R sigma, identical physical psi moments and body geometry",
+  "gram_units": "m5/s2; density/2 times Gram is complex-amplitude energy envelope, no time averaging",
+  "fixed_plane_owner": "Kphysical contactq4; Fsource q8 primary/q4 sensitivity",
+  "body_orders": [
+    {
+      "order": 2,
+      "points": 272,
+      "seconds": 0.7920150000136346,
+      "HH": {
+        "real": 0.001951841592993881,
+        "imag": 2.3388888813007298e-05
+      },
+      "RR": {
+        "real": 0.0003841911110908503,
+        "imag": 3.6897549314699355e-06
+      },
+      "HR_q8": {
+        "real": -0.00025378398475326043,
+        "imag": 1.992862385418244e-05
+      },
+      "HR_q4": {
+        "real": -0.0002542347508122292,
+        "imag": 2.0012954315862293e-05
+      },
+      "RH": {
+        "real": -0.00028129593115730066,
+        "imag": -5.260191430152895e-05
+      },
+      "determinant": {
+        "real": 6.773572049497113e-07,
+        "imag": 8.443937710101248e-09
+      },
+      "cross_conjugacy_defect": {
+        "real": 2.7511946404040234e-05,
+        "imag": -3.267329044734651e-05
+      },
+      "cross_conjugacy_absolute": 4.2713593896972036e-05,
+      "cross_conjugacy_relative": 0.07899141743659188,
+      "self_imaginary_absolute": [
+        2.3388888813007298e-05,
+        3.6897549314699355e-06
+      ],
+      "same_quadrature_total_green_sum_error": 2.169462877787276e-19,
+      "positive_energy_status": "unresolved; raw quadrature/adjoint evidence only, no averaging",
+      "scalar_normal_trace_diagnostics": {
+        "source_pairs": 36992,
+        "analytic_self_normal_jumps": 272,
+        "chart_edge_metric_max_absolute": 6.106226635438361e-16,
+        "chart_edge_metric_max_relative_diameter": 2.2982426659434683e-16,
+        "maximum_world_barycentric_difference": 4.440892098500626e-16
+      }
+    },
+    {
+      "order": 4,
+      "points": 1088,
+      "seconds": 2.9669578000030015,
+      "HH": {
+        "real": 0.0018869817969993166,
+        "imag": 2.7342113295634183e-06
+      },
+      "RR": {
+        "real": 0.0003718742596551132,
+        "imag": -3.507115448850404e-07
+      },
+      "HR_q8": {
+        "real": -0.000301523409772698,
+        "imag": 2.2302500533754205e-05
+      },
+      "HR_q4": {
+        "real": -0.0003019741758316668,
+        "imag": 2.2386830995434057e-05
+      },
+      "RH": {
+        "real": -0.00029950023474302305,
+        "imag": -2.235197546110183e-05
+      },
+      "determinant": {
+        "real": 6.109160807091841e-07,
+        "imag": 2.9495680175512154e-10
+      },
+      "cross_conjugacy_defect": {
+        "real": -2.0231750296749755e-06,
+        "imag": -4.9474927347624344e-08
+      },
+      "cross_conjugacy_absolute": 2.023779871709468e-06,
+      "cross_conjugacy_relative": 0.0033579661408155758,
+      "self_imaginary_absolute": [
+        2.7342113295634183e-06,
+        3.507115448850404e-07
+      ],
+      "same_quadrature_total_green_sum_error": 6.776263578034403e-21,
+      "positive_energy_status": "unresolved; raw quadrature/adjoint evidence only, no averaging",
+      "scalar_normal_trace_diagnostics": {
+        "source_pairs": 147968,
+        "analytic_self_normal_jumps": 1088,
+        "chart_edge_metric_max_absolute": 6.106226635438361e-16,
+        "chart_edge_metric_max_relative_diameter": 2.2982426659434683e-16,
+        "maximum_world_barycentric_difference": 4.440892098500626e-16
+      },
+      "previous_order_raw_gram_difference_max": 6.806914747814598e-05
+    },
+    {
+      "order": 8,
+      "points": 4352,
+      "seconds": 11.816633100010222,
+      "HH": {
+        "real": 0.0018969240910092272,
+        "imag": -3.2519065046234476e-06
+      },
+      "RR": {
+        "real": 0.0003694990053894715,
+        "imag": -8.594198693416632e-08
+      },
+      "HR_q8": {
+        "real": -0.0002994439638777033,
+        "imag": 2.064004941476293e-05
+      },
+      "HR_q4": {
+        "real": -0.00029989472993667207,
+        "imag": 2.0724379876442782e-05
+      },
+      "RH": {
+        "real": -0.000298979365209846,
+        "imag": -1.931397024614125e-05
+      },
+      "determinant": {
+        "real": 6.109850779155792e-07,
+        "imag": -9.771045813174193e-10
+      },
+      "cross_conjugacy_defect": {
+        "real": -4.6459866785729994e-07,
+        "imag": 1.3260791686216812e-06
+      },
+      "cross_conjugacy_absolute": 1.405111342074765e-06,
+      "cross_conjugacy_relative": 0.0023428010218135703,
+      "self_imaginary_absolute": [
+        3.2519065046234476e-06,
+        8.594198693416632e-08
+      ],
+      "same_quadrature_total_green_sum_error": 1.3552527156068805e-20,
+      "positive_energy_status": "unresolved; raw quadrature/adjoint evidence only, no averaging",
+      "scalar_normal_trace_diagnostics": {
+        "source_pairs": 591872,
+        "analytic_self_normal_jumps": 4352,
+        "chart_edge_metric_max_absolute": 6.106226635438361e-16,
+        "chart_edge_metric_max_relative_diameter": 2.2982426659434683e-16,
+        "maximum_world_barycentric_difference": 8.881784197001252e-16
+      },
+      "previous_order_raw_gram_difference_max": 1.1605292624672326e-05
+    },
+    {
+      "order": 16,
+      "points": 17408,
+      "seconds": 46.43017720000353,
+      "HH": {
+        "real": 0.001897546417451787,
+        "imag": -3.7332135140883944e-07
+      },
+      "RR": {
+        "real": 0.00036937650194621184,
+        "imag": -2.639331564803417e-08
+      },
+      "HR_q8": {
+        "real": -0.00029961402510607555,
+        "imag": 2.027013704841184e-05
+      },
+      "HR_q4": {
+        "real": -0.00030006479116504435,
+        "imag": 2.035446751009169e-05
+      },
+      "RH": {
+        "real": -0.0002993113802432423,
+        "imag": -2.0372541016570743e-05
+      },
+      "determinant": {
+        "real": 6.108182065125555e-07,
+        "imag": -2.2479499437138086e-10
+      },
+      "cross_conjugacy_defect": {
+        "real": -3.026448628332557e-07,
+        "imag": -1.0240396815890175e-07
+      },
+      "cross_conjugacy_absolute": 3.1950036884806493e-07,
+      "cross_conjugacy_relative": 0.0005322319914988666,
+      "self_imaginary_absolute": [
+        3.7332135140883944e-07,
+        2.639331564803417e-08
+      ],
+      "same_quadrature_total_green_sum_error": 8.690541527449943e-19,
+      "positive_energy_status": "unresolved; raw quadrature/adjoint evidence only, no averaging",
+      "scalar_normal_trace_diagnostics": {
+        "source_pairs": 2367488,
+        "analytic_self_normal_jumps": 17408,
+        "chart_edge_metric_max_absolute": 6.106226635438361e-16,
+        "chart_edge_metric_max_relative_diameter": 2.2982426659434683e-16,
+        "maximum_world_barycentric_difference": 8.881784197001252e-16
+      }
+    }
+  ],
+  "four_block_increments": [
+    {
+      "block": "HH",
+      "q4_to_q8": {
+        "real": 9.942294009910582e-06,
+        "imag": -5.986117834186866e-06,
+        "absolute": 1.1605292624672326e-05
+      },
+      "q8_to_q16": {
+        "real": 6.223264425598684e-07,
+        "imag": 2.878585153214608e-06,
+        "absolute": 2.945087890949401e-06
+      },
+      "increment_ratio": 0.2537711013583817
+    },
+    {
+      "block": "RR",
+      "q4_to_q8": {
+        "real": -2.3752542656416803e-06,
+        "imag": 2.647695579508741e-07,
+        "absolute": 2.389965636838007e-06
+      },
+      "q8_to_q16": {
+        "real": -1.22503443259652e-07,
+        "imag": 5.954867128613215e-08,
+        "absolute": 1.362099036869735e-07
+      },
+      "increment_ratio": 0.05699241093155762
+    },
+    {
+      "block": "HR",
+      "q4_to_q8": {
+        "real": 2.079445894994747e-06,
+        "imag": -1.6624511189912756e-06,
+        "absolute": 2.6622995611399268e-06
+      },
+      "q8_to_q16": {
+        "real": -1.7006122837227335e-07,
+        "imag": -3.699123663510882e-07,
+        "absolute": 4.0713140406378405e-07
+      },
+      "increment_ratio": 0.15292471591343426
+    },
+    {
+      "block": "RH",
+      "q4_to_q8": {
+        "real": 5.208695331770713e-07,
+        "imag": 3.038005214960581e-06,
+        "absolute": 3.0823336543469443e-06
+      },
+      "q8_to_q16": {
+        "real": -3.3201503339631757e-07,
+        "imag": -1.0585707704294948e-06,
+        "absolute": 1.109416990319173e-06
+      },
+      "increment_ratio": 0.35992761158565284
+    }
+  ],
+  "intrinsic_scalar_controls": [
+    {
+      "owner": 5,
+      "q4_point": 2,
+      "original_world_plane_residual_m": -2.920891474652784e-16,
+      "chart_self_S": 0.00019971358810994,
+      "independent_fan_S": 0.00019971358810993983,
+      "absolute_difference": 1.6263032587282567e-19,
+      "estimated_fan_error": 2.908348371078125e-14,
+      "original_scalar_error_request": 3.237046799797579e-12
+    },
+    {
+      "owner": 5,
+      "q4_point": 3,
+      "original_world_plane_residual_m": -1.7801202067849013e-16,
+      "chart_self_S": 0.000193203048521951,
+      "independent_fan_S": 0.0001932030485219508,
+      "absolute_difference": 1.8973538018496328e-19,
+      "estimated_fan_error": 3.934479206592729e-15,
+      "original_scalar_error_request": 3.171941403917689e-12
+    },
+    {
+      "owner": 39,
+      "q4_point": 3,
+      "original_world_plane_residual_m": -1.7801202067849013e-16,
+      "chart_self_S": 0.000193203048521951,
+      "independent_fan_S": 0.0001932030485219508,
+      "absolute_difference": 1.8973538018496328e-19,
+      "estimated_fan_error": 3.934479206592729e-15,
+      "original_scalar_error_request": 3.171941403917689e-12
+    },
+    {
+      "owner": 56,
+      "q4_point": 8,
+      "original_world_plane_residual_m": -3.038205537847505e-16,
+      "chart_self_S": 0.00043043264069121456,
+      "independent_fan_S": 0.00043043264069121456,
+      "absolute_difference": 0.0,
+      "estimated_fan_error": 2.6656251086133936e-14,
+      "original_scalar_error_request": 5.544237325610324e-12
+    }
+  ],
+  "actual_harmonic_map_parity_max": 1.2266347333466993e-18,
+  "actual_owned_trace_centroid_parity_max": 3.746777453318407e-18,
+  "interpretation": [
+    "Raw cross-adjoint discrepancy falls7.90%,.336%,.234%,.0532% across bodyq2/4/8/16, with fixedGammaKcontactq4/Fq8",
+    "Allfour q8-to16 block changes are smaller than q4-to8, but remaining discrepancies are not certified error bounds; raw complex diagonals/determinant/cross directions are retained",
+    "Do not infer full Ritz positivity or continuum accuracy from this2x2subspace; no averaging or eigenvalue repair has been applied",
+    "World-coordinate on-plane guard rejected4valid body quadrature points before completion. Every self scalar now uses original barycentrics in an intrinsic face chart, with metric/point ownership checks. Independent positive fan integrals agree within1.9e-19; original gradient guards and exactselfnormal half-jump remain unchanged",
+    "Data-only old offset comparison reduces weightedRMS error by.5615 on halvingh, but pointmaximum does not shrink. Maxima switch between Gauss points on one skinnyface, where offset/edgeclearance ratios1.38and3.27 are not locally asymptotic. This is not a blanket pointwise-limit validation"
+  ],
+  "next_gate": "ONEGamma-only known-pair Kcontactq8 and Fq16 work control, holding bodyq16 fixed; then a bounded quadrature-defined physical-energy owner with derivatives of both symmetric Green-integrand terms, retaining raw quadrature defects as accuracy evidence and rejecting positivity/rank failures",
+  "baseline_promoted": false,
+  "qualification": "No evolution operator promotion, nonlinear6DOF,60s accuracy, external time-domain correlation or simulation-throughput qualification"
+}
