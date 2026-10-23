@@ -10,6 +10,7 @@ from .boat_motion_metrics import (attitude_degrees, body_poses, motion_errors,
     ANGLE_ERROR_TARGET_DEGREES, POSITION_ERROR_TARGET_METERS, ACCURACY_DURATION_SECONDS)
 from .p4_fluid_ordering import fresh
 from .boat_moving import METHODS, SOURCES
+from .boat_benchmark_contract import performance_comparison
 
 
 def run(reference, candidate, output, driver_change_note=None, integration_change_note=None,
@@ -80,8 +81,9 @@ def run(reference, candidate, output, driver_change_note=None, integration_chang
         driver_changed=driver_changed, reviewed_driver_change_note=driver_change_note,
         integration_control_changes=integration_changes, reviewed_integration_change_note=integration_change_note,
         derivative_changes=derivative_changes, reviewed_derivative_change_note=derivative_change_note,
+        performance_comparison=performance_comparison(ra, rb),
         source_sha256={name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
-            for name in ('boat_motion_compare.py', 'boat_motion_metrics.py')},
+            for name in ('boat_motion_compare.py', 'boat_motion_metrics.py', 'boat_benchmark_contract.py')},
         samples=[], limitations=[
             'Matching this unqualified finer run does not establish physical accuracy.',
             'Subminute comparisons are screening evidence only; requested motion accuracy applies throughout 60 seconds.',
