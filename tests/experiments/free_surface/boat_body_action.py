@@ -1,4 +1,4 @@
-"""Frozen-state body action derivatives; not enabled in a trajectory.
+"""Body action derivatives for frozen audits and the opt-in moving driver.
 
 World translation is the CG position; rotations act on the left about that CG.
 The caller owns the CURRENT energy gradient and the matching offset fields.

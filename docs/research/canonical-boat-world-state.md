@@ -867,11 +867,50 @@ the experimental action path, with single-run timing caveats. Provenance,
 controls, partial failures, cost breakdown and memory metrics are retained in
 `boat-action-moving.json`.
 
-Next replace repeated owned geometry reconstructions with a batched tangent of
-the same plane-intersection/fan/midpoint recipes, validated against the current
-finite differences. Current-chart guards and offset fluid solves must remain.
-Action-side affine consistency, spatial/motion convergence and Capytaine
-correlation remain required before physical adoption.
+## Analytic current geometry/action derivatives
+
+The experimental action path now differentiates its owned chart analytically.
+One batched owner-intersection solve supplies all 21 world-pose/parent-height
+directions. Fan centroids, inherited free traces and body-refinement midpoints
+follow the same recipes as the primal geometry. Body loads, projected parent
+mass and fluid gravity use exact polynomial derivatives; Cdot contracts them
+with the current world twist and parent height rate. The current operator and
+vertex gradient are still fresh, as are all four time-offset fluid fields.
+
+On the saved nonlinear state at q3/q6/q12, the complete chain takes 0.13-0.15 s
+versus approximately 5 s for combined finite differences. All parent potential
+rates agree with h/2 controls within 1.1e-7 m2/s2; body pose loads agree within
+0.0007 N or N m, dominated by subtractive cancellation in the old gravity FD.
+CPU tests check all 21 directions, a mixed direction, B/C/U derivatives and
+two refinement levels. Aliases and relevant incident derivatives remain guarded;
+the default symmetric initial chart still rejects.
+
+A strict ownership failure after a cold refresh was traced to rational cold
+coordinates differing from floating replay by up to 8.9e-16 m. The action
+tangent branch now selects the same guarded replay BEFORE building its primal
+operator or derivative. Bitwise ownership checks remain. A later guard at
+t=0.921077 s isolated a triangular fan's area-quotient derivative cancellation.
+Using the exact triangle-centroid differential (the mean vertex Jacobian)
+reduces the incidence residual from 1.3e-12 to 4.4e-15 without changing primal
+coordinates or guard thresholds. All 21 h/h2 geometry directions replay there;
+their FD errors remain conditioning-dependent diagnostics.
+
+The matched 20 ms full coupled run falls from 28.2 to 8.56 s (observed 3.30x).
+The corrected one-second run COMPLETES in 107.7 s, with 79 RHS calls, 16 accepted
+steps and 31 cold builds. Roll reaches 2.17 degrees; this remains a short, coarse
+diagnostic. Against the old FD trajectory on their shared 0.6463 s interval,
+body-position differences stay below 1.3e-6 m and angular differences below 0.000182 degree.
+This earns the analytic derivative as the experimental action default;
+`--no-action-tangent` retains the reference geometry stencils. The pressure
+driver remains unchanged by default.
+
+Cold geometry consumes 39.0 s; current gradients consume about 31.3 s, offset
+fields 12.4 s, and time-offset geometry 6.5 s. Process peak RSS is about 595 MB;
+the reserved CuPy pool is about 54 MB (not total GPU memory). This is still
+107.7x simulated time, far above the 20x ceiling. Evidence and source ownership
+are in `boat-action-tangent.json`. Next investigate filtered cold construction
+and fewer RHS calls; action-side affine consistency, spatial/motion convergence
+and Capytaine correlation remain required before physical adoption.
 
 ## Primary context
 

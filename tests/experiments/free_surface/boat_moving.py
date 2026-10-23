@@ -35,8 +35,10 @@ from .p4_fluid_ordering import fresh
 
 def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_step=.01,
         quadrature_order=3, operator_reuse=None, charted_pressure=False, common_pressure_chart=False,
-        action_coupling=False, initial_xy=None):
+        action_coupling=False, initial_xy=None, action_tangent=None):
     from .cuda_operator import prepare_energy, cp
+    if action_tangent is None:
+        action_tangent = action_coupling
     if isinstance(operator_reuse, bool):
         operator_reuse = 'one-direction' if operator_reuse else None
     if (not np.isfinite(duration) or duration <= 0 or refinement not in (0, 1, 2)
@@ -50,6 +52,8 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
         raise ValueError('experimental action coupling requires fresh operators and one owned chart')
     if initial_xy is not None and (np.shape(initial_xy) != (2,) or not np.isfinite(initial_xy).all()):
         raise ValueError('initial_xy must contain two finite world coordinates')
+    if action_tangent and not action_coupling:
+        raise ValueError('analytic action tangent requires action coupling')
     output = fresh(output)
     output.parent.mkdir(parents=True, exist_ok=True)
     report = dict(complete=False, qualified=False,
@@ -69,6 +73,7 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
             scope='Past-only local model; atomic whole-RHS fallback. Geometry limits are heuristics, not force-error bounds. Stage history can affect refresh decisions.'),
         controls=dict(max_rhs=max_rhs, soft_elapsed_budget_seconds=budget_seconds,
             action_coupling=action_coupling,
+            action_tangent=action_tangent,
             initial_horizontal_position_m=None if initial_xy is None else list(initial_xy),
             common_pressure_chart=common_pressure_chart,
             pressure_derivative=('charted nodal with explicit material fallback on chart failure'
@@ -89,6 +94,10 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
         report['controls'].update(pressure_derivative='diagnostic only, matched action offsets',
             derivative_step_seconds=1e-5/2, minimum_chart_derivative_step_seconds=1e-5/2**13,
             action_difference_policy='Compute h and h/2; use h/2 without a claimed error bound.')
+    if action_tangent:
+        report['source_sha256'].update({name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
+            for name in ('boat_chart_tangent.py', 'boat_action_tangent.py')})
+        report['controls']['action_difference_policy'] = 'Analytic current shape derivatives; h/h2 time-offset fields, use h/2 without a claimed error bound.'
     started = perf_counter()
     times, states, solver = [], [], None
     templates, cold_count, operator_model = [], 0, None
@@ -137,6 +146,14 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
                 parent_eta=eta, parent_psi=psi)
             diagnostics = dict(reference_seconds=metadata['seconds'])
             mode = 'exact chart refresh'
+            if action_tangent:
+                # Cold rational intersections and floating chart replay can
+                # differ by ulps. Choose ONE replay before building either the
+                # primal operator or its tangent; never relax their ownership.
+                arrays, replay = evaluate_template(templates[0], pose=pose,
+                    parent_eta=eta, parent_psi=psi)
+                diagnostics.update(replay)
+                mode = 'exact chart refresh with owned replay'
         for _ in range(refinement):
             arrays = refine_boundary(arrays, region='body')
         row['geometry'].append(dict(label=label, mode=mode, seconds=perf_counter()-before,
@@ -248,11 +265,17 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
         result, audit_candidate = None, None
         if action_coupling:
             from .boat_action_stencil import evaluate as action_stencil
+            def tangent_geometry():
+                from .boat_chart_tangent import chart_tangent
+                from .boat_action_tangent import refine_tangent
+                coarse, derivative = chart_tangent(base_context['chart'], pose=pose, parent_eta=eta, parent_psi=psi)
+                return refine_tangent(coarse, derivative['point_jacobian'], derivative['parent_map_jacobian'], refinement)
             current, assembly = field(arrays, twist, time, True, None, retain_assembly=True)
             result = action_stencil(body, arrays, current, assembly, state, values, time,
                 lambda current_pose, height, potential, label: geometry(current_pose, height,
                     potential, label, chart=base_context['chart']),
-                lambda moved, current_time: field(moved, twist, current_time, False, None))
+                lambda moved, current_time: field(moved, twist, current_time, False, None),
+                geometry_tangent=tangent_geometry if action_tangent else None)
             row['operator_mode'] = 'fresh'
         refresh = (operator_reuse in ('past-linear', 'past-curved') and operator_model is not None
                    and abs(time-operator_model.time) >= PAST_LIMITS['refresh_age_seconds']-1e-14)
@@ -456,6 +479,7 @@ if __name__ == '__main__':
     parser.add_argument('--common-pressure-chart', action='store_true')
     parser.add_argument('--action-coupling', action='store_true')
     parser.add_argument('--initial-xy', nargs=2, type=float)
+    parser.add_argument('--action-tangent', action=argparse.BooleanOptionalAction, default=None)
     result = run(**vars(parser.parse_args()))
     print(json.dumps({key: result[key] for key in
         ('complete', 'seconds', 'accepted_simulated_seconds', 'accepted_steps', 'cold_geometry_count')}))

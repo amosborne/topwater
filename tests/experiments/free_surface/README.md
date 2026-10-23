@@ -1786,3 +1786,14 @@ action driver uses the combined version: all actual fluid solves retain full
 incident forcing. Its seam6/12 diagnostic is independent quadrature checking,
 not a comparison of the combined term with standalone port work. See
 `docs/research/boat-action-moving.json` for parity, timings and failed cases.
+
+The action driver now defaults to `--action-tangent`: one current analytic
+21-direction chart tangent replaces repeated shape reconstructions, while
+preserving fresh operators/gradients and all four time-offset fields. Use
+`--no-action-tangent` for the finite-difference reference. Cold refreshes choose
+one owned replay before constructing either the primal operator or tangent.
+`boat_action_tangent_audit --reference <parent-audit> --body-reference
+<body-audit> --output <report>` checks the complete chain against saved
+nonlinear h/h2 controls. `docs/research/boat-action-tangent.json` retains timing,
+failed guards and the complete one-second 107.7 s pilot. Neither accuracy nor
+the 20x runtime ceiling has been earned.

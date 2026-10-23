@@ -1,6 +1,6 @@
 """Restricted parent loads with prescribed open-port virtual work.
 
-Diagnostic candidate, not enabled in the moving solver. The supplied vertex
+Experimental candidate used by the opt-in action driver. The supplied vertex
 gradient must belong to this current geometry, potential, density and energy.
 Only geometry/load/trace stencils are evaluated here: no fluid operator/solve.
 """
@@ -35,6 +35,21 @@ def parent_mass(arrays):
     trace = mapping[faces]
     unit = (np.ones((3, 3))+np.eye(3))/12
     return np.einsum('f,fci,cd,fdj->ij', area, trace, unit, trace, optimize=True)
+
+
+def factor_parent_mass(mass):
+    """One equilibrated parent solve and its roundoff-budget check."""
+    scale = np.sqrt(np.diag(mass))
+    if not np.isfinite(scale).all() or np.any(scale <= 0):
+        raise ValueError('unsupported parent coefficient')
+    equilibrated = mass/scale[:, None]/scale[None, :]
+    condition = np.linalg.cond(equilibrated, 1)
+    if not np.isfinite(condition) or condition*np.finfo(float).eps > 1e-8:
+        raise ValueError('parent mass exceeds roundoff budget')
+    factor = cho_factor(equilibrated)
+    def solve(load):
+        return cho_solve(factor, load/scale)/scale
+    return solve, float(condition)
 
 
 def port_transport_covector(arrays, potential, values, time):
@@ -99,16 +114,7 @@ def action_rates(arrays, field, gradient, values, twist, time, geometry, *,
     eta, psi = arrays['parent_nodes'][:, 2], arrays['parent_psi']
     pose = InitialState(arrays['pose_position'], arrays['pose_orientation'])
     mass = parent_mass(arrays)
-    scale = np.sqrt(np.diag(mass))
-    if not np.isfinite(scale).all() or np.any(scale <= 0):
-        raise ValueError('unsupported parent coefficient')
-    equilibrated = mass/scale[:, None]/scale[None, :]
-    condition = np.linalg.cond(equilibrated, 1)
-    if not np.isfinite(condition) or condition*np.finfo(float).eps > 1e-8:
-        raise ValueError('parent mass exceeds roundoff budget')
-    factor = cho_factor(equilibrated)
-    def solve(load):
-        return cho_solve(factor, load/scale)/scale
+    solve, condition = factor_parent_mass(mass)
     eta_rate = solve(field['parent_map'].T@field['flux'])
     geometry_evaluations = 0
     def checked(current_pose, height):

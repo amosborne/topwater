@@ -15,7 +15,7 @@ from tests.reference_boat import GRAVITY, WATER_DENSITY
 from .boat_ale_pressure import differentiate
 from .boat_body_action import body_derivatives, known_load
 from .boat_geometry_template import InvalidTemplate
-from .boat_parent_action import action_rates, port_transport_covector
+from .boat_parent_action import action_rates, port_transport_covector, port_seam_load
 from .body_pressure import evaluate_body_pressure
 
 
@@ -26,7 +26,7 @@ class ActionResult:
     diagnostics: dict
 
 
-def evaluate(body, arrays, current, assembly, state, values, time, geometry, field):
+def evaluate(body, arrays, current, assembly, state, values, time, geometry, field, *, geometry_tangent=None):
     """Return the moving driver's stencil tuple, with a fresh action closure.
 
     geometry(pose, eta, psi, label) must stay on the selected base chart;
@@ -44,18 +44,40 @@ def evaluate(body, arrays, current, assembly, state, values, time, geometry, fie
     timings = dict(gradient_seconds=perf_counter()-before)
     def fixed_geometry(current_pose, height):
         return geometry(current_pose, height, psi, 'action-shape')
-    before = perf_counter()
-    covector = port_transport_covector(arrays, current['potential'], values, time)
-    timings['port_covector_seconds'] = perf_counter()-before
-    before = perf_counter()
-    parent = action_rates(arrays, current, gradient, values, twist, time, fixed_geometry,
-        combine_incident_ports=True, port_covector=covector)
-    timings['parent_geometry_load_seconds'] = perf_counter()-before
-    before = perf_counter()
-    derivatives = body_derivatives(arrays, current, gradient, values, twist, time,
-        parent['eta_rate'], fixed_geometry, combine_incident_ports=True, port_covector=covector)
-    timings['body_geometry_load_seconds'] = perf_counter()-before
-    eta_rate, psi_rate = parent['eta_rate'], parent['psi_rate'][1]
+    if geometry_tangent is None:
+        before = perf_counter()
+        covector = port_transport_covector(arrays, current['potential'], values, time)
+        timings['port_covector_seconds'] = perf_counter()-before
+        before = perf_counter()
+        parent = action_rates(arrays, current, gradient, values, twist, time, fixed_geometry,
+            combine_incident_ports=True, port_covector=covector)
+        timings['parent_geometry_load_seconds'] = perf_counter()-before
+        before = perf_counter()
+        derivatives = body_derivatives(arrays, current, gradient, values, twist, time,
+            parent['eta_rate'], fixed_geometry, combine_incident_ports=True, port_covector=covector)
+        timings['body_geometry_load_seconds'] = perf_counter()-before
+        eta_rate, psi_rate = parent['eta_rate'], parent['psi_rate'][1]
+        shape_evaluations = parent['geometry_evaluations']+derivatives['geometry_evaluations']
+        parent_difference = float(np.max(abs(parent['psi_rate'][0]-parent['psi_rate'][1])))
+        condition = parent['parent_mass_condition']
+        seam_difference = float(np.max(abs(parent['port_seam_weak_order6']-parent['port_seam_weak'])))
+    else:
+        from .boat_action_tangent import action_terms
+        before = perf_counter()
+        fine, dx, ds = geometry_tangent()
+        for key in ('points', 'faces', 'free_nodes', 'free_parent_indices', 'free_parent_weights'):
+            if not np.array_equal(fine[key], arrays[key]):
+                raise ValueError('analytic geometry does not own this current operator/trace')
+        timings['analytic_geometry_seconds'] = perf_counter()-before
+        before = perf_counter()
+        chain = action_terms(arrays, current, gradient, values, twist, time, dx, ds)
+        timings['analytic_action_terms_seconds'] = perf_counter()-before
+        eta_rate, psi_rate = chain['eta_rate'], chain['psi_rate']
+        # One exact current pose derivative serves both TIME-offset controls.
+        derivatives = dict(pose_load=np.broadcast_to(chain['body_pose_load'], (2, 6)))
+        shape_evaluations, parent_difference, condition = 1, None, chain['parent_mass_condition']
+        seam_difference = float(np.max(abs(port_seam_load(arrays, current, values, time, order=6)
+            -port_seam_load(arrays, current, values, time, order=12))))
     if not np.isfinite(np.r_[eta_rate, psi_rate]).all():
         raise FloatingPointError('nonfinite action surface rates')
     before = perf_counter()
@@ -108,18 +130,18 @@ def evaluate(body, arrays, current, assembly, state, values, time, geometry, fie
     hydro = loads[1]-added@accelerations[1]
     balance = rigid@accelerations[1]-hydro-weight_gyro
     diagnostics = dict(formulation='experimental restricted action',
+        geometry_derivatives='analytic owned chart' if geometry_tangent is not None else 'h/h2 finite differences',
         incident_port_derivatives='Exact cancellation before geometry differencing; full incident forcing remains in fluid solves.',
         added_mass_reciprocity_relative=float(reciprocity), rigid_body_balance_world=balance.tolist(),
         known_load_world=loads[1].tolist(), h_h2_known_load_difference=(loads[0]-loads[1]).tolist(),
         h_h2_acceleration_difference=(accelerations[0]-accelerations[1]).tolist(),
         pressure_known_load_world=pressure_loads[1].tolist(),
         action_minus_pressure_known_load_world=(loads[1]-pressure_loads[1]).tolist(),
-        geometry_evaluations=parent['geometry_evaluations']+derivatives['geometry_evaluations']+time_geometry_evaluations,
+        geometry_evaluations=shape_evaluations+time_geometry_evaluations,
         timings=dict(timings, total_seconds=perf_counter()-started))
     surface = dict(formulation='experimental restricted action',
-        maximum_h_h2_psi_rate_difference=float(np.max(abs(parent['psi_rate'][0]-parent['psi_rate'][1]))),
-        parent_mass_condition=parent['parent_mass_condition'],
-        maximum_seam_order6_12_difference=float(np.max(abs(parent['port_seam_weak_order6']-parent['port_seam_weak']))))
+        maximum_h_h2_psi_rate_difference=parent_difference,
+        parent_mass_condition=condition, maximum_seam_order6_12_difference=seam_difference)
     result = ActionResult(accelerations[1], hydro, diagnostics)
     return (result, eta_rate, psi_rate, surface, [arrays, offsets[h/2], offsets[-h/2]],
         [assembly.energy, energies[h/2], energies[-h/2]],
