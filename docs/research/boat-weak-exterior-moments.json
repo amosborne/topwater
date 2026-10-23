@@ -1,0 +1,115 @@
+{
+    "status":  "Physical-exterior weak feedback moments checked; no time-domain baseline promotion",
+    "scope":  "Frozen actual-hull heave/roll reference fields, four real phase columns. Only complete P1 test hats whose entire support lies outside the convex waterplane.",
+    "evidence":  {
+                     "raw":  "artifacts/boat-weak-exterior-moments-work.json",
+                     "sha256":  "db1b5a41d1df6c481d76a9dfd9e9dc9fd0e146a06561fb5a39206287653ffa17",
+                     "input_sha256":  "d4727637dd8b52ab90b0969c58341fbb033b844befae09340dae74a841d076d1",
+                     "panel_sha256":  "0f1cc91a5ed4b165a0374751d684e8e0b4c1a50c7d5455dfe1fb40f71af9b258",
+                     "tested_hats":  48,
+                     "minimum_support_clearance_m":  0.1567995614458636,
+                     "certificate":  "One convex-footprint halfplane separates every vertex of the complete six-triangle star",
+                     "saved_current_density_reconstruction_error":  0.0,
+                     "hat_fourier_direct_quadrature_error":  3.1225022567582528E-17
+                 },
+    "operator_composition":  [
+                                 "Global Fourier weak row uses one exact centred P1 hat transform hx*hy*sinc(kx*hx/2)*sinc(ky*hy/2)*sinc((kx*hx+ky*hy)/2); FFT amplitudes divided byN² once.",
+                                 "Local weak contribution is K*delta on the full retained compact patch; no extra area or mass factor.",
+                                 "Body-source weak flux is integrated over the SAME physical test supports using the saved CURRENT Topwater source density.",
+                                 "Reference uses actual externally evaluated Capytaine vertical velocity; its finite-panel Robin inconsistency is recorded independently.",
+                                 "All rows describe weak volume-flux moments. Area-normalized errors are diagnostics, not nodal evolution rates."
+                             ],
+    "moment_comparison":  {
+                              "coarse_relative_l2":  [
+                                                         0.8696124659568898,
+                                                         10.378233675071813
+                                                     ],
+                              "coupled_local_relative_l2":  [
+                                                                0.11038649482282159,
+                                                                0.21543665293042197
+                                                            ],
+                              "coupled_local_rms_absolute_volume_flux_error":  [
+                                                                                   5.9069023495331541E-05,
+                                                                                   1.5397580947463311E-05
+                                                                               ],
+                              "coupled_local_rms_area_normalized_error_m_per_s":  [
+                                                                                      0.003816801496497543,
+                                                                                      0.0009949294321306126
+                                                                                  ],
+                              "contribution_rms":  {
+                                                       "coarse":  [
+                                                                      0.006870522392501004,
+                                                                      0.0005781981466581638
+                                                                  ],
+                                                       "local":  [
+                                                                     0.00712934574580248,
+                                                                     0.0006500366429784127
+                                                                 ],
+                                                       "body":  [
+                                                                    0.0005580061059000623,
+                                                                    0.00021127281801779668
+                                                                ]
+                                                   },
+                              "reference_robin_relation_defect":  [
+                                                                      0.026019457333764942,
+                                                                      0.13143503049424157
+                                                                  ],
+                              "candidate_vs_reference_robin_relation":  [
+                                                                            0.11786860742896621,
+                                                                            0.34878407484517104
+                                                                        ],
+                              "interpretation":  "RMS values are spatial norms of complex amplitudes. These are not user body-motion errors or acceptance thresholds, and the alternative Robin relation is not selected as truth."
+                          },
+    "reciprocity":  {
+                        "identity":  "integral_FS Ni*T*sigma = -integral_body sigma*H[Ni] dA; body panels are integrated, not replaced by centroid values",
+                        "surface_quadrature_orders":  [
+                                                          4,
+                                                          8
+                                                      ],
+                        "body_quadrature_orders":  [
+                                                       4,
+                                                       8,
+                                                       16
+                                                   ],
+                        "contracted_max_error_at_body4":  [
+                                                              9.0073006687472424E-05,
+                                                              0.00010041528792058616
+                                                          ],
+                        "contracted_max_error_at_body8":  [
+                                                              5.3964293645796347E-06,
+                                                              6.1140743783388653E-06
+                                                          ],
+                        "contracted_max_error_at_body16":  [
+                                                               1.4980283522126365E-08,
+                                                               1.7292409149684018E-08
+                                                           ],
+                        "quadrature_sensitivity":  {
+                                                       "reference_relative_l2":  [
+                                                                                     7.9042988831554686E-07,
+                                                                                     5.714767855826937E-06
+                                                                                 ],
+                                                       "source_density_contracted_max_difference":  [
+                                                                                                        1.7674505190009586E-10,
+                                                                                                        2.0376681995268737E-10
+                                                                                                    ],
+                                                       "body_poisson_density_contracted_max_difference":  [
+                                                                                                              9.5469345645124911E-05,
+                                                                                                              0.00010652926124979187
+                                                                                                          ]
+                                                   },
+                        "interpretation":  "Order16 refines BODY integration only. Reference/source Gorder8 and candidate solution remain unchanged. Source reciprocity alone does not establish complete body-pressure work conservation."
+                    },
+    "resource_observation":  {
+                                 "complete_static_verification_seconds":  19.247503100021277,
+                                 "process_peak_rss_bytes":  570892288,
+                                 "scope":  "Includes references, operator build, direct/integrated reciprocity and all static diagnostics; no simulation throughput or speed ratio."
+                             },
+    "next_gate":  "Actual straight-waterline and corner cut supports: full weak row minus exact-owned hidden-domain contribution including the waterline boundary integral. Restrict coarse, local and body-source terms to the same physical support; compare against independent cut-geometry moments.",
+    "limits":  [
+                   "No contact rows, global mass closure, mass inverse or hidden-water evolution tested.",
+                   "No nonlinear moving hull, evolving sea or60-second body accuracy/throughput qualification.",
+                   "Fine independent Poisson-core entry validation remains open; kernel requests and cancelled moment errors are not certified bounds.",
+                   "External reference finite-panel potential/gradient uncertainty remains explicit.",
+                   "Complete joint body/pressure/extension work and moving-hole transport remain requirements before promotion."
+               ]
+}

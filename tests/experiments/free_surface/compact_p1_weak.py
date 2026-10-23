@@ -33,6 +33,15 @@ def hat(hx,hy):
     return panels,gradient,values,cells,orientation
 
 
+def hat_fourier(hx,hy,kx,ky):
+    """Exact transform of one centred BL-to-TR P1 hat (one factor, area units).
+
+    This hat is the box spline of the x, y and positive-diagonal unit segments.
+    NumPy sinc uses sin(pi*x)/(pi*x). Do not square or take absolute values.
+    """
+    return hx*hy*np.sinc(kx*hx/(2*np.pi))*np.sinc(ky*hy/(2*np.pi))*np.sinc((kx*hx+ky*hy)/(2*np.pi))
+
+
 @dataclass(frozen=True)
 class WeakControls:
     relative_tolerance: float=1e-5

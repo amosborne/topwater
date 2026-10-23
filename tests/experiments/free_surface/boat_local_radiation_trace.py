@@ -40,6 +40,16 @@ def amplitude(values):
     return values[:,:2]+1j*values[:,2:]
 
 
+def far_trace_spectrum(trace,origin,length,center,inner,beam):
+    """One owner for the near-excluded coarse trace used by local enrichment."""
+    grid=trace.shape[0]
+    axis=np.arange(grid)*length/grid
+    gx,gy=np.meshgrid(origin[0]+axis,origin[1]+axis)
+    excluded=window(gx-center[0],inner[0]-.5*beam,inner[0])*window(gy-center[1],inner[1]-.5*beam,inner[1])
+    far=phases(trace.reshape(-1,2)).reshape(grid,grid,4)*(1-excluded[:,:,None])
+    return np.fft.fft2(far,axes=(0,1))
+
+
 def run(args,report):
     import capytaine as cpt
     field=json.loads(args.field.read_text());audit=json.loads(args.audit.read_text())
@@ -101,11 +111,7 @@ def run(args,report):
     # Remove unresolved hull-scale trace detail BEFORE sampling the global
     # Fourier part. The local Poisson lift restores it. Both windows act on
     # surface DATA only; no three-dimensional harmonic field is windowed.
-    coarse_axis=np.arange(grid)*length/grid
-    gx,gy=np.meshgrid(origin[0]+coarse_axis,origin[1]+coarse_axis)
-    excluded=window(gx-cg[0],inner[0]-.5*beam,inner[0])*window(gy-cg[1],inner[1]-.5*beam,inner[1])
-    far_trace=phases(trace.reshape(-1,2)).reshape(grid,grid,4)*(1-excluded[:,:,None])
-    far_spectrum=np.fft.fft2(far_trace,axes=(0,1))
+    far_spectrum=far_trace_spectrum(trace,origin,length,cg[:2],inner,beam)
     far_lift=(pbody@far_spectrum.reshape(-1,4)).real
     far_normal=(nbody@far_spectrum.reshape(-1,4)).real
     probe_cells=np.ceil(2*outer/.25).astype(int)
