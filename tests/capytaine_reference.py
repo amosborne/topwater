@@ -46,6 +46,63 @@ def instantaneous_inertia(triangles, center, mass, *, density=1000., gravity=9.8
     return reference, damping
 
 
+def radiation_columns(triangles, center, mass, angular_frequency, modes, *, density, gravity):
+    """Deep-water radiation on EXACT supplied physical panels.
+
+    ``center`` is the WORLD CG/rotation center, not the material-frame body CG.
+    Triangles have BODY-outward winding. All six influenced force/moment rows
+    are returned for only the requested radiating columns. No wave excitation,
+    hydrostatic restoring or rigid inertia is included.
+
+    Capytaine uses Re(amplitude*exp(-i*omega*t)) and unit displacement. The
+    returned force_per_velocity instead corresponds to unit velocity amplitude:
+    F=(-B+i*omega*A)U, hence mean body power is -U*.B.U/2.
+    At angular_frequency=inf only A-infinity and zero damping are returned;
+    finite harmonic force amplitudes are undefined and their keys are omitted.
+    """
+    import capytaine as cpt
+
+    modes = tuple(modes)
+    if (not modes or len(set(modes)) != len(modes) or any(mode not in MODES for mode in modes)):
+        raise ValueError('distinct known rigid radiation modes required')
+    density, gravity, angular_frequency = map(float, (density, gravity, angular_frequency))
+    if not np.isfinite([density, gravity, mass]).all() or min(density, gravity, mass) <= 0:
+        raise ValueError('density, gravity and mass must be positive finite scalars')
+    if np.isnan(angular_frequency) or angular_frequency <= 0:
+        raise ValueError('angular_frequency must be positive finite or infinity')
+    triangles, center = np.asarray(triangles, dtype=float), np.asarray(center, dtype=float)
+    if (triangles.ndim != 3 or triangles.shape[1:] != (3, 3) or not len(triangles)
+            or center.shape != (3,) or not np.isfinite(triangles).all() or not np.isfinite(center).all()
+            or np.any(triangles[:, :, 2] > 0) or np.any(triangles[:, :, 2].mean(axis=1) >= 0)):
+        raise ValueError('finite wetted triangles below z=0 and a finite world CG required')
+    body = body_from_triangles(triangles, center, mass)
+    infinite = np.isinf(angular_frequency)
+    green = (cpt.Delhommeau(tabulation_nr=0, tabulation_nz=0, tabulation_cache_dir=None)
+             if infinite else cpt.Delhommeau(tabulation_cache_dir=None))
+    added, damping = np.empty((6, len(modes))), np.empty((6, len(modes)))
+    forces = None if infinite else np.empty((6, len(modes)), dtype=complex)
+    with threadpool_limits(1):
+        solver = cpt.BEMSolver(green_function=green)
+        for column, mode in enumerate(modes):
+            result = solver.solve(cpt.RadiationProblem(body=body, radiating_dof=mode,
+                omega=angular_frequency, rho=density, g=gravity, water_depth=np.inf))
+            added[:, column] = [result.added_mass[row] for row in MODES]
+            damping[:, column] = [result.radiation_damping[row] for row in MODES]
+            if not infinite:
+                forces[:, column] = [result.forces[row] for row in MODES]
+    if (not np.isfinite(added).all() or not np.isfinite(damping).all()
+            or (forces is not None and not np.isfinite(forces).all())):
+        raise FloatingPointError('nonfinite Capytaine radiation reference')
+    reference = dict(added_mass=added, radiation_damping=damping,
+        angular_frequency='infinite' if infinite else angular_frequency,
+        influenced_modes=MODES, radiating_modes=modes,
+        density=float(density), gravity=float(gravity), water_depth='infinite',
+        green_function_settings=green.exportable_settings)
+    if not infinite:
+        reference.update(force_per_displacement=forces, force_per_velocity=1j*forces/angular_frequency)
+    return reference
+
+
 def frequency_response(triangles, center, mass, frequencies, headings, *, water_depth=np.inf):
     """Finite-frequency reference only; excitation includes incident pressure.
 
