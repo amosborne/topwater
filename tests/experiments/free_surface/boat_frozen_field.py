@@ -3,7 +3,7 @@ from time import perf_counter
 import numpy as np
 
 from topwater.rankine import single_layer_trace
-from .boat_image_plane import elevated_potential
+from .cuda_source_potential import paired_potential
 from .panel_gradient_reference import checked_influence
 from .cuda_graph import GraphDirichlet, cp
 
@@ -79,7 +79,8 @@ def frozen_field(panels, eta, length, origin, height, image, order, trace, densi
     x, y = np.meshgrid(origin[0]+np.arange(grid)*length/grid,
                        origin[1]+np.arange(grid)*length/grid)
     points = np.column_stack((x.ravel(), y.ravel(), eta.ravel()))
-    source_trace = elevated_potential(points, panels, image)@density
+    source = paired_potential(points, panels, image)
+    source_trace = source.values@cp.asarray(density)
     trace_seconds = perf_counter()-started
     graph = GraphDirichlet(eta-height, [length, length], order=order)
     spectrum = sum(graph.coefficients((cp.asarray(trace)-cp.asarray(source_trace)).reshape(eta.shape))).ravel()
@@ -99,4 +100,5 @@ def frozen_field(panels, eta, length, origin, height, image, order, trace, densi
         raise ValueError('nonfinite frozen field action')
     return dict(potential=potential, normal=normal,
         diagnostics=dict(total_seconds=perf_counter()-started, source_trace_seconds=trace_seconds,
+                         source_trace=source.diagnostics,
                          offset_operator_builds=0, dense_harmonic_maps=0))

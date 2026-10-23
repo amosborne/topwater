@@ -1,0 +1,561 @@
+{
+  "status": "Adopted in experimental graph/body path; controlled matched warm forced-body speedup, NOT full evolving-sea baseline qualification",
+  "implementation": [
+    "One explicit nonself paired-potential GPU owner for current operator and frozen offsets; no production backend switch.",
+    "Energy, shape derivatives and GPU source potential reuse one analytic sample formula. Energy wrapper preserves original self ownership.",
+    "Vertex/edge/unowned-boundary rejection and individual/paired error estimates route flagged targets through public CPU guards; positive finite paired precision recovery or explicit failure.",
+    "Superseded CPU worker path removed; independent serial CPU implementation remains only in verification harnesses."
+  ],
+  "verification": {
+    "focused_tests_passed": 61,
+    "scope": "Source values/guard recovery, panel additivity/renumbering, shared energy/shape derivatives, current-field/transport and strict benchmark contracts.",
+    "existing_baseline_one_step_regression": {
+      "max_state_difference": 6.938893903907228e-18,
+      "max_dense_coefficient_difference": 1.4210854715202004e-14
+    }
+  },
+  "interpretation": [
+    "Canonical same0.1s forced-body setup+integration warmABBA improves3.34x/3.81x; alternative box2.14x/3.32x at its OWN.002s case. Same controls/physics/state/duration and current producer warmup; strict performance gate accepts each internal pair.",
+    "These are explicitly forced fixed-graph cases. They do not establish evolving sea/60s accuracy/<=20x runtime or a speedup over the old40x baseline.",
+    "Canonical warm GPUsetup+integration4.59/5.48s for0.1s; still above20x if naively normalized. Short horizon/startup effects and missing free-wave physics prevent treating this as final throughput.",
+    "Canonical archive before a later guard-only positivity change has zero flagged pairs in measured paths, so that change does not affect its measured kernels. Later box/final tests own the tightened recovery.",
+    "Raw aggregate reports include warmups, component controls and posthoc audits; paired benchmark_seconds deliberately covers only prewarmed numerical setup/integration. Fresh-process observation is separate and never mixed into those ratios."
+  ],
+  "fresh_process": {
+    "path": "artifacts\\boat-gpu-source-fresh-process.json",
+    "sha256": "389014f8279000c57705bd53a64ef12cc1562734b46bff6c51d5ebc213530a02",
+    "archive_seconds": 0.35733020000043325,
+    "numerical_setup_seconds": 2.688313799997559,
+    "integration_seconds": 3.2605086999828927,
+    "setup_plus_integration_seconds": 5.9488224999804515,
+    "posthoc_audit_seconds": 1.7590764999913517,
+    "reported_total_seconds": 8.150596799998311,
+    "peak_process_rss_bytes": 602660864,
+    "ending_cuda_pool_reserved_bytes": 1414964736,
+    "timing_scope": "Archive plus numerical setup/integration/audit; excludes Python imports and uv environment startup.",
+    "cache_policy": "uncontrolled persistent caches",
+    "memory_scope": "Process peak RSS and ending CUDA pool; ending pool is not peak VRAM."
+  },
+  "records": [
+    {
+      "path": "artifacts\\boat-gpu-source-controlled.json",
+      "sha256": "1266f270371be9729c8d530838b5751421a3baad7dbecdf2d8b7830a68815197",
+      "input_sha256": "d4727637dd8b52ab90b0969c58341fbb033b844befae09340dae74a841d076d1",
+      "source_matrix_max_errors": [
+        2.1206994493816467e-16,
+        1.7694179454963432e-16,
+        2.1337098754514727e-16
+      ],
+      "gpu_guards": [
+        {
+          "gpu_flagged_pairs": 0,
+          "cpu_guarded_rows": 0,
+          "individual_accuracy_flags": 0,
+          "paired_accuracy_flags": 0,
+          "geometry_guard_flags": 0,
+          "matrix_bytes": 11182752,
+          "guard_bytes": 1397844,
+          "scope": "Same analytic sample primitive; explicit nonself points; CPU guards/recovery for flagged pairs"
+        },
+        {
+          "gpu_flagged_pairs": 0,
+          "cpu_guarded_rows": 0,
+          "individual_accuracy_flags": 0,
+          "paired_accuracy_flags": 0,
+          "geometry_guard_flags": 0,
+          "matrix_bytes": 11182752,
+          "guard_bytes": 1397844,
+          "scope": "Same analytic sample primitive; explicit nonself points; CPU guards/recovery for flagged pairs"
+        },
+        {
+          "gpu_flagged_pairs": 0,
+          "cpu_guarded_rows": 0,
+          "individual_accuracy_flags": 0,
+          "paired_accuracy_flags": 0,
+          "geometry_guard_flags": 0,
+          "matrix_bytes": 11182752,
+          "guard_bytes": 1397844,
+          "scope": "Same analytic sample primitive; explicit nonself points; CPU guards/recovery for flagged pairs"
+        }
+      ],
+      "rhs_max_pressure_difference_pa": 1.5006662579253316e-11,
+      "rhs_max_acceleration_difference": 1.4988010832439613e-15,
+      "case_contract": {
+        "physics": "Fixed forced graph plus freely moving nonlinear body; no evolved sea",
+        "input_sha256": "d4727637dd8b52ab90b0969c58341fbb033b844befae09340dae74a841d076d1",
+        "boundary_data_sha256": "feb040c7d16bb2824db55fb85010c66c4ad891ac9151fee69eee189cc2b67f7f",
+        "constants": {
+          "gravity_m_per_s2": 9.81,
+          "water_density_kg_per_m3": 1025.0
+        },
+        "state_layout": [
+          "position_world_m[3]",
+          "raw_orientation_wxyz[4]",
+          "velocity_world_m_per_s[3]",
+          "angular_velocity_world_rad_per_s[3]"
+        ],
+        "state_count": 13,
+        "error_norm": "SciPy RK23 RMS over the complete supplied state; raw quaternion and world angular velocity",
+        "duration_seconds": 0.1,
+        "integrator": "RK23",
+        "tolerances": {
+          "rtol": 0.001,
+          "absolute_by_component": [
+            0.001,
+            0.001,
+            0.001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.001,
+            0.001,
+            0.001,
+            0.0001,
+            0.0001,
+            0.0001
+          ],
+          "scope": "Effective local integration controls; neither full-minute accuracy nor physical qualification"
+        },
+        "max_step_seconds": 0.05,
+        "first_step_seconds": 0.05,
+        "spatial": {
+          "grid": 129,
+          "length_m": 64.0,
+          "hos_order": 4,
+          "body_refinement": 1,
+          "initial_panel_count": 84,
+          "initial_panel_sha256": "6b5405b32026f18d9cbf571cd2bbd8dd10d1322bf248f924ed2560cbf76b72c5",
+          "derivative_step_seconds": 0.005,
+          "representation": {
+            "reference_height_m": 0.39468765335030426,
+            "image_height_m": 0.4864178157786592,
+            "exterior_mask_sha256": "467ca294e5f2c184de86ccd392f3512f96e10b7edd4887b48bfff4f542dc2304"
+          }
+        },
+        "solve_controls": {
+          "rtol": 1e-09,
+          "atol": 0.0,
+          "true_residual_limit": 2e-09,
+          "restart_cap": 40,
+          "restart_policy": "min(cap,current_panel_count)",
+          "maxiter": 5
+        },
+        "panel_integration": {
+          "format_version": 1,
+          "quadrature_rtol": 1e-08,
+          "quadrature_atol": 1e-10,
+          "max_refinement": 8,
+          "target_block_size": 128,
+          "max_operator_bytes": 536870912
+        }
+      },
+      "measurement_environment": {
+        "resource_status": "uncontended",
+        "resource_context": "After user five-minute completion window; before run GPU0percent/no compute processes,2sCPU sample only monitor shell; same-process prewarmed ABBA",
+        "hardware": {
+          "cpu": "Intel64 Family 6 Model 170 Stepping 4, GenuineIntel",
+          "gpu": "NVIDIA RTX 2000 Ada Generation Laptop GPU",
+          "gpu_memory_bytes": 8585216000
+        },
+        "software": {
+          "python": "3.12.8",
+          "numpy": "2.5.4",
+          "scipy": "1.18.1",
+          "numba": "0.68.0",
+          "cupy": "14.2.0",
+          "os": "Windows-11-10.0.26300-SP0",
+          "cuda_driver": 13020,
+          "cuda_runtime": 12090
+        },
+        "thread_pools": [
+          {
+            "user_api": "blas",
+            "internal_api": "openblas",
+            "prefix": "libscipy_openblas",
+            "version": "0.3.31.dev",
+            "num_threads": 1,
+            "threading_layer": "pthreads",
+            "architecture": "Haswell"
+          },
+          {
+            "user_api": "blas",
+            "internal_api": "openblas",
+            "prefix": "libscipy_openblas",
+            "version": "0.3.34.106.0",
+            "num_threads": 1,
+            "threading_layer": "pthreads",
+            "architecture": "Haswell"
+          }
+        ],
+        "thread_environment": {
+          "OPENBLAS_NUM_THREADS": "1",
+          "OMP_NUM_THREADS": "1",
+          "MKL_NUM_THREADS": "1",
+          "NUMBA_NUM_THREADS": "unset"
+        },
+        "timing_scope": "Configured-driver setup plus integration, including in-loop artifacts; final output/audits/archive excluded",
+        "output_policy": "Boundary NPZ in setup; stdout per RHS; final state NPZ/report and held-out audit excluded",
+        "cache_policy": "prewarmed current producers",
+        "startup_treatment": "Same process; both current implementations warmed with complete owned-state RHS before timed ABBA cases"
+      },
+      "cases": [
+        {
+          "path": "artifacts\\boat-gpu-source-controlled-moving-0-cpu.json",
+          "sha256": "43b425f9a126c9abf678e3e06997fd942401f0b8636cb9e776b0c75fdd44cd21",
+          "implementation": "cpu",
+          "benchmark_seconds": 15.35666399996262,
+          "setup_seconds": 0.19675399997504428,
+          "integration_seconds": 15.159909999987576,
+          "rhs": 7,
+          "steps": 2,
+          "oracle_pressure_error_pa": 1.6955846149357967e-07
+        },
+        {
+          "path": "artifacts\\boat-gpu-source-controlled-moving-1-gpu.json",
+          "sha256": "9b571db6efbce8dce7aa26c9618e33d6ba43d54cbc84f7beb890b21877a2f970",
+          "implementation": "gpu",
+          "benchmark_seconds": 4.591744599980302,
+          "setup_seconds": 0.1271260999783408,
+          "integration_seconds": 4.464618500001961,
+          "rhs": 7,
+          "steps": 2,
+          "oracle_pressure_error_pa": 1.69557097251527e-07
+        },
+        {
+          "path": "artifacts\\boat-gpu-source-controlled-moving-2-gpu.json",
+          "sha256": "dcc2a3cc17ae95abf3d9d579790ffdfd6483953f3aeb477f54f58a0fb6a14d0b",
+          "implementation": "gpu",
+          "benchmark_seconds": 5.48458010001923,
+          "setup_seconds": 0.3039148999960162,
+          "integration_seconds": 5.180665200023213,
+          "rhs": 7,
+          "steps": 2,
+          "oracle_pressure_error_pa": 1.69557097251527e-07
+        },
+        {
+          "path": "artifacts\\boat-gpu-source-controlled-moving-3-cpu.json",
+          "sha256": "c14ec015ab2e76b4950fe9fbf7428c02ee0d6562a200baa4fece878a53135234",
+          "implementation": "cpu",
+          "benchmark_seconds": 20.885776299983263,
+          "setup_seconds": 0.20536269998410717,
+          "integration_seconds": 20.680413599999156,
+          "rhs": 7,
+          "steps": 2,
+          "oracle_pressure_error_pa": 1.6955846149357967e-07
+        }
+      ],
+      "comparisons": [
+        {
+          "reference_case": 0,
+          "candidate_case": 1,
+          "performance": {
+            "comparable": true,
+            "speedup": 3.344407265166381,
+            "scope": "Matched reported problem/numerics/environment; physical accuracy qualification remains separate"
+          },
+          "max_translation_difference_m": [
+            1.3877787807814457e-17,
+            1.3877787807814457e-17,
+            2.7755575615628914e-17
+          ],
+          "max_rotation_difference_degrees": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "reference_case": 3,
+          "candidate_case": 2,
+          "performance": {
+            "comparable": true,
+            "speedup": 3.808090303925005,
+            "scope": "Matched reported problem/numerics/environment; physical accuracy qualification remains separate"
+          },
+          "max_translation_difference_m": [
+            1.3877787807814457e-17,
+            1.3877787807814457e-17,
+            2.7755575615628914e-17
+          ],
+          "max_rotation_difference_degrees": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "source_producers": {
+        "tests\\experiments\\free_surface\\boat_frozen_field.py": "a81497f94ca081bd5833c5127b980999828bafb0a1a26e5a116173b3095686c6",
+        "tests\\experiments\\free_surface\\boat_graph_bvp.py": "25901a938491dd8114f6fba4d1362a3947afed222e15a781c4732541cad6ff72",
+        "tests\\experiments\\free_surface\\boat_source_sampling_benchmark.py": "9c19f1e3f20e7c00338ec77ed71981e6fcebd04b164cd331af1d90b74e2778e4",
+        "tests\\experiments\\free_surface\\cuda_source_potential.py": "9b83d0565dfde2c859d3d415073827112a9373c32cddb5bcc8509e6de0b45a3a",
+        "tests\\experiments\\free_surface\\cuda_source_potential.cu": "f7fc780b1e2fcb3757b987e6fc0dd490b9930cfbe6a82774618e909eba053bef",
+        "tests\\experiments\\free_surface\\cuda_pair.cuh": "f49526fb6f5c42a839b07faadebd8973bdcfc2bc48d8e10a9277d618c093a92a"
+      }
+    },
+    {
+      "path": "artifacts\\box-gpu-source-controlled.json",
+      "sha256": "26a4baf9ab17c4fb1806c2f22cca99603b844a50c3775822c8f6c6b1a8a0df15",
+      "input_sha256": "c63d3f18509f9379c28e6797b0a4186a8610b4bb14a048d31376ca123102b485",
+      "source_matrix_max_errors": [
+        2.498001805406602e-16,
+        2.47198095326695e-16,
+        2.1510571102112408e-16
+      ],
+      "gpu_guards": [
+        {
+          "gpu_flagged_pairs": 0,
+          "cpu_guarded_rows": 0,
+          "individual_accuracy_flags": 0,
+          "paired_accuracy_flags": 0,
+          "geometry_guard_flags": 0,
+          "matrix_bytes": 7455168,
+          "guard_bytes": 931896,
+          "scope": "Same analytic sample primitive; explicit nonself points; CPU guards/recovery for flagged pairs"
+        },
+        {
+          "gpu_flagged_pairs": 0,
+          "cpu_guarded_rows": 0,
+          "individual_accuracy_flags": 0,
+          "paired_accuracy_flags": 0,
+          "geometry_guard_flags": 0,
+          "matrix_bytes": 7455168,
+          "guard_bytes": 931896,
+          "scope": "Same analytic sample primitive; explicit nonself points; CPU guards/recovery for flagged pairs"
+        },
+        {
+          "gpu_flagged_pairs": 0,
+          "cpu_guarded_rows": 0,
+          "individual_accuracy_flags": 0,
+          "paired_accuracy_flags": 0,
+          "geometry_guard_flags": 0,
+          "matrix_bytes": 7455168,
+          "guard_bytes": 931896,
+          "scope": "Same analytic sample primitive; explicit nonself points; CPU guards/recovery for flagged pairs"
+        }
+      ],
+      "rhs_max_pressure_difference_pa": 1.2732925824820995e-11,
+      "rhs_max_acceleration_difference": 1.1657341758564144e-15,
+      "case_contract": {
+        "physics": "Fixed forced graph plus freely moving nonlinear body; no evolved sea",
+        "input_sha256": "c63d3f18509f9379c28e6797b0a4186a8610b4bb14a048d31376ca123102b485",
+        "boundary_data_sha256": "aba0a6e31cda561a409530d5656d5f6b55bb34158b81a38a43020a55ca742b79",
+        "constants": {
+          "gravity_m_per_s2": 9.81,
+          "water_density_kg_per_m3": 1025.0
+        },
+        "state_layout": [
+          "position_world_m[3]",
+          "raw_orientation_wxyz[4]",
+          "velocity_world_m_per_s[3]",
+          "angular_velocity_world_rad_per_s[3]"
+        ],
+        "state_count": 13,
+        "error_norm": "SciPy RK23 RMS over the complete supplied state; raw quaternion and world angular velocity",
+        "duration_seconds": 0.002,
+        "integrator": "RK23",
+        "tolerances": {
+          "rtol": 0.001,
+          "absolute_by_component": [
+            0.001,
+            0.001,
+            0.001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.0001,
+            0.001,
+            0.001,
+            0.001,
+            0.0001,
+            0.0001,
+            0.0001
+          ],
+          "scope": "Effective local integration controls; neither full-minute accuracy nor physical qualification"
+        },
+        "max_step_seconds": 0.002,
+        "first_step_seconds": 0.002,
+        "spatial": {
+          "grid": 129,
+          "length_m": 64.0,
+          "hos_order": 4,
+          "body_refinement": 1,
+          "initial_panel_count": 56,
+          "initial_panel_sha256": "faa658ba4b57c21fcd524bce02a2d98a28de2ed07840f89a2bac69bcb0559354",
+          "derivative_step_seconds": 0.005,
+          "representation": {
+            "reference_height_m": 0.39478031770492517,
+            "image_height_m": 0.48903142579620723,
+            "exterior_mask_sha256": "edc79c59def75b996590ce295f293f7faf9ea8662bc55240cee34a4eefb86a77"
+          }
+        },
+        "solve_controls": {
+          "rtol": 1e-09,
+          "atol": 0.0,
+          "true_residual_limit": 2e-09,
+          "restart_cap": 40,
+          "restart_policy": "min(cap,current_panel_count)",
+          "maxiter": 5
+        },
+        "panel_integration": {
+          "format_version": 1,
+          "quadrature_rtol": 1e-08,
+          "quadrature_atol": 1e-10,
+          "max_refinement": 8,
+          "target_block_size": 128,
+          "max_operator_bytes": 536870912
+        }
+      },
+      "measurement_environment": {
+        "resource_status": "uncontended",
+        "resource_context": "After user resource-completion window; GPU0/no compute processes, CPU monitor only; matched prewarmed same-process ABBA",
+        "hardware": {
+          "cpu": "Intel64 Family 6 Model 170 Stepping 4, GenuineIntel",
+          "gpu": "NVIDIA RTX 2000 Ada Generation Laptop GPU",
+          "gpu_memory_bytes": 8585216000
+        },
+        "software": {
+          "python": "3.12.8",
+          "numpy": "2.5.4",
+          "scipy": "1.18.1",
+          "numba": "0.68.0",
+          "cupy": "14.2.0",
+          "os": "Windows-11-10.0.26300-SP0",
+          "cuda_driver": 13020,
+          "cuda_runtime": 12090
+        },
+        "thread_pools": [
+          {
+            "user_api": "blas",
+            "internal_api": "openblas",
+            "prefix": "libscipy_openblas",
+            "version": "0.3.31.dev",
+            "num_threads": 1,
+            "threading_layer": "pthreads",
+            "architecture": "Haswell"
+          },
+          {
+            "user_api": "blas",
+            "internal_api": "openblas",
+            "prefix": "libscipy_openblas",
+            "version": "0.3.34.106.0",
+            "num_threads": 1,
+            "threading_layer": "pthreads",
+            "architecture": "Haswell"
+          }
+        ],
+        "thread_environment": {
+          "OPENBLAS_NUM_THREADS": "1",
+          "OMP_NUM_THREADS": "1",
+          "MKL_NUM_THREADS": "1",
+          "NUMBA_NUM_THREADS": "unset"
+        },
+        "timing_scope": "Configured-driver setup plus integration, including in-loop artifacts; final output/audits/archive excluded",
+        "output_policy": "Boundary NPZ in setup; stdout per RHS; final state NPZ/report and held-out audit excluded",
+        "cache_policy": "prewarmed current producers",
+        "startup_treatment": "Same process; both current implementations warmed with complete owned-state RHS before timed ABBA cases"
+      },
+      "cases": [
+        {
+          "path": "artifacts\\box-gpu-source-controlled-moving-0-cpu.json",
+          "sha256": "a410e58701da7a0f6e41266a7bcc51daaf7c24913ab4064a11aed24bd1f05d3b",
+          "implementation": "cpu",
+          "benchmark_seconds": 3.6748551000200678,
+          "setup_seconds": 0.09498910000547767,
+          "integration_seconds": 3.57986600001459,
+          "rhs": 4,
+          "steps": 1,
+          "oracle_pressure_error_pa": 7.810194802004844e-08
+        },
+        {
+          "path": "artifacts\\box-gpu-source-controlled-moving-1-gpu.json",
+          "sha256": "e3994ba75e86fc150e9ef8d4ae610177eb301303b1d541ff26f6bb7ccdde6971",
+          "implementation": "gpu",
+          "benchmark_seconds": 1.7139101999928243,
+          "setup_seconds": 0.09468549999292009,
+          "integration_seconds": 1.6192246999999043,
+          "rhs": 4,
+          "steps": 1,
+          "oracle_pressure_error_pa": 7.810604074620642e-08
+        },
+        {
+          "path": "artifacts\\box-gpu-source-controlled-moving-2-gpu.json",
+          "sha256": "05b597b27b40414e2aca857927518ac2d1493c0295411ec774374c6f1f723ef3",
+          "implementation": "gpu",
+          "benchmark_seconds": 1.7649463999841828,
+          "setup_seconds": 0.1252278999891132,
+          "integration_seconds": 1.6397184999950696,
+          "rhs": 4,
+          "steps": 1,
+          "oracle_pressure_error_pa": 7.810604074620642e-08
+        },
+        {
+          "path": "artifacts\\box-gpu-source-controlled-moving-3-cpu.json",
+          "sha256": "b6db44ff33ea686eba182458359dd687fe2550f0b6bafc716ed1ee40f9f2b37c",
+          "implementation": "cpu",
+          "benchmark_seconds": 5.859661299997242,
+          "setup_seconds": 0.1244940000178758,
+          "integration_seconds": 5.735167299979366,
+          "rhs": 4,
+          "steps": 1,
+          "oracle_pressure_error_pa": 7.810194802004844e-08
+        }
+      ],
+      "comparisons": [
+        {
+          "reference_case": 0,
+          "candidate_case": 1,
+          "performance": {
+            "comparable": true,
+            "speedup": 2.1441351478248123,
+            "scope": "Matched reported problem/numerics/environment; physical accuracy qualification remains separate"
+          },
+          "max_translation_difference_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "max_rotation_difference_degrees": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "reference_case": 3,
+          "candidate_case": 2,
+          "performance": {
+            "comparable": true,
+            "speedup": 3.320022239797059,
+            "scope": "Matched reported problem/numerics/environment; physical accuracy qualification remains separate"
+          },
+          "max_translation_difference_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "max_rotation_difference_degrees": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "source_producers": {
+        "tests\\experiments\\free_surface\\boat_frozen_field.py": "a81497f94ca081bd5833c5127b980999828bafb0a1a26e5a116173b3095686c6",
+        "tests\\experiments\\free_surface\\boat_graph_bvp.py": "25901a938491dd8114f6fba4d1362a3947afed222e15a781c4732541cad6ff72",
+        "tests\\experiments\\free_surface\\boat_source_sampling_benchmark.py": "e32f7aefcccd33937b31c86652d4a91d6038adfe6fd3e68deb396796e5c50cc7",
+        "tests\\experiments\\free_surface\\cuda_source_potential.py": "8c1b674e549444bbdc3be29dc816f5ee9d9b7dd6afec08549f8e1995bc33517e",
+        "tests\\experiments\\free_surface\\cuda_source_potential.cu": "f7fc780b1e2fcb3757b987e6fc0dd490b9930cfbe6a82774618e909eba053bef",
+        "tests\\experiments\\free_surface\\cuda_pair.cuh": "f49526fb6f5c42a839b07faadebd8973bdcfc2bc48d8e10a9277d618c093a92a"
+      }
+    }
+  ],
+  "limits": [
+    "No free-surface state/exposure transfer or slamming/breaking qualification added.",
+    "No claim to fix the existing finite-frequency roll defect, curved-geometry field errors or physical force convergence.",
+    "Ending CUDA pool is not peak VRAM; fresh-process RSS is measured, per-case warm-process peak memory is not isolated."
+  ],
+  "next": "Guarded source gradients for actual exterior free-surface velocity; first match the archived linear radiation RHS/load before new Capytaine trajectories. Use one owned velocity consistently in kinematics/Bernoulli/AP and keep evolving-state/contact ownership explicit."
+}

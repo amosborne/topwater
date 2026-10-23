@@ -25,7 +25,7 @@ from tests.benchmark_rankine import peak_rss_bytes
 from .body_internal_field import internal_field
 from .boat_graph_images import image_height
 from .boat_hos_continuation import tilted_geometry, tangent_graph
-from .boat_image_plane import elevated_potential
+from .cuda_source_potential import paired_potential
 from .boat_radiation_time import harmonic_maps
 from .boat_spatial_work import source_matrix, subdivide
 from .boat_parent_clip_proof import coplanar_groups
@@ -73,8 +73,9 @@ class GraphBody:
                            origin[1]+np.arange(size)*length/size)
         self.surface_points = np.column_stack((x.ravel(), y.ravel(), eta.ravel()))
         self.surface_points.setflags(write=False)
-        trace = elevated_potential(self.surface_points, panels, image_plane_height)
-        self.trace = cp.asarray(trace)
+        trace = paired_potential(self.surface_points, panels, image_plane_height)
+        self.trace = trace.values
+        self.source_trace_diagnostics = trace.diagnostics
         cp.cuda.get_current_stream().synchronize()
         self.source_trace_seconds = perf_counter()-before
         self.evaluations = 0
@@ -270,6 +271,7 @@ if __name__ == '__main__':
         *[Path(__file__).with_name(name) for name in ['body_internal_field.py', 'boat_hos_continuation.py',
           'boat_graph_images.py', 'boat_image_plane.py', 'boat_radiation_time.py', 'boat_spatial_work.py',
           'hos_graph.py', 'cuda_graph.py', 'cuda_operator.py', 'cuda_pair.cuh', 'cuda_energy.cu',
+          'cuda_source_potential.py', 'cuda_source_potential.cu',
           'incident_baseline_benchmark.py', 'panel_gradient_reference.py',
           'boat_parent_clip_proof.py', 'p4_fluid_ordering.py']]]
     hashes = {}
