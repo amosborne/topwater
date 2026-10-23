@@ -99,8 +99,7 @@ def export_template(registry, meta, arrays, critical_vertices):
     face_start = np.r_[0, np.cumsum(np.diff(offsets))[:-1]]
     centers = arrays['faces'][face_start, 0]
     exact_points = [registry.points[i] for i in owners]+[meta['points'][active[i]] for i in centers]
-    signs = np.array([[int(np.sign(registry.value(j, p))) for j in range(len(registry.planes))]
-                      for p in exact_points], dtype=np.int8)
+    signs = registry.exact_signs(exact_points)
     if registry.relevant is None:
         raise ValueError('template export requires actual clipping-constraint provenance')
     relevant = np.zeros(signs.shape, dtype=bool)

@@ -86,6 +86,23 @@ def test_integer_owner_rejects_changed_frozen_coefficients():
         owner.check_planes(planes)
 
 
+def test_dense_witness_signs_include_exact_fan_points_without_sign_cache_changes():
+    planes = [(1, 0, 0, F(1, 3)), (0, 1, 0, F(-2, 7)), (0, 0, 1, 0),
+              (F(10**50), F(10**50+1), 1, F(1, 2**1100))]
+    points = [(F(0), F(0), F(0)), (F(1, 3), F(-2, 7), F(0)),
+              (F(2, 11), F(4, 13), F(-3, 17))]
+    points.append(tuple(sum(point[index] for point in points)/3 for index in range(3)))
+    old, new = [_registry(planes, mode) for mode in (False, True)]
+    expected = np.array([[int(np.sign(old.value(index, point))) for index in range(len(planes))]
+                         for point in points], dtype=np.int8)
+    for registry in (old, new):
+        np.testing.assert_array_equal(registry.exact_signs(points), expected)
+        assert registry.exact_signs(points).dtype == np.int8
+        assert registry.exact_signs([]).shape == (0, len(planes))
+        assert registry.sign_cache == {}
+        assert registry.sign_requests == registry.sign_cache_hits == 0
+
+
 @pytest.mark.parametrize('heights', [(0.,)*4, (-.01, .005, .025, 0.)])
 def test_actual_adjacent_transom_chine_geometry_is_bit_identical(monkeypatch, heights):
     old_mesh, old_report = proof.build(heights)

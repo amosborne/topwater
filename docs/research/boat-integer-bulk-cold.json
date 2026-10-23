@@ -1,0 +1,1382 @@
+﻿{
+    "complete":  true,
+    "qualified":  false,
+    "scope":  "Exact integer homogeneous cold predicates, matched serial timings; no fluid, force, or trajectory qualification.",
+    "versions":  {
+                     "python":  "3.12.8 (tags/v3.12.8:2dc476b, Dec  3 2024, 19:30:04) [MSC v.1942 64 bit (AMD64)]",
+                     "numpy":  "2.5.4",
+                     "scipy":  "1.18.1"
+                 },
+    "threads":  {
+                    "OMP_NUM_THREADS":  "1",
+                    "OPENBLAS_NUM_THREADS":  "1"
+                },
+    "source_sha256":  {
+                          "boat_integer_bulk_cold_audit.py":  "2f3237ef9ca952ce218fdd4b7dad70b4ea26de8b46f816cc0e92c13a6de573b8",
+                          "boat_integer_intersections.py":  "ac44203de7a3e7c27851c10628c8de1b0020a10987568286f4ce7df1c8470a3d",
+                          "boat_world_boundary.py":  "e5b69c97f3087d15c4543c0d7041559fd7fbe67e2fa8422855ea27612bc52a98",
+                          "boat_parent_clip_proof.py":  "c7289231da3c170f1e53c09b00a84525210ca79317e749635ac8ab38f7993034",
+                          "boat_geometry_template.py":  "99f1d1945a9b30c1bded34d63f47345bad3d1e098bf35c50fd97a9497dd944ce",
+                          "reference_boat.py":  "5d4cd16a436f30afc39d96d062ab060e706dcb736716ee7e0be16351672850cf",
+                          "test_boat_integer_intersections.py":  "1f44c7d74a707aad753f2d237239f0d173f38b6dfec501e085d1b1447290a9f2"
+                      },
+    "input_sha256":  {
+                         "C:\\Users\\alex\\topwater\\artifacts\\boat-contact-traces-964ms.json":  "e54857fab34830e812608c0d2185908edbacf480e4a593250cfd43a0736e89da",
+                         "C:\\Users\\alex\\topwater\\artifacts\\boat-contact-traces-964ms.npz":  "920118a92892adb2a5e1693d5d991ef517d9d4e0020709ce41502e8c743f970a",
+                         "C:\\Users\\alex\\topwater\\artifacts\\boat-common-chart-body2-q6-1s-geometry-33.npz":  "226ef76eb84637af3afd0c87a3df334fdc77027b6c834f1d570f975b4e862181",
+                         "C:\\Users\\alex\\topwater\\artifacts\\boat-common-chart-body2-q6-1s-geometry-0.npz":  "7b5569c9c8bfc6dc5570ef6d4fe9b631fc80c78b2413e8871dbd7a9939ea91c6",
+                         "C:\\Users\\alex\\topwater\\artifacts\\boat-common-chart-body2-q6-1s.json":  "8b419c48a2a9802f4d23fa41b83d2b5f327d5a6678a5adbeb915b0f12cbc2ceb"
+                     },
+    "cases":  [
+                  {
+                      "name":  "generic-t0",
+                      "rows":  [
+                                   {
+                                       "index":  0,
+                                       "integer_predicates":  false,
+                                       "total_cold_seconds":  2.7805153999943286,
+                                       "constructor_seconds":  2.6484483999956865,
+                                       "parent_clipping_seconds":  1.4244467999960762,
+                                       "integer_homogeneous_entries":  0,
+                                       "integer_maximum_bits":  0,
+                                       "integer_homogeneous_shallow_container_bytes":  0,
+                                       "memory_scope":  "Conservative sum of homogeneous dictionary/key/tuple/int storage; not process peak RSS; includes repeated integer references.",
+                                       "exact_arrays_template_registry_polygons_equal":  true,
+                                       "all_arrays_equal_archived_first_stage":  true,
+                                       "plane_count":  40,
+                                       "point_count":  144,
+                                       "exact_intersection_cache":  2421,
+                                       "registered_triples":  271,
+                                       "sign_requests":  127804,
+                                       "sign_cache_hits":  104301,
+                                       "registered_fraction_max_numerator_bits":  374,
+                                       "registered_fraction_max_denominator_bits":  376,
+                                       "limits":  {
+                                                      "maximum_planes":  128,
+                                                      "maximum_point_owners":  12000,
+                                                      "maximum_intersection_cache":  50000,
+                                                      "soft_parent_budget_seconds":  25
+                                                  }
+                                   },
+                                   {
+                                       "index":  1,
+                                       "integer_predicates":  true,
+                                       "total_cold_seconds":  1.557960499980254,
+                                       "constructor_seconds":  1.5365904000063892,
+                                       "parent_clipping_seconds":  0.8220017999992706,
+                                       "integer_homogeneous_entries":  2421,
+                                       "integer_maximum_bits":  380,
+                                       "integer_homogeneous_shallow_container_bytes":  1036924,
+                                       "memory_scope":  "Conservative sum of homogeneous dictionary/key/tuple/int storage; not process peak RSS; includes repeated integer references.",
+                                       "exact_arrays_template_registry_polygons_equal":  true,
+                                       "all_arrays_equal_archived_first_stage":  true,
+                                       "plane_count":  40,
+                                       "point_count":  144,
+                                       "exact_intersection_cache":  2421,
+                                       "registered_triples":  271,
+                                       "sign_requests":  127804,
+                                       "sign_cache_hits":  104301,
+                                       "registered_fraction_max_numerator_bits":  374,
+                                       "registered_fraction_max_denominator_bits":  376,
+                                       "limits":  {
+                                                      "maximum_planes":  128,
+                                                      "maximum_point_owners":  12000,
+                                                      "maximum_intersection_cache":  50000,
+                                                      "soft_parent_budget_seconds":  25
+                                                  }
+                                   },
+                                   {
+                                       "index":  2,
+                                       "integer_predicates":  true,
+                                       "total_cold_seconds":  1.0256422000238672,
+                                       "constructor_seconds":  1.0075000999786425,
+                                       "parent_clipping_seconds":  0.5830377999809571,
+                                       "integer_homogeneous_entries":  2421,
+                                       "integer_maximum_bits":  380,
+                                       "integer_homogeneous_shallow_container_bytes":  1036924,
+                                       "memory_scope":  "Conservative sum of homogeneous dictionary/key/tuple/int storage; not process peak RSS; includes repeated integer references.",
+                                       "exact_arrays_template_registry_polygons_equal":  true,
+                                       "all_arrays_equal_archived_first_stage":  true,
+                                       "plane_count":  40,
+                                       "point_count":  144,
+                                       "exact_intersection_cache":  2421,
+                                       "registered_triples":  271,
+                                       "sign_requests":  127804,
+                                       "sign_cache_hits":  104301,
+                                       "registered_fraction_max_numerator_bits":  374,
+                                       "registered_fraction_max_denominator_bits":  376,
+                                       "limits":  {
+                                                      "maximum_planes":  128,
+                                                      "maximum_point_owners":  12000,
+                                                      "maximum_intersection_cache":  50000,
+                                                      "soft_parent_budget_seconds":  25
+                                                  }
+                                   },
+                                   {
+                                       "index":  3,
+                                       "integer_predicates":  false,
+                                       "total_cold_seconds":  2.4368439000099897,
+                                       "constructor_seconds":  2.4037024000135716,
+                                       "parent_clipping_seconds":  1.6956301000027452,
+                                       "integer_homogeneous_entries":  0,
+                                       "integer_maximum_bits":  0,
+                                       "integer_homogeneous_shallow_container_bytes":  0,
+                                       "memory_scope":  "Conservative sum of homogeneous dictionary/key/tuple/int storage; not process peak RSS; includes repeated integer references.",
+                                       "exact_arrays_template_registry_polygons_equal":  true,
+                                       "all_arrays_equal_archived_first_stage":  true,
+                                       "plane_count":  40,
+                                       "point_count":  144,
+                                       "exact_intersection_cache":  2421,
+                                       "registered_triples":  271,
+                                       "sign_requests":  127804,
+                                       "sign_cache_hits":  104301,
+                                       "registered_fraction_max_numerator_bits":  374,
+                                       "registered_fraction_max_denominator_bits":  376,
+                                       "limits":  {
+                                                      "maximum_planes":  128,
+                                                      "maximum_point_owners":  12000,
+                                                      "maximum_intersection_cache":  50000,
+                                                      "soft_parent_budget_seconds":  25
+                                                  }
+                                   }
+                               ],
+                      "first_stage_array_sha256":  "f872b266001e5d63befbc997b131c9c621f61658363f667f475c48346c5747f8",
+                      "first_stage_report_sha256":  "45d47df21d16ad74203165208cf64d3c5d47c3a6e7539af2ea50af7f4bcf6db0",
+                      "median_old_over_new":  2.019412388753114
+                  },
+                  {
+                      "name":  "actual-964ms",
+                      "rows":  [
+                                   {
+                                       "index":  0,
+                                       "integer_predicates":  false,
+                                       "total_cold_seconds":  2.7247534999914933,
+                                       "constructor_seconds":  2.698487500019837,
+                                       "parent_clipping_seconds":  1.5951764000055846,
+                                       "integer_homogeneous_entries":  0,
+                                       "integer_maximum_bits":  0,
+                                       "integer_homogeneous_shallow_container_bytes":  0,
+                                       "memory_scope":  "Conservative sum of homogeneous dictionary/key/tuple/int storage; not process peak RSS; includes repeated integer references.",
+                                       "exact_arrays_template_registry_polygons_equal":  true,
+                                       "all_arrays_equal_archived_first_stage":  true,
+                                       "plane_count":  40,
+                                       "point_count":  141,
+                                       "exact_intersection_cache":  2421,
+                                       "registered_triples":  265,
+                                       "sign_requests":  126137,
+                                       "sign_cache_hits":  102314,
+                                       "registered_fraction_max_numerator_bits":  379,
+                                       "registered_fraction_max_denominator_bits":  381,
+                                       "limits":  {
+                                                      "maximum_planes":  128,
+                                                      "maximum_point_owners":  12000,
+                                                      "maximum_intersection_cache":  50000,
+                                                      "soft_parent_budget_seconds":  25
+                                                  }
+                                   },
+                                   {
+                                       "index":  1,
+                                       "integer_predicates":  true,
+                                       "total_cold_seconds":  1.0462889000191353,
+                                       "constructor_seconds":  1.0155521999986377,
+                                       "parent_clipping_seconds":  0.4891104999987874,
+                                       "integer_homogeneous_entries":  2421,
+                                       "integer_maximum_bits":  385,
+                                       "integer_homogeneous_shallow_container_bytes":  1075772,
+                                       "memory_scope":  "Conservative sum of homogeneous dictionary/key/tuple/int storage; not process peak RSS; includes repeated integer references.",
+                                       "exact_arrays_template_registry_polygons_equal":  true,
+                                       "all_arrays_equal_archived_first_stage":  true,
+                                       "plane_count":  40,
+                                       "point_count":  141,
+                                       "exact_intersection_cache":  2421,
+                                       "registered_triples":  265,
+                                       "sign_requests":  126137,
+                                       "sign_cache_hits":  102314,
+                                       "registered_fraction_max_numerator_bits":  379,
+                                       "registered_fraction_max_denominator_bits":  381,
+                                       "limits":  {
+                                                      "maximum_planes":  128,
+                                                      "maximum_point_owners":  12000,
+                                                      "maximum_intersection_cache":  50000,
+                                                      "soft_parent_budget_seconds":  25
+                                                  }
+                                   },
+                                   {
+                                       "index":  2,
+                                       "integer_predicates":  true,
+                                       "total_cold_seconds":  1.3230289999919478,
+                                       "constructor_seconds":  1.3039831000205595,
+                                       "parent_clipping_seconds":  0.7857034000044223,
+                                       "integer_homogeneous_entries":  2421,
+                                       "integer_maximum_bits":  385,
+                                       "integer_homogeneous_shallow_container_bytes":  1075772,
+                                       "memory_scope":  "Conservative sum of homogeneous dictionary/key/tuple/int storage; not process peak RSS; includes repeated integer references.",
+                                       "exact_arrays_template_registry_polygons_equal":  true,
+                                       "all_arrays_equal_archived_first_stage":  true,
+                                       "plane_count":  40,
+                                       "point_count":  141,
+                                       "exact_intersection_cache":  2421,
+                                       "registered_triples":  265,
+                                       "sign_requests":  126137,
+                                       "sign_cache_hits":  102314,
+                                       "registered_fraction_max_numerator_bits":  379,
+                                       "registered_fraction_max_denominator_bits":  381,
+                                       "limits":  {
+                                                      "maximum_planes":  128,
+                                                      "maximum_point_owners":  12000,
+                                                      "maximum_intersection_cache":  50000,
+                                                      "soft_parent_budget_seconds":  25
+                                                  }
+                                   },
+                                   {
+                                       "index":  3,
+                                       "integer_predicates":  false,
+                                       "total_cold_seconds":  2.128062299976591,
+                                       "constructor_seconds":  2.1176534999976866,
+                                       "parent_clipping_seconds":  1.1940023000061046,
+                                       "integer_homogeneous_entries":  0,
+                                       "integer_maximum_bits":  0,
+                                       "integer_homogeneous_shallow_container_bytes":  0,
+                                       "memory_scope":  "Conservative sum of homogeneous dictionary/key/tuple/int storage; not process peak RSS; includes repeated integer references.",
+                                       "exact_arrays_template_registry_polygons_equal":  true,
+                                       "all_arrays_equal_archived_first_stage":  true,
+                                       "plane_count":  40,
+                                       "point_count":  141,
+                                       "exact_intersection_cache":  2421,
+                                       "registered_triples":  265,
+                                       "sign_requests":  126137,
+                                       "sign_cache_hits":  102314,
+                                       "registered_fraction_max_numerator_bits":  379,
+                                       "registered_fraction_max_denominator_bits":  381,
+                                       "limits":  {
+                                                      "maximum_planes":  128,
+                                                      "maximum_point_owners":  12000,
+                                                      "maximum_intersection_cache":  50000,
+                                                      "soft_parent_budget_seconds":  25
+                                                  }
+                                   }
+                               ],
+                      "first_stage_array_sha256":  "a3f0af458c1018eb52f3ad0fc545a536d7b65f2854f4973695a3af0f00995152",
+                      "first_stage_report_sha256":  "45d47df21d16ad74203165208cf64d3c5d47c3a6e7539af2ea50af7f4bcf6db0",
+                      "median_old_over_new":  2.0481910848457203
+                  }
+              ],
+    "seconds":  16.343437299976358,
+    "decision":  "Retain combined exact integer predicates plus bulk export as opt-in candidate; matched cold parity passed, full moving regression/default adoption not yet earned.",
+    "timing_limitations":  "Large absolute wall-time variability. This compares original Fraction mode against combined integer intersections/signs and bulk export; it does not isolate the incremental gain from bulk export, and first-stage absolute timings are not a contemporary control.",
+    "cold_reports":  [
+                         {
+                             "path":  "C:\\Users\\alex\\topwater\\artifacts\\worktrees\\cell-clipping\\artifacts\\integer-bulk-cold-audit\\actual-964ms-0.json",
+                             "sha256":  "d4e7763b8c014adc85de07b3c592a2f4e57c23736f8e39f3c95094283157c6d5",
+                             "parents_completed":  [
+                                                       {
+                                                           "parent":  0,
+                                                           "seconds":  0.006429599976399913,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  3,
+                                                           "point_owners":  6,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  1,
+                                                           "seconds":  0.006636299978708848,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  3,
+                                                           "point_owners":  8,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  2,
+                                                           "seconds":  0.006209100014530122,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  2,
+                                                           "point_owners":  10,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  3,
+                                                           "seconds":  0.003972900012740865,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  4,
+                                                           "point_owners":  12,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  4,
+                                                           "seconds":  0.1988376000081189,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  28,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  5,
+                                                           "seconds":  0.12149910000152886,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  38,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  6,
+                                                           "seconds":  0.08920109999598935,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  7,
+                                                           "point_owners":  47,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  7,
+                                                           "seconds":  0.14683660000446253,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  6,
+                                                           "point_owners":  49,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  8,
+                                                           "seconds":  0.22357940001529641,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  10,
+                                                           "point_owners":  75,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  9,
+                                                           "seconds":  0.1534543999878224,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  6,
+                                                           "point_owners":  79,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  10,
+                                                           "seconds":  0.15742810000665486,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  9,
+                                                           "point_owners":  90,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  11,
+                                                           "seconds":  0.07465720002073795,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  6,
+                                                           "point_owners":  90,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  12,
+                                                           "seconds":  0.11934449998079799,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  98,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  13,
+                                                           "seconds":  0.08469930000137538,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  7,
+                                                           "point_owners":  104,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  14,
+                                                           "seconds":  0.07366900000488386,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  111,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  15,
+                                                           "seconds":  0.08154040001682006,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  6,
+                                                           "point_owners":  111,
+                                                           "duplicate_body":  0
+                                                       }
+                                                   ],
+                             "intersection_cache":  2421,
+                             "template_export":  {
+                                                     "dry_and_wet_critical_vertices":  46,
+                                                     "source_sha256":  "99f1d1945a9b30c1bded34d63f47345bad3d1e098bf35c50fd97a9497dd944ce"
+                                                 }
+                         },
+                         {
+                             "path":  "C:\\Users\\alex\\topwater\\artifacts\\worktrees\\cell-clipping\\artifacts\\integer-bulk-cold-audit\\actual-964ms-1.json",
+                             "sha256":  "e89549cafbd18327c3c963671a244c969e54b183a26a8d0d59cdb94ee9c5f063",
+                             "parents_completed":  [
+                                                       {
+                                                           "parent":  0,
+                                                           "seconds":  0.0032506000134162605,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  3,
+                                                           "point_owners":  6,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  1,
+                                                           "seconds":  0.0029697999998461455,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  3,
+                                                           "point_owners":  8,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  2,
+                                                           "seconds":  0.0023652999952901155,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  2,
+                                                           "point_owners":  10,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  3,
+                                                           "seconds":  0.002240800007712096,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  4,
+                                                           "point_owners":  12,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  4,
+                                                           "seconds":  0.04247129999566823,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  28,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  5,
+                                                           "seconds":  0.07427090001874603,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  38,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  6,
+                                                           "seconds":  0.02681559999473393,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  7,
+                                                           "point_owners":  47,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  7,
+                                                           "seconds":  0.01999130001058802,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  6,
+                                                           "point_owners":  49,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  8,
+                                                           "seconds":  0.036090999987209216,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  10,
+                                                           "point_owners":  75,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  9,
+                                                           "seconds":  0.02557679999154061,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  6,
+                                                           "point_owners":  79,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  10,
+                                                           "seconds":  0.02571200000238605,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  9,
+                                                           "point_owners":  90,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  11,
+                                                           "seconds":  0.019753900007344782,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  6,
+                                                           "point_owners":  90,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  12,
+                                                           "seconds":  0.02388950000749901,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  98,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  13,
+                                                           "seconds":  0.029016399988904595,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  7,
+                                                           "point_owners":  104,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  14,
+                                                           "seconds":  0.021947600005660206,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  111,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  15,
+                                                           "seconds":  0.05680580000625923,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  6,
+                                                           "point_owners":  111,
+                                                           "duplicate_body":  0
+                                                       }
+                                                   ],
+                             "intersection_cache":  2421,
+                             "template_export":  {
+                                                     "dry_and_wet_critical_vertices":  46,
+                                                     "source_sha256":  "99f1d1945a9b30c1bded34d63f47345bad3d1e098bf35c50fd97a9497dd944ce"
+                                                 }
+                         },
+                         {
+                             "path":  "C:\\Users\\alex\\topwater\\artifacts\\worktrees\\cell-clipping\\artifacts\\integer-bulk-cold-audit\\actual-964ms-2.json",
+                             "sha256":  "8baa433905c5ded6167b6335ef7b0ab40a8d99d3d5cdfa2bdb91c9d47dd73346",
+                             "parents_completed":  [
+                                                       {
+                                                           "parent":  0,
+                                                           "seconds":  0.0027526000048965216,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  3,
+                                                           "point_owners":  6,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  1,
+                                                           "seconds":  0.0022465999936684966,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  3,
+                                                           "point_owners":  8,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  2,
+                                                           "seconds":  0.0019320999854244292,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  2,
+                                                           "point_owners":  10,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  3,
+                                                           "seconds":  0.003076699998928234,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  4,
+                                                           "point_owners":  12,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  4,
+                                                           "seconds":  0.09806690001278184,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  28,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  5,
+                                                           "seconds":  0.036830400000326335,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  38,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  6,
+                                                           "seconds":  0.02539320001960732,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  7,
+                                                           "point_owners":  47,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  7,
+                                                           "seconds":  0.023105100000975654,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  6,
+                                                           "point_owners":  49,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  8,
+                                                           "seconds":  0.03591230002348311,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  10,
+                                                           "point_owners":  75,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  9,
+                                                           "seconds":  0.12426030001370236,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  6,
+                                                           "point_owners":  79,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  10,
+                                                           "seconds":  0.039340199989965186,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  9,
+                                                           "point_owners":  90,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  11,
+                                                           "seconds":  0.07022320001851767,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  6,
+                                                           "point_owners":  90,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  12,
+                                                           "seconds":  0.11550939999870025,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  98,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  13,
+                                                           "seconds":  0.037845400016522035,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  7,
+                                                           "point_owners":  104,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  14,
+                                                           "seconds":  0.023935899982461706,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  111,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  15,
+                                                           "seconds":  0.051760400005150586,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  6,
+                                                           "point_owners":  111,
+                                                           "duplicate_body":  0
+                                                       }
+                                                   ],
+                             "intersection_cache":  2421,
+                             "template_export":  {
+                                                     "dry_and_wet_critical_vertices":  46,
+                                                     "source_sha256":  "99f1d1945a9b30c1bded34d63f47345bad3d1e098bf35c50fd97a9497dd944ce"
+                                                 }
+                         },
+                         {
+                             "path":  "C:\\Users\\alex\\topwater\\artifacts\\worktrees\\cell-clipping\\artifacts\\integer-bulk-cold-audit\\actual-964ms-3.json",
+                             "sha256":  "ce191ba2a45cbd530752f31b8af4cf55f2cd65bfb7cdd723b1741f1aef354882",
+                             "parents_completed":  [
+                                                       {
+                                                           "parent":  0,
+                                                           "seconds":  0.00423439999576658,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  3,
+                                                           "point_owners":  6,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  1,
+                                                           "seconds":  0.004591599979903549,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  3,
+                                                           "point_owners":  8,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  2,
+                                                           "seconds":  0.003799600002821535,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  2,
+                                                           "point_owners":  10,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  3,
+                                                           "seconds":  0.011214400001335889,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  4,
+                                                           "point_owners":  12,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  4,
+                                                           "seconds":  0.14255129999946803,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  28,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  5,
+                                                           "seconds":  0.19039090001024306,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  38,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  6,
+                                                           "seconds":  0.18815049997647293,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  7,
+                                                           "point_owners":  47,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  7,
+                                                           "seconds":  0.057344700006069615,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  6,
+                                                           "point_owners":  49,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  8,
+                                                           "seconds":  0.08069939998677,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  10,
+                                                           "point_owners":  75,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  9,
+                                                           "seconds":  0.07997949997661635,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  6,
+                                                           "point_owners":  79,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  10,
+                                                           "seconds":  0.06930479998118244,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  9,
+                                                           "point_owners":  90,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  11,
+                                                           "seconds":  0.07806660002097487,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  6,
+                                                           "point_owners":  90,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  12,
+                                                           "seconds":  0.08454449998680502,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  98,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  13,
+                                                           "seconds":  0.049682999990182,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  7,
+                                                           "point_owners":  104,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  14,
+                                                           "seconds":  0.0563630000106059,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  111,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  15,
+                                                           "seconds":  0.05535829998552799,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  6,
+                                                           "point_owners":  111,
+                                                           "duplicate_body":  0
+                                                       }
+                                                   ],
+                             "intersection_cache":  2421,
+                             "template_export":  {
+                                                     "dry_and_wet_critical_vertices":  46,
+                                                     "source_sha256":  "99f1d1945a9b30c1bded34d63f47345bad3d1e098bf35c50fd97a9497dd944ce"
+                                                 }
+                         },
+                         {
+                             "path":  "C:\\Users\\alex\\topwater\\artifacts\\worktrees\\cell-clipping\\artifacts\\integer-bulk-cold-audit\\generic-t0-0.json",
+                             "sha256":  "2f2a70cbdc43f876fc486f9b12b3bc177fbd44016d85fccca3fd6b242d704685",
+                             "parents_completed":  [
+                                                       {
+                                                           "parent":  0,
+                                                           "seconds":  0.0027759000076912344,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  3,
+                                                           "point_owners":  6,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  1,
+                                                           "seconds":  0.0028304000152274966,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  3,
+                                                           "point_owners":  8,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  2,
+                                                           "seconds":  0.003320699994219467,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  2,
+                                                           "point_owners":  10,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  3,
+                                                           "seconds":  0.007099300011759624,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  4,
+                                                           "point_owners":  12,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  4,
+                                                           "seconds":  0.20086889999220148,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  6,
+                                                           "point_owners":  26,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  5,
+                                                           "seconds":  0.14641269997810014,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  6,
+                                                           "point_owners":  35,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  6,
+                                                           "seconds":  0.14492240000981838,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  48,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  7,
+                                                           "seconds":  0.08294270001351833,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  54,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  8,
+                                                           "seconds":  0.1303073999879416,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  10,
+                                                           "point_owners":  80,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  9,
+                                                           "seconds":  0.11780600002384745,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  5,
+                                                           "point_owners":  83,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  10,
+                                                           "seconds":  0.06396969998604618,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  11,
+                                                           "point_owners":  100,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  11,
+                                                           "seconds":  0.08547420002287254,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  7,
+                                                           "point_owners":  100,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  12,
+                                                           "seconds":  0.11727319998317398,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  108,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  13,
+                                                           "seconds":  0.10832310002297163,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  7,
+                                                           "point_owners":  114,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  14,
+                                                           "seconds":  0.0859338000009302,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  121,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  15,
+                                                           "seconds":  0.07269999998970889,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  9,
+                                                           "point_owners":  123,
+                                                           "duplicate_body":  0
+                                                       }
+                                                   ],
+                             "intersection_cache":  2421,
+                             "template_export":  {
+                                                     "dry_and_wet_critical_vertices":  45,
+                                                     "source_sha256":  "99f1d1945a9b30c1bded34d63f47345bad3d1e098bf35c50fd97a9497dd944ce"
+                                                 }
+                         },
+                         {
+                             "path":  "C:\\Users\\alex\\topwater\\artifacts\\worktrees\\cell-clipping\\artifacts\\integer-bulk-cold-audit\\generic-t0-1.json",
+                             "sha256":  "1045324909f2aaf20a845d0985f22355ec0eb0adc053f59783cf4c069c9ee0f8",
+                             "parents_completed":  [
+                                                       {
+                                                           "parent":  0,
+                                                           "seconds":  0.002274799975566566,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  3,
+                                                           "point_owners":  6,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  1,
+                                                           "seconds":  0.0018595999863464385,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  3,
+                                                           "point_owners":  8,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  2,
+                                                           "seconds":  0.0017859000072348863,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  2,
+                                                           "point_owners":  10,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  3,
+                                                           "seconds":  0.00444619997870177,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  4,
+                                                           "point_owners":  12,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  4,
+                                                           "seconds":  0.04505439999047667,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  6,
+                                                           "point_owners":  26,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  5,
+                                                           "seconds":  0.07541230000788346,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  6,
+                                                           "point_owners":  35,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  6,
+                                                           "seconds":  0.10492310000699945,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  48,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  7,
+                                                           "seconds":  0.04055860001244582,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  54,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  8,
+                                                           "seconds":  0.06724980002036318,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  10,
+                                                           "point_owners":  80,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  9,
+                                                           "seconds":  0.05510349999531172,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  5,
+                                                           "point_owners":  83,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  10,
+                                                           "seconds":  0.056726699986029416,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  11,
+                                                           "point_owners":  100,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  11,
+                                                           "seconds":  0.053944399987813085,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  7,
+                                                           "point_owners":  100,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  12,
+                                                           "seconds":  0.12402710001333617,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  108,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  13,
+                                                           "seconds":  0.04730879998533055,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  7,
+                                                           "point_owners":  114,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  14,
+                                                           "seconds":  0.06307440000819042,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  121,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  15,
+                                                           "seconds":  0.028091599990148097,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  9,
+                                                           "point_owners":  123,
+                                                           "duplicate_body":  0
+                                                       }
+                                                   ],
+                             "intersection_cache":  2421,
+                             "template_export":  {
+                                                     "dry_and_wet_critical_vertices":  45,
+                                                     "source_sha256":  "99f1d1945a9b30c1bded34d63f47345bad3d1e098bf35c50fd97a9497dd944ce"
+                                                 }
+                         },
+                         {
+                             "path":  "C:\\Users\\alex\\topwater\\artifacts\\worktrees\\cell-clipping\\artifacts\\integer-bulk-cold-audit\\generic-t0-2.json",
+                             "sha256":  "d86e9bcb4d6919e4f868ec02a7e1bd1f904d49ae7980d45a8019f364854f45e5",
+                             "parents_completed":  [
+                                                       {
+                                                           "parent":  0,
+                                                           "seconds":  0.003772600000957027,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  3,
+                                                           "point_owners":  6,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  1,
+                                                           "seconds":  0.0033885000157169998,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  3,
+                                                           "point_owners":  8,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  2,
+                                                           "seconds":  0.00205939999432303,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  2,
+                                                           "point_owners":  10,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  3,
+                                                           "seconds":  0.002154900023015216,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  4,
+                                                           "point_owners":  12,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  4,
+                                                           "seconds":  0.05841240001609549,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  6,
+                                                           "point_owners":  26,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  5,
+                                                           "seconds":  0.04331149999052286,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  6,
+                                                           "point_owners":  35,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  6,
+                                                           "seconds":  0.02655459998641163,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  48,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  7,
+                                                           "seconds":  0.030284500011475757,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  54,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  8,
+                                                           "seconds":  0.06038109998917207,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  10,
+                                                           "point_owners":  80,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  9,
+                                                           "seconds":  0.02460790000623092,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  5,
+                                                           "point_owners":  83,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  10,
+                                                           "seconds":  0.046810500003630295,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  11,
+                                                           "point_owners":  100,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  11,
+                                                           "seconds":  0.06844119998277165,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  7,
+                                                           "point_owners":  100,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  12,
+                                                           "seconds":  0.07810529999551363,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  108,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  13,
+                                                           "seconds":  0.0361589000094682,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  7,
+                                                           "point_owners":  114,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  14,
+                                                           "seconds":  0.027463899983558804,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  121,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  15,
+                                                           "seconds":  0.02346560001024045,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  9,
+                                                           "point_owners":  123,
+                                                           "duplicate_body":  0
+                                                       }
+                                                   ],
+                             "intersection_cache":  2421,
+                             "template_export":  {
+                                                     "dry_and_wet_critical_vertices":  45,
+                                                     "source_sha256":  "99f1d1945a9b30c1bded34d63f47345bad3d1e098bf35c50fd97a9497dd944ce"
+                                                 }
+                         },
+                         {
+                             "path":  "C:\\Users\\alex\\topwater\\artifacts\\worktrees\\cell-clipping\\artifacts\\integer-bulk-cold-audit\\generic-t0-3.json",
+                             "sha256":  "9e31372497514cff53ad83d8edc80b71dd10be70c5e1bbca99da5a7422c1198c",
+                             "parents_completed":  [
+                                                       {
+                                                           "parent":  0,
+                                                           "seconds":  0.01677190000191331,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  3,
+                                                           "point_owners":  6,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  1,
+                                                           "seconds":  0.022517900011735037,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  3,
+                                                           "point_owners":  8,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  2,
+                                                           "seconds":  0.009428299992578104,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  2,
+                                                           "point_owners":  10,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  3,
+                                                           "seconds":  0.007454400009009987,
+                                                           "bbox_disjoint":  true,
+                                                           "polygons":  4,
+                                                           "point_owners":  12,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  4,
+                                                           "seconds":  0.14959009998710826,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  6,
+                                                           "point_owners":  26,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  5,
+                                                           "seconds":  0.12894610001239926,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  6,
+                                                           "point_owners":  35,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  6,
+                                                           "seconds":  0.10827470000367612,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  48,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  7,
+                                                           "seconds":  0.2585663000063505,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  54,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  8,
+                                                           "seconds":  0.2596111999882851,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  10,
+                                                           "point_owners":  80,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  9,
+                                                           "seconds":  0.08441310000489466,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  5,
+                                                           "point_owners":  83,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  10,
+                                                           "seconds":  0.09323620001669042,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  11,
+                                                           "point_owners":  100,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  11,
+                                                           "seconds":  0.07567839999683201,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  7,
+                                                           "point_owners":  100,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  12,
+                                                           "seconds":  0.11408229998778552,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  108,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  13,
+                                                           "seconds":  0.06587729998864233,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  7,
+                                                           "point_owners":  114,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  14,
+                                                           "seconds":  0.0687233000062406,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  8,
+                                                           "point_owners":  121,
+                                                           "duplicate_body":  0
+                                                       },
+                                                       {
+                                                           "parent":  15,
+                                                           "seconds":  0.09649950001039542,
+                                                           "bbox_disjoint":  false,
+                                                           "polygons":  9,
+                                                           "point_owners":  123,
+                                                           "duplicate_body":  0
+                                                       }
+                                                   ],
+                             "intersection_cache":  2421,
+                             "template_export":  {
+                                                     "dry_and_wet_critical_vertices":  45,
+                                                     "source_sha256":  "99f1d1945a9b30c1bded34d63f47345bad3d1e098bf35c50fd97a9497dd944ce"
+                                                 }
+                         }
+                     ],
+    "producer_archive":  "C:/Users/alex/topwater/artifacts/boat-integer-bulk-cold-audit-source"
+}
