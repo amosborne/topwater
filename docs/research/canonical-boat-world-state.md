@@ -753,12 +753,39 @@ repeatable discrete-action/current-Bernoulli mismatch at this actual state;
 they do not establish quadrature convergence, physical accuracy, or replacement
 rates. In particular the parent-7 mismatch still changes 4.26 N from q12 to q24.
 
-If this control passes, use one order-matched `cuda_shape_gradient.vertex_gradient`
-pass and cheap same-chart geometry derivatives for all 15 directions, rather
-than 30 full energy assemblies. Current shape-gradient auxiliary ownership is
-order-three-specific and must remain strict until matching quadrature is
-implemented. This is an implementation route, not a completed correction;
-six-DOF work/pressure consistency still needs validation too.
+The order-matched derivative chain now passes the frozen-state controls;
+evidence is `boat-surface-gradient.json`. Auxiliary reuse requires an EXPLICIT
+matching quadrature order, uniform rule, exact current geometry and winding.
+That order reaches every geometric-Jacobian seed. The complete functional
+derivative includes both boundary-load and moving-free-trace terms. At q12,
+the smaller-stencil analytic derivatives match re-solved scalar differences
+within 5e-5 N. A single vertex gradient also contracts to the independently
+computed directional energy actions within 8e-10 N on the same geometry.
+Actual q3/q6 controls and hull translation/rotation/dilation identities pass too.
+This validates the discrete chain; it does not enable new surface rates.
+
+The original 18 scalar-lane vertex pass costs about 40 seconds at q12, so
+computing it freshly at every stage is not a credible timing architecture.
+Three shared-primal derivative lanes now form the experimental helper default;
+the same numeric pair formula and stationary scalar retain single ownership.
+Four matched calls on this machine, in order width1/3/3/1, cost
+39.69/34.73/36.61/46.88 s. Observed paired ratios are 1.14 and 1.28, with the
+second pair the cleaner warm comparison; startup and thermal variation are not
+eliminated. All 1680 gradient components agree with the validated reference
+within 3.81e-8 N, and its four directional contractions within 5.5e-10 N.
+The compiler reports 255 registers for both layouts and a larger per-thread
+local frame (504 versus 72 bytes) for width3. These attributes do not establish
+actual occupancy, peak VRAM or the cause of the limited improvement. Width1
+remains an explicit reference; width6 is tested but not timing-qualified.
+
+Use the validated gradient with cheap same-chart geometry/load/trace derivatives
+to construct all parent weak loads, instead of 30 full energy assemblies.
+External boundary work and six-DOF work/pressure consistency must still be
+resolved before replacement rates earn adoption. The next derivative speed
+avenue should remove repeated primal integration more substantially (a bounded
+sample-local reverse/analytic scalar derivative); expanding forward batch width
+alone has not earned a larger investigation. No new trajectory or full-RHS
+speed claim follows from this component optimization.
 
 ## Primary context
 

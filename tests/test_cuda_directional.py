@@ -8,6 +8,7 @@ from .experiments.free_surface import cuda_operator as gpu
 from .experiments.free_surface.cuda_directional import energy_direction_action
 from .experiments.free_surface.boat_domain_inertia import mirrored_body
 from .reference_boat import equilibrium
+from .experiments.free_surface.cuda_shape_gradient import vertex_gradient
 from topwater.rankine import TrianglePanels
 
 
@@ -44,3 +45,24 @@ def test_canonical_hull_similarity_derivatives_and_uniform_rule_ownership(monkey
         energy_direction_action(points, faces, points, phi, assembly=alternate)
     with pytest.raises(ValueError):
         alternate.auxiliary(points, faces, phi)
+
+
+@pytest.mark.parametrize('order', [3, 6, 12])
+@pytest.mark.parametrize('batch_width', [1, 3, 6])
+def test_vertex_gradient_similarity_and_quadrature_ownership(order, batch_width):
+    try:
+        if gpu.cp.cuda.runtime.getDeviceCount() == 0:
+            pytest.skip('CUDA device unavailable')
+    except gpu.cp.cuda.runtime.CUDARuntimeError:
+        pytest.skip('CUDA runtime unavailable')
+    mesh, _ = mirrored_body(equilibrium()[1].wetted_triangles)
+    points, faces = mesh.vertices, mesh.faces
+    phi = points@np.array([.3, -.2, .5])
+    assembly = gpu.prepare_energy(faces, TrianglePanels(points[faces], 1), order=order)
+    gradient = vertex_gradient(points, faces, phi, assembly=assembly, order=order,
+                               density=1025., batch_width=batch_width)
+    assert_allclose(gradient.sum(axis=0), 0., atol=1e-9)
+    assert_allclose(np.cross(points, gradient).sum(axis=0), 0., atol=1e-9)
+    assert_allclose(np.sum(points*gradient), 1025.*(phi@assembly.energy@phi)/2, rtol=2e-11)
+    with pytest.raises(ValueError, match='matching quadrature'):
+        vertex_gradient(points, faces, phi, assembly=assembly, order=order+1)

@@ -36,10 +36,10 @@ def parent_mass(arrays):
     return np.einsum('f,fci,cd,fdj->ij', area, trace, unit, trace, optimize=True)
 
 
-def run(audit, output, order=6):
+def run(audit, output, order=6, directional=False, vertex=False, vertex_batch_width=None):
     from .cuda_operator import prepare_energy
-    if order not in (6, 12, 24):
-        raise ValueError('bounded action control uses order six, twelve or twenty-four')
+    if order not in (3, 6, 12, 24):
+        raise ValueError('bounded action control uses order three, six, twelve or twenty-four')
     audit, output = Path(audit), fresh(output)
     source, data, arrays, pilot, chart = load_snapshot(audit)
     fixture = Path(__file__).resolve().parents[2]/'reference_boat.py'
@@ -56,10 +56,13 @@ def run(audit, output, order=6):
         scope='Finite differences of complete stationary mixed functional and moving surface one-form in two parent directions; no trajectory or implementation of replacement rates.',
         input_sha256={str(p): sha256(p.read_bytes()).hexdigest()
             for p in (audit, audit.with_suffix('.npz'), metadata_path, fixture)},
+        directional_check=directional,
+        vertex_gradient_check=vertex,
         source_sha256={name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
             for name in ('boat_surface_action_audit.py', 'boat_contact_reaction.py', 'boat_geometry_template.py',
                          'boat_world_field.py', 'boat_world_boundary.py', 'canoe.py', 'incident_baseline_benchmark.py',
-                         'cuda_operator.py', 'cuda_energy.cu', 'cuda_pair.cuh')},
+                         'cuda_operator.py', 'cuda_energy.cu', 'cuda_pair.cuh', 'cuda_directional.py',
+                         'cuda_directional.cu', 'cuda_dual.cuh', 'cuda_wide_dual.cuh', 'cuda_shape_gradient.py', 'cuda_shape.cu')},
         directions=[], operations=[])
     saved, started = dict(state=state), perf_counter()
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -68,11 +71,12 @@ def run(audit, output, order=6):
         current, _ = evaluate_template(chart, pose=current_pose, parent_eta=height, parent_psi=psi)
         return refine_snapshot(current, source, pilot)
 
-    def evaluate(current, label):
+    def evaluate(current, label, *, retain=False):
         if perf_counter()-started > 90:
             raise RuntimeError('90 s action audit budget exhausted')
         before = perf_counter()
-        energy = prepare_energy(current['faces'], TrianglePanels(current['points'][current['faces']], 1), order=order).energy
+        assembly = prepare_energy(current['faces'], TrianglePanels(current['points'][current['faces']], 1), order=order)
+        energy = assembly.energy
         field = current_field(current, energy, values, twist, time=time, acceleration_columns=False)
         potential = field['potential']
         functional = WATER_DENSITY*(potential@energy@potential/2-potential@field['right'])
@@ -81,10 +85,19 @@ def run(audit, output, order=6):
         report['operations'].append(dict(label=label, seconds=perf_counter()-before,
             functional_joules=float(functional), gravity_joules=float(gravity_energy),
             field_relative_residual=field['relative_field_residual']))
-        return functional, gravity_energy, parent_mass(current), field
+        return functional, gravity_energy, parent_mass(current), field, assembly if retain else None
 
     try:
-        _, _, mass, base_field = evaluate(arrays, 'base')
+        _, _, mass, base_field, base_assembly = evaluate(arrays, 'base', retain=directional or vertex)
+        if vertex:
+            from .cuda_shape_gradient import vertex_gradient, DEFAULT_BATCH_WIDTH
+            width = DEFAULT_BATCH_WIDTH if vertex_batch_width is None else vertex_batch_width
+            before = perf_counter()
+            gradient = vertex_gradient(arrays['points'], arrays['faces'], base_field['potential'],
+                assembly=base_assembly, density=WATER_DENSITY, order=order, batch_width=width)
+            report['vertex_gradient'] = dict(seconds=perf_counter()-before,
+                quadrature_order=order, batch_width=width, retained_current_factor=True)
+            saved['energy_vertex_gradient'] = gradient
         expected_mass = base_field['parent_map'].T@data['free_mass']@base_field['parent_map']
         np.testing.assert_allclose(mass, expected_mass, rtol=1e-13, atol=1e-13)
         eta_rate, psi_rate, surface = surface_rates(arrays['points'], arrays['faces'][arrays['free_faces']],
@@ -136,11 +149,40 @@ def run(audit, output, order=6):
                 dc = (plus[2]-minus[2])/(2*h)
                 transport = WATER_DENSITY*(psi@dc@eta_rate-(cdot[level].T@psi)[index])
                 variational = -df-du+transport
-                row['derivatives'].append(dict(step_m=h, functional_derivative_newtons=float(df),
+                derivative_row = dict(step_m=h, functional_derivative_newtons=float(df),
                     gravity_derivative_newtons=float(du),
                     independently_integrated_gravity_derivative_newtons=float(WATER_DENSITY*GRAVITY*(mass@eta)[index]),
                     mass_transport_newtons=float(transport), variational_weak_load_newtons=float(variational),
-                    discrepancy_newtons=float(variational-current_weak_load[index])))
+                    discrepancy_newtons=float(variational-current_weak_load[index]))
+                if directional or vertex:
+                    positive, negative = moved[2*level:2*level+2]
+                    if any(not np.array_equal(current[key], arrays[key])
+                           for current in (positive, negative) for key in ('faces', 'free_nodes')):
+                        raise ValueError('shape derivative requires identical same-chart numbering')
+                    moving = (positive['points']-negative['points'])/(2*h)
+                    db = (plus[3]['right']-minus[3]['right'])/(2*h)
+                    load_term = -WATER_DENSITY*(base_field['potential']@db)
+                    fixed = arrays['free_nodes']
+                    trace_change = (plus[3]['potential'][fixed]-minus[3]['potential'][fixed])/(2*h)
+                    trace_term = WATER_DENSITY*(base_field['flux']@trace_change)
+                    saved[f'eta{index}_h{level}_moving'] = moving
+                    def chain(dk):
+                        analytic = dk+load_term+trace_term
+                        return dict(fixed_trace_energy_derivative_newtons=float(dk),
+                            boundary_load_term_newtons=float(load_term), moving_trace_term_newtons=float(trace_term),
+                            complete_functional_derivative_newtons=float(analytic),
+                            scalar_finite_difference_error_newtons=float(analytic-df))
+                    if directional:
+                        from .cuda_directional import energy_direction_action
+                        before = perf_counter()
+                        action, diagnostics = energy_direction_action(arrays['points'], arrays['faces'],
+                            moving, base_field['potential'], assembly=base_assembly)
+                        derivative_row['directional'] = dict(seconds=perf_counter()-before,
+                            **chain(WATER_DENSITY*(base_field['potential']@action)/2), diagnostics=diagnostics)
+                        saved[f'eta{index}_h{level}_energy_action'] = action
+                    if vertex:
+                        derivative_row['vertex_gradient'] = chain(np.sum(gradient*moving))
+                row['derivatives'].append(derivative_row)
             report['directions'].append(row)
         saved.update(parent_mass=mass, eta_rate=eta_rate, psi_rate=psi_rate, mass_time_derivative=cdot[-1])
         report.update(complete=True, base_surface=surface)
@@ -159,4 +201,7 @@ if __name__ == '__main__':
     parser.add_argument('--audit', required=True)
     parser.add_argument('--output', required=True)
     parser.add_argument('--order', type=int, default=6)
+    parser.add_argument('--directional', action='store_true')
+    parser.add_argument('--vertex', action='store_true')
+    parser.add_argument('--vertex-batch-width', type=int, choices=(1, 3, 6))
     print(json.dumps(run(**vars(parser.parse_args())), indent=2))

@@ -1730,3 +1730,16 @@ yet establish quadrature convergence. Evidence: `docs/research/boat-surface-acti
 The shared snapshot loader preserves all previous reaction/probe numerical
 results exactly. Next match an order-owned shape derivative to these scalar
 controls; no action-derived rates are enabled in moving runs yet.
+
+The analytic chain is now checked with `--directional --vertex`, including
+boundary-load and moving-free-trace derivatives, at orders 3/6/12. The retained
+factor is rejected if its quadrature, geometry, winding or uniform-rule owner
+differs. `--vertex-batch-width 1` selects the scalar-lane reference; the tested
+experimental default is three shared-primal lanes. `boat_surface_gradient_cost
+--reference <complete-vertex-audit> --output <report>` measures alternating
+width1/3/3/1 complete calls and checks every component against the validated
+gradient. Four q12 calls favor width3 by observed factors 1.14/1.28; raw times,
+startup/thermal caveats and compiler resource attributes are preserved in
+`docs/research/boat-surface-gradient.json`. A 35-37 s gradient is still unusable
+per trajectory stage. This derivative implementation and modest component
+optimization do not qualify physical surface rates or full simulation timing.

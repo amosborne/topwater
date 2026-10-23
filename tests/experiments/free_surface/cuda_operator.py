@@ -61,13 +61,13 @@ class EnergyAssembly:
     quadrature_order: int
     uniform_quadrature: bool
 
-    def auxiliary(self, points, faces, potential):
-        if (self.quadrature_order != 3 or not self.uniform_quadrature
+    def auxiliary(self, points, faces, potential, *, order=3):
+        if (self.quadrature_order != order or not self.uniform_quadrature
                 or potential.shape != (len(self.energy),)
                 or not np.array_equal(faces, self.faces)
                 or not np.array_equal(points[faces], self.triangles)
                 or np.any(self.normal_sign != 1)):
-            raise ValueError('force reuse requires the same current order-three geometry and winding')
+            raise ValueError('force reuse requires matching quadrature, current geometry and winding')
         with errstate(linalg='raise'):
             value = solve_triangular(self.factor, self.mixed_trace@cp.asarray(potential), lower=True)
             return solve_triangular(self.factor.T, value, lower=False)
