@@ -7,6 +7,8 @@ pytest.importorskip('cupy')
 from .experiments.free_surface import cuda_operator as gpu
 from .experiments.free_surface.cuda_shape_gradient import vertex_gradient as raw_gradient
 from .experiments.free_surface.cuda_scalar_gradient import vertex_gradient as scalar_gradient
+from .experiments.free_surface.cuda_reverse_gradient import vertex_gradient as reverse_gradient
+from .experiments.free_surface.cuda_pair_gradient_probe import selected_pair_derivatives
 from .experiments.free_surface.cuda_directional import energy_direction_action
 from .experiments.free_surface.cuda_kernel_linearization import RawKernelAnchor
 from topwater.rankine import TrianglePanels
@@ -26,11 +28,17 @@ def test_contracted_gradient_preserves_current_energy(order):
     raw=raw_gradient(points,faces,phi,assembly=assembly,order=order,density=rho,batch_width=1)
     contracted=scalar_gradient(points,faces,phi,assembly=assembly,order=order,density=rho)
     assert_allclose(contracted,raw,rtol=3e-10,atol=3e-10)
+    reverse=reverse_gradient(points,faces,phi,assembly=assembly,order=order,density=rho)
+    assert_allclose(reverse,raw,rtol=3e-10,atol=3e-10)
     direction=np.random.default_rng(53).normal(size=points.shape)
     action,_=energy_direction_action(points,faces,direction,phi,assembly=assembly)
     assert_allclose(np.sum(contracted*direction),.5*rho*phi@action,rtol=3e-10,atol=3e-10)
     assert_allclose(contracted.sum(axis=0),0.,atol=3e-10)
     assert_allclose(np.cross(points,contracted).sum(axis=0),0.,atol=3e-10)
+    assert_allclose(np.sum(reverse*direction),.5*rho*phi@action,rtol=3e-10,atol=3e-10)
+    forward_pairs,reverse_pairs=selected_pair_derivatives(points,faces,phi,
+        np.array([[0,0],[0,1],[1,0],[1,1]]),assembly=assembly,density=rho,order=order)
+    assert_allclose(reverse_pairs,forward_pairs,rtol=3e-10,atol=3e-10)
     # The existing one-anchor raw adapter remains API-compatible after refactor.
     anchor=RawKernelAnchor(points,faces,chart_token='same-tetra',order=order)
     owned=anchor.evaluate(points,faces,chart_token='same-tetra')

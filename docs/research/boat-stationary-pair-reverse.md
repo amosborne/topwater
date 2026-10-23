@@ -1,7 +1,7 @@
 # Exact stationary pair derivative: bounded next experiment
 
-Status: sample-source refactor and contracted forward gate implemented only in
-the isolated development worktree; reverse pullback remains pending. The existing
+Status: sample-source refactor, contracted forward gate, and sample-local
+reverse prototype implemented only in the isolated development worktree. The existing
 q3/q6/q12 derivative controls qualify the discrete gradient identities, not the
 physical resolution or motion accuracy.
 
@@ -161,3 +161,37 @@ width3 0.760/0.672 s show no speed adoption case. Both use 255 registers;
 reported local frame is 80 versus 504 bytes. The immutable report and producer
 archive are `artifacts/scalar-gradient-q3-generic472.json` and its `-source`
 directory in the isolated worktree. Reverse work must retain this control.
+
+## Stage-two bounded reverse result
+
+The shared primitive now accepts a fixed typed observer; a null observer leaves
+raw/forward paths unchanged. The reverse observer records one sample's primal
+values. A specific hand-derived pullback streams edge feature adjoints through
+the existing geometry Jacobians into nine target and nine source coordinate
+accumulators. No runtime tape or second numerical sample formula was added.
+
+Five primitive GPU cases passed (21.44 s), including q3/q6 reverse/full-forward
+gradients and independent eighteen-lane diagnostics. On the same actual
+472-face q3 boat, the frozen PRE-observer producer comparison gives raw E
+relative difference 6.46e-17 and raw H maximum difference 5.55e-17. Reverse
+gradient relative difference is <=1.59e-13, maximum <=4.13e-11 N; random-direction
+contraction difference <=8.17e-11 N. All fifteen parent psi-rate differences
+are <=4.89e-15 and six body pose-load differences <=2.19e-11 N/Nm.
+
+An explicitly opt-in compile macro writes only eight selected actual pair
+outputs (18 virtual derivatives plus value); production output remains global
+vertex accumulation. Body/free self, contact-edge adjacency, coplanar wall
+adjacency and near-slender pairs in both directions give maximum difference
+1.14e-13, relative <=1.38e-15. No global pair-gradient tensor is allocated.
+
+Serialized old/new/new/old whole-gradient calls were 0.714/0.137/0.0938/0.686 s.
+The corresponding observed paired ratios are 5.2 and 7.3; four calls on one
+state do not establish a stable hardware speed guarantee. Compilation/startup
+can affect first calls. Reverse still uses 254 registers and a reported 336-byte
+local frame, versus old width3 255 registers/504 bytes. CPU geometry packing,
+auxiliary reuse/solve and GPU synchronization are included in these calls.
+
+Report and hashed producer archive: `artifacts/reverse-gradient-q3-generic472.json`
+and its `-source` directory in the isolated worktree. Canonical q6/q12 and the
+difficult late contact state remain untested for reverse at this checkpoint;
+there is no driver integration, motion or physical-resolution qualification.
