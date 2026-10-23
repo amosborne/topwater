@@ -7,7 +7,9 @@ import shutil
 from time import perf_counter
 import numpy as np
 from scipy.linalg import lu_factor, lu_solve
+from scipy.integrate import quad
 from topwater.constants import WATER_DENSITY
+from topwater.numerics import LaplaceControls
 from topwater.rankine import TrianglePanels, single_layer_trace
 from tests.laplace_reference import triangle_samples
 from tests.benchmark_rankine import peak_rss_bytes
@@ -15,7 +17,7 @@ from .regularized_snapshot import RegularizedSnapshot, owned
 from .compact_p1_trace import CompactP1Trace
 from .compact_p1_maps import body_maps
 from .panel_gradient_reference import checked_influence
-from .owned_odd_body_trace import owned_odd_trace
+from .owned_odd_body_trace import owned_odd_trace, self_scalar_trace
 
 
 def complex_record(value):
@@ -26,6 +28,30 @@ def checkpoint(args, report, arrays):
     np.savez(args.output.with_suffix('.npz'), **arrays)
     report['arrays_sha256'] = sha256(args.output.with_suffix('.npz').read_bytes()).hexdigest()
     args.output.write_text(json.dumps(report, indent=2, allow_nan=False))
+
+
+def fan_reference(triangle, barycentric):
+    """Independent positive three-fan integral with analytic radial integral."""
+    relative = triangle-triangle[0]
+    point = barycentric[1]*relative[1]+barycentric[2]*relative[2]
+    edges = relative-point
+    diameter = max(np.linalg.norm(triangle[(e+1)%3]-triangle[e]) for e in range(3))
+    total, estimate = 0., 0.
+    for a, b in zip(edges, np.roll(edges, -1, axis=0)):
+        determinant = np.linalg.norm(np.cross(a, b))
+        if determinant <= 0:
+            raise ValueError('positive interior fan must have positive area')
+        delta = b-a
+        closest = -np.dot(a, delta)/np.dot(delta, delta)
+        points = [float(closest)] if 0 < closest < 1 else None
+        answer = quad(lambda t: 1/np.linalg.norm((1-t)*a+t*b), 0., 1., points=points,
+            epsabs=4*np.pi*LaplaceControls().quadrature_atol*diameter/(32*determinant),
+            epsrel=1e-11, limit=128, full_output=1)
+        if len(answer) != 3:
+            raise RuntimeError('independent self-scalar fan quadrature unresolved: '+answer[3])
+        total += determinant*answer[0]/(4*np.pi)
+        estimate += determinant*answer[1]/(4*np.pi)
+    return total, estimate
 
 
 def run(args, report):
@@ -45,8 +71,8 @@ def run(args, report):
         raise ValueError('frozen complex-amplitude physical state changed')
     np.testing.assert_allclose(sigma, -lu_solve(lu_factor(jd), snapshot.coarse['n']@psi), rtol=1e-11, atol=1e-13)
     panels = TrianglePanels(snapshot.triangles, -1)
-    source_pairs = sum(len(panels)*q*q*(2*len(patch.panels)+3*len(panels)-1) for q in args.orders)
-    source_pairs += 6*len(patch.panels)+10*len(panels)-2  # two actual-point parity controls
+    source_pairs = sum(len(panels)*q*q*(2*len(patch.panels)+2*len(panels)) for q in args.orders)
+    source_pairs += 6*len(patch.panels)+8*len(panels)+16*len(panels)
     array_bound = 8*(2048*len(patch.panels)+64*len(panels)+32*len(panels)*max(args.orders)**2)+32*1024**2
     if source_pairs > args.maximum_pairs or array_bound > args.maximum_bytes:
         raise RuntimeError('owned Gram query/array preflight exceeds budget')
@@ -59,6 +85,29 @@ def run(args, report):
         pi, ui = imag.bulk(points)
         return pr+1j*pi, np.sum((ur+1j*ui)*normals, axis=1)
 
+    # The four original q4 points rejected by the world-coordinate plane
+    # guard are legitimate parametric interiors. Validate the intrinsic self
+    # scalar using an independent three-edge positive-fan 1D quadrature.
+    qpoints, _ = triangle_samples(snapshot.triangles, 4)
+    qbary, _ = triangle_samples(np.eye(3)[None], 4)
+    qowners = np.repeat(np.arange(len(panels)), 16)
+    qbary = np.tile(qbary[0], (len(panels), 1))
+    qpoints = qpoints.reshape(-1, 3)
+    height = np.sum((qpoints-panels.triangles[qowners, 0])*panels.geometric_normals[qowners], axis=1)
+    failed = np.flatnonzero(abs(height) > 64*np.finfo(float).eps*panels.diameters[qowners])
+    self_values, chart_control = self_scalar_trace(panels, qowners[failed], qbary[failed])
+    scalar_controls = []
+    controls = LaplaceControls()
+    for row, value in zip(failed, self_values):
+        reference_value, estimated_error = fan_reference(snapshot.triangles[qowners[row]], qbary[row])
+        request = controls.quadrature_atol*panels.diameters[qowners[row]]+controls.quadrature_rtol*abs(value)
+        if abs(value-reference_value)+estimated_error > request:
+            raise ValueError('intrinsic self scalar exceeds original error request against fan reference')
+        scalar_controls.append(dict(owner=int(qowners[row]), q4_point=int(row%16),
+            original_world_plane_residual_m=float(height[row]), chart_self_S=float(value),
+            independent_fan_S=float(reference_value), absolute_difference=float(abs(value-reference_value)),
+            estimated_fan_error=float(estimated_error), original_scalar_error_request=float(request)))
+
     # Independent actual-point potential/normal parity against the existing
     # all-nodal map owner before evaluating full body quadrature.
     ids = np.array([0, len(panels)//2])
@@ -66,7 +115,7 @@ def run(args, report):
     pmap, nmap = body_maps(patch, panels.centroids[ids], panels.normals[ids])
     np.testing.assert_allclose(hp, pmap@full.ravel(), atol=1e-12, rtol=3e-10)
     np.testing.assert_allclose(hn, nmap@full.ravel(), atol=1e-12, rtol=3e-10)
-    rp, rn, _ = owned_odd_trace(panels, sigma, panels.centroids[ids], ids)
+    rp, rn, _ = owned_odd_trace(panels, sigma, panels.centroids[ids], ids, np.full((len(ids), 3), 1/3))
     trace = single_layer_trace(panels, ids)
     image = checked_influence(panels.centroids[ids]*[1., 1., -1.], panels)
     expected_r = (trace.single_layer-image.single_layer)@sigma
@@ -84,6 +133,7 @@ def run(args, report):
         body_panels=len(panels), source_pair_preflight=source_pairs, array_byte_bound=array_bound,
         actual_harmonic_map_parity_max=float(max(abs(hp-pmap@full.ravel()).max(), abs(hn-nmap@full.ravel()).max())),
         actual_owned_trace_centroid_parity_max=float(max(abs(rp-expected_r).max(), abs(rn-expected_n).max())),
+        intrinsic_self_scalar_controls=scalar_controls, intrinsic_chart_control=chart_control,
         plane_HH=complex_record(plane_hh), plane_HR_q4=complex_record(plane_hr4), plane_HR_q8=complex_record(plane_hr8),
         body_orders=[], qualified=False)
     arrays = dict(psi=psi, sigma=sigma)
@@ -93,10 +143,12 @@ def run(args, report):
         points, qweights = triangle_samples(snapshot.triangles, order)
         points = points.reshape(-1, 3)
         owners = np.repeat(np.arange(len(panels)), len(qweights))
+        bary, _ = triangle_samples(np.eye(3)[None], order)
+        barycentric = np.tile(bary[0], (len(panels), 1))
         weights = (panels.areas[:, None]*qweights).ravel()
         normals = panels.normals[owners]
         hp, hn = harmonic(points, normals)
-        rp, rn, diagnostics = owned_odd_trace(panels, sigma, points, owners)
+        rp, rn, diagnostics = owned_odd_trace(panels, sigma, points, owners, barycentric)
         HH = plane_hh+weights@(np.conj(hp)*hn)
         RR = weights@(np.conj(rp)*rn)
         HR4 = plane_hr4+weights@(np.conj(hp)*rn)
