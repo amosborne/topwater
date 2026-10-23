@@ -192,6 +192,41 @@ local frame, versus old width3 255 registers/504 bytes. CPU geometry packing,
 auxiliary reuse/solve and GPU synchronization are included in these calls.
 
 Report and hashed producer archive: `artifacts/reverse-gradient-q3-generic472.json`
-and its `-source` directory in the isolated worktree. Canonical q6/q12 and the
-difficult late contact state remain untested for reverse at this checkpoint;
-there is no driver integration, motion or physical-resolution qualification.
+and its `-source` directory in the isolated worktree. There is no driver
+integration, motion or physical-resolution qualification.
+
+## Harder canonical controls
+
+The reverse producer was checkpointed separately at `c6c6080`, after the
+source/forward checkpoint `3eaeda6`. Subsequent serialized controls used the
+same SHA-verified PRE-observer producer archive, current physical potential,
+all fifteen parent psi-rate / six body pose-load contractions, and eight tiny
+selected-pair value plus eighteen-virtual-derivative diagnostics. The late
+state is 0.9644647283463897 s on explicit chart 33: its entire input hash
+manifest, chart token, and bitwise fine geometry replay were checked.
+
+| Case | Maximum gradient relative difference | Maximum body pose-load difference N/Nm | Maximum parent psi-rate difference | Whole-gradient old/new/new/old seconds |
+|---|---:|---:|---:|---|
+| Generic 472 faces, q6 | 4.21e-13 | 2.55e-11 | 6.22e-15 | 2.253 / .284 / .259 / 2.140 |
+| Late contact 1088 faces, q3 | 4.18e-10 | 8.52e-10 | 1.78e-13 | 2.408 / .342 / .200 / 1.368 |
+| Late contact 1088 faces, q6 | 1.66e-10 | 1.85e-9 | 1.09e-13 | 9.294 / 1.069 / 1.231 / 10.684 |
+
+Late-state coordinate-gradient absolute differences reach 3.49e-7 N at q3 and
+1.03e-7 N at q6; do not describe those entire arrays as bitwise or machine-epsilon
+matches. The physical parent/body contractions above are substantially closer.
+Selected-pair value/derivative differences remain <=4.55e-13 absolute and
+<=4.16e-15 relative; the selected slender face quality `area/max(edge_length²)`
+is 2.615e-4. Frozen raw E relative differences are <=7.83e-17 and raw H maximum
+differences <=8.33e-17 across these three controls.
+
+These are component timings and derivative controls on two archived physical
+states, not trajectory speed/accuracy qualification. Startup/clock variability
+is visible, especially the first late q3 raw call. Canonical q12 remains
+untested. No attempt was made to tune register limits or repair rows/gauge.
+The exact reverse tests no longer depend on the earlier approximate raw-kernel
+Taylor-cache prototype; that unrelated compatibility check remains historical
+evidence in its own preserved test/report set.
+
+Report hashes, source archive manifests and input hashes are recorded in
+`docs/research/boat-stationary-pair-reverse.json`. Complete reports and matching
+source archives are also copied into the root worktree's `artifacts` directory.
