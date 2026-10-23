@@ -1,0 +1,274 @@
+{
+  "status": "Reject further blind body refinement in odd physical-trace model: worse resolved global growth",
+  "producer_commit": "c650c12+9564302+e18b40e (integrated2c03236+fbd4e27+45d6c36)",
+  "evidence": {
+    "artifacts\\odd-body-refinement-owned.json": "d91750ece8653609b879cc84a95eef165b0a7f502d9d8d5e410b3f4f267c06b5"
+  },
+  "physical_inputs_sha256": "d4727637dd8b52ab90b0969c58341fbb033b844befae09340dae74a841d076d1",
+  "frozen_physical_psi_moment_sha256": "ab87d68e88fbd8fe0dac51b1a8c4b09f3086103ea069c4d3bc9dea210be7d751",
+  "normalization": "Spatial physical-mass RMS of complex eta amplitude1mm; not time RMS or each real phase RMS",
+  "comparison": "Only body-source/collocation partition68-to272 changes; water M/K/E, physical psi moments, zero-Dirichlet far closure, original Gauss4 physical probes/offsets fixed. Hpsi evaluated once per offset and reused.",
+  "body_levels": [
+    {
+      "level": 0,
+      "body_panels": 68,
+      "construction": {
+        "scope": "SHA-owned archived68 N/JD/F maps"
+      },
+      "centroid_normal_residual_max": 5.003707553108402e-17,
+      "orders": [
+        {
+          "order": 4,
+          "rayleigh_real": 13.558577202193069,
+          "rayleigh_imag": -0.27996829836713605,
+          "eta_rate_mass_norm": 0.011532280185535503
+        },
+        {
+          "order": 8,
+          "rayleigh_real": 13.563192328738102,
+          "rayleigh_imag": -0.28083170798840246,
+          "eta_rate_mass_norm": 0.011536179393216278
+        }
+      ],
+      "probes": [
+        {
+          "offset_factor": 1.0,
+          "potential_rms": 0.0019526927835815206,
+          "normal_rms": 0.01492283788935677,
+          "normal_max": 0.21892950831627034,
+          "green_body_work_J": 0.34006613178517464
+        },
+        {
+          "offset_factor": 0.5,
+          "potential_rms": 0.0019542846998996766,
+          "normal_rms": 0.014955625269331849,
+          "normal_max": 0.23116681362927358,
+          "green_body_work_J": 0.34074764197360946
+        }
+      ],
+      "q4_q8_action_difference_mass_norm": 3.051788456274793e-05,
+      "seconds": 1.4118482999911066
+    },
+    {
+      "level": 1,
+      "body_panels": 272,
+      "construction": {
+        "map_source_pair_bound": 1518848,
+        "map_array_byte_bound": 64118272,
+        "orders": [
+          {
+            "order": 4,
+            "source_pairs": 22721792,
+            "assembly_seconds": 5.294884899980389
+          },
+          {
+            "order": 8,
+            "source_pairs": 90887168,
+            "assembly_seconds": 19.16265559999738
+          }
+        ]
+      },
+      "centroid_normal_residual_max": 2.0026854743534788e-16,
+      "orders": [
+        {
+          "order": 4,
+          "rayleigh_real": 13.482843007829562,
+          "rayleigh_imag": -0.17483085211456095,
+          "eta_rate_mass_norm": 0.011608952184038996,
+          "coarse_fine_action_difference_mass_norm": 0.0018298851813692613
+        },
+        {
+          "order": 8,
+          "rayleigh_real": 13.493422649517244,
+          "rayleigh_imag": -0.17458116226713546,
+          "eta_rate_mass_norm": 0.011623158729113379,
+          "coarse_fine_action_difference_mass_norm": 0.0018509796451031304
+        }
+      ],
+      "probes": [
+        {
+          "offset_factor": 1.0,
+          "potential_rms": 0.0011223255724002825,
+          "normal_rms": 0.013568366264069952,
+          "normal_max": 0.33847129162780343,
+          "green_body_work_J": 0.14463015236581034
+        },
+        {
+          "offset_factor": 0.5,
+          "potential_rms": 0.0011234916868808579,
+          "normal_rms": 0.013635344267988068,
+          "normal_max": 0.36100097874676845,
+          "green_body_work_J": 0.14507117033405897
+        }
+      ],
+      "q4_q8_action_difference_mass_norm": 6.359673237606305e-05,
+      "seconds": 27.410664399998495
+    }
+  ],
+  "refined_spectrum": {
+    "raw_largest_lambda_plus_real": 0.4469504179626164,
+    "raw_smallest_mu_real": 0.35805122433431186,
+    "selected_modes": [
+      {
+        "index": 718,
+        "mu_real": 15.110336970853993,
+        "mu_imag": 1.110156880364431,
+        "lambda_plus_real": 0.4469504179626164,
+        "lambda_plus_imag": -12.183274205245265,
+        "dense_right_relative_residual": 2.000421012063734e-15,
+        "original_weak_kinematic_relative_residual": 1.0409477115785496e-14,
+        "original_weak_dynamic_relative_residual": 1.3651697867685376e-16,
+        "body_collocation_residual_max": 4.2251908630869667e-13,
+        "q4_q8_action_difference_mass_norm": 0.10656291096983257,
+        "q4_q8_action_difference_relative": 0.0070333616820547895,
+        "zero_denominators": [],
+        "q4_rayleigh_real": 15.073814347309709,
+        "q4_rayleigh_imag": 1.0951887132706262,
+        "q8_rayleigh_real": 15.110336970854098,
+        "q8_rayleigh_imag": 1.1101568803644415
+      },
+      {
+        "index": 719,
+        "mu_real": 15.110336970853993,
+        "mu_imag": -1.110156880364431,
+        "lambda_plus_real": 0.4469504179626164,
+        "lambda_plus_imag": 12.183274205245265,
+        "dense_right_relative_residual": 2.000421012063734e-15,
+        "original_weak_kinematic_relative_residual": 1.0409477115785496e-14,
+        "original_weak_dynamic_relative_residual": 1.3651697867685376e-16,
+        "body_collocation_residual_max": 4.2251908630869667e-13,
+        "q4_q8_action_difference_mass_norm": 0.10656291096983257,
+        "q4_q8_action_difference_relative": 0.0070333616820547895,
+        "zero_denominators": [],
+        "q4_rayleigh_real": 15.073814347309709,
+        "q4_rayleigh_imag": -1.0951887132706262,
+        "q8_rayleigh_real": 15.110336970854098,
+        "q8_rayleigh_imag": -1.1101568803644415
+      },
+      {
+        "index": 591,
+        "mu_real": 16.308633377966753,
+        "mu_imag": -0.5583640797813332,
+        "lambda_plus_real": 0.21649585618532832,
+        "lambda_plus_imag": 12.650476824752468,
+        "dense_right_relative_residual": 2.1319408220694692e-15,
+        "original_weak_kinematic_relative_residual": 1.3178964988934622e-14,
+        "original_weak_dynamic_relative_residual": 1.32536860051378e-16,
+        "body_collocation_residual_max": 7.110421606038186e-14,
+        "q4_q8_action_difference_mass_norm": 0.03442497255677167,
+        "q4_q8_action_difference_relative": 0.0021096074142173808,
+        "zero_denominators": [],
+        "q4_rayleigh_real": 16.296305028546588,
+        "q4_rayleigh_imag": -0.5570230587011564,
+        "q8_rayleigh_real": 16.308633377966732,
+        "q8_rayleigh_imag": -0.5583640797813278
+      },
+      {
+        "index": 590,
+        "mu_real": 16.308633377966753,
+        "mu_imag": 0.5583640797813332,
+        "lambda_plus_real": 0.21649585618532832,
+        "lambda_plus_imag": -12.650476824752468,
+        "dense_right_relative_residual": 2.1319408220694692e-15,
+        "original_weak_kinematic_relative_residual": 1.3178964988934622e-14,
+        "original_weak_dynamic_relative_residual": 1.32536860051378e-16,
+        "body_collocation_residual_max": 7.110421606038186e-14,
+        "q4_q8_action_difference_mass_norm": 0.03442497255677167,
+        "q4_q8_action_difference_relative": 0.0021096074142173808,
+        "zero_denominators": [],
+        "q4_rayleigh_real": 16.296305028546588,
+        "q4_rayleigh_imag": 0.5570230587011564,
+        "q8_rayleigh_real": 16.308633377966732,
+        "q8_rayleigh_imag": 0.5583640797813278
+      },
+      {
+        "index": 424,
+        "mu_real": 16.95997578779101,
+        "mu_imag": -0.5420781333663314,
+        "lambda_plus_real": 0.20610965943729034,
+        "lambda_plus_imag": 12.900381531952577,
+        "dense_right_relative_residual": 2.0036080266099825e-15,
+        "original_weak_kinematic_relative_residual": 1.3173196123591532e-14,
+        "original_weak_dynamic_relative_residual": 1.373289757792548e-16,
+        "body_collocation_residual_max": 4.130936831003462e-13,
+        "q4_q8_action_difference_mass_norm": 0.11118419704841692,
+        "q4_q8_action_difference_relative": 0.006552335334445469,
+        "zero_denominators": [],
+        "q4_rayleigh_real": 16.923601816054923,
+        "q4_rayleigh_imag": -0.53960409398846,
+        "q8_rayleigh_real": 16.959975787790984,
+        "q8_rayleigh_imag": -0.5420781333663325
+      },
+      {
+        "index": 423,
+        "mu_real": 16.95997578779101,
+        "mu_imag": 0.5420781333663314,
+        "lambda_plus_real": 0.20610965943729034,
+        "lambda_plus_imag": -12.900381531952577,
+        "dense_right_relative_residual": 2.0036080266099825e-15,
+        "original_weak_kinematic_relative_residual": 1.3173196123591532e-14,
+        "original_weak_dynamic_relative_residual": 1.373289757792548e-16,
+        "body_collocation_residual_max": 4.130936831003462e-13,
+        "q4_q8_action_difference_mass_norm": 0.11118419704841692,
+        "q4_q8_action_difference_relative": 0.006552335334445469,
+        "zero_denominators": [],
+        "q4_rayleigh_real": 16.923601816054923,
+        "q4_rayleigh_imag": 0.53960409398846,
+        "q8_rayleigh_real": 16.959975787790984,
+        "q8_rayleigh_imag": 0.5420781333663325
+      },
+      {
+        "index": 822,
+        "mu_real": 15.539736023861273,
+        "mu_imag": 0.4664095718104379,
+        "lambda_plus_real": 0.18526835986991622,
+        "lambda_plus_imag": -12.348244197425316,
+        "dense_right_relative_residual": 2.0427020753611467e-15,
+        "original_weak_kinematic_relative_residual": 1.1474981644903513e-14,
+        "original_weak_dynamic_relative_residual": 1.2630985239715707e-16,
+        "body_collocation_residual_max": 9.098346440440268e-13,
+        "q4_q8_action_difference_mass_norm": 0.22447597252358925,
+        "q4_q8_action_difference_relative": 0.014438786603482542,
+        "zero_denominators": [],
+        "q4_rayleigh_real": 15.429629811676717,
+        "q4_rayleigh_imag": 0.4505357199677957,
+        "q8_rayleigh_real": 15.53973602386126,
+        "q8_rayleigh_imag": 0.46640957181042747
+      },
+      {
+        "index": 823,
+        "mu_real": 15.539736023861273,
+        "mu_imag": -0.4664095718104379,
+        "lambda_plus_real": 0.18526835986991622,
+        "lambda_plus_imag": 12.348244197425316,
+        "dense_right_relative_residual": 2.0427020753611467e-15,
+        "original_weak_kinematic_relative_residual": 1.1474981644903513e-14,
+        "original_weak_dynamic_relative_residual": 1.2630985239715707e-16,
+        "body_collocation_residual_max": 9.098346440440268e-13,
+        "q4_q8_action_difference_mass_norm": 0.22447597252358925,
+        "q4_q8_action_difference_relative": 0.014438786603482542,
+        "zero_denominators": [],
+        "q4_rayleigh_real": 15.429629811676717,
+        "q4_rayleigh_imag": -0.4505357199677957,
+        "q8_rayleigh_real": 15.53973602386126,
+        "q8_rayleigh_imag": -0.46640957181042747
+      }
+    ],
+    "matrixfree_action_relative_error": 1.9883444518613914e-13
+  },
+  "resources": {
+    "total_diagnostic_seconds": 49.969947300007334,
+    "peak_process_rss_bytes": 373084160,
+    "scope": "Verification construction/field/spectrum; NOT simulation throughput"
+  },
+  "interpretation": [
+    "Worst growth increases0.1194-to0.44695/s; original weak residuals~1e-14 support a resolved discrete defect",
+    "On the frozen OLD coarse worst mode, sampled RMS leakage improves.014956-to.013635m/s and sampled body Green work.34075-to.14507J, but point maximum worsens and the full fine spectrum is less stable",
+    "Fine worst-mode q4/q8 action change.703%; imaginary Rayleigh1.09519-to1.11016 cannot explain most of the complex defect",
+    "Fixed target quadrature controls are not certified error bounds, and sampled body work is not a continuum boundary norm",
+    "Initial preflight normal-component comparison rejected thin facets before numerical work. Corrected source-only preflight checks original-parent support planes, area, first moments and winding under explicit arithmetic allowance; operator/numerical controls unchanged"
+  ],
+  "next_gate": "Stop blind body refinement. Check independent HH/RR/HR/RH2x2 physical Green-energy Gram on the coarse worst mode with true owned body-normal traces and q2/q4/q8 body quadrature; keep raw complex diagonals/cross terms, no averaging or positivity repair. If assembly is supported, derive body AND water weak updates from the same physical energy.",
+  "baseline_promoted": false,
+  "qualification": "No nonlinear6DOF,60s accuracy, Capytaine trajectory correlation or throughput qualification"
+}
