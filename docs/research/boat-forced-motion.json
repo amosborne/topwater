@@ -1,0 +1,527 @@
+{
+  "status": "Freely moving nonlinear6DOF body under prescribed fixed graph; verified intermediate checkpoint, NOT promoted",
+  "physical_scope": "Input hull/mass/inertia, current instantaneous wetted geometry, nonlinear Bernoulli pressure, implicit body-fluid acceleration, adaptiveRK23. Graph equals initial observed-sea tangent near hull and smooth window farther away; exterior potential is explicitly forced cosine. No evolving eta/psi, radiation history or p=0 dynamic free surface.",
+  "ownership": [
+    "Shared rigid kinematics, plane clipping and Fourier rim/cap certificate have one owner in boat_graph_geometry.py; example forcing stays tests/forced_graph_case.py.",
+    "Fixed image/h0 and initial exterior mask throughout each run; guards reject invalidation. No missing representation-refresh derivative or harmonic-fill event crossing.",
+    "World angular velocity stored in13-state; physics queries convert to InitialState body components. Accepted raw quaternions and actual RK23 dense coefficients are archived together.",
+    "Independent heldout pressure uses fresh current/offset full operators and7modal solves; it is a discrete model reference, not Capytaine/physical validation."
+  ],
+  "comparison": {
+    "duration_seconds": 0.1,
+    "samples": 101,
+    "common_heading_degrees": 0.0,
+    "max_surge_sway_heave_difference_m": [
+      1.632356017022829e-08,
+      6.552521053526661e-09,
+      3.310412854951039e-08
+    ],
+    "max_roll_pitch_yaw_difference_degrees": [
+      9.239142002570588e-07,
+      1.3583258748894877e-06,
+      4.22103028085985e-08
+    ],
+    "fixed_setup_identical": true,
+    "scope": "Adaptive coarse run accepted7steps; fine maxstep.008 accepted13. Local temporal consistency only; does not establish full60s convergence."
+  },
+  "assessment": [
+    "Canonical integration67.92s for0.1s, about679wall s/sim s; finer control104.48s. This is nowhere near usable speed, and it omits evolved-sea work.",
+    "Mean canonical RHS2.18s: source sampling dominates currentcontext andtwo frozen actions; geometry guards andcoupledsolve are also included. Do not claim free offset actions or current-factor reuse eliminates source-trace cost.",
+    "Both canonical heldout pressure oracles agree near1.7e-7Pa and acceleration~1.3e-10. The alternate box advances from changed inputs only and also receives its own evolved-state audit.",
+    "Eight focused preflight analytic/kinematic/Fourier-query tests passed. Source review found no sign/frame blocker; checkpoint/failure ownership and whole-boundary hash were strengthened before final box run."
+  ],
+  "limits": [
+    "Full actual evolving nonlinear directional sea/contact-state transfer, open-water/spatial accuracy, Capytaine/time-domain correlation, and full60s<=0.1deg/1cm/<=20x qualification remain incomplete.",
+    "Planar/Fourier waterline mismatch is retained as a reported discretization defect; no continuum contact qualification.",
+    "Process peakRSS and endingCUDAPool are reported; endingpool is not peakVRAM. Single-run timings vary and are not paired speedup evidence."
+  ],
+  "next": "Test concurrent bounded target blocks using existing nogil CPU kernel, then guardedGPUpairedpotential if needed. Measure wholeRHS and actual moving case before any promotion. Continue evolving-sea/contact integration after the coupling path is fast enough.",
+  "records": [
+    {
+      "raw_report": "artifacts\\boat-forced-motion-coarse-owned.json",
+      "sha256": "86457184697ab2a4e50aa3eec58626f9b12b1806375e5fec731b6c59c0c17696",
+      "input_sha256": "d4727637dd8b52ab90b0969c58341fbb033b844befae09340dae74a841d076d1",
+      "controls": {
+        "inputs": "artifacts\\boat-clean-canonical-inputs.json",
+        "output": "artifacts\\boat-forced-motion-coarse-owned.json",
+        "duration": 0.1,
+        "max_step": 0.05,
+        "derivative_step": 0.005,
+        "grid": 129,
+        "length": 64.0,
+        "body_refinement": 1,
+        "order": 4,
+        "max_rhs": 40,
+        "budget_seconds": 90.0
+      },
+      "setup": {
+        "reference_height_m": 0.39468765335030426,
+        "image_height_m": 0.4864178157786592,
+        "representation_padding_m": 0.027432000000000005,
+        "derivative_step_seconds": 0.005,
+        "exterior_mask_sha256": "467ca294e5f2c184de86ccd392f3512f96e10b7edd4887b48bfff4f542dc2304",
+        "policy": "Fixed image/expansion heights and exterior mask; fail on invalidation, no automatic refresh",
+        "physical_scope": "Freely moving body, fixed forced graph and analytic exterior trace; no evolving free surface"
+      },
+      "boundary_sha256": "23b4fd4a1a16b17162d99605d7060984a5a9b263b93b8055e60ff74e2e551c4a",
+      "states_sha256": "59ba1549036ab8613411401ef090405faa909298f24677baaa3175a2f6ffbeff",
+      "integration_seconds": 67.9210832999961,
+      "setup_seconds": 3.2322105999919586,
+      "reported_total_seconds": 80.0489856999775,
+      "total_timing_scope": "Numerical setup/integration/audit only; source archiving/import/uv startup not timed in first two reports",
+      "simulated_seconds": 0.1,
+      "accepted_steps": 7,
+      "rhs_evaluations": 31,
+      "mean_rhs_cost": {
+        "total_seconds": 2.190773803227198,
+        "geometry_seconds": 0.204535209677077,
+        "context_seconds": 0.6063655000001628,
+        "body_velocity_seconds": 0.01115402580434156,
+        "two_frozen_actions_seconds": 0.9574989741949755,
+        "two_scalar_source_traces_seconds": 0.8771445806402969,
+        "coupled_solve_seconds": 0.22187262580677447
+      },
+      "heldout": {
+        "time_seconds": 0.05,
+        "state": [
+          0.12440519257440309,
+          0.08572596894539382,
+          0.15676514028750893,
+          0.9999983870281421,
+          0.0003091354338808356,
+          -0.001712160100945111,
+          0.000445948191554414,
+          0.02620393386172111,
+          -0.030985447993486084,
+          -0.003594811884121465,
+          0.014616153360383374,
+          -0.0064678061169833965,
+          0.01571484602362819
+        ],
+        "full_context_oracle": {
+          "total_seconds": 3.6152528999955393,
+          "acceleration_difference": [
+            2.9236668641630104e-11,
+            -4.9618226194425574e-11,
+            3.025363293218675e-11,
+            1.3101034146423274e-10,
+            -1.4330370223802902e-11,
+            -1.547290073844465e-11
+          ],
+          "pressure_max_difference_pa": 1.6955254977801815e-07,
+          "six_functional_difference": [
+            7.309149639233846e-08,
+            -1.240451329709005e-07,
+            7.562837407344862e-08,
+            1.787765569104424e-07,
+            -1.3974275392359947e-07,
+            -1.744876237722108e-07
+          ],
+          "fluid_mass_matrix_world": [
+            [
+              521.305608918203,
+              -12.188933773270344,
+              -451.20982868255476,
+              28.070687453471237,
+              1506.328697190848,
+              -24.5470454219792
+            ],
+            [
+              -7.330528679985504,
+              1686.5166629274029,
+              187.23748635655906,
+              -1652.6907245998334,
+              -98.38219487825789,
+              117.16904460642829
+            ],
+            [
+              -364.9732427251082,
+              197.3552686516268,
+              12839.861381232857,
+              -191.1839709998913,
+              -2410.1966331076674,
+              -106.54625871070787
+            ],
+            [
+              18.154055792871777,
+              -1653.2201624944075,
+              -177.17419315744382,
+              1999.4957248216024,
+              312.6257485212934,
+              -117.5030584619788
+            ],
+            [
+              1484.4741455324747,
+              -112.88346136192371,
+              -2452.5286789167285,
+              362.0335716245635,
+              25711.562331686357,
+              -345.04660269665817
+            ],
+            [
+              -27.33885589269065,
+              99.1332064292498,
+              -55.976036346055395,
+              -104.38804951072692,
+              -312.02444060595485,
+              3584.976189715825
+            ]
+          ],
+          "scope": "Fresh full-context discrete pressure oracle at evolved pose; not independent physical validation"
+        },
+        "derivative_half_step_acceleration_difference": [
+          7.29013632169706e-07,
+          1.9090318606473922e-07,
+          2.0691245883330822e-08,
+          -1.9408245463536922e-07,
+          4.247326413631125e-07,
+          -6.120758164196438e-09
+        ],
+        "derivative_half_step_pressure_max_difference_pa": 0.001364492588891153,
+        "total_seconds": 8.867895100003807
+      },
+      "final_attitude_degrees": [
+        0.08327468889308111,
+        -0.2023951937587707,
+        0.08977647264056761
+      ],
+      "maximum_accepted_quaternion_norm_error": 1.2671530491559224e-11,
+      "peak_process_rss_bytes": 627818496,
+      "ending_cuda_pool_reserved_bytes": 2398499328,
+      "producer_sha256": {
+        "tests\\forced_graph_case.py": "a60a6b358a93fc8bf26e77215d842b7a12f281d178a5bab282de88847fae44c8",
+        "tests\\experiments\\free_surface\\boat_coupled_pressure.py": "5d33134f82793cc9c675ccb8abbdadaed799e92e5fa3ef8fa1a17882f7a96ebe",
+        "tests\\experiments\\free_surface\\boat_forced_motion.py": "2197e7f0038f260a2ea914acc801a5f81f032282877159e5283bf3e2ccb0b6fd",
+        "tests\\experiments\\free_surface\\boat_frozen_field.py": "27c87efa2a67039eef7597a8fb360e3d2384124b89ed92ad31d0802d67e51ee4",
+        "tests\\experiments\\free_surface\\boat_graph_bvp.py": "a6ba4fb2b89c5049faf9fbb4ccad094f4b9643adc9ef78db33a86225c872acc2",
+        "tests\\experiments\\free_surface\\boat_graph_fields.py": "e20b8e1cc6d960107c071c39d99e26da6b663a57a2a9e68f95dbec8890804bdd",
+        "tests\\experiments\\free_surface\\boat_graph_geometry.py": "a8e816a38b828a2536677ef572c2ec064f9d33797193c494d530d22256b35778",
+        "tests\\experiments\\free_surface\\cuda_graph.py": "14d0895914660b3530db5c880b97aa977148a1792903eb7c51853c4f8b4f4cec"
+      }
+    },
+    {
+      "raw_report": "artifacts\\boat-forced-motion-fine.json",
+      "sha256": "6faa15e6ec7f6f788a780a7aa1a539d8a8e324f997c276462949f4925dc1a383",
+      "input_sha256": "d4727637dd8b52ab90b0969c58341fbb033b844befae09340dae74a841d076d1",
+      "controls": {
+        "inputs": "artifacts\\boat-clean-canonical-inputs.json",
+        "output": "artifacts\\boat-forced-motion-fine.json",
+        "duration": 0.1,
+        "max_step": 0.008,
+        "derivative_step": 0.005,
+        "grid": 129,
+        "length": 64.0,
+        "body_refinement": 1,
+        "order": 4,
+        "max_rhs": 64,
+        "budget_seconds": 150.0
+      },
+      "setup": {
+        "reference_height_m": 0.39468765335030426,
+        "image_height_m": 0.4864178157786592,
+        "representation_padding_m": 0.027432000000000005,
+        "derivative_step_seconds": 0.005,
+        "exterior_mask_sha256": "467ca294e5f2c184de86ccd392f3512f96e10b7edd4887b48bfff4f542dc2304",
+        "policy": "Fixed image/expansion heights and exterior mask; fail on invalidation, no automatic refresh",
+        "physical_scope": "Freely moving body, fixed forced graph and analytic exterior trace; no evolving free surface"
+      },
+      "boundary_sha256": "23b4fd4a1a16b17162d99605d7060984a5a9b263b93b8055e60ff74e2e551c4a",
+      "states_sha256": "5138fcc5ea6107b4867a94dbf212cce89e1614b4935d17f7391ed76a04a19104",
+      "integration_seconds": 104.47592610001448,
+      "setup_seconds": 3.337490700010676,
+      "reported_total_seconds": 115.31671949999873,
+      "total_timing_scope": "Numerical setup/integration/audit only; source archiving/import/uv startup not timed in first two reports",
+      "simulated_seconds": 0.1,
+      "accepted_steps": 13,
+      "rhs_evaluations": 40,
+      "mean_rhs_cost": {
+        "total_seconds": 2.6115385375043845,
+        "geometry_seconds": 0.25075639499991664,
+        "context_seconds": 0.7095006050010852,
+        "body_velocity_seconds": 0.013206190001073991,
+        "two_frozen_actions_seconds": 1.1412063925010443,
+        "two_scalar_source_traces_seconds": 1.0406262399999833,
+        "coupled_solve_seconds": 0.29106583250322726
+      },
+      "heldout": {
+        "time_seconds": 0.05,
+        "state": [
+          0.12440520417246428,
+          0.08572596389693693,
+          0.1567651644926903,
+          0.9999983870225772,
+          0.00030912923687285293,
+          -0.0017121684006704896,
+          0.0004459479157865424,
+          0.026203935836370366,
+          -0.030985440114593536,
+          -0.0035948243262884936,
+          0.014616171838097783,
+          -0.006467814903903769,
+          0.015714846500755972
+        ],
+        "full_context_oracle": {
+          "total_seconds": 2.9026077000016812,
+          "acceleration_difference": [
+            2.923657149711545e-11,
+            -4.9621279307743293e-11,
+            3.0252189642254734e-11,
+            1.3100368012608499e-10,
+            -1.4331286157798218e-11,
+            -1.547327543871546e-11
+          ],
+          "pressure_max_difference_pa": 1.695539140200708e-07,
+          "six_functional_difference": [
+            7.309152857690573e-08,
+            -1.2405343107071334e-07,
+            7.563089782468234e-08,
+            1.7876706443133088e-07,
+            -1.3973323616084132e-07,
+            -1.7449135167104446e-07
+          ],
+          "fluid_mass_matrix_world": [
+            [
+              521.3055868462687,
+              -12.188933420715058,
+              -451.2099062505246,
+              28.070685083703793,
+              1506.328421435498,
+              -24.547044984202653
+            ],
+            [
+              -7.330528600875341,
+              1686.516516067723,
+              187.2375137158874,
+              -1652.6906094952708,
+              -98.38217438317282,
+              117.16878337048648
+            ],
+            [
+              -364.9733187261843,
+              197.35528515941508,
+              12839.860975073687,
+              -191.18385420368082,
+              -2410.195786839128,
+              -106.54628484809237
+            ],
+            [
+              18.15405369507189,
+              -1653.220045385207,
+              -177.17407871791607,
+              1999.4956316625414,
+              312.62571993885814,
+              -117.50290340687475
+            ],
+            [
+              1484.4738701356418,
+              -112.88343013768774,
+              -2452.5278018932995,
+              362.0335410978359,
+              25711.560191615623,
+              -345.04663211211874
+            ],
+            [
+              -27.33885401398273,
+              99.13293911916028,
+              -55.976055828606654,
+              -104.38789137482243,
+              -312.0244883929714,
+              3584.975776692216
+            ]
+          ],
+          "scope": "Fresh full-context discrete pressure oracle at evolved pose; not independent physical validation"
+        },
+        "derivative_half_step_acceleration_difference": [
+          7.290136491283628e-07,
+          1.909031807356687e-07,
+          2.0691271307438086e-08,
+          -1.9408246336449775e-07,
+          4.247326572948129e-07,
+          -6.1207496154791485e-09
+        ],
+        "derivative_half_step_pressure_max_difference_pa": 0.0013644926516462874,
+        "total_seconds": 7.463964600028703
+      },
+      "final_attitude_degrees": [
+        0.08327378387568758,
+        -0.2023965520846352,
+        0.08977643064176552
+      ],
+      "maximum_accepted_quaternion_norm_error": 1.691424778016426e-12,
+      "peak_process_rss_bytes": 628961280,
+      "ending_cuda_pool_reserved_bytes": 2597512192,
+      "producer_sha256": {
+        "tests\\forced_graph_case.py": "a60a6b358a93fc8bf26e77215d842b7a12f281d178a5bab282de88847fae44c8",
+        "tests\\experiments\\free_surface\\boat_coupled_pressure.py": "5d33134f82793cc9c675ccb8abbdadaed799e92e5fa3ef8fa1a17882f7a96ebe",
+        "tests\\experiments\\free_surface\\boat_forced_motion.py": "2cc2056f712d727c44aee65124d2ddaa4de8159fa65f8c754570c52ecbb35952",
+        "tests\\experiments\\free_surface\\boat_frozen_field.py": "27c87efa2a67039eef7597a8fb360e3d2384124b89ed92ad31d0802d67e51ee4",
+        "tests\\experiments\\free_surface\\boat_graph_bvp.py": "a6ba4fb2b89c5049faf9fbb4ccad094f4b9643adc9ef78db33a86225c872acc2",
+        "tests\\experiments\\free_surface\\boat_graph_fields.py": "e20b8e1cc6d960107c071c39d99e26da6b663a57a2a9e68f95dbec8890804bdd",
+        "tests\\experiments\\free_surface\\boat_graph_geometry.py": "a8e816a38b828a2536677ef572c2ec064f9d33797193c494d530d22256b35778",
+        "tests\\experiments\\free_surface\\cuda_graph.py": "14d0895914660b3530db5c880b97aa977148a1792903eb7c51853c4f8b4f4cec"
+      }
+    },
+    {
+      "raw_report": "artifacts\\box-forced-motion.json",
+      "sha256": "c6dccb5e8cddb8737635f113b71253cdd5516471c1ceb51f647c78f32a97fd3b",
+      "input_sha256": "c63d3f18509f9379c28e6797b0a4186a8610b4bb14a048d31376ca123102b485",
+      "controls": {
+        "inputs": "artifacts\\boat-clean-box-inputs.json",
+        "output": "artifacts\\box-forced-motion.json",
+        "duration": 0.02,
+        "max_step": 0.01,
+        "derivative_step": 0.005,
+        "grid": 129,
+        "length": 64.0,
+        "body_refinement": 1,
+        "order": 4,
+        "max_rhs": 32,
+        "budget_seconds": 90.0
+      },
+      "setup": {
+        "reference_height_m": 0.39478031770492517,
+        "image_height_m": 0.48903142579620723,
+        "representation_padding_m": 0.024,
+        "derivative_step_seconds": 0.005,
+        "exterior_mask_sha256": "edc79c59def75b996590ce295f293f7faf9ea8662bc55240cee34a4eefb86a77",
+        "policy": "Fixed image/expansion heights and exterior mask; fail on invalidation, no automatic refresh",
+        "physical_scope": "Freely moving body, fixed forced graph and analytic exterior trace; no evolving free surface"
+      },
+      "boundary_sha256": "8e4b893b68012d03808edc461fb6c9a1f7b4287310d6bc192bf5fbd63be11b70",
+      "states_sha256": "0520792012f27c46cb5dab3ac4258018a2550f5842fa5fe84ab31b249bd08cd4",
+      "integration_seconds": 15.751774900010787,
+      "setup_seconds": 4.6751545000006445,
+      "reported_total_seconds": 26.337320799997542,
+      "total_timing_scope": "Archive plus numerical setup/integration/audit; excludes Python imports and uv environment startup.",
+      "simulated_seconds": 0.02,
+      "accepted_steps": 2,
+      "rhs_evaluations": 7,
+      "mean_rhs_cost": {
+        "total_seconds": 2.2498291857149786,
+        "geometry_seconds": 0.29313359999131144,
+        "context_seconds": 0.7383398428542672,
+        "body_velocity_seconds": 0.012059799990051292,
+        "two_frozen_actions_seconds": 0.7841342857240566,
+        "two_scalar_source_traces_seconds": 0.7103853571544667,
+        "coupled_solve_seconds": 0.21865695713703254
+      },
+      "heldout": {
+        "time_seconds": 0.01,
+        "state": [
+          0.1303015575758245,
+          0.20978031488289448,
+          0.4750217371950742,
+          0.9999999911486187,
+          4.841484704077133e-05,
+          -7.423735579905293e-05,
+          9.923203232717875e-05,
+          0.030311337412415186,
+          -0.023936738608660645,
+          0.009982845314436153,
+          0.009364725111466863,
+          -0.014692650460345237,
+          0.019692856641419607
+        ],
+        "full_context_oracle": {
+          "total_seconds": 2.3820338000077754,
+          "acceleration_difference": [
+            -1.5926392149534507e-12,
+            -2.204825211293837e-11,
+            4.345943743766512e-12,
+            4.2312639503272464e-11,
+            -4.026744215845923e-12,
+            -9.811693124639476e-12
+          ],
+          "pressure_max_difference_pa": 7.521816769440193e-08,
+          "six_functional_difference": [
+            -3.1852945944193794e-09,
+            -4.4096317127491957e-08,
+            8.689469032322746e-09,
+            5.0789805609289064e-08,
+            -2.945312937369149e-08,
+            -7.853559751337885e-08
+          ],
+          "fluid_mass_matrix_world": [
+            [
+              416.6865242351365,
+              0.0007928118764390443,
+              8.820261355548451,
+              28.933726615448915,
+              307.68129298814745,
+              7.110678625936803
+            ],
+            [
+              -0.979849575784561,
+              1159.7086604058659,
+              94.35194358624253,
+              120.34383572426256,
+              -127.72971628143561,
+              -65.92103557582742
+            ],
+            [
+              11.870083890317787,
+              137.2597757228773,
+              17087.064271428808,
+              26.109056774414263,
+              -31.895742886589048,
+              8.833000510644986
+            ],
+            [
+              19.441114209574128,
+              -51.37692134578562,
+              2.764783210827755,
+              3087.695385446318,
+              880.7633282860666,
+              -8.673562973947424
+            ],
+            [
+              319.5929568319839,
+              -150.40498251869903,
+              16.175915789458003,
+              885.1900381769046,
+              38398.965281493285,
+              -239.54532632604474
+            ],
+            [
+              8.533451913356172,
+              -67.37040079088533,
+              -24.889007582489015,
+              -13.180591034611954,
+              -132.4423242899859,
+              3422.902161236656
+            ]
+          ],
+          "scope": "Fresh full-context discrete pressure oracle at evolved pose; not independent physical validation"
+        },
+        "derivative_half_step_acceleration_difference": [
+          1.1346002535377042e-06,
+          3.3392005932553204e-07,
+          -3.7300081317040434e-08,
+          -1.7313398659180024e-08,
+          2.7566442297594085e-07,
+          -3.91808147974515e-08
+        ],
+        "derivative_half_step_pressure_max_difference_pa": 0.0013414247150649317,
+        "total_seconds": 4.901879700017162
+      },
+      "final_attitude_degrees": [
+        0.010726460022864098,
+        -0.016835963484084563,
+        0.022564862698269104
+      ],
+      "maximum_accepted_quaternion_norm_error": 5.621059173677168e-13,
+      "peak_process_rss_bytes": 613060608,
+      "ending_cuda_pool_reserved_bytes": 1096016384,
+      "producer_sha256": {
+        "tests\\forced_graph_case.py": "a60a6b358a93fc8bf26e77215d842b7a12f281d178a5bab282de88847fae44c8",
+        "tests\\experiments\\free_surface\\boat_coupled_pressure.py": "5d33134f82793cc9c675ccb8abbdadaed799e92e5fa3ef8fa1a17882f7a96ebe",
+        "tests\\experiments\\free_surface\\boat_forced_motion.py": "0f487cb3cda7dd34a5c177928fd40f6bbebedfe34a566e316ed299c947dcebf0",
+        "tests\\experiments\\free_surface\\boat_frozen_field.py": "27c87efa2a67039eef7597a8fb360e3d2384124b89ed92ad31d0802d67e51ee4",
+        "tests\\experiments\\free_surface\\boat_graph_bvp.py": "a6ba4fb2b89c5049faf9fbb4ccad094f4b9643adc9ef78db33a86225c872acc2",
+        "tests\\experiments\\free_surface\\boat_graph_fields.py": "e20b8e1cc6d960107c071c39d99e26da6b663a57a2a9e68f95dbec8890804bdd",
+        "tests\\experiments\\free_surface\\boat_graph_geometry.py": "a8e816a38b828a2536677ef572c2ec064f9d33797193c494d530d22256b35778",
+        "tests\\experiments\\free_surface\\cuda_graph.py": "14d0895914660b3530db5c880b97aa977148a1792903eb7c51853c4f8b4f4cec"
+      }
+    }
+  ]
+}

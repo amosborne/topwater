@@ -11,7 +11,8 @@ from topwater.hydrostatics import hydrostatics
 from topwater.rankine import TrianglePanels
 from tests.reference_boat import simulation_inputs
 from tests.experiments.free_surface.boat_graph_bvp import GraphBody
-from tests.experiments.free_surface.boat_graph_time_derivative import prescribed_pose, constant_twist_pose
+from tests.experiments.free_surface.boat_graph_time_derivative import prescribed_pose
+from tests.experiments.free_surface.boat_graph_geometry import constant_twist_pose
 from tests.experiments.free_surface.cuda_graph import cp
 
 

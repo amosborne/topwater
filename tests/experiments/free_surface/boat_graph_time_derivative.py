@@ -19,7 +19,6 @@ from scipy.spatial.transform import Rotation
 from topwater import InitialState, SimulationInputs
 from topwater.constants import GRAVITY, WATER_DENSITY
 from topwater.frames import rotation_matrix
-from topwater.hydrostatics import hydrostatics
 from topwater.rankine import TrianglePanels
 from tests.benchmark_rankine import peak_rss_bytes
 from .boat_graph_bvp import GraphBody
@@ -27,11 +26,11 @@ from .boat_graph_fields import body_velocity, actual_graph_values, actual_field_
 from .boat_transport_pressure import prescribed_pressure
 from .boat_graph_images import image_height
 from .boat_hos_continuation import tilted_geometry, tangent_graph
-from .boat_spatial_work import subdivide
 from .boat_parent_clip_proof import coplanar_groups
 from .cuda_graph import ExteriorTrace, body_maps, harmonic_velocity, cp
 from .panel_gradient_reference import checked_influence
 from .graph_geometry_reference import fourier_points
+from .boat_graph_geometry import constant_twist_pose, wet_snapshot
 from .boat_frozen_field import frozen_field
 from .boat_coupled_pressure import coupled_pressure, body_dynamics
 
@@ -45,33 +44,6 @@ def prescribed_pose(initial, time):
     return InitialState(initial.position+initial.linear_velocity*path_time,
         orientation.as_quat(scalar_first=True), initial.linear_velocity*(1+.3*time),
         orientation.inv().apply(omega*(1+.3*time)))
-
-
-def constant_twist_pose(initial, time):
-    """Zero world linear/angular acceleration for the coupled known RHS."""
-    initial_rotation = Rotation.from_quat(initial.orientation, scalar_first=True)
-    omega = initial_rotation.apply(initial.angular_velocity)
-    orientation = Rotation.from_rotvec(omega*time)*initial_rotation
-    return InitialState(initial.position+initial.linear_velocity*time,
-        orientation.as_quat(scalar_first=True), initial.linear_velocity,
-        orientation.inv().apply(omega))
-
-
-def wet_snapshot(inputs, pose, plane_origin, frame, grid_xy, length, refinement):
-    orientation = Rotation.from_matrix(frame)*Rotation.from_quat(pose.orientation, scalar_first=True)
-    state = InitialState(frame@(pose.position-plane_origin), orientation.as_quat(scalar_first=True))
-    wet = hydrostatics(inputs.body, state, density=WATER_DENSITY, gravity=GRAVITY)
-    triangles = wet.wetted_triangles@frame+plane_origin
-    for _ in range(refinement):
-        triangles = subdivide(triangles)
-    footprint = ConvexHull((wet.waterline_segments@frame+plane_origin)[..., :2].reshape(-1, 2))
-    distance = grid_xy@footprint.equations[:, :2].T+footprint.equations[:, 2]
-    inside = np.all(distance <= 64*np.finfo(float).eps*length, axis=1)
-    relative = (inputs.body.mesh.vertices-inputs.body.cg)@rotation_matrix(pose.orientation).T
-    signs = np.sign(((relative+pose.position-plane_origin)@frame.T)[:, 2])
-    if np.any(signs == 0):
-        raise ValueError('stencil needs persistent clipping recipes, no on-plane input vertex')
-    return TrianglePanels(triangles, -1), inside, wet.source_faces, signs
 
 
 class BulkField:
@@ -126,7 +98,7 @@ def run(inputs, args, report):
     snapshots = {}
     for time in times:
         pose = prescribed_pose(initial, time)
-        snapshots[time] = (pose, *wet_snapshot(inputs, pose, plane_origin, frame, grid_xy,
+        snapshots[time] = (pose, *wet_snapshot(inputs.body, pose, plane_origin, frame, grid_xy,
                                               args.length, args.body_refinement))
     _, center_panels, inside, source, signs = snapshots[0.]
     for pose, panels, mask, owners, pattern in snapshots.values():
@@ -407,7 +379,7 @@ def run(inputs, args, report):
             constant_actions, constant_panels = [], []
             for offset_time in [step, -step]:
                 pose = constant_twist_pose(initial, offset_time)
-                panels, mask, owners, pattern = wet_snapshot(inputs, pose, plane_origin, frame,
+                panels, mask, owners, pattern = wet_snapshot(inputs.body, pose, plane_origin, frame,
                     grid_xy, args.length, args.body_refinement)
                 if (len(panels) != len(center_panels) or not np.array_equal(owners, source)
                         or not np.array_equal(pattern, signs) or not np.array_equal(mask, inside)):

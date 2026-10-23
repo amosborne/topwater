@@ -17,9 +17,9 @@ from scipy.spatial import ConvexHull
 from topwater import InitialState, SimulationInputs, WaveComponents, sea_states
 from topwater.constants import GRAVITY
 from topwater.frames import rotation_matrix
-from topwater.hydrostatics import FloodingError
 from topwater.rankine import TrianglePanels
 from tests.benchmark_rankine import peak_rss_bytes
+from .boat_graph_geometry import fourier_dry_certificate
 from .boat_hos_continuation import window
 from .boat_world_boundary import construct
 from .boat_parent_clip_proof import coplanar_groups
@@ -108,45 +108,6 @@ def graph_flux(height, slope, x, y, mask, measure, cg):
     return np.sum(modes*mask[..., None], axis=(0, 1))*measure
 
 
-def fourier_dry_certificate(inputs, world, eta, length, origin):
-    """Sufficient Lipschitz dry-rim/cap bounds, with explicit roundoff allowance."""
-    size = eta.shape[0]
-    k = 2*np.pi*np.fft.fftfreq(size, d=length/size)
-    spectrum = np.fft.fft2(eta)/eta.size
-    derivative = np.array([np.sum(abs(spectrum*k[None, :])),
-                           np.sum(abs(spectrum*k[:, None]))])
-    allowance = 64*np.finfo(float).eps*eta.size*max(1., float(np.sum(abs(spectrum))), float(abs(world).max()))
-    rim = inputs.body.mesh.opening_rim
-    lower, sampled = [], []
-    for i, j in zip(rim, np.roll(rim, -1)):
-        a, b = world[i], world[j]
-        points = a+((np.arange(64)+.5)/64)[:, None]*(b-a)
-        height = fourier_points(eta, points[:, :2], length, origin)[0]
-        gaps = points[:, 2]-height
-        bound = .5/64*(abs(b[2]-a[2])+derivative@abs(b[:2]-a[:2]))+allowance
-        sampled.append(float(gaps.min()))
-        lower.append(float(gaps.min()-bound))
-    if sampled and min(sampled) <= 0:
-        raise FloodingError('actual Fourier graph reaches a sampled physical rim point')
-    if lower and min(lower) <= 0:
-        raise ValueError('cannot certify dry rim against Fourier graph; not proven flooding')
-    cap_bound = None
-    if len(inputs.body.mesh.artificial_faces):
-        cap = world[np.unique(inputs.body.mesh.faces[inputs.body.mesh.artificial_faces])]
-        x = np.linspace(cap[:, 0].min(), cap[:, 0].max(), 129)
-        y = np.linspace(cap[:, 1].min(), cap[:, 1].max(), 65)
-        height = tensor_fourier(eta, x, y, length, origin)[0]
-        error = .5*derivative@np.array([np.diff(x).max(), np.diff(y).max()])+allowance
-        cap_bound = float(cap[:, 2].min()-height.max()-error)
-        if cap_bound <= 0:
-            raise ValueError('cannot certify artificial closure dry against Fourier graph; not proven flooding')
-    return dict(rim_sample_minimum_m=min(sampled) if sampled else None,
-        rim_clearance_lower_bound_m=min(lower) if lower else None,
-        artificial_closure_clearance_lower_bound_m=cap_bound,
-        derivative_absolute_sum_bounds=derivative.tolist(), rounding_allowance_m=allowance,
-        scope='Sufficient analytic Lipschitz bounds with engineering floating allowance; not interval arithmetic')
-
-
 def run(inputs, args, report):
     started = perf_counter()
     body, pose = inputs.body, inputs.initial_state
@@ -169,7 +130,7 @@ def run(inputs, args, report):
     report.update(input_sha256=sha256(inputs.to_json().encode()).hexdigest(),
         graph_sha256=sha256(eta.tobytes()).hexdigest(), graph_grid_size=args.grid,
         graph_box_length_m=args.length, dry_fourier_certificate=fourier_dry_certificate(
-            inputs, world, eta, args.length, origin))
+            inputs.body, world, eta, args.length, origin))
     np.savez(args.output.with_name(args.output.stem+'-graph.npz'), eta=eta, origin=origin, length=args.length)
     radius = np.max(abs(relative[:, :2]), axis=0)+beam/2
     low, high = cg[:2]-radius, cg[:2]+radius
