@@ -1,4 +1,4 @@
-"""Fixed flat physical-exterior weak DtN, bounded CPU reference operator.
+"""Fixed flat weak DtN: caller-owned FFT plus CPU-constructed contact rows.
 
 Evaluate contact rows by exterior-area work plus the waterline term. No hidden
 physical mass, source remeshing, diagonal/row repair or symmetrization.
@@ -56,8 +56,8 @@ class PhysicalWeakFlux:
         count, active_count = len(patch.interior_nodes), len(patch.active_nodes)
         full_to_active = np.full(len(patch.nodes), -1, dtype=int)
         full_to_active[patch.active_nodes] = np.arange(active_count)
-        # Only active hats that overlap the hidden integration region require
-        # correction. Covered-only target supports are algebraic, not rows.
+        # Only active hats that overlap the hole require direct integration.
+        # Covered-only target supports are algebraic, not physical test rows.
         hidden_ids = patch.faces[patch.hidden_parent_id]
         touched = full_to_active[hidden_ids]
         affected = np.unique(touched[touched >= 0])
@@ -68,7 +68,7 @@ class PhysicalWeakFlux:
             +64*len(patch.panels)+3*len(affected)*len(patch.nodes)
             +2*len(affected)*active_count+32*len(patch.panels)+4*len(patch.nodes))
         if estimated_peak > maximum_bytes:
-            raise MemoryError('weak physical constructor correction/pair scratch bound exceeds byte budget')
+            raise MemoryError('weak physical constructor contact/pair scratch bound exceeds byte budget')
         interior_position = np.full(len(patch.nodes), -1, dtype=int)
         interior_position[patch.interior_nodes] = np.arange(count)
         self._active_interior = interior_position[patch.active_nodes]

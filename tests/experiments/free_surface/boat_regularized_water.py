@@ -131,7 +131,12 @@ def run(args,report):
             projected_physical_psi_atol_m2_per_s=SURFACE_POTENTIAL_ABSOLUTE_TOLERANCE_M2_PER_S,
             real_state_count=8*count,error_norm='RMS over ALL real eta and projected physical-psi coefficients in all four cases',
             body_state_count=0,prescribed_velocity_amplitudes=amplitudes.tolist(),first_step=None))
-    saved=dict(x=x,y=y,active_nodes=patch.active_nodes,physical_flux_matrix=flux.matrix,
+    audit_coefficients=np.column_stack((initial_c,np.random.default_rng(0).standard_normal((count,3)),np.ones(count)))
+    saved=dict(x=x,y=y,active_nodes=patch.active_nodes,
+        physical_contact_rows=flux.contact_rows,physical_contact_active_rows=flux.affected_rows,
+        weak_full_kernel=kernel.kernel,weak_full_shape=np.array(kernel.shape),weak_fft_shape=np.array(kernel.fft_shape),
+        weak_spacing=np.array(kernel.spacing),
+        operator_audit_coefficients=audit_coefficients,operator_audit_loads=flux.apply(audit_coefficients),
         far_flux=far_flux,initial_eta=eta_bar,initial_projected_psi=psi_bar)
     mass_area=float(patch.mass.sum())
 
@@ -218,7 +223,7 @@ def run(args,report):
         'User released competing workload; no independent CPU contention measurement. Numerical jobs serialized.',
         'Common-time states and pressures; artifacts written after each integration, no speed ratio between different max-step contracts')
     report['measurement_environment']['timing_scope']='Fixed-hull verification setup, RK integration and pressure-output timings reported separately; total includes result writes, not imports/environment launcher'
-    report['measurement_environment']['startup_treatment']='Fresh process; first-use kernel/GPU context setup included in setup; uncontrolled persistent caches; steady RHS is CPU dense/sparse linear algebra'
+    report['measurement_environment']['startup_treatment']='Fresh process; first-use kernel/GPU context setup included in setup; uncontrolled persistent caches; steady RHS uses batched GPU FFT/host transfers and CPU sparse/body maps'
 
 
 if __name__=='__main__':

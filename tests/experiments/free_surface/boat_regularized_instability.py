@@ -14,6 +14,7 @@ import numpy as np
 from numpy.polynomial.legendre import leggauss
 from scipy.linalg import lu_factor,lu_solve
 from scipy.sparse.linalg import LinearOperator,eigs,ArpackNoConvergence,splu
+from scipy.fft import rfft2,irfft2
 
 from topwater import SimulationInputs
 from topwater.constants import GRAVITY
@@ -50,7 +51,11 @@ def run(args,report):
     if sha256(inputs.to_json().encode()).hexdigest()!=phase['input_sha256']:
         raise ValueError('physical inputs changed')
     with np.load(args.water.with_suffix('.npz')) as z:
-        x=z['x'].copy();y=z['y'].copy();k=z['physical_flux_matrix'].copy()
+        x=z['x'].copy();y=z['y'].copy();kernel=z['weak_full_kernel'].copy()
+        interior_shape=tuple(int(v) for v in z['weak_full_shape'])
+        fft_shape=tuple(int(v) for v in z['weak_fft_shape'])
+        contact_rows=z['physical_contact_rows'].copy();contact_indices=z['physical_contact_active_rows'].copy()
+        audit_coefficients=z['operator_audit_coefficients'].copy();audit_loads=z['operator_audit_loads'].copy()
         times=z['times'].copy();history=z['run_2_states'].copy()
     with np.load(args.phase.with_suffix('.npz')) as z:
         polygon=z['polygon'].copy();n=z['nmap'].copy();j=z['neumann'].copy()
@@ -61,7 +66,43 @@ def run(args,report):
     np.testing.assert_array_equal(patch.active_nodes,active)
     for current,previous in zip((patch.mass.data,patch.mass.indices,patch.mass.indptr),archived_mass,strict=True):
         np.testing.assert_array_equal(current,previous)
-    if k.shape!=(count,count): raise ValueError('recorded flux matrix dimensions differ')
+    if interior_shape!=(len(y)-2,len(x)-2) or contact_rows.shape!=(len(contact_indices),count):
+        raise ValueError('recorded flux operator dimensions differ')
+    position=np.full(len(patch.nodes),-1,dtype=int);position[patch.interior_nodes]=np.arange(len(patch.interior_nodes))
+    active_positions=position[active]
+    embed=np.zeros(fft_shape);dy,dx=np.indices(kernel.shape)
+    embed[(dy-interior_shape[0]+1)%fft_shape[0],(dx-interior_shape[1]+1)%fft_shape[1]]=kernel
+    spectrum=rfft2(embed)
+
+    def flux_real(values):
+        vector=values.ndim==1
+        if vector: values=values[:,None]
+        expanded=patch.expand(values)[patch.interior_nodes].reshape(*interior_shape,-1)
+        padded=np.zeros((*fft_shape,values.shape[1]));padded[:interior_shape[0],:interior_shape[1]]=expanded
+        result=irfft2(rfft2(padded,axes=(0,1))*spectrum[:,:,None],s=fft_shape,axes=(0,1))[
+            :interior_shape[0],:interior_shape[1]].reshape(-1,values.shape[1])[active_positions].copy()
+        result[contact_indices]=contact_rows@values
+        return result[:,0] if vector else result
+
+    def flux(values):
+        if np.iscomplexobj(values): return flux_real(values.real)+1j*flux_real(values.imag)
+        return flux_real(values)
+
+    cpu_audit=flux(audit_coefficients)
+    np.testing.assert_allclose(cpu_audit,audit_loads,rtol=1e-11,atol=1e-12)
+    report['cpu_reference_vs_production_action_max']=float(abs(cpu_audit-audit_loads).max())
+    if args.prior_instability is not None:
+        prior=owned(args.prior_instability)
+        if prior['parents']['phase']!=sha256(args.phase.read_bytes()).hexdigest():
+            raise ValueError('prior mode has different phase/source-space ownership')
+        with np.load(args.prior_instability.with_suffix('.npz')) as z: prior_mode=z['mode_0_chi'].copy()
+        corrected=flux(prior_mode)
+        report['prior_growing_mode_contact_rows']=[dict(active_row=r['active_row'],
+            previous_real=r['assembled_real'],corrected_real=float(corrected[r['active_row']].real),
+            corrected_imag=float(corrected[r['active_row']].imag),
+            independent_q16_real=r['orders'][-1]['direct_real'],
+            corrected_absolute_difference=float(abs(corrected[r['active_row']]-(r['orders'][-1]['direct_real']+1j*r['orders'][-1]['direct_imag']))))
+            for r in prior['independent_rows']]
     mass=patch.mass;mf=splu(mass.tocsc());yc=mf.solve(cross);schur=j-n@yc;sf=lu_factor(schur)
     length=float(np.ptp(inputs.body.mesh.vertices[:,1]));velocity=np.sqrt(GRAVITY*length)
     scaling=np.sqrt(mass.diagonal());evaluations=0
@@ -73,7 +114,7 @@ def run(args,report):
             if evaluations>args.maximum_matvecs: raise RuntimeError('homogeneous eigen matvec budget exhausted')
         eta=value[:count]/scaling;psi=velocity*value[count:]/scaling
         coefficient=psi+yc@lu_solve(sf,n@psi)
-        return np.r_[scaling*mf.solve(k@coefficient),-GRAVITY/velocity*value[:count]]
+        return np.r_[scaling*mf.solve(flux(coefficient)),-GRAVITY/velocity*value[:count]]
 
     def action(value):
         if np.iscomplexobj(value): return real_action(value.real,False)+1j*real_action(value.imag,False)
@@ -97,13 +138,13 @@ def run(args,report):
         rms=np.sqrt(np.vdot(eta,mass@eta).real/mass_area)
         eta/=rms;psi/=rms
         sigma=-lu_solve(sf,n@psi);coefficient=psi-yc@sigma
-        weak_kin=k@coefficient-value*(mass@eta)
+        weak_kin=flux(coefficient)-value*(mass@eta)
         weak_dyn=-GRAVITY*(mass@eta)-value*(mass@psi)
-        denominator=np.linalg.norm(value*(mass@eta))+np.linalg.norm(k@coefficient)
+        denominator=np.linalg.norm(value*(mass@eta))+np.linalg.norm(flux(coefficient))
         expanded=patch.expand(eta)
         field=np.einsum('tvi,ti->tv',patch.basis_values,expanded[patch.faces[patch.parent_id]])
         energy=patch.cut_areas/12*(np.sum(abs(field)**2,axis=1)+abs(field.sum(axis=1))**2)
-        base=k@psi;feedback=k@(yc@lu_solve(sf,n@psi));normalizer=np.vdot(psi,mass@psi)
+        base=flux(psi);feedback=flux(yc@lu_solve(sf,n@psi));normalizer=np.vdot(psi,mass@psi)
         base_quotient=np.vdot(psi,base)/normalizer;feedback_quotient=np.vdot(psi,feedback)/normalizer
         row=dict(real_growth_per_s=float(value.real),oscillation_rad_per_s=float(value.imag),
             inverted_operator_residual=float(np.linalg.norm(action(vector)-value*vector)/
@@ -125,9 +166,9 @@ def run(args,report):
         eigensolver_status=status,eigen_matvecs=evaluations,maximum_matvecs=args.maximum_matvecs,
         coordinate_scaling='diagonal sqrt physical mass; psi also divided by sqrt(g*beam); similarity only, no operator repair',
         modes=records,independent_rows=[])
-    # Compare the growing mode against a direct EXTERIOR area+waterline row,
-    # rather than the production full-minus-hidden construction.
-    coefficient=saved['mode_0_chi'];eta=saved['mode_0_eta'];mode_load=k@coefficient
+    # Independently integrate selected rows with per-hat cuts and higher
+    # target orders; this does not reuse the global contact-row assembly.
+    coefficient=saved['mode_0_chi'];eta=saved['mode_0_eta'];mode_load=flux(coefficient)
     full_to_active=np.full(len(patch.nodes),-1,dtype=int);full_to_active[active]=np.arange(count)
     touched=full_to_active[patch.faces[patch.hidden_parent_id]];affected=np.unique(touched[touched>=0])
     work=abs(np.conj(eta[affected])*mode_load[affected])
@@ -185,6 +226,7 @@ if __name__=='__main__':
     parser.add_argument('--maximum-matvecs',type=int,default=1000)
     parser.add_argument('--maximum-source-pairs',type=int,default=500_000_000)
     parser.add_argument('--row-count',type=int,choices=[1,2,3],default=2)
+    parser.add_argument('--prior-instability',type=Path,help='Independent recorded counterexample on the same owned phase space')
     args=parser.parse_args()
     if args.output.exists() or args.output.with_suffix('.source').exists(): parser.error('fresh output/source archive required')
     archive=args.output.with_suffix('.source');archive.mkdir(parents=True)

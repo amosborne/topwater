@@ -1,0 +1,417 @@
+{
+  "status": "Direct exterior contact rows fix a demonstrated assembly error, but evolving-water alternative remains REJECTED: unresolved body/coupling instability",
+  "evidence": {
+    "artifacts\\boat-regularized-water-direct.json": "1d08ce85d78eb1d6dad8991fd5de32e3f4ec7b2ece0212d654be7bee0687941f",
+    "artifacts\\boat-regularized-direct-instability.json": "fec498d46ab11e5a2f9c02c0151701a26d15877379615db018590f347f835fb9",
+    "artifacts\\boat-regularized-body-trace.json": "0bcd4f31c13e2d1def6440b6c8d2b7377fe2e30508eef30d4a4aa4c242a422a5"
+  },
+  "changes": [
+    "One batched FFT execution path plus directly integrated physical-exterior contact rows; no full-minus-hidden subtraction on contact rows",
+    "All positive cut supports, source geometry, physical mass and shared RK tolerances retained; no row/eigenvalue repair",
+    "Independent CPU replay consumes recorded signed-lag FFT kernel and contact rows, reproducing production action"
+  ],
+  "cpu_vs_gpu_action_max": 4.440892098500626e-16,
+  "previous_counterexample_rows": [
+    {
+      "active_row": 1246,
+      "previous_real": -0.29445410574649544,
+      "corrected_real": 0.028069936034724574,
+      "corrected_imag": 0.0,
+      "independent_q16_real": 0.02800662880923599,
+      "corrected_absolute_difference": 6.33072254885847e-05
+    },
+    {
+      "active_row": 1247,
+      "previous_real": -11.562594485611232,
+      "corrected_real": -11.638024238542522,
+      "corrected_imag": 0.0,
+      "independent_q16_real": -11.638152806327986,
+      "corrected_absolute_difference": 0.00012856778546321834
+    }
+  ],
+  "leading_modes": [
+    {
+      "real_growth_per_s": 24.311641539681435,
+      "oscillation_rad_per_s": 0.0,
+      "inverted_operator_residual": 6.772534241305055e-15,
+      "weak_kinematic_relative_residual": 2.3786195881664376e-15,
+      "weak_dynamic_relative_residual": 2.8890198167152867e-16,
+      "body_normal_residual_max": 3.183231456205249e-12,
+      "physical_trace_residual_max": 5.662137425588298e-15,
+      "physical_contact_parent_eta_energy_fraction": 0.22003000274657414,
+      "physical_contact_parent_area_fraction": 0.017080427073701252,
+      "base_rayleigh_real": 2.18279796987963,
+      "base_rayleigh_imag": 0.0,
+      "body_feedback_rayleigh_real": -62.43314601819391,
+      "body_feedback_rayleigh_imag": 0.0,
+      "expected_total_rayleigh_real": -60.25034804831436,
+      "expected_total_rayleigh_imag": 0.0
+    },
+    {
+      "real_growth_per_s": 13.544689932033826,
+      "oscillation_rad_per_s": 0.0,
+      "inverted_operator_residual": 4.0064931807378385e-12,
+      "weak_kinematic_relative_residual": 3.381067844470902e-12,
+      "weak_dynamic_relative_residual": 1.2793239499863146e-11,
+      "body_normal_residual_max": 1.1368683772161603e-12,
+      "physical_trace_residual_max": 2.041769531224702e-15,
+      "physical_contact_parent_eta_energy_fraction": 0.1473393981848135,
+      "physical_contact_parent_area_fraction": 0.017080427073701252,
+      "base_rayleigh_real": 1.5797885812179193,
+      "base_rayleigh_imag": 0.0,
+      "body_feedback_rayleigh_real": -20.280973632695257,
+      "body_feedback_rayleigh_imag": 0.0,
+      "expected_total_rayleigh_real": -18.701185051471814,
+      "expected_total_rayleigh_imag": 0.0
+    },
+    {
+      "real_growth_per_s": 4.754317672322383,
+      "oscillation_rad_per_s": 15.77896797504369,
+      "inverted_operator_residual": 3.037908956795283e-10,
+      "weak_kinematic_relative_residual": 3.2195466402745957e-10,
+      "weak_dynamic_relative_residual": 1.4820071781999878e-09,
+      "body_normal_residual_max": 6.967667714054223e-13,
+      "physical_trace_residual_max": 1.1507832995586806e-15,
+      "physical_contact_parent_eta_energy_fraction": 0.2905474505084605,
+      "physical_contact_parent_area_fraction": 0.017080427073701252,
+      "base_rayleigh_real": 15.026753849829383,
+      "base_rayleigh_imag": -3.4544412209742763,
+      "body_feedback_rayleigh_real": 8.048913207403572,
+      "body_feedback_rayleigh_imag": -11.839794519910287,
+      "expected_total_rayleigh_real": 23.075667056890666,
+      "expected_total_rayleigh_imag": -15.294235737973322
+    },
+    {
+      "real_growth_per_s": 4.754317672322383,
+      "oscillation_rad_per_s": -15.77896797504369,
+      "inverted_operator_residual": 3.037908956795283e-10,
+      "weak_kinematic_relative_residual": 3.2195466402745957e-10,
+      "weak_dynamic_relative_residual": 1.4820071781999878e-09,
+      "body_normal_residual_max": 6.967667714054223e-13,
+      "physical_trace_residual_max": 1.1507832995586806e-15,
+      "physical_contact_parent_eta_energy_fraction": 0.2905474505084605,
+      "physical_contact_parent_area_fraction": 0.017080427073701252,
+      "base_rayleigh_real": 15.026753849829383,
+      "base_rayleigh_imag": 3.4544412209742763,
+      "body_feedback_rayleigh_real": 8.048913207403572,
+      "body_feedback_rayleigh_imag": 11.839794519910287,
+      "expected_total_rayleigh_real": 23.075667056890666,
+      "expected_total_rayleigh_imag": 15.294235737973322
+    }
+  ],
+  "independent_new_mode_rows": [
+    {
+      "active_row": 1098,
+      "full_node": 1263,
+      "center": [
+        3.3646529385932107,
+        -0.1612544517279062
+      ],
+      "physical_hat_mass": 0.040714627874497214,
+      "physical_mass_diagonal": 0.02178283196647302,
+      "assembled_real": -18.515013211495834,
+      "assembled_imag": 0.0,
+      "orders": [
+        {
+          "order": 8,
+          "direct_real": -18.48754338191351,
+          "direct_imag": 0.0,
+          "absolute_difference": 0.027469829582322802,
+          "relative_difference": 0.0014858561256546785
+        },
+        {
+          "order": 16,
+          "direct_real": -18.48701208562626,
+          "direct_imag": 0.0,
+          "absolute_difference": 0.028001125869572263,
+          "relative_difference": 0.0015146377218708733
+        }
+      ]
+    },
+    {
+      "active_row": 1060,
+      "full_node": 1201,
+      "center": [
+        3.115295020239887,
+        -0.40950890345581215
+      ],
+      "physical_hat_mass": 0.020076817536059707,
+      "physical_mass_diagonal": 0.008499810026230717,
+      "assembled_real": -6.719688746758959,
+      "assembled_imag": 0.0,
+      "orders": [
+        {
+          "order": 8,
+          "direct_real": -6.7158455132473165,
+          "direct_imag": 0.0,
+          "absolute_difference": 0.0038432335116427296,
+          "relative_difference": 0.0005722635376382279
+        },
+        {
+          "order": 16,
+          "direct_real": -6.715594938914805,
+          "direct_imag": 0.0,
+          "absolute_difference": 0.004093807844154362,
+          "relative_difference": 0.0006095971959881033
+        }
+      ]
+    }
+  ],
+  "short_transient_runs": [
+    {
+      "max_step_seconds": 0.01,
+      "achieved_duration_seconds": 0.1,
+      "accepted_steps": 11,
+      "rhs_evaluations": 35,
+      "last_evaluation_time": 0.1,
+      "integration_seconds": 0.6126902000105474,
+      "pressure_output_seconds": 0.024485400004778057,
+      "integration_only_wall_per_sim_second": 6.126902000105474,
+      "minimum_accepted_step": 1.3877787807814457e-17,
+      "maximum_accepted_step": 0.010000000000000002,
+      "eta_max_coefficient_m": 0.002188957045177102,
+      "physical_mass_eta_rms_error_vs_external_harmonic_max": [
+        3.9084008430524935e-06,
+        9.577106126008844e-07,
+        1.3378307175093475e-05,
+        2.8709968721991737e-08
+      ],
+      "six_force_phase_amplitude_error_max": [
+        [
+          0.743585121121324,
+          0.013605231448447651
+        ],
+        [
+          0.3443335361537893,
+          0.12172369884078797
+        ],
+        [
+          3.607994431645041,
+          0.1686217507496614
+        ],
+        [
+          0.1019148437294013,
+          0.1993837327550504
+        ],
+        [
+          3.2053732478466097,
+          0.12959416261276827
+        ],
+        [
+          0.86553935079323,
+          0.0060059692767674795
+        ]
+      ],
+      "principal_force_phase_relative_error_max": [
+        0.02801013165608425,
+        0.03470736141839206
+      ]
+    },
+    {
+      "max_step_seconds": 0.005,
+      "achieved_duration_seconds": 0.1,
+      "accepted_steps": 20,
+      "rhs_evaluations": 62,
+      "last_evaluation_time": 0.1,
+      "integration_seconds": 1.2601092999975663,
+      "pressure_output_seconds": 0.01309729999047704,
+      "integration_only_wall_per_sim_second": 12.601092999975663,
+      "minimum_accepted_step": 0.0049999999999999906,
+      "maximum_accepted_step": 0.0050000000000000044,
+      "eta_max_coefficient_m": 0.002189836738496811,
+      "physical_mass_eta_rms_error_vs_external_harmonic_max": [
+        3.909828370625341e-06,
+        9.57727302886889e-07,
+        1.3375895348145352e-05,
+        2.870964459608861e-08
+      ],
+      "six_force_phase_amplitude_error_max": [
+        [
+          0.7444200482546508,
+          0.013616149955564956
+        ],
+        [
+          0.34465902335207743,
+          0.12171967511617807
+        ],
+        [
+          3.6121095656386086,
+          0.16868127838454552
+        ],
+        [
+          0.10195823438240773,
+          0.19938486893966442
+        ],
+        [
+          3.209292158993219,
+          0.1296304266873614
+        ],
+        [
+          0.8662990399033605,
+          0.005996611478386875
+        ]
+      ],
+      "principal_force_phase_relative_error_max": [
+        0.02804207889079484,
+        0.034707559197666694
+      ]
+    }
+  ],
+  "short_transient_contract": {
+    "integrator": "SciPy RK23",
+    "rtol": 0.001,
+    "eta_atol_m": 0.001,
+    "projected_physical_psi_atol_m2_per_s": 0.01,
+    "real_state_count": 18152,
+    "error_norm": "RMS over ALL real eta and projected physical-psi coefficients in all four cases",
+    "body_state_count": 0,
+    "prescribed_velocity_amplitudes": [
+      0.01,
+      0.005,
+      0.01,
+      0.005
+    ],
+    "first_step": null
+  },
+  "body_probe": {
+    "eta_mode_rms_m": 0.001,
+    "growth_per_s": 24.311641539681435,
+    "collocation_residual": 3.183231456205248e-15,
+    "sets": [
+      {
+        "name": "centroids",
+        "points": 68,
+        "offsets": [
+          {
+            "offset_factor": 1.0,
+            "seconds": 6.697062799998093,
+            "offset_min_m": 1.2399109186981788e-06,
+            "offset_max_m": 0.00028046439414447646,
+            "offset_over_diameter_min": 9.999999999999999e-05,
+            "offset_over_diameter_max": 0.0001,
+            "normal_real_rms_m_per_s": 4.7262033418264754e-05,
+            "normal_imag_rms_m_per_s": 0.0,
+            "normal_complex_rms_m_per_s": 4.7262033418264754e-05,
+            "normal_max_m_per_s": 0.0006352089645357915,
+            "net_normal_volume_flux_real_m3_per_s": 7.807950792368663e-05,
+            "net_normal_volume_flux_imag_m3_per_s": 0.0,
+            "potential_complex_rms_m2_per_s": 0.007049580380876162,
+            "green_body_boundary_work_J": 0.00379835369711838,
+            "pressure_work_into_fluid_W": 0.09234421352526576
+          },
+          {
+            "offset_factor": 0.5,
+            "seconds": 1.2547800000174902,
+            "offset_min_m": 6.199554593490894e-07,
+            "offset_max_m": 0.00014023219707223823,
+            "offset_over_diameter_min": 4.9999999999999996e-05,
+            "offset_over_diameter_max": 5e-05,
+            "normal_real_rms_m_per_s": 2.3641586342642465e-05,
+            "normal_imag_rms_m_per_s": 0.0,
+            "normal_complex_rms_m_per_s": 2.3641586342642465e-05,
+            "normal_max_m_per_s": 0.0003243177944656124,
+            "net_normal_volume_flux_real_m3_per_s": 3.9101981646869305e-05,
+            "net_normal_volume_flux_imag_m3_per_s": 0.0,
+            "potential_complex_rms_m2_per_s": 0.007049581371544332,
+            "green_body_boundary_work_J": 0.001899947583019981,
+            "pressure_work_into_fluid_W": 0.04619084458256593
+          }
+        ],
+        "offset_halving_normal_rms_change_m_per_s": 2.3620775419934514e-05
+      },
+      {
+        "name": "independent Gauss2",
+        "points": 272,
+        "offsets": [
+          {
+            "offset_factor": 1.0,
+            "seconds": 6.225256000005174,
+            "offset_min_m": 1.2399109186981788e-06,
+            "offset_max_m": 0.00028046439414447646,
+            "offset_over_diameter_min": 9.999999999999999e-05,
+            "offset_over_diameter_max": 0.0001,
+            "normal_real_rms_m_per_s": 0.13497848686998887,
+            "normal_imag_rms_m_per_s": 0.0,
+            "normal_complex_rms_m_per_s": 0.13497848686998887,
+            "normal_max_m_per_s": 2.4038849482764166,
+            "net_normal_volume_flux_real_m3_per_s": 0.14570787902153443,
+            "net_normal_volume_flux_imag_m3_per_s": 0.0,
+            "potential_complex_rms_m2_per_s": 0.01299354958914143,
+            "green_body_boundary_work_J": 21.324805455889734,
+            "pressure_work_into_fluid_W": 518.4410261470343
+          },
+          {
+            "offset_factor": 0.5,
+            "seconds": 7.310050100000808,
+            "offset_min_m": 6.199554593490894e-07,
+            "offset_max_m": 0.00014023219707223823,
+            "offset_over_diameter_min": 4.9999999999999996e-05,
+            "offset_over_diameter_max": 5e-05,
+            "normal_real_rms_m_per_s": 0.1350507232625246,
+            "normal_imag_rms_m_per_s": 0.0,
+            "normal_complex_rms_m_per_s": 0.1350507232625246,
+            "normal_max_m_per_s": 2.406603404930822,
+            "net_normal_volume_flux_real_m3_per_s": 0.14577048935947223,
+            "net_normal_volume_flux_imag_m3_per_s": 0.0,
+            "potential_complex_rms_m2_per_s": 0.012997362188284924,
+            "green_body_boundary_work_J": 21.340816814278732,
+            "pressure_work_into_fluid_W": 518.8302885527512
+          }
+        ],
+        "offset_halving_normal_rms_change_m_per_s": 9.394798472157453e-05
+      },
+      {
+        "name": "independent Gauss4",
+        "points": 1088,
+        "offsets": [
+          {
+            "offset_factor": 1.0,
+            "seconds": 20.753599699994083,
+            "offset_min_m": 1.2399109186981788e-06,
+            "offset_max_m": 0.00028046439414447646,
+            "offset_over_diameter_min": 9.999999999999999e-05,
+            "offset_over_diameter_max": 0.0001,
+            "normal_real_rms_m_per_s": 0.12821945018316167,
+            "normal_imag_rms_m_per_s": 0.0,
+            "normal_complex_rms_m_per_s": 0.12821945018316167,
+            "normal_max_m_per_s": 2.7516405948321823,
+            "net_normal_volume_flux_real_m3_per_s": 0.10173327480505229,
+            "net_normal_volume_flux_imag_m3_per_s": 0.0,
+            "potential_complex_rms_m2_per_s": 0.011109553989514824,
+            "green_body_boundary_work_J": 15.85704406019421,
+            "pressure_work_into_fluid_W": 385.51077107037634
+          },
+          {
+            "offset_factor": 0.5,
+            "seconds": 21.793887300009374,
+            "offset_min_m": 6.199554593490894e-07,
+            "offset_max_m": 0.00014023219707223823,
+            "offset_over_diameter_min": 4.9999999999999996e-05,
+            "offset_over_diameter_max": 5e-05,
+            "normal_real_rms_m_per_s": 0.12830172909110518,
+            "normal_imag_rms_m_per_s": 0.0,
+            "normal_complex_rms_m_per_s": 0.12830172909110518,
+            "normal_max_m_per_s": 2.7652751361156414,
+            "net_normal_volume_flux_real_m3_per_s": 0.10177225973180679,
+            "net_normal_volume_flux_imag_m3_per_s": 0.0,
+            "potential_complex_rms_m2_per_s": 0.011112960822026976,
+            "green_body_boundary_work_J": 15.8713551885308,
+            "pressure_work_into_fluid_W": 385.85869809252387
+          }
+        ],
+        "offset_halving_normal_rms_change_m_per_s": 0.00013956651199117148
+      }
+    ]
+  },
+  "interpretation": [
+    "The old leading-mode contact row changes from the wrong sign to agreement with independent exterior quadrature; other errors remain",
+    "New leading homogeneous mode grows at24.31/s; base Rayleigh contribution is positive, body feedback makes the total negative",
+    "Centroid normal-velocity leakage decreases with offset while off-centroid leakage persists: point residuals do not enforce no-penetration over whole faces",
+    "Gauss2 to Gauss4 body Green work changes from21.34 to15.87J at1mm eta RMS; sampled values are NOT a converged energy-budget closure",
+    "This isolates a body-boundary consistency concern, but does not exclude physical-trace projection or prescribed far-chi closure defects",
+    "A0.1s completion is insufficient stability evidence; no new long transient is warranted yet"
+  ],
+  "next_gate": "ONE same-planar-hull68-to272 source-density refinement, frozen physical psi moments and unchanged water operator; compare re-solved old-mode action and leakage at identical old physical probes/offsets",
+  "baseline_promoted": false,
+  "qualification": "No nonlinear6DOF, sixty-second accuracy, Capytaine trajectory correlation or realtime result"
+}
