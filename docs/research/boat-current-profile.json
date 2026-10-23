@@ -1,0 +1,287 @@
+{
+  "complete": true,
+  "qualified": false,
+  "producer_commit": "73bbdad",
+  "scope": "cProfile attribution of a complete nonlinear one-second diagnostic-tank trajectory; instrumented times are not benchmark timings.",
+  "inputs": {
+    "report": "artifacts\\boat-current-profile-1s.json",
+    "report_sha256": "a47251b559c842a0a032f0229762344e4183b66118797339d222df866c6a3406",
+    "arrays_sha256": "5448a7fecb90dc3917a19dc09723ab6710acdd3505845954abaf656a4b664582",
+    "profile": "artifacts\\boat-current-profile-1s.prof",
+    "profile_sha256": "98d864b265141e6b5c96bbc648d62d6ac6d76b653707d04a812474a7345980b9",
+    "runner": "artifacts\\profile_boat_current.py",
+    "runner_sha256": "9e2e1621123ef9a49981973bd754c89f5e56ce5bfce5c24388b91af1b0382b88"
+  },
+  "producer_source_sha256": {
+    "boat_moving.py": "fc8fba821926fcecabbcbb1c9d0b2c5033bdeca098e74eb0d51b916e85d22c75",
+    "boat_geometry_template.py": "99f1d1945a9b30c1bded34d63f47345bad3d1e098bf35c50fd97a9497dd944ce",
+    "boat_world_boundary.py": "7d9db20826039ed8261a61858a77e1ebf63606e9ff7cf29a629f04263ac95d02",
+    "boat_parent_clip_proof.py": "c7289231da3c170f1e53c09b00a84525210ca79317e749635ac8ab38f7993034",
+    "boat_integer_intersections.py": "b5e947096269dc5acd4a649d45f8173f683fab6106037707907a2ed5f92ee834",
+    "boat_world_field.py": "dba2612dd64de85ca27e390f4c0fa2c04bda2bc466ecfd7487503cb346ce67f3",
+    "body_pressure.py": "b8f82cd758dcd58cee25c5453e32d683e2f144313ae6c24145cd13a40585bdfa",
+    "canoe.py": "9a4d966127c11e7f2d3bae69e085a58585188b4795c349f8287983b52a99f6b9",
+    "incident_baseline_benchmark.py": "c1c339b092a2e571f1997788313d0d8fe09f8e0614806ab0e942cf57b213d655",
+    "cuda_operator.py": "22348f0038fee5a96f66b27abb135c3d3fd2252114d52c67e63f6fd81bb289b7",
+    "cuda_energy.cu": "0d50ebffe56bfab003bd5189e38320c4122f0dfbf119de426c002cfc7912af1f",
+    "cuda_pair.cuh": "a82aee8a9be6612dd4d24bc060762f85252187c968e7deb0a51a3371aed103ec",
+    "boat_operator_reuse.py": "72dad4861675c4fb8b270acf24af5ba686b2c903ef2716bb0ccba97f5cde5f95",
+    "boat_past_operator.py": "9a753e81141ea6b43af1146f21cc8023aad8fae92b30ddfa9f8ac822f3c48f5f",
+    "boat_ale_pressure.py": "2154016e415a38b80d50b8c73e718220bbc494a1f86127627bea80f9e830fb63",
+    "boat_motion_metrics.py": "34f7e377c4daa8e6d85bb54123f55be2f73cdd927686a910d563a518dd4faafa",
+    "boat_action_stencil.py": "b4ba7cd8a575ae5fafd146a259287921286fb5ce41cba367146a628cc36089b8",
+    "boat_body_action.py": "adba82f9f139bc13156b0c353a0d8f7b5a9449628ea8271feb2c761951c2616e",
+    "boat_parent_action.py": "652cef1314f02afc13461944e17001da19e4ff56d105e4d8b6c9293e0ed79499",
+    "cuda_shape_gradient.py": "6cfa9fb82e8921d15d32ff8b9dc1aea2d36b6704a64fe38370844cc0f8e0ca49",
+    "cuda_shape.cu": "d1dbcba8727b75492bd509f3be6e1de6d3b4e47a28a1f713bbaefe03ac02d926",
+    "cuda_dual.cuh": "a251a46a1d695a15c9bb6e07ceac87241dcee589e85017ca8dbf8e9113dac97d",
+    "cuda_wide_dual.cuh": "8319bb59c910b3ac9b373021204575c76be9a50c3e1376ff7b68bc6c5a49ea5a",
+    "boat_chart_tangent.py": "bb1499beac7e34c29cfdda1ad5e284b6f41179d6a8916d9713948b39737d006f",
+    "boat_action_tangent.py": "9740cb271bb095ff57b5d5df5fed73b984b878360bc45a1147e0084d60ee66cd",
+    "boat_momentum_tangent.py": "d3163671ab5aabc1531d167d4f2b31ffb11c8e34e33e79e2b78e5d2341d63509",
+    "boat_incident_tangent.py": "572d19c35e6c52af3f1a7e4f2b688434f55a08ca5118bce8cdeaa702be7fcfdd",
+    "cuda_directional.py": "801b1b54985c625e7c84f5b39854f8b0222531552d71ba2a10311254846447cc",
+    "cuda_directional.cu": "d2a83408a86b4d6fc5c11e665dbe06ce32398832f676d78d883b2cee04ba1713",
+    "cuda_reverse_gradient.py": "c54da97ae515aec16110d4d9df72cece2e055193b450cd2ec20452e268798fb5",
+    "cuda_scalar_reverse.cu": "15354f48e2d7507c9c1345f782b2ae5fdb0d3bc41bd2dd0ee7e5d0092c473b52"
+  },
+  "elapsed_instrumented_seconds": 120.54673639999237,
+  "rhs": 64,
+  "accepted_steps": 14,
+  "cold_builds": 29,
+  "calls": 107109557,
+  "top_project_cumulative": [
+    {
+      "file": "boat_moving.py",
+      "line": 36,
+      "function": "run",
+      "primitive_calls": 1,
+      "calls": 1,
+      "self_seconds": 0.0785213,
+      "cumulative_seconds": 121.2099838
+    },
+    {
+      "file": "boat_moving.py",
+      "line": 217,
+      "function": "rhs",
+      "primitive_calls": 64,
+      "calls": 64,
+      "self_seconds": 0.014238,
+      "cumulative_seconds": 116.1961256
+    },
+    {
+      "file": "boat_moving.py",
+      "line": 155,
+      "function": "geometry",
+      "primitive_calls": 64,
+      "calls": 64,
+      "self_seconds": 0.0164766,
+      "cumulative_seconds": 70.0865184
+    },
+    {
+      "file": "boat_moving.py",
+      "line": 142,
+      "function": "cold",
+      "primitive_calls": 29,
+      "calls": 29,
+      "self_seconds": 0.08705410000000001,
+      "cumulative_seconds": 63.1455058
+    },
+    {
+      "file": "boat_world_boundary.py",
+      "line": 98,
+      "function": "construct",
+      "primitive_calls": 29,
+      "calls": 29,
+      "self_seconds": 0.4293735,
+      "cumulative_seconds": 62.2852079
+    },
+    {
+      "file": "boat_action_stencil.py",
+      "line": 29,
+      "function": "evaluate",
+      "primitive_calls": 64,
+      "calls": 64,
+      "self_seconds": 0.033996000000000005,
+      "cumulative_seconds": 34.098181700000005
+    },
+    {
+      "file": "boat_parent_clip_proof.py",
+      "line": 150,
+      "function": "polytope",
+      "primitive_calls": 4408,
+      "calls": 4408,
+      "self_seconds": 1.9020964,
+      "cumulative_seconds": 33.462639700000004
+    },
+    {
+      "file": "boat_parent_clip_proof.py",
+      "line": 249,
+      "function": "cell_polygons",
+      "primitive_calls": 464,
+      "calls": 464,
+      "self_seconds": 0.0432909,
+      "cumulative_seconds": 30.418678300000003
+    },
+    {
+      "file": "boat_parent_clip_proof.py",
+      "line": 89,
+      "function": "_sign",
+      "primitive_calls": 3669652,
+      "calls": 3669652,
+      "self_seconds": 4.132856100000001,
+      "cumulative_seconds": 20.8440665
+    },
+    {
+      "file": "boat_parent_clip_proof.py",
+      "line": 154,
+      "function": "<genexpr>",
+      "primitive_calls": 4251376,
+      "calls": 4251376,
+      "self_seconds": 2.1453049,
+      "cumulative_seconds": 17.433949600000002
+    },
+    {
+      "file": "boat_parent_clip_proof.py",
+      "line": 436,
+      "function": "triangulate",
+      "primitive_calls": 29,
+      "calls": 29,
+      "self_seconds": 0.033977,
+      "cumulative_seconds": 15.263685400000002
+    },
+    {
+      "file": "boat_parent_clip_proof.py",
+      "line": 56,
+      "function": "_integer_owner",
+      "primitive_calls": 762228,
+      "calls": 762228,
+      "self_seconds": 0.38381350000000003,
+      "cumulative_seconds": 13.0422319
+    },
+    {
+      "file": "boat_integer_intersections.py",
+      "line": 41,
+      "function": "check_planes",
+      "primitive_calls": 762228,
+      "calls": 762228,
+      "self_seconds": 5.415498,
+      "cumulative_seconds": 12.613885000000002
+    },
+    {
+      "file": "boat_geometry_template.py",
+      "line": 145,
+      "function": "evaluate_template",
+      "primitive_calls": 264,
+      "calls": 264,
+      "self_seconds": 1.7099952,
+      "cumulative_seconds": 11.1740054
+    },
+    {
+      "file": "cuda_reverse_gradient.py",
+      "line": 16,
+      "function": "vertex_gradient",
+      "primitive_calls": 64,
+      "calls": 64,
+      "self_seconds": 0.0355496,
+      "cumulative_seconds": 10.5080823
+    },
+    {
+      "file": "boat_moving.py",
+      "line": 193,
+      "function": "field",
+      "primitive_calls": 64,
+      "calls": 64,
+      "self_seconds": 0.008622000000000001,
+      "cumulative_seconds": 9.4197611
+    },
+    {
+      "file": "boat_moving.py",
+      "line": 298,
+      "function": "tangent_geometry",
+      "primitive_calls": 64,
+      "calls": 64,
+      "self_seconds": 0.0326252,
+      "cumulative_seconds": 7.4669404
+    },
+    {
+      "file": "boat_parent_clip_proof.py",
+      "line": 109,
+      "function": "intersection",
+      "primitive_calls": 920344,
+      "calls": 920344,
+      "self_seconds": 0.9881026,
+      "cumulative_seconds": 7.339698800000001
+    },
+    {
+      "file": "boat_integer_intersections.py",
+      "line": 42,
+      "function": "<genexpr>",
+      "primitive_calls": 31251348,
+      "calls": 31251348,
+      "self_seconds": 7.198387,
+      "cumulative_seconds": 7.198387
+    },
+    {
+      "file": "boat_momentum_tangent.py",
+      "line": 33,
+      "function": "field_momentum_rate",
+      "primitive_calls": 64,
+      "calls": 64,
+      "self_seconds": 0.0522127,
+      "cumulative_seconds": 6.8515147
+    },
+    {
+      "file": "boat_parent_clip_proof.py",
+      "line": 38,
+      "function": "cross",
+      "primitive_calls": 104623,
+      "calls": 104623,
+      "self_seconds": 0.41195210000000004,
+      "cumulative_seconds": 6.644287200000001
+    },
+    {
+      "file": "boat_chart_tangent.py",
+      "line": 63,
+      "function": "chart_tangent",
+      "primitive_calls": 64,
+      "calls": 64,
+      "self_seconds": 0.5369104,
+      "cumulative_seconds": 6.5809553
+    },
+    {
+      "file": "boat_parent_clip_proof.py",
+      "line": 416,
+      "function": "split_nonstar_polygons",
+      "primitive_calls": 29,
+      "calls": 29,
+      "self_seconds": 0.025230700000000002,
+      "cumulative_seconds": 5.953936000000001
+    },
+    {
+      "file": "boat_parent_clip_proof.py",
+      "line": 130,
+      "function": "register",
+      "primitive_calls": 16158,
+      "calls": 16158,
+      "self_seconds": 0.0968474,
+      "cumulative_seconds": 5.868894900000001
+    },
+    {
+      "file": "boat_parent_clip_proof.py",
+      "line": 180,
+      "function": "split_edges",
+      "primitive_calls": 2821,
+      "calls": 2821,
+      "self_seconds": 0.4590464,
+      "cumulative_seconds": 5.8420182
+    }
+  ],
+  "findings": [
+    "Cold geometry remains expensive; evaluate immutable plane ownership before interval-filter machinery.",
+    "762228 check_planes calls repeatedly normalize the whole frozen list; immutable ownership could avoid redundant work without weakening coefficient checks.",
+    "CuPy get includes synchronization and kernel waiting; do not interpret its cumulative time as transfer bandwidth cost.",
+    "Python instrumentation disproportionately penalizes many small calls; validate optimization with uninstrumented matched cost and exact cold parity.",
+    "Selective near/far cache must amortize against the adopted reverse gradient and observed short chart lifetimes."
+  ]
+}
