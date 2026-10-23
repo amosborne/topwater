@@ -1,0 +1,161 @@
+{
+  "complete": true,
+  "qualified": false,
+  "scope": "ONE geometry-only near/far count on the archived 472-face 0/10/20 ms chart.\n\nNo CUDA, fluid assembly, Taylor cache, factorization, threshold sweep or pilot.\nSeparation is bounded for supplied endpoint geometries and their piecewise\nlinear NODAL chords. The actual nonlinear ALE path between samples is not\nenclosed. Contact/slender and opening-ratio choices are screening heuristics.\n",
+  "source_sha256": {
+    "boat_hybrid_mask_probe.py": "a97248dcfc441ce9fee12c7608a5265d0f6c58fe815ae26d30c6b2060a412623",
+    "boat_geometry_template.py": "4bd82128a54120432af7e258bfeb14bb5db31ab599c10eb0463fc164988b6172",
+    "boat_world_field.py": "dba2612dd64de85ca27e390f4c0fa2c04bda2bc466ecfd7487503cb346ce67f3"
+  },
+  "policy": {
+    "opening_factor": 2.0,
+    "slender_quality": 0.001,
+    "contact": "All rows/columns incident to a body/free shared node exact; conservative heuristic, not mathematically necessary.",
+    "slender": "All rows/columns of a face with endpoint quality below threshold exact; heuristic, no interval aspect-ratio proof.",
+    "touching": "Any shared node ID exact, including self.",
+    "margin": "Maximum held-out vertex displacement from anchor; retrospective geometric budget, not online lifetime evidence."
+  },
+  "nodes": 238,
+  "faces": 472,
+  "times": [
+    0.0,
+    0.01,
+    0.02
+  ],
+  "input_sha256": {
+    "C:\\Users\\alex\\topwater\\artifacts\\boat-action-tangent-generic-q3-body1-20ms.npz": "9cbc1174c7e5a4b755b42efcc65357a4829d65f798af50a01c719e7b51789c7d",
+    "C:\\Users\\alex\\topwater\\artifacts\\boat-action-tangent-generic-q3-body1-20ms-geometry-0.json": "5dbd583d5200eb6d70be05981052ddae8ae5d300780b495247b116e01b08c7d6",
+    "C:\\Users\\alex\\topwater\\artifacts\\boat-action-tangent-generic-q3-body1-20ms-geometry-0.npz": "f872b266001e5d63befbc997b131c9c621f61658363f667f475c48346c5747f8",
+    "C:\\Users\\alex\\topwater\\artifacts\\reverse-gradient-q3-generic472.json": "db0436eed84ac4d849e5892057721a48c7fcfef66680e0353fd0b67d9de07baa",
+    "C:\\Users\\alex\\topwater\\artifacts\\momentum-tangent-analytic-generic-q3-body1.json": "dc06a750512268cad4a18544845c6594370d31ed737886867391c0a8f577df63"
+  },
+  "node_chart_key": "38e08e1b3a6a805a57c6b6c0d2ead6540bc98ff4b89d57e4be9162b03c69b045",
+  "guard_diagnostics": [
+    {
+      "maximum_owner_condition": 11.779525993158353,
+      "maximum_intersection_uncertainty_m": 8.617889143255018e-13,
+      "rim_clearance_lower_bound_m": 0.2547666387413393,
+      "displaced_volume_m3": 6.472317202914297,
+      "witnesses": 197
+    },
+    {
+      "maximum_owner_condition": 11.791954938898622,
+      "maximum_intersection_uncertainty_m": 8.631809771674283e-13,
+      "rim_clearance_lower_bound_m": 0.25316646266993853,
+      "displaced_volume_m3": 6.47475623819372,
+      "witnesses": 197
+    },
+    {
+      "maximum_owner_condition": 11.801011664201605,
+      "maximum_intersection_uncertainty_m": 8.64274272439964e-13,
+      "rim_clearance_lower_bound_m": 0.2519217433718482,
+      "displaced_volume_m3": 6.469060503262995,
+      "witnesses": 197
+    }
+  ],
+  "separation": {
+    "scope": "Supplied floating endpoint triangles and all piecewise-linear nodal chords joining them; NOT nonlinear ALE paths.",
+    "arithmetic": "Individually outward-widened float64 basic operations on supplied coordinates; not an enclosure of exact CSG geometry.",
+    "maximum_vertex_motion_m": 0.01738815098567807,
+    "global_far_gap_lower_m": {
+      "minimum": 0.20452125668093676,
+      "maximum": 10.751265436136952
+    },
+    "endpoints": [
+      {
+        "time": 0.0,
+        "far_ball_gap_lower_m": {
+          "minimum": 0.21623884085018796,
+          "maximum": 10.766218025473867
+        }
+      },
+      {
+        "time": 0.01,
+        "far_ball_gap_lower_m": {
+          "minimum": 0.21369950784808642,
+          "maximum": 10.769401617475626
+        }
+      },
+      {
+        "time": 0.02,
+        "far_ball_gap_lower_m": {
+          "minimum": 0.21172961817503952,
+          "maximum": 10.772840125024425
+        }
+      }
+    ],
+    "intervals": [
+      {
+        "times": [
+          0.0,
+          0.01
+        ],
+        "far_ball_gap_lower_m": {
+          "minimum": 0.20980182316257545,
+          "maximum": 10.75855600664062
+        }
+      },
+      {
+        "times": [
+          0.01,
+          0.02
+        ],
+        "far_ball_gap_lower_m": {
+          "minimum": 0.20452125668093676,
+          "maximum": 10.751265436136952
+        }
+      }
+    ],
+    "actual_nonlinear_inter_sample_path_certified": false
+  },
+  "counts": {
+    "directed_total": 222784,
+    "directed_far": 58548,
+    "directed_exact_near": 164236,
+    "far_fraction": 0.26280163746049984,
+    "unordered_far": 29274,
+    "geometric_far_before_heuristics": 137012,
+    "touching_directed": 6972,
+    "contact_nodes": 38,
+    "contact_faces": 147,
+    "slender_faces": 0,
+    "minimum_endpoint_quality": 0.005450926438901835,
+    "geometric_far_removed_by_heuristics": 78464
+  },
+  "mask_sha256": "bc080920770b3065c2103b9ca1b20606f390ae95dba1ee3986d73a1eba6bf707",
+  "retained_payload_estimate": {
+    "label": "Arithmetic estimate only; no allocation/cache/peak-memory measurement.",
+    "packed_far_six_outputs_bytes": 53395776,
+    "packed_far_seven_outputs_bytes": 62295072,
+    "packed_far_pair_index_bytes": 468384,
+    "fixed_boolean_mask_bytes": 222784,
+    "full_1088_six_outputs_bytes": 1079574528,
+    "full_1088_seven_outputs_bytes": 1259503616,
+    "excludes": "Factors/E/H/current geometry/temporary work/CuPy pool/local kernel memory; 256MiB is not a user cap."
+  },
+  "cost_screen": {
+    "label": "Optimistic uniform-pair count proxy, not a measured runtime or load-error estimate.",
+    "observed_rhs_count": 64,
+    "observed_cold_build_count": 29,
+    "rhs_per_cold_build_screening_ratio": 2.206896551724138,
+    "anchor_lifetime_measured": false,
+    "archived_whole_reverse_gradient_seconds": 0.09377690000110306,
+    "archived_mixed_factor_and_solve_seconds": 0.0003123000205960125,
+    "archived_timing_selection": "Last reverse-labeled row and first factor sample; screening arithmetic uses these explicitly selected archived observations.",
+    "archived_reverse_seconds_samples": [
+      0.13732599999639206,
+      0.09377690000110306
+    ],
+    "archived_mixed_factor_seconds_samples": [
+      0.0003123000205960125,
+      0.0003252000024076551
+    ],
+    "V_factor_cost_separately_measured": false,
+    "factorization_eliminated_by_mask": false,
+    "maximum_pair_speedup_if_far_free": 1.3564870065028374,
+    "optimistic_gradient_seconds_if_far_free": 0.06913217712484362,
+    "optimistic_gradient_savings_seconds_per_rhs": 0.024644722876259434,
+    "optimistic_anchor_build_break_even_seconds": 0.05438835393381392,
+    "caveats": "64/29 includes initial cold build and reuse of older charts, not actual anchor lifetime. Whole-gradient packing/solves are not all pair-scaled; near/far pair costs vary, Taylor hits cost bandwidth, and masks do not remove current matrix factorization. This one conservative policy cannot reject every less-conservative hybrid."
+  }
+}
