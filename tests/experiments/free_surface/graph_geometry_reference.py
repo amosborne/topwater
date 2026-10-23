@@ -13,12 +13,7 @@ def _coordinates(values, name):
     return result.astype(np.float64, copy=False)
 
 
-def tensor_fourier(eta, x, y, length, origin):
-    """Interpolate a periodic grid at tensor coordinates without point/mode maps.
-
-    length is scalar or (Lx,Ly); origin locates eta[0,0]. The real Fourier
-    interpolant and its derivatives are returned, including for off-grid points.
-    """
+def _fourier_data(eta, length, origin):
     eta = np.asarray(eta)
     length = np.broadcast_to(np.asarray(length, dtype=float), (2,))
     origin = np.asarray(origin, dtype=float)
@@ -26,18 +21,46 @@ def tensor_fourier(eta, x, y, length, origin):
             or not np.isfinite(eta).all() or not np.isfinite(length).all()
             or np.any(length <= 0) or origin.shape != (2,) or not np.isfinite(origin).all()):
         raise ValueError('finite real graph, positive lengths and finite origin required')
-    x, y = _coordinates(x, 'x'), _coordinates(y, 'y')
     ny, nx = eta.shape
     kx = 2*np.pi*np.fft.fftfreq(nx, d=length[0]/nx)
     ky = 2*np.pi*np.fft.fftfreq(ny, d=length[1]/ny)
+    spectrum = np.fft.fft2(eta.astype(np.float64))/(nx*ny)
+    return kx, ky, spectrum, origin
+
+
+def tensor_fourier(eta, x, y, length, origin):
+    """Interpolate a periodic grid at tensor coordinates without point/mode maps.
+
+    length is scalar or (Lx,Ly); origin locates eta[0,0]. The real Fourier
+    interpolant and its derivatives are returned, including for off-grid points.
+    """
+    kx, ky, spectrum, origin = _fourier_data(eta, length, origin)
+    x, y = _coordinates(x, 'x'), _coordinates(y, 'y')
     fx = np.exp(1j*(x-origin[0])[:, None]*kx)
     fy = np.exp(1j*(y-origin[1])[:, None]*ky)
-    spectrum = np.fft.fft2(eta.astype(np.float64))/(nx*ny)
     rows = spectrum@fx.T
     value = (fy@rows).real
     dx = (fy@(spectrum@(fx*(1j*kx)).T)).real
     dy = ((fy*(1j*ky))@rows).real
     return value, np.stack((dx, dy), axis=-1)
+
+
+def fourier_points(eta, points_xy, length, origin):
+    """Fourier height/xy gradient at paired points; O(Ngrid) scratch per point."""
+    kx, ky, spectrum, origin = _fourier_data(eta, length, origin)
+    points = np.asarray(points_xy)
+    if (points.ndim != 2 or points.shape[1] != 2 or np.iscomplexobj(points)
+            or not np.isfinite(points).all()):
+        raise ValueError('finite real (N,2) points required')
+    value, gradient = np.empty(len(points)), np.empty((len(points), 2))
+    for index, point in enumerate(points):
+        fx = np.exp(1j*(point[0]-origin[0])*kx)
+        fy = np.exp(1j*(point[1]-origin[1])*ky)
+        row = fy@spectrum
+        value[index] = (row@fx).real
+        gradient[index, 0] = (row@(fx*(1j*kx))).real
+        gradient[index, 1] = (((fy*(1j*ky))@spectrum)@fx).real
+    return value, gradient
 
 
 def structured_P1(nodesx, nodesy, heights, x, y):

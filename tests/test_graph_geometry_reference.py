@@ -2,7 +2,7 @@
 import numpy as np
 from numpy.testing import assert_allclose
 import pytest
-from tests.experiments.free_surface.graph_geometry_reference import tensor_fourier, structured_P1
+from tests.experiments.free_surface.graph_geometry_reference import tensor_fourier, fourier_points, structured_P1
 
 
 def test_oblique_fourier_values_and_derivatives_at_irregular_tensor_queries():
@@ -21,6 +21,9 @@ def test_oblique_fourier_values_and_derivatives_at_irregular_tensor_queries():
     actual = tensor_fourier(eta, x, y, lengths, origin)
     expected = exact(*np.meshgrid(x, y))
     for a, b in zip(actual, expected, strict=True):
+        assert_allclose(a, b, atol=3e-14, rtol=3e-13)
+    points = np.array([[x[0], y[2]], [x[2], y[1]], [x[3], y[0]]])
+    for a, b in zip(fourier_points(eta, points, lengths, origin), exact(points[:, 0], points[:, 1]), strict=True):
         assert_allclose(a, b, atol=3e-14, rtol=3e-13)
 
 
