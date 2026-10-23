@@ -309,6 +309,41 @@
         ],
         "scope": "Mixed-domain sampled boundary energy, not a certified physical conservation error"
       }
+    },
+    {
+      "complete": true,
+      "grid_size": 513,
+      "box_length_m": 256.0,
+      "body_panel_count": 272,
+      "setup_seconds": 21.547406300000148,
+      "evolution_seconds": 162.7606178999995,
+      "total_seconds": 184.38946339997347,
+      "peak_process_rss_bytes": 5314658304,
+      "cupy_pool_used_bytes": 1792161792,
+      "cupy_pool_reserved_bytes": 1863931392,
+      "execution": "GPU float64/complex128 evolution, CPU fixed geometry/operator preparation",
+      "timing_scope": "Run total includes static setup, lazy CUDA import/context/transfers, first-use compilation/plans, synchronized evolution, output download, fits and NPZ; source archiving and final JSON are outside this total.",
+      "memory_scope": "Process peak RSS; CUDA pool figures are retained/reserved at end, exclude other CUDA allocations, and are not peak/total VRAM.",
+      "report": "artifacts\\boat-radiation-time-body.json",
+      "sha256": "aeb3ba0b74360f378a08f583289033251856becb20a4f2bc95380994857e8c58",
+      "producer_archive": "artifacts\\boat-radiation-time-body.source",
+      "arrays_sha256": "cca3b074d0c8503a7cd8c578343c0a89c85129c4d1264e9e23edebbb9276a50e",
+      "spacing_m": 0.49902534113060426,
+      "fit_start_seconds": 40.0,
+      "fit_end_seconds": 60.0,
+      "heave_added_mass": 18828.402028557404,
+      "roll_added_mass": 1490.7505206906196,
+      "heave_damping": 1842.5117503530387,
+      "roll_damping": 0.10129628666506332,
+      "heave_force_fit_rms": 0.09226048458229635,
+      "roll_force_fit_rms": 7.212269879863899e-05,
+      "same_panel_reference": {
+        "angular_frequency": 0.6283185307179586,
+        "heave_added_mass": 19972.732843608956,
+        "roll_added_mass": 1828.2217683562508,
+        "heave_damping": 1769.1886745076615,
+        "roll_damping": 0.266034702608654
+      }
     }
   ],
   "parity": {
@@ -392,7 +427,7 @@
     ],
     "scope": "20-sample CUDA-event device medians on actual257grid maps; not whole-run gains"
   },
-  "verification": "CPU3 independent controls passed0.90s; GPU4 controls passed22.64s including initial compilation and3.88s after contraction change; final setup cleanup gate4passed3.60s. Analytic oblique field, harmonic polynomial fill, nonzero ramp/sponge pressure finite differences and independent NumPy/SciPy whole RHS.",
+  "verification": "CPU3 independent controls passed0.90s; GPU4 controls passed22.64s including initial compilation and3.88s after contraction change; final setup cleanup gate4passed3.60s. Analytic oblique field, harmonic polynomial fill, nonzero ramp/sponge pressure finite differences and independent NumPy/SciPy whole RHS. Exact-owned-driver extension audit reproduced prior two-phase rows exactly; independent nonharmonic biharmonic polynomial test1passed0.78s.",
   "review": "Two independent source reviewers approved fixed extension derivative, source/force signs, strict reference identity, projected impulse algebra, GPU LU/pivots and contraction equivalence. Reviewers ran no numerical jobs.",
   "conclusions": [
     "The first time-domain physical check failed despite valid discrete algebra. The2x2 box/grid controls separate substantial surface resolution error from domain/absorption bias; none qualifies the physical solver.",
@@ -400,17 +435,290 @@
     "Roll damping force is only~0.00127Nm at prescribed0.005rad/s, versus~5.745Nm reactive force. Report absolute fit residuals; negative/coefficient percentages alone are not instability or user-motion-accuracy evidence.",
     "CompleteCPU/GPU60s histories agree to roundoff. Column GEMVs replaced narrow2-columnGEMMs in the ONLY runtime path; same-case93.31->39.05s observed(2.389x), all histories agree to roundoff. Old CPU/GEMM paths are in Git; independent controls remain in tests.",
     "Do not attribute86.27s CPUcoarse versus34.36s GPUcoarse solely to GPU: pressure condensation also changed. Use matched whole-run controls, not products of component ratios.",
-    "All maps/factors stay fixed for these60s trajectories. No improvement to the full nonlinear moving baseline is claimed; that remains40.36wall seconds/simsecond without minute accuracy/open-water qualification."
+    "All maps/factors stay fixed for these60s trajectories. No improvement to the full nonlinear moving baseline is claimed; that remains40.36wall seconds/simsecond without minute accuracy/open-water qualification.",
+    "Uniform body68->272 at unchanged256m/513 changes rollA1486.918->1490.751, against own-panel Capytaine1828.222. The ~18.46% deficit remains. HeaveA18828.402 versus own19972.733; more body panels alone do not solve the discrepancy. Total184.389s, peakRSS5.315GB and ending CUDA pool1.864GB; no promotion.",
+    "Two-phase same-state harmonic-versus-biharmonic extension audit: roll force change at acceleration peak0.03094Nm versus ~1.07Nm missing reactive amplitude. Exact archived parent driver reproduces the final force and prior audit rows exactly. This pair does not explain most of the discrepancy; it cannot rule out history feedback, other extensions or exterior interpolation error."
   ],
   "next_falsifiers": [
-    "Same-state smooth-extension sensitivity at two phases separated by a quarter period (final60s alone is acceleration?0 and cannot rule out reactive sensitivity). Keep any alternative fill in verification only.",
-    "Body68->272 at unchanged256m/513grid against its OWN exact-panel Capytaine reference, before adding physical approximations or more global surface resolution.",
-    "Then one sponge-strength and half-timestep control on the best spatial case; none substitutes for full nonlinear moving graph/body validation."
+    "Isolate surface-hole/Fourier coupling and off-collocation body residuals before investing in more body panels; uniform refinement did not improve roll materially.",
+    "One sponge-strength and half-timestep control remain outstanding; neither substitutes for full nonlinear moving graph/body validation."
   ],
   "nonlinear_limit": "Flat odd images only enforce zero plane trace atz=0; actual eta requires an actual graph/body BVP with two-way exterior matching. Feeding nonlinear HOS heights into this fixed flat-image coupling is invalid.",
   "precursor_source_commits": [
     "b0befda",
     "0481851"
   ],
-  "source_authority": "Each report owns its exact producer hashes and pre-run source archive; current Git source also includes subsequent metadata and unused-host-storage cleanup."
+  "source_authority": "Each report owns its exact producer hashes and pre-run source archive; current Git source also includes subsequent metadata and unused-host-storage cleanup.",
+  "extension_audit": {
+    "report": "artifacts\\boat-radiation-extension-owned.json",
+    "sha256": "f6047ff32dc41cab5dd08642f464ecdac6df72983981f7fbbb97d8624d8f9421",
+    "producer_archive": "artifacts\\boat-radiation-extension-owned.source",
+    "initial_force_reconstruction_max_error": 0.0,
+    "rows": [
+      {
+        "time_seconds": 60.0,
+        "velocity_multiplier": 1.0,
+        "acceleration_multiplier": 9.23361932986459e-16,
+        "current_force": [
+          [
+            -0.008670153510139224,
+            -4.4863077185831064e-05
+          ],
+          [
+            -0.00028241749688716214,
+            0.0002559342320647632
+          ],
+          [
+            -18.837319356672193,
+            0.009692135637116758
+          ],
+          [
+            -6.678324646534474e-05,
+            -0.00039472152516302695
+          ],
+          [
+            1.5362500737653675,
+            -0.0014257836248345033
+          ],
+          [
+            -0.005438257350708597,
+            4.491786484226049e-06
+          ]
+        ],
+        "alternative_force": [
+          [
+            -0.008096497833728379,
+            -4.5210059375818704e-05
+          ],
+          [
+            -0.0002465219426502331,
+            0.00025625966083755655
+          ],
+          [
+            -18.83989866289426,
+            0.009693646462085691
+          ],
+          [
+            -0.0002300606413086357,
+            -0.0003951863117741023
+          ],
+          [
+            1.5351179473270633,
+            -0.0014252360823508632
+          ],
+          [
+            -0.005354768914418675,
+            4.5560589036195885e-06
+          ]
+        ],
+        "force_change": [
+          [
+            0.0005736556764108443,
+            -3.46982189987641e-07
+          ],
+          [
+            3.589555423692908e-05,
+            3.2542877279335045e-07
+          ],
+          [
+            -0.002579306222068179,
+            1.510824968933736e-06
+          ],
+          [
+            -0.00016327739484329096,
+            -4.647866110753501e-07
+          ],
+          [
+            -0.0011321264383040838,
+            5.475424836399829e-07
+          ],
+          [
+            8.348843628992194e-05,
+            6.427241939353989e-08
+          ]
+        ],
+        "capytaine_reactive_force_amplitude": [
+          [
+            -1.0989725357934796,
+            0.028153394134083447
+          ],
+          [
+            -0.036875942556354735,
+            -3.6848347252405427
+          ],
+          [
+            127.60218443944285,
+            -0.09127098783208194
+          ],
+          [
+            -0.06678588828479168,
+            5.744710047715912
+          ],
+          [
+            -8.68582226867069,
+            0.9014751737260953
+          ],
+          [
+            -0.3088757766773014,
+            0.15287916452476588
+          ]
+        ],
+        "hidden_rate_change_max": [
+          1.2887931058592692e-05,
+          7.432287562515578e-09
+        ],
+        "exterior_nodal_change_max": [
+          0.0,
+          0.0
+        ],
+        "offgrid_exterior_trace_change_max": [
+          1.7471284106649807e-06,
+          1.3978704491718518e-09
+        ],
+        "offgrid_exterior_trace_change_rms": [
+          4.3277559286301533e-07,
+          2.7951920056239776e-10
+        ],
+        "original_offgrid_trace_max": [
+          0.0015178461880843387,
+          1.0298944227709304e-06
+        ]
+      },
+      {
+        "time_seconds": 62.5,
+        "velocity_multiplier": -2.45548340466059e-16,
+        "acceleration_multiplier": -0.6283185307179586,
+        "current_force": [
+          [
+            -0.9018700265747513,
+            0.07892288135555725
+          ],
+          [
+            -0.034940657855268675,
+            -3.0297697460742303
+          ],
+          [
+            123.05285279280884,
+            -0.08429566024618595
+          ],
+          [
+            -0.007932669422108542,
+            4.671206954366051
+          ],
+          [
+            -7.041161706787931,
+            1.5466768170166112
+          ],
+          [
+            -0.17467346099154105,
+            0.16627494429241507
+          ]
+        ],
+        "alternative_force": [
+          [
+            -0.8334675041129957,
+            0.08120128797384207
+          ],
+          [
+            -0.03078944552635294,
+            -3.0484016812734316
+          ],
+          [
+            122.76659491972464,
+            -0.09604202274372842
+          ],
+          [
+            -0.025171697879741203,
+            4.702142684398329
+          ],
+          [
+            -7.148769090471897,
+            1.5295630075713968
+          ],
+          [
+            -0.16543910434401393,
+            0.16461658668125495
+          ]
+        ],
+        "force_change": [
+          [
+            0.06840252246175565,
+            0.0022784066182848293
+          ],
+          [
+            0.004151212328915738,
+            -0.018631935199201272
+          ],
+          [
+            -0.28625787308418893,
+            -0.01174636249754246
+          ],
+          [
+            -0.01723902845763266,
+            0.030935730032278744
+          ],
+          [
+            -0.10760738368396641,
+            -0.017113809445214283
+          ],
+          [
+            0.009234356647527121,
+            -0.0016583576111601178
+          ]
+        ],
+        "capytaine_reactive_force_amplitude": [
+          [
+            -1.0989725357934796,
+            0.028153394134083447
+          ],
+          [
+            -0.036875942556354735,
+            -3.6848347252405427
+          ],
+          [
+            127.60218443944285,
+            -0.09127098783208194
+          ],
+          [
+            -0.06678588828479168,
+            5.744710047715912
+          ],
+          [
+            -8.68582226867069,
+            0.9014751737260953
+          ],
+          [
+            -0.3088757766773014,
+            0.15287916452476588
+          ]
+        ],
+        "hidden_rate_change_max": [
+          0.0014488689404005741,
+          0.00012268423641618493
+        ],
+        "exterior_nodal_change_max": [
+          0.0,
+          0.0
+        ],
+        "offgrid_exterior_trace_change_max": [
+          0.00020433907848322282,
+          3.093085570242829e-05
+        ],
+        "offgrid_exterior_trace_change_rms": [
+          4.940595637745525e-05,
+          9.313639246257845e-06
+        ],
+        "original_offgrid_trace_max": [
+          0.006909983998087283,
+          0.0005126919613530181
+        ]
+      }
+    ],
+    "scope": "Same-state extension sensitivity including off-grid Fourier leakage; no alternative runtime fill or trajectory qualification",
+    "limits": [
+      "Exterior nodal equality is not continuum trace equality; finite Fourier changes leak between nodes",
+      "Two phases screen instantaneous force sensitivity, not history feedback or total trajectory error"
+    ],
+    "numerical_producers": "Archived parent driver; all imported producers must match parent hashes exactly"
+  }
 }

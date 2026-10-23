@@ -28,6 +28,12 @@ Capytaine supplies independent hydrostatic and instantaneous added-mass benchmar
 
 The initial scope is a single rigid body in deep water, with reproducible directional wave realizations and no anchor or mooring forces. Viscous damping remains an explicit model requiring sensitivity analysis or calibration. Breaking/overturning waves, resolved slamming jets, flooding, propulsion and multiple bodies are outside the initial scope. Free yaw does not guarantee a settled heading.
 
+Optimize for midsize boats adrift in the intended ocean-wave range. Convexity is
+a supported-hull requirement; the reference boat's mesh is not. Changing to
+another supported boat must require only new geometry, mass properties and sea
+inputs, with no solver edits. Example dimensions, loading and mesh layout belong
+in fixtures. Keep one simple execution path as improvements are promoted.
+
 ## Reference boat
 
 ![Simple 24 ft boat mesh at solved calm-water equilibrium](docs/images/reference-boat.png)
