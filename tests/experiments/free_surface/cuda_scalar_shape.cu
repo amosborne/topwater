@@ -6,11 +6,21 @@ extern "C" __global__ void contracted_vertex_gradient(
     const double *center0,const double *centerJ,const double *sign0,const double *signJ,
     const double *gradient0,const double *gradientJ,const double *points0,const double *pointsJ,
     const double *weights,const long long *faces,const double *curlphi0,const double *curlphiJ,
-    const double *phi,const double *aux,int nf,int nv,int nq,double density,double *out) {
+    const double *phi,const double *aux,int nf,int nv,int nq,double density,double *out
+#ifdef PAIR_DIAGNOSTIC
+    ,const long long *selected,int selected_count
+#endif
+    ) {
     int work=blockDim.x*blockIdx.x+threadIdx.x;
     const int batches=18/SHAPE_WIDTH;
+#ifdef PAIR_DIAGNOSTIC
+    if(work>=selected_count*batches)return;
+    int slot=work/batches,pair=selected[slot];
+#else
     if(work>=nf*nf*batches)return;
-    int pair=work/batches,seed=(work%batches)*SHAPE_WIDTH,i=pair/nf,j=pair%nf;
+    int pair=work/batches;
+#endif
+    int seed=(work%batches)*SHAPE_WIDTH,i=pair/nf,j=pair%nf;
     DualView tri={tri0,triJ,9,seed,1},normal={normal0,normalJ,3,seed,1};
     DualView outward={outward0,outwardJ,9,seed,1},tangent={tangent0,tangentJ,9,seed,1};
     DualView length={length0,lengthJ,3,seed,1},source_area={area0,areaJ,1,seed,1};
@@ -30,6 +40,13 @@ extern "C" __global__ void contracted_vertex_gradient(
         i,j,nq,A,g,aux[i],sum_phi);
     for(int k=0;k<SHAPE_WIDTH;++k){
         int lane=seed+k,local=lane%9,face=lane<9?i:j;
+#ifdef PAIR_DIAGNOSTIC
+        out[slot*19+lane]=get_lane(scalar,k);
+#else
         atomicAdd(out+faces[face*3+local/3]*3+local%3,get_lane(scalar,k));
+#endif
     }
+#ifdef PAIR_DIAGNOSTIC
+    if(seed==0)out[slot*19+18]=scalar.v;
+#endif
 }

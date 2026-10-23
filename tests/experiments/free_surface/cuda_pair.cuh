@@ -1,10 +1,16 @@
 // Single numerical SAMPLE formula for primal energy and shape derivatives.
 // Adapters below only weight/contract these same integral moments.
-template<class Scalar,class View>
-__device__ void energy_sample(
+struct NullSampleObserver {
+    template<class S> __device__ void point(const S*,const S[3][3],const S*){}
+    template<class S> __device__ void solid(S,S,S){}
+    template<class S> __device__ void edge(int,S,S,S,S){}
+};
+
+template<class Scalar,class View,class Observer>
+__device__ void energy_sample_observed(
     View tri,View normal,View outward,View tangent,View length,
     View source_area,View center,View sign,View points,int i,int j,int nq,int q,
-    Scalar& single,Scalar& dbl,Scalar moment[3]) {
+    Scalar& single,Scalar& dbl,Scalar moment[3],Observer& observer) {
     const Scalar factor=4.*3.1415926535897932384626433832795;
         Scalar r[3][3], distance[3], edge_gradient[3]={0.,0.,0.};
         Scalar x[3]; for (int k=0;k<3;++k) x[k]=points[(i*nq+q)*3+k];
@@ -18,6 +24,7 @@ __device__ void energy_sample(
             }
             distance[e]=sqrt(squared);
         }
+        observer.point(x,r,distance);
         Scalar height=0.;
         #pragma unroll
         for (int k=0;k<3;++k) height+=r[0][k]*normal[j*3+k];
@@ -33,7 +40,9 @@ __device__ void energy_sample(
                 denominator+=dot*distance[(e+2)%3];
             }
             angle=2.*atan2(2.*source_area[j]*height,denominator);
+            observer.solid(height,angle,denominator);
         }
+        else observer.solid(height,angle,Scalar(0.));
         Scalar terms=0.;
         #pragma unroll
         for (int e=0;e<3;++e) {
@@ -48,6 +57,7 @@ __device__ void energy_sample(
                 +perp/(distance[(e+1)%3]+fabs(end))
                 +2.*(fmax(-a,0.)+fmax(a-l,0.));
             Scalar logarithm=log1p(2.*l/denominator);
+            observer.edge(e,d,a,denominator,logarithm);
             terms+=d*logarithm;
             #pragma unroll
             for (int k=0;k<3;++k) edge_gradient[k]+=outward[j*9+e*3+k]*logarithm;
@@ -61,6 +71,16 @@ __device__ void energy_sample(
                 moment[k]=(x[k]-center[j*3+k]-height*normal[j*3+k])*dbl
                     -height*edge_gradient[k]*sign[j]/factor;
         }
+}
+
+template<class Scalar,class View>
+__device__ void energy_sample(
+    View tri,View normal,View outward,View tangent,View length,
+    View source_area,View center,View sign,View points,int i,int j,int nq,int q,
+    Scalar& single,Scalar& dbl,Scalar moment[3]) {
+    NullSampleObserver observer;
+    energy_sample_observed<Scalar,View,NullSampleObserver>(tri,normal,outward,
+        tangent,length,source_area,center,sign,points,i,j,nq,q,single,dbl,moment,observer);
 }
 
 // Existing raw V/H interface: unchanged quadrature, self branch and jump.
