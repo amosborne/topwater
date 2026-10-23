@@ -72,7 +72,8 @@
   "verification": {
     "cpu_tests": 70,
     "cuda_tests": 12,
-    "adversarial_source_review": "Approved; shared numerical owners, physical frame conventions, derived convex groups and explicit closure guards reviewed."
+    "adversarial_source_review": "Approved; shared numerical owners, physical frame conventions, derived convex groups and explicit closure guards reviewed.",
+    "physical_input_fixture_tests": 92
   },
   "architecture": {
     "input_contract": "SimulationInputs; no reference boat import/default in moving driver or generic constructor.",
@@ -86,5 +87,6 @@
     "Historical 69-89s controls ran under varying conditions; no cleanup-only speed factor is claimed.",
     "The second boat run is a data-flow smoke, not a physical or performance qualification.",
     "Exact input convexity and conservative dry-closure certificate are current geometry requirements."
-  ]
+  ],
+  "implementation_commit": "a37c566"
 }
