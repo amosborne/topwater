@@ -36,59 +36,6 @@
         "type": "ValueError",
         "message": "mesh contains degenerate triangles"
       },
-      "fourier_quadrature": [
-        {
-          "midpoint_shape_yx": [
-            128,
-            256
-          ],
-          "cell_area_m2": 0.0016840893114688999,
-          "hidden_projected_area_m2": 15.203958303941228,
-          "six_mode_flux": [
-            0.021123679368499335,
-            0.38130540482076125,
-            15.203958303941228,
-            -0.21161752556044747,
-            -3.9093654463218557,
-            0.4585718972512332
-          ],
-          "ambiguous_classification_area_m2": 0.0
-        },
-        {
-          "midpoint_shape_yx": [
-            256,
-            512
-          ],
-          "cell_area_m2": 0.00042102232786722497,
-          "hidden_projected_area_m2": 15.160171981843037,
-          "six_mode_flux": [
-            0.022172376971025868,
-            0.3808591161738459,
-            15.160171981843037,
-            -0.2695793464086358,
-            -4.039426888590738,
-            0.45996180547988597
-          ],
-          "ambiguous_classification_area_m2": 0.0
-        },
-        {
-          "midpoint_shape_yx": [
-            512,
-            1024
-          ],
-          "cell_area_m2": 0.00010525558196680624,
-          "hidden_projected_area_m2": 15.190169822703577,
-          "six_mode_flux": [
-            0.022021925538285716,
-            0.38130436241580246,
-            15.190169822703577,
-            -0.26705526303800203,
-            -4.020521538280687,
-            0.45968854810940096
-          ],
-          "ambiguous_classification_area_m2": 0.0
-        }
-      ],
       "owned_data_hashes_verified": true
     },
     {
@@ -103,59 +50,6 @@
         "type": "ValueError",
         "message": "mesh contains degenerate triangles"
       },
-      "fourier_quadrature": [
-        {
-          "midpoint_shape_yx": [
-            128,
-            256
-          ],
-          "cell_area_m2": 0.0016840893114688999,
-          "hidden_projected_area_m2": 15.203958303941228,
-          "six_mode_flux": [
-            0.021123679368499335,
-            0.38130540482076125,
-            15.203958303941228,
-            -0.21161752556044747,
-            -3.9093654463218557,
-            0.4585718972512332
-          ],
-          "ambiguous_classification_area_m2": 0.0
-        },
-        {
-          "midpoint_shape_yx": [
-            256,
-            512
-          ],
-          "cell_area_m2": 0.00042102232786722497,
-          "hidden_projected_area_m2": 15.160171981843037,
-          "six_mode_flux": [
-            0.022172376971025868,
-            0.3808591161738459,
-            15.160171981843037,
-            -0.2695793464086358,
-            -4.039426888590738,
-            0.45996180547988597
-          ],
-          "ambiguous_classification_area_m2": 0.0
-        },
-        {
-          "midpoint_shape_yx": [
-            512,
-            1024
-          ],
-          "cell_area_m2": 0.00010525558196680624,
-          "hidden_projected_area_m2": 15.190169822703577,
-          "six_mode_flux": [
-            0.022021925538285716,
-            0.38130436241580246,
-            15.190169822703577,
-            -0.26705526303800203,
-            -4.020521538280687,
-            0.45968854810940096
-          ],
-          "ambiguous_classification_area_m2": 0.0
-        }
-      ],
       "owned_data_hashes_verified": true
     },
     {
@@ -166,183 +60,6 @@
       "complete": true,
       "total_seconds": 3.8115375000052154,
       "peak_process_rss_bytes": 260575232,
-      "fourier_quadrature": [
-        {
-          "midpoint_shape_yx": [
-            128,
-            256
-          ],
-          "cell_area_m2": 0.0019628973751999105,
-          "hidden_projected_area_m2": 15.253675502678504,
-          "six_mode_flux": [
-            0.019508926943148045,
-            0.3815862855712806,
-            15.253675502678504,
-            -0.20820437014653284,
-            -3.7965424285848988,
-            0.4589215548133888
-          ],
-          "ambiguous_classification_area_m2": 0.0
-        },
-        {
-          "midpoint_shape_yx": [
-            256,
-            512
-          ],
-          "cell_area_m2": 0.0004907243437999776,
-          "hidden_projected_area_m2": 15.14767904441771,
-          "six_mode_flux": [
-            0.02266873998005664,
-            0.38086638988458926,
-            15.14767904441771,
-            -0.26829237764617153,
-            -4.075064664323477,
-            0.46007015823956077
-          ],
-          "ambiguous_classification_area_m2": 0.0
-        },
-        {
-          "midpoint_shape_yx": [
-            512,
-            1024
-          ],
-          "cell_area_m2": 0.0001226810859499944,
-          "hidden_projected_area_m2": 15.205707198072057,
-          "six_mode_flux": [
-            0.021398903218697602,
-            0.3813077860396244,
-            15.205707198072057,
-            -0.26727737311732097,
-            -3.975827929462948,
-            0.45960892015926125
-          ],
-          "ambiguous_classification_area_m2": 0.0
-        }
-      ],
-      "geometry_rows": [
-        {
-          "roof_refinement": 1,
-          "parents": 16,
-          "body_panels": 46,
-          "geometry_seconds": 0.6475672999804374,
-          "geometry_planes": 43,
-          "body_triangles_sha256": "b13a3281373555d128135f85417da32e1c2d97aaf8556fd2add04c02f4b9f8b8",
-          "physical_group_count": 9,
-          "fluid_outward_body_six_mode_flux": [
-            0.018579689791826837,
-            0.3364518752544109,
-            15.093807881252236,
-            -0.22850435568296876,
-            -4.018132938742529,
-            0.2774419557889383
-          ],
-          "p1_hidden_six_mode_flux": [
-            0.018579689791826892,
-            0.3364518752544119,
-            15.093807881252246,
-            -0.22850435568298139,
-            -4.018132938742578,
-            0.2774419557889387
-          ],
-          "p1_self_closure_absolute_error": [
-            -5.551115123125783e-17,
-            -9.992007221626409e-16,
-            -1.0658141036401503e-14,
-            1.2628786905111156e-14,
-            4.973799150320701e-14,
-            -3.885780586188048e-16
-          ],
-          "contact_fourier_minus_p1_height_range_m": [
-            -0.00885039846048008,
-            0.04372167854585557
-          ],
-          "maximum_wet_vertex_above_fourier_graph_m": 0.00885039846048008,
-          "minimum_body_centroid_depth_below_fourier_graph_m": 0.01975582126240591
-        },
-        {
-          "roof_refinement": 2,
-          "parents": 64,
-          "body_panels": 54,
-          "geometry_seconds": 1.2069046999968123,
-          "geometry_planes": 121,
-          "body_triangles_sha256": "2a6993a990c1fa9773bb82ceb721656287734a888266302d898b445c81294dfc",
-          "physical_group_count": 9,
-          "fluid_outward_body_six_mode_flux": [
-            0.02130933740485319,
-            0.3759122867570126,
-            15.173278203608207,
-            -0.2619915182910886,
-            -3.9989372117387383,
-            0.4337653705098212
-          ],
-          "p1_hidden_six_mode_flux": [
-            0.021309337404853163,
-            0.3759122867570135,
-            15.173278203608298,
-            -0.26199151829109957,
-            -3.9989372117387667,
-            0.43376537050982167
-          ],
-          "p1_self_closure_absolute_error": [
-            2.7755575615628914e-17,
-            -8.881784197001252e-16,
-            -9.059419880941277e-14,
-            1.099120794378905e-14,
-            2.842170943040401e-14,
-            -4.440892098500626e-16
-          ],
-          "contact_fourier_minus_p1_height_range_m": [
-            -0.0009860034219886793,
-            0.00619013519582251
-          ],
-          "maximum_wet_vertex_above_fourier_graph_m": 0.0009860034219886793,
-          "minimum_body_centroid_depth_below_fourier_graph_m": 0.023813438400415554
-        }
-      ],
-      "finest_quadrature_per_roof": [
-        {
-          "midpoint_shape_yx": [
-            512,
-            1024
-          ],
-          "body_minus_fourier_six_mode_flux": [
-            -0.0028192134268707654,
-            -0.044855910785213504,
-            -0.11189931681982124,
-            0.038773017434352214,
-            -0.042305009279580474,
-            -0.18216696437032293
-          ],
-          "p1_hidden_projected_area_m2": 15.100201464155061,
-          "mask_symmetric_difference_area_m2": 0.12464398332519432,
-          "ambiguous_p1_classification_area_m2": 0.0,
-          "hidden_union_height_rms_m": 0.018283304413389934,
-          "hidden_union_height_max_m": 0.043814254355405424,
-          "hidden_union_slope_rms": 0.021601905068221298,
-          "hidden_union_slope_max": 0.05474353613937747
-        },
-        {
-          "midpoint_shape_yx": [
-            512,
-            1024
-          ],
-          "body_minus_fourier_six_mode_flux": [
-            -8.956581384441178e-05,
-            -0.005395499282611793,
-            -0.03242899446384939,
-            0.0052858548262323946,
-            -0.02310928227579012,
-            -0.025843549649440023
-          ],
-          "p1_hidden_projected_area_m2": 15.186568948663858,
-          "mask_symmetric_difference_area_m2": 0.021101146783399038,
-          "ambiguous_p1_classification_area_m2": 0.0,
-          "hidden_union_height_rms_m": 0.005704009907097274,
-          "hidden_union_height_max_m": 0.012579515158176402,
-          "hidden_union_slope_rms": 0.011970191093263088,
-          "hidden_union_slope_max": 0.02880795694385995
-        }
-      ],
       "owned_data_hashes_verified": true
     },
     {
@@ -353,183 +70,6 @@
       "complete": true,
       "total_seconds": 16.69420650001848,
       "peak_process_rss_bytes": 1619263488,
-      "fourier_quadrature": [
-        {
-          "midpoint_shape_yx": [
-            512,
-            1024
-          ],
-          "cell_area_m2": 0.0001226810859499944,
-          "hidden_projected_area_m2": 15.205707198072057,
-          "six_mode_flux": [
-            0.021398903218697602,
-            0.3813077860396244,
-            15.205707198072057,
-            -0.26727737311732097,
-            -3.975827929462948,
-            0.45960892015926125
-          ],
-          "ambiguous_classification_area_m2": 0.0
-        },
-        {
-          "midpoint_shape_yx": [
-            1024,
-            2048
-          ],
-          "cell_area_m2": 3.06702714874986e-05,
-          "hidden_projected_area_m2": 15.190004019070457,
-          "six_mode_flux": [
-            0.021955573956021823,
-            0.38127721786308677,
-            15.190004019070457,
-            -0.2669194777563115,
-            -4.01620330933168,
-            0.4597430375891441
-          ],
-          "ambiguous_classification_area_m2": 0.0
-        },
-        {
-          "midpoint_shape_yx": [
-            2048,
-            4096
-          ],
-          "cell_area_m2": 7.66756787187465e-06,
-          "hidden_projected_area_m2": 15.196069065257111,
-          "six_mode_flux": [
-            0.021676650766176486,
-            0.3812626303184728,
-            15.196069065257111,
-            -0.26694997321670516,
-            -3.996267900423911,
-            0.459718102847003
-          ],
-          "ambiguous_classification_area_m2": 0.0
-        }
-      ],
-      "geometry_rows": [
-        {
-          "roof_refinement": 1,
-          "parents": 16,
-          "body_panels": 46,
-          "geometry_seconds": 0.637268699996639,
-          "geometry_planes": 43,
-          "body_triangles_sha256": "b13a3281373555d128135f85417da32e1c2d97aaf8556fd2add04c02f4b9f8b8",
-          "physical_group_count": 9,
-          "fluid_outward_body_six_mode_flux": [
-            0.018579689791826837,
-            0.3364518752544109,
-            15.093807881252236,
-            -0.22850435568296876,
-            -4.018132938742529,
-            0.2774419557889383
-          ],
-          "p1_hidden_six_mode_flux": [
-            0.018579689791826892,
-            0.3364518752544119,
-            15.093807881252246,
-            -0.22850435568298139,
-            -4.018132938742578,
-            0.2774419557889387
-          ],
-          "p1_self_closure_absolute_error": [
-            -5.551115123125783e-17,
-            -9.992007221626409e-16,
-            -1.0658141036401503e-14,
-            1.2628786905111156e-14,
-            4.973799150320701e-14,
-            -3.885780586188048e-16
-          ],
-          "contact_fourier_minus_p1_height_range_m": [
-            -0.00885039846048008,
-            0.04372167854585557
-          ],
-          "maximum_wet_vertex_above_fourier_graph_m": 0.00885039846048008,
-          "minimum_body_centroid_depth_below_fourier_graph_m": 0.01975582126240591
-        },
-        {
-          "roof_refinement": 2,
-          "parents": 64,
-          "body_panels": 54,
-          "geometry_seconds": 1.2476373999961652,
-          "geometry_planes": 121,
-          "body_triangles_sha256": "2a6993a990c1fa9773bb82ceb721656287734a888266302d898b445c81294dfc",
-          "physical_group_count": 9,
-          "fluid_outward_body_six_mode_flux": [
-            0.02130933740485319,
-            0.3759122867570126,
-            15.173278203608207,
-            -0.2619915182910886,
-            -3.9989372117387383,
-            0.4337653705098212
-          ],
-          "p1_hidden_six_mode_flux": [
-            0.021309337404853163,
-            0.3759122867570135,
-            15.173278203608298,
-            -0.26199151829109957,
-            -3.9989372117387667,
-            0.43376537050982167
-          ],
-          "p1_self_closure_absolute_error": [
-            2.7755575615628914e-17,
-            -8.881784197001252e-16,
-            -9.059419880941277e-14,
-            1.099120794378905e-14,
-            2.842170943040401e-14,
-            -4.440892098500626e-16
-          ],
-          "contact_fourier_minus_p1_height_range_m": [
-            -0.0009860034219886793,
-            0.00619013519582251
-          ],
-          "maximum_wet_vertex_above_fourier_graph_m": 0.0009860034219886793,
-          "minimum_body_centroid_depth_below_fourier_graph_m": 0.023813438400415554
-        }
-      ],
-      "finest_quadrature_per_roof": [
-        {
-          "midpoint_shape_yx": [
-            2048,
-            4096
-          ],
-          "body_minus_fourier_six_mode_flux": [
-            -0.003096960974349649,
-            -0.0448107550640619,
-            -0.10226118400487572,
-            0.038445617533736404,
-            -0.021865038318617636,
-            -0.18227614705806466
-          ],
-          "p1_hidden_projected_area_m2": 15.096505696440818,
-          "mask_symmetric_difference_area_m2": 0.11894698039639146,
-          "ambiguous_p1_classification_area_m2": 0.0,
-          "hidden_union_height_rms_m": 0.018282752117332494,
-          "hidden_union_height_max_m": 0.04383699823568338,
-          "hidden_union_slope_rms": 0.021588826197695723,
-          "hidden_union_slope_max": 0.05481398456631455
-        },
-        {
-          "midpoint_shape_yx": [
-            2048,
-            4096
-          ],
-          "body_minus_fourier_six_mode_flux": [
-            -0.00036731336132329526,
-            -0.005350343561460191,
-            -0.02279086164890387,
-            0.004958454925616584,
-            -0.002669311314827283,
-            -0.02595273233718176
-          ],
-          "p1_hidden_projected_area_m2": 15.175596659039206,
-          "mask_symmetric_difference_area_m2": 0.022297287371411484,
-          "ambiguous_p1_classification_area_m2": 0.0,
-          "hidden_union_height_rms_m": 0.005705070457923708,
-          "hidden_union_height_max_m": 0.012579587513288693,
-          "hidden_union_slope_rms": 0.011967729984696172,
-          "hidden_union_slope_max": 0.029018387124616938
-        }
-      ],
       "owned_data_hashes_verified": true
     },
     {
@@ -540,301 +80,6 @@
       "complete": true,
       "total_seconds": 4.955542399984552,
       "peak_process_rss_bytes": 658477056,
-      "bvp_controls": {
-        "body_refinement": 1,
-        "surface_refinement": 1,
-        "hos_order": 4,
-        "image_height_m": 0.424473578448259,
-        "reference_height_m": 0.34594381946627656
-      },
-      "cases": [
-        {
-          "roof_refinement": 1,
-          "body_panels": 184,
-          "minimum_centroid_depth_below_fourier_graph_m": 0.006203788235703028,
-          "rows": [
-            {
-              "field": "vertical internal dipole",
-              "auxiliary_trace": "physical exterior total fill",
-              "gmres_iterations": 7,
-              "body_potential_relative_l2": 0.4473743640084834,
-              "exact_integrated_pressure_functional": [
-                -0.1358990795190047,
-                0.716759757483743,
-                44.19748110727505,
-                -0.40869263112312915,
-                -4.942179756901112,
-                0.049892679726189826
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.2418606177784507,
-                2.4303398121634583,
-                68.10192192985174,
-                -1.8384547958333415,
-                16.87576737974458,
-                -0.1185120696645742
-              ]
-            },
-            {
-              "field": "vertical internal dipole",
-              "auxiliary_trace": "known analytic auxiliary trace",
-              "gmres_iterations": 7,
-              "body_potential_relative_l2": 0.5013019950461302,
-              "exact_integrated_pressure_functional": [
-                -0.1358990795190047,
-                0.716759757483743,
-                44.19748110727505,
-                -0.40869263112312915,
-                -4.942179756901112,
-                0.049892679726189826
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.5538691069594383,
-                2.0536447921803833,
-                74.59309240991053,
-                -1.5695933668879023,
-                19.497985822784507,
-                -0.22984450324090616
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "auxiliary_trace": "physical exterior total fill",
-              "gmres_iterations": 7,
-              "body_potential_relative_l2": 0.227858985910174,
-              "exact_integrated_pressure_functional": [
-                -0.01642991723858589,
-                28.67204185035387,
-                0.41176358284508296,
-                -28.54457912152644,
-                -0.13005979817066304,
-                3.1485460958083156
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.010900302553006364,
-                13.185882073244045,
-                -0.35358803351022267,
-                -11.258991087271475,
-                0.41776556691503275,
-                -4.319073701906182
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "auxiliary_trace": "known analytic auxiliary trace",
-              "gmres_iterations": 7,
-              "body_potential_relative_l2": 0.21491778047965746,
-              "exact_integrated_pressure_functional": [
-                -0.01642991723858589,
-                28.67204185035387,
-                0.41176358284508296,
-                -28.54457912152644,
-                -0.13005979817066304,
-                3.1485460958083156
-              ],
-              "total_integrated_pressure_functional_error": [
-                0.016244395738458373,
-                14.650345452646292,
-                1.8087375034918414,
-                -12.052661158527336,
-                0.23810080256236088,
-                -3.3541437759063935
-              ]
-            },
-            {
-              "field": "unit heave",
-              "gmres_iterations": 8,
-              "instantaneous_added_mass_column": [
-                -381.6420082815504,
-                171.27876348580216,
-                11871.188438545194,
-                -145.04924883470295,
-                -2154.467802276774,
-                165.08388931996387
-              ]
-            },
-            {
-              "field": "unit world-x rotation",
-              "gmres_iterations": 8,
-              "instantaneous_added_mass_column": [
-                14.961116113524248,
-                -1501.780928736839,
-                -146.2221743255659,
-                1849.4551745873068,
-                144.8384491681043,
-                -92.90955716129474
-              ]
-            }
-          ],
-          "extension_sensitivity": [
-            {
-              "field": "vertical internal dipole",
-              "pressure_centroid_functional_change": [
-                0.3120084891809875,
-                0.37669501998307336,
-                -6.491170480058823,
-                -0.2688614289454404,
-                -2.622218443039932,
-                0.11133243357633142
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "pressure_centroid_functional_change": [
-                -0.027144698291464743,
-                -1.4644633794022412,
-                -2.1623255370020726,
-                0.7936700712558381,
-                0.17966476435267206,
-                -0.9649299259997884
-              ]
-            }
-          ]
-        },
-        {
-          "roof_refinement": 2,
-          "body_panels": 216,
-          "minimum_centroid_depth_below_fourier_graph_m": 0.011650849783667122,
-          "rows": [
-            {
-              "field": "vertical internal dipole",
-              "auxiliary_trace": "physical exterior total fill",
-              "gmres_iterations": 7,
-              "body_potential_relative_l2": 0.4473409592520758,
-              "exact_integrated_pressure_functional": [
-                -0.13576867599284537,
-                0.6857198333471715,
-                44.157195609210135,
-                -0.38387168809641636,
-                -4.937539635692019,
-                0.00837752942980785
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.2421994883414646,
-                2.4577654355799745,
-                68.11522716093113,
-                -1.8608227861638809,
-                16.864873247058384,
-                -0.08903788115767125
-              ]
-            },
-            {
-              "field": "vertical internal dipole",
-              "auxiliary_trace": "known analytic auxiliary trace",
-              "gmres_iterations": 8,
-              "body_potential_relative_l2": 0.501349638853682,
-              "exact_integrated_pressure_functional": [
-                -0.13576867599284537,
-                0.6857198333471715,
-                44.157195609210135,
-                -0.38387168809641636,
-                -4.937539635692019,
-                0.00837752942980785
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.5563648355878786,
-                2.0702368987542483,
-                74.61106381794926,
-                -1.5845717420549243,
-                19.48290767145034,
-                -0.1969260702470783
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "auxiliary_trace": "physical exterior total fill",
-              "gmres_iterations": 8,
-              "body_potential_relative_l2": 0.22810527237100955,
-              "exact_integrated_pressure_functional": [
-                -0.020513955021749575,
-                29.127146153285615,
-                0.4601251709116241,
-                -28.868946710973876,
-                -0.22768198525523076,
-                3.1829325772596313
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.010362164352233465,
-                13.025311090866339,
-                -0.4422636918414549,
-                -11.134939865460193,
-                0.4488730512413982,
-                -4.389545461716269
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "auxiliary_trace": "known analytic auxiliary trace",
-              "gmres_iterations": 7,
-              "body_potential_relative_l2": 0.21432409747704098,
-              "exact_integrated_pressure_functional": [
-                -0.020513955021749575,
-                29.127146153285615,
-                0.4601251709116241,
-                -28.868946710973876,
-                -0.22768198525523076,
-                3.1829325772596313
-              ],
-              "total_integrated_pressure_functional_error": [
-                0.01760697040090206,
-                14.629808016201409,
-                1.729877182005493,
-                -12.031203506068234,
-                0.28139188197091375,
-                -3.383974956813015
-              ]
-            },
-            {
-              "field": "unit heave",
-              "gmres_iterations": 8,
-              "instantaneous_added_mass_column": [
-                -381.3009617103604,
-                170.41530995626917,
-                11863.74215259677,
-                -145.04785742317662,
-                -2151.3418921276793,
-                175.85850191582867
-              ]
-            },
-            {
-              "field": "unit world-x rotation",
-              "gmres_iterations": 8,
-              "instantaneous_added_mass_column": [
-                15.843919212738125,
-                -1502.8321114762828,
-                -143.92531414416078,
-                1848.793545302316,
-                149.93789977065208,
-                -95.09317643852656
-              ]
-            }
-          ],
-          "extension_sensitivity": [
-            {
-              "field": "vertical internal dipole",
-              "pressure_centroid_functional_change": [
-                0.31416534724641426,
-                0.387528536825729,
-                -6.495836657018107,
-                -0.27625104410895485,
-                -2.6180344243919627,
-                0.10788818908940769
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "pressure_centroid_functional_change": [
-                -0.02796913475313554,
-                -1.6044969253350754,
-                -2.172140873846943,
-                0.8962636406080364,
-                0.1674811692704843,
-                -1.0055705049032542
-              ]
-            }
-          ]
-        }
-      ],
       "owned_data_hashes_verified": true
     },
     {
@@ -849,15 +94,6 @@
         "type": "ValueError",
         "message": "a body collocation point lies above the Fourier graph"
       },
-      "partial_cases": [
-        {
-          "roof_refinement": 1,
-          "body_panels": 736,
-          "rows": [],
-          "panel_sha256": "6919c7c78ac30e33dbe372bd1d1ec1aebda56df4cabe5352cf7ef67767c0f0a0",
-          "minimum_centroid_depth_below_fourier_graph_m": -0.0005607894052496176
-        }
-      ],
       "owned_data_hashes_verified": true
     },
     {
@@ -868,158 +104,6 @@
       "complete": true,
       "total_seconds": 8.999712899996666,
       "peak_process_rss_bytes": 792072192,
-      "bvp_controls": {
-        "body_refinement": 2,
-        "surface_refinement": 1,
-        "hos_order": 4,
-        "image_height_m": 0.424473578448259,
-        "reference_height_m": 0.34594381946627656
-      },
-      "cases": [
-        {
-          "roof_refinement": 2,
-          "body_panels": 864,
-          "minimum_centroid_depth_below_fourier_graph_m": 0.005579790531538814,
-          "rows": [
-            {
-              "field": "vertical internal dipole",
-              "auxiliary_trace": "physical exterior total fill",
-              "gmres_iterations": 8,
-              "body_potential_relative_l2": 0.178366152804804,
-              "exact_integrated_pressure_functional": [
-                -0.13576867599282239,
-                0.6857198333471217,
-                44.15719560921059,
-                -0.3838716880962423,
-                -4.937539635691763,
-                0.008377529430589448
-              ],
-              "total_integrated_pressure_functional_error": [
-                0.10256094141552179,
-                0.09986260852124917,
-                -6.200546918133647,
-                -0.09777314829299605,
-                9.495394144474009,
-                -0.20933547981926506
-              ]
-            },
-            {
-              "field": "vertical internal dipole",
-              "auxiliary_trace": "known analytic auxiliary trace",
-              "gmres_iterations": 8,
-              "body_potential_relative_l2": 0.19103497528849295,
-              "exact_integrated_pressure_functional": [
-                -0.13576867599282239,
-                0.6857198333471217,
-                44.15719560921059,
-                -0.3838716880962423,
-                -4.937539635691763,
-                0.008377529430589448
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.19999584842942775,
-                -0.41744543458145184,
-                -5.89687055918246,
-                0.3271020225027133,
-                9.395142620459008,
-                -0.31255315029298836
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "auxiliary_trace": "physical exterior total fill",
-              "gmres_iterations": 8,
-              "body_potential_relative_l2": 0.11891215649361056,
-              "exact_integrated_pressure_functional": [
-                -0.020513955021746133,
-                29.127146153285505,
-                0.46012517091014615,
-                -28.868946710975997,
-                -0.22768198525557182,
-                3.1829325772607326
-              ],
-              "total_integrated_pressure_functional_error": [
-                0.010976645298581778,
-                -1.2321769068541215,
-                -2.582148145198307,
-                0.6293575198949917,
-                0.6229485385753655,
-                -1.5828985242619078
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "auxiliary_trace": "known analytic auxiliary trace",
-              "gmres_iterations": 8,
-              "body_potential_relative_l2": 0.0906428765323694,
-              "exact_integrated_pressure_functional": [
-                -0.020513955021746133,
-                29.127146153285505,
-                0.46012517091014615,
-                -28.868946710975997,
-                -0.22768198525557182,
-                3.1829325772607326
-              ],
-              "total_integrated_pressure_functional_error": [
-                0.029074322055130476,
-                1.2410755135242582,
-                -0.28603598664858054,
-                -1.3978394825604,
-                0.3124940284731,
-                -0.9342257601139674
-              ]
-            },
-            {
-              "field": "unit heave",
-              "gmres_iterations": 9,
-              "instantaneous_added_mass_column": [
-                -366.1389073969795,
-                164.3065721413766,
-                11461.781072128379,
-                -141.05888794787037,
-                -2153.453847543964,
-                169.98775932483426
-              ]
-            },
-            {
-              "field": "unit world-x rotation",
-              "gmres_iterations": 9,
-              "instantaneous_added_mass_column": [
-                15.244611477209112,
-                -1468.0357829666793,
-                -138.99550798706895,
-                1822.7387618365294,
-                147.00785751656775,
-                -107.21475223295779
-              ]
-            }
-          ],
-          "extension_sensitivity": [
-            {
-              "field": "vertical internal dipole",
-              "pressure_centroid_functional_change": [
-                0.3025567898449497,
-                0.517308043102701,
-                -0.3036763589511729,
-                -0.4248751707957105,
-                0.10025152401499317,
-                0.10321767047372332
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "pressure_centroid_functional_change": [
-                -0.0180976767565487,
-                -2.4732524203783472,
-                -2.296112158549728,
-                2.0271970024553823,
-                0.31045451010226577,
-                -0.6486727641479414
-              ]
-            }
-          ]
-        }
-      ],
       "owned_data_hashes_verified": true
     },
     {
@@ -1030,301 +114,6 @@
       "complete": true,
       "total_seconds": 11.170032900001388,
       "peak_process_rss_bytes": 877580288,
-      "bvp_controls": {
-        "body_refinement": 1,
-        "surface_refinement": 2,
-        "hos_order": 4,
-        "image_height_m": 0.424473578448259,
-        "reference_height_m": 0.34594381946627656
-      },
-      "cases": [
-        {
-          "roof_refinement": 1,
-          "body_panels": 184,
-          "minimum_centroid_depth_below_fourier_graph_m": 0.006203788235703028,
-          "rows": [
-            {
-              "field": "vertical internal dipole",
-              "auxiliary_trace": "physical exterior total fill",
-              "gmres_iterations": 8,
-              "body_potential_relative_l2": 0.4459180222177538,
-              "exact_integrated_pressure_functional": [
-                -0.1358990795190047,
-                0.716759757483743,
-                44.19748110727505,
-                -0.40869263112312915,
-                -4.942179756901112,
-                0.049892679726189826
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.22915624074615698,
-                2.086159591337401,
-                67.89096538498953,
-                -1.5604381185123213,
-                16.94655390864054,
-                -0.1789425463811569
-              ]
-            },
-            {
-              "field": "vertical internal dipole",
-              "auxiliary_trace": "known analytic auxiliary trace",
-              "gmres_iterations": 8,
-              "body_potential_relative_l2": 0.5381229120164991,
-              "exact_integrated_pressure_functional": [
-                -0.1358990795190047,
-                0.716759757483743,
-                44.19748110727505,
-                -0.40869263112312915,
-                -4.942179756901112,
-                0.049892679726189826
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.27364027153553105,
-                2.2499476623474655,
-                79.16236183032608,
-                -1.743438886369963,
-                19.94917751759363,
-                -0.18947037256579946
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "auxiliary_trace": "physical exterior total fill",
-              "gmres_iterations": 8,
-              "body_potential_relative_l2": 0.23155181400758176,
-              "exact_integrated_pressure_functional": [
-                -0.01642991723858589,
-                28.67204185035387,
-                0.41176358284508296,
-                -28.54457912152644,
-                -0.13005979817066304,
-                3.1485460958083156
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.013308665696966294,
-                14.447217040441906,
-                1.7933653797612452,
-                -12.297916725694883,
-                0.008960351008544587,
-                -4.126297863727166
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "auxiliary_trace": "known analytic auxiliary trace",
-              "gmres_iterations": 8,
-              "body_potential_relative_l2": 0.20384298974608525,
-              "exact_integrated_pressure_functional": [
-                -0.01642991723858589,
-                28.67204185035387,
-                0.41176358284508296,
-                -28.54457912152644,
-                -0.13005979817066304,
-                3.1485460958083156
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.008161982689331403,
-                13.673930469375982,
-                2.093194508770138,
-                -11.151476232258453,
-                0.2493008487997479,
-                -3.6418821055666353
-              ]
-            },
-            {
-              "field": "unit heave",
-              "gmres_iterations": 9,
-              "instantaneous_added_mass_column": [
-                -378.61451767186765,
-                176.4808160922767,
-                11944.80720040633,
-                -148.45969069105854,
-                -2152.537379882978,
-                160.1304502644142
-              ]
-            },
-            {
-              "field": "unit world-x rotation",
-              "gmres_iterations": 9,
-              "instantaneous_added_mass_column": [
-                14.632119652204292,
-                -1547.963412739339,
-                -149.5562573424988,
-                1888.9057962655754,
-                136.77232665438984,
-                -85.5958804770664
-              ]
-            }
-          ],
-          "extension_sensitivity": [
-            {
-              "field": "vertical internal dipole",
-              "pressure_centroid_functional_change": [
-                0.04448403078937432,
-                -0.16378807101005902,
-                -11.271396445336569,
-                0.18300076785764227,
-                -3.0026236089530935,
-                0.010527826184642148
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "pressure_centroid_functional_change": [
-                -0.005146683007634892,
-                0.7732865710659145,
-                -0.29982912900889525,
-                -1.146440493436443,
-                -0.24034049779120417,
-                -0.4844157581605303
-              ]
-            }
-          ]
-        },
-        {
-          "roof_refinement": 2,
-          "body_panels": 216,
-          "minimum_centroid_depth_below_fourier_graph_m": 0.011650849783667122,
-          "rows": [
-            {
-              "field": "vertical internal dipole",
-              "auxiliary_trace": "physical exterior total fill",
-              "gmres_iterations": 8,
-              "body_potential_relative_l2": 0.44597657200004664,
-              "exact_integrated_pressure_functional": [
-                -0.13576867599284537,
-                0.6857198333471715,
-                44.157195609210135,
-                -0.38387168809641636,
-                -4.937539635692019,
-                0.00837752942980785
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.22929857113820895,
-                2.0880975284173555,
-                67.92109231002703,
-                -1.5635153343637969,
-                16.956528730586157,
-                -0.14855742441776273
-              ]
-            },
-            {
-              "field": "vertical internal dipole",
-              "auxiliary_trace": "known analytic auxiliary trace",
-              "gmres_iterations": 8,
-              "body_potential_relative_l2": 0.5383086066157772,
-              "exact_integrated_pressure_functional": [
-                -0.13576867599284537,
-                0.6857198333471715,
-                44.157195609210135,
-                -0.38387168809641636,
-                -4.937539635692019,
-                0.00837752942980785
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.27360933580378305,
-                2.253235506693881,
-                79.21764522466532,
-                -1.7488971223758178,
-                19.96445111831048,
-                -0.14613640912808634
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "auxiliary_trace": "physical exterior total fill",
-              "gmres_iterations": 8,
-              "body_potential_relative_l2": 0.23182317338296884,
-              "exact_integrated_pressure_functional": [
-                -0.020513955021749575,
-                29.127146153285615,
-                0.4601251709116241,
-                -28.868946710973876,
-                -0.22768198525523076,
-                3.1829325772596313
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.013751728613315216,
-                14.519337237516766,
-                1.8335354954188947,
-                -12.357642835306041,
-                -0.018456664737985545,
-                -4.142746329150398
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "auxiliary_trace": "known analytic auxiliary trace",
-              "gmres_iterations": 8,
-              "body_potential_relative_l2": 0.2038146877909024,
-              "exact_integrated_pressure_functional": [
-                -0.020513955021749575,
-                29.127146153285615,
-                0.4601251709116241,
-                -28.868946710973876,
-                -0.22768198525523076,
-                3.1829325772596313
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.008573909491918198,
-                13.715921826568895,
-                2.122282507253122,
-                -11.18376974743703,
-                0.23305708773099243,
-                -3.656802504811779
-              ]
-            },
-            {
-              "field": "unit heave",
-              "gmres_iterations": 9,
-              "instantaneous_added_mass_column": [
-                -378.54515191029463,
-                182.8330762536253,
-                11970.484030656227,
-                -153.9551967087362,
-                -2149.284002027903,
-                183.72048968101657
-              ]
-            },
-            {
-              "field": "unit world-x rotation",
-              "gmres_iterations": 9,
-              "instantaneous_added_mass_column": [
-                15.439634228985852,
-                -1576.275371002992,
-                -154.98231897329285,
-                1910.4543949382398,
-                153.57999158542907,
-                -86.16894126777088
-              ]
-            }
-          ],
-          "extension_sensitivity": [
-            {
-              "field": "vertical internal dipole",
-              "pressure_centroid_functional_change": [
-                0.04431076466557396,
-                -0.1651379782765272,
-                -11.29655291463829,
-                0.1853817880120177,
-                -3.0079223877243106,
-                -0.0024210152896752242
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "pressure_centroid_functional_change": [
-                -0.005177819121397014,
-                0.8034154109478517,
-                -0.28874701183421414,
-                -1.1738730878690176,
-                -0.25151375246897817,
-                -0.4859438243386198
-              ]
-            }
-          ]
-        }
-      ],
       "owned_data_hashes_verified": true
     },
     {
@@ -1335,158 +124,6 @@
       "complete": true,
       "total_seconds": 8.151959099981468,
       "peak_process_rss_bytes": 781045760,
-      "bvp_controls": {
-        "body_refinement": 1,
-        "surface_refinement": 2,
-        "hos_order": 6,
-        "image_height_m": 0.424473578448259,
-        "reference_height_m": 0.34594381946627656
-      },
-      "cases": [
-        {
-          "roof_refinement": 2,
-          "body_panels": 216,
-          "minimum_centroid_depth_below_fourier_graph_m": 0.011650849783667122,
-          "rows": [
-            {
-              "field": "vertical internal dipole",
-              "auxiliary_trace": "physical exterior total fill",
-              "gmres_iterations": 8,
-              "body_potential_relative_l2": 0.4459759478406446,
-              "exact_integrated_pressure_functional": [
-                -0.13576867599284537,
-                0.6857198333471715,
-                44.157195609210135,
-                -0.38387168809641636,
-                -4.937539635692019,
-                0.00837752942980785
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.2292153439766592,
-                2.0882130091512696,
-                67.92088587726553,
-                -1.5636199369723087,
-                16.95691389018775,
-                -0.14839825268697082
-              ]
-            },
-            {
-              "field": "vertical internal dipole",
-              "auxiliary_trace": "known analytic auxiliary trace",
-              "gmres_iterations": 8,
-              "body_potential_relative_l2": 0.5383071151788347,
-              "exact_integrated_pressure_functional": [
-                -0.13576867599284537,
-                0.6857198333471715,
-                44.157195609210135,
-                -0.38387168809641636,
-                -4.937539635692019,
-                0.00837752942980785
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.2725886362032844,
-                2.2529197080725623,
-                79.21544744925798,
-                -1.7486771955853158,
-                19.97127499705598,
-                -0.14624121083087394
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "auxiliary_trace": "physical exterior total fill",
-              "gmres_iterations": 8,
-              "body_potential_relative_l2": 0.2318246674668038,
-              "exact_integrated_pressure_functional": [
-                -0.020513955021749575,
-                29.127146153285615,
-                0.4601251709116241,
-                -28.868946710973876,
-                -0.22768198525523076,
-                3.1829325772596313
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.013749991505741084,
-                14.51937370851568,
-                1.8331876358433727,
-                -12.357735953624992,
-                -0.01835138399109809,
-                -4.142801968630714
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "auxiliary_trace": "known analytic auxiliary trace",
-              "gmres_iterations": 8,
-              "body_potential_relative_l2": 0.20382482245336186,
-              "exact_integrated_pressure_functional": [
-                -0.020513955021749575,
-                29.127146153285615,
-                0.4601251709116241,
-                -28.868946710973876,
-                -0.22768198525523076,
-                3.1829325772596313
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.008113034879674463,
-                13.718019130733907,
-                2.11968480266845,
-                -11.185291662628206,
-                0.23614556836223724,
-                -3.655267325922229
-              ]
-            },
-            {
-              "field": "unit heave",
-              "gmres_iterations": 9,
-              "instantaneous_added_mass_column": [
-                -378.39786655800606,
-                182.97304471744317,
-                11970.193787491924,
-                -154.08448992997663,
-                -2148.4708783876545,
-                184.01733785735595
-              ]
-            },
-            {
-              "field": "unit world-x rotation",
-              "gmres_iterations": 9,
-              "instantaneous_added_mass_column": [
-                15.505584502274608,
-                -1576.166691561702,
-                -155.1565776672001,
-                1910.361851115497,
-                153.99337640102857,
-                -85.9654432637627
-              ]
-            }
-          ],
-          "extension_sensitivity": [
-            {
-              "field": "vertical internal dipole",
-              "pressure_centroid_functional_change": [
-                0.043373292226625074,
-                -0.16470669892129414,
-                -11.294561571992418,
-                0.1850572586130053,
-                -3.014361106868221,
-                -0.0021570418560971413
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "pressure_centroid_functional_change": [
-                -0.005636956626066606,
-                0.8013545777817752,
-                -0.2864971668250843,
-                -1.1724442909968007,
-                -0.2544969523533346,
-                -0.48753464270848507
-              ]
-            }
-          ]
-        }
-      ],
       "owned_data_hashes_verified": true
     },
     {
@@ -1501,123 +138,6 @@
         "type": "QhullError",
         "message": "QH6154 Qhull precision error: Initial simplex is flat (facet 2 is coplanar with the interior point)"
       },
-      "fourier_quadrature": [
-        {
-          "midpoint_shape_yx": [
-            128,
-            256
-          ],
-          "cell_area_m2": 0.0013037109375,
-          "hidden_projected_area_m2": 15.519375,
-          "six_mode_flux": [
-            -0.009843361623236783,
-            0.3826935284095742,
-            15.519375,
-            0.07006305515941208,
-            0.0008372233912635698,
-            0.4133034238367841
-          ],
-          "ambiguous_classification_area_m2": 0.0
-        },
-        {
-          "midpoint_shape_yx": [
-            256,
-            512
-          ],
-          "cell_area_m2": 0.000325927734375,
-          "hidden_projected_area_m2": 15.602812499999999,
-          "six_mode_flux": [
-            -0.010583119627789636,
-            0.3845964596624632,
-            15.602812499999999,
-            0.07048595258822736,
-            0.001005118864817543,
-            0.41962365111094996
-          ],
-          "ambiguous_classification_area_m2": 0.0
-        },
-        {
-          "midpoint_shape_yx": [
-            512,
-            1024
-          ],
-          "cell_area_m2": 8.148193359375e-05,
-          "hidden_projected_area_m2": 15.602812499999999,
-          "six_mode_flux": [
-            -0.010582960876986462,
-            0.3845954778739655,
-            15.602812499999999,
-            0.07048591847146513,
-            0.0010050628847372682,
-            0.41962174791969253
-          ],
-          "ambiguous_classification_area_m2": 0.0
-        }
-      ],
-      "geometry_rows": [
-        {
-          "roof_refinement": 1,
-          "parents": 16,
-          "body_panels": 34,
-          "geometry_seconds": 0.2686219000024721,
-          "geometry_planes": 39,
-          "body_triangles_sha256": "3b8e9141a178264d716120c97e5514f6deada1b4b5e519bee04d8559a526b204",
-          "physical_group_count": 5,
-          "fluid_outward_body_six_mode_flux": [
-            -0.01543084508244194,
-            0.3482972680620996,
-            15.6,
-            0.06795955922858327,
-            0.0026803888682640914,
-            0.30587050327189813
-          ],
-          "p1_hidden_six_mode_flux": [
-            -0.015430845082441969,
-            0.34829726806209915,
-            15.599999999999984,
-            0.06795955922857921,
-            0.0026803888682670474,
-            0.3058705032718977
-          ],
-          "p1_self_closure_absolute_error": [
-            2.7755575615628914e-17,
-            4.440892098500626e-16,
-            1.5987211554602254e-14,
-            4.052314039881821e-15,
-            -2.9559688030644793e-15,
-            4.440892098500626e-16
-          ],
-          "contact_fourier_minus_p1_height_range_m": [
-            -0.008891273059013993,
-            0.03014089029771494
-          ],
-          "maximum_wet_vertex_above_fourier_graph_m": 0.008891273059013993,
-          "minimum_body_centroid_depth_below_fourier_graph_m": 0.05754179810656665
-        }
-      ],
-      "finest_quadrature_per_roof": [
-        {
-          "midpoint_shape_yx": [
-            512,
-            1024
-          ],
-          "body_minus_fourier_six_mode_flux": [
-            -0.004847884205455479,
-            -0.03629820981186588,
-            -0.0028124999999992184,
-            -0.0025263592428818593,
-            0.0016753259835268232,
-            -0.1137512446477944
-          ],
-          "p1_hidden_projected_area_m2": 15.602812499999999,
-          "mask_symmetric_difference_area_m2": 0.0,
-          "ambiguous_p1_classification_area_m2": 0.0,
-          "hidden_union_height_rms_m": 0.012462684339443524,
-          "hidden_union_height_max_m": 0.03013978018549185,
-          "hidden_union_slope_rms": 0.017969028582311086,
-          "hidden_union_slope_max": 0.04830126292993435
-        }
-      ],
       "owned_data_hashes_verified": true
     },
     {
@@ -1628,193 +148,6 @@
       "complete": true,
       "total_seconds": 2.701922000007471,
       "peak_process_rss_bytes": 260333568,
-      "fourier_quadrature": [
-        {
-          "midpoint_shape_yx": [
-            128,
-            256
-          ],
-          "cell_area_m2": 0.0013037109375,
-          "hidden_projected_area_m2": 15.519375,
-          "six_mode_flux": [
-            -0.009843361623236783,
-            0.3826935284095742,
-            15.519375,
-            0.07006305515941208,
-            0.0008372233912635698,
-            0.4133034238367841
-          ],
-          "ambiguous_classification_area_m2": 0.0
-        },
-        {
-          "midpoint_shape_yx": [
-            256,
-            512
-          ],
-          "cell_area_m2": 0.000325927734375,
-          "hidden_projected_area_m2": 15.602812499999999,
-          "six_mode_flux": [
-            -0.010583119627789636,
-            0.3845964596624632,
-            15.602812499999999,
-            0.07048595258822736,
-            0.001005118864817543,
-            0.41962365111094996
-          ],
-          "ambiguous_classification_area_m2": 0.0
-        },
-        {
-          "midpoint_shape_yx": [
-            512,
-            1024
-          ],
-          "cell_area_m2": 8.148193359375e-05,
-          "hidden_projected_area_m2": 15.602812499999999,
-          "six_mode_flux": [
-            -0.010582960876986462,
-            0.3845954778739655,
-            15.602812499999999,
-            0.07048591847146513,
-            0.0010050628847372682,
-            0.41962174791969253
-          ],
-          "ambiguous_classification_area_m2": 0.0
-        }
-      ],
-      "geometry_rows": [
-        {
-          "roof_refinement": 1,
-          "parents": 16,
-          "body_panels": 34,
-          "geometry_frame_origin_world_m": [
-            0.13,
-            0.21,
-            0.0
-          ],
-          "geometry_seconds": 0.25654620002023876,
-          "geometry_planes": 36,
-          "body_triangles_sha256": "8b7b34291b458e903defc890de00f65068d2ecb87c2c593e686941e371ee14dc",
-          "physical_group_count": 5,
-          "fluid_outward_body_six_mode_flux": [
-            -0.015430845082441885,
-            0.3482972680620996,
-            15.6,
-            0.06795955922858327,
-            0.0026803888682640775,
-            0.3058705032718979
-          ],
-          "p1_hidden_six_mode_flux": [
-            -0.015430845082441982,
-            0.34829726806209904,
-            15.599999999999994,
-            0.06795955922858077,
-            0.0026803888682637167,
-            0.3058705032718978
-          ],
-          "p1_self_closure_absolute_error": [
-            9.71445146547012e-17,
-            5.551115123125783e-16,
-            5.329070518200751e-15,
-            2.4980018054066022e-15,
-            3.608224830031759e-16,
-            1.1102230246251565e-16
-          ],
-          "contact_fourier_minus_p1_height_range_m": [
-            -0.008891273059013993,
-            0.03014089029771494
-          ],
-          "maximum_wet_vertex_above_fourier_graph_m": 0.008891273059013993,
-          "minimum_body_centroid_depth_below_fourier_graph_m": 0.05754179810656665
-        },
-        {
-          "roof_refinement": 2,
-          "parents": 64,
-          "body_panels": 36,
-          "geometry_frame_origin_world_m": [
-            0.13,
-            0.21,
-            0.0
-          ],
-          "geometry_seconds": 0.6759497000020929,
-          "geometry_planes": 106,
-          "body_triangles_sha256": "7eb424bcdd7c3ea3504841bb92b201d17212669c8668e0705d47567642771001",
-          "physical_group_count": 5,
-          "fluid_outward_body_six_mode_flux": [
-            -0.007801424504152388,
-            0.38352939642043415,
-            15.6,
-            0.07055835689201889,
-            0.00047188679375652354,
-            0.4111126769874563
-          ],
-          "p1_hidden_six_mode_flux": [
-            -0.007801424504152402,
-            0.3835293964204339,
-            15.599999999999948,
-            0.07055835689202394,
-            0.0004718867937669735,
-            0.41111267698745546
-          ],
-          "p1_self_closure_absolute_error": [
-            1.3877787807814457e-17,
-            2.7755575615628914e-16,
-            5.1514348342607263e-14,
-            -5.051514762044462e-15,
-            -1.0449974219284286e-14,
-            8.326672684688674e-16
-          ],
-          "contact_fourier_minus_p1_height_range_m": [
-            -0.0007979232571224681,
-            0.0034932824560423015
-          ],
-          "maximum_wet_vertex_above_fourier_graph_m": 0.0002768705052973719,
-          "minimum_body_centroid_depth_below_fourier_graph_m": 0.06284402623279203
-        }
-      ],
-      "finest_quadrature_per_roof": [
-        {
-          "midpoint_shape_yx": [
-            512,
-            1024
-          ],
-          "body_minus_fourier_six_mode_flux": [
-            -0.004847884205455424,
-            -0.03629820981186588,
-            -0.0028124999999992184,
-            -0.0025263592428818593,
-            0.0016753259835268093,
-            -0.11375124464779462
-          ],
-          "p1_hidden_projected_area_m2": 15.602812499999999,
-          "mask_symmetric_difference_area_m2": 0.0,
-          "ambiguous_p1_classification_area_m2": 0.0,
-          "hidden_union_height_rms_m": 0.012462684339443527,
-          "hidden_union_height_max_m": 0.03013978018549185,
-          "hidden_union_slope_rms": 0.017966888982515274,
-          "hidden_union_slope_max": 0.04830126292993435
-        },
-        {
-          "midpoint_shape_yx": [
-            512,
-            1024
-          ],
-          "body_minus_fourier_six_mode_flux": [
-            0.0027815363728340738,
-            -0.0010660814535313201,
-            -0.0028124999999992184,
-            7.243842055376648e-05,
-            -0.0005331760909807446,
-            -0.00850907093223624
-          ],
-          "p1_hidden_projected_area_m2": 15.602812499999999,
-          "mask_symmetric_difference_area_m2": 0.0,
-          "ambiguous_p1_classification_area_m2": 0.0,
-          "hidden_union_height_rms_m": 0.0036378840513123594,
-          "hidden_union_height_max_m": 0.008662982273520636,
-          "hidden_union_slope_rms": 0.009994451929396702,
-          "hidden_union_slope_max": 0.02430480953705004
-        }
-      ],
       "owned_data_hashes_verified": true
     },
     {
@@ -1825,301 +158,6 @@
       "complete": true,
       "total_seconds": 5.209776600007899,
       "peak_process_rss_bytes": 644829184,
-      "bvp_controls": {
-        "body_refinement": 1,
-        "surface_refinement": 1,
-        "hos_order": 4,
-        "image_height_m": 0.4240538268951875,
-        "reference_height_m": 0.34688505821817767
-      },
-      "cases": [
-        {
-          "roof_refinement": 1,
-          "body_panels": 136,
-          "minimum_centroid_depth_below_fourier_graph_m": 0.024282418255535704,
-          "rows": [
-            {
-              "field": "vertical internal dipole",
-              "auxiliary_trace": "physical exterior total fill",
-              "gmres_iterations": 7,
-              "body_potential_relative_l2": 2.114463609149286,
-              "exact_integrated_pressure_functional": [
-                0.0012617233757745844,
-                -0.11289539932514003,
-                50.488775209631854,
-                -1.2753405110086682,
-                1.6117425570350896,
-                -0.03342540504315572
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.0016780368931203216,
-                -0.6857262991707066,
-                -167.60691595887533,
-                0.850229744534281,
-                -3.2486246675949486,
-                -0.4047765567301784
-              ]
-            },
-            {
-              "field": "vertical internal dipole",
-              "auxiliary_trace": "known analytic auxiliary trace",
-              "gmres_iterations": 7,
-              "body_potential_relative_l2": 2.0417067882722555,
-              "exact_integrated_pressure_functional": [
-                0.0012617233757745844,
-                -0.11289539932514003,
-                50.488775209631854,
-                -1.2753405110086682,
-                1.6117425570350896,
-                -0.03342540504315572
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.10394262957581073,
-                -0.6826148820453274,
-                -156.00775916343804,
-                0.29411067848153305,
-                -5.060717478725447,
-                -0.34615017307587687
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "auxiliary_trace": "physical exterior total fill",
-              "gmres_iterations": 7,
-              "body_potential_relative_l2": 0.4122452163036616,
-              "exact_integrated_pressure_functional": [
-                -0.006995595352555159,
-                11.922379630454762,
-                -0.7921477349749466,
-                -27.010100454655422,
-                -0.02096245012281628,
-                -0.4095528156914483
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.008714356661043622,
-                4.24547511123138,
-                68.90553694593386,
-                -46.165700758578275,
-                -0.3515885652848195,
-                0.2081115410220246
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "auxiliary_trace": "known analytic auxiliary trace",
-              "gmres_iterations": 7,
-              "body_potential_relative_l2": 0.3922191882917618,
-              "exact_integrated_pressure_functional": [
-                -0.006995595352555159,
-                11.922379630454762,
-                -0.7921477349749466,
-                -27.010100454655422,
-                -0.02096245012281628,
-                -0.4095528156914483
-              ],
-              "total_integrated_pressure_functional_error": [
-                0.0002051880282127501,
-                4.344717818481103,
-                69.29270858262532,
-                -40.63034969298072,
-                -0.16661912660689243,
-                0.19897581053147845
-              ]
-            },
-            {
-              "field": "unit heave",
-              "gmres_iterations": 7,
-              "instantaneous_added_mass_column": [
-                -2.883540217199764,
-                80.6528814970139,
-                15959.605131301258,
-                -15.453652536654083,
-                24.490357261719787,
-                74.02534120562201
-              ]
-            },
-            {
-              "field": "unit world-x rotation",
-              "gmres_iterations": 7,
-              "instantaneous_added_mass_column": [
-                0.25842645244857465,
-                45.48789693316748,
-                -9.101475816689401,
-                2870.6930965943025,
-                -2.345083743664513,
-                -3.4408719467981363
-              ]
-            }
-          ],
-          "extension_sensitivity": [
-            {
-              "field": "vertical internal dipole",
-              "pressure_centroid_functional_change": [
-                0.1022645926826904,
-                -0.0031114171253794343,
-                -11.599156795437306,
-                0.556119066052749,
-                1.8120928111304995,
-                -0.05862638365430138
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "pressure_centroid_functional_change": [
-                -0.008919544689256362,
-                -0.09924270724972932,
-                -0.3871716366914626,
-                -5.53535106559756,
-                -0.18496943867792712,
-                0.009135730490546555
-              ]
-            }
-          ]
-        },
-        {
-          "roof_refinement": 2,
-          "body_panels": 144,
-          "minimum_centroid_depth_below_fourier_graph_m": 0.0314088522819872,
-          "rows": [
-            {
-              "field": "vertical internal dipole",
-              "auxiliary_trace": "physical exterior total fill",
-              "gmres_iterations": 7,
-              "body_potential_relative_l2": 2.11468700930399,
-              "exact_integrated_pressure_functional": [
-                0.0010802632129527923,
-                -0.13818303834477064,
-                50.488775209631854,
-                -1.277893939500491,
-                1.611802068259074,
-                -0.051720477533661935
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.0019343944650165902,
-                -0.6903585466313423,
-                -167.64083020520013,
-                0.8512262516749786,
-                -3.2500847197470764,
-                -0.4105765465890477
-              ]
-            },
-            {
-              "field": "vertical internal dipole",
-              "auxiliary_trace": "known analytic auxiliary trace",
-              "gmres_iterations": 7,
-              "body_potential_relative_l2": 2.0417645456254436,
-              "exact_integrated_pressure_functional": [
-                0.0010802632129527923,
-                -0.13818303834477064,
-                50.488775209631854,
-                -1.277893939500491,
-                1.611802068259074,
-                -0.051720477533661935
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.10464527720860031,
-                -0.6837750102071619,
-                -156.0243761904667,
-                0.2943116603918078,
-                -5.061760671186409,
-                -0.35135357844143006
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "auxiliary_trace": "physical exterior total fill",
-              "gmres_iterations": 7,
-              "body_potential_relative_l2": 0.41225989594581114,
-              "exact_integrated_pressure_functional": [
-                -0.012667082864546847,
-                12.299434349309708,
-                -0.7921477349749466,
-                -26.947780070746887,
-                -0.019714511779589827,
-                -0.43042167780399865
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.009073320505371466,
-                4.270417546384062,
-                68.92289436054755,
-                -46.169929359839756,
-                -0.3708967582378718,
-                0.2138426889058477
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "auxiliary_trace": "known analytic auxiliary trace",
-              "gmres_iterations": 7,
-              "body_potential_relative_l2": 0.3921073187284333,
-              "exact_integrated_pressure_functional": [
-                -0.012667082864546847,
-                12.299434349309708,
-                -0.7921477349749466,
-                -26.947780070746887,
-                -0.019714511779589827,
-                -0.43042167780399865
-              ],
-              "total_integrated_pressure_functional_error": [
-                0.0008747444849880708,
-                4.362657093170347,
-                69.2966506405322,
-                -40.63125604269686,
-                -0.1920570256549893,
-                0.20013489400656106
-              ]
-            },
-            {
-              "field": "unit heave",
-              "gmres_iterations": 7,
-              "instantaneous_added_mass_column": [
-                -2.8210824044528833,
-                81.23519306077142,
-                15963.862019260036,
-                -15.586719929557988,
-                25.05477703002088,
-                76.15636643702811
-              ]
-            },
-            {
-              "field": "unit world-x rotation",
-              "gmres_iterations": 7,
-              "instantaneous_added_mass_column": [
-                0.5064069671782185,
-                45.628263215949076,
-                -9.67005702411521,
-                2871.728902927162,
-                0.5040242168485485,
-                -3.5329143985694316
-              ]
-            }
-          ],
-          "extension_sensitivity": [
-            {
-              "field": "vertical internal dipole",
-              "pressure_centroid_functional_change": [
-                0.10271088274358374,
-                -0.006583536424180317,
-                -11.616454014733424,
-                0.5569145912831708,
-                1.8116759514393344,
-                -0.05922296814761727
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "pressure_centroid_functional_change": [
-                -0.00994806499035953,
-                -0.09223954678628683,
-                -0.3737562799846553,
-                -5.538673317142906,
-                -0.17883973258287805,
-                0.01370779489928683
-              ]
-            }
-          ]
-        }
-      ],
       "owned_data_hashes_verified": true
     },
     {
@@ -2130,6 +168,74 @@
       "complete": true,
       "total_seconds": 18.25329399999464,
       "peak_process_rss_bytes": 1618903040,
+      "owned_data_hashes_verified": true
+    },
+    {
+      "report": "artifacts\\boat-nonplanar-bvp-relative-frame.json",
+      "report_sha256": "91b6f48973341ae0b22a89585415be5583e7a9bc62e15c628aebb82d9b36bb47",
+      "source_archive": "artifacts\\boat-nonplanar-bvp-relative-frame.source",
+      "archive_hashes_verified": true,
+      "complete": true,
+      "total_seconds": 5.3050182000151835,
+      "peak_process_rss_bytes": 659140608,
+      "owned_data_hashes_verified": true
+    },
+    {
+      "report": "artifacts\\box-nonplanar-geometry-owned-frame.json",
+      "report_sha256": "7b7eccd07488bc78ada554a4f5be02a01fdb523506c042e861cebf36b6c3a766",
+      "source_archive": "artifacts\\box-nonplanar-geometry-owned-frame.source",
+      "archive_hashes_verified": true,
+      "complete": true,
+      "total_seconds": 2.6858469000144396,
+      "peak_process_rss_bytes": 260100096,
+      "owned_data_hashes_verified": true
+    },
+    {
+      "report": "artifacts\\box-nonplanar-bvp-owned-frame.json",
+      "report_sha256": "1070d03c58e55779079ea91659c75eca3780d40c9df74148b97410ad6637e141",
+      "source_archive": "artifacts\\box-nonplanar-bvp-owned-frame.source",
+      "archive_hashes_verified": true,
+      "complete": true,
+      "total_seconds": 5.3741184000100475,
+      "peak_process_rss_bytes": 645754880,
+      "owned_data_hashes_verified": true
+    },
+    {
+      "report": "artifacts\\boat-nonplanar-geometry-owned-frame.json",
+      "report_sha256": "c75107fe8f0fbb9245786075a091b584e5cc1cc3b4bd735bd41b6b1b52b0eb78",
+      "source_archive": "artifacts\\boat-nonplanar-geometry-owned-frame.source",
+      "archive_hashes_verified": true,
+      "complete": true,
+      "total_seconds": 3.67108339999686,
+      "peak_process_rss_bytes": 265969664,
+      "owned_data_hashes_verified": true
+    },
+    {
+      "report": "artifacts\\boat-nonplanar-bvp-owned-frame.json",
+      "report_sha256": "b39c9e67107567e57fcd22f4070d2eed29f5a96d10f1de505e1e4af89f8cfc79",
+      "source_archive": "artifacts\\boat-nonplanar-bvp-owned-frame.source",
+      "archive_hashes_verified": true,
+      "complete": true,
+      "total_seconds": 5.725164200004656,
+      "peak_process_rss_bytes": 658677760,
+      "owned_data_hashes_verified": true
+    }
+  ],
+  "geometry_controls": [
+    {
+      "report": "artifacts/boat-nonplanar-geometry-fine-quadrature.json",
+      "graph_sha256": "624cb396e59dcbca76010582212f3a0119b67b4875becd591f7a7d773aecd08e",
+      "dry_fourier_certificate": {
+        "rim_sample_minimum_m": 0.2562738257902296,
+        "rim_clearance_lower_bound_m": 0.24444619636386708,
+        "artificial_closure_clearance_lower_bound_m": 0.23119388716063893,
+        "derivative_absolute_sum_bounds": [
+          0.27305809523592384,
+          0.3233787402797534
+        ],
+        "rounding_allowance_m": 1.0909396357576361e-09,
+        "scope": "Sufficient analytic Lipschitz bounds with engineering floating allowance; not interval arithmetic"
+      },
       "fourier_quadrature": [
         {
           "midpoint_shape_yx": [
@@ -2183,38 +289,130 @@
           "ambiguous_classification_area_m2": 0.0
         }
       ],
-      "geometry_rows": [
+      "roofs": [
         {
           "roof_refinement": 1,
           "parents": 16,
           "body_panels": 46,
-          "geometry_frame_origin_world_m": [
-            0.123,
-            0.087,
-            0.0
+          "geometry_planes": 43,
+          "p1_self_closure_absolute_error": [
+            -5.551115123125783e-17,
+            -9.992007221626409e-16,
+            -1.0658141036401503e-14,
+            1.2628786905111156e-14,
+            4.973799150320701e-14,
+            -3.885780586188048e-16
           ],
-          "body_triangles_coordinate_frame": "world",
-          "local_body_triangles_sha256": "c42617e9b17323fe33eeeaa0d45cbed8cd3dc747931db8edff7f422b874274c8",
-          "geometry_seconds": 0.6902070000069216,
+          "contact_fourier_minus_p1_height_range_m": [
+            -0.00885039846048008,
+            0.04372167854585557
+          ],
+          "maximum_wet_vertex_above_fourier_graph_m": 0.00885039846048008,
+          "minimum_body_centroid_depth_below_fourier_graph_m": 0.01975582126240591,
+          "finest_quadrature": {
+            "midpoint_shape_yx": [
+              2048,
+              4096
+            ],
+            "body_minus_fourier_six_mode_flux": [
+              -0.003096960974349649,
+              -0.0448107550640619,
+              -0.10226118400487572,
+              0.038445617533736404,
+              -0.021865038318617636,
+              -0.18227614705806466
+            ],
+            "p1_hidden_projected_area_m2": 15.096505696440818,
+            "mask_symmetric_difference_area_m2": 0.11894698039639146,
+            "ambiguous_p1_classification_area_m2": 0.0,
+            "hidden_union_height_rms_m": 0.018282752117332494,
+            "hidden_union_height_max_m": 0.04383699823568338,
+            "hidden_union_slope_rms": 0.021588826197695723,
+            "hidden_union_slope_max": 0.05481398456631455
+          }
+        },
+        {
+          "roof_refinement": 2,
+          "parents": 64,
+          "body_panels": 54,
+          "geometry_planes": 121,
+          "p1_self_closure_absolute_error": [
+            2.7755575615628914e-17,
+            -8.881784197001252e-16,
+            -9.059419880941277e-14,
+            1.099120794378905e-14,
+            2.842170943040401e-14,
+            -4.440892098500626e-16
+          ],
+          "contact_fourier_minus_p1_height_range_m": [
+            -0.0009860034219886793,
+            0.00619013519582251
+          ],
+          "maximum_wet_vertex_above_fourier_graph_m": 0.0009860034219886793,
+          "minimum_body_centroid_depth_below_fourier_graph_m": 0.023813438400415554,
+          "finest_quadrature": {
+            "midpoint_shape_yx": [
+              2048,
+              4096
+            ],
+            "body_minus_fourier_six_mode_flux": [
+              -0.00036731336132329526,
+              -0.005350343561460191,
+              -0.02279086164890387,
+              0.004958454925616584,
+              -0.002669311314827283,
+              -0.02595273233718176
+            ],
+            "p1_hidden_projected_area_m2": 15.175596659039206,
+            "mask_symmetric_difference_area_m2": 0.022297287371411484,
+            "ambiguous_p1_classification_area_m2": 0.0,
+            "hidden_union_height_rms_m": 0.005705070457923708,
+            "hidden_union_height_max_m": 0.012579587513288693,
+            "hidden_union_slope_rms": 0.011967729984696172,
+            "hidden_union_slope_max": 0.029018387124616938
+          }
+        }
+      ]
+    },
+    {
+      "report": "artifacts/boat-nonplanar-geometry-owned-frame.json",
+      "graph_sha256": "624cb396e59dcbca76010582212f3a0119b67b4875becd591f7a7d773aecd08e",
+      "dry_fourier_certificate": {
+        "rim_sample_minimum_m": 0.2562738257902296,
+        "rim_clearance_lower_bound_m": 0.24444619636386708,
+        "artificial_closure_clearance_lower_bound_m": 0.23119388716063893,
+        "derivative_absolute_sum_bounds": [
+          0.27305809523592384,
+          0.3233787402797534
+        ],
+        "rounding_allowance_m": 1.0909396357576361e-09,
+        "scope": "Sufficient analytic Lipschitz bounds with engineering floating allowance; not interval arithmetic"
+      },
+      "fourier_quadrature": [
+        {
+          "midpoint_shape_yx": [
+            512,
+            1024
+          ],
+          "cell_area_m2": 0.0001226810859499944,
+          "hidden_projected_area_m2": 15.205707198072057,
+          "six_mode_flux": [
+            0.021398903218697602,
+            0.3813077860396244,
+            15.205707198072057,
+            -0.26727737311732097,
+            -3.975827929462948,
+            0.45960892015926125
+          ],
+          "ambiguous_classification_area_m2": 0.0
+        }
+      ],
+      "roofs": [
+        {
+          "roof_refinement": 1,
+          "parents": 16,
+          "body_panels": 46,
           "geometry_planes": 40,
-          "body_triangles_sha256": "a63576e82ac1df24b6b065f24539e465baee742da09c3a36422f71c8fe5a60e7",
-          "physical_group_count": 9,
-          "fluid_outward_body_six_mode_flux": [
-            0.018579689791826892,
-            0.33645187525441167,
-            15.093807881252236,
-            -0.2285043556829677,
-            -4.0181329387425295,
-            0.27744195578893843
-          ],
-          "p1_hidden_six_mode_flux": [
-            0.018579689791826726,
-            0.3364518752544122,
-            15.093807881252232,
-            -0.2285043556829849,
-            -4.018132938742524,
-            0.27744195578893915
-          ],
           "p1_self_closure_absolute_error": [
             1.6653345369377348e-16,
             -5.551115123125783e-16,
@@ -2228,39 +426,34 @@
             0.04372167854585557
           ],
           "maximum_wet_vertex_above_fourier_graph_m": 0.008850398460480108,
-          "minimum_body_centroid_depth_below_fourier_graph_m": 0.01975582126240591
+          "minimum_body_centroid_depth_below_fourier_graph_m": 0.01975582126240591,
+          "finest_quadrature": {
+            "midpoint_shape_yx": [
+              512,
+              1024
+            ],
+            "body_minus_fourier_six_mode_flux": [
+              -0.00281921342687071,
+              -0.04485591078521273,
+              -0.11189931681982124,
+              0.03877301743435327,
+              -0.04230500927958136,
+              -0.18216696437032281
+            ],
+            "p1_hidden_projected_area_m2": 15.100201464155061,
+            "mask_symmetric_difference_area_m2": 0.12464398332519432,
+            "ambiguous_p1_classification_area_m2": 0.0,
+            "hidden_union_height_rms_m": 0.01828330441338993,
+            "hidden_union_height_max_m": 0.043814254355405424,
+            "hidden_union_slope_rms": 0.021598681854369747,
+            "hidden_union_slope_max": 0.05474353613937747
+          }
         },
         {
           "roof_refinement": 2,
           "parents": 64,
           "body_panels": 54,
-          "geometry_frame_origin_world_m": [
-            0.123,
-            0.087,
-            0.0
-          ],
-          "body_triangles_coordinate_frame": "world",
-          "local_body_triangles_sha256": "41abb06427d27847055ec649fc4c0e107a63b9413658cb94599c3d5a0cda2ec5",
-          "geometry_seconds": 1.7479509999975562,
           "geometry_planes": 112,
-          "body_triangles_sha256": "4bab0a35be524bfd0b4592ccb8fb712dfc57a2d77a550bd677e5241ee0c572c5",
-          "physical_group_count": 9,
-          "fluid_outward_body_six_mode_flux": [
-            0.02130933740485319,
-            0.37591228675701355,
-            15.173278203608207,
-            -0.261991518291088,
-            -3.9989372117387396,
-            0.43376537050982117
-          ],
-          "p1_hidden_six_mode_flux": [
-            0.021309337404853274,
-            0.3759122867570136,
-            15.173278203608191,
-            -0.26199151829107536,
-            -3.998937211738738,
-            0.43376537050982256
-          ],
           "p1_self_closure_absolute_error": [
             -8.326672684688674e-17,
             -5.551115123125783e-17,
@@ -2274,368 +467,45 @@
             0.00619013519582251
           ],
           "maximum_wet_vertex_above_fourier_graph_m": 0.0009860034219886793,
-          "minimum_body_centroid_depth_below_fourier_graph_m": 0.023813438400415554
+          "minimum_body_centroid_depth_below_fourier_graph_m": 0.023813438400415554,
+          "finest_quadrature": {
+            "midpoint_shape_yx": [
+              512,
+              1024
+            ],
+            "body_minus_fourier_six_mode_flux": [
+              -8.956581384441178e-05,
+              -0.0053954992826108494,
+              -0.03242899446384939,
+              0.00528585482623295,
+              -0.023109282275791454,
+              -0.02584354964944008
+            ],
+            "p1_hidden_projected_area_m2": 15.186568948663858,
+            "mask_symmetric_difference_area_m2": 0.021101146783399038,
+            "ambiguous_p1_classification_area_m2": 0.0,
+            "hidden_union_height_rms_m": 0.005704009907097275,
+            "hidden_union_height_max_m": 0.012579515158176402,
+            "hidden_union_slope_rms": 0.01197085073961106,
+            "hidden_union_slope_max": 0.028928807078548308
+          }
         }
-      ],
-      "finest_quadrature_per_roof": [
-        {
-          "midpoint_shape_yx": [
-            2048,
-            4096
-          ],
-          "body_minus_fourier_six_mode_flux": [
-            -0.0030969609743495934,
-            -0.044810755064061125,
-            -0.10226118400487572,
-            0.03844561753373746,
-            -0.021865038318618524,
-            -0.18227614705806455
-          ],
-          "p1_hidden_projected_area_m2": 15.096505696440818,
-          "mask_symmetric_difference_area_m2": 0.11894698039639146,
-          "ambiguous_p1_classification_area_m2": 0.0,
-          "hidden_union_height_rms_m": 0.01828275211733249,
-          "hidden_union_height_max_m": 0.04383699823568338,
-          "hidden_union_slope_rms": 0.021588307118963406,
-          "hidden_union_slope_max": 0.05481398456631455
-        },
-        {
-          "midpoint_shape_yx": [
-            2048,
-            4096
-          ],
-          "body_minus_fourier_six_mode_flux": [
-            -0.00036731336132329526,
-            -0.005350343561459248,
-            -0.02279086164890387,
-            0.0049584549256171395,
-            -0.002669311314828615,
-            -0.025952732337181816
-          ],
-          "p1_hidden_projected_area_m2": 15.175596659039206,
-          "mask_symmetric_difference_area_m2": 0.022297287371411484,
-          "ambiguous_p1_classification_area_m2": 0.0,
-          "hidden_union_height_rms_m": 0.00570507045792371,
-          "hidden_union_height_max_m": 0.012579587513288693,
-          "hidden_union_slope_rms": 0.011967903745018596,
-          "hidden_union_slope_max": 0.02901838712461694
-        }
-      ],
-      "owned_data_hashes_verified": true
+      ]
     },
     {
-      "report": "artifacts\\boat-nonplanar-bvp-relative-frame.json",
-      "report_sha256": "91b6f48973341ae0b22a89585415be5583e7a9bc62e15c628aebb82d9b36bb47",
-      "source_archive": "artifacts\\boat-nonplanar-bvp-relative-frame.source",
-      "archive_hashes_verified": true,
-      "complete": true,
-      "total_seconds": 5.3050182000151835,
-      "peak_process_rss_bytes": 659140608,
-      "bvp_controls": {
-        "body_refinement": 1,
-        "surface_refinement": 1,
-        "hos_order": 4,
-        "image_height_m": 0.424473578448259,
-        "reference_height_m": 0.34594381946627656
+      "report": "artifacts/box-nonplanar-geometry-owned-frame.json",
+      "graph_sha256": "06636adb596494ec6bfa5ec21484ac38fd3d7a1109dd23b9b6d36a272cec233e",
+      "dry_fourier_certificate": {
+        "rim_sample_minimum_m": 0.7265321455539766,
+        "rim_clearance_lower_bound_m": 0.7125748003323119,
+        "artificial_closure_clearance_lower_bound_m": 0.713192544632885,
+        "derivative_absolute_sum_bounds": [
+          0.2748523209324847,
+          0.3392280084267929
+        ],
+        "rounding_allowance_m": 7.993119766069867e-10,
+        "scope": "Sufficient analytic Lipschitz bounds with engineering floating allowance; not interval arithmetic"
       },
-      "cases": [
-        {
-          "roof_refinement": 1,
-          "body_panels": 184,
-          "minimum_centroid_depth_below_fourier_graph_m": 0.006203788235703028,
-          "rows": [
-            {
-              "field": "vertical internal dipole",
-              "auxiliary_trace": "physical exterior total fill",
-              "gmres_iterations": 7,
-              "body_potential_relative_l2": 0.44737436400848485,
-              "exact_integrated_pressure_functional": [
-                -0.13589907951901203,
-                0.7167597574836826,
-                44.19748110727528,
-                -0.40869263112242216,
-                -4.9421797569010835,
-                0.04989267972662326
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.24186061777844192,
-                2.430339812163538,
-                68.10192192985166,
-                -1.8384547958340738,
-                16.875767379744637,
-                -0.11851206966501582
-              ]
-            },
-            {
-              "field": "vertical internal dipole",
-              "auxiliary_trace": "known analytic auxiliary trace",
-              "gmres_iterations": 7,
-              "body_potential_relative_l2": 0.5013019950461313,
-              "exact_integrated_pressure_functional": [
-                -0.13589907951901203,
-                0.7167597574836826,
-                44.19748110727528,
-                -0.40869263112242216,
-                -4.9421797569010835,
-                0.04989267972662326
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.5538691069594291,
-                2.053644792180459,
-                74.59309240991043,
-                -1.569593366888632,
-                19.497985822784557,
-                -0.2298445032413506
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "auxiliary_trace": "physical exterior total fill",
-              "gmres_iterations": 7,
-              "body_potential_relative_l2": 0.22785898591017445,
-              "exact_integrated_pressure_functional": [
-                -0.016429917238563685,
-                28.672041850353963,
-                0.4117635828447419,
-                -28.54457912152574,
-                -0.13005979817083357,
-                3.148546095808511
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.010900302553028058,
-                13.185882073243938,
-                -0.35358803351000856,
-                -11.258991087272168,
-                0.41776556691527994,
-                -4.319073701906377
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "auxiliary_trace": "known analytic auxiliary trace",
-              "gmres_iterations": 7,
-              "body_potential_relative_l2": 0.21491778047965765,
-              "exact_integrated_pressure_functional": [
-                -0.016429917238563685,
-                28.672041850353963,
-                0.4117635828447419,
-                -28.54457912152574,
-                -0.13005979817083357,
-                3.148546095808511
-              ],
-              "total_integrated_pressure_functional_error": [
-                0.01624439573843514,
-                14.650345452646171,
-                1.808737503492107,
-                -12.052661158528007,
-                0.23810080256259425,
-                -3.3541437759065897
-              ]
-            },
-            {
-              "field": "unit heave",
-              "gmres_iterations": 8,
-              "instantaneous_added_mass_column": [
-                -381.64200828155055,
-                171.27876348580205,
-                11871.188438545194,
-                -145.04924883470332,
-                -2154.4678022767725,
-                165.08388931996367
-              ]
-            },
-            {
-              "field": "unit world-x rotation",
-              "gmres_iterations": 8,
-              "instantaneous_added_mass_column": [
-                14.96111611352392,
-                -1501.7809287368395,
-                -146.222174325567,
-                1849.455174587307,
-                144.83844916810165,
-                -92.9095571612944
-              ]
-            }
-          ],
-          "extension_sensitivity": [
-            {
-              "field": "vertical internal dipole",
-              "pressure_centroid_functional_change": [
-                0.31200848918098717,
-                0.37669501998308097,
-                -6.491170480058787,
-                -0.26886142894544446,
-                -2.6222184430399316,
-                0.11133243357633413
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "pressure_centroid_functional_change": [
-                -0.027144698291463206,
-                -1.4644633794022315,
-                -2.162325537002117,
-                0.7936700712558284,
-                0.1796647643526855,
-                -0.9649299259997869
-              ]
-            }
-          ]
-        },
-        {
-          "roof_refinement": 2,
-          "body_panels": 216,
-          "minimum_centroid_depth_below_fourier_graph_m": 0.011650849783667122,
-          "rows": [
-            {
-              "field": "vertical internal dipole",
-              "auxiliary_trace": "physical exterior total fill",
-              "gmres_iterations": 7,
-              "body_potential_relative_l2": 0.44734095925207734,
-              "exact_integrated_pressure_functional": [
-                -0.13576867599286324,
-                0.6857198333471608,
-                44.1571956092107,
-                -0.3838716880976989,
-                -4.937539635692332,
-                0.008377529430168451
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.24219948834144645,
-                2.4577654355800185,
-                68.11522716093074,
-                -1.8608227861626312,
-                16.864873247058767,
-                -0.08903788115803418
-              ]
-            },
-            {
-              "field": "vertical internal dipole",
-              "auxiliary_trace": "known analytic auxiliary trace",
-              "gmres_iterations": 8,
-              "body_potential_relative_l2": 0.5013496388536827,
-              "exact_integrated_pressure_functional": [
-                -0.13576867599286324,
-                0.6857198333471608,
-                44.1571956092107,
-                -0.3838716880976989,
-                -4.937539635692332,
-                0.008377529430168451
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.5563648355878604,
-                2.0702368987542847,
-                74.61106381794878,
-                -1.584571742053669,
-                19.48290767145074,
-                -0.19692607024744574
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "auxiliary_trace": "physical exterior total fill",
-              "gmres_iterations": 8,
-              "body_potential_relative_l2": 0.22810527237100975,
-              "exact_integrated_pressure_functional": [
-                -0.02051395502175135,
-                29.1271461532856,
-                0.4601251709115104,
-                -28.86894671097489,
-                -0.22768198525523076,
-                3.1829325772594785
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.010362164352234762,
-                13.025311090866346,
-                -0.44226369184141934,
-                -11.13493986545916,
-                0.44887305124145116,
-                -4.389545461716119
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "auxiliary_trace": "known analytic auxiliary trace",
-              "gmres_iterations": 7,
-              "body_potential_relative_l2": 0.21432409747704098,
-              "exact_integrated_pressure_functional": [
-                -0.02051395502175135,
-                29.1271461532856,
-                0.4601251709115104,
-                -28.86894671097489,
-                -0.22768198525523076,
-                3.1829325772594785
-              ],
-              "total_integrated_pressure_functional_error": [
-                0.017606970400900326,
-                14.629808016201395,
-                1.7298771820055578,
-                -12.031203506067207,
-                0.28139188197094955,
-                -3.3839749568128634
-              ]
-            },
-            {
-              "field": "unit heave",
-              "gmres_iterations": 8,
-              "instantaneous_added_mass_column": [
-                -381.3009617103607,
-                170.41530995626792,
-                11863.74215259677,
-                -145.04785742317512,
-                -2151.3418921276775,
-                175.85850191582838
-              ]
-            },
-            {
-              "field": "unit world-x rotation",
-              "gmres_iterations": 8,
-              "instantaneous_added_mass_column": [
-                15.84391921273819,
-                -1502.8321114762819,
-                -143.92531414415976,
-                1848.7935453023156,
-                149.9378997706557,
-                -95.0931764385258
-              ]
-            }
-          ],
-          "extension_sensitivity": [
-            {
-              "field": "vertical internal dipole",
-              "pressure_centroid_functional_change": [
-                0.3141653472464142,
-                0.38752853682573346,
-                -6.495836657018026,
-                -0.276251044108959,
-                -2.6180344243919724,
-                0.10788818908941034
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "pressure_centroid_functional_change": [
-                -0.027969134753135064,
-                -1.604496925335071,
-                -2.1721408738469803,
-                0.8962636406080308,
-                0.16748116927050313,
-                -1.0055705049032566
-              ]
-            }
-          ]
-        }
-      ],
-      "owned_data_hashes_verified": true
-    },
-    {
-      "report": "artifacts\\box-nonplanar-geometry-owned-frame.json",
-      "report_sha256": "7b7eccd07488bc78ada554a4f5be02a01fdb523506c042e861cebf36b6c3a766",
-      "source_archive": "artifacts\\box-nonplanar-geometry-owned-frame.source",
-      "archive_hashes_verified": true,
-      "complete": true,
-      "total_seconds": 2.6858469000144396,
-      "peak_process_rss_bytes": 260100096,
       "fourier_quadrature": [
         {
           "midpoint_shape_yx": [
@@ -2689,38 +559,12 @@
           "ambiguous_classification_area_m2": 0.0
         }
       ],
-      "geometry_rows": [
+      "roofs": [
         {
           "roof_refinement": 1,
           "parents": 16,
           "body_panels": 34,
-          "geometry_frame_origin_world_m": [
-            0.13,
-            0.21,
-            0.0
-          ],
-          "body_triangles_coordinate_frame": "world",
-          "local_body_triangles_sha256": "cb3f1c3c0eec1983c5c961e2dec8dadd068ea8010123ec77f6582858defa4e7f",
-          "geometry_seconds": 0.24649820002377965,
           "geometry_planes": 36,
-          "body_triangles_sha256": "8b7b34291b458e903defc890de00f65068d2ecb87c2c593e686941e371ee14dc",
-          "physical_group_count": 5,
-          "fluid_outward_body_six_mode_flux": [
-            -0.015430845082441885,
-            0.3482972680620996,
-            15.6,
-            0.06795955922858282,
-            0.0026803888682636334,
-            0.3058705032718981
-          ],
-          "p1_hidden_six_mode_flux": [
-            -0.015430845082442,
-            0.34829726806209904,
-            15.599999999999994,
-            0.06795955922858155,
-            0.002680388868266048,
-            0.3058705032718979
-          ],
           "p1_self_closure_absolute_error": [
             1.1449174941446927e-16,
             5.551115123125783e-16,
@@ -2734,39 +578,34 @@
             0.03014089029771494
           ],
           "maximum_wet_vertex_above_fourier_graph_m": 0.008891273059013993,
-          "minimum_body_centroid_depth_below_fourier_graph_m": 0.05754179810656665
+          "minimum_body_centroid_depth_below_fourier_graph_m": 0.05754179810656665,
+          "finest_quadrature": {
+            "midpoint_shape_yx": [
+              512,
+              1024
+            ],
+            "body_minus_fourier_six_mode_flux": [
+              -0.004847884205455424,
+              -0.03629820981186588,
+              -0.0028124999999992184,
+              -0.0025263592428823034,
+              0.0016753259835263652,
+              -0.11375124464779446
+            ],
+            "p1_hidden_projected_area_m2": 15.602812499999999,
+            "mask_symmetric_difference_area_m2": 0.0,
+            "ambiguous_p1_classification_area_m2": 0.0,
+            "hidden_union_height_rms_m": 0.012462684339443527,
+            "hidden_union_height_max_m": 0.03013978018549185,
+            "hidden_union_slope_rms": 0.017966888982515274,
+            "hidden_union_slope_max": 0.04830126292993435
+          }
         },
         {
           "roof_refinement": 2,
           "parents": 64,
           "body_panels": 36,
-          "geometry_frame_origin_world_m": [
-            0.13,
-            0.21,
-            0.0
-          ],
-          "body_triangles_coordinate_frame": "world",
-          "local_body_triangles_sha256": "c74ebb6e99f59faabdc47de893b38436d1258ee1997c42847d3f70566c421d05",
-          "geometry_seconds": 0.6587134999863338,
           "geometry_planes": 106,
-          "body_triangles_sha256": "7eb424bcdd7c3ea3504841bb92b201d17212669c8668e0705d47567642771001",
-          "physical_group_count": 5,
-          "fluid_outward_body_six_mode_flux": [
-            -0.007801424504152388,
-            0.38352939642043415,
-            15.6,
-            0.07055835689201845,
-            0.00047188679375607945,
-            0.4111126769874562
-          ],
-          "p1_hidden_six_mode_flux": [
-            -0.0078014245041524155,
-            0.3835293964204339,
-            15.599999999999945,
-            0.07055835689202067,
-            0.00047188679376408693,
-            0.41111267698745557
-          ],
           "p1_self_closure_absolute_error": [
             2.7755575615628914e-17,
             2.7755575615628914e-16,
@@ -2780,639 +619,85 @@
             0.0034932824560423015
           ],
           "maximum_wet_vertex_above_fourier_graph_m": 0.0002768705052973719,
-          "minimum_body_centroid_depth_below_fourier_graph_m": 0.06284402623279203
+          "minimum_body_centroid_depth_below_fourier_graph_m": 0.06284402623279203,
+          "finest_quadrature": {
+            "midpoint_shape_yx": [
+              512,
+              1024
+            ],
+            "body_minus_fourier_six_mode_flux": [
+              0.0027815363728340738,
+              -0.0010660814535313201,
+              -0.0028124999999992184,
+              7.243842055332239e-05,
+              -0.0005331760909811887,
+              -0.008509070932236351
+            ],
+            "p1_hidden_projected_area_m2": 15.602812499999999,
+            "mask_symmetric_difference_area_m2": 0.0,
+            "ambiguous_p1_classification_area_m2": 0.0,
+            "hidden_union_height_rms_m": 0.0036378840513123594,
+            "hidden_union_height_max_m": 0.008662982273520636,
+            "hidden_union_slope_rms": 0.009994451929396702,
+            "hidden_union_slope_max": 0.02430480953705004
+          }
         }
-      ],
-      "finest_quadrature_per_roof": [
-        {
-          "midpoint_shape_yx": [
-            512,
-            1024
-          ],
-          "body_minus_fourier_six_mode_flux": [
-            -0.004847884205455424,
-            -0.03629820981186588,
-            -0.0028124999999992184,
-            -0.0025263592428823034,
-            0.0016753259835263652,
-            -0.11375124464779446
-          ],
-          "p1_hidden_projected_area_m2": 15.602812499999999,
-          "mask_symmetric_difference_area_m2": 0.0,
-          "ambiguous_p1_classification_area_m2": 0.0,
-          "hidden_union_height_rms_m": 0.012462684339443527,
-          "hidden_union_height_max_m": 0.03013978018549185,
-          "hidden_union_slope_rms": 0.017966888982515274,
-          "hidden_union_slope_max": 0.04830126292993435
-        },
-        {
-          "midpoint_shape_yx": [
-            512,
-            1024
-          ],
-          "body_minus_fourier_six_mode_flux": [
-            0.0027815363728340738,
-            -0.0010660814535313201,
-            -0.0028124999999992184,
-            7.243842055332239e-05,
-            -0.0005331760909811887,
-            -0.008509070932236351
-          ],
-          "p1_hidden_projected_area_m2": 15.602812499999999,
-          "mask_symmetric_difference_area_m2": 0.0,
-          "ambiguous_p1_classification_area_m2": 0.0,
-          "hidden_union_height_rms_m": 0.0036378840513123594,
-          "hidden_union_height_max_m": 0.008662982273520636,
-          "hidden_union_slope_rms": 0.009994451929396702,
-          "hidden_union_slope_max": 0.02430480953705004
-        }
-      ],
-      "owned_data_hashes_verified": true
-    },
+      ]
+    }
+  ],
+  "bvp_controls": [
     {
-      "report": "artifacts\\box-nonplanar-bvp-owned-frame.json",
-      "report_sha256": "1070d03c58e55779079ea91659c75eca3780d40c9df74148b97410ad6637e141",
-      "source_archive": "artifacts\\box-nonplanar-bvp-owned-frame.source",
-      "archive_hashes_verified": true,
-      "complete": true,
-      "total_seconds": 5.3741184000100475,
-      "peak_process_rss_bytes": 645754880,
-      "bvp_controls": {
-        "body_refinement": 1,
-        "surface_refinement": 1,
-        "hos_order": 4,
-        "image_height_m": 0.4240538268951875,
-        "reference_height_m": 0.34688505821817767
-      },
-      "cases": [
-        {
-          "roof_refinement": 1,
-          "body_panels": 136,
-          "minimum_centroid_depth_below_fourier_graph_m": 0.024282418255535704,
-          "rows": [
-            {
-              "field": "vertical internal dipole",
-              "auxiliary_trace": "physical exterior total fill",
-              "gmres_iterations": 7,
-              "body_potential_relative_l2": 2.114463609149286,
-              "exact_integrated_pressure_functional": [
-                0.0012617233757745844,
-                -0.11289539932514003,
-                50.488775209631854,
-                -1.2753405110086682,
-                1.6117425570350896,
-                -0.03342540504315572
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.0016780368931203216,
-                -0.6857262991707066,
-                -167.60691595887533,
-                0.850229744534281,
-                -3.2486246675949486,
-                -0.4047765567301784
-              ]
-            },
-            {
-              "field": "vertical internal dipole",
-              "auxiliary_trace": "known analytic auxiliary trace",
-              "gmres_iterations": 7,
-              "body_potential_relative_l2": 2.0417067882722555,
-              "exact_integrated_pressure_functional": [
-                0.0012617233757745844,
-                -0.11289539932514003,
-                50.488775209631854,
-                -1.2753405110086682,
-                1.6117425570350896,
-                -0.03342540504315572
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.10394262957581073,
-                -0.6826148820453274,
-                -156.00775916343804,
-                0.29411067848153305,
-                -5.060717478725447,
-                -0.34615017307587687
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "auxiliary_trace": "physical exterior total fill",
-              "gmres_iterations": 7,
-              "body_potential_relative_l2": 0.4122452163036616,
-              "exact_integrated_pressure_functional": [
-                -0.006995595352555159,
-                11.922379630454762,
-                -0.7921477349749466,
-                -27.010100454655422,
-                -0.02096245012281628,
-                -0.4095528156914483
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.008714356661043622,
-                4.24547511123138,
-                68.90553694593386,
-                -46.165700758578275,
-                -0.3515885652848195,
-                0.2081115410220246
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "auxiliary_trace": "known analytic auxiliary trace",
-              "gmres_iterations": 7,
-              "body_potential_relative_l2": 0.3922191882917618,
-              "exact_integrated_pressure_functional": [
-                -0.006995595352555159,
-                11.922379630454762,
-                -0.7921477349749466,
-                -27.010100454655422,
-                -0.02096245012281628,
-                -0.4095528156914483
-              ],
-              "total_integrated_pressure_functional_error": [
-                0.0002051880282127501,
-                4.344717818481103,
-                69.29270858262532,
-                -40.63034969298072,
-                -0.16661912660689243,
-                0.19897581053147845
-              ]
-            },
-            {
-              "field": "unit heave",
-              "gmres_iterations": 7,
-              "instantaneous_added_mass_column": [
-                -2.883540217199764,
-                80.6528814970139,
-                15959.605131301258,
-                -15.453652536654083,
-                24.490357261719787,
-                74.02534120562201
-              ]
-            },
-            {
-              "field": "unit world-x rotation",
-              "gmres_iterations": 7,
-              "instantaneous_added_mass_column": [
-                0.25842645244857465,
-                45.48789693316748,
-                -9.101475816689401,
-                2870.6930965943025,
-                -2.345083743664513,
-                -3.4408719467981363
-              ]
-            }
-          ],
-          "extension_sensitivity": [
-            {
-              "field": "vertical internal dipole",
-              "pressure_centroid_functional_change": [
-                0.1022645926826904,
-                -0.0031114171253794343,
-                -11.599156795437306,
-                0.556119066052749,
-                1.8120928111304995,
-                -0.05862638365430138
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "pressure_centroid_functional_change": [
-                -0.008919544689256362,
-                -0.09924270724972932,
-                -0.3871716366914626,
-                -5.53535106559756,
-                -0.18496943867792712,
-                0.009135730490546555
-              ]
-            }
-          ]
-        },
-        {
-          "roof_refinement": 2,
-          "body_panels": 144,
-          "minimum_centroid_depth_below_fourier_graph_m": 0.0314088522819872,
-          "rows": [
-            {
-              "field": "vertical internal dipole",
-              "auxiliary_trace": "physical exterior total fill",
-              "gmres_iterations": 7,
-              "body_potential_relative_l2": 2.11468700930399,
-              "exact_integrated_pressure_functional": [
-                0.0010802632129527923,
-                -0.13818303834477064,
-                50.488775209631854,
-                -1.277893939500491,
-                1.611802068259074,
-                -0.051720477533661935
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.0019343944650165902,
-                -0.6903585466313423,
-                -167.64083020520013,
-                0.8512262516749786,
-                -3.2500847197470764,
-                -0.4105765465890477
-              ]
-            },
-            {
-              "field": "vertical internal dipole",
-              "auxiliary_trace": "known analytic auxiliary trace",
-              "gmres_iterations": 7,
-              "body_potential_relative_l2": 2.0417645456254436,
-              "exact_integrated_pressure_functional": [
-                0.0010802632129527923,
-                -0.13818303834477064,
-                50.488775209631854,
-                -1.277893939500491,
-                1.611802068259074,
-                -0.051720477533661935
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.10464527720860031,
-                -0.6837750102071619,
-                -156.0243761904667,
-                0.2943116603918078,
-                -5.061760671186409,
-                -0.35135357844143006
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "auxiliary_trace": "physical exterior total fill",
-              "gmres_iterations": 7,
-              "body_potential_relative_l2": 0.41225989594581114,
-              "exact_integrated_pressure_functional": [
-                -0.012667082864546847,
-                12.299434349309708,
-                -0.7921477349749466,
-                -26.947780070746887,
-                -0.019714511779589827,
-                -0.43042167780399865
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.009073320505371466,
-                4.270417546384062,
-                68.92289436054755,
-                -46.169929359839756,
-                -0.3708967582378718,
-                0.2138426889058477
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "auxiliary_trace": "known analytic auxiliary trace",
-              "gmres_iterations": 7,
-              "body_potential_relative_l2": 0.3921073187284333,
-              "exact_integrated_pressure_functional": [
-                -0.012667082864546847,
-                12.299434349309708,
-                -0.7921477349749466,
-                -26.947780070746887,
-                -0.019714511779589827,
-                -0.43042167780399865
-              ],
-              "total_integrated_pressure_functional_error": [
-                0.0008747444849880708,
-                4.362657093170347,
-                69.2966506405322,
-                -40.63125604269686,
-                -0.1920570256549893,
-                0.20013489400656106
-              ]
-            },
-            {
-              "field": "unit heave",
-              "gmres_iterations": 7,
-              "instantaneous_added_mass_column": [
-                -2.8210824044528833,
-                81.23519306077142,
-                15963.862019260036,
-                -15.586719929557988,
-                25.05477703002088,
-                76.15636643702811
-              ]
-            },
-            {
-              "field": "unit world-x rotation",
-              "gmres_iterations": 7,
-              "instantaneous_added_mass_column": [
-                0.5064069671782185,
-                45.628263215949076,
-                -9.67005702411521,
-                2871.728902927162,
-                0.5040242168485485,
-                -3.5329143985694316
-              ]
-            }
-          ],
-          "extension_sensitivity": [
-            {
-              "field": "vertical internal dipole",
-              "pressure_centroid_functional_change": [
-                0.10271088274358374,
-                -0.006583536424180317,
-                -11.616454014733424,
-                0.5569145912831708,
-                1.8116759514393344,
-                -0.05922296814761727
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "pressure_centroid_functional_change": [
-                -0.00994806499035953,
-                -0.09223954678628683,
-                -0.3737562799846553,
-                -5.538673317142906,
-                -0.17883973258287805,
-                0.01370779489928683
-              ]
-            }
-          ]
-        }
-      ],
-      "owned_data_hashes_verified": true
-    },
-    {
-      "report": "artifacts\\boat-nonplanar-geometry-owned-frame.json",
-      "report_sha256": "c75107fe8f0fbb9245786075a091b584e5cc1cc3b4bd735bd41b6b1b52b0eb78",
-      "source_archive": "artifacts\\boat-nonplanar-geometry-owned-frame.source",
-      "archive_hashes_verified": true,
-      "complete": true,
-      "total_seconds": 3.67108339999686,
-      "peak_process_rss_bytes": 265969664,
-      "fourier_quadrature": [
-        {
-          "midpoint_shape_yx": [
-            512,
-            1024
-          ],
-          "cell_area_m2": 0.0001226810859499944,
-          "hidden_projected_area_m2": 15.205707198072057,
-          "six_mode_flux": [
-            0.021398903218697602,
-            0.3813077860396244,
-            15.205707198072057,
-            -0.26727737311732097,
-            -3.975827929462948,
-            0.45960892015926125
-          ],
-          "ambiguous_classification_area_m2": 0.0
-        }
-      ],
-      "geometry_rows": [
-        {
-          "roof_refinement": 1,
-          "parents": 16,
-          "body_panels": 46,
-          "geometry_frame_origin_world_m": [
-            0.123,
-            0.087,
-            0.0
-          ],
-          "body_triangles_coordinate_frame": "world",
-          "local_body_triangles_sha256": "c42617e9b17323fe33eeeaa0d45cbed8cd3dc747931db8edff7f422b874274c8",
-          "geometry_seconds": 0.5673669000098016,
-          "geometry_planes": 40,
-          "body_triangles_sha256": "a63576e82ac1df24b6b065f24539e465baee742da09c3a36422f71c8fe5a60e7",
-          "physical_group_count": 9,
-          "fluid_outward_body_six_mode_flux": [
-            0.018579689791826892,
-            0.33645187525441167,
-            15.093807881252236,
-            -0.2285043556829677,
-            -4.0181329387425295,
-            0.27744195578893843
-          ],
-          "p1_hidden_six_mode_flux": [
-            0.018579689791826726,
-            0.3364518752544122,
-            15.093807881252232,
-            -0.2285043556829849,
-            -4.018132938742524,
-            0.27744195578893915
-          ],
-          "p1_self_closure_absolute_error": [
-            1.6653345369377348e-16,
-            -5.551115123125783e-16,
-            3.552713678800501e-15,
-            1.7208456881689926e-14,
-            -5.329070518200751e-15,
-            -7.216449660063518e-16
-          ],
-          "contact_fourier_minus_p1_height_range_m": [
-            -0.008850398460480108,
-            0.04372167854585557
-          ],
-          "maximum_wet_vertex_above_fourier_graph_m": 0.008850398460480108,
-          "minimum_body_centroid_depth_below_fourier_graph_m": 0.01975582126240591
-        },
-        {
-          "roof_refinement": 2,
-          "parents": 64,
-          "body_panels": 54,
-          "geometry_frame_origin_world_m": [
-            0.123,
-            0.087,
-            0.0
-          ],
-          "body_triangles_coordinate_frame": "world",
-          "local_body_triangles_sha256": "41abb06427d27847055ec649fc4c0e107a63b9413658cb94599c3d5a0cda2ec5",
-          "geometry_seconds": 1.5008146000036504,
-          "geometry_planes": 112,
-          "body_triangles_sha256": "4bab0a35be524bfd0b4592ccb8fb712dfc57a2d77a550bd677e5241ee0c572c5",
-          "physical_group_count": 9,
-          "fluid_outward_body_six_mode_flux": [
-            0.02130933740485319,
-            0.37591228675701355,
-            15.173278203608207,
-            -0.261991518291088,
-            -3.9989372117387396,
-            0.43376537050982117
-          ],
-          "p1_hidden_six_mode_flux": [
-            0.021309337404853274,
-            0.3759122867570136,
-            15.173278203608191,
-            -0.26199151829107536,
-            -3.998937211738738,
-            0.43376537050982256
-          ],
-          "p1_self_closure_absolute_error": [
-            -8.326672684688674e-17,
-            -5.551115123125783e-17,
-            1.5987211554602254e-14,
-            -1.2656542480726785e-14,
-            -1.7763568394002505e-15,
-            -1.3877787807814457e-15
-          ],
-          "contact_fourier_minus_p1_height_range_m": [
-            -0.0009860034219886793,
-            0.00619013519582251
-          ],
-          "maximum_wet_vertex_above_fourier_graph_m": 0.0009860034219886793,
-          "minimum_body_centroid_depth_below_fourier_graph_m": 0.023813438400415554
-        }
-      ],
-      "finest_quadrature_per_roof": [
-        {
-          "midpoint_shape_yx": [
-            512,
-            1024
-          ],
-          "body_minus_fourier_six_mode_flux": [
-            -0.00281921342687071,
-            -0.04485591078521273,
-            -0.11189931681982124,
-            0.03877301743435327,
-            -0.04230500927958136,
-            -0.18216696437032281
-          ],
-          "p1_hidden_projected_area_m2": 15.100201464155061,
-          "mask_symmetric_difference_area_m2": 0.12464398332519432,
-          "ambiguous_p1_classification_area_m2": 0.0,
-          "hidden_union_height_rms_m": 0.01828330441338993,
-          "hidden_union_height_max_m": 0.043814254355405424,
-          "hidden_union_slope_rms": 0.021598681854369747,
-          "hidden_union_slope_max": 0.05474353613937747
-        },
-        {
-          "midpoint_shape_yx": [
-            512,
-            1024
-          ],
-          "body_minus_fourier_six_mode_flux": [
-            -8.956581384441178e-05,
-            -0.0053954992826108494,
-            -0.03242899446384939,
-            0.00528585482623295,
-            -0.023109282275791454,
-            -0.02584354964944008
-          ],
-          "p1_hidden_projected_area_m2": 15.186568948663858,
-          "mask_symmetric_difference_area_m2": 0.021101146783399038,
-          "ambiguous_p1_classification_area_m2": 0.0,
-          "hidden_union_height_rms_m": 0.005704009907097275,
-          "hidden_union_height_max_m": 0.012579515158176402,
-          "hidden_union_slope_rms": 0.01197085073961106,
-          "hidden_union_slope_max": 0.028928807078548308
-        }
-      ],
-      "owned_data_hashes_verified": true
-    },
-    {
-      "report": "artifacts\\boat-nonplanar-bvp-owned-frame.json",
-      "report_sha256": "b39c9e67107567e57fcd22f4070d2eed29f5a96d10f1de505e1e4af89f8cfc79",
-      "source_archive": "artifacts\\boat-nonplanar-bvp-owned-frame.source",
-      "archive_hashes_verified": true,
-      "complete": true,
-      "total_seconds": 5.725164200004656,
-      "peak_process_rss_bytes": 658677760,
-      "bvp_controls": {
-        "body_refinement": 1,
-        "surface_refinement": 1,
-        "hos_order": 4,
-        "image_height_m": 0.424473578448259,
-        "reference_height_m": 0.34594381946627656
-      },
+      "report": "artifacts/boat-nonplanar-bvp-owned-frame.json",
+      "surface_refinement": 1,
+      "body_refinement": 1,
+      "hos_order": 4,
+      "image_height_m": 0.424473578448259,
+      "reference_height_m": 0.34594381946627656,
       "cases": [
         {
           "roof_refinement": 1,
           "body_panels": 184,
-          "minimum_centroid_depth_below_fourier_graph_m": 0.006203788235703028,
-          "rows": [
+          "manufactured": [
             {
               "field": "vertical internal dipole",
               "auxiliary_trace": "physical exterior total fill",
-              "gmres_iterations": 7,
               "body_potential_relative_l2": 0.44737436400848485,
-              "exact_integrated_pressure_functional": [
-                -0.13589907951901203,
-                0.7167597574836826,
-                44.19748110727528,
-                -0.40869263112242216,
-                -4.9421797569010835,
-                0.04989267972662326
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.24186061777844192,
-                2.430339812163538,
-                68.10192192985166,
-                -1.8384547958340738,
-                16.875767379744637,
-                -0.11851206966501582
-              ]
+              "maximum_force_error_N": 68.10192192985166,
+              "maximum_moment_error_Nm": 16.875767379744637,
+              "heave_error_N": 68.10192192985166,
+              "roll_error_Nm": -1.8384547958340738
             },
             {
               "field": "vertical internal dipole",
               "auxiliary_trace": "known analytic auxiliary trace",
-              "gmres_iterations": 7,
               "body_potential_relative_l2": 0.5013019950461313,
-              "exact_integrated_pressure_functional": [
-                -0.13589907951901203,
-                0.7167597574836826,
-                44.19748110727528,
-                -0.40869263112242216,
-                -4.9421797569010835,
-                0.04989267972662326
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.5538691069594291,
-                2.053644792180459,
-                74.59309240991043,
-                -1.569593366888632,
-                19.497985822784557,
-                -0.2298445032413506
-              ]
+              "maximum_force_error_N": 74.59309240991043,
+              "maximum_moment_error_Nm": 19.497985822784557,
+              "heave_error_N": 74.59309240991043,
+              "roll_error_Nm": -1.569593366888632
             },
             {
               "field": "transverse internal dipole",
               "auxiliary_trace": "physical exterior total fill",
-              "gmres_iterations": 7,
               "body_potential_relative_l2": 0.22785898591017445,
-              "exact_integrated_pressure_functional": [
-                -0.016429917238563685,
-                28.672041850353963,
-                0.4117635828447419,
-                -28.54457912152574,
-                -0.13005979817083357,
-                3.148546095808511
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.010900302553028058,
-                13.185882073243938,
-                -0.35358803351000856,
-                -11.258991087272168,
-                0.41776556691527994,
-                -4.319073701906377
-              ]
+              "maximum_force_error_N": 13.185882073243938,
+              "maximum_moment_error_Nm": 11.258991087272168,
+              "heave_error_N": -0.35358803351000856,
+              "roll_error_Nm": -11.258991087272168
             },
             {
               "field": "transverse internal dipole",
               "auxiliary_trace": "known analytic auxiliary trace",
-              "gmres_iterations": 7,
               "body_potential_relative_l2": 0.21491778047965765,
-              "exact_integrated_pressure_functional": [
-                -0.016429917238563685,
-                28.672041850353963,
-                0.4117635828447419,
-                -28.54457912152574,
-                -0.13005979817083357,
-                3.148546095808511
-              ],
-              "total_integrated_pressure_functional_error": [
-                0.01624439573843514,
-                14.650345452646171,
-                1.808737503492107,
-                -12.052661158528007,
-                0.23810080256259425,
-                -3.3541437759065897
-              ]
-            },
+              "maximum_force_error_N": 14.650345452646171,
+              "maximum_moment_error_Nm": 12.052661158528007,
+              "heave_error_N": 1.808737503492107,
+              "roll_error_Nm": -12.052661158528007
+            }
+          ],
+          "rigid_columns": [
             {
               "field": "unit heave",
-              "gmres_iterations": 8,
               "instantaneous_added_mass_column": [
                 -381.64200828155055,
                 171.27876348580205,
@@ -3424,7 +709,6 @@
             },
             {
               "field": "unit world-x rotation",
-              "gmres_iterations": 8,
               "instantaneous_added_mass_column": [
                 14.96111611352392,
                 -1501.7809287368395,
@@ -3434,128 +718,52 @@
                 -92.9095571612944
               ]
             }
-          ],
-          "extension_sensitivity": [
-            {
-              "field": "vertical internal dipole",
-              "pressure_centroid_functional_change": [
-                0.31200848918098717,
-                0.37669501998308097,
-                -6.491170480058787,
-                -0.26886142894544446,
-                -2.6222184430399316,
-                0.11133243357633413
-              ]
-            },
-            {
-              "field": "transverse internal dipole",
-              "pressure_centroid_functional_change": [
-                -0.027144698291463206,
-                -1.4644633794022315,
-                -2.162325537002117,
-                0.7936700712558284,
-                0.1796647643526855,
-                -0.9649299259997869
-              ]
-            }
           ]
         },
         {
           "roof_refinement": 2,
           "body_panels": 216,
-          "minimum_centroid_depth_below_fourier_graph_m": 0.011650849783667122,
-          "rows": [
+          "manufactured": [
             {
               "field": "vertical internal dipole",
               "auxiliary_trace": "physical exterior total fill",
-              "gmres_iterations": 7,
               "body_potential_relative_l2": 0.44734095925207734,
-              "exact_integrated_pressure_functional": [
-                -0.13576867599286324,
-                0.6857198333471608,
-                44.1571956092107,
-                -0.3838716880976989,
-                -4.937539635692332,
-                0.008377529430168451
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.24219948834144645,
-                2.4577654355800185,
-                68.11522716093074,
-                -1.8608227861626312,
-                16.864873247058767,
-                -0.08903788115803418
-              ]
+              "maximum_force_error_N": 68.11522716093074,
+              "maximum_moment_error_Nm": 16.864873247058767,
+              "heave_error_N": 68.11522716093074,
+              "roll_error_Nm": -1.8608227861626312
             },
             {
               "field": "vertical internal dipole",
               "auxiliary_trace": "known analytic auxiliary trace",
-              "gmres_iterations": 8,
               "body_potential_relative_l2": 0.5013496388536827,
-              "exact_integrated_pressure_functional": [
-                -0.13576867599286324,
-                0.6857198333471608,
-                44.1571956092107,
-                -0.3838716880976989,
-                -4.937539635692332,
-                0.008377529430168451
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.5563648355878604,
-                2.0702368987542847,
-                74.61106381794878,
-                -1.584571742053669,
-                19.48290767145074,
-                -0.19692607024744574
-              ]
+              "maximum_force_error_N": 74.61106381794878,
+              "maximum_moment_error_Nm": 19.48290767145074,
+              "heave_error_N": 74.61106381794878,
+              "roll_error_Nm": -1.584571742053669
             },
             {
               "field": "transverse internal dipole",
               "auxiliary_trace": "physical exterior total fill",
-              "gmres_iterations": 8,
               "body_potential_relative_l2": 0.22810527237100975,
-              "exact_integrated_pressure_functional": [
-                -0.02051395502175135,
-                29.1271461532856,
-                0.4601251709115104,
-                -28.86894671097489,
-                -0.22768198525523076,
-                3.1829325772594785
-              ],
-              "total_integrated_pressure_functional_error": [
-                -0.010362164352234762,
-                13.025311090866346,
-                -0.44226369184141934,
-                -11.13493986545916,
-                0.44887305124145116,
-                -4.389545461716119
-              ]
+              "maximum_force_error_N": 13.025311090866346,
+              "maximum_moment_error_Nm": 11.13493986545916,
+              "heave_error_N": -0.44226369184141934,
+              "roll_error_Nm": -11.13493986545916
             },
             {
               "field": "transverse internal dipole",
               "auxiliary_trace": "known analytic auxiliary trace",
-              "gmres_iterations": 7,
               "body_potential_relative_l2": 0.21432409747704098,
-              "exact_integrated_pressure_functional": [
-                -0.02051395502175135,
-                29.1271461532856,
-                0.4601251709115104,
-                -28.86894671097489,
-                -0.22768198525523076,
-                3.1829325772594785
-              ],
-              "total_integrated_pressure_functional_error": [
-                0.017606970400900326,
-                14.629808016201395,
-                1.7298771820055578,
-                -12.031203506067207,
-                0.28139188197094955,
-                -3.3839749568128634
-              ]
-            },
+              "maximum_force_error_N": 14.629808016201395,
+              "maximum_moment_error_Nm": 12.031203506067207,
+              "heave_error_N": 1.7298771820055578,
+              "roll_error_Nm": -12.031203506067207
+            }
+          ],
+          "rigid_columns": [
             {
               "field": "unit heave",
-              "gmres_iterations": 8,
               "instantaneous_added_mass_column": [
                 -381.3009617103607,
                 170.41530995626792,
@@ -3567,7 +775,6 @@
             },
             {
               "field": "unit world-x rotation",
-              "gmres_iterations": 8,
               "instantaneous_added_mass_column": [
                 15.84391921273819,
                 -1502.8321114762819,
@@ -3577,34 +784,449 @@
                 -95.0931764385258
               ]
             }
-          ],
-          "extension_sensitivity": [
+          ]
+        }
+      ]
+    },
+    {
+      "report": "artifacts/boat-nonplanar-bvp-body-fine-roof2.json",
+      "surface_refinement": 1,
+      "body_refinement": 2,
+      "hos_order": 4,
+      "image_height_m": 0.424473578448259,
+      "reference_height_m": 0.34594381946627656,
+      "cases": [
+        {
+          "roof_refinement": 2,
+          "body_panels": 864,
+          "manufactured": [
             {
               "field": "vertical internal dipole",
-              "pressure_centroid_functional_change": [
-                0.3141653472464142,
-                0.38752853682573346,
-                -6.495836657018026,
-                -0.276251044108959,
-                -2.6180344243919724,
-                0.10788818908941034
-              ]
+              "auxiliary_trace": "physical exterior total fill",
+              "body_potential_relative_l2": 0.178366152804804,
+              "maximum_force_error_N": 6.200546918133647,
+              "maximum_moment_error_Nm": 9.495394144474009,
+              "heave_error_N": -6.200546918133647,
+              "roll_error_Nm": -0.09777314829299605
+            },
+            {
+              "field": "vertical internal dipole",
+              "auxiliary_trace": "known analytic auxiliary trace",
+              "body_potential_relative_l2": 0.19103497528849295,
+              "maximum_force_error_N": 5.89687055918246,
+              "maximum_moment_error_Nm": 9.395142620459008,
+              "heave_error_N": -5.89687055918246,
+              "roll_error_Nm": 0.3271020225027133
             },
             {
               "field": "transverse internal dipole",
-              "pressure_centroid_functional_change": [
-                -0.027969134753135064,
-                -1.604496925335071,
-                -2.1721408738469803,
-                0.8962636406080308,
-                0.16748116927050313,
-                -1.0055705049032566
+              "auxiliary_trace": "physical exterior total fill",
+              "body_potential_relative_l2": 0.11891215649361056,
+              "maximum_force_error_N": 2.582148145198307,
+              "maximum_moment_error_Nm": 1.5828985242619078,
+              "heave_error_N": -2.582148145198307,
+              "roll_error_Nm": 0.6293575198949917
+            },
+            {
+              "field": "transverse internal dipole",
+              "auxiliary_trace": "known analytic auxiliary trace",
+              "body_potential_relative_l2": 0.0906428765323694,
+              "maximum_force_error_N": 1.2410755135242582,
+              "maximum_moment_error_Nm": 1.3978394825604,
+              "heave_error_N": -0.28603598664858054,
+              "roll_error_Nm": -1.3978394825604
+            }
+          ],
+          "rigid_columns": [
+            {
+              "field": "unit heave",
+              "instantaneous_added_mass_column": [
+                -366.1389073969795,
+                164.3065721413766,
+                11461.781072128379,
+                -141.05888794787037,
+                -2153.453847543964,
+                169.98775932483426
+              ]
+            },
+            {
+              "field": "unit world-x rotation",
+              "instantaneous_added_mass_column": [
+                15.244611477209112,
+                -1468.0357829666793,
+                -138.99550798706895,
+                1822.7387618365294,
+                147.00785751656775,
+                -107.21475223295779
               ]
             }
           ]
         }
-      ],
-      "owned_data_hashes_verified": true
+      ]
+    },
+    {
+      "report": "artifacts/boat-nonplanar-bvp-surface-fine.json",
+      "surface_refinement": 2,
+      "body_refinement": 1,
+      "hos_order": 4,
+      "image_height_m": 0.424473578448259,
+      "reference_height_m": 0.34594381946627656,
+      "cases": [
+        {
+          "roof_refinement": 1,
+          "body_panels": 184,
+          "manufactured": [
+            {
+              "field": "vertical internal dipole",
+              "auxiliary_trace": "physical exterior total fill",
+              "body_potential_relative_l2": 0.4459180222177538,
+              "maximum_force_error_N": 67.89096538498953,
+              "maximum_moment_error_Nm": 16.94655390864054,
+              "heave_error_N": 67.89096538498953,
+              "roll_error_Nm": -1.5604381185123213
+            },
+            {
+              "field": "vertical internal dipole",
+              "auxiliary_trace": "known analytic auxiliary trace",
+              "body_potential_relative_l2": 0.5381229120164991,
+              "maximum_force_error_N": 79.16236183032608,
+              "maximum_moment_error_Nm": 19.94917751759363,
+              "heave_error_N": 79.16236183032608,
+              "roll_error_Nm": -1.743438886369963
+            },
+            {
+              "field": "transverse internal dipole",
+              "auxiliary_trace": "physical exterior total fill",
+              "body_potential_relative_l2": 0.23155181400758176,
+              "maximum_force_error_N": 14.447217040441906,
+              "maximum_moment_error_Nm": 12.297916725694883,
+              "heave_error_N": 1.7933653797612452,
+              "roll_error_Nm": -12.297916725694883
+            },
+            {
+              "field": "transverse internal dipole",
+              "auxiliary_trace": "known analytic auxiliary trace",
+              "body_potential_relative_l2": 0.20384298974608525,
+              "maximum_force_error_N": 13.673930469375982,
+              "maximum_moment_error_Nm": 11.151476232258453,
+              "heave_error_N": 2.093194508770138,
+              "roll_error_Nm": -11.151476232258453
+            }
+          ],
+          "rigid_columns": [
+            {
+              "field": "unit heave",
+              "instantaneous_added_mass_column": [
+                -378.61451767186765,
+                176.4808160922767,
+                11944.80720040633,
+                -148.45969069105854,
+                -2152.537379882978,
+                160.1304502644142
+              ]
+            },
+            {
+              "field": "unit world-x rotation",
+              "instantaneous_added_mass_column": [
+                14.632119652204292,
+                -1547.963412739339,
+                -149.5562573424988,
+                1888.9057962655754,
+                136.77232665438984,
+                -85.5958804770664
+              ]
+            }
+          ]
+        },
+        {
+          "roof_refinement": 2,
+          "body_panels": 216,
+          "manufactured": [
+            {
+              "field": "vertical internal dipole",
+              "auxiliary_trace": "physical exterior total fill",
+              "body_potential_relative_l2": 0.44597657200004664,
+              "maximum_force_error_N": 67.92109231002703,
+              "maximum_moment_error_Nm": 16.956528730586157,
+              "heave_error_N": 67.92109231002703,
+              "roll_error_Nm": -1.5635153343637969
+            },
+            {
+              "field": "vertical internal dipole",
+              "auxiliary_trace": "known analytic auxiliary trace",
+              "body_potential_relative_l2": 0.5383086066157772,
+              "maximum_force_error_N": 79.21764522466532,
+              "maximum_moment_error_Nm": 19.96445111831048,
+              "heave_error_N": 79.21764522466532,
+              "roll_error_Nm": -1.7488971223758178
+            },
+            {
+              "field": "transverse internal dipole",
+              "auxiliary_trace": "physical exterior total fill",
+              "body_potential_relative_l2": 0.23182317338296884,
+              "maximum_force_error_N": 14.519337237516766,
+              "maximum_moment_error_Nm": 12.357642835306041,
+              "heave_error_N": 1.8335354954188947,
+              "roll_error_Nm": -12.357642835306041
+            },
+            {
+              "field": "transverse internal dipole",
+              "auxiliary_trace": "known analytic auxiliary trace",
+              "body_potential_relative_l2": 0.2038146877909024,
+              "maximum_force_error_N": 13.715921826568895,
+              "maximum_moment_error_Nm": 11.18376974743703,
+              "heave_error_N": 2.122282507253122,
+              "roll_error_Nm": -11.18376974743703
+            }
+          ],
+          "rigid_columns": [
+            {
+              "field": "unit heave",
+              "instantaneous_added_mass_column": [
+                -378.54515191029463,
+                182.8330762536253,
+                11970.484030656227,
+                -153.9551967087362,
+                -2149.284002027903,
+                183.72048968101657
+              ]
+            },
+            {
+              "field": "unit world-x rotation",
+              "instantaneous_added_mass_column": [
+                15.439634228985852,
+                -1576.275371002992,
+                -154.98231897329285,
+                1910.4543949382398,
+                153.57999158542907,
+                -86.16894126777088
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "report": "artifacts/boat-nonplanar-bvp-order6.json",
+      "surface_refinement": 2,
+      "body_refinement": 1,
+      "hos_order": 6,
+      "image_height_m": 0.424473578448259,
+      "reference_height_m": 0.34594381946627656,
+      "cases": [
+        {
+          "roof_refinement": 2,
+          "body_panels": 216,
+          "manufactured": [
+            {
+              "field": "vertical internal dipole",
+              "auxiliary_trace": "physical exterior total fill",
+              "body_potential_relative_l2": 0.4459759478406446,
+              "maximum_force_error_N": 67.92088587726553,
+              "maximum_moment_error_Nm": 16.95691389018775,
+              "heave_error_N": 67.92088587726553,
+              "roll_error_Nm": -1.5636199369723087
+            },
+            {
+              "field": "vertical internal dipole",
+              "auxiliary_trace": "known analytic auxiliary trace",
+              "body_potential_relative_l2": 0.5383071151788347,
+              "maximum_force_error_N": 79.21544744925798,
+              "maximum_moment_error_Nm": 19.97127499705598,
+              "heave_error_N": 79.21544744925798,
+              "roll_error_Nm": -1.7486771955853158
+            },
+            {
+              "field": "transverse internal dipole",
+              "auxiliary_trace": "physical exterior total fill",
+              "body_potential_relative_l2": 0.2318246674668038,
+              "maximum_force_error_N": 14.51937370851568,
+              "maximum_moment_error_Nm": 12.357735953624992,
+              "heave_error_N": 1.8331876358433727,
+              "roll_error_Nm": -12.357735953624992
+            },
+            {
+              "field": "transverse internal dipole",
+              "auxiliary_trace": "known analytic auxiliary trace",
+              "body_potential_relative_l2": 0.20382482245336186,
+              "maximum_force_error_N": 13.718019130733907,
+              "maximum_moment_error_Nm": 11.185291662628206,
+              "heave_error_N": 2.11968480266845,
+              "roll_error_Nm": -11.185291662628206
+            }
+          ],
+          "rigid_columns": [
+            {
+              "field": "unit heave",
+              "instantaneous_added_mass_column": [
+                -378.39786655800606,
+                182.97304471744317,
+                11970.193787491924,
+                -154.08448992997663,
+                -2148.4708783876545,
+                184.01733785735595
+              ]
+            },
+            {
+              "field": "unit world-x rotation",
+              "instantaneous_added_mass_column": [
+                15.505584502274608,
+                -1576.166691561702,
+                -155.1565776672001,
+                1910.361851115497,
+                153.99337640102857,
+                -85.9654432637627
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "report": "artifacts/box-nonplanar-bvp-owned-frame.json",
+      "surface_refinement": 1,
+      "body_refinement": 1,
+      "hos_order": 4,
+      "image_height_m": 0.4240538268951875,
+      "reference_height_m": 0.34688505821817767,
+      "cases": [
+        {
+          "roof_refinement": 1,
+          "body_panels": 136,
+          "manufactured": [
+            {
+              "field": "vertical internal dipole",
+              "auxiliary_trace": "physical exterior total fill",
+              "body_potential_relative_l2": 2.114463609149286,
+              "maximum_force_error_N": 167.60691595887533,
+              "maximum_moment_error_Nm": 3.2486246675949486,
+              "heave_error_N": -167.60691595887533,
+              "roll_error_Nm": 0.850229744534281
+            },
+            {
+              "field": "vertical internal dipole",
+              "auxiliary_trace": "known analytic auxiliary trace",
+              "body_potential_relative_l2": 2.0417067882722555,
+              "maximum_force_error_N": 156.00775916343804,
+              "maximum_moment_error_Nm": 5.060717478725447,
+              "heave_error_N": -156.00775916343804,
+              "roll_error_Nm": 0.29411067848153305
+            },
+            {
+              "field": "transverse internal dipole",
+              "auxiliary_trace": "physical exterior total fill",
+              "body_potential_relative_l2": 0.4122452163036616,
+              "maximum_force_error_N": 68.90553694593386,
+              "maximum_moment_error_Nm": 46.165700758578275,
+              "heave_error_N": 68.90553694593386,
+              "roll_error_Nm": -46.165700758578275
+            },
+            {
+              "field": "transverse internal dipole",
+              "auxiliary_trace": "known analytic auxiliary trace",
+              "body_potential_relative_l2": 0.3922191882917618,
+              "maximum_force_error_N": 69.29270858262532,
+              "maximum_moment_error_Nm": 40.63034969298072,
+              "heave_error_N": 69.29270858262532,
+              "roll_error_Nm": -40.63034969298072
+            }
+          ],
+          "rigid_columns": [
+            {
+              "field": "unit heave",
+              "instantaneous_added_mass_column": [
+                -2.883540217199764,
+                80.6528814970139,
+                15959.605131301258,
+                -15.453652536654083,
+                24.490357261719787,
+                74.02534120562201
+              ]
+            },
+            {
+              "field": "unit world-x rotation",
+              "instantaneous_added_mass_column": [
+                0.25842645244857465,
+                45.48789693316748,
+                -9.101475816689401,
+                2870.6930965943025,
+                -2.345083743664513,
+                -3.4408719467981363
+              ]
+            }
+          ]
+        },
+        {
+          "roof_refinement": 2,
+          "body_panels": 144,
+          "manufactured": [
+            {
+              "field": "vertical internal dipole",
+              "auxiliary_trace": "physical exterior total fill",
+              "body_potential_relative_l2": 2.11468700930399,
+              "maximum_force_error_N": 167.64083020520013,
+              "maximum_moment_error_Nm": 3.2500847197470764,
+              "heave_error_N": -167.64083020520013,
+              "roll_error_Nm": 0.8512262516749786
+            },
+            {
+              "field": "vertical internal dipole",
+              "auxiliary_trace": "known analytic auxiliary trace",
+              "body_potential_relative_l2": 2.0417645456254436,
+              "maximum_force_error_N": 156.0243761904667,
+              "maximum_moment_error_Nm": 5.061760671186409,
+              "heave_error_N": -156.0243761904667,
+              "roll_error_Nm": 0.2943116603918078
+            },
+            {
+              "field": "transverse internal dipole",
+              "auxiliary_trace": "physical exterior total fill",
+              "body_potential_relative_l2": 0.41225989594581114,
+              "maximum_force_error_N": 68.92289436054755,
+              "maximum_moment_error_Nm": 46.169929359839756,
+              "heave_error_N": 68.92289436054755,
+              "roll_error_Nm": -46.169929359839756
+            },
+            {
+              "field": "transverse internal dipole",
+              "auxiliary_trace": "known analytic auxiliary trace",
+              "body_potential_relative_l2": 0.3921073187284333,
+              "maximum_force_error_N": 69.2966506405322,
+              "maximum_moment_error_Nm": 40.63125604269686,
+              "heave_error_N": 69.2966506405322,
+              "roll_error_Nm": -40.63125604269686
+            }
+          ],
+          "rigid_columns": [
+            {
+              "field": "unit heave",
+              "instantaneous_added_mass_column": [
+                -2.8210824044528833,
+                81.23519306077142,
+                15963.862019260036,
+                -15.586719929557988,
+                25.05477703002088,
+                76.15636643702811
+              ]
+            },
+            {
+              "field": "unit world-x rotation",
+              "instantaneous_added_mass_column": [
+                0.5064069671782185,
+                45.628263215949076,
+                -9.67005702411521,
+                2871.728902927162,
+                0.5040242168485485,
+                -3.5329143985694316
+              ]
+            }
+          ]
+        }
+      ]
     }
+  ],
+  "reproduction_inputs": [
+    "tests.reference_boat.simulation_inputs()",
+    "tests.reference_convex_boat.box_inputs()"
   ]
 }
