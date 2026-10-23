@@ -36,7 +36,7 @@ from .p4_fluid_ordering import fresh
 def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_step=.01,
         quadrature_order=3, operator_reuse=None, charted_pressure=False, common_pressure_chart=False,
         action_coupling=False, initial_xy=None, action_tangent=None, integrator='RK23', tolerance_scale=1.,
-        momentum_tangent=None):
+        momentum_tangent=None, integer_geometry=False, shape_gradient='forward'):
     from .cuda_operator import prepare_energy, cp
     if action_tangent is None:
         action_tangent = action_coupling
@@ -59,6 +59,8 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
         raise ValueError('analytic action tangent requires action coupling')
     if momentum_tangent and not action_tangent:
         raise ValueError('exact momentum tangent requires analytic action tangent')
+    if shape_gradient not in ('forward', 'reverse') or (shape_gradient == 'reverse' and not action_coupling):
+        raise ValueError('reverse shape gradient requires action coupling')
     if integrator not in ('RK23', 'RK45'):
         raise ValueError('integrator must be RK23 or RK45')
     if not np.isfinite(tolerance_scale) or tolerance_scale <= 0:
@@ -87,6 +89,8 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
             action_coupling=action_coupling,
             action_tangent=action_tangent,
             momentum_tangent=momentum_tangent,
+            integer_geometry=bool(integer_geometry),
+            shape_gradient=shape_gradient,
             initial_horizontal_position_m=None if initial_xy is None else list(initial_xy),
             common_pressure_chart=common_pressure_chart,
             pressure_derivative=('charted nodal with explicit material fallback on chart failure'
@@ -97,7 +101,7 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
             max_step_seconds=max_step, topology_templates_retained=4),
         source_sha256={name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
             for name in ('boat_moving.py', 'boat_geometry_template.py', 'boat_world_boundary.py',
-                         'boat_parent_clip_proof.py', 'boat_world_field.py', 'body_pressure.py',
+                         'boat_parent_clip_proof.py', 'boat_integer_intersections.py', 'boat_world_field.py', 'body_pressure.py',
                          'canoe.py', 'incident_baseline_benchmark.py',
                          'cuda_operator.py', 'cuda_energy.cu', 'cuda_pair.cuh', 'boat_operator_reuse.py',
                          'boat_past_operator.py', 'boat_ale_pressure.py', 'boat_motion_metrics.py')})
@@ -119,6 +123,9 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
         report['controls'].update(action_difference_policy='Analytic current shape and mixed-field time derivatives.',
             pressure_derivative='diagnostic only, exact current nodal ALE rate',
             derivative_step_seconds=None, minimum_chart_derivative_step_seconds=None)
+    if shape_gradient == 'reverse':
+        report['source_sha256'].update({name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
+            for name in ('cuda_reverse_gradient.py', 'cuda_scalar_reverse.cu')})
     started = perf_counter()
     times, states, dense_q, solver = [], [], [], None
     templates, cold_count, operator_model = [], 0, None
@@ -136,7 +143,7 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
         path = output.with_name(output.stem+f'-geometry-{cold_count}.json')
         cold_count += 1
         before = perf_counter()
-        _, arrays, metadata = construct(path, export_template=True, **inputs)
+        _, arrays, metadata = construct(path, export_template=True, integer_predicates=integer_geometry, **inputs)
         report['geometry'].append(dict(path=str(path), seconds=perf_counter()-before,
             sha256=sha256(path.with_suffix('.npz').read_bytes()).hexdigest()))
         templates.insert(0, arrays)
@@ -296,7 +303,8 @@ def run(output, duration=.02, refinement=1, max_rhs=13, budget_seconds=90., max_
                 lambda current_pose, height, potential, label: geometry(current_pose, height,
                     potential, label, chart=base_context['chart']),
                 lambda moved, current_time: field(moved, twist, current_time, False, None),
-                geometry_tangent=tangent_geometry if action_tangent else None, momentum_tangent=momentum_tangent)
+                geometry_tangent=tangent_geometry if action_tangent else None,
+                momentum_tangent=momentum_tangent, shape_gradient=shape_gradient)
             row['operator_mode'] = 'fresh'
         refresh = (operator_reuse in ('past-linear', 'past-curved') and operator_model is not None
                    and abs(time-operator_model.time) >= PAST_LIMITS['refresh_age_seconds']-1e-14)
@@ -509,6 +517,8 @@ if __name__ == '__main__':
     parser.add_argument('--integrator', choices=('RK23', 'RK45'), default='RK23')
     parser.add_argument('--tolerance-scale', type=float, default=1.)
     parser.add_argument('--momentum-tangent', action=argparse.BooleanOptionalAction, default=None)
+    parser.add_argument('--integer-geometry', action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument('--shape-gradient', choices=('forward', 'reverse'), default='forward')
     result = run(**vars(parser.parse_args()))
     print(json.dumps({key: result[key] for key in
         ('complete', 'seconds', 'accepted_simulated_seconds', 'accepted_steps', 'cold_geometry_count')}))

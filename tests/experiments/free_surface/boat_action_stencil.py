@@ -26,13 +26,18 @@ class ActionResult:
     diagnostics: dict
 
 
-def evaluate(body, arrays, current, assembly, state, values, time, geometry, field, *, geometry_tangent=None, momentum_tangent=False):
+def evaluate(body, arrays, current, assembly, state, values, time, geometry, field, *, geometry_tangent=None,
+             momentum_tangent=False, shape_gradient='forward'):
     """Return the moving driver's stencil tuple, with a fresh action closure.
 
     geometry(pose, eta, psi, label) must stay on the selected base chart;
     field(arrays, time) returns a fresh field and energy on each owned offset.
     """
     from .cuda_shape_gradient import vertex_gradient
+    if shape_gradient == 'reverse':
+        from .cuda_reverse_gradient import vertex_gradient
+    elif shape_gradient != 'forward':
+        raise ValueError('shape gradient must be forward or reverse')
     if momentum_tangent and geometry_tangent is None:
         raise ValueError('exact momentum tangent requires analytic geometry tangent')
     started = perf_counter()
@@ -157,6 +162,7 @@ def evaluate(body, arrays, current, assembly, state, values, time, geometry, fie
     hydro = loads[-1]-added@accelerations[-1]
     balance = rigid@accelerations[-1]-hydro-weight_gyro
     diagnostics = dict(formulation='experimental restricted action',
+        shape_gradient=shape_gradient,
         momentum_derivative='exact current' if momentum_tangent else 'h/h2 field stencils',
         geometry_derivatives='analytic owned chart' if geometry_tangent is not None else 'h/h2 finite differences',
         incident_port_derivatives='Exact cancellation before geometry differencing; full incident forcing remains in fluid solves.',

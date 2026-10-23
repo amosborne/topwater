@@ -97,7 +97,7 @@ def material_coordinates(registry_points, rr, cg, position):
 
 def construct(output, *, body=None, pose=None, parent_xy=None, parents=None,
               parent_eta=None, parent_psi=None, export_template=False,
-              material_refinement=None, cache_signs=True):
+              material_refinement=None, cache_signs=True, integer_predicates=False):
     """Construct one checkpointed snapshot; coefficients stay on WORLD parents.
 
     Returns ``(mesh, arrays, report)``. Pose translations locate the body's CG;
@@ -113,7 +113,8 @@ def construct(output, *, body=None, pose=None, parent_xy=None, parents=None,
                     soft_parent_budget_seconds=25),
         budget_scope='Elapsed checks between parents; an in-flight parent/edge pass is not preempted',
         source_sha256={name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest() for name in
-                       ('boat_world_boundary.py', 'boat_parent_clip_proof.py')},
+                       ('boat_world_boundary.py', 'boat_parent_clip_proof.py', 'boat_integer_intersections.py')},
+        integer_predicates=bool(integer_predicates),
         fixture_sha256=sha256(Path(__file__).resolve().parents[2].joinpath('reference_boat.py').read_bytes()).hexdigest())
     arrays, polygons = {}, []
     registry = None
@@ -178,7 +179,8 @@ def construct(output, *, body=None, pose=None, parent_xy=None, parents=None,
             affine_pose_roundoff_max=float(np.max(abs(np.asarray(world, dtype=float)
                 -((body.mesh.vertices-body.cg)@rotation.T+rest.position)))))
         registry = PlanePoints(max_points=12000, max_intersections=50000,
-                               capture_constraints=export_template, cache_signs=cache_signs)
+                               capture_constraints=export_template, cache_signs=cache_signs,
+                               integer_predicates=integer_predicates)
         hull = hull_planes(registry, world, body.mesh.faces)
         cells, roofs, outer = columns(registry, roof, parents)
         if len(registry.planes) > 128:

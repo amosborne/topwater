@@ -1,6 +1,7 @@
 """Decompose a saved free reaction without another operator or fluid solve."""
 import argparse
 import ast
+from copy import copy
 from hashlib import sha256
 import json
 from pathlib import Path
@@ -48,12 +49,37 @@ def load_snapshot(audit):
         expected_hash = report['source_sha256'][name]
         if actual_hash == expected_hash:
             continue
-        if name != 'boat_world_field.py':
+        if name not in ('boat_world_field.py', 'boat_world_boundary.py', 'boat_geometry_template.py'):
             raise ValueError('physical helper changed: '+name)
         archived = audit.with_name(audit.stem+'-source')/name
         if not archived.is_file() or sha256(archived.read_bytes()).hexdigest() != expected_hash:
-            raise ValueError('original geometry-refiner source archive is absent or changed')
+            raise ValueError('original geometry producer source archive is absent or changed: '+name)
+        if name == 'boat_world_boundary.py':
+            # Replay consumes the owned chart, never the current cold builder.
+            report.setdefault('geometry_replay_verification', {})[name] = dict(
+                snapshot_source_sha256=expected_hash, current_source_sha256=actual_hash,
+                scope='Original cold producer only; current cold builder is not executed during replay.',
+                mechanism='SHA-verified original source archive and bitwise geometry replay below.')
+            continue
         original_tree, current_tree = (ast.parse(path.read_text()) for path in (archived, current_path))
+        if name == 'boat_geometry_template.py':
+            def replay_contract(tree):
+                exports = [node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == 'export_template']
+                if len(exports) != 1:
+                    raise ValueError('one explicit cold chart exporter required')
+                definition = copy(exports[0])
+                definition.body = [ast.Pass()]
+                # Defaults, decorators and annotations execute at import; only
+                # the unused cold function body is outside the replay contract.
+                return ast.dump(ast.Module(body=[definition if node is exports[0] else node for node in tree.body],
+                    type_ignores=[]), include_attributes=False)
+            if replay_contract(original_tree) != replay_contract(current_tree):
+                raise ValueError('geometry replay code or imports changed outside cold exporter')
+            report.setdefault('geometry_replay_verification', {})[name] = dict(
+                snapshot_source_sha256=expected_hash, current_source_sha256=actual_hash,
+                scope='Cold exporter body only; signatures, defaults, decorators, replay code and imports remain identical.',
+                mechanism='SHA-verified original source archive; identical module AST ignoring only export_template body; bitwise geometry replay below.')
+            continue
         def refiner_contract(tree):
             function = next(node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == 'refine_boundary')
             # These bindings are the only nonlocal callable/module dependencies

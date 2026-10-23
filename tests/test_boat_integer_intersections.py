@@ -108,7 +108,7 @@ def test_actual_adjacent_transom_chine_geometry_is_bit_identical(monkeypatch, he
     old_mesh, old_report = proof.build(heights)
     original = proof.PlanePoints
     with monkeypatch.context() as context:
-        context.setattr(proof, 'PlanePoints', lambda **options: original(**options, integer_predicates=True))
+        context.setattr(proof, 'PlanePoints', lambda **options: original(**dict(options, integer_predicates=True)))
         new_mesh, new_report = proof.build(heights)
     np.testing.assert_array_equal(new_mesh.vertices, old_mesh.vertices)
     np.testing.assert_array_equal(new_mesh.faces, old_mesh.faces)
@@ -125,7 +125,7 @@ def test_complete_cold_arrays_and_template_are_bit_identical(monkeypatch, tmp_pa
     original = boundary.PlanePoints
     captured = []
     def factory(**options):
-        registry = original(**options, integer_predicates=True)
+        registry = original(**dict(options, integer_predicates=True))
         captured.append(registry)
         return registry
     with monkeypatch.context() as context:

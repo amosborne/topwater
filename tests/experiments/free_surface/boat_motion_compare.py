@@ -38,6 +38,7 @@ def run(reference, candidate, output, driver_change_note=None, integration_chang
             refinement=report['boundary_refinement'],
             quadrature_order=report['operator_policy']['quadrature_order']))
         inputs[-1]['integrator'] = report['controls'].get('integrator', 'RK23')
+        inputs[-1]['integer_geometry'] = report['controls'].get('integer_geometry', False)
         trajectories.append((times, states, report, metadata, dense))
     ta, ya, ra, ma, da = trajectories[0]
     tb, yb, rb, mb, db = trajectories[1]
@@ -48,13 +49,15 @@ def run(reference, candidate, output, driver_change_note=None, integration_chang
                'boat_geometry_template.py', 'body_pressure.py', 'incident_baseline_benchmark.py',
                'boat_ale_pressure.py', 'cuda_operator.py', 'cuda_energy.cu', 'cuda_pair.cuh',
                'canoe.py')
+    if any('boat_integer_intersections.py' in report['source_sha256'] for report in (ra, rb)):
+        physics += ('boat_integer_intersections.py',)
     derivative_changes = {}
     for name in ('action_coupling', 'action_tangent'):
         if ra['controls'].get(name, False) != rb['controls'].get(name, False):
             raise ValueError('action policy differs: '+name)
-    for name in ('momentum_tangent',):
-        if ra['controls'].get(name, False) != rb['controls'].get(name, False):
-            derivative_changes[name] = dict(reference=ra['controls'].get(name, False), candidate=rb['controls'].get(name, False))
+    for name, default in (('momentum_tangent', False), ('shape_gradient', 'forward')):
+        if ra['controls'].get(name, default) != rb['controls'].get(name, default):
+            derivative_changes[name] = dict(reference=ra['controls'].get(name, default), candidate=rb['controls'].get(name, default))
     if any(report['controls'].get('action_coupling', False) for report in (ra, rb)):
         physics += ('boat_action_stencil.py', 'boat_body_action.py', 'boat_parent_action.py',
                     'cuda_shape_gradient.py', 'cuda_shape.cu', 'cuda_dual.cuh', 'cuda_wide_dual.cuh')
@@ -62,12 +65,18 @@ def run(reference, candidate, output, driver_change_note=None, integration_chang
         physics += ('boat_chart_tangent.py', 'boat_action_tangent.py')
     if any(report['controls'].get('momentum_tangent', False) for report in (ra, rb)):
         physics += ('boat_momentum_tangent.py', 'boat_incident_tangent.py', 'cuda_directional.py', 'cuda_directional.cu')
+    if any(report['controls'].get('shape_gradient', 'forward') == 'reverse' for report in (ra, rb)):
+        physics += ('cuda_reverse_gradient.py', 'cuda_scalar_reverse.cu')
     derivative_owners = ('boat_action_stencil.py', 'boat_ale_pressure.py', 'boat_momentum_tangent.py',
-                         'boat_incident_tangent.py', 'cuda_directional.py', 'cuda_directional.cu')
+                         'boat_incident_tangent.py', 'cuda_directional.py', 'cuda_directional.cu',
+                         'cuda_reverse_gradient.py', 'cuda_scalar_reverse.cu')
+    momentum_owners = ('boat_momentum_tangent.py', 'boat_incident_tangent.py', 'cuda_directional.py', 'cuda_directional.cu')
+    reverse_owners = ('cuda_reverse_gradient.py', 'cuda_scalar_reverse.cu')
     for name in physics:
         for report in (ra, rb):
-            if ((name not in derivative_owners[2:] or report['controls'].get('momentum_tangent', False))
-                    and name not in report['source_sha256']):
+            used = (report['controls'].get('momentum_tangent', False) if name in momentum_owners else
+                    report['controls'].get('shape_gradient', 'forward') == 'reverse' if name in reverse_owners else True)
+            if used and name not in report['source_sha256']:
                 raise ValueError('required physical helper provenance absent: '+name)
         hashes = tuple(report['source_sha256'].get(name) for report in (ra, rb))
         if hashes[0] != hashes[1]:
