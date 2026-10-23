@@ -42,7 +42,7 @@ def cross(a, b):
 class PlanePoints:
     """Tiny reference registry: all planes are frozen before intersections."""
     def __init__(self, *, max_points=None, max_intersections=None, capture_constraints=False,
-                 cache_signs=False):
+                 cache_signs=False, integer_predicates=False):
         self.planes, self.labels, self.cache = [], [], {}
         self.points, self.incidence, self.vertex_by_owner = [], [], {}
         self.registered_intersections = {}
@@ -50,6 +50,15 @@ class PlanePoints:
         self.max_points, self.max_intersections = max_points, max_intersections
         self.sign_cache = {} if cache_signs else None
         self.sign_requests, self.sign_cache_hits = 0, 0
+        self.integer_predicates = bool(integer_predicates)
+        self.integer_geometry = None
+
+    def _integer_owner(self):
+        if self.integer_geometry is None:
+            from .boat_integer_intersections import IntegerIntersections
+            self.integer_geometry = IntegerIntersections(self.planes)
+        self.integer_geometry.check_planes(self.planes)
+        return self.integer_geometry
 
     def plane(self, points, label):
         if self.cache:
@@ -78,8 +87,13 @@ class PlanePoints:
         if known & bit:
             self.sign_cache_hits += 1
             return 0 if zero & bit else (1 if positive & bit else -1)
-        value = self.value(plane, point)
-        sign = (value > 0)-(value < 0)
+        if self.integer_predicates:
+            owner = self._integer_owner()
+            sign = (owner.sign(triple, plane) if point is self.cache.get(triple)
+                    else owner.sign_point(point, plane))
+        else:
+            value = self.value(plane, point)
+            sign = (value > 0)-(value < 0)
         if self.sign_cache is not None:
             self.sign_cache[triple] = known | bit, zero | (bit if sign == 0 else 0), positive | (bit if sign > 0 else 0)
         return sign
@@ -90,6 +104,10 @@ class PlanePoints:
             return self.cache[triple]
         if self.max_intersections is not None and len(self.cache) >= self.max_intersections:
             raise RuntimeError('reference intersection cap reached')
+        if self.integer_predicates:
+            point = self._integer_owner().intersection(triple)
+            self.cache[triple] = point
+            return point
         a, b, c = (self.planes[i] for i in triple)
         determinant = dot(a[:3], cross(b[:3], c[:3]))
         if not determinant:
