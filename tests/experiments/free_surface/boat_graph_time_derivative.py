@@ -32,6 +32,8 @@ from .boat_parent_clip_proof import coplanar_groups
 from .cuda_graph import ExteriorTrace, body_maps, harmonic_velocity, cp
 from .panel_gradient_reference import checked_influence
 from .graph_geometry_reference import fourier_points
+from .boat_frozen_field import frozen_field
+from .boat_coupled_pressure import coupled_pressure, body_dynamics
 
 
 def prescribed_pose(initial, time):
@@ -43,6 +45,16 @@ def prescribed_pose(initial, time):
     return InitialState(initial.position+initial.linear_velocity*path_time,
         orientation.as_quat(scalar_first=True), initial.linear_velocity*(1+.3*time),
         orientation.inv().apply(omega*(1+.3*time)))
+
+
+def constant_twist_pose(initial, time):
+    """Zero world linear/angular acceleration for the coupled known RHS."""
+    initial_rotation = Rotation.from_quat(initial.orientation, scalar_first=True)
+    omega = initial_rotation.apply(initial.angular_velocity)
+    orientation = Rotation.from_rotvec(omega*time)*initial_rotation
+    return InitialState(initial.position+initial.linear_velocity*time,
+        orientation.as_quat(scalar_first=True), initial.linear_velocity,
+        orientation.inv().apply(omega))
 
 
 def wet_snapshot(inputs, pose, plane_origin, frame, grid_xy, length, refinement):
@@ -161,6 +173,11 @@ def run(inputs, args, report):
     height = max(height, float(probes[:, 2].max()), max(float((pose.position
         +material@rotation_matrix(pose.orientation).T)[:, 2].max())
         for pose, *_ in snapshots.values()))
+    minimum_height = height
+    if args.reference_height is not None:
+        if not np.isfinite(args.reference_height) or args.reference_height < minimum_height:
+            raise ValueError('fixed expansion height must cover every stencil source and target')
+        height = args.reference_height
     omega = rotation_matrix(initial.orientation)@initial.angular_velocity
     probe_speed = initial.linear_velocity+np.cross(omega, probes-cg)
     k = 2*np.pi*np.array([3., 1.])/args.length
@@ -170,6 +187,7 @@ def run(inputs, args, report):
         hos_order=args.order, body_refinement=args.body_refinement,
         image_height_m=image, reference_height_m=height, probe_count=len(probes),
         minimum_sufficient_image_height_m=minimum_image,
+        minimum_sufficient_reference_height_m=minimum_height,
         minimum_image_gap_above_true_plane_m=min(float(np.min(2*image-p.triangles[..., 2]
             -level-(p.triangles[..., :2]-cg[:2])@slope)) for _, p, *_ in snapshots.values()),
         exterior_nodes=len(extension.exterior), hidden_nodes=len(extension.hidden),
@@ -229,6 +247,16 @@ def run(inputs, args, report):
                 frozen_moving=moving_field.value(center_solution[0], frozen_spectrum),
                 operator_on_center=context.apply(center_solution[0]))
             del moving_field
+            if abs(time) == args.step/4:
+                action = frozen_field(panels, eta, args.length, origin, height, image,
+                                      args.order, trace, center_solution[0])
+                action['residual'] = np.sum(speed*panels.normals, axis=1)-action['normal']
+                action['diagnostics'].update(
+                    full_context_residual_max_difference=float(np.max(abs(action['residual']
+                        -(right-record['operator_on_center'])))),
+                    full_context_potential_max_difference=float(np.max(abs(action['potential']
+                        -record['frozen_body']))))
+                record['frozen_action'] = action
         records[time] = record
         record['actual_graph_values'] = actual_trace
         record['desired_graph_values'] = cp.asnumpy(trace[trace_nodes])
@@ -357,6 +385,79 @@ def run(inputs, args, report):
             body_pressure_pa=body_pressure.tolist(),
             bulk_pressure_pa=bernoulli.tolist(), fixed_phi_t_m2_per_s2=implicit_fixed.tolist())
         report['rows'].append(row)
+        if step == args.step/4:
+            actions = [record['frozen_action'] for record in (plus, minus)]
+            action_density_dot, action_solve = center.solve_density(
+                (actions[0]['residual']-actions[1]['residual'])/(2*step))
+            action_response_spectrum = -center.spectrum(center.trace@cp.asarray(action_density_dot))
+            action_response = center.body_potential(action_density_dot, action_response_spectrum)
+            action_body_rate = (actions[0]['potential']-actions[1]['potential'])/(2*step)+action_response
+            action_phi_t = action_body_rate-chart_convection
+            action_pressure = -WATER_DENSITY*(action_phi_t+.5*np.sum(surface_velocity**2, axis=1)
+                                              +GRAVITY*center_panels.centroids[:, 2])
+            report['frozen_field_pressure'] = dict(step_seconds=step,
+                offsets=[a['diagnostics'] for a in actions], density_derivative_solve=action_solve,
+                implicit_full_context_pressure_max_difference_pa=float(np.max(abs(action_pressure-body_pressure))),
+                implicit_full_context_six_functional_difference=(weighted.T@(action_pressure-body_pressure)).tolist(),
+                scope='Two frozen-density field actions plus one CURRENT derivative solve; full contexts remain independent verification references. No sixDOF evolution or end-to-end timing claim.')
+            # Genuine zero-world-acceleration stencils own the coupled known RHS.
+            # Subtracting W*a from an accelerating stencil leaves O(h^2) geometry terms.
+            modes = weighted/center_panels.areas[:, None]
+            prescribed_acceleration = .3*np.r_[initial.linear_velocity, omega]
+            constant_actions, constant_panels = [], []
+            for offset_time in [step, -step]:
+                pose = constant_twist_pose(initial, offset_time)
+                panels, mask, owners, pattern = wet_snapshot(inputs, pose, plane_origin, frame,
+                    grid_xy, args.length, args.body_refinement)
+                if (len(panels) != len(center_panels) or not np.array_equal(owners, source)
+                        or not np.array_equal(pattern, signs) or not np.array_equal(mask, inside)):
+                    raise ValueError('zero-acceleration stencil changed clipping/exterior ownership')
+                plane_bound = float(np.max(panels.triangles[..., 2]+level
+                    +(panels.triangles[..., :2]-cg[:2])@slope))/2
+                required_image = image_height(panels.triangles, eta, [args.length]*2, origin)[0]
+                actual_depth = fourier_points(eta, panels.centroids[:, :2], args.length, origin)[0]-panels.centroids[:, 2]
+                if (required_image > image or plane_bound >= image
+                        or panels.triangles[..., 2].max() > height or np.min(actual_depth) <= 0):
+                    raise ValueError('zero-acceleration stencil failed image/continuation/physical-depth guard')
+                trace = extension.extend(.1*np.cos(grid_xy[extension.exterior]@k-wave_frequency*offset_time))
+                action = frozen_field(panels, eta, args.length, origin, height, image,
+                                      args.order, trace, center_solution[0])
+                angular = rotation_matrix(pose.orientation)@pose.angular_velocity
+                speed = pose.linear_velocity+np.cross(angular, panels.centroids-pose.position)
+                action['residual'] = np.sum(speed*panels.normals, axis=1)-action['normal']
+                constant_actions.append(action)
+                constant_panels.append(panels)
+            normal_rhs = (constant_actions[0]['residual']-constant_actions[1]['residual'])/(2*step)
+            constant_chart_velocity = (constant_panels[0].centroids-constant_panels[1].centroids)/(2*step)
+            frozen_phi_t = (constant_actions[0]['potential']-constant_actions[1]['potential'])/(2*step) \
+                -np.sum(constant_chart_velocity*surface_velocity, axis=1)
+            coupled = coupled_pressure(center, inputs.body, initial, normal_rhs,
+                                       frozen_phi_t, surface_velocity)
+            known_density, _ = center.solve_density(normal_rhs)
+            known_spectrum = -center.spectrum(center.trace@cp.asarray(known_density))
+            known_phi_t = frozen_phi_t+center.body_potential(known_density, known_spectrum)
+            known_pressure = -WATER_DENSITY*(known_phi_t+.5*np.sum(surface_velocity**2, axis=1)
+                                            +GRAVITY*center_panels.centroids[:, 2])
+            responses = [center.solve(np.zeros(args.grid**2), modes[:, axis]) for axis in range(6)]
+            pressure_modes = np.column_stack([solution.potential for solution in responses])
+            fluid_mass = WATER_DENSITY*weighted.T@pressure_modes
+            mass, external = body_dynamics(inputs.body, initial)
+            modal_acceleration = np.linalg.solve(mass+fluid_mass, weighted.T@known_pressure+external)
+            modal_pressure = known_pressure-WATER_DENSITY*pressure_modes@modal_acceleration
+            recovered_prescribed = known_pressure-WATER_DENSITY*pressure_modes@prescribed_acceleration
+            report['coupled_current_pressure'] = dict(diagnostics=coupled['diagnostics'],
+                known_rhs_stencil='Genuine zero-world-linear/angular-acceleration poses; explicit clipping/label/image/height/physical-depth guards',
+                zero_acceleration_offsets=[a['diagnostics'] for a in constant_actions],
+                acceleration_world=coupled['acceleration'].tolist(),
+                explicit_modal_acceleration_world=modal_acceleration.tolist(),
+                acceleration_difference=(coupled['acceleration']-modal_acceleration).tolist(),
+                pressure_max_difference_pa=float(np.max(abs(coupled['pressure']-modal_pressure))),
+                six_functional_difference=(weighted.T@(coupled['pressure']-modal_pressure)).tolist(),
+                recovered_prescribed_pressure_max_difference_pa=float(np.max(abs(recovered_prescribed-body_pressure))),
+                prescribed_recovery_scope='Zero-acceleration and accelerating centered paths differ at O(h^2); this is a stencil convergence comparison, not roundoff parity.',
+                body_mass_matrix_world=mass.tolist(), fluid_mass_matrix_world=fluid_mass.tolist(),
+                fluid_mass_max_asymmetry=float(np.max(abs(fluid_mass-fluid_mass.T))),
+                scope='One matrix-free rank-six coupled solve vs seven independent current modal solves; no matrix symmetry repair, no evolved trajectory.')
     report.update(complete=True, total_run_seconds=perf_counter()-started,
         cupy_pool_used_bytes=cp.get_default_memory_pool().used_bytes(),
         cupy_pool_reserved_bytes=cp.get_default_memory_pool().total_bytes())
@@ -373,6 +474,8 @@ if __name__ == '__main__':
     parser.add_argument('--step', type=float, default=.04)
     parser.add_argument('--image-height', type=float,
                         help='hold a valid image height across spatial-resolution controls')
+    parser.add_argument('--reference-height', type=float,
+                        help='hold a valid expansion height across derivative-stencil controls')
     args = parser.parse_args()
     if (args.output.exists() or args.output.with_suffix('.source').exists()
             or args.grid < 17 or args.grid % 2 != 1 or not np.isfinite(args.length) or args.length <= 0

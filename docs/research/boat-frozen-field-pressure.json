@@ -1,0 +1,1577 @@
+{
+  "status": "Exact discrete frozen-field and rank-six coupling prototypes verified at two supported boat states; NOT promoted",
+  "formulation": {
+    "frozen_field": "Hold center density at offset geometry; evaluate source scalar trace, HOS coefficients, body potential and body normal residual. No offset operator/factor/dense continuation maps.",
+    "derivative": "A_current sigma_dot=(r_plus-r_minus)/(2h). Body phi_t equals frozen body-value derivative plus current density response minus actual centroid-chart convection.",
+    "coupling": "Genuinely zero-world-linear/angular-acceleration poses own two frozen field actions and their centroid-chart derivative. A sigma_dot=b_known+W a; M a+C sigma_dot=f_known. Solve A+W M^-1 C without building six modal responses.",
+    "reference": "Seven separate current solves form zero-acceleration known pressure and full6x6 modal fluid mass; no symmetrization. Prescribed oblique acceleration recombination must recover owned implicit derivative."
+  },
+  "assessment": [
+    "Frozen actions match full-context residuals below9e-16, potentials below1.7e-16 and surface pressure below1.1e-11Pa on both input boats.",
+    "Standalone speedup is NOT demonstrated. In first canonical screen two frozen actions cost0.930s versus0.839s for the matched full offset contexts. CPU scalar source trace accounts for0.849s of those actions. Box first screen actions0.453s versuscontexts0.525s. These are variable single-run component observations, not paired throughput measurements.",
+    "Canonical one-coupled-solve acceleration agrees with explicit7solve reference within6.6e-11, pressure1.3e-7Pa, prescribed-pressure reconstruction1.9e-9Pa. Box corresponding bounds6.3e-11,6.1e-8Pa,7.3e-9Pa.",
+    "Measured coupled solve0.298s canonical and0.102s box, each10GMRESiterations and no acceleration response basis or additional operator builds. These are current-state algebra costs, not full-RHS or trajectory timings.",
+    "Review correction: the first coupled audit subtracted W*a_prescribed from an accelerating centered residual, leaving O(h^2) geometry contamination in known_phi_t. Final implementation uses separately guarded zero-acceleration stencils. At common image0.45902726862203064 and expansion0.36733855903704704, h0.01->0.005s reduces reconstructed prescribed-pressure difference0.00014307->0.0000354585Pa (~4.03x). Coupled acceleration changes at most2.88e-6m/s2 and1.75e-6rad/s2 across this pair. This is local stencil evidence, not minute motion accuracy.",
+    "Final zero-acceleration canonical/box coupled solves retain modal agreement near1e-10 acceleration and1e-7Pa pressure. Single-solve times vary across screens; no seven-solve timing ratio or trajectory speedup claimed."
+  ],
+  "limits": [
+    "Fixed forced graph and persistent clipping/exterior labels; no evolving free surface, newly exposed state transfer or full nonlinear trajectory in these gates.",
+    "Physical/spatial pressure accuracy and open-water Capytaine correlation remain unresolved. Discrete agreement is not continuum validation.",
+    "Current harness inherits clipping/recipe, full represented-graph depth, image clearance and physical-probe guards from its full-context references. Preserve and time those guards independently before removing references from a moving path.",
+    "Frozen helper computes bounded source value/gradient blocks at body centroids; it avoids assembling body operators, not all panel integration.",
+    "Known source trace remains CPU dominated; deleting offset matrices does not delete that cost."
+  ],
+  "records": [
+    {
+      "raw_report": "artifacts\\boat-current-pressure-frozen-action.json",
+      "raw_sha256": "7a4f0ff923519b873a4b45b62e18fb3162166f4d863ca10731c1b2584d1342da",
+      "input_sha256": "d4727637dd8b52ab90b0969c58341fbb033b844befae09340dae74a841d076d1",
+      "grid": 129,
+      "body_panels": 84,
+      "hos_order": 4,
+      "image_height_m": 0.45902726862203064,
+      "reference_height_m": 0.36733855903704704,
+      "screen_seconds": 11.628421200002776,
+      "frozen_field": {
+        "step_seconds": 0.01,
+        "offsets": [
+          {
+            "total_seconds": 0.401379300019471,
+            "source_trace_seconds": 0.3529895000101533,
+            "offset_operator_builds": 0,
+            "dense_harmonic_maps": 0,
+            "full_context_residual_max_difference": 8.98586760555986e-16,
+            "full_context_potential_max_difference": 1.1102230246251565e-16
+          },
+          {
+            "total_seconds": 0.5285388000193052,
+            "source_trace_seconds": 0.49622960001579486,
+            "offset_operator_builds": 0,
+            "dense_harmonic_maps": 0,
+            "full_context_residual_max_difference": 8.118505867571457e-16,
+            "full_context_potential_max_difference": 1.6653345369377348e-16
+          }
+        ],
+        "density_derivative_solve": {
+          "gmres_iterations": 7,
+          "operator_applications": 9,
+          "true_relative_residual": 3.8521684023441696e-10,
+          "preconditioned_residual_history": [
+            0.11542142158837257,
+            0.009446968584868279,
+            0.00042566371837417466,
+            1.2896800201874018e-05,
+            5.409827004912238e-07,
+            2.362082765707571e-08,
+            8.4617895939787e-10
+          ],
+          "solve_seconds": 0.06700419998378493
+        },
+        "implicit_full_context_pressure_max_difference_pa": 1.0231815394945443e-11,
+        "implicit_full_context_six_functional_difference": [
+          -2.0405849772058155e-12,
+          1.3685337415827092e-12,
+          2.3377085143851883e-11,
+          -4.051979894104685e-12,
+          8.515502289933191e-12,
+          7.272186636040816e-12
+        ],
+        "scope": "Two frozen-density field actions plus one CURRENT derivative solve; full contexts remain independent verification references. No sixDOF evolution or end-to-end timing claim."
+      },
+      "coupled": null,
+      "full_offset_context_seconds": [
+        0.436395700002322,
+        0.4026033000263851
+      ],
+      "producer_sha256": {
+        "tests\\experiments\\free_surface\\boat_frozen_field.py": "27c87efa2a67039eef7597a8fb360e3d2384124b89ed92ad31d0802d67e51ee4",
+        "tests\\experiments\\free_surface\\boat_graph_bvp.py": "a6ba4fb2b89c5049faf9fbb4ccad094f4b9643adc9ef78db33a86225c872acc2",
+        "tests\\experiments\\free_surface\\boat_graph_fields.py": "e20b8e1cc6d960107c071c39d99e26da6b663a57a2a9e68f95dbec8890804bdd",
+        "tests\\experiments\\free_surface\\boat_graph_time_derivative.py": "ee78c3851f18c5752238afd3626e92612bc269191d8484002838e6dcf7fcfe7f",
+        "tests\\experiments\\free_surface\\cuda_graph.py": "14d0895914660b3530db5c880b97aa977148a1792903eb7c51853c4f8b4f4cec"
+      }
+    },
+    {
+      "raw_report": "artifacts\\box-current-pressure-frozen-action.json",
+      "raw_sha256": "6b1dddf321bef5e689e25c4b1392eff85a41fc96fb150b6528a86c2fd15caea1",
+      "input_sha256": "c63d3f18509f9379c28e6797b0a4186a8610b4bb14a048d31376ca123102b485",
+      "grid": 129,
+      "body_panels": 56,
+      "hos_order": 4,
+      "image_height_m": 0.46506698253105394,
+      "reference_height_m": 0.3708514311746186,
+      "screen_seconds": 9.010060700005852,
+      "frozen_field": {
+        "step_seconds": 0.01,
+        "offsets": [
+          {
+            "total_seconds": 0.2212862999876961,
+            "source_trace_seconds": 0.20061209998675622,
+            "offset_operator_builds": 0,
+            "dense_harmonic_maps": 0,
+            "full_context_residual_max_difference": 5.065392549852277e-16,
+            "full_context_potential_max_difference": 1.249000902703301e-16
+          },
+          {
+            "total_seconds": 0.2319965000206139,
+            "source_trace_seconds": 0.20293749999837019,
+            "offset_operator_builds": 0,
+            "dense_harmonic_maps": 0,
+            "full_context_residual_max_difference": 3.191891195797325e-16,
+            "full_context_potential_max_difference": 1.249000902703301e-16
+          }
+        ],
+        "density_derivative_solve": {
+          "gmres_iterations": 6,
+          "operator_applications": 8,
+          "true_relative_residual": 6.721660370114769e-10,
+          "preconditioned_residual_history": [
+            0.06094886424048041,
+            0.0032462838218994023,
+            7.970858368736343e-05,
+            2.2838614651220174e-06,
+            4.8207916219163115e-08,
+            1.4006310642708532e-09
+          ],
+          "solve_seconds": 0.052653999999165535
+        },
+        "implicit_full_context_pressure_max_difference_pa": 8.640199666842818e-12,
+        "implicit_full_context_six_functional_difference": [
+          2.221640130678771e-12,
+          1.0624361103778094e-12,
+          -4.0790837374515846e-11,
+          5.298796374196744e-12,
+          6.672159992852443e-11,
+          -1.4882052955922947e-12
+        ],
+        "scope": "Two frozen-density field actions plus one CURRENT derivative solve; full contexts remain independent verification references. No sixDOF evolution or end-to-end timing claim."
+      },
+      "coupled": null,
+      "full_offset_context_seconds": [
+        0.25187360000563785,
+        0.273250400001416
+      ],
+      "producer_sha256": {
+        "tests\\experiments\\free_surface\\boat_frozen_field.py": "27c87efa2a67039eef7597a8fb360e3d2384124b89ed92ad31d0802d67e51ee4",
+        "tests\\experiments\\free_surface\\boat_graph_bvp.py": "a6ba4fb2b89c5049faf9fbb4ccad094f4b9643adc9ef78db33a86225c872acc2",
+        "tests\\experiments\\free_surface\\boat_graph_fields.py": "e20b8e1cc6d960107c071c39d99e26da6b663a57a2a9e68f95dbec8890804bdd",
+        "tests\\experiments\\free_surface\\boat_graph_time_derivative.py": "ee78c3851f18c5752238afd3626e92612bc269191d8484002838e6dcf7fcfe7f",
+        "tests\\experiments\\free_surface\\cuda_graph.py": "14d0895914660b3530db5c880b97aa977148a1792903eb7c51853c4f8b4f4cec"
+      }
+    },
+    {
+      "raw_report": "artifacts\\boat-current-pressure-coupled.json",
+      "raw_sha256": "9729f8a682941cf66d33f78f2f1c2d1a047d3629d4e54ac3dc54486739d6df59",
+      "input_sha256": "d4727637dd8b52ab90b0969c58341fbb033b844befae09340dae74a841d076d1",
+      "grid": 129,
+      "body_panels": 84,
+      "hos_order": 4,
+      "image_height_m": 0.45902726862203064,
+      "reference_height_m": 0.36733855903704704,
+      "screen_seconds": 11.318562300002668,
+      "frozen_field": {
+        "step_seconds": 0.01,
+        "offsets": [
+          {
+            "total_seconds": 0.3379349999886472,
+            "source_trace_seconds": 0.30489999998826534,
+            "offset_operator_builds": 0,
+            "dense_harmonic_maps": 0,
+            "full_context_residual_max_difference": 8.98586760555986e-16,
+            "full_context_potential_max_difference": 1.1102230246251565e-16
+          },
+          {
+            "total_seconds": 0.33783089998178184,
+            "source_trace_seconds": 0.3113965999800712,
+            "offset_operator_builds": 0,
+            "dense_harmonic_maps": 0,
+            "full_context_residual_max_difference": 8.118505867571457e-16,
+            "full_context_potential_max_difference": 1.6653345369377348e-16
+          }
+        ],
+        "density_derivative_solve": {
+          "gmres_iterations": 7,
+          "operator_applications": 9,
+          "true_relative_residual": 3.8521684023441696e-10,
+          "preconditioned_residual_history": [
+            0.11542142158837257,
+            0.009446968584868279,
+            0.00042566371837417466,
+            1.2896800201874018e-05,
+            5.409827004912238e-07,
+            2.362082765707571e-08,
+            8.4617895939787e-10
+          ],
+          "solve_seconds": 0.06091190001461655
+        },
+        "implicit_full_context_pressure_max_difference_pa": 1.0231815394945443e-11,
+        "implicit_full_context_six_functional_difference": [
+          -2.0405849772058155e-12,
+          1.3685337415827092e-12,
+          2.3377085143851883e-11,
+          -4.051979894104685e-12,
+          8.515502289933191e-12,
+          7.272186636040816e-12
+        ],
+        "scope": "Two frozen-density field actions plus one CURRENT derivative solve; full contexts remain independent verification references. No sixDOF evolution or end-to-end timing claim."
+      },
+      "coupled": {
+        "diagnostics": {
+          "total_seconds": 0.2983310999989044,
+          "gmres_iterations": 10,
+          "operator_applications": 12,
+          "true_relative_residual": 1.6124026581138885e-10,
+          "body_balance_residual": [
+            1.4210854715202004e-13,
+            -5.684341886080801e-13,
+            1.0913936421275139e-11,
+            5.222489107836736e-13,
+            -1.8911539001464917e-12,
+            -9.261480471423056e-13
+          ],
+          "fluid_normal_residual_max": 1.3280528066150765e-09,
+          "additional_operator_builds": 0,
+          "acceleration_response_basis_builds": 0,
+          "scope": "Current-domain implicit algebra only; geometry/state/pressure qualification is separate"
+        },
+        "acceleration_world": [
+          -0.07552037794470962,
+          -0.21817555995495871,
+          -0.2744800846455106,
+          0.0955231644870769,
+          0.16765325336714731,
+          -0.0857632027766532
+        ],
+        "explicit_modal_acceleration_world": [
+          -0.07552037795826748,
+          -0.21817555994506277,
+          -0.27448008471151036,
+          0.09552316447436558,
+          0.1676532533927407,
+          -0.08576320276694442
+        ],
+        "acceleration_difference": [
+          1.355786316548091e-11,
+          -9.895945174420717e-12,
+          6.599976121179907e-11,
+          1.2711318109204228e-11,
+          -2.5593388519595806e-11,
+          -9.708775450256724e-12
+        ],
+        "pressure_max_difference_pa": 1.295784386456944e-07,
+        "six_functional_difference": [
+          3.389445971855818e-08,
+          -2.47393286943445e-08,
+          1.6499479629482345e-07,
+          1.7901279522190914e-08,
+          -2.478451092584927e-07,
+          -1.0421402931112383e-07
+        ],
+        "recovered_prescribed_pressure_max_difference_pa": 1.8098944565281272e-09,
+        "body_mass_matrix_world": [
+          [
+            2500.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            2500.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            2500.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1354.8467953524926,
+            0.0,
+            -70.03519269408712
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            9684.123317654701,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            -70.03519269408712,
+            0.0,
+            10642.300725100527
+          ]
+        ],
+        "fluid_mass_matrix_world": [
+          [
+            520.5156626687683,
+            -11.101502794780712,
+            -447.90432850847236,
+            27.655735155989802,
+            1512.341546100891,
+            -25.370079555408495
+          ],
+          [
+            -6.2100520737039515,
+            1687.1554651632646,
+            191.22530430205376,
+            -1653.103292557364,
+            -98.99408776632664,
+            129.1850967111135
+          ],
+          [
+            -361.0016511519676,
+            201.73186123444697,
+            12845.983347467789,
+            -189.83180686565927,
+            -2435.464016493448,
+            -105.81396008269473
+          ],
+          [
+            17.73696948688451,
+            -1653.7787839516375,
+            -175.7310963195934,
+            2000.269443066157,
+            333.04930712346027,
+            -125.88990359933257
+          ],
+          [
+            1490.7394144992572,
+            -113.5699075583993,
+            -2478.483110107302,
+            382.5128985629438,
+            25758.426267865314,
+            -354.20234965517403
+          ],
+          [
+            -28.16296198704376,
+            110.70898430815076,
+            -54.891380497679826,
+            -112.11651648629834,
+            -320.510238286864,
+            3586.725085369291
+          ]
+        ],
+        "fluid_mass_max_asymmetry": 86.90267735650474,
+        "scope": "One matrix-free rank-six coupled solve vs seven independent current modal solves; no matrix symmetry repair, no evolved trajectory."
+      },
+      "full_offset_context_seconds": [
+        0.3710656999901403,
+        0.3920308999950066
+      ],
+      "producer_sha256": {
+        "tests\\experiments\\free_surface\\boat_coupled_pressure.py": "5d33134f82793cc9c675ccb8abbdadaed799e92e5fa3ef8fa1a17882f7a96ebe",
+        "tests\\experiments\\free_surface\\boat_frozen_field.py": "27c87efa2a67039eef7597a8fb360e3d2384124b89ed92ad31d0802d67e51ee4",
+        "tests\\experiments\\free_surface\\boat_graph_bvp.py": "a6ba4fb2b89c5049faf9fbb4ccad094f4b9643adc9ef78db33a86225c872acc2",
+        "tests\\experiments\\free_surface\\boat_graph_fields.py": "e20b8e1cc6d960107c071c39d99e26da6b663a57a2a9e68f95dbec8890804bdd",
+        "tests\\experiments\\free_surface\\boat_graph_time_derivative.py": "f20220eb3e161ff4e32936713f18155f08b0405cf74d2f92941111b5c6ca562a",
+        "tests\\experiments\\free_surface\\cuda_graph.py": "14d0895914660b3530db5c880b97aa977148a1792903eb7c51853c4f8b4f4cec"
+      }
+    },
+    {
+      "raw_report": "artifacts\\box-current-pressure-coupled.json",
+      "raw_sha256": "4fed75a28ccb8f2d7758e3ebc59fb298ab81bfbcd45ec1a5f620f15c7214d9b5",
+      "input_sha256": "c63d3f18509f9379c28e6797b0a4186a8610b4bb14a048d31376ca123102b485",
+      "grid": 129,
+      "body_panels": 56,
+      "hos_order": 4,
+      "image_height_m": 0.46506698253105394,
+      "reference_height_m": 0.3708514311746186,
+      "screen_seconds": 8.842415000020992,
+      "frozen_field": {
+        "step_seconds": 0.01,
+        "offsets": [
+          {
+            "total_seconds": 0.2038806999917142,
+            "source_trace_seconds": 0.1837185999902431,
+            "offset_operator_builds": 0,
+            "dense_harmonic_maps": 0,
+            "full_context_residual_max_difference": 5.065392549852277e-16,
+            "full_context_potential_max_difference": 1.249000902703301e-16
+          },
+          {
+            "total_seconds": 0.1939113999833353,
+            "source_trace_seconds": 0.174710999999661,
+            "offset_operator_builds": 0,
+            "dense_harmonic_maps": 0,
+            "full_context_residual_max_difference": 3.191891195797325e-16,
+            "full_context_potential_max_difference": 1.249000902703301e-16
+          }
+        ],
+        "density_derivative_solve": {
+          "gmres_iterations": 6,
+          "operator_applications": 8,
+          "true_relative_residual": 6.721660370114769e-10,
+          "preconditioned_residual_history": [
+            0.06094886424048041,
+            0.0032462838218994023,
+            7.970858368736343e-05,
+            2.2838614651220174e-06,
+            4.8207916219163115e-08,
+            1.4006310642708532e-09
+          ],
+          "solve_seconds": 0.05066660000011325
+        },
+        "implicit_full_context_pressure_max_difference_pa": 8.640199666842818e-12,
+        "implicit_full_context_six_functional_difference": [
+          2.221640130678771e-12,
+          1.0624361103778094e-12,
+          -4.0790837374515846e-11,
+          5.298796374196744e-12,
+          6.672159992852443e-11,
+          -1.4882052955922947e-12
+        ],
+        "scope": "Two frozen-density field actions plus one CURRENT derivative solve; full contexts remain independent verification references. No sixDOF evolution or end-to-end timing claim."
+      },
+      "coupled": {
+        "diagnostics": {
+          "total_seconds": 0.10245749997557141,
+          "gmres_iterations": 10,
+          "operator_applications": 12,
+          "true_relative_residual": 7.818741514242343e-11,
+          "body_balance_residual": [
+            7.105427357601002e-14,
+            2.2737367544323206e-13,
+            0.0,
+            7.469580509678053e-13,
+            -1.8054446826454296e-12,
+            -2.637889906509372e-13
+          ],
+          "fluid_normal_residual_max": 1.229941565261683e-10,
+          "additional_operator_builds": 0,
+          "acceleration_response_basis_builds": 0,
+          "scope": "Current-domain implicit algebra only; geometry/state/pressure qualification is separate"
+        },
+        "acceleration_world": [
+          0.03118801847436189,
+          -0.3935031441993,
+          -0.0018680924934387094,
+          -0.06315309053425805,
+          0.03003157777257391,
+          -0.03073455513850687
+        ],
+        "explicit_modal_acceleration_world": [
+          0.031188018464073736,
+          -0.3935031441668991,
+          -0.0018680925085045143,
+          -0.0631530905970467,
+          0.030031577756516808,
+          -0.030734555141433233
+        ],
+        "acceleration_difference": [
+          1.0288155743998217e-11,
+          -3.240091528411426e-11,
+          1.5065804940400662e-11,
+          6.278864927988792e-11,
+          1.605710356344936e-11,
+          2.926364012223459e-12
+        ],
+        "pressure_max_difference_pa": 6.089271664677653e-08,
+        "six_functional_difference": [
+          2.0576376156185807e-08,
+          -6.48024168045389e-08,
+          3.0134231110423544e-08,
+          7.53451340455976e-08,
+          1.1721637292812833e-07,
+          2.3410963114488333e-08
+        ],
+        "recovered_prescribed_pressure_max_difference_pa": 7.265498425113037e-09,
+        "body_mass_matrix_world": [
+          [
+            2000.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            2000.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            2000.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1200.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            7300.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            8000.0
+          ]
+        ],
+        "fluid_mass_matrix_world": [
+          [
+            417.0279608909087,
+            0.24372341408743883,
+            10.859814284493323,
+            29.05209229814644,
+            307.57477321218687,
+            6.785101671085389
+          ],
+          [
+            -0.7623867404521342,
+            1162.0953670091296,
+            95.25357909395525,
+            121.03371445731175,
+            -127.9083276329757,
+            -64.09731413245167
+          ],
+          [
+            13.618198934901118,
+            140.18551813424136,
+            17086.743602413193,
+            26.475239117184383,
+            -31.413082591511913,
+            7.766228331104539
+          ],
+          [
+            19.54631247915672,
+            -51.533043961496936,
+            2.70623779140116,
+            3088.0110038145745,
+            887.7355041458393,
+            -8.359542534060154
+          ],
+          [
+            319.4876627141114,
+            -150.0492479786817,
+            15.55030468183626,
+            892.3130812158402,
+            38397.40295802273,
+            -245.7788890487208
+          ],
+          [
+            8.458000313430992,
+            -65.54998966079789,
+            -24.678478820068822,
+            -12.982550001901009,
+            -135.16450930001196,
+            3429.517166853501
+          ]
+        ],
+        "fluid_mass_max_asymmetry": 172.5667584188087,
+        "scope": "One matrix-free rank-six coupled solve vs seven independent current modal solves; no matrix symmetry repair, no evolved trajectory."
+      },
+      "full_offset_context_seconds": [
+        0.20890530000906438,
+        0.2191445000062231
+      ],
+      "producer_sha256": {
+        "tests\\experiments\\free_surface\\boat_coupled_pressure.py": "5d33134f82793cc9c675ccb8abbdadaed799e92e5fa3ef8fa1a17882f7a96ebe",
+        "tests\\experiments\\free_surface\\boat_frozen_field.py": "27c87efa2a67039eef7597a8fb360e3d2384124b89ed92ad31d0802d67e51ee4",
+        "tests\\experiments\\free_surface\\boat_graph_bvp.py": "a6ba4fb2b89c5049faf9fbb4ccad094f4b9643adc9ef78db33a86225c872acc2",
+        "tests\\experiments\\free_surface\\boat_graph_fields.py": "e20b8e1cc6d960107c071c39d99e26da6b663a57a2a9e68f95dbec8890804bdd",
+        "tests\\experiments\\free_surface\\boat_graph_time_derivative.py": "f20220eb3e161ff4e32936713f18155f08b0405cf74d2f92941111b5c6ca562a",
+        "tests\\experiments\\free_surface\\cuda_graph.py": "14d0895914660b3530db5c880b97aa977148a1792903eb7c51853c4f8b4f4cec"
+      }
+    },
+    {
+      "raw_report": "artifacts\\boat-current-pressure-coupled-zero.json",
+      "raw_sha256": "bee1a9710ab9f546e31dd55d7b534b236d4817ddd439e4168c4be449c766478b",
+      "input_sha256": "d4727637dd8b52ab90b0969c58341fbb033b844befae09340dae74a841d076d1",
+      "grid": 129,
+      "body_panels": 84,
+      "hos_order": 4,
+      "image_height_m": 0.45902726862203064,
+      "reference_height_m": 0.36733855903704704,
+      "screen_seconds": 11.691499800013844,
+      "frozen_field": {
+        "step_seconds": 0.01,
+        "offsets": [
+          {
+            "total_seconds": 0.38240329999825917,
+            "source_trace_seconds": 0.3552124999987427,
+            "offset_operator_builds": 0,
+            "dense_harmonic_maps": 0,
+            "full_context_residual_max_difference": 8.98586760555986e-16,
+            "full_context_potential_max_difference": 1.1102230246251565e-16
+          },
+          {
+            "total_seconds": 0.3059124000137672,
+            "source_trace_seconds": 0.2897409000142943,
+            "offset_operator_builds": 0,
+            "dense_harmonic_maps": 0,
+            "full_context_residual_max_difference": 8.118505867571457e-16,
+            "full_context_potential_max_difference": 1.6653345369377348e-16
+          }
+        ],
+        "density_derivative_solve": {
+          "gmres_iterations": 7,
+          "operator_applications": 9,
+          "true_relative_residual": 3.8521684023441696e-10,
+          "preconditioned_residual_history": [
+            0.11542142158837257,
+            0.009446968584868279,
+            0.00042566371837417466,
+            1.2896800201874018e-05,
+            5.409827004912238e-07,
+            2.362082765707571e-08,
+            8.4617895939787e-10
+          ],
+          "solve_seconds": 0.06869129999540746
+        },
+        "implicit_full_context_pressure_max_difference_pa": 1.0231815394945443e-11,
+        "implicit_full_context_six_functional_difference": [
+          -2.0405849772058155e-12,
+          1.3685337415827092e-12,
+          2.3377085143851883e-11,
+          -4.051979894104685e-12,
+          8.515502289933191e-12,
+          7.272186636040816e-12
+        ],
+        "scope": "Two frozen-density field actions plus one CURRENT derivative solve; full contexts remain independent verification references. No sixDOF evolution or end-to-end timing claim."
+      },
+      "coupled": {
+        "diagnostics": {
+          "total_seconds": 0.09431590000167489,
+          "gmres_iterations": 10,
+          "operator_applications": 12,
+          "true_relative_residual": 1.6124030731964788e-10,
+          "body_balance_residual": [
+            -1.7053025658242404e-13,
+            -1.1368683772161603e-12,
+            0.0,
+            -1.8829382497642655e-13,
+            -4.164890654578812e-12,
+            -1.2672085603071537e-12
+          ],
+          "fluid_normal_residual_max": 1.3280525151815326e-09,
+          "additional_operator_builds": 0,
+          "acceleration_response_basis_builds": 0,
+          "scope": "Current-domain implicit algebra only; geometry/state/pressure qualification is separate"
+        },
+        "known_rhs_stencil": "Genuine zero-world-linear/angular-acceleration poses; explicit clipping/label/image/height/physical-depth guards",
+        "zero_acceleration_offsets": [
+          {
+            "total_seconds": 0.35691319999750704,
+            "source_trace_seconds": 0.3358066999935545,
+            "offset_operator_builds": 0,
+            "dense_harmonic_maps": 0
+          },
+          {
+            "total_seconds": 0.3049483000067994,
+            "source_trace_seconds": 0.28521730002830736,
+            "offset_operator_builds": 0,
+            "dense_harmonic_maps": 0
+          }
+        ],
+        "acceleration_world": [
+          -0.07552037440795632,
+          -0.21817554539748557,
+          -0.27448006752665405,
+          0.09552314447123857,
+          0.16765324652979655,
+          -0.08576320925276594
+        ],
+        "explicit_modal_acceleration_world": [
+          -0.07552037442151424,
+          -0.21817554538758935,
+          -0.2744800675926549,
+          0.0955231444585277,
+          0.16765324655539043,
+          -0.08576320924305707
+        ],
+        "acceleration_difference": [
+          1.3557918676632141e-11,
+          -9.896222730176873e-12,
+          6.60008714348237e-11,
+          1.271086014220657e-11,
+          -2.5593888119956887e-11,
+          -9.708872594771378e-12
+        ],
+        "pressure_max_difference_pa": 1.2957775652466808e-07,
+        "six_functional_difference": [
+          3.389483817769895e-08,
+          -2.4739809108171485e-08,
+          1.6499722210712883e-07,
+          1.790147694119786e-08,
+          -2.4784875058179004e-07,
+          -1.042142566831202e-07
+        ],
+        "recovered_prescribed_pressure_max_difference_pa": 0.0001430695601811749,
+        "prescribed_recovery_scope": "Zero-acceleration and accelerating centered paths differ at O(h^2); this is a stencil convergence comparison, not roundoff parity.",
+        "body_mass_matrix_world": [
+          [
+            2500.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            2500.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            2500.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1354.8467953524926,
+            0.0,
+            -70.03519269408712
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            9684.123317654701,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            -70.03519269408712,
+            0.0,
+            10642.300725100527
+          ]
+        ],
+        "fluid_mass_matrix_world": [
+          [
+            520.5156626687683,
+            -11.101502794780712,
+            -447.90432850847236,
+            27.655735155989802,
+            1512.341546100891,
+            -25.370079555408495
+          ],
+          [
+            -6.2100520737039515,
+            1687.1554651632646,
+            191.22530430205376,
+            -1653.103292557364,
+            -98.99408776632664,
+            129.1850967111135
+          ],
+          [
+            -361.0016511519676,
+            201.73186123444697,
+            12845.983347467789,
+            -189.83180686565927,
+            -2435.464016493448,
+            -105.81396008269473
+          ],
+          [
+            17.73696948688451,
+            -1653.7787839516375,
+            -175.7310963195934,
+            2000.269443066157,
+            333.04930712346027,
+            -125.88990359933257
+          ],
+          [
+            1490.7394144992572,
+            -113.5699075583993,
+            -2478.483110107302,
+            382.5128985629438,
+            25758.426267865314,
+            -354.20234965517403
+          ],
+          [
+            -28.16296198704376,
+            110.70898430815076,
+            -54.891380497679826,
+            -112.11651648629834,
+            -320.510238286864,
+            3586.725085369291
+          ]
+        ],
+        "fluid_mass_max_asymmetry": 86.90267735650474,
+        "scope": "One matrix-free rank-six coupled solve vs seven independent current modal solves; no matrix symmetry repair, no evolved trajectory."
+      },
+      "full_offset_context_seconds": [
+        0.44654790000640787,
+        0.38020489999325946
+      ],
+      "producer_sha256": {
+        "tests\\experiments\\free_surface\\boat_coupled_pressure.py": "5d33134f82793cc9c675ccb8abbdadaed799e92e5fa3ef8fa1a17882f7a96ebe",
+        "tests\\experiments\\free_surface\\boat_frozen_field.py": "27c87efa2a67039eef7597a8fb360e3d2384124b89ed92ad31d0802d67e51ee4",
+        "tests\\experiments\\free_surface\\boat_graph_bvp.py": "a6ba4fb2b89c5049faf9fbb4ccad094f4b9643adc9ef78db33a86225c872acc2",
+        "tests\\experiments\\free_surface\\boat_graph_fields.py": "e20b8e1cc6d960107c071c39d99e26da6b663a57a2a9e68f95dbec8890804bdd",
+        "tests\\experiments\\free_surface\\boat_graph_time_derivative.py": "ad1a5686f333c4121a0597bd569699004ad71526625e349aa89f1c1fef0316b1",
+        "tests\\experiments\\free_surface\\cuda_graph.py": "14d0895914660b3530db5c880b97aa977148a1792903eb7c51853c4f8b4f4cec"
+      }
+    },
+    {
+      "raw_report": "artifacts\\boat-current-pressure-coupled-zero-half.json",
+      "raw_sha256": "8e5b46a9c57d1664482cc5c2bff0bf2ef8834f88aa5e58c6704c52bc3ece9712",
+      "input_sha256": "d4727637dd8b52ab90b0969c58341fbb033b844befae09340dae74a841d076d1",
+      "grid": 129,
+      "body_panels": 84,
+      "hos_order": 4,
+      "image_height_m": 0.45902726862203064,
+      "reference_height_m": 0.3672910830698829,
+      "screen_seconds": 12.483459299983224,
+      "frozen_field": {
+        "step_seconds": 0.005,
+        "offsets": [
+          {
+            "total_seconds": 0.3281373000063468,
+            "source_trace_seconds": 0.3059656000114046,
+            "offset_operator_builds": 0,
+            "dense_harmonic_maps": 0,
+            "full_context_residual_max_difference": 6.084542591988651e-16,
+            "full_context_potential_max_difference": 1.6653345369377348e-16
+          },
+          {
+            "total_seconds": 0.3206800000043586,
+            "source_trace_seconds": 0.29369940000469796,
+            "offset_operator_builds": 0,
+            "dense_harmonic_maps": 0,
+            "full_context_residual_max_difference": 6.696032617270475e-16,
+            "full_context_potential_max_difference": 1.3877787807814457e-16
+          }
+        ],
+        "density_derivative_solve": {
+          "gmres_iterations": 7,
+          "operator_applications": 9,
+          "true_relative_residual": 3.845587343475971e-10,
+          "preconditioned_residual_history": [
+            0.11538590455510186,
+            0.009442279895090394,
+            0.00042551611860471705,
+            1.2891951050419032e-05,
+            5.408084973176689e-07,
+            2.3630362901130477e-08,
+            8.44817871845983e-10
+          ],
+          "solve_seconds": 0.16000980001990683
+        },
+        "implicit_full_context_pressure_max_difference_pa": 1.6825651982799172e-11,
+        "implicit_full_context_six_functional_difference": [
+          -6.2557974559617025e-12,
+          -2.4519070752785225e-12,
+          -1.0972412378616116e-11,
+          2.001917254496343e-12,
+          -2.4349343038310645e-11,
+          -7.774394928471576e-12
+        ],
+        "scope": "Two frozen-density field actions plus one CURRENT derivative solve; full contexts remain independent verification references. No sixDOF evolution or end-to-end timing claim."
+      },
+      "coupled": {
+        "diagnostics": {
+          "total_seconds": 0.09347079999861307,
+          "gmres_iterations": 10,
+          "operator_applications": 12,
+          "true_relative_residual": 1.6109957786884697e-10,
+          "body_balance_residual": [
+            -1.4210854715202004e-13,
+            -9.094947017729282e-13,
+            0.0,
+            6.750155989720952e-14,
+            -3.710143303692348e-12,
+            1.688649220454863e-12
+          ],
+          "fluid_normal_residual_max": 1.326239063015322e-09,
+          "additional_operator_builds": 0,
+          "acceleration_response_basis_builds": 0,
+          "scope": "Current-domain implicit algebra only; geometry/state/pressure qualification is separate"
+        },
+        "known_rhs_stencil": "Genuine zero-world-linear/angular-acceleration poses; explicit clipping/label/image/height/physical-depth guards",
+        "zero_acceleration_offsets": [
+          {
+            "total_seconds": 0.303254400001606,
+            "source_trace_seconds": 0.2832234000088647,
+            "offset_operator_builds": 0,
+            "dense_harmonic_maps": 0
+          },
+          {
+            "total_seconds": 0.24716349999653175,
+            "source_trace_seconds": 0.22752389998640865,
+            "offset_operator_builds": 0,
+            "dense_harmonic_maps": 0
+          }
+        ],
+        "acceleration_world": [
+          -0.07551749384999912,
+          -0.2181748766931195,
+          -0.27448030727513906,
+          0.0955224408946555,
+          0.16765499224038366,
+          -0.0857632037569647
+        ],
+        "explicit_modal_acceleration_world": [
+          -0.0755174938634997,
+          -0.21817487668330438,
+          -0.27448030734120743,
+          0.09552244088213434,
+          0.16765499226596386,
+          -0.0857632037472772
+        ],
+        "acceleration_difference": [
+          1.3500575657410252e-11,
+          -9.815120938228006e-12,
+          6.60683729947209e-11,
+          1.2521164660661555e-11,
+          -2.5580204621178382e-11,
+          -9.687500801547344e-12
+        ],
+        "pressure_max_difference_pa": 1.2978466656932142e-07,
+        "six_functional_difference": [
+          3.375153719695602e-08,
+          -2.453755034135493e-08,
+          1.651686501957901e-07,
+          1.7642745400193146e-08,
+          -2.477186513981585e-07,
+          -1.03974303115178e-07
+        ],
+        "recovered_prescribed_pressure_max_difference_pa": 3.545849313013605e-05,
+        "prescribed_recovery_scope": "Zero-acceleration and accelerating centered paths differ at O(h^2); this is a stencil convergence comparison, not roundoff parity.",
+        "body_mass_matrix_world": [
+          [
+            2500.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            2500.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            2500.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1354.8467953524926,
+            0.0,
+            -70.03519269408712
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            9684.123317654701,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            -70.03519269408712,
+            0.0,
+            10642.300725100527
+          ]
+        ],
+        "fluid_mass_matrix_world": [
+          [
+            520.5156548485522,
+            -11.101512867287397,
+            -447.9043190111981,
+            27.65574266294598,
+            1512.341520893717,
+            -25.370105120709837
+          ],
+          [
+            -6.210056319258663,
+            1687.1553811507426,
+            191.22535667699074,
+            -1653.1032397724184,
+            -98.9941072529189,
+            129.18507863693472
+          ],
+          [
+            -361.00165349071625,
+            201.73198443279347,
+            12845.983292225314,
+            -189.83188195704253,
+            -2435.463995043963,
+            -105.81391611096106
+          ],
+          [
+            17.73697141713473,
+            -1653.7787177913178,
+            -175.7311352855818,
+            2000.269402074696,
+            333.0493202469498,
+            -125.88989294558547
+          ],
+          [
+            1490.7393823875566,
+            -113.56995682759865,
+            -2478.483069566578,
+            382.5129334659788,
+            25758.426070944133,
+            -354.20263968347547
+          ],
+          [
+            -28.162979622171235,
+            110.70896898487932,
+            -54.89135994064663,
+            -112.11650657538925,
+            -320.51038959757955,
+            3586.7248864642834
+          ]
+        ],
+        "fluid_mass_max_asymmetry": 86.90266552048183,
+        "scope": "One matrix-free rank-six coupled solve vs seven independent current modal solves; no matrix symmetry repair, no evolved trajectory."
+      },
+      "full_offset_context_seconds": [
+        0.40515040000900626,
+        0.3841658000019379
+      ],
+      "producer_sha256": {
+        "tests\\experiments\\free_surface\\boat_coupled_pressure.py": "5d33134f82793cc9c675ccb8abbdadaed799e92e5fa3ef8fa1a17882f7a96ebe",
+        "tests\\experiments\\free_surface\\boat_frozen_field.py": "27c87efa2a67039eef7597a8fb360e3d2384124b89ed92ad31d0802d67e51ee4",
+        "tests\\experiments\\free_surface\\boat_graph_bvp.py": "a6ba4fb2b89c5049faf9fbb4ccad094f4b9643adc9ef78db33a86225c872acc2",
+        "tests\\experiments\\free_surface\\boat_graph_fields.py": "e20b8e1cc6d960107c071c39d99e26da6b663a57a2a9e68f95dbec8890804bdd",
+        "tests\\experiments\\free_surface\\boat_graph_time_derivative.py": "ad1a5686f333c4121a0597bd569699004ad71526625e349aa89f1c1fef0316b1",
+        "tests\\experiments\\free_surface\\cuda_graph.py": "14d0895914660b3530db5c880b97aa977148a1792903eb7c51853c4f8b4f4cec"
+      }
+    },
+    {
+      "raw_report": "artifacts\\boat-current-pressure-coupled-zero-half-fixed-height.json",
+      "raw_sha256": "69df223136a77ec9a8b53945f505f16decde349c6ae7842eea82858265a79be8",
+      "input_sha256": "d4727637dd8b52ab90b0969c58341fbb033b844befae09340dae74a841d076d1",
+      "grid": 129,
+      "body_panels": 84,
+      "hos_order": 4,
+      "image_height_m": 0.45902726862203064,
+      "reference_height_m": 0.36733855903704704,
+      "screen_seconds": 11.808110299985856,
+      "frozen_field": {
+        "step_seconds": 0.005,
+        "offsets": [
+          {
+            "total_seconds": 0.29318370000692084,
+            "source_trace_seconds": 0.27649690001271665,
+            "offset_operator_builds": 0,
+            "dense_harmonic_maps": 0,
+            "full_context_residual_max_difference": 1.124100812432971e-15,
+            "full_context_potential_max_difference": 1.249000902703301e-16
+          },
+          {
+            "total_seconds": 0.35353970000869595,
+            "source_trace_seconds": 0.3331570999871474,
+            "offset_operator_builds": 0,
+            "dense_harmonic_maps": 0,
+            "full_context_residual_max_difference": 5.967448757360216e-16,
+            "full_context_potential_max_difference": 1.249000902703301e-16
+          }
+        ],
+        "density_derivative_solve": {
+          "gmres_iterations": 7,
+          "operator_applications": 9,
+          "true_relative_residual": 3.8523034643611413e-10,
+          "preconditioned_residual_history": [
+            0.11542522566433702,
+            0.009447160287593917,
+            0.00042566854055148484,
+            1.2897058046717691e-05,
+            5.410044470293116e-07,
+            2.3621455782044132e-08,
+            8.462082344514274e-10
+          ],
+          "solve_seconds": 0.07473849999951199
+        },
+        "implicit_full_context_pressure_max_difference_pa": 2.000888343900442e-11,
+        "implicit_full_context_six_functional_difference": [
+          -5.799484780354918e-12,
+          -1.0085836861849999e-11,
+          9.392385607335987e-13,
+          -6.912673921179863e-12,
+          -6.533661671450322e-11,
+          1.6654999450949876e-11
+        ],
+        "scope": "Two frozen-density field actions plus one CURRENT derivative solve; full contexts remain independent verification references. No sixDOF evolution or end-to-end timing claim."
+      },
+      "coupled": {
+        "diagnostics": {
+          "total_seconds": 0.0778326999861747,
+          "gmres_iterations": 10,
+          "operator_applications": 12,
+          "true_relative_residual": 1.6123809845939427e-10,
+          "body_balance_residual": [
+            1.1368683772161603e-13,
+            7.958078640513122e-13,
+            3.637978807091713e-12,
+            -2.1671553440683056e-13,
+            8.113287819355719e-12,
+            1.461275545011631e-12
+          ],
+          "fluid_normal_residual_max": 1.3280612443100637e-09,
+          "additional_operator_builds": 0,
+          "acceleration_response_basis_builds": 0,
+          "scope": "Current-domain implicit algebra only; geometry/state/pressure qualification is separate"
+        },
+        "known_rhs_stencil": "Genuine zero-world-linear/angular-acceleration poses; explicit clipping/label/image/height/physical-depth guards",
+        "zero_acceleration_offsets": [
+          {
+            "total_seconds": 0.3957931000040844,
+            "source_trace_seconds": 0.3763860000181012,
+            "offset_operator_builds": 0,
+            "dense_harmonic_maps": 0
+          },
+          {
+            "total_seconds": 0.3025363000051584,
+            "source_trace_seconds": 0.2826372999988962,
+            "offset_operator_builds": 0,
+            "dense_harmonic_maps": 0
+          }
+        ],
+        "acceleration_world": [
+          -0.07551749426185513,
+          -0.21817487527932808,
+          -0.27448030858916556,
+          0.09552243949609644,
+          0.16765499209935217,
+          -0.08576320444820955
+        ],
+        "explicit_modal_acceleration_world": [
+          -0.07551749427541193,
+          -0.21817487526943236,
+          -0.2744803086551636,
+          0.09552243948338553,
+          0.16765499212494656,
+          -0.0857632044385007
+        ],
+        "acceleration_difference": [
+          1.3556808453607516e-11,
+          -9.895723129815792e-12,
+          6.59980403661109e-11,
+          1.2710915653357802e-11,
+          -2.5594387720317968e-11,
+          -9.708844839195763e-12
+        ],
+        "pressure_max_difference_pa": 1.2957866601936985e-07,
+        "six_functional_difference": [
+          3.389194530627083e-08,
+          -2.4739649297293218e-08,
+          1.6499414502914513e-07,
+          1.7901476753900688e-08,
+          -2.478631935685564e-07,
+          -1.0421359908839577e-07
+        ],
+        "recovered_prescribed_pressure_max_difference_pa": 3.5458464935800293e-05,
+        "prescribed_recovery_scope": "Zero-acceleration and accelerating centered paths differ at O(h^2); this is a stencil convergence comparison, not roundoff parity.",
+        "body_mass_matrix_world": [
+          [
+            2500.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            2500.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            2500.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1354.8467953524926,
+            0.0,
+            -70.03519269408712
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            9684.123317654701,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            -70.03519269408712,
+            0.0,
+            10642.300725100527
+          ]
+        ],
+        "fluid_mass_matrix_world": [
+          [
+            520.5156626687683,
+            -11.101502794780712,
+            -447.90432850847236,
+            27.655735155989802,
+            1512.341546100891,
+            -25.370079555408495
+          ],
+          [
+            -6.2100520737039515,
+            1687.1554651632646,
+            191.22530430205376,
+            -1653.103292557364,
+            -98.99408776632664,
+            129.1850967111135
+          ],
+          [
+            -361.0016511519676,
+            201.73186123444697,
+            12845.983347467789,
+            -189.83180686565927,
+            -2435.464016493448,
+            -105.81396008269473
+          ],
+          [
+            17.73696948688451,
+            -1653.7787839516375,
+            -175.7310963195934,
+            2000.269443066157,
+            333.04930712346027,
+            -125.88990359933257
+          ],
+          [
+            1490.7394144992572,
+            -113.5699075583993,
+            -2478.483110107302,
+            382.5128985629438,
+            25758.426267865314,
+            -354.20234965517403
+          ],
+          [
+            -28.16296198704376,
+            110.70898430815076,
+            -54.891380497679826,
+            -112.11651648629834,
+            -320.510238286864,
+            3586.725085369291
+          ]
+        ],
+        "fluid_mass_max_asymmetry": 86.90267735650474,
+        "scope": "One matrix-free rank-six coupled solve vs seven independent current modal solves; no matrix symmetry repair, no evolved trajectory."
+      },
+      "full_offset_context_seconds": [
+        0.390993700013496,
+        0.39575300001888536
+      ],
+      "producer_sha256": {
+        "tests\\experiments\\free_surface\\boat_coupled_pressure.py": "5d33134f82793cc9c675ccb8abbdadaed799e92e5fa3ef8fa1a17882f7a96ebe",
+        "tests\\experiments\\free_surface\\boat_frozen_field.py": "27c87efa2a67039eef7597a8fb360e3d2384124b89ed92ad31d0802d67e51ee4",
+        "tests\\experiments\\free_surface\\boat_graph_bvp.py": "a6ba4fb2b89c5049faf9fbb4ccad094f4b9643adc9ef78db33a86225c872acc2",
+        "tests\\experiments\\free_surface\\boat_graph_fields.py": "e20b8e1cc6d960107c071c39d99e26da6b663a57a2a9e68f95dbec8890804bdd",
+        "tests\\experiments\\free_surface\\boat_graph_time_derivative.py": "4752f7595515a06f194d534d8751bdbda389628bb3b6eb856ad57d5ba9dd9cf4",
+        "tests\\experiments\\free_surface\\cuda_graph.py": "14d0895914660b3530db5c880b97aa977148a1792903eb7c51853c4f8b4f4cec"
+      }
+    },
+    {
+      "raw_report": "artifacts\\box-current-pressure-coupled-zero.json",
+      "raw_sha256": "b588849aec730d4c393ecbbc278061e0be7100da70a77149a7fe2f2c4a5ac675",
+      "input_sha256": "c63d3f18509f9379c28e6797b0a4186a8610b4bb14a048d31376ca123102b485",
+      "grid": 129,
+      "body_panels": 56,
+      "hos_order": 4,
+      "image_height_m": 0.46506698253105394,
+      "reference_height_m": 0.3708514311746186,
+      "screen_seconds": 8.62669430000824,
+      "frozen_field": {
+        "step_seconds": 0.01,
+        "offsets": [
+          {
+            "total_seconds": 0.18870259998948313,
+            "source_trace_seconds": 0.17403779999585822,
+            "offset_operator_builds": 0,
+            "dense_harmonic_maps": 0,
+            "full_context_residual_max_difference": 5.065392549852277e-16,
+            "full_context_potential_max_difference": 1.249000902703301e-16
+          },
+          {
+            "total_seconds": 0.23275890000513755,
+            "source_trace_seconds": 0.2107315000030212,
+            "offset_operator_builds": 0,
+            "dense_harmonic_maps": 0,
+            "full_context_residual_max_difference": 3.191891195797325e-16,
+            "full_context_potential_max_difference": 1.249000902703301e-16
+          }
+        ],
+        "density_derivative_solve": {
+          "gmres_iterations": 6,
+          "operator_applications": 8,
+          "true_relative_residual": 6.721660370114769e-10,
+          "preconditioned_residual_history": [
+            0.06094886424048041,
+            0.0032462838218994023,
+            7.970858368736343e-05,
+            2.2838614651220174e-06,
+            4.8207916219163115e-08,
+            1.4006310642708532e-09
+          ],
+          "solve_seconds": 0.03380549998837523
+        },
+        "implicit_full_context_pressure_max_difference_pa": 8.640199666842818e-12,
+        "implicit_full_context_six_functional_difference": [
+          2.221640130678771e-12,
+          1.0624361103778094e-12,
+          -4.0790837374515846e-11,
+          5.298796374196744e-12,
+          6.672159992852443e-11,
+          -1.4882052955922947e-12
+        ],
+        "scope": "Two frozen-density field actions plus one CURRENT derivative solve; full contexts remain independent verification references. No sixDOF evolution or end-to-end timing claim."
+      },
+      "coupled": {
+        "diagnostics": {
+          "total_seconds": 0.08215070000733249,
+          "gmres_iterations": 10,
+          "operator_applications": 12,
+          "true_relative_residual": 7.818743290631075e-11,
+          "body_balance_residual": [
+            -1.2789769243681803e-13,
+            2.2737367544323206e-13,
+            0.0,
+            -1.4832579608992091e-13,
+            -4.249711693660174e-12,
+            4.75175454539567e-13
+          ],
+          "fluid_normal_residual_max": 1.229938095814731e-10,
+          "additional_operator_builds": 0,
+          "acceleration_response_basis_builds": 0,
+          "scope": "Current-domain implicit algebra only; geometry/state/pressure qualification is separate"
+        },
+        "known_rhs_stencil": "Genuine zero-world-linear/angular-acceleration poses; explicit clipping/label/image/height/physical-depth guards",
+        "zero_acceleration_offsets": [
+          {
+            "total_seconds": 0.22786159999668598,
+            "source_trace_seconds": 0.21296299999812618,
+            "offset_operator_builds": 0,
+            "dense_harmonic_maps": 0
+          },
+          {
+            "total_seconds": 0.20155550001072697,
+            "source_trace_seconds": 0.18550110000069253,
+            "offset_operator_builds": 0,
+            "dense_harmonic_maps": 0
+          }
+        ],
+        "acceleration_world": [
+          0.03118800881692092,
+          -0.39350313461389996,
+          -0.0018680661110138316,
+          -0.06315310364121009,
+          0.030031573893805074,
+          -0.03073455786864521
+        ],
+        "explicit_modal_acceleration_world": [
+          0.031188008806632753,
+          -0.39350313458149905,
+          -0.0018680661260798818,
+          -0.06315310370399822,
+          0.030031573877747717,
+          -0.030734557871571543
+        ],
+        "acceleration_difference": [
+          1.0288166152339073e-11,
+          -3.240091528411426e-11,
+          1.506605018693208e-11,
+          6.278813580173903e-11,
+          1.6057356833076852e-11,
+          2.9263327872008915e-12
+        ],
+        "pressure_max_difference_pa": 6.089362614147831e-08,
+        "six_functional_difference": [
+          2.0576500957946524e-08,
+          -6.480189840824598e-08,
+          3.013334435308931e-08,
+          7.534664502874155e-08,
+          1.172240018031716e-07,
+          2.3411003603759547e-08
+        ],
+        "recovered_prescribed_pressure_max_difference_pa": 0.00010291847092958051,
+        "prescribed_recovery_scope": "Zero-acceleration and accelerating centered paths differ at O(h^2); this is a stencil convergence comparison, not roundoff parity.",
+        "body_mass_matrix_world": [
+          [
+            2000.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            2000.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            2000.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1200.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            7300.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            8000.0
+          ]
+        ],
+        "fluid_mass_matrix_world": [
+          [
+            417.0279608909087,
+            0.24372341408743883,
+            10.859814284493323,
+            29.05209229814644,
+            307.57477321218687,
+            6.785101671085389
+          ],
+          [
+            -0.7623867404521342,
+            1162.0953670091296,
+            95.25357909395525,
+            121.03371445731175,
+            -127.9083276329757,
+            -64.09731413245167
+          ],
+          [
+            13.618198934901118,
+            140.18551813424136,
+            17086.743602413193,
+            26.475239117184383,
+            -31.413082591511913,
+            7.766228331104539
+          ],
+          [
+            19.54631247915672,
+            -51.533043961496936,
+            2.70623779140116,
+            3088.0110038145745,
+            887.7355041458393,
+            -8.359542534060154
+          ],
+          [
+            319.4876627141114,
+            -150.0492479786817,
+            15.55030468183626,
+            892.3130812158402,
+            38397.40295802273,
+            -245.7788890487208
+          ],
+          [
+            8.458000313430992,
+            -65.54998966079789,
+            -24.678478820068822,
+            -12.982550001901009,
+            -135.16450930001196,
+            3429.517166853501
+          ]
+        ],
+        "fluid_mass_max_asymmetry": 172.5667584188087,
+        "scope": "One matrix-free rank-six coupled solve vs seven independent current modal solves; no matrix symmetry repair, no evolved trajectory."
+      },
+      "full_offset_context_seconds": [
+        0.2141657000174746,
+        0.2195415000023786
+      ],
+      "producer_sha256": {
+        "tests\\experiments\\free_surface\\boat_coupled_pressure.py": "5d33134f82793cc9c675ccb8abbdadaed799e92e5fa3ef8fa1a17882f7a96ebe",
+        "tests\\experiments\\free_surface\\boat_frozen_field.py": "27c87efa2a67039eef7597a8fb360e3d2384124b89ed92ad31d0802d67e51ee4",
+        "tests\\experiments\\free_surface\\boat_graph_bvp.py": "a6ba4fb2b89c5049faf9fbb4ccad094f4b9643adc9ef78db33a86225c872acc2",
+        "tests\\experiments\\free_surface\\boat_graph_fields.py": "e20b8e1cc6d960107c071c39d99e26da6b663a57a2a9e68f95dbec8890804bdd",
+        "tests\\experiments\\free_surface\\boat_graph_time_derivative.py": "4752f7595515a06f194d534d8751bdbda389628bb3b6eb856ad57d5ba9dd9cf4",
+        "tests\\experiments\\free_surface\\cuda_graph.py": "14d0895914660b3530db5c880b97aa977148a1792903eb7c51853c4f8b4f4cec"
+      }
+    }
+  ],
+  "independent_review": "Source reviewer confirmed harmonic indexing/normalization, source/image/jump signs, actual chart convection, world inertia/gyro and rank-six elimination. Reviewer identified the zero-acceleration stencil correction and required explicit geometry guards before reference contexts are removed.",
+  "next": "Advance a freely moving six-DOF body under the existing explicitly FORCED graph/analytic trace; short/half timestep plus an independently reconstructed full-context pressure at an evolved state. Then couple actual evolving curved sea, contact/exposure state transfer and open-water physics before Capytaine/time-domain and full60s accuracy/speed qualification."
+}

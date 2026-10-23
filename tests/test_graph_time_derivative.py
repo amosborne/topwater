@@ -11,22 +11,23 @@ from topwater.hydrostatics import hydrostatics
 from topwater.rankine import TrianglePanels
 from tests.reference_boat import simulation_inputs
 from tests.experiments.free_surface.boat_graph_bvp import GraphBody
-from tests.experiments.free_surface.boat_graph_time_derivative import prescribed_pose
+from tests.experiments.free_surface.boat_graph_time_derivative import prescribed_pose, constant_twist_pose
 from tests.experiments.free_surface.cuda_graph import cp
 
 
-def test_prescribed_world_velocity_matches_moving_material_points():
+@pytest.mark.parametrize('pose_at', [prescribed_pose, constant_twist_pose])
+def test_prescribed_world_velocity_matches_moving_material_points(pose_at):
     quaternion = np.array([.96, .12, -.16, .2])
     initial = InitialState([.3, -.2, .1], quaternion/np.linalg.norm(quaternion),
                            [.03, -.02, .01], [.01, -.015, .02])
     material = np.array([[1.2, -.7, .2], [-.5, .4, -.3]])
     time = .13
-    pose = prescribed_pose(initial, time)
+    pose = pose_at(initial, time)
     points = pose.position+material@rotation_matrix(pose.orientation).T
     omega = rotation_matrix(pose.orientation)@pose.angular_velocity
     expected = pose.linear_velocity+np.cross(omega, points-pose.position)
     for step in [1e-3, 5e-4]:
-        offsets = [prescribed_pose(initial, time+s) for s in [step, -step]]
+        offsets = [pose_at(initial, time+s) for s in [step, -step]]
         world = [p.position+material@rotation_matrix(p.orientation).T for p in offsets]
         assert_allclose((world[0]-world[1])/(2*step), expected, atol=2e-10, rtol=0)
 
