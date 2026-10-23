@@ -79,10 +79,7 @@ def frozen_field(panels, eta, length, origin, height, image, order, trace, densi
     x, y = np.meshgrid(origin[0]+np.arange(grid)*length/grid,
                        origin[1]+np.arange(grid)*length/grid)
     points = np.column_stack((x.ravel(), y.ravel(), eta.ravel()))
-    source_trace = np.empty(len(points))
-    for first in range(0, len(points), 256):
-        last = min(first+256, len(points))
-        source_trace[first:last] = elevated_potential(points[first:last], panels, image)@density
+    source_trace = elevated_potential(points, panels, image)@density
     trace_seconds = perf_counter()-started
     graph = GraphDirichlet(eta-height, [length, length], order=order)
     spectrum = sum(graph.coefficients((cp.asarray(trace)-cp.asarray(source_trace)).reshape(eta.shape))).ravel()

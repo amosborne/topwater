@@ -6,6 +6,7 @@ Changing the artificial image height must not change the continuum answer.
 This is a static precursor, not a nonlinear solver or a runtime alternative.
 """
 import argparse
+from concurrent.futures import ThreadPoolExecutor
 from hashlib import sha256
 import json
 from pathlib import Path
@@ -28,15 +29,21 @@ from .boat_graph_images import image_height
 from .panel_gradient_reference import checked_influence
 
 
+def _potential_block(points, panels, height):
+    reflected = points.copy()
+    reflected[:, 2] = 2*height-reflected[:, 2]
+    return (panel_influence(points, panels).single_layer
+            -panel_influence(reflected, panels).single_layer)
+
+
 def elevated_potential(points, panels, height):
-    """Paired-source potential only; retain the public kernel's accuracy guards."""
+    """Parallel target blocks; unchanged guarded CPU integration, no worker CUDA."""
     value = np.empty((len(points), len(panels)))
-    for first in range(0, len(points), 128):
-        last = min(first+128, len(points))
-        reflected = points[first:last].copy()
-        reflected[:, 2] = 2*height-reflected[:, 2]
-        value[first:last] = (panel_influence(points[first:last], panels).single_layer
-                            -panel_influence(reflected, panels).single_layer)
+    starts = range(0, len(points), 128)
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        blocks = pool.map(lambda first: _potential_block(points[first:first+128], panels, height), starts)
+        for first, block in zip(starts, blocks, strict=True):
+            value[first:first+len(block)] = block
     return value
 
 

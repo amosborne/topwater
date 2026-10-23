@@ -184,6 +184,8 @@ class ForcedBody:
             dict(time_seconds=float(time), total_seconds=perf_counter()-started,
                 geometry_seconds=geometry_seconds, geometry=[s.diagnostics for s in snapshots],
                 context_seconds=context.setup_seconds, current_solve=solution.diagnostics,
+                context_breakdown=dict(source_operator_seconds=context.source_operator_seconds,
+                    harmonic_maps_seconds=context.lift_map_seconds, source_trace_seconds=context.source_trace_seconds),
                 body_velocity_seconds=velocity_seconds, offsets=[a['diagnostics'] for a in actions],
                 coupled_solve=coupled['diagnostics'], acceleration_world=coupled['acceleration'].tolist(),
                 pressure_functionals=coupled['pressure_functionals'].tolist(),

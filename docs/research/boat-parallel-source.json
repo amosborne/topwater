@@ -1,0 +1,152 @@
+{
+  "status": "Unqualified candidate; NOT promoted to baseline",
+  "change": "Four CPU workers evaluate bounded independent target blocks through the unchanged public guarded nogil kernel. CuPy/copies/assembly remain on main thread. Frozen actions make one source-matrix call, then contract density. No numerical backend switch in moving path.",
+  "reference": "Independent serial scheduling reference lives in boat_source_sampling_benchmark.py; useful primitive math/error guards remain shared public rankine owner.",
+  "measurements": {
+    "initial_three_matrices_abba": {
+      "complete": true,
+      "qualified": false,
+      "reference_sha256": "00820e98cc0fc42c7a7904c301c0b77e924021d026629c7399e43915e71fd0fb",
+      "candidate_sha256": "daaa4037ffdb9be5d90b9f4d3ce2782df5f411b7b4e872c970050d1cfa3cb8b3",
+      "input_sha256": "d4727637dd8b52ab90b0969c58341fbb033b844befae09340dae74a841d076d1",
+      "points": 16641,
+      "body_panels": [
+        84,
+        84,
+        84
+      ],
+      "exact_matrix_parity": true,
+      "rows": [
+        {
+          "method": "serial",
+          "seconds": 2.433222099993145
+        },
+        {
+          "method": "parallel",
+          "seconds": 0.6144490000151563
+        },
+        {
+          "method": "parallel",
+          "seconds": 0.6381185999780428
+        },
+        {
+          "method": "serial",
+          "seconds": 2.3853623000031803
+        }
+      ],
+      "scope": "Warm three actual center/offset paired-potential matrices, serial ABBA; no RHS/trajectory speed claim"
+    },
+    "warm_evolved_source_abba": [
+      {
+        "method": "serial",
+        "seconds": 1.3132334999972954
+      },
+      {
+        "method": "parallel",
+        "seconds": 0.6073788999929093
+      },
+      {
+        "method": "parallel",
+        "seconds": 0.6474279999965802
+      },
+      {
+        "method": "serial",
+        "seconds": 1.7706068999832496
+      }
+    ],
+    "warm_evolved_full_rhs_abba": [
+      {
+        "method": "serial",
+        "total_seconds": 2.394530899997335,
+        "geometry_seconds": 0.14354879999882542,
+        "context": {
+          "source_operator_seconds": 0.08305019998806529,
+          "harmonic_maps_seconds": 0.02713550001499243,
+          "source_trace_seconds": 0.48526859999401495
+        },
+        "two_offsets_seconds": 1.284312100004172,
+        "coupled_seconds": 0.1280020999838598,
+        "pressure_max_difference_pa": 0.0,
+        "acceleration_max_difference": 0.0
+      },
+      {
+        "method": "parallel",
+        "total_seconds": 1.7060018999909516,
+        "geometry_seconds": 0.19088569999439642,
+        "context": {
+          "source_operator_seconds": 0.12409239998669364,
+          "harmonic_maps_seconds": 0.026878900011070073,
+          "source_trace_seconds": 0.2829156000225339
+        },
+        "two_offsets_seconds": 0.6550153999996837,
+        "coupled_seconds": 0.12692979999701492,
+        "pressure_max_difference_pa": 0.0,
+        "acceleration_max_difference": 0.0
+      },
+      {
+        "method": "parallel",
+        "total_seconds": 1.4274119999899995,
+        "geometry_seconds": 0.37463609999394976,
+        "context": {
+          "source_operator_seconds": 0.08711220000986941,
+          "harmonic_maps_seconds": 0.015560500003630295,
+          "source_trace_seconds": 0.14836089999880642
+        },
+        "two_offsets_seconds": 0.5550289999810047,
+        "coupled_seconds": 0.12314280000282452,
+        "pressure_max_difference_pa": 0.0,
+        "acceleration_max_difference": 0.0
+      },
+      {
+        "method": "serial",
+        "total_seconds": 4.632580900011817,
+        "geometry_seconds": 0.21493650000775233,
+        "context": {
+          "source_operator_seconds": 0.08988509999471717,
+          "harmonic_maps_seconds": 0.022335699992254376,
+          "source_trace_seconds": 0.6118614000151865
+        },
+        "two_offsets_seconds": 2.1913058000209276,
+        "coupled_seconds": 1.1961253999907058,
+        "pressure_max_difference_pa": 0.0,
+        "acceleration_max_difference": 0.0
+      }
+    ],
+    "actual_moving_case": {
+      "serial_integration_seconds": 67.9210832999961,
+      "parallel_integration_seconds": 84.91433460000553,
+      "accepted_steps": 7,
+      "rhs_evaluations": 31,
+      "states_times_dense_coefficients_bitwise_identical": true,
+      "heldout_pressure_max_difference_pa": 1.6955254977801815e-07
+    }
+  },
+  "assessment": [
+    "Initial source-only gain~3.8x; repeated warm source control~2-3x. Complete RHS warmABBA favors parallel but has large timing variation in unrelated geometry/coupled stages.",
+    "Actual .1s moving-case integration84.91s versus earlier67.92s is slower. Do not claim an end-to-end improvement or promote from isolated kernel gains.",
+    "All source matrices, fullRHS pressure/acceleration and actual motion arrays retain exact parity in measured controls. No kernel tolerance or geometry guard relaxed."
+  ],
+  "next": "Guarded GPU paired-potential sampler, preserving unsupported-geometry rejection and analytic/paired-cancellation checks with CPU verification/fallback. Then full RHS and moving-case controls before promotion.",
+  "records": [
+    {
+      "path": "artifacts\\boat-parallel-source.json",
+      "sha256": "2120f877a5cbfc0bec39b48ee1c9fa561e48e615ab11cac4de04c527bba0d770"
+    },
+    {
+      "path": "artifacts\\boat-source-sampling-rhs.json",
+      "sha256": "cc21f68ccaf3c8a092a1659178ef55e80cbb84f1d907b10bcea394224347c044"
+    },
+    {
+      "path": "artifacts\\boat-forced-motion-parallel-source.json",
+      "sha256": "f58627cc69e82c98859fe28d03b63a295310c10cd7ba9c30287ed5ba7adb32ba"
+    }
+  ],
+  "producer_sha256": {
+    "tests\\experiments\\free_surface\\boat_forced_motion.py": "2a7fbbe5bf4a442865bd77b35519d0b7846993f7d70d12fed6804846b5e630db",
+    "tests\\experiments\\free_surface\\boat_frozen_field.py": "04aac172ad3a047e26590990af58699acab547a3e0e5015d40c258a2bc5bcaed",
+    "tests\\experiments\\free_surface\\boat_graph_bvp.py": "a6ba4fb2b89c5049faf9fbb4ccad094f4b9643adc9ef78db33a86225c872acc2",
+    "tests\\experiments\\free_surface\\boat_graph_geometry.py": "a8e816a38b828a2536677ef572c2ec064f9d33797193c494d530d22256b35778",
+    "tests\\experiments\\free_surface\\boat_image_plane.py": "daaa4037ffdb9be5d90b9f4d3ce2782df5f411b7b4e872c970050d1cfa3cb8b3",
+    "tests\\experiments\\free_surface\\boat_source_sampling_benchmark.py": "25815e516df204942ecabdd915ca083c10b41e4af0418383de6ad71c7d045563"
+  }
+}
