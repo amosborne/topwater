@@ -1,0 +1,81 @@
+{
+    "status":  "Spatial/reference diagnosis; no new solver baseline or performance qualification",
+    "source_matrix_commit":  "e6d9bc8 (reviewed1bd22ef cherry-pick)",
+    "compact_p1_commit":  "913dd1e (08ee761 cherry-pick)",
+    "integrated_cpu_tests_passed":  7,
+    "spatial_snapshot":  {
+                             "report":  "artifacts/boat-radiation-field-defect.json",
+                             "sha256":  "37d97bc7a9a407793dad4bd4b8efaa37ec87a9502eb80b29be8315a956dc2442",
+                             "input_sha256":  "d4727637dd8b52ab90b0969c58341fbb033b844befae09340dae74a841d076d1",
+                             "scope":  "Same-panel external radiation potential sampled at two real time phases; full auxiliary versus physical exterior fill",
+                             "principal_roll_load_error_at_half_metre_spacing":  [
+                                                                                     0.029748944463753993,
+                                                                                     0.057246537958937506
+                                                                                 ],
+                             "interpretation":  "Spatial load error exists before integration. Reported local flux-vs-kappaPhi defects were subsequently found to include finite-panel reference inconsistency; do not treat them as exact physical errors."
+                         },
+    "failed_reference_guard":  {
+                                   "report":  "artifacts/boat-radiation-field-defect-body.json",
+                                   "sha256":  "02ee95ddecdd757cb95ca9ff4f90a746d850a7ebacfb6658d782cf08fa20e811",
+                                   "scope":  "272-panel body control stopped at independent Capytaine vertical-velocity/Robin check; no completed body-refinement result"
+                               },
+    "reference_audit":  {
+                            "report":  "artifacts/boat-capytaine-surface-audit-native.json",
+                            "sha256":  "4e81bd2cc722b3ad54683ce86eb9c2ed111734597abbb457738d46030ff0b922",
+                            "panels":  68,
+                            "fixed_probes":  22,
+                            "unit_velocity_normalization":  "Phi=Phi_displacement/(-i*omega), omega=2*pi*0.1; Re/Im are the two time phases",
+                            "default_robin_relative_l2":  [
+                                                              0.08084044164663749,
+                                                              0.3573093684339671
+                                                          ],
+                            "untabulated_robin_relative_l2":  [
+                                                                  0.08083961490677832,
+                                                                  0.35731070975772267
+                                                              ],
+                            "extracted_robin_relative_l2":  [
+                                                                3.0846977209455266E-16,
+                                                                5.0926041682140532E-16
+                                                            ],
+                            "default_smaller_step_derivative_difference_normalized_by_robin":  [
+                                                                                                   0.0010376730993482603,
+                                                                                                   0.006914602426040756
+                                                                                               ],
+                            "extracted_smaller_step_derivative_difference_normalized_by_robin":  [
+                                                                                                     0.08070547984663888,
+                                                                                                     0.3567942761781164
+                                                                                                 ],
+                            "predictor":  "dzPhi-kappaPhi=2*kappa*(S_Rankine_positive-S_wave_centroid_positive)*sigma_velocity at z=0",
+                            "native_rankine_predictor_max_error":  [
+                                                                       1.5547792934709907E-09,
+                                                                       5.3178279842304774E-10
+                                                                   ],
+                            "default_principal_added_mass":  [
+                                                                 20308.51840286106,
+                                                                 1828.5980014473307
+                                                             ],
+                            "extracted_matching_solve_principal_added_mass":  [
+                                                                                  20464.401119625203,
+                                                                                  1858.6389659852907
+                                                                              ],
+                            "interpretation":  "Mixed finite-panel integration explains the observed reference boundary defect. Untabulation leaves it. Pole extraction restores the boundary relation but changes the matching solve and does not exactly differentiate the same finite potential map. Neither variant is selected as continuum truth.",
+                            "historical_field_labels":  "In raw reports, added_mass/damping name the coefficients belonging to the solution supplying sources. Only matching-solve rows give new variant coefficients. Current source makes these names explicit."
+                        },
+    "local_candidate":  {
+                            "implementation":  "Continuous compact P1 surface trace plus its exact aperiodic Poisson lift from existing K/gS panel kernels; preserves a global return-flux tail.",
+                            "verification":  "Three independent CPU checks passed, including adaptive direct Poisson integration at2cm depth, velocity finite differences, surface limits, outside tail and ownership. Seven tests passed together with integrated source-matrix controls.",
+                            "limit":  "Static verification helper only. P1 nodal/edge DNO is singular; owned centroid point values are not a nodal time integrator.",
+                            "next_gate":  "Coarse global Fourier trace plus compact near-hull trace correction: compare actual-hull loads AND same-point return flux with an analytic harmonic field or precisely frozen Capytaine field derivative. No new trajectory before this gate."
+                        },
+    "physics_limits":  [
+                           "No evolving nonlinear eta/psi or moving-waterline trajectory was qualified.",
+                           "Earlier time-domain Capytaine roll discrepancy remains unresolved.",
+                           "Reference qualification requires panel/wave quadrature convergence and potential/gradient consistency, not choosing a formulation for a small residual.",
+                           "No new throughput or speed ratio is claimed; user accuracy and20x timing targets remain unchanged."
+                       ],
+    "primary_sources":  [
+                            "https://capytaine.org/v3.0.0/theory_manual/inf_depth_green_function.html",
+                            "https://capytaine.org/v3.0.0/user_manual/mesh.html",
+                            "https://github.com/capytaine/capytaine/pull/510/files"
+                        ]
+}
