@@ -1,0 +1,103 @@
+{
+    "status":  "Local trace enrichment is useful for body-field accuracy but NOT promoted to a time-domain solver",
+    "interpretation":  [
+                           "The near/far split acts on one surface trace and lifts both parts harmonically. No three-dimensional potential is multiplied by a window.",
+                           "Current coarse-global nodal sampling leaves far trace error; a compact local correction cannot change the plane Dirichlet trace outside its support.",
+                           "Finer local P1 improves body fields and trace approximation but does not establish suitable pointwise surface evolution. P1 nodal/edge DNO can be singular.",
+                           "Pointwise water accuracy is diagnostic, not a new user requirement. Acceptance remains0.1degree/1cm THROUGHOUT60s and \u003c=20wall seconds/simsecond with nonlinear6DOF."
+                       ],
+    "internal_source_control":  {
+                                    "raw":  "artifacts/boat-local-trace-enrichment.json",
+                                    "sha256":  "d9997d8ac6cb9e8ef168111e21cc5b7b8dc0d70667b8ae5706f52673c102539e",
+                                    "role":  "Demanding analytic fixture with source locations frozen before body discretization; reflected sources give exact lower-halfspace lift and same-J lifting oracle.",
+                                    "decision":  "Fails physical-field qualification: local correction approaches the exact-lift oracle, but that coarse-body oracle has a large error against the independent internal-pole field. This is not a production mesh requirement.",
+                                    "coarse_body_vs_lift_oracle_l2":  [
+                                                                          0.4232685446062148,
+                                                                          0.19549902024522858
+                                                                      ],
+                                    "enriched_body_vs_lift_oracle_l2":  [
+                                                                            0.1380251125823192,
+                                                                            0.0563119341339173
+                                                                        ],
+                                    "same_body_exact_lift_oracle_physical_field_error":  [
+                                                                                             8.201142211102491,
+                                                                                             0.2654942792792102
+                                                                                         ]
+                                },
+    "representative_snapshot":  {
+                                    "raw":  "artifacts/boat-local-radiation-projection-audit.json",
+                                    "sha256":  "a2b4eae7aa01f8638841e0048f954b3a4fbe53899faf66bd7f2585b180e6fbc3",
+                                    "scope":  "Unit-velocity heave/roll external snapshots represented by four REAL phase columns; actual evaluated Capytaine velocity, not kappaPhi, is the field reference. Its finite-panel uncertainty remains.",
+                                    "coarse_grid":  129,
+                                    "coarse_length_m":  128.0,
+                                    "hull_panels":  68,
+                                    "coarse_body_phi_l2":  [
+                                                               0.01658239020283398,
+                                                               0.047718877369708174
+                                                           ],
+                                    "local_eighth_metre_body_phi_l2":  [
+                                                                           0.0021919179428454266,
+                                                                           0.00620651761009177
+                                                                       ],
+                                    "local_triangles":  20160,
+                                    "local_spacing_m":  [
+                                                            0.12467895917666283,
+                                                            0.12412722586395475
+                                                        ],
+                                    "shared_probe_hash":  "077b82963603071de7796ae7c9c907ec26734f800c5ef67f618daeb61aaed517",
+                                    "shared_probe_roundoff_distance_m":  1.3732700395566711E-15,
+                                    "same_point_near_trace_error":  [
+                                                                        0.0021826072750739003,
+                                                                        0.005671883248147598
+                                                                    ],
+                                    "near_surface_vertical_velocity_error":  [
+                                                                                 0.839446676103895,
+                                                                                 3.548129760217222
+                                                                             ],
+                                    "near_subsurface_vertical_velocity_error":  [
+                                                                                    0.02513800974100824,
+                                                                                    0.01156733097338018
+                                                                                ],
+                                    "near_surface_rms_absolute_error":  [
+                                                                            0.030019949234343823,
+                                                                            0.017027930126581266
+                                                                        ],
+                                    "near_subsurface_rms_absolute_error":  [
+                                                                               0.0027574364018795113,
+                                                                               0.0006646363064602825
+                                                                           ],
+                                    "subsurface_depth_m":  0.27432000000000006,
+                                    "far_trace_error":  [
+                                                            0.005442061129444278,
+                                                            0.11150794700265
+                                                        ],
+                                    "stored_finer_projection_far_trace_error":  [
+                                                                                    0.004650910510273605,
+                                                                                    0.055254422391489186
+                                                                                ],
+                                    "decision":  "Do not promote. Better body-field accuracy alone is insufficient evidence for the coupled water evolution. Boundary-concentrated error and coarse-far representation error remain distinct.",
+                                    "local_quarter_metre_body_phi_l2":  [
+                                                                            0.0028227222653421135,
+                                                                            0.01181427854231052
+                                                                        ]
+                                },
+    "timing":  {
+                   "scope":  "Static CPU verification includes independent references, fields, body solves and local application; not a simulation throughput measurement or controlled implementation speed comparison.",
+                   "whole_audit_seconds":  7.194188599998597,
+                   "local_application_seconds":  4.089256100007333,
+                   "peak_process_rss_bytes":  649650176
+               },
+    "next_decisive_test":  "Weak compact-P1 DtN: verify 2*grad^T*V*grad and exploit translation invariance on a uniform structured patch for zero-padded FFT convolution. Compare against an independent small assembled operator before any moving integration. Preserve global/local cross coupling and physical hull-hole ownership.",
+    "limits":  [
+                   "No nonlinear evolving sea or time-domain rigid-body trajectory in this experiment.",
+                   "Full known auxiliary trace is supplied; hidden-state and moving-waterline transfer are not solved.",
+                   "No baseline speed or60s accuracy claim.",
+                   "No further uniform local refinement before separating trace evaluation and coarse-far errors."
+               ],
+    "weak_operator_invariants":  [
+                                     "Weak stiffness is K=2*B^T*V*B; evolve with the consistent mass M, not K alone.",
+                                     "Uniform planar translated hats admit a finite Toeplitz kernel and zero-padded FFT application; preserve aperiodic tails.",
+                                     "Zero-perimeter compact patch does not have zero row sums: no diagonal/gauge repair.",
+                                     "The full-plane weak identity does not justify simply deleting hidden triangles or evolving fictitious water. Begin with test hats whose entire support is physical exterior; contact restriction and cross coupling remain explicit work."
+                                 ]
+}
