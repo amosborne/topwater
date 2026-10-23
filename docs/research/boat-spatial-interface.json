@@ -1,0 +1,646 @@
+{
+  "complete": true,
+  "qualified": false,
+  "branch": "experiment/spatial-interface",
+  "scope": "Static actual-input convex-hull spatial body/plane coupling; no moving or nonlinear baseline change.",
+  "input_sha256": "d4727637dd8b52ab90b0969c58341fbb033b844befae09340dae74a841d076d1",
+  "reports": {
+    "boat-spatial-work-extended": {
+      "path": "artifacts/boat-spatial-work-extended.json",
+      "sha256": "f4c03da226a671355f703f7394527d6f357a40f9e411f83c0eb214d1f9a899db",
+      "producer_archive": "artifacts/boat-spatial-work-extended.source",
+      "complete": true
+    },
+    "boat-spatial-work-source-matrix": {
+      "path": "artifacts/boat-spatial-work-source-matrix.json",
+      "sha256": "9bccdab13e0a20093ac8e19728f026d98d3604b5b7b3935e2b9af34fb9c85e04",
+      "producer_archive": "artifacts/boat-spatial-work-source-matrix.source",
+      "complete": true
+    },
+    "boat-spatial-work-source-quadrature": {
+      "path": "artifacts/boat-spatial-work-source-quadrature.json",
+      "sha256": "edace350298c4913c9dcbb849bf33b4ee16c14fd8d466860803a4f6ddbcf4677",
+      "producer_archive": "artifacts/boat-spatial-work-source-quadrature.source",
+      "complete": true
+    },
+    "boat-spatial-capytaine": {
+      "path": "artifacts/boat-spatial-capytaine.json",
+      "sha256": "28437953c57f4366c4cc243ff21acb8504e4c0e2a879e418599451804c88bddd",
+      "producer_archive": "artifacts/boat-spatial-capytaine.source",
+      "complete": true
+    }
+  },
+  "levels": [
+    {
+      "panel_count": 17,
+      "panel_sha256": "11845f4209dde768fa9f1e8802b6e3043f05c88490d62838ff2b77f025989987",
+      "capytaine_A_infinity": [
+        [
+          10541.441120110925,
+          15.235441283758629
+        ],
+        [
+          14.416013788272693,
+          1067.290378656932
+        ]
+      ],
+      "comparisons": {
+        "direct_p0_potential": {
+          "matrix": [
+            [
+              11518.029131890959,
+              25.846509980506344
+            ],
+            [
+              11.12165688879816,
+              1331.6495434133058
+            ]
+          ],
+          "absolute_error": [
+            [
+              976.5880117800334,
+              10.611068696747715
+            ],
+            [
+              -3.2943568994745327,
+              264.35916475637373
+            ]
+          ],
+          "diagonal_relative_error": [
+            0.09264274216899074,
+            0.24769188408597928
+          ]
+        },
+        "indirect_p0_density": {
+          "matrix": [
+            [
+              10541.393315273683,
+              15.24119584459899
+            ],
+            [
+              14.348995579940734,
+              1067.2979975929898
+            ]
+          ],
+          "absolute_error": [
+            [
+              -0.047804837242438225,
+              0.005754560840360412
+            ],
+            [
+              -0.06701820833195882,
+              0.007618936057724568
+            ]
+          ],
+          "diagonal_relative_error": [
+            -4.53494324900571e-06,
+            7.1385784132263646e-06
+          ]
+        }
+      },
+      "source_manufactured_potential_relative_error": 3.7630490367317755,
+      "contact_distance_m": [
+        0.01,
+        0.003,
+        0.001,
+        0.0003,
+        0.0001,
+        3e-05,
+        1e-05
+      ],
+      "distance_times_plane_flux": {
+        "direct_p0_potential": [
+          [
+            -0.2695436848027479,
+            0.10222084440010833
+          ],
+          [
+            -0.2679765705490101,
+            0.10189980559418461
+          ],
+          [
+            -0.2672918625566158,
+            0.10166551051436777
+          ],
+          [
+            -0.2669714229485987,
+            0.10153411770505841
+          ],
+          [
+            -0.2668559416015537,
+            0.10148187905921371
+          ],
+          [
+            -0.26680741963728544,
+            0.10145860990242435
+          ],
+          [
+            -0.26679116118255414,
+            0.1014504873302021
+          ]
+        ],
+        "indirect_p0_density": [
+          [
+            -0.02716630565396641,
+            0.009630049227191854
+          ],
+          [
+            -0.01069824683354222,
+            0.003911177765420987
+          ],
+          [
+            -0.004346197418516852,
+            0.0016176433254500768
+          ],
+          [
+            -0.0015608522896838227,
+            0.0005888103665690553
+          ],
+          [
+            -0.000598502391415251,
+            0.00022778681046738464
+          ],
+          [
+            -0.00020527177709051117,
+            7.870093252371278e-05
+          ],
+          [
+            -7.624782823386759e-05,
+            2.938656666969319e-05
+          ]
+        ]
+      }
+    },
+    {
+      "panel_count": 68,
+      "panel_sha256": "0f1cc91a5ed4b165a0374751d684e8e0b4c1a50c7d5455dfe1fb40f71af9b258",
+      "capytaine_A_infinity": [
+        [
+          9169.464738398563,
+          -6.4569844363221875
+        ],
+        [
+          2.833670407182865,
+          1094.5345044587957
+        ]
+      ],
+      "comparisons": {
+        "direct_p0_potential": {
+          "matrix": [
+            [
+              9671.112582417974,
+              0.3195012149370664
+            ],
+            [
+              0.43764951883946335,
+              1312.6628477588504
+            ]
+          ],
+          "absolute_error": [
+            [
+              501.6478440194114,
+              6.776485651259254
+            ],
+            [
+              -2.3960208883434015,
+              218.12834330005467
+            ]
+          ],
+          "diagonal_relative_error": [
+            0.054708519889790606,
+            0.1992886861140212
+          ]
+        },
+        "indirect_p0_density": {
+          "matrix": [
+            [
+              9169.683368486894,
+              -6.439803906582
+            ],
+            [
+              2.7679053891585252,
+              1094.5413940157075
+            ]
+          ],
+          "absolute_error": [
+            [
+              0.2186300883313379,
+              0.017180529740187467
+            ],
+            [
+              -0.06576501802433965,
+              0.0068895569118012645
+            ]
+          ],
+          "diagonal_relative_error": [
+            2.3843277068920973e-05,
+            6.2945086552642575e-06
+          ]
+        }
+      },
+      "source_manufactured_potential_relative_error": 2.8692976206901197,
+      "contact_distance_m": [
+        0.01,
+        0.003,
+        0.001,
+        0.0003,
+        0.0001,
+        3e-05,
+        1e-05
+      ],
+      "distance_times_plane_flux": {
+        "direct_p0_potential": [
+          [
+            -0.18989316665175268,
+            0.08856245474906084
+          ],
+          [
+            -0.18590723556671765,
+            0.08826278267489146
+          ],
+          [
+            -0.1844968240832371,
+            0.08799635123769617
+          ],
+          [
+            -0.18391859499956553,
+            0.0878388652379865
+          ],
+          [
+            -0.18372909362055648,
+            0.08777460387186113
+          ],
+          [
+            -0.18365462606217023,
+            0.0877455606072118
+          ],
+          [
+            -0.18363095090200365,
+            0.08773532366032118
+          ]
+        ],
+        "indirect_p0_density": [
+          [
+            -0.029012498476361955,
+            0.012048277015011393
+          ],
+          [
+            -0.011858673680886441,
+            0.005211841402275154
+          ],
+          [
+            -0.004930675316379067,
+            0.0022372015970640534
+          ],
+          [
+            -0.0018026011676221354,
+            0.0008370195585288486
+          ],
+          [
+            -0.0006994247330615815,
+            0.0003296037455543714
+          ],
+          [
+            -0.00024224996852206164,
+            0.00011553129305572773
+          ],
+          [
+            -9.061366054749494e-05,
+            4.357629709481567e-05
+          ]
+        ]
+      }
+    },
+    {
+      "panel_count": 272,
+      "panel_sha256": "799cbe09baa94bda5406ba65ca1aa1b01aaa168f412661ffe97772bee39808d1",
+      "capytaine_A_infinity": [
+        [
+          8461.741576283353,
+          -11.24490477139365
+        ],
+        [
+          -3.2289081258532946,
+          1048.1454655236084
+        ]
+      ],
+      "comparisons": {
+        "direct_p0_potential": {
+          "matrix": [
+            [
+              8727.342817884206,
+              -1.4090954835191172
+            ],
+            [
+              -2.5232817287258302,
+              1176.312683565973
+            ]
+          ],
+          "absolute_error": [
+            [
+              265.6012416008525,
+              9.835809287874532
+            ],
+            [
+              0.7056263971274643,
+              128.16721804236454
+            ]
+          ],
+          "diagonal_relative_error": [
+            0.031388484179814956,
+            0.12227999095367713
+          ]
+        },
+        "indirect_p0_density": {
+          "matrix": [
+            [
+              8463.598459677743,
+              -11.598246421690353
+            ],
+            [
+              -3.266769150661613,
+              1048.1427837228134
+            ]
+          ],
+          "absolute_error": [
+            [
+              1.8568833943900245,
+              -0.35334165029670395
+            ],
+            [
+              -0.03786102480831843,
+              -0.0026818007950168976
+            ]
+          ],
+          "diagonal_relative_error": [
+            0.0002194445880496415,
+            -2.558615080853482e-06
+          ]
+        }
+      },
+      "source_manufactured_potential_relative_error": 1.4263343773358934,
+      "contact_distance_m": [
+        0.01,
+        0.003,
+        0.001,
+        0.0003,
+        0.0001,
+        3e-05,
+        1e-05
+      ],
+      "distance_times_plane_flux": {
+        "direct_p0_potential": [
+          [
+            -0.14362945854192755,
+            0.07251791726293706
+          ],
+          [
+            -0.13897145947142844,
+            0.07138264484266792
+          ],
+          [
+            -0.13736839375361717,
+            0.07084280891242206
+          ],
+          [
+            -0.1367226853614873,
+            0.07058000892027697
+          ],
+          [
+            -0.1365138998695196,
+            0.07048301691693538
+          ],
+          [
+            -0.13643268243609524,
+            0.07044164708517628
+          ],
+          [
+            -0.13640707869960866,
+            0.07042763301343526
+          ]
+        ],
+        "indirect_p0_density": [
+          [
+            -0.03642416588151647,
+            0.01719494575797254
+          ],
+          [
+            -0.01527555552650297,
+            0.007533863976725825
+          ],
+          [
+            -0.006445023174200156,
+            0.0032549383505855027
+          ],
+          [
+            -0.002381636422185866,
+            0.0012232187428367078
+          ],
+          [
+            -0.0009305053926622487,
+            0.00048301094403209346
+          ],
+          [
+            -0.00032410346933161097,
+            0.00016967316556776014
+          ],
+          [
+            -0.00012171042274233215,
+            6.409404811179444e-05
+          ]
+        ]
+      }
+    }
+  ],
+  "high_order_quadrature": [
+    {
+      "representation": "direct_p0_potential",
+      "order": 64,
+      "surface_work": [
+        [
+          -23.249668193214728,
+          -0.23090232925408677
+        ],
+        [
+          1.8062114414714996,
+          -0.280870354580806
+        ]
+      ],
+      "body_work": [
+        [
+          -12.168040178564246,
+          -0.10905353529846405
+        ],
+        [
+          0.0004770503561147228,
+          -0.11726491197594173
+        ]
+      ],
+      "outer_work": [
+        [
+          0.44895771632303194,
+          0.005509585175900498
+        ],
+        [
+          2.7378152456391246e-05,
+          0.003543444333979044
+        ]
+      ],
+      "residual": [
+        [
+          -11.530585730973513,
+          -0.1273583791315232
+        ],
+        [
+          1.8057070129629285,
+          -0.1671488869388433
+        ]
+      ]
+    },
+    {
+      "representation": "direct_p0_potential",
+      "order": 128,
+      "surface_work": [
+        [
+          -24.46925492876802,
+          -0.2467186017552037
+        ],
+        [
+          2.047798446206154,
+          -0.29627255537599095
+        ]
+      ],
+      "body_work": [
+        [
+          -12.168040178564246,
+          -0.10905353529846405
+        ],
+        [
+          0.0004770503561147228,
+          -0.11726491197594173
+        ]
+      ],
+      "outer_work": [
+        [
+          0.4489577163230288,
+          0.005509585175900283
+        ],
+        [
+          2.7378152456173497e-05,
+          0.003543444333979004
+        ]
+      ],
+      "residual": [
+        [
+          -12.750172466526804,
+          -0.14317465163263993
+        ],
+        [
+          2.047294017697583,
+          -0.18255108773402823
+        ]
+      ]
+    },
+    {
+      "representation": "indirect_p0_density",
+      "order": 64,
+      "surface_work": [
+        [
+          -11.318799774687978,
+          -0.10162231401935197
+        ],
+        [
+          0.0019049976282577122,
+          -0.09260403930688971
+        ]
+      ],
+      "body_work": [
+        [
+          -12.178389524075683,
+          -0.10803210124211944
+        ],
+        [
+          7.588778921893539e-05,
+          -0.11576271574672056
+        ]
+      ],
+      "outer_work": [
+        [
+          0.4381930478302701,
+          0.006392675698418039
+        ],
+        [
+          -0.0004946933935720474,
+          0.0028797883353492435
+        ]
+      ],
+      "residual": [
+        [
+          0.4213967015574353,
+          1.711152434943214e-05
+        ],
+        [
+          0.002323803232610824,
+          0.020278888104481613
+        ]
+      ]
+    },
+    {
+      "representation": "indirect_p0_density",
+      "order": 128,
+      "surface_work": [
+        [
+          -11.324951302199585,
+          -0.10107787811310903
+        ],
+        [
+          -0.011235027903837808,
+          -0.09170166062303577
+        ]
+      ],
+      "body_work": [
+        [
+          -12.178389524075683,
+          -0.10803210124211944
+        ],
+        [
+          7.588778921893539e-05,
+          -0.11576271574672056
+        ]
+      ],
+      "outer_work": [
+        [
+          0.43819304783026536,
+          0.006392675698417547
+        ],
+        [
+          -0.0004946933935742498,
+          0.0028797883353490154
+        ]
+      ],
+      "residual": [
+        [
+          0.41524517404583317,
+          0.0005615474305928616
+        ],
+        [
+          -0.010816222299482493,
+          0.021181266788335783
+        ]
+      ]
+    }
+  ],
+  "independent_controls": {
+    "gradient_tests": "2 passed in 0.81s: independent area quadrature and five-point potential differencing at actual reference-hull near-contact geometry.",
+    "review": "Independent source review approved fluid-normal signs, half-jump, target reflection, disjoint exposed-plane integration and explicit finite-box boundary term; no numerical reviewer jobs.",
+    "precision": "Rejected bulk pair entries recomputed at Decimal64/96; atan2/pi remain binary64. This is a cancellation control, not interval certification."
+  },
+  "conclusions": [
+    "Direct P0 body potential reconstruction has an observed nonzero distance*plane-flux limit at the sampled actual contact edge. Increasing surface integration order worsens its work defect despite roundoff-level centroid BIE residuals. Do not use this raw trace as the spatial coupling.",
+    "Indirect odd-image P0 source density removes the sampled 1/d flux behavior. Its same-panel A-infinity heave/roll values closely match independently solved Capytaine values, without row correction, symmetrization, damping tuning or input-specific topology.",
+    "Source-density finite-box work is substantially improved but not qualified: body-mesh and surface-quadrature defects remain. The thin-body interior point-source potential control falls from 3.76 to 2.87 to 1.43 relative error and remains unresolved.",
+    "Independent 0.1Hz heave/roll radiation A/B references are recorded on all three exact panel sets. Topwater has not yet reproduced them with a transient.",
+    "No new full-trajectory runtime result; cleaned nonlinear baseline remains 40.36 wall seconds per simulated second and has not met minute accuracy/open-ocean gates."
+  ],
+  "next_falsifier": "Hidden-plane extension cancellation using a smooth compact trace strictly inside the actual waterplane, with an aperiodic Poisson lift and independent quadrature/body refinement. Then finite-frequency forced heave/roll transients; only then nonlinear coupling/performance promotion."
+}
