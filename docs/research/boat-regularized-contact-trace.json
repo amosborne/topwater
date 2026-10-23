@@ -1,0 +1,317 @@
+{
+  "status": "Promising flat source-trace representation; not promoted to runtime",
+  "evidence": {
+    "artifacts\\boat-regularized-contact-trace.json": "9a8979d2107d0b02f1618aa84063e6cb02ad1f47e86a2c0969903419c5ba5bbb",
+    "artifacts\\boat-regularized-contact-neumann.json": "a70222d3ca3c28b14379a29efdbccad5c349e7f7953fd8052a307beb245c33b5",
+    "artifacts\\boat-regularized-contact-coarsening.json": "fa3396a426e3ef815fea23cedc9692e5c7a8d6d17fbdc443ab58820862e1579c"
+  },
+  "identity": {
+    "field": "phi=H*chi+(Sreal+Simage)*sigma",
+    "physical_trace": "psi=chi+2*S_Gamma*sigma",
+    "flat_vertical_flux": "D*chi",
+    "body_condition": "JN*sigma=q-N*H*chi; JN=JD+2*Nimage"
+  },
+  "known_reference_density_control": {
+    "source_triangles": 20160,
+    "same_physical_test_hat": true,
+    "flux_moment_error_q16": [
+      3.207537116309788e-05,
+      4.6461904446281103e-07
+    ],
+    "body_potential_relative_l2": [
+      0.00034194172213909886,
+      0.0004642990122069532
+    ],
+    "frozen_field_error_reduction_vs_physical_trace": [
+      43.99448995890359,
+      3126.5031991153323
+    ],
+    "meaning": "Accuracy improvement with known source coefficients, not speed. Same reference field/source density and test support; both global-far and compact-local traces rebuilt for chi."
+  },
+  "prescribed_chi_neumann_solve": {
+    "refinement": 0,
+    "source_triangles": 20160,
+    "source_spacing": [
+      0.12467895917666194,
+      0.12412722586395297
+    ],
+    "known_density_body_potential_relative_l2": [
+      0.000341941722139099,
+      0.00046429901220695414
+    ],
+    "reference_density_rigid_normal_relative_defect": [
+      0.0018523743903816612,
+      0.003141362507243337
+    ],
+    "solved_vs_reference_density_relative_l2": [
+      0.0023878217692133064,
+      0.003177008658327446
+    ],
+    "solved_rigid_normal_residual_max": [
+      8.881784197001252e-16,
+      6.106226635438361e-16,
+      1.3877787807814457e-17,
+      5.421010862427522e-20
+    ],
+    "solved_density_body_potential_relative_l2": [
+      0.0013582179378274545,
+      0.0021836919868970703
+    ],
+    "solved_density_six_dof_force_absolute_error": [
+      [
+        0.1715682344560189,
+        0.08819756472975253
+      ],
+      [
+        0.20741520454786322,
+        1.3956782235339527
+      ],
+      [
+        17.040550594763115,
+        1.5174214410253064
+      ],
+      [
+        0.3781367528926582,
+        2.3132347162504923
+      ],
+      [
+        2.3182356146295566,
+        1.8910217783043897
+      ],
+      [
+        0.4441840950238569,
+        0.20749105639683293
+      ]
+    ],
+    "solved_density_principal_force_relative_error": [
+      0.0013229179664610907,
+      0.0020133606747425037
+    ]
+  },
+  "neumann_matrix_condition_number": 32.454455601256775,
+  "coarsening": [
+    {
+      "refinement": -2,
+      "source_triangles": 1260,
+      "source_spacing": [
+        0.49871583670664776,
+        0.4965089034558119
+      ],
+      "known_density_body_potential_relative_l2": [
+        0.0030896480794275864,
+        0.0040629683424476416
+      ],
+      "reference_density_rigid_normal_relative_defect": [
+        0.017007009792676477,
+        0.015119862529706304
+      ],
+      "solved_vs_reference_density_relative_l2": [
+        0.02336750588100163,
+        0.015315364913115689
+      ],
+      "solved_rigid_normal_residual_max": [
+        7.771561172376096e-16,
+        7.303185833862358e-16,
+        4.163336342344337e-17,
+        8.131516293641283e-20
+      ],
+      "solved_density_body_potential_relative_l2": [
+        0.0020483913782587465,
+        0.008779897597184142
+      ],
+      "solved_density_six_dof_force_absolute_error": [
+        [
+          0.7277996732993894,
+          0.20358800424784446
+        ],
+        [
+          1.5342493081081034,
+          5.759165454341614
+        ],
+        [
+          14.670391136993647,
+          6.013053515879958
+        ],
+        [
+          2.858576100550503,
+          9.388357981975538
+        ],
+        [
+          10.87489897106013,
+          2.465785168041413
+        ],
+        [
+          2.2007836900571465,
+          0.6485393871353076
+        ]
+      ],
+      "solved_density_principal_force_relative_error": [
+        0.0011389141390833232,
+        0.008171306884047123
+      ],
+      "q16_flux_moment_error": [
+        9.685290829442894e-05,
+        1.2795314483815817e-06
+      ],
+      "q16_reconstructed_physical_trace_rms_error": [
+        0.004329812455546151,
+        0.0035437514620791128
+      ]
+    },
+    {
+      "refinement": -1,
+      "source_triangles": 5040,
+      "source_spacing": [
+        0.24935791835332388,
+        0.24825445172790594
+      ],
+      "known_density_body_potential_relative_l2": [
+        0.0008442445001587238,
+        0.001663764932835764
+      ],
+      "reference_density_rigid_normal_relative_defect": [
+        0.006075219569755832,
+        0.010076671180168998
+      ],
+      "solved_vs_reference_density_relative_l2": [
+        0.008354560703710179,
+        0.010199747125915594
+      ],
+      "solved_rigid_normal_residual_max": [
+        9.32847549206528e-16,
+        8.326672684688674e-16,
+        6.938893903907228e-18,
+        5.421010862427522e-20
+      ],
+      "solved_density_body_potential_relative_l2": [
+        0.001053268515514769,
+        0.006576306244132775
+      ],
+      "solved_density_six_dof_force_absolute_error": [
+        [
+          0.41665507855637673,
+          0.25101261708431716
+        ],
+        [
+          0.3589937878154449,
+          4.364717029144711
+        ],
+        [
+          9.05593643867699,
+          0.2897059501884137
+        ],
+        [
+          0.5255010321042677,
+          7.3124023380611325
+        ],
+        [
+          0.5919342732095147,
+          5.9678357932414094
+        ],
+        [
+          1.428006310612008,
+          0.007157451512505192
+        ]
+      ],
+      "solved_density_principal_force_relative_error": [
+        0.0007030442444469617,
+        0.006364465828703729
+      ],
+      "q16_flux_moment_error": [
+        0.00019068338270583418,
+        8.605836355577365e-06
+      ],
+      "q16_reconstructed_physical_trace_rms_error": [
+        0.001954104772243754,
+        0.0029356714859439196
+      ]
+    },
+    {
+      "refinement": 0,
+      "source_triangles": 20160,
+      "source_spacing": [
+        0.12467895917666194,
+        0.12412722586395297
+      ],
+      "known_density_body_potential_relative_l2": [
+        0.000341941722139099,
+        0.00046429901220695414
+      ],
+      "reference_density_rigid_normal_relative_defect": [
+        0.0018523743903816612,
+        0.003141362507243337
+      ],
+      "solved_vs_reference_density_relative_l2": [
+        0.0023878217692133064,
+        0.003177008658327446
+      ],
+      "solved_rigid_normal_residual_max": [
+        8.881784197001252e-16,
+        6.106226635438361e-16,
+        1.3877787807814457e-17,
+        5.421010862427522e-20
+      ],
+      "solved_density_body_potential_relative_l2": [
+        0.0013582179378274545,
+        0.0021836919868970703
+      ],
+      "solved_density_six_dof_force_absolute_error": [
+        [
+          0.1715682344560189,
+          0.08819756472975253
+        ],
+        [
+          0.20741520454786322,
+          1.3956782235339527
+        ],
+        [
+          17.040550594763115,
+          1.5174214410253064
+        ],
+        [
+          0.3781367528926582,
+          2.3132347162504923
+        ],
+        [
+          2.3182356146295566,
+          1.8910217783043897
+        ],
+        [
+          0.4441840950238569,
+          0.20749105639683293
+        ]
+      ],
+      "solved_density_principal_force_relative_error": [
+        0.0013229179664610907,
+        0.0020133606747425037
+      ],
+      "q16_flux_moment_error": [
+        3.207537116309788e-05,
+        4.6461904446281103e-07
+      ],
+      "q16_reconstructed_physical_trace_rms_error": [
+        0.0013486768977709982,
+        0.000663819803299436
+      ]
+    }
+  ],
+  "decision": [
+    "Keep the representation as a leading experimental candidate: analytical source traces remove much of the difficult contact cancellation without new physics.",
+    "No coarser mesh is promoted: principal roll-force discrepancy rises from.201% at20160 triangles to.636% at5040 and.817% at1260. Heave and fixed-cell flux errors are nonmonotone; local metrics are not motion acceptance thresholds.",
+    "The independent prescribed-chi solve produces principal heave/roll force errors.132%/.201% and body-potential errors.136%/.218%. The algebraic normal residual is roundoff, but is not the physical validation.",
+    "The initial chi is derived from a known external density. Solving for a current density with chi prescribed is NOT a solve at prescribed physical psi; it does not establish correct water/body feedback.",
+    "Frozen moment accuracy does not qualify chi_t or eta resolution. Physical dynamic coupling psi_t=chi_t+C*sigma_t must be retained; pressure uses BOTH P*chi_t and Seven*sigma_t.",
+    "Fixed-plane even-image zero vertical flux does not apply to a curved free-surface normal. No nonlinear moving-surface promotion follows.",
+    "Even sources have a1/r monopole tail unless net density vanishes. Aperiodic analytic C with periodic H must be checked via H*C=2*Simage, zero modes, domain size and volume flux; earlier odd-source conclusions do not transfer.",
+    "The final46.44s coarsening CLI is a serial static CPU integration reference, not simulation throughput, an isolated constructor benchmark or a measured realtime speedup."
+  ],
+  "next_gate": "Implement the fixed-hull time-domain physical-psi/chi coupling and test BOTH real/imaginary harmonic phases against saved actual reference fields/forces before a trajectory. Independently test H*C=2*Simage at body points with domain/zero-mode controls. Retain analytically integrated C source work rather than interpolating it into the smooth trace space.",
+  "candidate_linear_dae": [
+    "M*eta_t=K*chi; displacement_t=velocity",
+    "M*chi_t+Cw*sigma_t=-g*M*eta",
+    "N*chi_t+JN*sigma_t=Q*acceleration",
+    "Mbody*acceleration=-rho*B*(P*chi_t+Seven*sigma_t)+Fexternal-Khydro*displacement",
+    "M and Cw integrate PHYSICAL exposed-water supports; no hidden physical mass/state. Nystr?m maps do not imply discrete energy symmetry: test work, do not repair matrices."
+  ],
+  "qualification": "No full nonlinear6DOF trajectory, Capytaine correlation qualification,0.1degree/1cm throughout60s, or<=20wall seconds per simulated second has been demonstrated."
+}
