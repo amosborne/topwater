@@ -21,6 +21,22 @@ larger/smaller boats, more/less energetic seas and faster/slower wave regimes
 are outside this development scope; the broad dimensional bounds above do not
 promise a general-purpose solver. Other catalog observations and phase seeds
 are test inputs, not automatic solver qualifications.
+
+Convexity is a supported-hull requirement; the reference boat's particular mesh
+is not. Another supported boat must run through the same execution path using
+only new physical input data. Derive hull planes, coplanar groups, rim ownership,
+beam and numerical setup from those inputs rather than reference face counts,
+indices, dimensions or loading assumptions. Keep example construction and sea
+selection in fixtures. This requires no hull-specific solver branches or
+extensibility framework.
+
+Before promoting an optimization, verify the same path with a geometrically
+different supported convex hull and with an equivalent retriangulation or
+vertex/face renumbering. Compare geometry and physical results to the appropriate
+discretization accuracy, not identical internal arrays across different meshes.
+These controls establish input independence; they do not replace the canonical
+boat/sea performance and full-minute accuracy gates.
+
 The user excludes breaking waves, slamming and incident wavelengths shorter
 than **twice the boat beam**. Beam is the complete physical hull's maximum
 body-frame transverse width, independent of heading, roll or numerical mesh
