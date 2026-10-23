@@ -1,0 +1,265 @@
+{
+  "complete": true,
+  "qualified": false,
+  "branch": "experiment/spatial-interface",
+  "scope": "Aperiodic compact hidden-plane extension cancellation on actual input hulls. Static verification, not a physical incident sea or performance qualification.",
+  "exact_answer": "The harmonic lift plus fixed-body correction is zero throughout the exterior fluid.",
+  "reports": {
+    "canonical": {
+      "path": "artifacts/boat-hidden-extension-bulk.json",
+      "sha256": "37a3b8ddb6d7a5a4c50eea6a356537c5f2fb16a5444c96c6f2ed1a9631173902",
+      "producer_archive": "artifacts/boat-hidden-extension-bulk.source",
+      "elapsed_seconds": 8.108239900000626
+    },
+    "fine_canonical": {
+      "path": "artifacts/boat-hidden-extension-fine.json",
+      "sha256": "2fcb33818d02c3a5b55985dfe67066cc70b20406dc828903bdc9d69bef9436b5",
+      "producer_archive": "artifacts/boat-hidden-extension-fine.source",
+      "elapsed_seconds": 37.88868660002481
+    },
+    "box": {
+      "path": "artifacts/box-hidden-extension-bulk.json",
+      "sha256": "e887b2f27b6e70ce0e59031cf81a1e817196f203e05f0df55206436ace799343",
+      "producer_archive": "artifacts/box-hidden-extension-bulk.source",
+      "elapsed_seconds": 6.000312699994538
+    }
+  },
+  "metrics": {
+    "canonical": {
+      "input_sha256": "d4727637dd8b52ab90b0969c58341fbb033b844befae09340dae74a841d076d1",
+      "support_clearance_m": 0.43329242335915275,
+      "rows": [
+        {
+          "panel_count": 17,
+          "lift_order": 96,
+          "body_potential_relative_area_l2": 3.2522427851734896,
+          "exterior_grid_flux_relative_sample_l2": 2.6915397583114595,
+          "near_rim_flux_relative_sample_l2": 3.8426668794002277,
+          "matrix_reciprocal_condition_1": 0.011026331500843601,
+          "lift_quadrature_change": {
+            "body_potential_relative": 5.357414844672476e-12,
+            "body_normal_derivative_relative": 3.766062857504754e-12,
+            "exterior_flux_relative": 4.2425734508923685e-12
+          }
+        },
+        {
+          "panel_count": 68,
+          "lift_order": 96,
+          "body_potential_relative_area_l2": 2.453726855384306,
+          "exterior_grid_flux_relative_sample_l2": 2.2616505224217454,
+          "near_rim_flux_relative_sample_l2": 2.590669083230233,
+          "matrix_reciprocal_condition_1": 0.002093942961998,
+          "lift_quadrature_change": {
+            "body_potential_relative": 4.987531499762306e-12,
+            "body_normal_derivative_relative": 4.357321929542422e-12,
+            "exterior_flux_relative": 4.2425734508923685e-12
+          }
+        },
+        {
+          "panel_count": 272,
+          "lift_order": 96,
+          "body_potential_relative_area_l2": 0.6122597276392323,
+          "exterior_grid_flux_relative_sample_l2": 1.2264522329035248,
+          "near_rim_flux_relative_sample_l2": 1.6304614646221207,
+          "matrix_reciprocal_condition_1": 0.0005187774001631567,
+          "lift_quadrature_change": {
+            "body_potential_relative": 4.4230684371915985e-12,
+            "body_normal_derivative_relative": 8.43475333519459e-12,
+            "exterior_flux_relative": 4.2425734508923685e-12
+          }
+        },
+        {
+          "panel_count": 1088,
+          "lift_order": 96,
+          "body_potential_relative_area_l2": 0.11049775476439216,
+          "exterior_grid_flux_relative_sample_l2": 0.0799249965702582,
+          "near_rim_flux_relative_sample_l2": 0.17503099135960906,
+          "matrix_reciprocal_condition_1": 0.00013306475154136501,
+          "lift_quadrature_change": {
+            "body_potential_relative": 3.376231109669101e-12,
+            "body_normal_derivative_relative": 5.399403250176023e-12,
+            "exterior_flux_relative": 4.2425734508923685e-12
+          }
+        }
+      ],
+      "finest_potential_moments": {
+        "modes": [
+          "Surge",
+          "Sway",
+          "Heave",
+          "Roll",
+          "Pitch",
+          "Yaw"
+        ],
+        "units": [
+          "kg*m/s",
+          "kg*m/s",
+          "kg*m/s",
+          "kg*m^2/s",
+          "kg*m^2/s",
+          "kg*m^2/s"
+        ],
+        "meaning": "rho integral of fluid-normal rigid mode times potential; impulse units, not static force",
+        "lift": [
+          -1.0354447140172518,
+          0.2150667775565045,
+          384.38298345988204,
+          -0.22518097662541417,
+          38.19225858593624,
+          -0.14973770660135685
+        ],
+        "correction": [
+          1.0677786727067387,
+          -0.9270273484861411,
+          -390.4297764186098,
+          1.0685897080593358,
+          -39.9742182852492,
+          1.080002575672845
+        ],
+        "total": [
+          0.032333958689487526,
+          -0.7119605709296307,
+          -6.046792958727182,
+          0.8434087314339233,
+          -1.7819596993130071,
+          0.9302648690714882
+        ]
+      }
+    },
+    "fine_canonical": {
+      "input_sha256": "d4727637dd8b52ab90b0969c58341fbb033b844befae09340dae74a841d076d1",
+      "support_clearance_m": 0.43329242335915275,
+      "rows": [
+        {
+          "panel_count": 4352,
+          "lift_order": 96,
+          "body_potential_relative_area_l2": 0.020812196218266892,
+          "exterior_grid_flux_relative_sample_l2": 0.015398843740980515,
+          "near_rim_flux_relative_sample_l2": 0.021481080534328924,
+          "matrix_reciprocal_condition_1": 2.8581151120156254e-05,
+          "lift_quadrature_change": {
+            "body_potential_relative": 3.2172280932297534e-12,
+            "body_normal_derivative_relative": 5.0909335286640325e-12,
+            "exterior_flux_relative": 4.2424769386082695e-12
+          }
+        }
+      ]
+    },
+    "box": {
+      "input_sha256": "c63d3f18509f9379c28e6797b0a4186a8610b4bb14a048d31376ca123102b485",
+      "support_clearance_m": 0.48,
+      "rows": [
+        {
+          "panel_count": 14,
+          "lift_order": 96,
+          "body_potential_relative_area_l2": 11.741937726617007,
+          "exterior_grid_flux_relative_sample_l2": 7.428185827310842,
+          "near_rim_flux_relative_sample_l2": 14.941368459816212,
+          "matrix_reciprocal_condition_1": 0.027180955080790145,
+          "lift_quadrature_change": {
+            "body_potential_relative": 5.476539141164278e-12,
+            "body_normal_derivative_relative": 5.113199824394309e-12,
+            "exterior_flux_relative": 3.808422349388193e-12
+          }
+        },
+        {
+          "panel_count": 56,
+          "lift_order": 96,
+          "body_potential_relative_area_l2": 7.860684875021686,
+          "exterior_grid_flux_relative_sample_l2": 2.9330678360270253,
+          "near_rim_flux_relative_sample_l2": 4.613304934080665,
+          "matrix_reciprocal_condition_1": 0.01451923923335693,
+          "lift_quadrature_change": {
+            "body_potential_relative": 5.177584833087848e-12,
+            "body_normal_derivative_relative": 4.9053070631471474e-12,
+            "exterior_flux_relative": 3.808422349388193e-12
+          }
+        },
+        {
+          "panel_count": 224,
+          "lift_order": 96,
+          "body_potential_relative_area_l2": 2.001040827703307,
+          "exterior_grid_flux_relative_sample_l2": 3.368957499005574,
+          "near_rim_flux_relative_sample_l2": 5.179557657624595,
+          "matrix_reciprocal_condition_1": 0.006062476508798649,
+          "lift_quadrature_change": {
+            "body_potential_relative": 1.1063285296021417e-09,
+            "body_normal_derivative_relative": 9.964071639739386e-08,
+            "exterior_flux_relative": 3.808422349388193e-12
+          }
+        },
+        {
+          "panel_count": 896,
+          "lift_order": 96,
+          "body_potential_relative_area_l2": 0.22159002997434768,
+          "exterior_grid_flux_relative_sample_l2": 0.24593857683914502,
+          "near_rim_flux_relative_sample_l2": 0.16283606684379517,
+          "matrix_reciprocal_condition_1": 0.0021000413640115223,
+          "lift_quadrature_change": {
+            "body_potential_relative": 3.5782296444974476e-10,
+            "body_normal_derivative_relative": 2.131476353288547e-08,
+            "exterior_flux_relative": 3.808422349388193e-12
+          }
+        }
+      ],
+      "finest_potential_moments": {
+        "modes": [
+          "Surge",
+          "Sway",
+          "Heave",
+          "Roll",
+          "Pitch",
+          "Yaw"
+        ],
+        "units": [
+          "kg*m/s",
+          "kg*m/s",
+          "kg*m/s",
+          "kg*m^2/s",
+          "kg*m^2/s",
+          "kg*m^2/s"
+        ],
+        "meaning": "rho integral of fluid-normal rigid mode times potential; impulse units, not static force",
+        "lift": [
+          4.597017211338539e-17,
+          2.3371333080640655e-16,
+          617.2685976182983,
+          7.033951329379895e-15,
+          8.193410007536692e-14,
+          -0.002904868974492698
+        ],
+        "correction": [
+          3.4033106194319984e-15,
+          -7.503451527647587e-15,
+          -545.4325938438416,
+          7.770006019884937e-14,
+          -7.612863451070782e-14,
+          0.09315349340536579
+        ],
+        "total": [
+          3.448987718145634e-15,
+          -7.244590635670147e-15,
+          71.83600377445654,
+          6.669721910456273e-14,
+          1.7351798149771403e-14,
+          0.09024862443087282
+        ]
+      }
+    }
+  },
+  "verification": {
+    "tests": "4 passed in 1.01 s: two independent Poisson kernel controls (adaptive radial integral and five-point value differentiation) and two independent panel-gradient controls.",
+    "review": "Independent source/mathematical review: correct halfspace lift signs/polar Jacobian, strict support clearance, source correction and finite sampled norms. Reviewer ran no numerical jobs."
+  },
+  "interpretation": [
+    "Source-density cancellation improves substantially with hull refinement. Poisson lift quadrature at48/96 agrees at ~1e-12 on the canonical case, so the observed coarse defects are primarily body discretization rather than hidden-lift integration.",
+    "The compact hidden bump is deliberately outside the supported incident bandwidth. Its errors are a decomposition-invariance diagnostic, not a newly invented production tolerance or a reason to adopt thousands of runtime panels.",
+    "Body-field error is not a motion error. At1088 canonical panels the body-potential sampled norm is11%, while the heave potential-moment residual is6.05 kg*m/s against384.38 kg*m/s lift (about1.6%). Generalized moments have impulse units, not static-force units. No roll/pitch/yaw or translation accuracy follows from this control.",
+    "A distinct6.5m/2000kg convex open-box input runs through the same probe without source edits. It also has substantial coarse errors; not every error family is monotone under refinement.",
+    "Validation grid excludes points within5mm of every violated footprint plane; contact-near targets start at1cm. This meets the bulk evaluator contract without jittering geometry or relaxing a panel-edge guard. Earlier exact-grid-alignment rejection remains in artifacts.",
+    "The fine4352 canonical run used the preceding integration-grid sample set; source archives preserve that distinction. Do not compare its runtime with the current coarser runs as a speedup.",
+    "No baseline path or default changed. The moving nonlinear baseline remains unqualified at40.36 wall seconds per simulated second."
+  ],
+  "next_step": "One fixed-hull linear TIME-DOMAIN radiation checkpoint: prescribe heave/roll at0.1Hz with smooth ramp, derive pressure from the same source system, fit cosine/sine force against saved Capytaine -B*U and omega*A*U. Explicitly choose the smooth hidden extension and control returning domain/sponge and spatial errors.",
+  "nonlinear_limit": "Zero-plane odd images enforce R=0 atz=0 only. For actual eta!=0 they neither preserve prescribed total graph potential nor guarantee image sources remain outside the fluid. Nonlinear successor needs actual local graph/body BVP with two-way exterior matching; do not pass nonzero eta to HOS while retaining flat image T/J and call that nonlinear coupling."
+}
