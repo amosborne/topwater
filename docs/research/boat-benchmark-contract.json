@@ -1,0 +1,32 @@
+{
+  "status": "Baseline maintenance: shared local tolerance defaults and strict performance-comparison guard",
+  "numerical_change": "None: relative and all43 absolute tolerances retain exact previous values; solver/formulation unchanged.",
+  "verification": {
+    "cpu_regression_tests_passed": 33,
+    "accepted_steps": 1,
+    "rhs": 4,
+    "actual_effective_rtol": 0.001,
+    "state_count": 43,
+    "maximum_absolute_differences": {
+      "accepted_times": 0.0,
+      "accepted_states": 6.938893903907228e-18,
+      "accepted_dense_q": 1.4654943925052066e-14
+    },
+    "scope": "Short box smoke at.002s verifies wiring/roundoff regression; not minute accuracy or speed qualification."
+  },
+  "measurement": {
+    "resource_status": "contended",
+    "cache_policy": "uncontrolled persistent caches",
+    "performance_ratio_allowed": false
+  },
+  "records": [
+    {
+      "path": "artifacts/box-benchmark-contract.json",
+      "sha256": "b0690dd64abaa75c5c22e5d7504c56edfe3961e1757173e1ccde6eca2785576e"
+    },
+    {
+      "path": "artifacts/box-baseline-shared-defaults.json",
+      "sha256": "701000006d33d8434383eb75f6883120e0c7dd39964814208b543b6004206d8f"
+    }
+  ]
+}
