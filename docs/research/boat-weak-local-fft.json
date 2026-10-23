@@ -1,0 +1,145 @@
+{
+    "status":  "Experimental flat full-plane weak local DtN; not promoted to nonlinear moving baseline",
+    "formulation":  [
+                        "K=2*B^T*(V tensor I2)*B on continuous compact P1 traces; K is weak stiffness, M is the separate consistent sparse mass.",
+                        "Complete interior hats are translations on the uniform BL-to-TR triangular lattice. Retain signed 2D offsets and central reciprocity only; no radial assumption or row repair.",
+                        "Near/touching whole hats use source-analytic S and symmetric target/source quadrature. Only separated whole hats use the cancellation-free negative inverse-cube integral.",
+                        "Adaptive order2..64 retains the same1e-5 relative and1e-10*minSpacing absolute requests. Term-count-dependent floating accumulation allowances remain estimates, not certified total bounds.",
+                        "Storage preflight and500million sample/term work cap apply before expensive work; FFT workspace and caches remain separately excluded from retained storage."
+                    ],
+    "verification":  {
+                         "raw":  "artifacts/weak-local-fft-full-retry.json",
+                         "sha256":  "5a214305c31fbe1acc96f33dfed21e7324163b6fa5d105bdd90fffaa3dd4f247",
+                         "small_anisotropic_shape":  [
+                                                         7,
+                                                         8
+                                                     ],
+                         "dense_triangle_quadrature":  [
+                                                           {
+                                                               "order":  8,
+                                                               "maximum_kernel_matrix_difference":  3.0574578194053625E-05,
+                                                               "raw_triangle_integral_asymmetry":  1.152739664461765E-07
+                                                           },
+                                                           {
+                                                               "order":  16,
+                                                               "maximum_kernel_matrix_difference":  1.9823017782250041E-06,
+                                                               "raw_triangle_integral_asymmetry":  7.9924773607135263E-09
+                                                           },
+                                                           {
+                                                               "order":  32,
+                                                               "maximum_kernel_matrix_difference":  3.9691768746741296E-08,
+                                                               "raw_triangle_integral_asymmetry":  5.2869875860096782E-10
+                                                           }
+                                                       ],
+                         "action_checks":  [
+                                               {
+                                                   "case":  "actual residual samples",
+                                                   "fft_vs_toeplitz_max_difference":  1.6653345369377348E-16,
+                                                   "versus_independent_assembly_relative_l2":  9.9074184267617121E-07,
+                                                   "energy":  20.50956865038301
+                                               },
+                                               {
+                                                   "case":  "near boundary hat",
+                                                   "fft_vs_toeplitz_max_difference":  2.7348999800946849E-17,
+                                                   "versus_independent_assembly_relative_l2":  1.89034119400314E-07,
+                                                   "energy":  0.31625252981212676
+                                               },
+                                               {
+                                                   "case":  "smooth compact trace",
+                                                   "fft_vs_toeplitz_max_difference":  8.3266726846886741E-17,
+                                                   "versus_independent_assembly_relative_l2":  1.1895365647347569E-06,
+                                                   "energy":  2.138560217674119
+                                               },
+                                               {
+                                                   "case":  "interior plateau with zero exterior",
+                                                   "fft_vs_toeplitz_max_difference":  1.1102230246251565E-16,
+                                                   "versus_independent_assembly_relative_l2":  9.890698829964665E-07,
+                                                   "energy":  7.221093540988471
+                                               }
+                                           ],
+                         "scale_max_error":  0.0,
+                         "far_limit_relative_difference":  0.0031125385241086434,
+                         "plateau_energy":  7.221093540988471,
+                         "cpu_reference_tests_passed":  9,
+                         "gpu_resource_tests_passed":  2,
+                         "independent_normalization":  {
+                                                           "raw":  "artifacts/weak-work-coarse-normalization.json",
+                                                           "sha256":  "7d35fcd8b7bf4f37958827ffb5c581bbb1f74a9ffe54dfc920381c236a3b6ce1",
+                                                           "work":  {
+                                                                        "depth_m":  0.04,
+                                                                        "work":  0.20006692735008272,
+                                                                        "h1_seminorm_squared":  4.17952314165498,
+                                                                        "continuum_error_width":  0.1671809256661992,
+                                                                        "inserted_continuum_interval":  [
+                                                                                                            0.20006692735008272,
+                                                                                                            0.36724785301628193
+                                                                                                        ],
+                                                                        "quadrature_error_estimate":  1.6691775813964539E-06,
+                                                                        "estimate_expanded_interval":  [
+                                                                                                           0.20006525817250131,
+                                                                                                           0.3672495221938633
+                                                                                                       ],
+                                                                        "target_evaluations":  2646,
+                                                                        "active_triangles":  6,
+                                                                        "seconds":  0.4993237000016961,
+                                                                        "certified_total_error":  false,
+                                                                        "error_scope":  "Continuum Parseval width is exact; inserted work uses adaptive target quadrature estimates and existing Rankine accuracy requests, not interval arithmetic."
+                                                                    },
+                                                           "candidates":  [
+                                                                              {
+                                                                                  "name":  "GPU diagonal",
+                                                                                  "value":  0.31625252981212676,
+                                                                                  "inside_inserted_continuum_interval":  true
+                                                                              },
+                                                                              {
+                                                                                  "name":  "missing factor two",
+                                                                                  "value":  0.15812626490606338,
+                                                                                  "inside_inserted_continuum_interval":  false
+                                                                              },
+                                                                              {
+                                                                                  "name":  "doubled",
+                                                                                  "value":  0.6325050596242535,
+                                                                                  "inside_inserted_continuum_interval":  false
+                                                                              }
+                                                                          ],
+                                                           "scope":  "Coarse self normalization checks sign/factor only, with numerical quadrature uncertainty explicitly remaining uncertified."
+                                                       },
+                         "unresolved_independent_fine_checks":  [
+                                                                    "All three fine-depth polarized entry comparisons exhausted20k target calls.",
+                                                                    "One higher-work self attempt exhausted100k calls; remaining cases skipped. No fine-entry validation claimed.",
+                                                                    "Failure source/results retained in artifacts/weak-work-three-entries.json and weak-work-three-entries-100k.json."
+                                                                ]
+                     },
+    "actual_patch_component":  {
+                                   "unknowns":  9877,
+                                   "shape":  [
+                                                 83,
+                                                 119
+                                             ],
+                                   "spacing_m":  [
+                                                     0.12467895917666194,
+                                                     0.12412722586395297
+                                                 ],
+                                   "constructor_seconds":  2.8433939999958966,
+                                   "median_synchronized_apply_seconds":  0.0005907000013394281,
+                                   "apply_minimum_seconds":  0.0005586000042967498,
+                                   "apply_maximum_seconds":  0.0007029999978840351,
+                                   "samples":  10,
+                                   "retained_operator_bytes_upper_bound":  1804632,
+                                   "hypothetical_dense_float64_matrix_bytes":  780441032,
+                                   "sample_term_work_upper_bound":  219356640,
+                                   "constructor_scope":  "After small-case shared CUDA kernel/context warmup; includes actual-size assembly, sparse mass and first-size FFT spectrum/plan work.",
+                                   "apply_scope":  "Warm weak-stiffness apply includes CPU input upload, finite check and stream synchronization. Excludes mass solve, body/hole/cross coupling and nonlinear geometry.",
+                                   "timing_metadata_note":  "Raw generic measurement_environment timing/startup labels refer to the older driver template. Interpret component numbers using the above scope; current producer overrides those labels. No timing values or old report were rewritten.",
+                                   "whole_verification_peak_rss_bytes":  489783296,
+                                   "ending_cuda_pool_reserved_bytes":  6006784,
+                                   "memory_scope":  "Retained core bound excludes construction/application scratch, CuFFT workspace/cache and output. Process RSS covers all verification; ending CUDA pool is not peakVRAM."
+                               },
+    "next_gate":  "Check actual-hull physical-exterior weak surface moments: full-support exterior test hats, exact Fourier-to-hat weak coupling, weak local FFT contribution and consistently integrated body-source flux against frozen external field moments. Cut waterline supports and physical state ownership must be derived before evolution.",
+    "limits":  [
+                   "Full-plane compact mathematical core only; deleting hidden triangles or evolving water under hull is not justified.",
+                   "Uniform planar translation invariance does not automatically apply to curved free surfaces or cut contact supports.",
+                   "Consistent mass solve and compatible two-way coarse/local/body work remain required.",
+                   "No full nonlinear6DOF trajectory, Capytaine time-domain qualification,60-second motion accuracy or whole-simulation speed claim."
+               ]
+}
