@@ -160,6 +160,7 @@ class WeakPatch:
     def __init__(self,shape,hx,hy,controls=WeakControls()):
         kernel,self.diagnostics=lag_kernel(shape,hx,hy,controls)
         self.shape=tuple(int(n) for n in shape);self.kernel=kernel
+        self.spacing=(float(hx),float(hy))
         kernel.setflags(write=False)
         self.mass=mass_matrix(shape,hx,hy)
         for array in (self.mass.data,self.mass.indices,self.mass.indptr): array.setflags(write=False)
