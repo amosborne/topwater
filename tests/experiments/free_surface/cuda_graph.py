@@ -41,8 +41,9 @@ class ExteriorTrace:
 
     def extend(self, exterior):
         exterior = cp.asarray(exterior)
-        if exterior.ndim not in (1, 2) or len(exterior) != len(self.exterior):
-            raise ValueError('one value or column row per physical exterior node required')
+        if (exterior.ndim not in (1, 2) or len(exterior) != len(self.exterior)
+                or exterior.dtype != cp.float64 or not bool(cp.isfinite(exterior).all())):
+            raise ValueError('finite float64 value or column row per physical exterior node required')
         full = cp.zeros((self.count, *exterior.shape[1:]), dtype=exterior.dtype)
         full[self._exterior] = exterior
         full[self._hidden] = self.weights@full[self._boundary]
@@ -85,6 +86,14 @@ def body_maps(points, normals, size, spacing, origin):
     potential, normal = _body_maps(cp.asarray(points), cp.asarray(normals), cp.asarray(origin),
         kx.ravel(), ky.ravel(), wave.ravel(), np.int64(size*size), size=len(points)*size*size)
     return potential.reshape(len(points), size*size), normal.reshape(len(points), size*size)
+
+
+def harmonic_velocity(potential, spectrum, size, length):
+    """Cartesian derivative of the same flat harmonic continuation."""
+    kx, ky = cp.meshgrid(2*np.pi*cp.fft.fftfreq(size, d=length/size),
+                         2*np.pi*cp.fft.fftfreq(size, d=length/size))
+    return cp.stack([(potential@(spectrum*d)).real for d in
+                     (1j*kx.ravel(), 1j*ky.ravel(), cp.hypot(kx, ky).ravel())], axis=1)
 
 
 def _resize(values, shape):

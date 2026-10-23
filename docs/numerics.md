@@ -302,6 +302,17 @@ their trace coefficients are not always one half. Centroid self targets are
 supported explicitly. Panels must form a nonintersecting boundary; global
 intersection detection is not implemented by the panel cache or assembler.
 
+`single_layer_trace(panels, indices)` evaluates the domain-side gradient of
+the single layer only at explicitly indexed panel centroids. The domain lies
+toward `-panels.normals`: the owned self contribution is its tangential
+principal value plus `0.5*panels.normals`. Other pairs receive no jump.
+It shares the analytic kernel and accuracy guards with bulk evaluation,
+computes no double-layer gradient, and returns that unused gradient as `None`.
+The bulk API continues to reject boundary gradients; edge, vertex and nonowned
+overlapping trace targets remain unsupported. Independent edge quadrature and
+one-sided bulk limits verify the new trace; this does not qualify pressure
+quadrature or motion accuracy.
+
 Measure both kernels on the same physical length scale. A pair estimate must
 satisfy `error <= atol + rtol*abs(reference)` for `S/panel_diameter` and `K`.
 These are requested tolerances, not certified error bounds; independent checks

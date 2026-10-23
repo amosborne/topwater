@@ -4,7 +4,9 @@ from numpy.testing import assert_allclose
 import pytest
 
 pytest.importorskip('cupy')
-from tests.experiments.free_surface.cuda_graph import GraphDirichlet, ExteriorTrace, body_maps, cp, _resize
+from tests.experiments.free_surface.cuda_graph import (
+    GraphDirichlet, ExteriorTrace, body_maps, harmonic_velocity, cp, _resize,
+)
 from tests.experiments.free_surface.hos_graph import graph_field
 
 
@@ -20,6 +22,8 @@ def test_exterior_state_is_preserved_and_hidden_trace_is_discrete_harmonic():
     assert_allclose(actual[fill.exterior], exterior, atol=0, rtol=0)
     assert_allclose(actual[fill.hidden], fields[fill.hidden], atol=3e-14, rtol=2e-14)
     assert_allclose(cp.asnumpy(fill.extend(exterior[:, 0])), actual[:, 0], atol=2e-15)
+    with pytest.raises(ValueError, match='finite float64'):
+        fill.extend(np.zeros(len(fill.exterior), dtype=np.int64))
 
 
 def test_gpu_body_maps_match_independent_complex_fourier_formula():
@@ -31,6 +35,16 @@ def test_gpu_body_maps_match_independent_complex_fourier_formula():
         expected = harmonic_maps(points, normals, size, .3, [-2., -1.])
         for gpu, cpu in zip(actual, expected[:2], strict=True):
             assert_allclose(cp.asnumpy(gpu), cpu, atol=3e-16, rtol=2e-13)
+        length = size*.3
+        x, y = cp.meshgrid(cp.arange(size), cp.arange(size))
+        spectrum = cp.fft.fft2(cp.cos(2*np.pi*(2*x+y)/size)).ravel()
+        wavevector = 2*np.pi*np.array([2., 1.])/length
+        wave = np.linalg.norm(wavevector)
+        phase = (points[:, :2]-[-2., -1.])@wavevector
+        analytic = np.exp(wave*points[:, 2, None])*np.column_stack((
+            -wavevector[0]*np.sin(phase), -wavevector[1]*np.sin(phase), wave*np.cos(phase)))
+        assert_allclose(cp.asnumpy(harmonic_velocity(actual[0], spectrum, size, length)),
+                        analytic, atol=2e-14, rtol=3e-13)
 
 
 @pytest.mark.parametrize('order', [2, 4])

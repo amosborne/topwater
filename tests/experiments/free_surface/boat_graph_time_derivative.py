@@ -1,4 +1,4 @@
-"""Moving-hull bulk pressure/ALE derivative gate, not a trajectory or hull load.
+"""Moving-hull pressure/ALE derivative gate, not a coupled trajectory.
 
 Prescribed six-DOF motion clips the input hull against one fixed nonflat graph's
 tangent plane. Only exterior Dirichlet data are supplied; hidden TOTAL trace is
@@ -20,13 +20,13 @@ from topwater import InitialState, SimulationInputs
 from topwater.constants import GRAVITY, WATER_DENSITY
 from topwater.frames import rotation_matrix
 from topwater.hydrostatics import hydrostatics
-from topwater.rankine import TrianglePanels
+from topwater.rankine import TrianglePanels, single_layer_trace
 from tests.benchmark_rankine import peak_rss_bytes
 from .boat_graph_bvp import GraphBody
 from .boat_graph_images import image_height
 from .boat_hos_continuation import tilted_geometry, tangent_graph
 from .boat_spatial_work import subdivide
-from .cuda_graph import ExteriorTrace, body_maps, cp
+from .cuda_graph import ExteriorTrace, body_maps, harmonic_velocity, cp
 from .panel_gradient_reference import checked_influence
 
 
@@ -65,9 +65,7 @@ class BulkField:
         size = context.graph.padded_shape[0]
         self.potential, unused = body_maps(shifted, np.zeros_like(shifted), size, length/size, origin)
         del unused
-        kx, ky = cp.meshgrid(2*np.pi*cp.fft.fftfreq(size, d=length/size),
-                             2*np.pi*cp.fft.fftfreq(size, d=length/size))
-        self.derivatives = (1j*kx.ravel(), 1j*ky.ravel(), cp.hypot(kx, ky).ravel())
+        self.size, self.length = size, length
         self.single = np.empty((len(points), len(context.panels)))
         self.gradient = np.empty((*self.single.shape, 3))
         for first in range(0, len(points), 128):
@@ -84,8 +82,24 @@ class BulkField:
         return cp.asnumpy((self.potential@spectrum).real)+self.single@density
 
     def velocity(self, density, spectrum):
-        return np.column_stack([cp.asnumpy((self.potential@(spectrum*d)).real)
-                                for d in self.derivatives])+np.einsum('tni,n->ti', self.gradient, density)
+        return cp.asnumpy(harmonic_velocity(self.potential, spectrum, self.size, self.length)) \
+            +np.einsum('tni,n->ti', self.gradient, density)
+
+
+def body_velocity(context, density, spectrum, length):
+    """Owned domain-side gradient at current collocation centroids, no offset."""
+    panels = context.panels
+    velocity = cp.asnumpy(harmonic_velocity(context.potential, spectrum,
+                                           context.graph.padded_shape[0], length))
+    for first in range(0, len(panels), 128):
+        last = min(first+128, len(panels))
+        real = single_layer_trace(panels, np.arange(first, last))
+        reflected = panels.centroids[first:last].copy()
+        reflected[:, 2] = 2*context.image_height-reflected[:, 2]
+        image = checked_influence(reflected, panels)
+        gradient = real.gradient_single_layer-image.gradient_single_layer*np.array([1., 1., -1.])
+        velocity[first:last] += np.einsum('tnj,n->tj', gradient, density)
+    return velocity
 
 
 def run(inputs, args, report):
@@ -164,6 +178,7 @@ def run(inputs, args, report):
         right = context.right_hand_side(trace, np.sum(speed*panels.normals, axis=1))
         density, diagnostics = context.solve_density(right)
         spectrum = context.spectrum(trace-context.trace@cp.asarray(density))
+        body = context.body_potential(density, spectrum)
         moving = pose.position+material@rotation_matrix(pose.orientation).T
         # Both fixed and moving targets must remain strictly in physical fluid.
         hull = ConvexHull((inputs.body.mesh.vertices-inputs.body.cg)@rotation_matrix(pose.orientation).T
@@ -188,14 +203,15 @@ def run(inputs, args, report):
             center, center_solution = context, (density, spectrum)
             center_field = fixed_field
             velocity = fixed_field.velocity(density, spectrum)
-            record = dict(right=right, fixed=fixed, moving=fixed,
-                          frozen_fixed=fixed, frozen_moving=fixed)
+            record = dict(right=right, fixed=fixed, moving=fixed, body=body,
+                          frozen_fixed=fixed, frozen_moving=fixed, frozen_body=body)
         else:
             frozen_spectrum = context.spectrum(trace-context.trace@cp.asarray(center_solution[0]))
             frozen_fixed = fixed_field.value(center_solution[0], frozen_spectrum)
             del fixed_field
             moving_field = BulkField(context, moving, args.length, origin)
             record = dict(right=right, fixed=fixed,
+                body=body, frozen_body=context.body_potential(center_solution[0], frozen_spectrum),
                 moving=moving_field.value(density, spectrum),
                 frozen_fixed=frozen_fixed,
                 frozen_moving=moving_field.value(center_solution[0], frozen_spectrum),
@@ -210,6 +226,25 @@ def run(inputs, args, report):
         if time != 0:
             del context
     convection = np.sum(probe_speed*velocity, axis=1)
+    surface_velocity = body_velocity(center, *center_solution, args.length)
+    body_speed = initial.linear_velocity+np.cross(omega, center_panels.centroids-cg)
+    normal_error = np.sum((surface_velocity-body_speed)*center_panels.normals, axis=1)
+    weighted = center_panels.areas[:, None]*np.column_stack((center_panels.normals,
+        np.cross(center_panels.centroids-cg, center_panels.normals)))
+    bulk_errors = [float(np.max(np.linalg.norm(
+            velocity[first:first+len(center_panels)]-surface_velocity, axis=1)))
+            for first in [0, len(center_panels)]]
+    report['surface_trace'] = dict(normal_boundary_condition_max_error_m_per_s=float(np.max(abs(normal_error))))
+    limit_rows = [dict(offset_fraction=fraction, velocity_max_error_m_per_s=error)
+        for fraction, error in zip([1., .5],
+            bulk_errors, strict=True)]
+    for fraction in [.25, .125, .0625]:
+        points = center_panels.centroids-fraction*offset[:, None]*center_panels.normals
+        field = BulkField(center, points, args.length, origin)
+        error = np.linalg.norm(field.velocity(*center_solution)-surface_velocity, axis=1)
+        limit_rows.append(dict(offset_fraction=fraction, velocity_max_error_m_per_s=float(error.max())))
+        del field
+    report['surface_trace']['one_sided_bulk_limit'] = limit_rows
     for step in [args.step, args.step/2, args.step/4]:
         plus, minus = records[step], records[-step]
         bdot = (plus['right']-minus['right'])/(2*step)
@@ -217,15 +252,28 @@ def run(inputs, args, report):
         density_dot, diagnostics = center.solve_density(bdot-adot_sigma)
         response_spectrum = -center.spectrum(center.trace@cp.asarray(density_dot))
         response = center_field.value(density_dot, response_spectrum)
+        body_response = center.body_potential(density_dot, response_spectrum)
         implicit_fixed = (plus['frozen_fixed']-minus['frozen_fixed'])/(2*step)+response
         implicit_material = (plus['frozen_moving']-minus['frozen_moving'])/(2*step)+response
         resolved_fixed = (plus['fixed']-minus['fixed'])/(2*step)
         resolved_material = (plus['moving']-minus['moving'])/(2*step)
+        body_chart_rate = (plus['frozen_body']-minus['frozen_body'])/(2*step)+body_response
+        resolved_body_rate = (plus['body']-minus['body'])/(2*step)
+        chart_velocity = (snapshots[step][1].centroids-snapshots[-step][1].centroids)/(2*step)
+        chart_convection = np.sum(chart_velocity*surface_velocity, axis=1)
+        body_phi_t = body_chart_rate-chart_convection
+        body_pressure = -WATER_DENSITY*(body_phi_t+.5*np.sum(surface_velocity**2, axis=1)
+                                      +GRAVITY*center_panels.centroids[:, 2])
+        resolved_body_pressure = -WATER_DENSITY*(resolved_body_rate-chart_convection
+            +.5*np.sum(surface_velocity**2, axis=1)+GRAVITY*center_panels.centroids[:, 2])
         incomplete_density, _ = center.solve_density(bdot)
-        incomplete_response = center_field.value(incomplete_density,
-            -center.spectrum(center.trace@cp.asarray(incomplete_density)))
+        incomplete_spectrum = -center.spectrum(center.trace@cp.asarray(incomplete_density))
+        incomplete_response = center_field.value(incomplete_density, incomplete_spectrum)
+        incomplete_body_response = center.body_potential(incomplete_density, incomplete_spectrum)
         bernoulli = -WATER_DENSITY*(implicit_material-convection+.5*np.sum(velocity*velocity, axis=1)
                                    +GRAVITY*probes[:, 2])
+        dynamic_pressure_difference = (bernoulli+WATER_DENSITY*GRAVITY*probes[:, 2]).reshape(2, -1) \
+            -body_pressure-WATER_DENSITY*GRAVITY*center_panels.centroids[:, 2]
         row = dict(step_seconds=step, density_derivative_solve=diagnostics,
             implicit_vs_resolved_fixed_phi_t_max_m2_per_s2=float(np.max(abs(implicit_fixed-resolved_fixed))),
             implicit_vs_resolved_material_phi_rate_max_m2_per_s2=float(np.max(abs(implicit_material-resolved_material))),
@@ -234,6 +282,17 @@ def run(inputs, args, report):
             omitting_operator_derivative_phi_t_max_change_m2_per_s2=float(np.max(abs(incomplete_response-response))),
             omitting_ale_correction_pressure_max_change_pa=float(WATER_DENSITY*np.max(abs(convection))),
             bulk_pressure_min_max_pa=[float(bernoulli.min()), float(bernoulli.max())],
+            surface_chart_normal_velocity_max_error_m_per_s=float(np.max(abs(
+                np.sum((chart_velocity-body_speed)*center_panels.normals, axis=1)))),
+            implicit_vs_resolved_body_pressure_max_pa=float(np.max(abs(body_pressure-resolved_body_pressure))),
+            using_rigid_velocity_for_chart_pressure_max_change_pa=float(WATER_DENSITY*np.max(abs(
+                np.sum((chart_velocity-body_speed)*surface_velocity, axis=1)))),
+            omitting_operator_derivative_body_pressure_max_change_pa=float(WATER_DENSITY*np.max(abs(
+                incomplete_body_response-body_response))),
+            bulk_to_surface_dynamic_pressure_max_error_pa=np.max(abs(dynamic_pressure_difference), axis=1).tolist(),
+            body_pressure_force_and_moment=(weighted.T@body_pressure).tolist(),
+            implicit_minus_resolved_body_load=(weighted.T@(body_pressure-resolved_body_pressure)).tolist(),
+            body_pressure_pa=body_pressure.tolist(),
             bulk_pressure_pa=bernoulli.tolist(), fixed_phi_t_m2_per_s2=implicit_fixed.tolist())
         report['rows'].append(row)
     report.update(complete=True, total_run_seconds=perf_counter()-started,
@@ -271,7 +330,7 @@ if __name__ == '__main__':
     report = dict(complete=False, qualified=False, scope=__doc__, producer_sha256=hashes,
         snapshots=[], rows=[], limits=[
             'Prescribed small-pose stencil, fixed forced graph/Dirichlet data; not free-surface evolution or sixDOF advancement',
-            'Bulk pressures only; no surface-gradient limit, wetted pressure integration or physical hull-force qualification',
+            'Centroid surface-pressure integration and bulk probes; no spatial/load-convergence or physical hull-force qualification',
             'Implicit derivative and offset solves share the elliptic discretization; this is consistency, not PDE accuracy',
             'Exterior labels and clipping recipes must persist; newly exposed state transfer is not implemented',
             'Image/expansion heights are fixed across the entire stencil; no representation-switch derivative',

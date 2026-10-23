@@ -1,0 +1,615 @@
+{
+  "qualified": false,
+  "scope": "Prescribed sixDOF input hull against fixed forced nonflat graph: current-centroid Eulerian pressure samples and six centroid pressure functionals. No free-surface or rigid-body evolution.",
+  "decision": "Keep as pressure-consistency prerequisite. Shared gradient trace earns integration in numerical core; moving solver remains experimental/unqualified.",
+  "method": [
+    "Indexed centroid single-layer domain-side gradient uses shared Rankine analytic owner: PV plus one +0.5*fluid-normal self jump; no gradient-K work or relaxed bulk boundary guard.",
+    "Physical exterior TOTAL potential is harmonically filled algebraically before FULL source trace subtraction.",
+    "Differentiate current A sigma=b with fixed density DOF identities and one fixed graph/image/expansion frame: A sigma_dot=b_dot-A_dot sigma.",
+    "Full frozen-density offset reconstruction includes moving target maps, source geometry, source graph trace and imposed potential changes, including P_dot L psi.",
+    "Use actual clipped-centroid chart velocity, including tangential waterline sliding, to recover Eulerian phi_t before Bernoulli pressure.",
+    "Integrate centroid pressure against six current world modes, omitting artificial opening caps. These are unqualified quadrature functionals."
+  ],
+  "validation": "63 focused kernel, boundary, graph and pressure-prerequisite tests passed14.05s, including independent six-mode Capytaine inertia regression. Independent adversarial source review approved trace, frame, derivative and pressure signs. Final exterior-trace float64 guard and GPU controls:6passed5.57s; silent integer fill truncation rejected.",
+  "findings": [
+    "Both hull inputs show approximately second-order stencil consistency of surface pressure; smallest-step implicit-vs-resolved differences0.000189Pa canonical/0.000121Pa box.",
+    "Canonical trace normal-BC error5.43e-11m/s; one-sided bulk velocity error decreases0.0609->0.0410->0.0236->0.0125->0.00636m/s over offset fractions1,1/2,1/4,1/8,1/16. This is approach evidence, not a velocity or motion tolerance.",
+    "At the smallest canonical stencil, substituting rigid velocity for centroid-chart velocity changes pressure up to5.27Pa; omitting A_dot changes it up to0.960Pa.",
+    "Removing known hydrostatic offset, bulk dynamic pressure differs from the body sample by8.52->5.29Pa over the two larger probe offsets; boundary-pressure spatial accuracy remains unqualified.",
+    "Current-center pressure functionals change under time-stencil refinement; canonical h/2->h/4 maximum moment change0.265Nm. This is temporal consistency only, not converged spatial pressure integration."
+  ],
+  "limits": [
+    "Body implicit/resolved pressure comparisons share the same velocity/ALE correction, so chiefly validate chart-potential differentiation; independent bulk chain-rule, edge quadrature and one-sided limits support the bridge separately.",
+    "Fixed forced graph/potential is not a physical free-surface trajectory. No full nonlinear sixDOF throughput or60s accuracy qualification.",
+    "Nonplanar evolving-graph clipping, newly exposed exterior-state transfer, spatial/quadrature convergence, finite-frequency radiation bias and pressure/work convergence remain open.",
+    "Bulk/trace/source evaluations share the elliptic model; residual/derivative agreement is not independent PDE accuracy.",
+    "Ending CUDA pool is not total/peak VRAM. These short component timings are not comparable to the full moving baseline."
+  ],
+  "reports": [
+    {
+      "report": "artifacts\\boat-graph-surface-pressure.json",
+      "report_sha256": "c5c70774ae92136f2ba7fe39386be706a6d2ce200775d0843cfde9dceaee4ebd",
+      "source_archive": "artifacts\\boat-graph-surface-pressure.source",
+      "archive_hashes_verified": true,
+      "body_panels": 84,
+      "grid_size": 129,
+      "total_seconds": 6.651586500025587,
+      "peak_process_rss_bytes": 665964544,
+      "cupy_pool_reserved_bytes": 1667920896,
+      "surface_trace": {
+        "normal_boundary_condition_max_error_m_per_s": 5.426359708793349e-11,
+        "bulk_offset_velocity_difference_max_m_per_s": [
+          0.06090498886154235,
+          0.04099841341283046
+        ]
+      },
+      "successive_stencil_pressure_functional_changes": [
+        [
+          0.18396448769991025,
+          0.057403433607760235,
+          -0.12990431246726075,
+          -0.042844102899266545,
+          1.068229290317504,
+          0.00036739967845278443
+        ],
+        [
+          0.045685332045138694,
+          0.015143186264367614,
+          -0.033883042058732826,
+          -0.011407347130102607,
+          0.26499359394529165,
+          -0.0015044560248043126
+        ]
+      ],
+      "rows": [
+        {
+          "step_seconds": 0.04,
+          "implicit_vs_resolved_fixed_phi_t_max_m2_per_s2": 8.031298382671359e-06,
+          "implicit_vs_resolved_material_phi_rate_max_m2_per_s2": 1.0435544962161813e-05,
+          "resolved_ale_vs_fixed_phi_t_max_m2_per_s2": 1.1942523543195804e-05,
+          "implicit_ale_vs_fixed_phi_t_max_m2_per_s2": 7.028942403480842e-06,
+          "omitting_operator_derivative_phi_t_max_change_m2_per_s2": 0.0007772369168216999,
+          "omitting_ale_correction_pressure_max_change_pa": 6.41816189941618,
+          "bulk_pressure_min_max_pa": [
+            -3046.50489876717,
+            4191.605335457212
+          ],
+          "surface_chart_normal_velocity_max_error_m_per_s": 1.3337077170716416e-06,
+          "implicit_vs_resolved_body_pressure_max_pa": 0.0038301394038171566,
+          "body_pressure_force_and_moment": [
+            158.85657662022837,
+            -1137.8678800369535,
+            19835.0413879204,
+            787.3160240346159,
+            6708.482589721867,
+            -1321.234811278859
+          ],
+          "implicit_minus_resolved_body_load": [
+            0.002212231674992407,
+            0.0022803463254993067,
+            -0.007839877349156485,
+            -0.0023530729955516774,
+            0.017117972695545384,
+            -0.002018624627963021
+          ]
+        },
+        {
+          "step_seconds": 0.02,
+          "implicit_vs_resolved_fixed_phi_t_max_m2_per_s2": 2.0087615484054577e-06,
+          "implicit_vs_resolved_material_phi_rate_max_m2_per_s2": 2.609417073196063e-06,
+          "resolved_ale_vs_fixed_phi_t_max_m2_per_s2": 2.985538542721322e-06,
+          "implicit_ale_vs_fixed_phi_t_max_m2_per_s2": 1.7650280664804896e-06,
+          "omitting_operator_derivative_phi_t_max_change_m2_per_s2": 0.0007777312813990358,
+          "omitting_ale_correction_pressure_max_change_pa": 6.41816189941618,
+          "bulk_pressure_min_max_pa": [
+            -3046.5557024329382,
+            4191.644448575086
+          ],
+          "surface_chart_normal_velocity_max_error_m_per_s": 3.333994589623662e-07,
+          "implicit_vs_resolved_body_pressure_max_pa": 0.0007790953336552775,
+          "body_pressure_force_and_moment": [
+            159.04054110792828,
+            -1137.8104766033457,
+            19834.91148360793,
+            787.2731799317166,
+            6709.550819012185,
+            -1321.2344438791806
+          ],
+          "implicit_minus_resolved_body_load": [
+            0.0005660500748116394,
+            0.0005323503638427707,
+            -0.001899699992400794,
+            -0.0005557610597095007,
+            0.004371802216578555,
+            -0.00043055317430107474
+          ]
+        },
+        {
+          "step_seconds": 0.01,
+          "implicit_vs_resolved_fixed_phi_t_max_m2_per_s2": 5.022507993390768e-07,
+          "implicit_vs_resolved_material_phi_rate_max_m2_per_s2": 6.523885171527688e-07,
+          "resolved_ale_vs_fixed_phi_t_max_m2_per_s2": 7.46364655801468e-07,
+          "implicit_ale_vs_fixed_phi_t_max_m2_per_s2": 4.4125552647877875e-07,
+          "omitting_operator_derivative_phi_t_max_change_m2_per_s2": 0.0007778381853588809,
+          "omitting_ale_correction_pressure_max_change_pa": 6.41816189941618,
+          "bulk_pressure_min_max_pa": [
+            -3046.5684092651986,
+            4191.65410569699
+          ],
+          "surface_chart_normal_velocity_max_error_m_per_s": 8.334813986210499e-08,
+          "implicit_vs_resolved_body_pressure_max_pa": 0.00018894356617238373,
+          "body_pressure_force_and_moment": [
+            159.08622643997342,
+            -1137.7953334170813,
+            19834.877600565873,
+            787.2617725845865,
+            6709.81581260613,
+            -1321.2359483352054
+          ],
+          "implicit_minus_resolved_body_load": [
+            0.00014189365992154645,
+            0.0001317608592025211,
+            -0.00047302271420039134,
+            -0.00013780452290471917,
+            0.0010959592898386098,
+            -0.00010503066265502008
+          ]
+        }
+      ]
+    },
+    {
+      "report": "artifacts\\box-graph-surface-pressure.json",
+      "report_sha256": "33f6196c805a6cf494b3e35a11e4ccb943724d8ed3a4c9eef1f5f2f238938acb",
+      "source_archive": "artifacts\\box-graph-surface-pressure.source",
+      "archive_hashes_verified": true,
+      "body_panels": 56,
+      "grid_size": 129,
+      "total_seconds": 5.105065300012939,
+      "peak_process_rss_bytes": 630177792,
+      "cupy_pool_reserved_bytes": 1117118464,
+      "surface_trace": {
+        "normal_boundary_condition_max_error_m_per_s": 9.216376967158268e-11,
+        "bulk_offset_velocity_difference_max_m_per_s": [
+          0.03682858750285776,
+          0.021000427884282864
+        ]
+      },
+      "successive_stencil_pressure_functional_changes": [
+        [
+          0.18026778092377072,
+          0.06485104061903257,
+          -0.05046465694249491,
+          0.010181932582696618,
+          0.8218098585061853,
+          -0.03306384719098787
+        ],
+        [
+          0.04507719325340531,
+          0.016216335282706495,
+          -0.012618183591257548,
+          0.0025458401159994537,
+          0.20549889794642695,
+          -0.008267706829713006
+        ]
+      ],
+      "rows": [
+        {
+          "step_seconds": 0.04,
+          "implicit_vs_resolved_fixed_phi_t_max_m2_per_s2": 3.097549205438588e-06,
+          "implicit_vs_resolved_material_phi_rate_max_m2_per_s2": 5.5855520316450136e-06,
+          "resolved_ale_vs_fixed_phi_t_max_m2_per_s2": 6.952109861402267e-06,
+          "implicit_ale_vs_fixed_phi_t_max_m2_per_s2": 3.280162548968679e-06,
+          "omitting_operator_derivative_phi_t_max_change_m2_per_s2": 0.001090797521479895,
+          "omitting_ale_correction_pressure_max_change_pa": 5.822107076243426,
+          "bulk_pressure_min_max_pa": [
+            -2810.1441380558513,
+            2056.4543395771534
+          ],
+          "surface_chart_normal_velocity_max_error_m_per_s": 1.7038749660115704e-06,
+          "implicit_vs_resolved_body_pressure_max_pa": 0.0019318941443202675,
+          "body_pressure_force_and_moment": [
+            79.70631469395158,
+            -1247.952627650831,
+            19476.00543004334,
+            -228.93618021665208,
+            1557.9230780346568,
+            -350.83187450817877
+          ],
+          "implicit_minus_resolved_body_load": [
+            0.001957959865150253,
+            0.0011316205454518999,
+            -0.0021181827958912424,
+            -0.00014786566554594437,
+            0.006944632164426679,
+            -0.00044048803072716056
+          ]
+        },
+        {
+          "step_seconds": 0.02,
+          "implicit_vs_resolved_fixed_phi_t_max_m2_per_s2": 7.745415970539238e-07,
+          "implicit_vs_resolved_material_phi_rate_max_m2_per_s2": 1.3967064987630007e-06,
+          "resolved_ale_vs_fixed_phi_t_max_m2_per_s2": 1.7387499431364972e-06,
+          "implicit_ale_vs_fixed_phi_t_max_m2_per_s2": 8.20365507733789e-07,
+          "omitting_operator_derivative_phi_t_max_change_m2_per_s2": 0.0010908229353049428,
+          "omitting_ale_correction_pressure_max_change_pa": 5.822107076243426,
+          "bulk_pressure_min_max_pa": [
+            -2810.2103559627217,
+            2056.4965891161855
+          ],
+          "surface_chart_normal_velocity_max_error_m_per_s": 4.2595314487040015e-07,
+          "implicit_vs_resolved_body_pressure_max_pa": 0.00048310407117924115,
+          "body_pressure_force_and_moment": [
+            79.88658247487535,
+            -1247.8877766102119,
+            19475.954965386398,
+            -228.92599828406938,
+            1558.744887893163,
+            -350.86493835536976
+          ],
+          "implicit_minus_resolved_body_load": [
+            0.0004897231408558944,
+            0.0002830032189651322,
+            -0.0005301157845110535,
+            -3.6944659950361256e-05,
+            0.001736132217149155,
+            -0.00011009616616989718
+          ]
+        },
+        {
+          "step_seconds": 0.01,
+          "implicit_vs_resolved_fixed_phi_t_max_m2_per_s2": 1.9364735698301772e-07,
+          "implicit_vs_resolved_material_phi_rate_max_m2_per_s2": 3.491834148772188e-07,
+          "resolved_ale_vs_fixed_phi_t_max_m2_per_s2": 4.3473265490256985e-07,
+          "implicit_ale_vs_fixed_phi_t_max_m2_per_s2": 2.051117427848137e-07,
+          "omitting_operator_derivative_phi_t_max_change_m2_per_s2": 0.0010908292871214722,
+          "omitting_ale_correction_pressure_max_change_pa": 5.822107076243426,
+          "bulk_pressure_min_max_pa": [
+            -2810.2269140923922,
+            2056.5071539646283
+          ],
+          "surface_chart_normal_velocity_max_error_m_per_s": 1.064872966506647e-07,
+          "implicit_vs_resolved_body_pressure_max_pa": 0.00012076562092033782,
+          "body_pressure_force_and_moment": [
+            79.93165966812876,
+            -1247.8715602749292,
+            19475.942347202807,
+            -228.92345244395338,
+            1558.9503867911094,
+            -350.8732060621995
+          ],
+          "implicit_minus_resolved_body_load": [
+            0.00012242559766400117,
+            7.07242330270204e-05,
+            -0.0001328753298366791,
+            -9.2122255449691e-06,
+            0.0004333937547126077,
+            -2.7464064808868148e-05
+          ]
+        }
+      ]
+    },
+    {
+      "report": "artifacts\\boat-graph-pressure-trace-limit.json",
+      "report_sha256": "84acfa822a75fd3ffe323b61ecd08f688815eef0cc33c1ed2cad62aaa048b2e4",
+      "source_archive": "artifacts\\boat-graph-pressure-trace-limit.source",
+      "archive_hashes_verified": true,
+      "body_panels": 84,
+      "grid_size": 129,
+      "total_seconds": 5.893655299994862,
+      "peak_process_rss_bytes": 643780608,
+      "cupy_pool_reserved_bytes": 1667920896,
+      "surface_trace": {
+        "normal_boundary_condition_max_error_m_per_s": 5.426359708793349e-11,
+        "one_sided_bulk_limit": [
+          {
+            "offset_fraction": 1.0,
+            "velocity_max_error_m_per_s": 0.06090498886154235
+          },
+          {
+            "offset_fraction": 0.5,
+            "velocity_max_error_m_per_s": 0.04099841341283046
+          },
+          {
+            "offset_fraction": 0.25,
+            "velocity_max_error_m_per_s": 0.02363271090254177
+          },
+          {
+            "offset_fraction": 0.125,
+            "velocity_max_error_m_per_s": 0.012476832983547721
+          },
+          {
+            "offset_fraction": 0.0625,
+            "velocity_max_error_m_per_s": 0.006364663923232412
+          }
+        ]
+      },
+      "successive_stencil_pressure_functional_changes": [
+        [
+          0.18396448769991025,
+          0.057403433607760235,
+          -0.12990431246726075,
+          -0.042844102899266545,
+          1.068229290317504,
+          0.00036739967845278443
+        ],
+        [
+          0.045685332045138694,
+          0.015143186264367614,
+          -0.033883042058732826,
+          -0.011407347130102607,
+          0.26499359394529165,
+          -0.0015044560248043126
+        ]
+      ],
+      "rows": [
+        {
+          "step_seconds": 0.04,
+          "implicit_vs_resolved_fixed_phi_t_max_m2_per_s2": 8.031298382671359e-06,
+          "implicit_vs_resolved_material_phi_rate_max_m2_per_s2": 1.0435544962161813e-05,
+          "resolved_ale_vs_fixed_phi_t_max_m2_per_s2": 1.1942523543195804e-05,
+          "implicit_ale_vs_fixed_phi_t_max_m2_per_s2": 7.028942403480842e-06,
+          "omitting_operator_derivative_phi_t_max_change_m2_per_s2": 0.0007772369168216999,
+          "omitting_ale_correction_pressure_max_change_pa": 6.41816189941618,
+          "bulk_pressure_min_max_pa": [
+            -3046.50489876717,
+            4191.605335457212
+          ],
+          "surface_chart_normal_velocity_max_error_m_per_s": 1.3337077170716416e-06,
+          "implicit_vs_resolved_body_pressure_max_pa": 0.0038301394038171566,
+          "body_pressure_force_and_moment": [
+            158.85657662022837,
+            -1137.8678800369535,
+            19835.0413879204,
+            787.3160240346159,
+            6708.482589721867,
+            -1321.234811278859
+          ],
+          "implicit_minus_resolved_body_load": [
+            0.002212231674992407,
+            0.0022803463254993067,
+            -0.007839877349156485,
+            -0.0023530729955516774,
+            0.017117972695545384,
+            -0.002018624627963021
+          ]
+        },
+        {
+          "step_seconds": 0.02,
+          "implicit_vs_resolved_fixed_phi_t_max_m2_per_s2": 2.0087615484054577e-06,
+          "implicit_vs_resolved_material_phi_rate_max_m2_per_s2": 2.609417073196063e-06,
+          "resolved_ale_vs_fixed_phi_t_max_m2_per_s2": 2.985538542721322e-06,
+          "implicit_ale_vs_fixed_phi_t_max_m2_per_s2": 1.7650280664804896e-06,
+          "omitting_operator_derivative_phi_t_max_change_m2_per_s2": 0.0007777312813990358,
+          "omitting_ale_correction_pressure_max_change_pa": 6.41816189941618,
+          "bulk_pressure_min_max_pa": [
+            -3046.5557024329382,
+            4191.644448575086
+          ],
+          "surface_chart_normal_velocity_max_error_m_per_s": 3.333994589623662e-07,
+          "implicit_vs_resolved_body_pressure_max_pa": 0.0007790953336552775,
+          "body_pressure_force_and_moment": [
+            159.04054110792828,
+            -1137.8104766033457,
+            19834.91148360793,
+            787.2731799317166,
+            6709.550819012185,
+            -1321.2344438791806
+          ],
+          "implicit_minus_resolved_body_load": [
+            0.0005660500748116394,
+            0.0005323503638427707,
+            -0.001899699992400794,
+            -0.0005557610597095007,
+            0.004371802216578555,
+            -0.00043055317430107474
+          ]
+        },
+        {
+          "step_seconds": 0.01,
+          "implicit_vs_resolved_fixed_phi_t_max_m2_per_s2": 5.022507993390768e-07,
+          "implicit_vs_resolved_material_phi_rate_max_m2_per_s2": 6.523885171527688e-07,
+          "resolved_ale_vs_fixed_phi_t_max_m2_per_s2": 7.46364655801468e-07,
+          "implicit_ale_vs_fixed_phi_t_max_m2_per_s2": 4.4125552647877875e-07,
+          "omitting_operator_derivative_phi_t_max_change_m2_per_s2": 0.0007778381853588809,
+          "omitting_ale_correction_pressure_max_change_pa": 6.41816189941618,
+          "bulk_pressure_min_max_pa": [
+            -3046.5684092651986,
+            4191.65410569699
+          ],
+          "surface_chart_normal_velocity_max_error_m_per_s": 8.334813986210499e-08,
+          "implicit_vs_resolved_body_pressure_max_pa": 0.00018894356617238373,
+          "body_pressure_force_and_moment": [
+            159.08622643997342,
+            -1137.7953334170813,
+            19834.877600565873,
+            787.2617725845865,
+            6709.81581260613,
+            -1321.2359483352054
+          ],
+          "implicit_minus_resolved_body_load": [
+            0.00014189365992154645,
+            0.0001317608592025211,
+            -0.00047302271420039134,
+            -0.00013780452290471917,
+            0.0010959592898386098,
+            -0.00010503066265502008
+          ]
+        }
+      ]
+    },
+    {
+      "report": "artifacts\\boat-graph-pressure-reviewed.json",
+      "report_sha256": "4a649856ce3e6590489e032c6a26838310f1e2d8ffc8e7b91f025e987aff8260",
+      "source_archive": "artifacts\\boat-graph-pressure-reviewed.source",
+      "archive_hashes_verified": true,
+      "body_panels": 84,
+      "grid_size": 129,
+      "total_seconds": 6.349390999996103,
+      "peak_process_rss_bytes": 643493888,
+      "cupy_pool_reserved_bytes": 1667920896,
+      "surface_trace": {
+        "normal_boundary_condition_max_error_m_per_s": 5.426359708793349e-11,
+        "one_sided_bulk_limit": [
+          {
+            "offset_fraction": 1.0,
+            "velocity_max_error_m_per_s": 0.06090498886154235
+          },
+          {
+            "offset_fraction": 0.5,
+            "velocity_max_error_m_per_s": 0.04099841341283046
+          },
+          {
+            "offset_fraction": 0.25,
+            "velocity_max_error_m_per_s": 0.02363271090254177
+          },
+          {
+            "offset_fraction": 0.125,
+            "velocity_max_error_m_per_s": 0.012476832983547721
+          },
+          {
+            "offset_fraction": 0.0625,
+            "velocity_max_error_m_per_s": 0.006364663923232412
+          }
+        ]
+      },
+      "successive_stencil_pressure_functional_changes": [
+        [
+          0.18396448769991025,
+          0.057403433607760235,
+          -0.12990431246726075,
+          -0.042844102899266545,
+          1.068229290317504,
+          0.00036739967845278443
+        ],
+        [
+          0.045685332045138694,
+          0.015143186264367614,
+          -0.033883042058732826,
+          -0.011407347130102607,
+          0.26499359394529165,
+          -0.0015044560248043126
+        ]
+      ],
+      "rows": [
+        {
+          "step_seconds": 0.04,
+          "implicit_vs_resolved_fixed_phi_t_max_m2_per_s2": 8.031298382671359e-06,
+          "implicit_vs_resolved_material_phi_rate_max_m2_per_s2": 1.0435544962161813e-05,
+          "resolved_ale_vs_fixed_phi_t_max_m2_per_s2": 1.1942523543195804e-05,
+          "implicit_ale_vs_fixed_phi_t_max_m2_per_s2": 7.028942403480842e-06,
+          "omitting_operator_derivative_phi_t_max_change_m2_per_s2": 0.0007772369168216999,
+          "omitting_ale_correction_pressure_max_change_pa": 6.41816189941618,
+          "bulk_pressure_min_max_pa": [
+            -3046.50489876717,
+            4191.605335457212
+          ],
+          "surface_chart_normal_velocity_max_error_m_per_s": 1.3337077170716416e-06,
+          "implicit_vs_resolved_body_pressure_max_pa": 0.0038301394038171566,
+          "using_rigid_velocity_for_chart_pressure_max_change_pa": 5.2732377675792,
+          "omitting_operator_derivative_body_pressure_max_change_pa": 0.9594155846791002,
+          "bulk_to_surface_dynamic_pressure_max_error_pa": [
+            8.515194698509276,
+            5.289767520359646
+          ],
+          "body_pressure_force_and_moment": [
+            158.85657662022837,
+            -1137.8678800369535,
+            19835.0413879204,
+            787.3160240346159,
+            6708.482589721867,
+            -1321.234811278859
+          ],
+          "implicit_minus_resolved_body_load": [
+            0.002212231674992407,
+            0.0022803463254993067,
+            -0.007839877349156485,
+            -0.0023530729955516774,
+            0.017117972695545384,
+            -0.002018624627963021
+          ]
+        },
+        {
+          "step_seconds": 0.02,
+          "implicit_vs_resolved_fixed_phi_t_max_m2_per_s2": 2.0087615484054577e-06,
+          "implicit_vs_resolved_material_phi_rate_max_m2_per_s2": 2.609417073196063e-06,
+          "resolved_ale_vs_fixed_phi_t_max_m2_per_s2": 2.985538542721322e-06,
+          "implicit_ale_vs_fixed_phi_t_max_m2_per_s2": 1.7650280664804896e-06,
+          "omitting_operator_derivative_phi_t_max_change_m2_per_s2": 0.0007777312813990358,
+          "omitting_ale_correction_pressure_max_change_pa": 6.41816189941618,
+          "bulk_pressure_min_max_pa": [
+            -3046.5557024329382,
+            4191.644448575086
+          ],
+          "surface_chart_normal_velocity_max_error_m_per_s": 3.333994589623662e-07,
+          "implicit_vs_resolved_body_pressure_max_pa": 0.0007790953336552775,
+          "using_rigid_velocity_for_chart_pressure_max_change_pa": 5.273353742861468,
+          "omitting_operator_derivative_body_pressure_max_change_pa": 0.9600351089008923,
+          "bulk_to_surface_dynamic_pressure_max_error_pa": [
+            8.516103263165633,
+            5.290472149755487
+          ],
+          "body_pressure_force_and_moment": [
+            159.04054110792828,
+            -1137.8104766033457,
+            19834.91148360793,
+            787.2731799317166,
+            6709.550819012185,
+            -1321.2344438791806
+          ],
+          "implicit_minus_resolved_body_load": [
+            0.0005660500748116394,
+            0.0005323503638427707,
+            -0.001899699992400794,
+            -0.0005557610597095007,
+            0.004371802216578555,
+            -0.00043055317430107474
+          ]
+        },
+        {
+          "step_seconds": 0.01,
+          "implicit_vs_resolved_fixed_phi_t_max_m2_per_s2": 5.022507993390768e-07,
+          "implicit_vs_resolved_material_phi_rate_max_m2_per_s2": 6.523885171527688e-07,
+          "resolved_ale_vs_fixed_phi_t_max_m2_per_s2": 7.46364655801468e-07,
+          "implicit_ale_vs_fixed_phi_t_max_m2_per_s2": 4.4125552647877875e-07,
+          "omitting_operator_derivative_phi_t_max_change_m2_per_s2": 0.0007778381853588809,
+          "omitting_ale_correction_pressure_max_change_pa": 6.41816189941618,
+          "bulk_pressure_min_max_pa": [
+            -3046.5684092651986,
+            4191.65410569699
+          ],
+          "surface_chart_normal_velocity_max_error_m_per_s": 8.334813986210499e-08,
+          "implicit_vs_resolved_body_pressure_max_pa": 0.00018894356617238373,
+          "using_rigid_velocity_for_chart_pressure_max_change_pa": 5.2733827370538355,
+          "omitting_operator_derivative_body_pressure_max_change_pa": 0.9601680993026429,
+          "bulk_to_surface_dynamic_pressure_max_error_pa": [
+            8.516327313386,
+            5.290646658090964
+          ],
+          "body_pressure_force_and_moment": [
+            159.08622643997342,
+            -1137.7953334170813,
+            19834.877600565873,
+            787.2617725845865,
+            6709.81581260613,
+            -1321.2359483352054
+          ],
+          "implicit_minus_resolved_body_load": [
+            0.00014189365992154645,
+            0.0001317608592025211,
+            -0.00047302271420039134,
+            -0.00013780452290471917,
+            0.0010959592898386098,
+            -0.00010503066265502008
+          ]
+        }
+      ]
+    }
+  ],
+  "static_regression": {
+    "report": "artifacts\\boat-graph-bvp-after-trace.json",
+    "report_sha256": "12b9df8463141ea6711c61f332d040df88bfe6efb3989d62ab77dd0fda6bf4ea",
+    "archive_hashes_verified": true,
+    "reference_report": "artifacts/boat-graph-bvp-plane129-roundtrip.json",
+    "max_absolute_four_column_pressure_functional_change": 1.8189894035458565e-12
+  }
+}

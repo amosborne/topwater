@@ -112,10 +112,14 @@ class GraphBody:
         started = perf_counter()
         density, diagnostics = self.solve_density(self.right_hand_side(trace, normal_load))
         spectrum = self.spectrum(cp.asarray(trace).reshape(-1)-self.trace@cp.asarray(density))
-        potential = cp.asnumpy((self.potential@spectrum).real+self.single@cp.asarray(density))
+        potential = self.body_potential(density, spectrum)
         cp.cuda.get_current_stream().synchronize()
         diagnostics['solve_seconds'] = perf_counter()-started
         return GraphSolution(potential, density, spectrum, diagnostics)
+
+
+    def body_potential(self, density, spectrum):
+        return cp.asnumpy((self.potential@spectrum).real+self.single@cp.asarray(density))
 
 
 def tangent_plane_reference(panels, cg, level, slope, normal_load):
