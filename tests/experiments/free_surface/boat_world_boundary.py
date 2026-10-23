@@ -97,7 +97,7 @@ def material_coordinates(registry_points, rr, cg, position):
 
 def construct(output, *, body=None, pose=None, parent_xy=None, parents=None,
               parent_eta=None, parent_psi=None, export_template=False,
-              material_refinement=None, cache_signs=True):
+              material_refinement=None, cache_signs=True, filter_intersections=False):
     """Construct one checkpointed snapshot; coefficients stay on WORLD parents.
 
     Returns ``(mesh, arrays, report)``. Pose translations locate the body's CG;
@@ -178,7 +178,12 @@ def construct(output, *, body=None, pose=None, parent_xy=None, parents=None,
             affine_pose_roundoff_max=float(np.max(abs(np.asarray(world, dtype=float)
                 -((body.mesh.vertices-body.cg)@rotation.T+rest.position)))))
         registry = PlanePoints(max_points=12000, max_intersections=50000,
-                               capture_constraints=export_template, cache_signs=cache_signs)
+                               capture_constraints=export_template, cache_signs=cache_signs,
+                               filter_intersections=filter_intersections)
+        if filter_intersections:
+            report['intersection_filter'] = registry.intersection_filter_stats
+            report['source_sha256']['boat_intersection_filter.py'] = sha256(
+                Path(__file__).with_name('boat_intersection_filter.py').read_bytes()).hexdigest()
         hull = hull_planes(registry, world, body.mesh.faces)
         cells, roofs, outer = columns(registry, roof, parents)
         if len(registry.planes) > 128:

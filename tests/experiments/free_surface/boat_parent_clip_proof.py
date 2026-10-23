@@ -42,7 +42,7 @@ def cross(a, b):
 class PlanePoints:
     """Tiny reference registry: all planes are frozen before intersections."""
     def __init__(self, *, max_points=None, max_intersections=None, capture_constraints=False,
-                 cache_signs=False):
+                 cache_signs=False, filter_intersections=False):
         self.planes, self.labels, self.cache = [], [], {}
         self.points, self.incidence, self.vertex_by_owner = [], [], {}
         self.registered_intersections = {}
@@ -50,6 +50,10 @@ class PlanePoints:
         self.max_points, self.max_intersections = max_points, max_intersections
         self.sign_cache = {} if cache_signs else None
         self.sign_requests, self.sign_cache_hits = 0, 0
+        self.filter_intersections = bool(filter_intersections)
+        self.rejection_filter = None
+        self.intersection_filter_stats = dict(enabled=self.filter_intersections,
+            calls=0, candidates=0, interval_constructions=0, rejected=0, exact_fallback=0)
 
     def plane(self, points, label):
         if self.cache:
@@ -123,7 +127,17 @@ class PlanePoints:
 
     def polytope(self, constraints):
         vertices = set()
-        for triple in combinations(sorted({i for i, _ in constraints}), 3):
+        triples = combinations(sorted({i for i, _ in constraints}), 3)
+        if self.filter_intersections:
+            from .boat_intersection_filter import IntersectionRejectionFilter
+            if self.rejection_filter is None or self.rejection_filter.plane_count != len(self.planes):
+                cap = 50000 if self.max_intersections is None else self.max_intersections
+                self.rejection_filter = IntersectionRejectionFilter(self.planes,
+                    self.intersection_filter_stats, max_entries=cap)
+            triples = list(triples)
+            rejected = self.rejection_filter.reject(triples, constraints)
+            triples = (triple for triple, skip in zip(triples, rejected) if not skip)
+        for triple in triples:
             point = self.intersection(triple)
             if point is not None and all(sign*self._sign(triple, point, i) <= 0 for i, sign in constraints):
                 vertices.add(self.register(triple, point))
