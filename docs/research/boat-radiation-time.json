@@ -372,6 +372,69 @@
       "roll_damping": 0.0935058565944021,
       "heave_force_fit_rms": 0.09418039559946657,
       "roll_force_fit_rms": 6.650292274095123e-05
+    },
+    {
+      "complete": true,
+      "grid_size": 1025,
+      "box_length_m": 256.0,
+      "body_panel_count": 68,
+      "time_step_seconds": 0.025,
+      "setup_seconds": 20.248749099991983,
+      "evolution_seconds": 694.3695042000036,
+      "total_seconds": 714.7699208999984,
+      "peak_process_rss_bytes": 5400875008,
+      "cupy_pool_used_bytes": 2008804864,
+      "cupy_pool_reserved_bytes": 2294947840,
+      "execution": "GPU float64/complex128 evolution, CPU fixed geometry/operator preparation",
+      "timing_scope": "Run total includes static setup, lazy CUDA import/context/transfers, first-use compilation/plans, synchronized evolution, output download, fits and NPZ; source archiving and final JSON are outside this total.",
+      "memory_scope": "Process peak RSS; CUDA pool figures are retained/reserved at end, exclude other CUDA allocations, and are not peak/total VRAM.",
+      "report": "artifacts\\boat-radiation-time-surface-fine-retry.json",
+      "sha256": "a2131ea671f78bb836ebd9c3974704877166caea54f7f2c6af57e044c48075b0",
+      "producer_archive": "artifacts\\boat-radiation-time-surface-fine-retry.source",
+      "arrays_sha256": "414d7fe34381e31c4f13fe3d595d7007fc68af9ab9b75736efae4a45c7b51539",
+      "fit_start_seconds": 40.0,
+      "fit_end_seconds": 60.0,
+      "heave_added_mass": 21293.167155594314,
+      "roll_added_mass": 1740.541664622151,
+      "heave_damping": 2074.186936283654,
+      "roll_damping": 0.12330179918234249,
+      "heave_force_fit_rms": 0.1030255037559701,
+      "roll_force_fit_rms": 8.772662861877901e-05,
+      "incomplete_first_attempt": {
+        "producer_archive": "artifacts/boat-radiation-time-surface-fine.source",
+        "producer_hashes_identical_to_retry": true,
+        "log_sha256": "b89fe7be45510374ed938d4ee7a575fe25e523c685c09c42a12d7148a4ad6dea",
+        "status": "Monitoring handle missing, no Python processes and no GPU allocation at inspection; onlyt0 log and no terminal report. Termination cause unknown. Not a timing or physical result."
+      }
+    },
+    {
+      "complete": true,
+      "grid_size": 513,
+      "box_length_m": 256.0,
+      "body_panel_count": 68,
+      "time_step_seconds": 0.05,
+      "sponge_strength_per_second": 1.0,
+      "setup_seconds": 9.569477099983487,
+      "evolution_seconds": 88.2005754999991,
+      "total_seconds": 97.840885099984,
+      "peak_process_rss_bytes": 1506197504,
+      "cupy_pool_used_bytes": 503206400,
+      "cupy_pool_reserved_bytes": 574976000,
+      "execution": "GPU float64/complex128 evolution, CPU fixed geometry/operator preparation",
+      "timing_scope": "Run total includes static setup, lazy CUDA import/context/transfers, first-use compilation/plans, synchronized evolution, output download, fits and NPZ; source archiving and final JSON are outside this total.",
+      "memory_scope": "Process peak RSS; CUDA pool figures are retained/reserved at end, exclude other CUDA allocations, and are not peak/total VRAM.",
+      "report": "artifacts\\boat-radiation-time-sponge.json",
+      "sha256": "f552a09e2bd7673a30eda80c96a93739ff06d8ed84dc37cf23a6c614c00d05ca",
+      "producer_archive": "artifacts\\boat-radiation-time-sponge.source",
+      "arrays_sha256": "c1040291213765ef4473718393fea6dfd2267b041577c6d2ca7c7530ed90f663",
+      "fit_start_seconds": 40.0,
+      "fit_end_seconds": 60.0,
+      "heave_added_mass": 19932.69825848116,
+      "roll_added_mass": 1486.8367629082443,
+      "heave_damping": 2205.35060575491,
+      "roll_damping": 0.0940142403595224,
+      "heave_force_fit_rms": 0.5160849266978265,
+      "roll_force_fit_rms": 3.9000072985080035e-05
     }
   ],
   "parity": {
@@ -466,11 +529,13 @@
     "All maps/factors stay fixed for these60s trajectories. No improvement to the full nonlinear moving baseline is claimed; that remains40.36wall seconds/simsecond without minute accuracy/open-water qualification.",
     "Uniform body68->272 at unchanged256m/513 changes rollA1486.918->1490.751, against own-panel Capytaine1828.222. The ~18.46% deficit remains. HeaveA18828.402 versus own19972.733; more body panels alone do not solve the discrepancy. Total184.389s, peakRSS5.315GB and ending CUDA pool1.864GB; no promotion.",
     "Two-phase same-state harmonic-versus-biharmonic extension audit: roll force change at acceleration peak0.03094Nm versus ~1.07Nm missing reactive amplitude. Exact archived parent driver reproduces the final force and prior audit rows exactly. This pair does not explain most of the discrepancy; it cannot rule out history feedback, other extensions or exterior interpolation error.",
-    "Half timestep.05->.025 at unchanged256m/513/body68 changes rollA1486.9184335->1486.9181347 and heaveA19569.09190->19569.10145. Temporal integration error does not explain the~342kgm2 roll gap. Total190.345s; no nonlinear timing claim."
+    "Half timestep.05->.025 at unchanged256m/513/body68 changes rollA1486.9184335->1486.9181347 and heaveA19569.09190->19569.10145. Temporal integration error does not explain the~342kgm2 roll gap. Total190.345s; no nonlinear timing claim.",
+    "Surface513->1025 at fixed256m/body68/.025 timestep increases rollA1486.9181->1740.5417 versus1828.5980, reducing absolute relative error18.69%->4.82%. HeaveA19569.10->21293.17 crosses reference20308.52; damping1885.26->2074.19 versus1760.07. Spatial refinement matters but solution is not converged or physically qualified. Total714.77s for60simseconds(11.91x), peakRSS5.401GB/endCUDApool2.295GB. Maps fixed throughout; NOT nonlinear sixDOF throughput.",
+    "Sponge.5->1 at unchanged256m/513/body68/.05 changes heaveA19569.09->19932.70 and heaveB1885.25->2205.35, but rollA1486.91843->1486.83676 and B.093632->.094014. Absorber bias is material for heave; this strength change does not explain the roll reactive deficit. Do not tune gamma to match Capytaine instead of demonstrating domain/absorber convergence."
   ],
   "next_falsifiers": [
-    "Surface513->1025 at same256m/body68/.025 timestep tests whether the compact-trace interpolation observation carries into actual60s radiation. Initial attempt lost monitoring handle and process without terminal report; preserve its source/log as incomplete, do not treat as a result. Retry has independent output ownership.",
-    "Sponge-strength sensitivity and actual nonlinear current-graph/body coupling remain outstanding. Global surface refinement alone is not a speed architecture."
+    "A current-graph/body local-refinement candidate must first pass a bounded static actual-hull force/work and interface test before any trajectory or baseline promotion. Keep the fixed-flat-image checkpoint as a linear reference only.",
+    "Demonstrate domain/absorber convergence independently of spatial refinement. Uniform global refinement has increasing cost and heave bias remains; no physical qualification or nonlinear speed claim."
   ],
   "nonlinear_limit": "Flat odd images only enforce zero plane trace atz=0; actual eta requires an actual graph/body BVP with two-way exterior matching. Feeding nonlinear HOS heights into this fixed flat-image coupling is invalid.",
   "precursor_source_commits": [
