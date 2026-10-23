@@ -65,6 +65,15 @@ def run(args, report):
         abs(fine_triangles)+abs(snapshot.triangles[parent_ids, :1]), axis=2)
     if np.any(plane_defect > plane_allowance):
         raise ValueError('subdivided vertices leave the original parent planes')
+    if np.any(np.sum(fine_panels.normals*old.normals[parent_ids], axis=1) <= 0):
+        raise ValueError('subdivision reversed physical source winding')
+    child_first = (fine_panels.areas[:, None]*fine_panels.centroids).reshape(4, len(old), 3).sum(axis=0)
+    original_first = old.areas[:, None]*old.centroids
+    first_allowance = (abs(fine_panels.areas.reshape(4, len(old))-old.areas[None, :]/4)[:, :, None]
+        *abs(fine_panels.centroids.reshape(4, len(old), 3))).sum(axis=0)
+    first_allowance += 64*np.finfo(float).eps*old.areas[:, None]*np.max(abs(snapshot.triangles), axis=1)
+    if np.any(abs(child_first-original_first) > first_allowance):
+        raise ValueError('subdivision changes original source first moments beyond preflight roundoff')
     total_queries = 2*len(base)*len(patch.panels)
     total_queries += 2*len(base)*2*(len(old)+len(fine_panels))
     probe_bytes = 8*(2*len(base)*len(patch.nodes)+1024*len(patch.panels)+4096*len(fine_panels))
@@ -72,6 +81,7 @@ def run(args, report):
         raise RuntimeError('fixed-probe work/storage bound exceeds budget')
     report.update(physical_psi_moment_sha256=sha256((mass@psi).tobytes()).hexdigest(),
         physical_eta_rms_m=args.eta_rms, frozen_mode_index=index,
+        eta_normalization='complex-amplitude spatial physical-mass RMS; not time RMS',
         frozen_mode_lambda_real=lam.real, frozen_mode_lambda_imag=lam.imag,
         physical_inputs_sha256=snapshot.mode['input_sha256'], panel_sha256=snapshot.mode['panel_sha256'],
         body_levels=[], harmonic_probe_evaluations=2,
@@ -82,6 +92,7 @@ def run(args, report):
         refinement_max_parent_plane_defect_m=float(plane_defect.max()),
         refinement_max_plane_roundoff_allowance_m=float(plane_allowance.max()),
         refinement_max_normal_difference=float(abs(fine_panels.normals-old.normals[parent_ids]).max()),
+        refinement_geometry_guard_scope='arithmetic roundoff preflight; not a certified interval',
         refinement_first_moment_difference=((fine_panels.areas[:, None]*fine_panels.centroids).sum(axis=0)
             -(old.areas[:, None]*old.centroids).sum(axis=0)).tolist(),
         candidate_limits=['Only one body-density refinement; failure stops blind body refinement',
