@@ -1,14 +1,11 @@
-// Single numerical pair formula for primal energy and shape derivatives.
-// Views use flat indices; source and target area views may carry different seeds.
+// Single numerical SAMPLE formula for primal energy and shape derivatives.
+// Adapters below only weight/contract these same integral moments.
 template<class Scalar,class View>
-__device__ void energy_pair(
+__device__ void energy_sample(
     View tri,View normal,View outward,View tangent,View length,
-    View source_area,View target_area,View center,View sign,
-    View gradient,View points,const double* weights,int i,int j,int nq,
-    Scalar& vsum,Scalar linear[3]) {
-    vsum=0.; for (int c=0;c<3;++c) linear[c]=0.;
+    View source_area,View center,View sign,View points,int i,int j,int nq,int q,
+    Scalar& single,Scalar& dbl,Scalar moment[3]) {
     const Scalar factor=4.*3.1415926535897932384626433832795;
-    for (int q=0;q<nq;++q) {
         Scalar r[3][3], distance[3], edge_gradient[3]={0.,0.,0.};
         Scalar x[3]; for (int k=0;k<3;++k) x[k]=points[(i*nq+q)*3+k];
         #pragma unroll
@@ -55,16 +52,33 @@ __device__ void energy_pair(
             #pragma unroll
             for (int k=0;k<3;++k) edge_gradient[k]+=outward[j*9+e*3+k]*logarithm;
         }
-        Scalar single=(terms-height*angle)/factor;
-        Scalar dbl=angle*sign[j]/factor;
-        Scalar weight=target_area[i]*weights[q];
-        vsum+=weight*single;
+        single=(terms-height*angle)/factor;
+        dbl=angle*sign[j]/factor;
+        for(int k=0;k<3;++k)moment[k]=0.;
         if (i!=j) {
-            Scalar moment[3];
             #pragma unroll
             for (int k=0;k<3;++k)
                 moment[k]=(x[k]-center[j*3+k]-height*normal[j*3+k])*dbl
                     -height*edge_gradient[k]*sign[j]/factor;
+        }
+}
+
+// Existing raw V/H interface: unchanged quadrature, self branch and jump.
+// Views use flat indices; source and target area may carry different seeds.
+template<class Scalar,class View>
+__device__ void energy_pair(
+    View tri,View normal,View outward,View tangent,View length,
+    View source_area,View target_area,View center,View sign,
+    View gradient,View points,const double* weights,int i,int j,int nq,
+    Scalar& vsum,Scalar linear[3]) {
+    vsum=0.;for(int c=0;c<3;++c)linear[c]=0.;
+    for(int q=0;q<nq;++q){
+        Scalar single,dbl,moment[3];
+        energy_sample<Scalar,View>(tri,normal,outward,tangent,length,source_area,
+            center,sign,points,i,j,nq,q,single,dbl,moment);
+        Scalar weight=target_area[i]*weights[q];
+        vsum+=weight*single;
+        if(i!=j){
             #pragma unroll
             for (int c=0;c<3;++c) {
                 Scalar value=dbl/3.;
@@ -76,4 +90,29 @@ __device__ void energy_pair(
     }
     // Smooth self double-layer moments vanish; the mixed trace jump occurs once.
     for (int c=0;c<3;++c) linear[c]+=(i==j?target_area[i]/6.:Scalar(0.));
+}
+
+// Same sample moments, contracted BEFORE constructing three local H columns.
+// A and g remain shape-active; zi and nodal phi are stationary constants.
+template<class Scalar,class View>
+__device__ Scalar stationary_pair_scalar(
+    View tri,View normal,View outward,View tangent,View length,
+    View source_area,View target_area,View center,View sign,View points,
+    const double* weights,int i,int j,int nq,Scalar A,const Scalar g[3],
+    double zi,double sum_phi) {
+    Scalar result=0.;
+    for(int q=0;q<nq;++q){
+        Scalar single,dbl,moment[3];
+        energy_sample<Scalar,View>(tri,normal,outward,tangent,length,source_area,
+            center,sign,points,i,j,nq,q,single,dbl,moment);
+        Scalar value=A*single;
+        if(i!=j){
+            Scalar mixed=dbl*(sum_phi/3.);
+            for(int k=0;k<3;++k)mixed+=moment[k]*g[k];
+            value+=zi*mixed;
+        }
+        result+=target_area[i]*weights[q]*value;
+    }
+    if(i==j)result+=zi*target_area[i]*sum_phi/6.;
+    return result;
 }
