@@ -1,6 +1,8 @@
 """Fixed-hull LINEAR time-domain radiation checkpoint, not a nonlinear solver.
 
-Physical exterior eta/psi are the only fluid states. A fixed harmonic interior
+Physical exterior eta/psi are the only fluid states, evolved on the GPU.
+Geometry and fixed boundary maps are prepared on the CPU and uploaded once.
+A fixed harmonic interior
 fill supplies the fictitious plane trace for Fourier continuation; the current
 body correction solves the prescribed total normal velocity. Odd grids avoid
 ambiguous Nyquist continuation. The periodic lift/nonperiodic source field and
@@ -98,6 +100,7 @@ class Radiation:
         adjoint = lu_solve(self.factor, self.single.T@weighted_modes, trans=1)
         self.impulse_trace = WATER_DENSITY*(weighted_modes.T@potential-adjoint.T@self.normal_map)
         self.impulse_velocity = WATER_DENSITY*weighted_modes.T@self.single@lu_solve(self.factor, self.modes)
+        del potential
         surface = np.column_stack((xy[self.exterior], np.zeros(len(self.exterior))))
         self.flux_map = np.empty((len(surface), len(panels)))
         for first in range(0, len(surface), 128):
@@ -106,6 +109,21 @@ class Radiation:
         radius = np.max(np.abs(xy-inputs.initial_state.position[:2]), axis=1)/(length/2)
         position = np.clip((radius-.6)/.4, 0, 1)
         self.sponge = sponge_strength*position[self.exterior]**2
+        self.cpu_static_setup_seconds = perf_counter()-start
+        before = perf_counter()
+        from .cuda_operator import cp
+        from cupyx.scipy.linalg import lu_solve as device_lu_solve
+        self.cp, self.device_lu_solve = cp, device_lu_solve
+        self.factor = (cp.array(self.factor[0], order='F'), cp.asarray(self.factor[1]))
+        for name in ('fill_weights', 'normal_map', 'velocity',
+                     'impulse_trace', 'impulse_velocity', 'flux_map', 'wave', 'sponge', 'body_velocity'):
+            setattr(self, name, cp.asarray(getattr(self, name)))
+        self.device_exterior = cp.asarray(self.exterior)
+        self.device_hidden = cp.asarray(self.hidden)
+        self.device_fill_boundary = cp.asarray(self.fill_boundary)
+        cp.cuda.get_current_stream().synchronize()
+        self.device_setup_seconds = perf_counter()-before
+        self.device_name = cp.cuda.runtime.getDeviceProperties(cp.cuda.Device().id)['name'].decode()
         self.evaluations = 0
         self.setup_seconds = perf_counter()-start
 
@@ -115,30 +133,34 @@ class Radiation:
                 ((row-1) % self.size)*self.size+col, ((row+1) % self.size)*self.size+col]
 
     def extend(self, exterior):
-        full = np.zeros((self.size*self.size, exterior.shape[1]))
-        full[self.exterior] = exterior
-        full[self.hidden] = self.fill_weights@full[self.fill_boundary]
+        cp = self.cp
+        exterior = cp.asarray(exterior)
+        full = cp.zeros((self.size*self.size, exterior.shape[1]), dtype=exterior.dtype)
+        full[self.device_exterior] = exterior
+        full[self.device_hidden] = self.fill_weights@full[self.device_fill_boundary]
         return full.reshape(self.size, self.size, -1)
 
     def rhs(self, time, state, omega, ramp):
+        cp = self.cp
+        state = cp.asarray(state)
         eta, psi = state
-        spectrum = np.fft.fft2(self.extend(psi), axes=(0, 1)).reshape(self.size*self.size, 2)
+        spectrum = cp.fft.fft2(self.extend(psi), axes=(0, 1)).reshape(self.size*self.size, 2)
         speed, acceleration = drive(time, omega, ramp)
-        density = lu_solve(self.factor, self.velocity*speed-(self.normal_map@spectrum).real)
-        flat_flux = np.fft.ifft2((spectrum.reshape(self.size, self.size, 2)
-                                  *self.wave[:, :, None]), axes=(0, 1)).real.reshape(-1, 2)[self.exterior]
+        density = self.device_lu_solve(self.factor, self.velocity*speed-(self.normal_map@spectrum).real)
+        flat_flux = cp.fft.ifft2((spectrum.reshape(self.size, self.size, 2)
+                                  *self.wave[:, :, None]), axes=(0, 1)).real.reshape(-1, 2)[self.device_exterior]
         flux = flat_flux+self.flux_map@density
         eta_rate = flux-self.sponge[:, None]*eta
         psi_rate = -GRAVITY*eta-self.sponge[:, None]*psi
-        rate_spectrum = np.fft.fft2(self.extend(psi_rate), axes=(0, 1)).reshape(-1, 2)
+        rate_spectrum = cp.fft.fft2(self.extend(psi_rate), axes=(0, 1)).reshape(-1, 2)
         force = -(self.impulse_trace@rate_spectrum).real-self.impulse_velocity@self.body_velocity*acceleration
         impulse = (self.impulse_trace@spectrum).real+self.impulse_velocity@self.body_velocity*speed
-        energy = .5*WATER_DENSITY*self.spacing**2*np.sum(GRAVITY*eta*eta+psi*flux, axis=0)
-        energy += .5*np.sum(impulse*self.body_velocity*speed, axis=0)
-        nominal_sponge_power = -WATER_DENSITY*self.spacing**2*np.sum(
+        energy = .5*WATER_DENSITY*self.spacing**2*cp.sum(GRAVITY*eta*eta+psi*flux, axis=0)
+        energy += .5*cp.sum(impulse*self.body_velocity*speed, axis=0)
+        nominal_sponge_power = -WATER_DENSITY*self.spacing**2*cp.sum(
             self.sponge[:, None]*(GRAVITY*eta*eta+psi*flux), axis=0)
         self.evaluations += 1
-        return np.stack((eta_rate, psi_rate)), force, energy, nominal_sponge_power
+        return cp.stack((eta_rate, psi_rate)), force, energy, nominal_sponge_power
 
 
 def fit(times, force, omega, start, amplitudes):
@@ -156,8 +178,9 @@ def fit(times, force, omega, start, amplitudes):
 def run(inputs, output, size, length, refinement, duration, step, ramp, sponge_strength, reference):
     started = perf_counter()
     system = Radiation(inputs, size, length, refinement, sponge_strength)
+    cp = system.cp
     omega = 2*np.pi*.1
-    if step*np.sqrt(GRAVITY*np.max(system.wave)) > .5:
+    if step*np.sqrt(GRAVITY*float(cp.max(system.wave).item())) > .5:
         raise ValueError('RK4 step too large for this resolved wave band')
     panel_hash = sha256(system.panels.triangles.tobytes()).hexdigest()
     references = [row for row in reference['rows'] if row['panel_sha256'] == panel_hash
@@ -174,34 +197,43 @@ def run(inputs, output, size, length, refinement, duration, step, ramp, sponge_s
     count = round(duration/step)
     if not np.isclose(count*step, duration) or duration < ramp+30:
         raise ValueError('duration must be a multiple of step and leave >=30s after ramp')
-    state = np.zeros((2, len(system.exterior), 2))
-    times, forces, energies, sponge_power, peaks = [], [], [], [], []
+    state = cp.zeros((2, len(system.exterior), 2))
+    times = np.arange(count+1)*step
+    forces = cp.empty((count+1, 6, 2))
+    energies, sponge_power, peaks = [cp.empty((count+1, 2)) for _ in range(3)]
+    cp.cuda.get_current_stream().synchronize()
     before = perf_counter()
     for index in range(count+1):
         time = index*step
         k1, force, energy, power = system.rhs(time, state, omega, ramp)
-        times.append(time); forces.append(force); energies.append(energy); sponge_power.append(power)
-        peaks.append(np.max(np.abs(state[0]), axis=0))
+        forces[index], energies[index], sponge_power[index] = force, energy, power
+        peaks[index] = cp.max(cp.abs(state[0]), axis=0)
         if index == count:
             break
         k2 = system.rhs(time+step/2, state+step*k1/2, omega, ramp)[0]
         k3 = system.rhs(time+step/2, state+step*k2/2, omega, ramp)[0]
         k4 = system.rhs(time+step, state+step*k3, omega, ramp)[0]
         state += step*(k1+2*k2+2*k3+k4)/6
-        if not np.isfinite(state).all():
+        if not bool(cp.isfinite(state).all().item()):
             raise FloatingPointError('nonfinite radiation state')
         if index % max(1, count//10) == 0:
             print(json.dumps(dict(time=time, elapsed=perf_counter()-started,
-                                  peak_eta=peaks[-1].tolist())), flush=True)
+                                  peak_eta=cp.asnumpy(peaks[index]).tolist())), flush=True)
+    cp.cuda.get_current_stream().synchronize()
     evolution_seconds = perf_counter()-before
-    times, forces, energies, sponge_power = map(np.array, (times, forces, energies, sponge_power))
+    before = perf_counter()
+    forces, energies, sponge_power, peaks, state = [cp.asnumpy(value) for value in
+                                                   (forces, energies, sponge_power, peaks, state)]
+    output_transfer_seconds = perf_counter()-before
+    before = perf_counter()
     fits = [fit(times, forces, omega, start, system.amplitudes) for start in [ramp+10, duration-20]]
     for result in fits:
         result['added_mass_error'] = (np.array(result['added_mass'])-ref['added_mass']).tolist()
         result['damping_error'] = (np.array(result['damping'])-ref['radiation_damping']).tolist()
     np.savez(output.with_suffix('.npz'), times=times, forces=forces, boundary_energy_proxy=energies,
-             nominal_sponge_power=sponge_power, peak_eta=np.array(peaks), final_state=state,
+             nominal_sponge_power=sponge_power, peak_eta=peaks, final_state=state,
              exterior=system.exterior, hidden=system.hidden)
+    fit_and_output_seconds = perf_counter()-before
     return dict(complete=True, qualified=False,
         scope='LINEAR fixed-hull time-domain radiation; not nonlinear moving-boat throughput or open-water qualification',
         input_sha256=sha256(inputs.to_json().encode()).hexdigest(), panel_sha256=panel_hash,
@@ -211,7 +243,13 @@ def run(inputs, output, size, length, refinement, duration, step, ramp, sponge_s
         sponge_strength_per_second=sponge_strength, sponge_start_fraction_of_half_box=.6,
         driven_modes=['Heave', 'Roll'], velocity_amplitudes=system.amplitudes.tolist(),
         force_rows=['Surge', 'Sway', 'Heave', 'Roll', 'Pitch', 'Yaw'],
+        execution='GPU float64/complex128 evolution, CPU fixed geometry/operator preparation',
+        device=system.device_name, cupy_version=cp.__version__,
+        cpu_static_setup_seconds=system.cpu_static_setup_seconds,
+        device_setup_seconds=system.device_setup_seconds,
         setup_seconds=system.setup_seconds, evolution_seconds=evolution_seconds,
+        output_transfer_seconds=output_transfer_seconds, fit_and_output_seconds=fit_and_output_seconds,
+        timing_scope='Run total includes static setup, lazy CUDA import/context/transfers, first-use compilation/plans, synchronized evolution, output download, fits and NPZ; source archiving and final JSON are outside this total.',
         total_seconds=perf_counter()-started, rhs_evaluations=system.evaluations,
         minimum_boundary_energy_proxy=energies.min(axis=0).tolist(), fits=fits,
         limits=['Periodic lift plus nonperiodic radiation; domain and sponge controls outstanding',
@@ -245,7 +283,9 @@ if __name__ == '__main__':
     archive = args.output.with_suffix('.source')
     archive.mkdir(parents=True, exist_ok=False)
     sources = [*Path('src/topwater').glob('*.py'), Path('tests/laplace_reference.py'), Path(__file__),
-               Path(__file__).with_name('boat_spatial_work.py'), Path(__file__).with_name('panel_gradient_reference.py')]
+               *[Path(__file__).with_name(name) for name in
+                 ('boat_spatial_work.py', 'panel_gradient_reference.py', 'cuda_operator.py',
+                  'cuda_energy.cu', 'cuda_pair.cuh')]]
     hashes = {}
     for source in sources:
         relative = source.resolve().relative_to(Path.cwd())
