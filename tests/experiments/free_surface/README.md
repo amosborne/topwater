@@ -1743,3 +1743,14 @@ startup/thermal caveats and compiler resource attributes are preserved in
 `docs/research/boat-surface-gradient.json`. A 35-37 s gradient is still unusable
 per trajectory stage. This derivative implementation and modest component
 optimization do not qualify physical surface rates or full simulation timing.
+
+`boat_parent_action_audit --reference <complete-vertex-audit> --output <report>`
+constructs all 15 candidate parent rates using the identical frozen gradient
+and geometry/load derivatives. It checks interior functional derivatives,
+fresh constant-gauge field/gradient/rates, and open-port work against an
+independent perimeter integral. An affine manufactured test supplies a separate
+closed-form port load. The boundary-data refactor is checked bitwise against
+the SHA-verified archived field implementation, including all six acceleration
+responses. Evidence is in `docs/research/boat-parent-action.json`; these rates
+are not enabled in the moving solver. Body work/pressure consistency and
+trajectory convergence remain outstanding.

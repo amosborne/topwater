@@ -1,5 +1,6 @@
 """Decompose a saved free reaction without another operator or fluid solve."""
 import argparse
+import ast
 from hashlib import sha256
 import json
 from pathlib import Path
@@ -42,8 +43,30 @@ def load_snapshot(audit):
         if sha256(Path(path).read_bytes()).hexdigest() != digest:
             raise ValueError('contact audit input changed: '+path)
     for name in DEPENDENCIES:
-        if sha256(Path(__file__).with_name(name).read_bytes()).hexdigest() != report['source_sha256'][name]:
+        current_path = Path(__file__).with_name(name)
+        actual_hash = sha256(current_path.read_bytes()).hexdigest()
+        expected_hash = report['source_sha256'][name]
+        if actual_hash == expected_hash:
+            continue
+        if name != 'boat_world_field.py':
             raise ValueError('physical helper changed: '+name)
+        archived = audit.with_name(audit.stem+'-source')/name
+        if not archived.is_file() or sha256(archived.read_bytes()).hexdigest() != expected_hash:
+            raise ValueError('original geometry-refiner source archive is absent or changed')
+        original_tree, current_tree = (ast.parse(path.read_text()) for path in (archived, current_path))
+        def refiner_contract(tree):
+            function = next(node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == 'refine_boundary')
+            # These bindings are the only nonlocal callable/module dependencies
+            # of refine_boundary. This is a narrow geometry replay exception.
+            bindings = [node for node in tree.body if isinstance(node, (ast.Import, ast.ImportFrom))
+                and any((alias.asname or alias.name) in ('np', 'HullMesh', 'surface_integrals') for alias in node.names)]
+            return ast.dump(ast.Module(body=[*bindings, function], type_ignores=[]), include_attributes=False)
+        if refiner_contract(original_tree) != refiner_contract(current_tree):
+            raise ValueError('geometry-refiner function or required import bindings changed')
+        report.setdefault('geometry_replay_verification', {})[name] = dict(
+            snapshot_source_sha256=expected_hash, current_source_sha256=actual_hash,
+            scope='Geometry refiner only; field/rate compatibility is NOT inferred.',
+            mechanism='SHA-verified original archive; identical refiner AST and np/HullMesh/surface_integrals import bindings; bitwise geometry replay below.')
     data = dict(np.load(audit.with_suffix('.npz'), allow_pickle=False))
     state = data['state']
     count = (len(state)-13)//2
@@ -138,7 +161,8 @@ def run(audit, output, order=48, probe_point=None):
         scope='Exact algebraic decomposition of saved discrete reaction; no component is declared physical truth.',
         input_sha256={str(p): sha256(p.read_bytes()).hexdigest() for p in (audit, audit.with_suffix('.npz'))},
         source_sha256=sha256(Path(__file__).read_bytes()).hexdigest(), order=order,
-        dependency_sha256={name: report['source_sha256'][name] for name in DEPENDENCIES},
+        dependency_sha256={name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest() for name in DEPENDENCIES},
+        geometry_replay_verification=report.get('geometry_replay_verification', {}),
         extra_free_refinement=report.get('extra_free_refinement', 0),
         local_body_refinement=local_refinement,
         maximum_weak_closure_error=float(np.max(abs(closure))),

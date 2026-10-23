@@ -24,6 +24,16 @@ refinement. Every nonzero incident component must satisfy `lambda >= 2*beam`;
 equality is allowed. Calm water and zero-amplitude components add no wave
 content. These are operating limits, not requests to model impacts or breaking.
 
+The user's motion envelope is ordinary motion tolerable for a person aboard.
+Dangerous onboard motion is outside the required simulation scope; there is no
+fixed 20 or 30 degree roll cutoff. Rates, accelerations and combined six-DOF
+motion matter as well as angles. This intended-use boundary does not supply a
+numerical safety threshold or authorize an automatic human-safety classifier.
+Keep the existing flooding/contact and incident-wave checks. Numerical accuracy
+is a separate target: 0.1 degree convergence in each of roll, pitch and yaw, and
+a practical 1 cm target in each of surge, sway and heave. These targets do not
+certify a case as safe for occupants.
+
 Use the configured physical dispersion relation and depth, with intrinsic
 wave frequency rather than boat encounter frequency. For gravity waves over
 constant depth, `k_max=pi/beam` and

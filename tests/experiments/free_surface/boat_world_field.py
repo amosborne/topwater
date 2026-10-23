@@ -214,8 +214,8 @@ def surface_rates(points, free_faces, free_nodes, parent_map, parent_psi, flux, 
     return eta_rate, psi_rate, diagnostics
 
 
-def current_field(arrays, energy, values, twist, *, acceleration_columns=True, time=0.):
-    """One current mixed factor; six responses computed only when requested."""
+def boundary_data(arrays, values, twist, *, time=0.):
+    """Current prescribed trace map and physical loads; no operator or solve."""
     points, faces, fixed = arrays['points'], arrays['faces'], arrays['free_nodes']
     mesh = HullMesh(points, faces)
     panels = TrianglePanels(points[faces], 1)
@@ -236,6 +236,14 @@ def current_field(arrays, energy, values, twist, *, acceleration_columns=True, t
     for corner in range(3):
         np.add.at(right, faces[outer, corner], panels.areas[outer]
                   *np.einsum('q,q,fq->f', weights, shape[0, :, corner], flux))
+    return dict(parent_map=mapping, body_load=load, right=right)
+
+
+def current_field(arrays, energy, values, twist, *, acceleration_columns=True, time=0.):
+    """One current mixed factor; six responses computed only when requested."""
+    points, faces, fixed = arrays['points'], arrays['faces'], arrays['free_nodes']
+    boundary = boundary_data(arrays, values, twist, time=time)
+    mapping, load, right = (boundary[name] for name in ('parent_map', 'body_load', 'right'))
     unknown = np.setdiff1d(np.arange(len(points)), fixed)
     potential = np.zeros(len(points))
     potential[fixed] = mapping@arrays['parent_psi']

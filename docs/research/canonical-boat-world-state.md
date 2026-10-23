@@ -778,10 +778,26 @@ local frame (504 versus 72 bytes) for width3. These attributes do not establish
 actual occupancy, peak VRAM or the cause of the limited improvement. Width1
 remains an explicit reference; width6 is tested but not timing-qualified.
 
-Use the validated gradient with cheap same-chart geometry/load/trace derivatives
-to construct all parent weak loads, instead of 30 full energy assemblies.
-External boundary work and six-DOF work/pressure consistency must still be
-resolved before replacement rates earn adoption. The next derivative speed
+All 15 candidate parent weak loads are now constructed from the validated
+gradient and same-chart geometry/load/trace derivatives, without additional
+energy assemblies. Prescribed incident-flux ports require endpoint virtual
+work: the discrete moving-port expression agrees with an independently
+integrated perimeter load within 0.015 N at this frozen state. A manufactured
+affine-potential test also compares the port expression with a closed-form
+corner load. The bottom incident flux remains a forcing port, not a closed bed.
+
+At q3/q6 the geometry/load work takes 3.95/3.64 s for 64 geometry evaluations,
+excluding the primal operator and current gradient. A fresh constant-potential
+gauge shift changes the corrected potential rate by at most 6.7e-8 m2/s2;
+the uncorrected weak load changes by about 898 N. The h/h2 rate difference is
+below 3.2e-7 m2/s2, while q3/q6 rates differ by up to 0.0152 m2/s2. These
+checks establish discrete consistency, not physical quadrature convergence.
+The boundary-data refactor reproduces every archived field output bitwise,
+including all six acceleration responses. Reports and source provenance are
+retained in `boat-parent-action.json`.
+
+Six-DOF work/pressure consistency must still be resolved before replacement
+rates earn adoption in moving runs. The next derivative speed
 avenue should remove repeated primal integration more substantially (a bounded
 sample-local reverse/analytic scalar derivative); expanding forward batch width
 alone has not earned a larger investigation. No new trajectory or full-RHS

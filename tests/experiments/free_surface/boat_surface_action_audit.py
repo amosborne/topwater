@@ -15,25 +15,9 @@ from tests.reference_hull import surface_integrals
 from .boat_contact_reaction import load_snapshot, refine_snapshot
 from .boat_geometry_template import evaluate_template, InvalidTemplate
 from .boat_world_field import current_field, surface_rates
+from .boat_parent_action import parent_mass
 from .incident_baseline_benchmark import coefficients
 from .p4_fluid_ordering import fresh
-
-
-def parent_mass(arrays):
-    """Integrate fixed world parent basis products over exposed projected faces."""
-    mapping = np.zeros((len(arrays['points']), len(arrays['parent_nodes'])))
-    for column in range(3):
-        ids = arrays['free_parent_indices'][:, column]
-        valid = ids >= 0
-        mapping[arrays['free_nodes'][valid], ids[valid]] += arrays['free_parent_weights'][valid, column]
-    faces = arrays['faces'][arrays['free_faces']]
-    triangles = arrays['points'][faces, :2]
-    area = np.linalg.det(triangles[:, 1:]-triangles[:, :1])/2
-    if np.any(area <= 0):
-        raise ValueError('invalid projected free triangle')
-    trace = mapping[faces]
-    unit = (np.ones((3, 3))+np.eye(3))/12
-    return np.einsum('f,fci,cd,fdj->ij', area, trace, unit, trace, optimize=True)
 
 
 def run(audit, output, order=6, directional=False, vertex=False, vertex_batch_width=None):
@@ -60,7 +44,7 @@ def run(audit, output, order=6, directional=False, vertex=False, vertex_batch_wi
         vertex_gradient_check=vertex,
         source_sha256={name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
             for name in ('boat_surface_action_audit.py', 'boat_contact_reaction.py', 'boat_geometry_template.py',
-                         'boat_world_field.py', 'boat_world_boundary.py', 'canoe.py', 'incident_baseline_benchmark.py',
+                         'boat_world_field.py', 'boat_parent_action.py', 'boat_world_boundary.py', 'canoe.py', 'incident_baseline_benchmark.py',
                          'cuda_operator.py', 'cuda_energy.cu', 'cuda_pair.cuh', 'cuda_directional.py',
                          'cuda_directional.cu', 'cuda_dual.cuh', 'cuda_wide_dual.cuh', 'cuda_shape_gradient.py', 'cuda_shape.cu')},
         directions=[], operations=[])
