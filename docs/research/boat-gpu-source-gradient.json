@@ -1,0 +1,41 @@
+{
+    "status":  "GPU bulk gradients adopted in experimental graph path; archived linear-state parity established; full nonlinear baseline remains unqualified",
+    "implementation":  [
+                           "One shared analytic sample formula for energy, source potential and bulk source gradient.",
+                           "Image chain rule subtracts horizontal and adds vertical mirror gradients.",
+                           "Geometry rejections propagate; flagged numerical cases use bounded precision recovery with explicit cancellation bounds and fail closed.",
+                           "Density contraction batches targets under the matrix/guard memory budget and releases each matrix before the next allocation.",
+                           "Owned body traces retain their explicit domain-side jump; bulk evaluation never invents a boundary limit.",
+                           "Superseded CPU bulk-velocity loop removed from graph execution; independent CPU evaluators remain verification references."
+                       ],
+    "verification":  {
+                         "integrated_tests_passed":  62,
+                         "test_log":  "artifacts/gradient-integrated-check.log",
+                         "test_log_sha256":  "7bed17dc4a45f004d13e3b079f1fb69192b4dbdaaca97ca3da5b35ea882b5ec3",
+                         "raw_report":  "artifacts/boat-gradient-radiation-audit-final.json",
+                         "raw_report_sha256":  "abe7109ba5030abcb5c22585b82f64504a4d6c62c727b4e24556b83ad7f15c97",
+                         "parent":  "artifacts\\boat-radiation-time-gpu-pilot.json",
+                         "parent_sha256":  "3e9acdf42669cdb79c24367f29480b6a857ae8d8fc092d4d37d0590e9ec041f4",
+                         "parent_arrays_sha256":  "5ad568dea3ec2bad6a31cb67e94ac6175ba14004ee9c3af345f88bf165713506",
+                         "grid_size":  129,
+                         "body_panels":  68,
+                         "archived_time_seconds":  60.0,
+                         "max_source_velocity_difference":  8.2399365108898337E-18,
+                         "max_archived_rhs_difference":  8.0230960763927328E-18,
+                         "max_archived_load_difference":  1.2434497875801753E-14,
+                         "max_direct_pressure_load_difference":  4.8849813083506888E-15,
+                         "reference_ownership":  "Old code executes in an isolated subprocess/copy. Every loaded topwater/tests producer must reside in that archive. Inputs, panel hash, state arrays, drive amplitudes and exterior/hidden ownership are checked."
+                     },
+    "limits":  [
+                   "Implementation parity only; preserves the old linear discretization and its unresolved Capytaine discrepancy.",
+                   "Legacy sponge pressure is retained for comparison, so p=0 is not imposed inside the damping zone.",
+                   "No new trajectory, throughput or 60-second nonlinear accuracy qualification.",
+                   "No speed ratio is inferred from this audit or compared to earlier contended timings.",
+                   "The archived 60-second endpoint is near a velocity peak with nearly zero prescribed acceleration. Separate acceleration-column controls remain necessary."
+               ],
+    "adversarial_fixes":  [
+                              "Retain both vertical gradient constituent magnitudes before cancellation in the far-field roundoff allowance.",
+                              "Release each contracted gradient matrix before allocating the next target batch.",
+                              "Use isolated archived RHS execution rather than treating force parity as proof of flux parity."
+                          ]
+}

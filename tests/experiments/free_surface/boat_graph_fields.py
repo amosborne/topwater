@@ -6,6 +6,7 @@ from .cuda_graph import harmonic_velocity, cp
 from .panel_gradient_reference import checked_influence
 from .boat_radiation_time import harmonic_maps
 from .boat_image_plane import elevated_potential
+from .cuda_source_potential import paired_velocity
 
 
 def _actual_harmonic_values(context, spectrum, points):
@@ -44,14 +45,7 @@ def _image_gradient(points, panels, height):
 
 
 def source_velocity_bulk(context, density, points):
-    velocity = np.empty((len(points), 3))
-    for first in range(0, len(points), 128):
-        last = min(first+128, len(points))
-        targets = points[first:last]
-        real = checked_influence(targets, context.panels).gradient_single_layer
-        gradient = real-_image_gradient(targets, context.panels, context.image_height)
-        velocity[first:last] = np.einsum('tnj,n->tj', gradient, density)
-    return velocity
+    return cp.asnumpy(paired_velocity(points,context.panels,context.image_height,density).values)
 
 
 def source_velocity_body(context, density):

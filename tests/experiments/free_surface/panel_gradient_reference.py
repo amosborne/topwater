@@ -1,7 +1,8 @@
 """Slow extended-precision reference for rejected bulk panel gradients.
 
-Verification harness only. The production evaluator keeps its failure guard.
-Recompute flagged entries at two decimal precisions; never accept the original
+Shared precision recovery for experimental GPU gradients and CPU verification.
+The public production evaluator keeps its failure guard. Recompute flagged
+entries at two decimal precisions; never accept the original
 uncertified result or a fixed quadrature rule near a singularity.
 The algebra/logarithms use Decimal; atan2 and pi remain binary64. Agreement of
 the two precisions checks cancellation, not a certified interval error bound.
@@ -64,7 +65,14 @@ def extended(target, triangle, sign, precision):
             gt = area2*normal[j]
             gk.append(2*Decimal(int(sign))*(denominator*gt-determinant*gd)
                       /((denominator**2+determinant**2)*factor))
-        return np.array([float(v) for v in [single, double, *gs, *gk]])
+        values = np.array([float(v) for v in [single, double, *gs, *gk]])
+        rounding = 64*np.finfo(float).eps
+        errors = [rounding*(abs(float(single))+float(abs(height*angle)/factor)),
+                  rounding*abs(float(double))]
+        errors.extend(rounding*float((sum(abs(logs[e]*outward[e][j]) for e in range(3))
+                       +abs(angle*normal[j]))/factor) for j in range(3))
+        errors.extend(rounding*abs(float(value)) for value in gk)
+        return values, np.array(errors)
 
 
 def checked_influence(targets, panels):
@@ -83,8 +91,8 @@ def checked_influence(targets, panels):
     if bad:
         raise ValueError('reference requires strict bulk targets, away from edges/traces')
     for row, col in zip(*np.nonzero(unsafe)):
-        a = extended(targets[row], panels.triangles[col], panels.normal_sign[col], 64)
-        b = extended(targets[row], panels.triangles[col], panels.normal_sign[col], 96)
+        a, _ = extended(targets[row], panels.triangles[col], panels.normal_sign[col], 64)
+        b, _ = extended(targets[row], panels.triangles[col], panels.normal_sign[col], 96)
         scale = np.array([1/panels.diameters[col], 1., 1., 1., 1.,
                           panels.diameters[col], panels.diameters[col], panels.diameters[col]])
         tolerance = controls.quadrature_atol+controls.quadrature_rtol*np.abs(b*scale)

@@ -10,7 +10,7 @@ template<class Scalar,class View,class Observer>
 __device__ void rankine_sample_at_point_observed(
     View tri,View normal,View outward,View tangent,View length,
     View source_area,View center,View sign,const Scalar* x,int j,bool self_pair,
-    Scalar& single,Scalar& dbl,Scalar moment[3],Observer& observer) {
+    Scalar& single,Scalar& dbl,Scalar moment[3],Scalar gradient_single[3],Observer& observer) {
     const Scalar factor=4.*3.1415926535897932384626433832795;
         Scalar r[3][3], distance[3], edge_gradient[3]={0.,0.,0.};
         #pragma unroll
@@ -63,6 +63,7 @@ __device__ void rankine_sample_at_point_observed(
         }
         single=(terms-height*angle)/factor;
         dbl=angle*sign[j]/factor;
+        for(int k=0;k<3;++k) gradient_single[k]=(-edge_gradient[k]-angle*normal[j*3+k])/factor;
         for(int k=0;k<3;++k)moment[k]=0.;
         if (!self_pair) {
             #pragma unroll
@@ -77,10 +78,10 @@ __device__ void energy_sample_observed(
     View tri,View normal,View outward,View tangent,View length,
     View source_area,View center,View sign,View points,int i,int j,int nq,int q,
     Scalar& single,Scalar& dbl,Scalar moment[3],Observer& observer) {
-    Scalar x[3];
+    Scalar x[3],gradient_single[3];
     for(int k=0;k<3;++k) x[k]=points[(i*nq+q)*3+k];
     rankine_sample_at_point_observed(tri,normal,outward,tangent,length,
-        source_area,center,sign,x,j,i==j,single,dbl,moment,observer);
+        source_area,center,sign,x,j,i==j,single,dbl,moment,gradient_single,observer);
 }
 
 template<class Scalar,class View>
