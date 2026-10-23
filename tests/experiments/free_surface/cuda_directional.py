@@ -9,7 +9,7 @@ from cupyx import errstate
 from cupyx.scipy.linalg import solve_triangular
 
 from .cuda_operator import cp
-from .cuda_shape_gradient import _geometric
+from .cuda_panel_geometry import directional_geometry
 
 _folder = Path(__file__).parent
 _source = '\n'.join((_folder/name).read_text() for name in
@@ -33,7 +33,7 @@ def energy_direction_action(points, faces, moving, potential, *, assembly):
             or not np.array_equal(points[faces], assembly.triangles)
             or np.any(assembly.normal_sign != 1)):
         raise ValueError('directional action requires uniform quadrature and identical current fluid geometry')
-    values, derivatives, curl, dcurl = _geometric(points, faces, moving,
+    values, derivatives, curl, dcurl = directional_geometry(points, faces, moving,
                                                 order=assembly.quadrature_order)
     geometry = []
     for value, derivative in zip(values[:-1], derivatives[:-1], strict=True):

@@ -55,7 +55,7 @@ def run(reference, output):
             for name in ('boat_parent_action_audit.py', 'boat_parent_action.py', 'boat_contact_reaction.py',
                          'boat_world_field.py', 'boat_world_boundary.py', 'boat_geometry_template.py', 'canoe.py',
                          'incident_baseline_benchmark.py', 'cuda_operator.py', 'cuda_energy.cu', 'cuda_pair.cuh',
-                         'cuda_shape_gradient.py', 'cuda_shape.cu', 'cuda_dual.cuh', 'cuda_wide_dual.cuh')},
+                         'cuda_shape_gradient.py', 'cuda_panel_geometry.py', 'cuda_shape.cu', 'cuda_dual.cuh', 'cuda_wide_dual.cuh')},
         geometry_replay_verification=source.get('geometry_replay_verification', {}),
         cached_gradient_scope='Reused ONLY at its identical frozen geometry/physical state; not an operator refresh/cache policy.')
     output.parent.mkdir(parents=True, exist_ok=True)

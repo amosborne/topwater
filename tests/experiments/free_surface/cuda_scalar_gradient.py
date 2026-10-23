@@ -8,7 +8,8 @@ all curl/gradient geometry dependencies retain the existing owners.
 from pathlib import Path
 import numpy as np
 from .cuda_operator import cp
-from .cuda_shape_gradient import _geometry_jacobians,_source as _shape_source
+from .cuda_panel_geometry import geometry_jacobians
+from .cuda_shape_gradient import _source as _shape_source
 
 _source=_shape_source+'\n'+Path(__file__).with_name('cuda_scalar_shape.cu').read_text()
 _kernels={}
@@ -26,7 +27,7 @@ def vertex_gradient(points,faces,potential,*,assembly,density=1000.,order=3,batc
     if not np.isfinite(density) or density<=0 or batch_width not in (1,3):
         raise ValueError('positive finite density and derivative width one or three required')
     auxiliary=assembly.auxiliary(points,faces,phi,order=order)
-    geometry,weights,curl,curl_jac=_geometry_jacobians(points,faces,order=order)
+    geometry,weights,curl,curl_jac=geometry_jacobians(points,faces,order=order)
     nf,nv,nq=len(faces),len(points),len(weights)
     c=cp.asarray(np.einsum('fci,fc->fi',curl,phi[faces]))
     dc=cp.asarray(np.ascontiguousarray(np.einsum('fsci,fc->fsi',curl_jac,phi[faces])))

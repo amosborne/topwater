@@ -46,7 +46,7 @@ def run(audit, output, order=6, directional=False, vertex=False, vertex_batch_wi
             for name in ('boat_surface_action_audit.py', 'boat_contact_reaction.py', 'boat_geometry_template.py',
                          'boat_world_field.py', 'boat_parent_action.py', 'boat_world_boundary.py', 'canoe.py', 'incident_baseline_benchmark.py',
                          'cuda_operator.py', 'cuda_energy.cu', 'cuda_pair.cuh', 'cuda_directional.py',
-                         'cuda_directional.cu', 'cuda_dual.cuh', 'cuda_wide_dual.cuh', 'cuda_shape_gradient.py', 'cuda_shape.cu')},
+                         'cuda_directional.cu', 'cuda_dual.cuh', 'cuda_wide_dual.cuh', 'cuda_shape_gradient.py', 'cuda_panel_geometry.py', 'cuda_shape.cu')},
         directions=[], operations=[])
     saved, started = dict(state=state), perf_counter()
     output.parent.mkdir(parents=True, exist_ok=True)

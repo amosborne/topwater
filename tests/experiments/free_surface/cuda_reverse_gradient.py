@@ -7,9 +7,10 @@ chains feature adjoints through the existing exact geometry Jacobians.
 from pathlib import Path
 import numpy as np
 from .cuda_operator import cp
-from .cuda_shape_gradient import _geometry_jacobians,_source as _shape_source
+from .cuda_panel_geometry import geometry_jacobians
 
-_source=_shape_source+'\n'+Path(__file__).with_name('cuda_scalar_reverse.cu').read_text()
+_source='\n'.join(Path(__file__).with_name(name).read_text() for name in
+                  ('cuda_pair.cuh','cuda_scalar_reverse.cu'))
 _kernel=cp.RawKernel(_source,'reverse_vertex_gradient',options=('--std=c++11',))
 
 
@@ -24,7 +25,7 @@ def vertex_gradient(points,faces,potential,*,assembly,density=1000.,order=3):
     if not np.isfinite(density) or density<=0:
         raise ValueError('positive finite density required')
     auxiliary=assembly.auxiliary(points,faces,phi,order=order)
-    geometry,weights,curl,curl_jac=_geometry_jacobians(points,faces,order=order)
+    geometry,weights,curl,curl_jac=geometry_jacobians(points,faces,order=order)
     nf,nv,nq=len(faces),len(points),len(weights)
     c=cp.asarray(np.einsum('fci,fc->fi',curl,phi[faces]))
     dc=cp.asarray(np.ascontiguousarray(np.einsum('fsci,fc->fsi',curl_jac,phi[faces])))

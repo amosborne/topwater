@@ -5,7 +5,7 @@ sample and pullback owners are unchanged. Never allocate nf*nf*18 outputs.
 """
 import numpy as np
 from .cuda_operator import cp
-from .cuda_shape_gradient import _geometry_jacobians
+from .cuda_panel_geometry import geometry_jacobians
 from .cuda_scalar_gradient import _source as _forward_source
 from .cuda_reverse_gradient import _source as _reverse_source
 
@@ -26,7 +26,7 @@ def selected_pair_derivatives(points,faces,potential,pairs,*,assembly,density=10
             or not np.isfinite(density) or density<=0):
         raise ValueError('finite current nodal potential and positive density required')
     z=assembly.auxiliary(points,faces,phi,order=order)
-    geometry,weights,curl,curl_jac=_geometry_jacobians(points,faces,order=order)
+    geometry,weights,curl,curl_jac=geometry_jacobians(points,faces,order=order)
     nf,nv,nq=len(faces),len(points),len(weights)
     device_faces=cp.asarray(np.ascontiguousarray(faces,dtype=np.int64));device_phi=cp.asarray(phi)
     c=cp.asarray(np.einsum('fci,fc->fi',curl,phi[faces]))

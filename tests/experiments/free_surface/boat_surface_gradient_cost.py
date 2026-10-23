@@ -59,7 +59,7 @@ def run(reference, output):
             for name in ('boat_surface_gradient_cost.py', 'boat_contact_reaction.py', 'boat_world_field.py',
                          'boat_geometry_template.py', 'boat_world_boundary.py', 'canoe.py',
                          'incident_baseline_benchmark.py', 'cuda_operator.py', 'cuda_energy.cu',
-                         'cuda_shape_gradient.py', 'cuda_shape.cu', 'cuda_pair.cuh',
+                         'cuda_shape_gradient.py', 'cuda_panel_geometry.py', 'cuda_shape.cu', 'cuda_pair.cuh',
                          'cuda_dual.cuh', 'cuda_wide_dual.cuh')})
     started, saved = perf_counter(), {}
     output.parent.mkdir(parents=True, exist_ok=True)

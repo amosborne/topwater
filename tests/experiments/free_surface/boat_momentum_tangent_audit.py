@@ -61,7 +61,7 @@ def run(output,states=None,geometry=None,sample_indices=(0,2),order=3,analytic_i
     files=('boat_momentum_tangent.py','boat_momentum_tangent_audit.py','cuda_directional.py',
            'cuda_directional.cu','cuda_pair.cuh','boat_chart_tangent.py','boat_action_tangent.py',
            'boat_world_field.py','boat_geometry_template.py','boat_ale_pressure.py','body_pressure.py',
-           'incident_baseline_benchmark.py','boat_body_action.py','cuda_shape_gradient.py','cuda_shape.cu',
+           'incident_baseline_benchmark.py','boat_body_action.py','cuda_shape_gradient.py', 'cuda_panel_geometry.py','cuda_shape.cu',
            'cuda_dual.cuh','cuda_wide_dual.cuh','cuda_operator.py','cuda_energy.cu','boat_incident_tangent.py')
     report=dict(complete=False,qualified=False,scope='Exact-current directional field derivative; archived canonical states, no trajectory',
         states=str(states),geometry=str(geometry),states_sha256=sha256(states.read_bytes()).hexdigest(),

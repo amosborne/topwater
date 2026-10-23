@@ -72,7 +72,7 @@ def run(frozen_report,output,states=None,geometry=None,reverse=False,order=3,con
     points,faces=arrays['points'],arrays['faces']
     values=coefficients(sea_states.loads_realization(json.dumps(metadata['actual_sea_realization'])))
     folder=Path(__file__).parent
-    names=('cuda_pair.cuh','cuda_scalar_shape.cu','cuda_scalar_gradient.py','cuda_shape_gradient.py',
+    names=('cuda_pair.cuh','cuda_scalar_shape.cu','cuda_scalar_gradient.py','cuda_shape_gradient.py', 'cuda_panel_geometry.py',
         'cuda_shape.cu','cuda_dual.cuh','cuda_wide_dual.cuh','cuda_operator.py','cuda_energy.cu',
         'boat_scalar_gradient_audit.py','boat_action_tangent.py','boat_chart_tangent.py','boat_world_field.py',
         'incident_baseline_benchmark.py','cuda_reverse_gradient.py','cuda_scalar_reverse.cu','cuda_pair_gradient_probe.py')

@@ -62,7 +62,7 @@ def run(snapshot, output, order=12):
                       for p in (snapshot, snapshot.with_suffix('.npz'))},
         source_sha256={name: sha256((folder/name).read_bytes()).hexdigest() for name in
             ('boat_directional_action.py', 'cuda_directional.py', 'cuda_directional.cu',
-             'cuda_dual.cuh', 'cuda_pair.cuh', 'cuda_shape_gradient.py', 'cuda_shape.cu',
+             'cuda_dual.cuh', 'cuda_pair.cuh', 'cuda_shape_gradient.py', 'cuda_panel_geometry.py', 'cuda_shape.cu',
              'cuda_operator.py', 'boat_world_field.py', 'boat_geometry_template.py')})
     arrays = {}
     started = perf_counter()

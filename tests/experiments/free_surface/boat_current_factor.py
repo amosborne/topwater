@@ -35,7 +35,7 @@ def run(output):
     report = dict(complete=False, qualified=False,
         scope='Current flat-water boat field/shape kernel only; no nonlinear trajectory or world-basis force qualification',
         source_sha256={name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
-            for name in ('boat_current_factor.py', 'cuda_operator.py', 'cuda_shape_gradient.py',
+            for name in ('boat_current_factor.py', 'cuda_operator.py', 'cuda_shape_gradient.py', 'cuda_panel_geometry.py',
                          'cuda_shape.cu', 'cuda_dual.cuh', 'cuda_pair.cuh', 'cuda_energy.cu', 'canoe.py')},
         density=WATER_DENSITY, gravity=GRAVITY, timings=[])
     arrays = {}
