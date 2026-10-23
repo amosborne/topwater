@@ -52,7 +52,19 @@ def run(args, report):
     fine_triangles = subdivide(snapshot.triangles)
     fine_panels = TrianglePanels(fine_triangles, -1)
     np.testing.assert_allclose(fine_panels.areas, np.tile(old.areas/4, 4), rtol=1e-12, atol=1e-14)
-    np.testing.assert_allclose(fine_panels.normals, np.tile(old.normals, (4, 1)), rtol=1e-12, atol=1e-13)
+    parent_ids = np.tile(np.arange(len(old)), 4)
+    original_offset = snapshot.triangles-snapshot.triangles[:, :1]
+    parent_plane_defect = np.max(abs(np.einsum('tvi,ti->tv', original_offset, old.geometric_normals)), axis=1)
+    offset = fine_triangles-snapshot.triangles[parent_ids, :1]
+    plane_defect = abs(np.einsum('tvi,ti->tv', offset, old.geometric_normals[parent_ids]))
+    # Normalized cross products are ill-conditioned on skinny facets. Check
+    # the actual child positions against their original plane instead. The
+    # bound includes original plane arithmetic plus coordinate/midpoint/dot
+    # roundoff; it does not move a point or change the numerical hull.
+    plane_allowance = parent_plane_defect[parent_ids, None]+64*np.finfo(float).eps*np.sum(
+        abs(fine_triangles)+abs(snapshot.triangles[parent_ids, :1]), axis=2)
+    if np.any(plane_defect > plane_allowance):
+        raise ValueError('subdivided vertices leave the original parent planes')
     total_queries = 2*len(base)*len(patch.panels)
     total_queries += 2*len(base)*2*(len(old)+len(fine_panels))
     probe_bytes = 8*(2*len(base)*len(patch.nodes)+1024*len(patch.panels)+4096*len(fine_panels))
@@ -67,6 +79,9 @@ def run(args, report):
         probe_source_pair_bound=total_queries,
         probe_array_bytes_bound=probe_bytes,
         refinement_area_difference=float(fine_panels.areas.sum()-old.areas.sum()),
+        refinement_max_parent_plane_defect_m=float(plane_defect.max()),
+        refinement_max_plane_roundoff_allowance_m=float(plane_allowance.max()),
+        refinement_max_normal_difference=float(abs(fine_panels.normals-old.normals[parent_ids]).max()),
         refinement_first_moment_difference=((fine_panels.areas[:, None]*fine_panels.centroids).sum(axis=0)
             -(old.areas[:, None]*old.centroids).sum(axis=0)).tolist(),
         candidate_limits=['Only one body-density refinement; failure stops blind body refinement',
