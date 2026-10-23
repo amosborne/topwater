@@ -217,8 +217,9 @@ derivative mismatch to investigate. Then test the one fixed hybrid mask on
 both held-out sizes, with current phi/z and derivative of the same energy.
 
 Record whole fresh-reverse versus hybrid costs, including anchor build,
-retained bytes, exact-near work and amortization at the observed roughly 2.5
-RHS uses/chart. The earlier 0.7 s slope build can erase savings relative to the
+retained bytes, exact-near work and amortization at the observed roughly 2.2
+RHS evaluations per cold build (64/29; not a per-anchor lifetime guarantee).
+The earlier 0.7 s slope build can erase savings relative to the
 new 0.09 s whole-gradient component. Also record gradient/action errors: a tiny
 potential or field residual was previously compatible with 141 Nm load error.
 Stop if the mask leaves too much exact work for a meaningful gain, amortized
@@ -233,8 +234,8 @@ the reported component breakdown. Deleting the gradient alone would yield
 only about 1.11--1.15x overall speedup across that wall-time range. A cache must
 therefore earn its extra construction/maintenance cost against the NEW reverse
 baseline; the old 10/141 Nm rejected Taylor result is not an attractive speed
-baseline anymore. At roughly 2.5 RHS uses/chart, a bounded mask count and an
-honest warm-build amortization estimate should precede any cache implementation.
+baseline anymore. At 64/29 = 2.2 RHS evaluations per cold build, a bounded
+mask count and an honest warm-build amortization estimate should precede any cache implementation.
 The component breakdown does not price all possible E/directional-action
 savings, but it prevents interpreting a gradient-only gain as the remaining
 order-of-magnitude whole-solver improvement. Issue 30 owns subsequent status;
