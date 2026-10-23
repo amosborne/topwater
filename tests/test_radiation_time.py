@@ -48,7 +48,8 @@ def test_oblique_fourier_maps_match_analytic_subsurface_field(system):
     derivative = scale[:, None]*np.column_stack((-np.sin(argument), np.cos(argument)))
     expected_normal = (normals[:, :2]@k)[:, None]*derivative
     expected_normal += normals[:, 2, None]*np.linalg.norm(k)*value
-    p, n, _ = harmonic_maps(system.panels, system.size, system.spacing, system.origin)
+    p, n, _ = harmonic_maps(system.panels.centroids, system.panels.normals,
+                           system.size, system.spacing, system.origin)
     assert_allclose((p@spectrum).real, value, rtol=2e-12, atol=2e-13)
     assert_allclose((n@spectrum).real, expected_normal, rtol=2e-12, atol=2e-13)
 
@@ -62,7 +63,8 @@ def test_pressure_is_time_derivative_of_static_body_potential(system):
     rates, actual, _, _ = system.rhs(time, np.stack((eta, psi)), omega, ramp)
     psi_rate = -GRAVITY*eta-system.cp.asnumpy(system.sponge)[:, None]*psi
     assert_allclose(system.cp.asnumpy(rates[1]), psi_rate, atol=2e-17, rtol=2e-15)
-    p, n, _ = harmonic_maps(system.panels, system.size, system.spacing, system.origin)
+    p, n, _ = harmonic_maps(system.panels.centroids, system.panels.normals,
+                           system.size, system.spacing, system.origin)
     factor = lu_factor(source_matrix(system.panels))
     single = assemble_dirichlet_halfspace(system.panels).single_layer
     velocity = system.modes@system.cp.asnumpy(system.body_velocity)
@@ -87,7 +89,8 @@ def test_gpu_rhs_matches_independent_cpu_field_and_pressure(system):
     psi = np.column_stack((.03*np.sin(i*.013), .02*np.cos(i*.017)))
     time, omega, ramp = 7.3, 2*np.pi*.1, 20.
     actual = system.rhs(time, np.stack((eta, psi)), omega, ramp)
-    p, n, wave = harmonic_maps(system.panels, system.size, system.spacing, system.origin)
+    p, n, wave = harmonic_maps(system.panels.centroids, system.panels.normals,
+                              system.size, system.spacing, system.origin)
     factor = lu_factor(source_matrix(system.panels))
     single = assemble_dirichlet_halfspace(system.panels).single_layer
     velocity = system.modes@system.cp.asnumpy(system.body_velocity)

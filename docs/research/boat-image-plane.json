@@ -1,0 +1,574 @@
+{
+  "complete": true,
+  "qualified": false,
+  "branch": "experiment/graph-source-coupling",
+  "scope": "Static flat actual-hull precursor to nonlinear source/graph coupling. No moving geometry or time evolution.",
+  "equation": "R=S_body-S_image(h); Aeff=Jh-N FFT(R|plane);Seff=Sh-P FFT(R|plane); Aeff sigma=q;phi_body=Seff sigma. Full auxiliary trace is sampled under hull as well. Do not impose R=0 on a nonflat actualgraph.",
+  "body_panel_count": 68,
+  "zero_plane_added_mass": [
+    [
+      -139.2888617191571,
+      11.004213487288729
+    ],
+    [
+      -4.329362235680844,
+      -722.6183894689349
+    ],
+    [
+      9169.683368486894,
+      -6.439803906582093
+    ],
+    [
+      2.767905389158654,
+      1094.5413940157075
+    ],
+    [
+      -111.18377966093179,
+      316.59932561414547
+    ],
+    [
+      -53.14253430247533,
+      37.78914141582321
+    ]
+  ],
+  "capytaine_added_mass": [
+    [
+      -139.16968875901705,
+      10.976935667018893
+    ],
+    [
+      -4.393010736911506,
+      -722.6160757433286
+    ],
+    [
+      9169.464738398563,
+      -6.4569844363221875
+    ],
+    [
+      2.833670407182865,
+      1094.5345044587957
+    ],
+    [
+      -111.09069412719396,
+      316.58696665762693
+    ],
+    [
+      -53.08364901613248,
+      37.77190470606418
+    ]
+  ],
+  "cases": [
+    {
+      "report": "artifacts\\boat-image-plane-fixed-probes.json",
+      "sha256": "ba841630bbfe06f662a0e87e0377aa1bb8a4d390e4cbf141d21e76b9b3c2182d",
+      "producer_archive": "artifacts\\boat-image-plane-fixed-probes.source",
+      "device": "NVIDIA RTX 2000 Ada Generation Laptop GPU",
+      "cupy_version": "14.2.0",
+      "fixed_probe_distances_m": [
+        0.027432000000000005,
+        0.08229600000000001
+      ],
+      "total_seconds": 43.505378600006225,
+      "peak_process_rss_bytes": 3749199872,
+      "cupy_pool_reserved_bytes": 2392302080,
+      "memory_scope": "Process peak RSS; ending CUDA pool is not peak or total VRAM.",
+      "rows": [
+        {
+          "box_length_m": 64.0,
+          "grid_size": 129,
+          "spacing_m": 0.49612403100775193,
+          "image_plane_height_m": 0.6858000000000001,
+          "body_potential_relative_l2": [
+            0.060322594312478876,
+            0.10804149398974021
+          ],
+          "effective_single_relative_frobenius_error": 0.19741230007302316,
+          "effective_normal_relative_frobenius_error": 0.42895362418188693,
+          "offgrid_plane_trace_relative_to_body_peak": [
+            0.11688176036353004,
+            0.15756625810787794
+          ],
+          "mean_flux_closure_rectangle": [
+            -1.3792891754890846,
+            -0.021424052297765433
+          ],
+          "case_seconds": 0.6994540000159759,
+          "heave_added_mass": 9635.718431330233,
+          "roll_added_mass": 1209.5269246944156,
+          "heave_zero_plane_error": 466.0350628433389,
+          "roll_zero_plane_error": 114.98553067870807
+        },
+        {
+          "box_length_m": 64.0,
+          "grid_size": 129,
+          "spacing_m": 0.49612403100775193,
+          "image_plane_height_m": 1.3716000000000002,
+          "body_potential_relative_l2": [
+            0.060092767150433934,
+            0.10804183575308836
+          ],
+          "effective_single_relative_frobenius_error": 0.19741661417940692,
+          "effective_normal_relative_frobenius_error": 0.4289577434816262,
+          "offgrid_plane_trace_relative_to_body_peak": [
+            0.11685820320342676,
+            0.1575687253313334
+          ],
+          "mean_flux_closure_rectangle": [
+            -0.04035953804876158,
+            -0.020859217241186976
+          ],
+          "case_seconds": 0.4383899999957066,
+          "heave_added_mass": 9632.682438845657,
+          "roll_added_mass": 1209.5272098260227,
+          "heave_zero_plane_error": 462.99907035876276,
+          "roll_zero_plane_error": 114.98581581031522
+        },
+        {
+          "box_length_m": 64.0,
+          "grid_size": 257,
+          "spacing_m": 0.2490272373540856,
+          "image_plane_height_m": 0.6858000000000001,
+          "body_potential_relative_l2": [
+            0.056383312300921064,
+            0.09003863475438142
+          ],
+          "effective_single_relative_frobenius_error": 0.06673595076408678,
+          "effective_normal_relative_frobenius_error": 0.36320621122724944,
+          "offgrid_plane_trace_relative_to_body_peak": [
+            0.05440590700380058,
+            0.08046958883780421
+          ],
+          "mean_flux_closure_rectangle": [
+            -3.943567124204929,
+            -0.04085501313799517
+          ],
+          "case_seconds": 1.6727362000092398,
+          "heave_added_mass": 9664.880236181438,
+          "roll_added_mass": 1193.4962696291243,
+          "heave_zero_plane_error": 495.19686769454347,
+          "roll_zero_plane_error": 98.95487561341679
+        },
+        {
+          "box_length_m": 64.0,
+          "grid_size": 257,
+          "spacing_m": 0.2490272373540856,
+          "image_plane_height_m": 1.3716000000000002,
+          "body_potential_relative_l2": [
+            0.056080860475646636,
+            0.09003878905321275
+          ],
+          "effective_single_relative_frobenius_error": 0.06673564460504917,
+          "effective_normal_relative_frobenius_error": 0.36320715275912907,
+          "offgrid_plane_trace_relative_to_body_peak": [
+            0.05439121691034327,
+            0.08046981390739968
+          ],
+          "mean_flux_closure_rectangle": [
+            -2.4965092838842384,
+            -0.045832305964429845
+          ],
+          "case_seconds": 1.654638599982718,
+          "heave_added_mass": 9661.596983433477,
+          "roll_added_mass": 1193.4963555807585,
+          "heave_zero_plane_error": 491.91361494658304,
+          "roll_zero_plane_error": 98.95496156505101
+        },
+        {
+          "box_length_m": 64.0,
+          "grid_size": 513,
+          "spacing_m": 0.12475633528265107,
+          "image_plane_height_m": 0.6858000000000001,
+          "body_potential_relative_l2": [
+            0.015827457753149074,
+            0.023858027570853146
+          ],
+          "effective_single_relative_frobenius_error": 0.025475583718879775,
+          "effective_normal_relative_frobenius_error": 0.2427528148593315,
+          "offgrid_plane_trace_relative_to_body_peak": [
+            0.06396559969998383,
+            0.10861265690797442
+          ],
+          "mean_flux_closure_rectangle": [
+            3.6810693161752326,
+            0.004320765889431277
+          ],
+          "case_seconds": 6.924757100001443,
+          "heave_added_mass": 9040.53158809213,
+          "roll_added_mass": 1069.65133792136,
+          "heave_zero_plane_error": -129.1517803947645,
+          "roll_zero_plane_error": -24.89005609434753
+        },
+        {
+          "box_length_m": 64.0,
+          "grid_size": 513,
+          "spacing_m": 0.12475633528265107,
+          "image_plane_height_m": 1.3716000000000002,
+          "body_potential_relative_l2": [
+            0.016072774586803593,
+            0.023857622912589728
+          ],
+          "effective_single_relative_frobenius_error": 0.025475789734987805,
+          "effective_normal_relative_frobenius_error": 0.24275351403182996,
+          "offgrid_plane_trace_relative_to_body_peak": [
+            0.06394960229682657,
+            0.10861291884653641
+          ],
+          "mean_flux_closure_rectangle": [
+            5.021921747093087,
+            -0.0006325948215780555
+          ],
+          "case_seconds": 6.988086400000611,
+          "heave_added_mass": 9037.640471658739,
+          "roll_added_mass": 1069.6514256052214,
+          "heave_zero_plane_error": -132.0428968281558,
+          "roll_zero_plane_error": -24.889968410486063
+        },
+        {
+          "box_length_m": 128.0,
+          "grid_size": 257,
+          "spacing_m": 0.4980544747081712,
+          "image_plane_height_m": 0.6858000000000001,
+          "body_potential_relative_l2": [
+            0.061660462639522136,
+            0.10918462232978335
+          ],
+          "effective_single_relative_frobenius_error": 0.1978267604811694,
+          "effective_normal_relative_frobenius_error": 0.42909885850506696,
+          "offgrid_plane_trace_relative_to_body_peak": [
+            0.11659232344910232,
+            0.15479314951439543
+          ],
+          "mean_flux_closure_rectangle": [
+            -1.9280422514779954,
+            -0.029723537351375395
+          ],
+          "case_seconds": 1.9698971000034362,
+          "heave_added_mass": 9649.732501759012,
+          "roll_added_mass": 1210.7732258749686,
+          "heave_zero_plane_error": 480.0491332721176,
+          "roll_zero_plane_error": 116.23183185926109
+        },
+        {
+          "box_length_m": 128.0,
+          "grid_size": 257,
+          "spacing_m": 0.4980544747081712,
+          "image_plane_height_m": 1.3716000000000002,
+          "body_potential_relative_l2": [
+            0.06163094958279457,
+            0.10918499183996007
+          ],
+          "effective_single_relative_frobenius_error": 0.19783152479167343,
+          "effective_normal_relative_frobenius_error": 0.42910213359880284,
+          "offgrid_plane_trace_relative_to_body_peak": [
+            0.11659439936809007,
+            0.15479540190819624
+          ],
+          "mean_flux_closure_rectangle": [
+            -1.2544009723440102,
+            -0.029232523892004
+          ],
+          "case_seconds": 1.7746878000034485,
+          "heave_added_mass": 9649.340256201463,
+          "roll_added_mass": 1210.7735035328292,
+          "heave_zero_plane_error": 479.65688771456917,
+          "roll_zero_plane_error": 116.23210951712167
+        },
+        {
+          "box_length_m": 128.0,
+          "grid_size": 513,
+          "spacing_m": 0.24951267056530213,
+          "image_plane_height_m": 0.6858000000000001,
+          "body_potential_relative_l2": [
+            0.058610152875286994,
+            0.09272944026927746
+          ],
+          "effective_single_relative_frobenius_error": 0.06943223987407939,
+          "effective_normal_relative_frobenius_error": 0.3639243526887669,
+          "offgrid_plane_trace_relative_to_body_peak": [
+            0.048835439935320746,
+            0.07438126664323777
+          ],
+          "mean_flux_closure_rectangle": [
+            -5.226032229724755,
+            -0.023429447667168986
+          ],
+          "case_seconds": 6.792436499992618,
+          "heave_added_mass": 9686.602871683743,
+          "roll_added_mass": 1196.6279071053177,
+          "heave_zero_plane_error": 516.9195031968484,
+          "roll_zero_plane_error": 102.08651308961021
+        },
+        {
+          "box_length_m": 128.0,
+          "grid_size": 513,
+          "spacing_m": 0.24951267056530213,
+          "image_plane_height_m": 1.3716000000000002,
+          "body_potential_relative_l2": [
+            0.0585709561007577,
+            0.09272945170536198
+          ],
+          "effective_single_relative_frobenius_error": 0.06943219783431077,
+          "effective_normal_relative_frobenius_error": 0.363924471101657,
+          "offgrid_plane_trace_relative_to_body_peak": [
+            0.048833745748445845,
+            0.07438128640662249
+          ],
+          "mean_flux_closure_rectangle": [
+            -4.498436797309566,
+            -0.02597499221820062
+          ],
+          "case_seconds": 6.9962186999910045,
+          "heave_added_mass": 9686.180306774253,
+          "roll_added_mass": 1196.6279100130862,
+          "heave_zero_plane_error": 516.4969382873587,
+          "roll_zero_plane_error": 102.08651599737868
+        }
+      ]
+    },
+    {
+      "report": "artifacts\\boat-image-plane-fine.json",
+      "sha256": "64b6548c0a9fee28c674d9159cb9ffec57651bcc012e16fafb8ec01f4dc38d0c",
+      "producer_archive": "artifacts\\boat-image-plane-fine.source",
+      "device": "NVIDIA RTX 2000 Ada Generation Laptop GPU",
+      "cupy_version": "14.2.0",
+      "fixed_probe_distances_m": [
+        0.027432000000000005,
+        0.08229600000000001
+      ],
+      "total_seconds": 70.67975630000001,
+      "peak_process_rss_bytes": 8343777280,
+      "cupy_pool_reserved_bytes": 7438428672,
+      "memory_scope": "Process peak RSS; ending CUDA pool is not peak or total VRAM.",
+      "rows": [
+        {
+          "box_length_m": 64.0,
+          "grid_size": 1025,
+          "spacing_m": 0.0624390243902439,
+          "image_plane_height_m": 0.6858000000000001,
+          "body_potential_relative_l2": [
+            0.0021089845491708303,
+            0.004225930496802484
+          ],
+          "effective_single_relative_frobenius_error": 0.013086223168201737,
+          "effective_normal_relative_frobenius_error": 0.20951166926358186,
+          "offgrid_plane_trace_relative_to_body_peak": [
+            0.028715311104328425,
+            0.05207309357227253
+          ],
+          "mean_flux_closure_rectangle": [
+            1.3418521355475974,
+            0.012984949108061066
+          ],
+          "case_seconds": 29.648562999995193,
+          "heave_added_mass": 9173.19287222849,
+          "roll_added_mass": 1095.720755321779,
+          "heave_zero_plane_error": 3.509503741595836,
+          "roll_zero_plane_error": 1.1793613060715415
+        },
+        {
+          "box_length_m": 64.0,
+          "grid_size": 1025,
+          "spacing_m": 0.0624390243902439,
+          "image_plane_height_m": 1.3716000000000002,
+          "body_potential_relative_l2": [
+            0.002091447101841243,
+            0.004225010906210844
+          ],
+          "effective_single_relative_frobenius_error": 0.013086270717052154,
+          "effective_normal_relative_frobenius_error": 0.20951241853544567,
+          "offgrid_plane_trace_relative_to_body_peak": [
+            0.028707964104942623,
+            0.05207313701214695
+          ],
+          "mean_flux_closure_rectangle": [
+            2.711539508600275,
+            0.008265699752978075
+          ],
+          "case_seconds": 29.10568539999076,
+          "heave_added_mass": 9170.207136605113,
+          "roll_added_mass": 1095.7208364282167,
+          "heave_zero_plane_error": 0.523768118218868,
+          "roll_zero_plane_error": 1.179442412509161
+        }
+      ]
+    },
+    {
+      "report": "artifacts\\boat-image-plane-local-bound.json",
+      "sha256": "93625326dced156aa1cd5f42134189f0262080550a79271fb3ab54df84c3370b",
+      "producer_archive": "artifacts\\boat-image-plane-local-bound.source",
+      "device": "NVIDIA RTX 2000 Ada Generation Laptop GPU",
+      "cupy_version": "14.2.0",
+      "fixed_probe_distances_m": [
+        0.027432000000000005,
+        0.08229600000000001
+      ],
+      "total_seconds": 4.376694900012808,
+      "peak_process_rss_bytes": 716709888,
+      "cupy_pool_reserved_bytes": 117821952,
+      "memory_scope": "Process peak RSS; ending CUDA pool is not peak or total VRAM.",
+      "rows": [
+        {
+          "box_length_m": 64.0,
+          "grid_size": 129,
+          "spacing_m": 0.49612403100775193,
+          "image_plane_height_m": 1.182414166578383e-10,
+          "body_potential_relative_l2": [
+            2.084876470456887e-10,
+            3.75336867297925e-10
+          ],
+          "effective_single_relative_frobenius_error": 7.398228185741012e-10,
+          "effective_normal_relative_frobenius_error": 1.5232392930281406e-08,
+          "offgrid_plane_trace_relative_to_body_peak": [
+            1.761979551762114e-10,
+            2.791766209434647e-10
+          ],
+          "mean_flux_closure_rectangle": [
+            0.0971973215286841,
+            0.02266885339567274
+          ],
+          "case_seconds": 0.6657024000014644,
+          "heave_added_mass": 9169.68337018194,
+          "roll_added_mass": 1094.5413944068237,
+          "heave_zero_plane_error": 1.6950452845776454e-06,
+          "roll_zero_plane_error": 3.911161456926493e-07,
+          "plane_kind": "local graph bound",
+          "local_image_height_bound": {
+            "image_plane_height_m": 1.182414166578383e-10,
+            "source_maximum_height_m": 0.0,
+            "local_graph_node_maximum_m": 0.0,
+            "global_graph_node_maximum_m": 0.0,
+            "graph_upper_over_source_projection_m": 2.3648283331567654e-10,
+            "derivative_upper_bounds": [
+              0.0,
+              0.0
+            ],
+            "rounding_allowance_m": 2.3648283331567654e-10,
+            "source_rectangle_node_low_xy": [
+              58,
+              62
+            ],
+            "source_rectangle_node_high_xy": [
+              72,
+              67
+            ],
+            "minimum_image_graph_gap_bound_m": 5.169878828456423e-26,
+            "scope": "Analytic derivative bound for represented Fourier graph with explicit floating allowance; not interval arithmetic"
+          }
+        },
+        {
+          "box_length_m": 64.0,
+          "grid_size": 129,
+          "spacing_m": 0.49612403100775193,
+          "image_plane_height_m": 0.6858000000000001,
+          "body_potential_relative_l2": [
+            0.060322594312478876,
+            0.10804149398974021
+          ],
+          "effective_single_relative_frobenius_error": 0.19741230007302316,
+          "effective_normal_relative_frobenius_error": 0.42895362418188693,
+          "offgrid_plane_trace_relative_to_body_peak": [
+            0.11688176036353004,
+            0.15756625810787794
+          ],
+          "mean_flux_closure_rectangle": [
+            -1.3792891754890846,
+            -0.021424052297765433
+          ],
+          "case_seconds": 0.49135739999474026,
+          "heave_added_mass": 9635.718431330233,
+          "roll_added_mass": 1209.5269246944156,
+          "heave_zero_plane_error": 466.0350628433389,
+          "roll_zero_plane_error": 114.98553067870807,
+          "plane_kind": "quarter beam",
+          "local_image_height_bound": {
+            "image_plane_height_m": 1.182414166578383e-10,
+            "source_maximum_height_m": 0.0,
+            "local_graph_node_maximum_m": 0.0,
+            "global_graph_node_maximum_m": 0.0,
+            "graph_upper_over_source_projection_m": 2.3648283331567654e-10,
+            "derivative_upper_bounds": [
+              0.0,
+              0.0
+            ],
+            "rounding_allowance_m": 2.3648283331567654e-10,
+            "source_rectangle_node_low_xy": [
+              58,
+              62
+            ],
+            "source_rectangle_node_high_xy": [
+              72,
+              67
+            ],
+            "minimum_image_graph_gap_bound_m": 5.169878828456423e-26,
+            "scope": "Analytic derivative bound for represented Fourier graph with explicit floating allowance; not interval arithmetic"
+          }
+        },
+        {
+          "box_length_m": 64.0,
+          "grid_size": 129,
+          "spacing_m": 0.49612403100775193,
+          "image_plane_height_m": 1.3716000000000002,
+          "body_potential_relative_l2": [
+            0.060092767150433934,
+            0.10804183575308836
+          ],
+          "effective_single_relative_frobenius_error": 0.19741661417940692,
+          "effective_normal_relative_frobenius_error": 0.4289577434816262,
+          "offgrid_plane_trace_relative_to_body_peak": [
+            0.11685820320342676,
+            0.1575687253313334
+          ],
+          "mean_flux_closure_rectangle": [
+            -0.04035953804876158,
+            -0.020859217241186976
+          ],
+          "case_seconds": 0.44522210001014173,
+          "heave_added_mass": 9632.682438845657,
+          "roll_added_mass": 1209.5272098260227,
+          "heave_zero_plane_error": 462.99907035876276,
+          "roll_zero_plane_error": 114.98581581031522,
+          "plane_kind": "half beam",
+          "local_image_height_bound": {
+            "image_plane_height_m": 1.182414166578383e-10,
+            "source_maximum_height_m": 0.0,
+            "local_graph_node_maximum_m": 0.0,
+            "global_graph_node_maximum_m": 0.0,
+            "graph_upper_over_source_projection_m": 2.3648283331567654e-10,
+            "derivative_upper_bounds": [
+              0.0,
+              0.0
+            ],
+            "rounding_allowance_m": 2.3648283331567654e-10,
+            "source_rectangle_node_low_xy": [
+              58,
+              62
+            ],
+            "source_rectangle_node_high_xy": [
+              72,
+              67
+            ],
+            "minimum_image_graph_gap_bound_m": 5.169878828456423e-26,
+            "scope": "Analytic derivative bound for represented Fourier graph with explicit floating allowance; not interval arithmetic"
+          }
+        }
+      ]
+    }
+  ],
+  "verification": "Existing4GPUFourier/RHS controls passed3.69s after genericpoint-map interface;2 independent paired-source quadrature/chain-rule checks and2 local-image-bound checks passed0.86s. No duplicate backend or compatibility wrapper.",
+  "review": "Independent source reviewer approved shifted-source signs, effectiveS/J equations, full auxiliary trace, mean trace retention, ownership and local Fourier derivative-bound mathematics. Floating allowance is not an interval proof; image admissibility does not certify wet cutting or HOS continuation.",
+  "conclusions": [
+    "Moving elevated imageplanes hardly changes rollload, yet both can share substantial Fourierlift error. Image-plane agreement alone is insufficient.",
+    "At64m/129grid,elevatedplanes give rollA1209.53 vs zero-plane1094.54. Fine64m/1025 gives1095.72(~0.108%high), but the full normalmatrix defect remains~21% and fixed physical near-rim trace residual~5.2%of bodypotentialpeak. Do not qualify the operator from selected inertia diagonals.",
+    "The local admissibility condition is2h-Pz>=eta_aux(Pxy) for every sourcepoint, INCLUDING the auxiliarygraph extensioninsidehull. A faraway crestdoesnot constrain an image at anotherXY. The initial globalmaximum requirement was self-imposed and unnecessarilystrong.",
+    "A local-node maximum plus Fourierderivative bounds covers the sourceprojection; rounding allowance is explicit and not interval arithmetic. Flat localboundh~1.18e-10m recovers directzeroplanemaps/loads at coarse129grid through the SAMEformula, with~1.7e-6kg heave/~3.9e-7kgm2 roll difference and~3e-10relative offgridtrace.",
+    "Fine staticcontrol uses8.34GBpeakprocessRSS/7.44GBendingCUDApool. This is NOT a nonlinearperformance result. Explicit case-owned spectrum lifetimes prevent retaining two full spectra; no measured speedup claimed.",
+    "Rectanglefluxdiagnostic mixes nearcontact sampling and finite-tail/domainerror. It is not certified conservation; pair netcharge cancellation alone doesnot establish the complete nonlinear mean-flow treatment."
+  ],
+  "next": "Known harmonic-image-field HOS continuation on nonflat actualhull targets, varying spatialresolution/order separately, before building the complete coupled moving solver. MappedfullgraphFEM remains an alternative if HOS continuation fails.",
+  "limits": [
+    "Flat gate does not establish nonlinearHOS accuracy, energy/work ownership or60s motionaccuracy",
+    "Imagepositionsmust be checked against the represented auxiliarygraph, not only P1nodes when the operator usesFourierinterpolation",
+    "Pressure derivatives should share one admissible imageplane across perturbedstates where possible; nonsmoothmaxupdates can introduce numericalnoise",
+    "Initialpilot used grid-scaled probes and is retained only in artifacts; fixed-probe reports own the convergence evidence"
+  ]
+}

@@ -35,15 +35,15 @@ def drive(time, omega, ramp_seconds):
     return ramp*np.cos(omega*time), rate*np.cos(omega*time)-omega*ramp*np.sin(omega*time)
 
 
-def harmonic_maps(panels, size, spacing, origin):
+def harmonic_maps(points, normals, size, spacing, origin):
     kx, ky = np.meshgrid(2*np.pi*np.fft.fftfreq(size, d=spacing),
                          2*np.pi*np.fft.fftfreq(size, d=spacing))
     wave = np.hypot(kx, ky)
-    phase = ((panels.centroids[:, 0]-origin[0])[:, None]*kx.ravel()
-             +(panels.centroids[:, 1]-origin[1])[:, None]*ky.ravel())
-    potential = np.exp(1j*phase+panels.centroids[:, 2, None]*wave.ravel())/(size*size)
-    normal = potential*(1j*panels.normals[:, 0, None]*kx.ravel()
-        +1j*panels.normals[:, 1, None]*ky.ravel()+panels.normals[:, 2, None]*wave.ravel())
+    phase = ((points[:, 0]-origin[0])[:, None]*kx.ravel()
+             +(points[:, 1]-origin[1])[:, None]*ky.ravel())
+    potential = np.exp(1j*phase+points[:, 2, None]*wave.ravel())/(size*size)
+    normal = potential*(1j*normals[:, 0, None]*kx.ravel()
+        +1j*normals[:, 1, None]*ky.ravel()+normals[:, 2, None]*wave.ravel())
     return potential, normal, wave
 
 
@@ -93,7 +93,8 @@ class Radiation:
                     rhs[row, boundary_lookup[neighbor]] += 1
         self.fill_weights = np.linalg.solve(matrix, rhs)
         self.fill_boundary = np.array(boundary)
-        potential, self.normal_map, self.wave = harmonic_maps(panels, size, self.spacing, origin)
+        potential, self.normal_map, self.wave = harmonic_maps(panels.centroids, panels.normals,
+                                                            size, self.spacing, origin)
         single = assemble_dirichlet_halfspace(panels).single_layer
         self.factor = lu_factor(source_matrix(panels))
         weighted_modes = panels.areas[:, None]*self.modes
