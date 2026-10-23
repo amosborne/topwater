@@ -194,9 +194,9 @@ if __name__ == '__main__':
     parser.add_argument('--maximum-pairs', type=int, default=500_000_000)
     parser.add_argument('--maximum-bytes', type=int, default=512*1024**2)
     args = parser.parse_args()
-    if (args.output.exists() or args.output.with_suffix('.source').exists() or args.orders != [2, 4, 8]
+    if (args.output.exists() or args.output.with_suffix('.source').exists() or tuple(args.orders) not in ((2, 4, 8), (16,))
             or min(args.maximum_pairs, args.maximum_bytes) <= 0):
-        parser.error('fresh archive, q2/4/8 and positive bounds required')
+        parser.error('fresh archive, explicit q2/4/8 or body-only q16, and positive bounds required')
     archive = args.output.with_suffix('.source')
     archive.mkdir(parents=True)
     hashes = {}
