@@ -1,6 +1,6 @@
 """Fixed flat physical-exterior weak DtN, bounded CPU reference operator.
 
-Subtract hidden-area gradient work and retain the waterline term. No hidden
+Evaluate contact rows by exterior-area work plus the waterline term. No hidden
 physical mass, source remeshing, diagonal/row repair or symmetrization.
 """
 from time import perf_counter
@@ -14,7 +14,7 @@ from .plane_single_layer import plane_single_layer
 
 
 class PhysicalWeakFlux:
-    """Full-plane FFT action plus physical contact-row correction only.
+    """Full-plane FFT action with directly integrated physical contact rows.
 
     ``kernel_owner`` is the caller's precomputed full-plane WeakPatch.
     Its interior dimensions/spacings must match patch.
@@ -72,8 +72,8 @@ class PhysicalWeakFlux:
         interior_position = np.full(len(patch.nodes), -1, dtype=int)
         interior_position[patch.interior_nodes] = np.arange(count)
         self._active_interior = interior_position[patch.active_nodes]
-        correction_x = np.zeros((len(affected), len(patch.panels)))
-        correction_y = np.zeros_like(correction_x)
+        contact_x = np.zeros((len(affected), len(patch.panels)))
+        contact_y = np.zeros_like(contact_x)
         active_to_affected = np.full(active_count, -1, dtype=int)
         active_to_affected[affected] = np.arange(len(affected))
         triangle = patch.panels.triangles[:, :, :2]
@@ -95,24 +95,24 @@ class PhysicalWeakFlux:
                 scalar_counts[name]+=diagnostics[name]
             return values
 
-        # Hidden area: integrate original target-basis gradients, retaining
-        # every positive piece with a nonzero active test gradient.
-        area_pairs = 0
-        for cut_id, parent in enumerate(patch.hidden_parent_id):
+        # Direct physical area: no full-hat minus hidden-area cancellation.
+        # Retain every positive piece supporting any affected test gradient.
+        for cut_id, parent in enumerate(patch.parent_id):
             active = full_to_active[patch.faces[parent]]
             local = np.flatnonzero(active >= 0)
+            local = local[active_to_affected[active[local]] >= 0]
             if not len(local):
                 continue
-            tri = np.column_stack((patch.hidden_triangles[cut_id], np.zeros(3)))
+            tri = np.column_stack((patch.cut_triangles[cut_id], np.zeros(3)))
             points, weights = triangle_samples(tri[None], order)
             integrated = np.zeros(len(patch.panels))
             for first in range(0, len(weights), 64):
                 p = points[0, first:first+64, :2]
-                integrated += patch.hidden_areas[cut_id]*weights[first:first+64] @ single(p)
+                integrated += patch.cut_areas[cut_id]*weights[first:first+64] @ single(p)
             for vertex in local:
                 row = active_to_affected[active[vertex]]
-                correction_x[row] += 2*gradient[parent, 0, vertex]*integrated
-                correction_y[row] += 2*gradient[parent, 1, vertex]*integrated
+                contact_x[row] += 2*gradient[parent, 0, vertex]*integrated
+                contact_y[row] += 2*gradient[parent, 1, vertex]*integrated
         area_pairs = pairs
         # Keep original parent provenance for the test function. Scalar S
         # itself is defined at every common-plane query, including boundaries.
@@ -137,32 +137,32 @@ class PhysicalWeakFlux:
                     raise ValueError('waterline original-parent provenance differs')
                 value = (1-t)*nodal[0]+t*nodal[1]
                 integrated = (np.linalg.norm(segment[1]-segment[0])*weights*value) @ single(point)
-                correction_x[affected_id] -= 2*normal[0]*integrated
-                correction_y[affected_id] -= 2*normal[1]*integrated
+                contact_x[affected_id] += 2*normal[0]*integrated
+                contact_y[affected_id] += 2*normal[1]*integrated
         source_rows = np.repeat(np.arange(len(triangle)), 3)
         source_cols = patch.faces.ravel()
         gx = sparse.coo_matrix((gradient[:, 0].ravel(), (source_rows, source_cols)),
                                shape=(len(triangle), len(patch.nodes))).tocsr()
         gy = sparse.coo_matrix((gradient[:, 1].ravel(), (source_rows, source_cols)), shape=gx.shape).tocsr()
-        correction = (gx.T @ correction_x.T+gy.T @ correction_y.T).T
-        del correction_x, correction_y, gx, gy
-        self.correction = np.ascontiguousarray((patch.E.T @ correction.T).T)
-        del correction
-        if not np.isfinite(self.correction).all():
-            raise ValueError('nonfinite physical weak correction')
+        contact = (gx.T @ contact_x.T+gy.T @ contact_y.T).T
+        del contact_x, contact_y, gx, gy
+        self.contact_rows = np.ascontiguousarray((patch.E.T @ contact.T).T)
+        del contact
+        if not np.isfinite(self.contact_rows).all():
+            raise ValueError('nonfinite physical weak contact rows')
         self.affected_rows = affected
         self.shape = (active_count, active_count)
-        for array in (self.correction, self.affected_rows, self._active_interior):
+        for array in (self.contact_rows, self.affected_rows, self._active_interior):
             array.setflags(write=False)
-        retained = self.correction.nbytes+self.affected_rows.nbytes+self._active_interior.nbytes
+        retained = self.contact_rows.nbytes+self.affected_rows.nbytes+self._active_interior.nbytes
         self.diagnostics = dict(assembly_seconds=perf_counter()-started,
             active_nodes=active_count, covered_nodes=len(patch.covered_nodes),
-            corrected_rows=len(affected), source_pairs=pairs, hidden_area_pairs=area_pairs,
+            contact_rows=len(affected), source_pairs=pairs, physical_area_pairs=area_pairs,
             waterline_pairs=pairs-area_pairs, retained_operator_bytes=retained,
             constructor_array_bound_bytes=estimated_peak, order=order,
             scalar_source_diagnostics=scalar_counts,
-            storage_scope='Owned correction/row maps; excludes caller-owned patch/kernel, FFT workspace and apply scratch',
-            scope='Fixed flat physical weak loads; FFT full-plane rows minus contact correction, no left E transpose')
+            storage_scope='Owned contact rows/maps; excludes caller-owned patch/kernel, FFT workspace and apply scratch',
+            scope='Fixed flat physical weak loads; direct exterior contact rows replace FFT outputs, no left E transpose')
 
     def apply(self, active_coefficients):
         values = np.asarray(active_coefficients)
@@ -186,5 +186,5 @@ class PhysicalWeakFlux:
             raise FloatingPointError('full-plane weak action returned invalid loads')
         weak = weak.reshape(-1, cases)
         result = weak[self._active_interior].copy()
-        result[self.affected_rows] -= self.correction @ values
+        result[self.affected_rows] = self.contact_rows @ values
         return result[:, 0] if vector else result

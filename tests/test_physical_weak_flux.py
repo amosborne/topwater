@@ -93,7 +93,7 @@ def test_physical_rows_against_independent_exterior_work_and_scaling():
     assert_allclose(operator.apply(np.column_stack((coefficients, -2*coefficients))),
                     np.column_stack((operator.apply(coefficients), -2*operator.apply(coefficients))), atol=3e-16)
     assert operator.diagnostics['source_pairs'] > 0
-    assert not operator.correction.flags.writeable
+    assert not operator.contact_rows.flags.writeable
     assert not operator.affected_rows.flags.writeable
     assert not hasattr(operator, 'matrix')
 
@@ -132,9 +132,28 @@ def test_hidden_trial_fill_without_hidden_target_rows_matches_dense_control():
     operator = PhysicalWeakFlux(patch, footprint, owner, order=4)
     active = np.searchsorted(patch.interior_nodes, patch.active_nodes)
     E = patch.E[patch.interior_nodes].toarray()
-    old_dense = owner.matrix[active] @ E
-    old_dense[operator.affected_rows] -= operator.correction
+    independent_dense = owner.matrix[active] @ E
+    independent_dense[operator.affected_rows] = operator.contact_rows
     coefficients = np.linspace(-.7, .8, len(patch.active_nodes))
-    assert_allclose(operator.apply(coefficients), old_dense @ coefficients, atol=3e-15, rtol=3e-14)
+    assert_allclose(operator.apply(coefficients), independent_dense @ coefficients, atol=3e-15, rtol=3e-14)
     assert operator.shape == (len(coefficients), len(coefficients))
-    assert operator.correction.shape == (len(operator.affected_rows), len(coefficients))
+    assert operator.contact_rows.shape == (len(operator.affected_rows), len(coefficients))
+
+
+def test_nearly_covered_positive_row_uses_physical_work_without_fullhat_subtraction():
+    hx, hy = .3, .23
+    x, y = np.array([-hx, 0, hx]), np.array([-hy, 0, hy])
+    footprint = box(-hx+.003, -2, 2, 2)
+    patch = PhysicalP1Patch(x, y, footprint)
+    assert len(patch.active_nodes) == 1
+    assert 0 < patch.physical_node_moments[4] < hx*hy*1e-4
+    # Deliberately corrupt the full-hat entry: contact rows must REPLACE it,
+    # not subtract two large values at application time. Exterior work alone
+    # owns this row, so even a huge base must have no effect on its result.
+    owner = DenseReferenceOwner(np.array([[1e12]]), (1, 1), (hx, hy))
+    operator = PhysicalWeakFlux(patch, footprint, owner, order=8)
+    field = PlaneP1Field(x, y, patch.expand(np.ones(1)).reshape(3, 3, 1))
+    expected = exterior_row(field, [0, 0], hx, hy, footprint, 16)
+    assert_allclose(operator.apply(np.ones(1)), [expected], atol=1e-9, rtol=1e-2)
+    assert_array = operator.apply(np.array([[1., -2.]]))
+    assert_allclose(assert_array, np.array([[expected, -2*expected]]), atol=2e-9, rtol=1e-2)
