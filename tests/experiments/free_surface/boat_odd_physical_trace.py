@@ -14,10 +14,9 @@ from scipy.linalg import lu_factor, lu_solve
 from scipy.sparse.linalg import LinearOperator, eigs, ArpackNoConvergence
 from topwater.constants import GRAVITY, WATER_DENSITY
 from topwater.rankine import TrianglePanels
-from tests.laplace_reference import triangle_samples
 from .boat_spatial_work import source_matrix
-from .panel_gradient_reference import checked_influence
 from .regularized_snapshot import RegularizedSnapshot, owned
+from .odd_body_reference import source_flux, harmonic_field, source_field
 
 
 def checkpoint(args, report, saved):
@@ -68,13 +67,9 @@ def run(args, report):
     # SAME physical old Gauss4 points and h/h2 offsets as the even-source test.
     for fraction in (1., .5):
         target = base-fraction*offsets[:, None]*normals
-        value, normal = snapshot.body_field(snapshot.triangles, psi, sigma, target, normals)
-        for first in range(0, len(target), 128):
-            last = min(first+128, len(target))
-            image = checked_influence(target[first:last]*[1., 1., -1.], panels)
-            value[first:last] -= 2*image.single_layer@sigma
-            normal[first:last] -= 2*np.einsum('mni,mi->mn', image.gradient_single_layer,
-                normals[first:last]*[1., 1., -1.])@sigma
+        hp, hn = harmonic_field(patch, psi, target, normals)
+        sp, sn = source_field(panels, sigma, target, normals)
+        value, normal = hp+sp, hn+sn
         record = dict(offset_factor=fraction, normal_rms=float(np.sqrt(weights@abs(normal)**2/weights.sum())),
             normal_max=float(abs(normal).max()), potential_rms=float(np.sqrt(weights@abs(value)**2/weights.sum())),
             green_body_work_J=float(WATER_DENSITY*np.real(weights@(np.conj(value)*normal))))
@@ -84,33 +79,12 @@ def run(args, report):
         print(json.dumps(record), flush=True)
     previous_load = previous_F = None
     for order in args.orders:
-        started = perf_counter()
-        F = np.zeros((len(patch.nodes), nb))
-        bary, qweights = triangle_samples(np.eye(3)[None], order)
-        bary = bary[0]
-        pairs = 0
-        for first in range(0, len(patch.cut_triangles), 16):
-            last = min(first+16, len(patch.cut_triangles))
-            xy = np.einsum('qj,tji->tqi', bary, patch.cut_triangles[first:last])
-            basis = np.einsum('qj,tji->tqi', bary, patch.basis_values[first:last])
-            w = (patch.cut_areas[first:last, None, None]*qweights[None, :, None]*basis).reshape(-1, 3)
-            points = np.column_stack((xy.reshape(-1, 2), np.zeros(len(xy)*len(qweights))))
-            nodes = np.repeat(patch.faces[patch.parent_id[first:last]], len(qweights), axis=0)
-            for start in range(0, len(points), 128):
-                stop = min(start+128, len(points))
-                pairs += (stop-start)*nb
-                if pairs > args.maximum_pairs:
-                    raise RuntimeError('odd F source-pair budget exhausted')
-                # Preserve source/body gradient edge/vertex guards. The scalar
-                # common-plane edge helper does NOT legalize these queries.
-                flux = 2*checked_influence(points[start:stop], panels).gradient_single_layer[:, :, 2]
-                for local in range(3):
-                    np.add.at(F, nodes[start:stop, local], w[start:stop, local, None]*flux)
-        F = F[patch.active_nodes]
+        F, flux_diagnostics = source_flux(patch, panels, order,
+            maximum_pairs=args.maximum_pairs, maximum_bytes=args.maximum_bytes)
         load = snapshot.flux(psi)+F@sigma
         rate = snapshot.mass_solve(load)
         rayleigh = np.vdot(psi, load)/np.vdot(psi, mass@psi)
-        row = dict(order=order, source_pairs=pairs, assembly_seconds=perf_counter()-started,
+        row = dict(order=order, **flux_diagnostics,
             effective_rayleigh_real=float(rayleigh.real), effective_rayleigh_imag=float(rayleigh.imag),
             frozen_state_rate_mass_norm=float(np.sqrt(np.vdot(rate, mass@rate).real/float(mass.sum()))),
             spectrum=dict(status='not started'))
