@@ -1,0 +1,799 @@
+{
+  "qualified": false,
+  "scope": "Static nonflat matrix-free GPU body/graph coupling. No moving sixDOF, time-pressure or minute accuracy qualification.",
+  "decision": "Keep as experiment. Algebraic convergence and near-plane Capytaine agreement are encouraging; manufactured-field/body/cross-coupling convergence remains incomplete.",
+  "findings": [
+    "Independent point dipoles stress coarse P0 body data: sampled exact Neumann flux can have wrong sign. Body refinement decreases field errors, but no production panel count follows from this artificial fixture.",
+    "Graph refinement also changes certified image height; do not attribute differences solely to grid spacing.",
+    "Infinite tangent plane differs from the smoothly tapered graph away from the hull. Capytaine comparison is a nearby physical control, not identical nonflat BC validation.",
+    "Pure vertex/face renumbering changes rigid load columns by at most7.28e-12 in reported SI units. Retriangulation changes diagonal heave/roll by6.72kg/0.243kgm2 but cross-moments by up to323.62kgm2: no mesh convergence claim.",
+    "Distinct6.5m/2000kg convex box runs unchanged through input data only.",
+    "N513 setup dominated by CPU harmonic lift maps9.90s and source traces7.02s; complete static job25.69s includes verification. Next bounded performance experiment: construct identical lift maps directly on GPU.",
+    "20 focused CPU/GPU checks passed6.65s; source adversarial review approved equations and reference-frame contractions."
+  ],
+  "reports": [
+    {
+      "report": "artifacts\\boat-graph-bvp-first.json",
+      "report_sha256": "2f5f92f9ccf1028c3fec3737e0c10c1a9bd0178ce25ec1b9435f9ee72bb96993",
+      "source_archive": "artifacts\\boat-graph-bvp-first.source",
+      "archive_hashes_verified": true,
+      "complete": true,
+      "body_panels": 84,
+      "grid_size": 65,
+      "box_length_m": 64.0,
+      "image_height_m": 0.5359463222492725,
+      "reference_height_m": 0.3672438906483191,
+      "total_seconds": 4.554180399980396,
+      "setup": {
+        "geometry_and_fields_seconds": 0.7994721999857575,
+        "source_operators_seconds": 1.8239407999790274,
+        "lift_map_seconds": 0.6706511999946088,
+        "source_trace_seconds": 0.1061428000102751,
+        "context_seconds": 2.600789399992209
+      },
+      "peak_process_rss_bytes": 697036800,
+      "cupy_pool_reserved_bytes": 53039104,
+      "manufactured_body_potential_relative_l2": [
+        2.331471177976984,
+        0.434276672571545
+      ],
+      "rigid_modes": [
+        {
+          "name": "unit heave",
+          "gmres_iterations": 8,
+          "operator_applications": 11,
+          "true_relative_residual": 5.7727038314647336e-11,
+          "solve_seconds": 0.0644451999978628,
+          "instantaneous_added_mass_column": [
+            -454.64680274277185,
+            191.57413695158982,
+            12954.720408243118,
+            -177.55186284058487,
+            -2389.833539458373,
+            -45.77003357039111
+          ]
+        },
+        {
+          "name": "unit world-x rotation",
+          "gmres_iterations": 7,
+          "operator_applications": 9,
+          "true_relative_residual": 7.375776017323372e-10,
+          "solve_seconds": 0.05775489998632111,
+          "instantaneous_added_mass_column": [
+            25.985463081167815,
+            -1790.5505804489221,
+            -185.4124821410632,
+            2104.3897969988793,
+            387.2356315032424,
+            -92.50048937603637
+          ]
+        }
+      ]
+    },
+    {
+      "report": "artifacts\\boat-graph-bvp-grid257.json",
+      "report_sha256": "3fc12af9a340e5bb8da84d2dc6ce9800d0463b32be1873521b0d1112851b6899",
+      "source_archive": "artifacts\\boat-graph-bvp-grid257.source",
+      "archive_hashes_verified": true,
+      "complete": true,
+      "body_panels": 84,
+      "grid_size": 257,
+      "box_length_m": 64.0,
+      "image_height_m": 0.4115734535751135,
+      "reference_height_m": 0.3672438906483191,
+      "total_seconds": 8.204051700013224,
+      "setup": {
+        "geometry_and_fields_seconds": 0.8106324999826029,
+        "source_operators_seconds": 1.7961467999848537,
+        "lift_map_seconds": 2.935857100004796,
+        "source_trace_seconds": 1.7752452999993693,
+        "context_seconds": 6.50734349997947
+      },
+      "peak_process_rss_bytes": 2425212928,
+      "cupy_pool_reserved_bytes": 821674496,
+      "manufactured_body_potential_relative_l2": [
+        2.8426042563842437,
+        0.40240444746923404
+      ],
+      "rigid_modes": [
+        {
+          "name": "unit heave",
+          "gmres_iterations": 7,
+          "operator_applications": 9,
+          "true_relative_residual": 3.8108640557391304e-10,
+          "solve_seconds": 0.14924060000339523,
+          "instantaneous_added_mass_column": [
+            -447.57936789374395,
+            195.6122057548207,
+            12967.159286793298,
+            -178.69712259385977,
+            -2496.6063471798857,
+            -46.43835888853094
+          ]
+        },
+        {
+          "name": "unit world-x rotation",
+          "gmres_iterations": 7,
+          "operator_applications": 9,
+          "true_relative_residual": 2.58195110177698e-10,
+          "solve_seconds": 0.14981979998992756,
+          "instantaneous_added_mass_column": [
+            27.658952115866942,
+            -1743.3330110322652,
+            -191.52030998561077,
+            2073.40687427844,
+            394.394479244324,
+            -107.26317574720146
+          ]
+        }
+      ]
+    },
+    {
+      "report": "artifacts\\boat-graph-bvp-body336.json",
+      "report_sha256": "f42afdde80af63e3b40d9df3eacdfd88f94a5313cd0c6fb65c4282e3b9b5b469",
+      "source_archive": "artifacts\\boat-graph-bvp-body336.source",
+      "archive_hashes_verified": true,
+      "complete": true,
+      "body_panels": 336,
+      "grid_size": 257,
+      "box_length_m": 64.0,
+      "image_height_m": 0.4115734535751135,
+      "reference_height_m": 0.3672438906483191,
+      "total_seconds": 24.784215100022266,
+      "setup": {
+        "geometry_and_fields_seconds": 0.8388608999957796,
+        "source_operators_seconds": 2.1293463000038173,
+        "lift_map_seconds": 11.802378100022906,
+        "source_trace_seconds": 7.545730000012554,
+        "context_seconds": 21.47759669998777
+      },
+      "peak_process_rss_bytes": 8254201856,
+      "cupy_pool_reserved_bytes": 3095296512,
+      "manufactured_body_potential_relative_l2": [
+        0.5870803388869459,
+        0.23135431368711729
+      ],
+      "rigid_modes": [
+        {
+          "name": "unit heave",
+          "gmres_iterations": 9,
+          "operator_applications": 11,
+          "true_relative_residual": 1.1764661496284451e-10,
+          "solve_seconds": 0.4602498000022024,
+          "instantaneous_added_mass_column": [
+            -428.9934745765955,
+            186.47714834656557,
+            12174.719986510421,
+            -161.48568197815322,
+            -2602.160897004728,
+            21.558177679018144
+          ]
+        },
+        {
+          "name": "unit world-x rotation",
+          "gmres_iterations": 8,
+          "operator_applications": 10,
+          "true_relative_residual": 6.887033221250249e-10,
+          "solve_seconds": 0.4258247000107076,
+          "instantaneous_added_mass_column": [
+            14.060440462964953,
+            -1683.5055693308043,
+            -165.82507454278831,
+            2018.3016107371454,
+            129.07052401439174,
+            -124.60265764140787
+          ]
+        }
+      ]
+    },
+    {
+      "report": "artifacts\\boat-graph-bvp-body1344.json",
+      "report_sha256": "0e3c0fe9e9f9dbb97ae5f76430f18bedf142b5f9672d21ce3791dc89601e9d0f",
+      "source_archive": "artifacts\\boat-graph-bvp-body1344.source",
+      "archive_hashes_verified": true,
+      "complete": true,
+      "body_panels": 1344,
+      "grid_size": 129,
+      "box_length_m": 64.0,
+      "image_height_m": 0.45897993442766666,
+      "reference_height_m": 0.3672438906483191,
+      "total_seconds": 29.176746699988144,
+      "setup": {
+        "geometry_and_fields_seconds": 0.8110444000049029,
+        "source_operators_seconds": 5.823237700009486,
+        "lift_map_seconds": 12.397127299977,
+        "source_trace_seconds": 8.695370400004322,
+        "context_seconds": 26.915868400014006
+      },
+      "peak_process_rss_bytes": 8324804608,
+      "cupy_pool_reserved_bytes": 3109365760,
+      "manufactured_body_potential_relative_l2": [
+        0.13424994174484087,
+        0.07869760265904918
+      ],
+      "rigid_modes": [
+        {
+          "name": "unit heave",
+          "gmres_iterations": 9,
+          "operator_applications": 11,
+          "true_relative_residual": 2.7977838952996884e-10,
+          "solve_seconds": 0.2287281000171788,
+          "instantaneous_added_mass_column": [
+            -409.70705300933975,
+            176.55092833752505,
+            11733.087426656755,
+            -149.78604924221017,
+            -2527.0610625456948,
+            25.326301716803588
+          ]
+        },
+        {
+          "name": "unit world-x rotation",
+          "gmres_iterations": 9,
+          "operator_applications": 11,
+          "true_relative_residual": 3.752038473217021e-10,
+          "solve_seconds": 0.2404652000113856,
+          "instantaneous_added_mass_column": [
+            8.878614929975605,
+            -1557.9039670559814,
+            -151.21953306607983,
+            1901.7581217265924,
+            52.4220944424365,
+            -133.94864749808013
+          ]
+        }
+      ]
+    },
+    {
+      "report": "artifacts\\boat-graph-bvp-plane129.json",
+      "report_sha256": "2d18a88ec40a756537290e9ecd58a124b705cba52d84325b57d55613e6936e03",
+      "source_archive": "artifacts\\boat-graph-bvp-plane129.source",
+      "archive_hashes_verified": true,
+      "complete": false,
+      "failure": {
+        "type": "ValueError",
+        "message": "half-space panels must lie below the water plane"
+      },
+      "body_panels": 84,
+      "grid_size": 129,
+      "box_length_m": 64.0,
+      "image_height_m": 0.45897993442766666,
+      "reference_height_m": 0.3672438906483191,
+      "total_seconds": 4.104449800011935,
+      "setup": {
+        "geometry_and_fields_seconds": 0.9625266999937594,
+        "source_operators_seconds": 1.842067899997346,
+        "lift_map_seconds": 0.7975305000145454,
+        "source_trace_seconds": 0.45138730001053773,
+        "context_seconds": 3.0910560000047553
+      },
+      "peak_process_rss_bytes": 991748096,
+      "minimum_centroid_depth_below_represented_graph_m": 0.046720571386811516
+    },
+    {
+      "report": "artifacts\\boat-graph-bvp-plane129-roundtrip.json",
+      "report_sha256": "0c802e93ead76ccc327956a0b6c07dfd7ca7eeac2e14e28dc3b719ef5c7ad5a3",
+      "source_archive": "artifacts\\boat-graph-bvp-plane129-roundtrip.source",
+      "archive_hashes_verified": true,
+      "complete": true,
+      "body_panels": 84,
+      "grid_size": 129,
+      "box_length_m": 64.0,
+      "image_height_m": 0.45897993442766666,
+      "reference_height_m": 0.3672438906483191,
+      "total_seconds": 4.093780899973353,
+      "setup": {
+        "geometry_and_fields_seconds": 0.8155053000082262,
+        "source_operators_seconds": 1.7997917000029702,
+        "lift_map_seconds": 0.6923750000132713,
+        "source_trace_seconds": 0.367952200002037,
+        "context_seconds": 2.8601774999988265,
+        "verification_tangent_plane_seconds": 0.024860700010322034
+      },
+      "peak_process_rss_bytes": 992075776,
+      "cupy_pool_reserved_bytes": 208131584,
+      "minimum_centroid_depth_below_represented_graph_m": 0.046720571386811516,
+      "manufactured_body_potential_relative_l2": [
+        2.732300611616307,
+        0.3803683693051493
+      ],
+      "rigid_modes": [
+        {
+          "name": "unit heave",
+          "gmres_iterations": 7,
+          "operator_applications": 9,
+          "true_relative_residual": 6.217466939619611e-10,
+          "solve_seconds": 0.06829789999756031,
+          "instantaneous_added_mass_column": [
+            -447.904069236769,
+            191.22763669886103,
+            12845.98769463419,
+            -175.73299874613352,
+            -2478.4834526967097,
+            -54.89132022550924
+          ],
+          "tangent_plane_added_mass_column": [
+            -447.8641553226503,
+            195.69874112115514,
+            12940.822084032832,
+            -178.6277827827643,
+            -2495.1791919141338,
+            -49.620478624075155
+          ]
+        },
+        {
+          "name": "unit world-x rotation",
+          "gmres_iterations": 7,
+          "operator_applications": 9,
+          "true_relative_residual": 2.733940516246248e-10,
+          "solve_seconds": 0.0632878000033088,
+          "instantaneous_added_mass_column": [
+            27.655685314348865,
+            -1653.1068598386476,
+            -189.83420602978146,
+            2000.272420810565,
+            382.51297422938876,
+            -112.11617522399072
+          ],
+          "tangent_plane_added_mass_column": [
+            27.40728517670944,
+            -1718.4163821399816,
+            -192.17185759421767,
+            2054.5773290637203,
+            390.72681260377624,
+            -108.72107334581794
+          ]
+        }
+      ]
+    },
+    {
+      "report": "artifacts\\boat-graph-bvp-plane257.json",
+      "report_sha256": "50d2c901d4f412a8918bcb2e168e2bc4498f8d19cfc2ed28137e04164483ca82",
+      "source_archive": "artifacts\\boat-graph-bvp-plane257.source",
+      "archive_hashes_verified": true,
+      "complete": true,
+      "body_panels": 84,
+      "grid_size": 257,
+      "box_length_m": 64.0,
+      "image_height_m": 0.4115734535751135,
+      "reference_height_m": 0.3672438906483191,
+      "total_seconds": 8.74446159999934,
+      "setup": {
+        "geometry_and_fields_seconds": 1.3353010999853723,
+        "source_operators_seconds": 1.8195015999954194,
+        "lift_map_seconds": 2.879230999998981,
+        "source_trace_seconds": 1.7916051000065636,
+        "context_seconds": 6.490418700006558,
+        "verification_tangent_plane_seconds": 0.03451830000267364
+      },
+      "peak_process_rss_bytes": 2514386944,
+      "cupy_pool_reserved_bytes": 821674496,
+      "minimum_centroid_depth_below_represented_graph_m": 0.046825066508855345,
+      "manufactured_body_potential_relative_l2": [
+        2.8426042563842437,
+        0.40240444746923404
+      ],
+      "rigid_modes": [
+        {
+          "name": "unit heave",
+          "gmres_iterations": 7,
+          "operator_applications": 9,
+          "true_relative_residual": 3.8108640557391304e-10,
+          "solve_seconds": 0.15494910001871176,
+          "instantaneous_added_mass_column": [
+            -447.57936789374395,
+            195.6122057548207,
+            12967.159286793298,
+            -178.69712259385977,
+            -2496.6063471798857,
+            -46.43835888853094
+          ],
+          "tangent_plane_added_mass_column": [
+            -447.8641553226503,
+            195.69874112115514,
+            12940.822084032832,
+            -178.6277827827643,
+            -2495.1791919141338,
+            -49.620478624075155
+          ]
+        },
+        {
+          "name": "unit world-x rotation",
+          "gmres_iterations": 7,
+          "operator_applications": 9,
+          "true_relative_residual": 2.58195110177698e-10,
+          "solve_seconds": 0.16481519999797456,
+          "instantaneous_added_mass_column": [
+            27.658952115866942,
+            -1743.3330110322652,
+            -191.52030998561077,
+            2073.40687427844,
+            394.394479244324,
+            -107.26317574720146
+          ],
+          "tangent_plane_added_mass_column": [
+            27.40728517670944,
+            -1718.4163821399816,
+            -192.17185759421767,
+            2054.5773290637203,
+            390.72681260377624,
+            -108.72107334581794
+          ]
+        }
+      ]
+    },
+    {
+      "report": "artifacts\\boat-graph-bvp-plane513.json",
+      "report_sha256": "a02f649619309962d88e158b7f2728f96662495459e6d02a0767a0cc847eb2d7",
+      "source_archive": "artifacts\\boat-graph-bvp-plane513.source",
+      "archive_hashes_verified": true,
+      "complete": true,
+      "body_panels": 84,
+      "grid_size": 513,
+      "box_length_m": 64.0,
+      "image_height_m": 0.3894717430829828,
+      "reference_height_m": 0.3672438906483191,
+      "total_seconds": 25.68766759999562,
+      "setup": {
+        "geometry_and_fields_seconds": 2.574244000017643,
+        "source_operators_seconds": 1.7710910000023432,
+        "lift_map_seconds": 9.899686100019608,
+        "source_trace_seconds": 7.017585399997188,
+        "context_seconds": 18.68849639999098,
+        "verification_tangent_plane_seconds": 0.020715299993753433
+      },
+      "peak_process_rss_bytes": 8611618816,
+      "cupy_pool_reserved_bytes": 3271787008,
+      "minimum_centroid_depth_below_represented_graph_m": 0.046825431335744516,
+      "manufactured_body_potential_relative_l2": [
+        2.8400861914279605,
+        0.40406874138629223
+      ],
+      "rigid_modes": [
+        {
+          "name": "unit heave",
+          "gmres_iterations": 8,
+          "operator_applications": 11,
+          "true_relative_residual": 3.3643801455907196e-11,
+          "solve_seconds": 0.9479403999866918,
+          "instantaneous_added_mass_column": [
+            -448.2958447695495,
+            195.58125241336768,
+            12949.284661241718,
+            -178.5417169982362,
+            -2497.017273501411,
+            -48.31833438321579
+          ],
+          "tangent_plane_added_mass_column": [
+            -447.8641553226503,
+            195.69874112115514,
+            12940.822084032832,
+            -178.6277827827643,
+            -2495.1791919141338,
+            -49.620478624075155
+          ]
+        },
+        {
+          "name": "unit world-x rotation",
+          "gmres_iterations": 7,
+          "operator_applications": 9,
+          "true_relative_residual": 1.7791877786800025e-10,
+          "solve_seconds": 0.6581312000053003,
+          "instantaneous_added_mass_column": [
+            27.25014040557802,
+            -1727.349028141737,
+            -191.6823268959351,
+            2061.2828371654286,
+            391.4604156300712,
+            -108.31473457607807
+          ],
+          "tangent_plane_added_mass_column": [
+            27.40728517670944,
+            -1718.4163821399816,
+            -192.17185759421767,
+            2054.5773290637203,
+            390.72681260377624,
+            -108.72107334581794
+          ]
+        }
+      ]
+    },
+    {
+      "report": "artifacts\\box-graph-bvp-plane129.json",
+      "report_sha256": "167748d4cc09dcb3cd34723fba64879d9c240349572ea515df14dc9ed40da8dc",
+      "source_archive": "artifacts\\box-graph-bvp-plane129.source",
+      "archive_hashes_verified": true,
+      "complete": true,
+      "body_panels": 56,
+      "grid_size": 129,
+      "box_length_m": 64.0,
+      "image_height_m": 0.4650263806443478,
+      "reference_height_m": 0.37077022740120635,
+      "total_seconds": 3.969191599986516,
+      "setup": {
+        "geometry_and_fields_seconds": 0.9095750999986194,
+        "source_operators_seconds": 1.782829000003403,
+        "lift_map_seconds": 0.5907717999943998,
+        "source_trace_seconds": 0.31458009997732006,
+        "context_seconds": 2.688246900012018,
+        "verification_tangent_plane_seconds": 0.019230800011428073
+      },
+      "peak_process_rss_bytes": 774201344,
+      "cupy_pool_reserved_bytes": 144235520,
+      "minimum_centroid_depth_below_represented_graph_m": 0.06738016558003534,
+      "manufactured_body_potential_relative_l2": [
+        7.122586779478828,
+        0.22014840894760368
+      ],
+      "rigid_modes": [
+        {
+          "name": "unit heave",
+          "gmres_iterations": 7,
+          "operator_applications": 9,
+          "true_relative_residual": 7.334216499173352e-11,
+          "solve_seconds": 0.059975999989546835,
+          "instantaneous_added_mass_column": [
+            10.859758864805091,
+            95.25302840558636,
+            17086.74256304911,
+            2.7062398738251403,
+            15.550038606011897,
+            -24.678256337785168
+          ],
+          "tangent_plane_added_mass_column": [
+            10.820093828706174,
+            97.27746579998481,
+            17061.299021704188,
+            2.4456124583765746,
+            17.752656216709017,
+            -22.79886007355621
+          ]
+        },
+        {
+          "name": "unit world-x rotation",
+          "gmres_iterations": 7,
+          "operator_applications": 9,
+          "true_relative_residual": 3.673087578801107e-11,
+          "solve_seconds": 0.05179849997512065,
+          "instantaneous_added_mass_column": [
+            29.05210458204743,
+            121.03509722477354,
+            26.476410920400173,
+            3088.0109573166164,
+            892.3130373660478,
+            -12.982871731906375
+          ],
+          "tangent_plane_added_mass_column": [
+            28.487219343751075,
+            146.50530720666686,
+            17.62210311209425,
+            3086.874835287745,
+            890.1804162807742,
+            -12.842345084651562
+          ]
+        }
+      ]
+    },
+    {
+      "report": "artifacts\\boat-graph-bvp-retessellated.json",
+      "report_sha256": "14176d1c6c78c65d3073a8e108f60e1fde5e2fb78019b7fe477c8a772b3ee681",
+      "source_archive": "artifacts\\boat-graph-bvp-retessellated.source",
+      "archive_hashes_verified": true,
+      "complete": true,
+      "body_panels": 84,
+      "grid_size": 129,
+      "box_length_m": 64.0,
+      "image_height_m": 0.45897993442766666,
+      "reference_height_m": 0.3672438906483191,
+      "total_seconds": 4.312711400008993,
+      "setup": {
+        "geometry_and_fields_seconds": 0.9176964999933261,
+        "source_operators_seconds": 1.81363320001401,
+        "lift_map_seconds": 0.7613685000105761,
+        "source_trace_seconds": 0.42272120001143776,
+        "context_seconds": 2.9977788999967743,
+        "verification_tangent_plane_seconds": 0.026619499985827133
+      },
+      "peak_process_rss_bytes": 991793152,
+      "cupy_pool_reserved_bytes": 208131584,
+      "minimum_centroid_depth_below_represented_graph_m": 0.046720571386811516,
+      "manufactured_body_potential_relative_l2": [
+        2.4802813347349755,
+        0.3851447957286459
+      ],
+      "rigid_modes": [
+        {
+          "name": "unit heave",
+          "gmres_iterations": 7,
+          "operator_applications": 9,
+          "true_relative_residual": 6.138998425242098e-10,
+          "solve_seconds": 0.06397170000127517,
+          "instantaneous_added_mass_column": [
+            -456.89953300246543,
+            190.72808401101435,
+            12852.70701790441,
+            -165.4606020587558,
+            -2399.1556223925854,
+            6.435792182047919
+          ],
+          "tangent_plane_added_mass_column": [
+            -456.7945799645951,
+            195.34760149619245,
+            12947.04869067626,
+            -168.49993722929364,
+            -2416.8176378082094,
+            11.629280834420626
+          ]
+        },
+        {
+          "name": "unit world-x rotation",
+          "gmres_iterations": 7,
+          "operator_applications": 9,
+          "true_relative_residual": 2.4837626611412877e-10,
+          "solve_seconds": 0.047738099994603544,
+          "instantaneous_added_mass_column": [
+            12.1181868479898,
+            -1659.8996088188453,
+            -169.03579874619547,
+            2000.0294859674805,
+            58.88951291082091,
+            -199.3280853718004
+          ],
+          "tangent_plane_added_mass_column": [
+            11.755737207925893,
+            -1725.1042313677347,
+            -171.4947585897632,
+            2054.1424759601973,
+            64.07293909744214,
+            -196.87012368647652
+          ]
+        }
+      ]
+    },
+    {
+      "report": "artifacts\\boat-graph-bvp-renumbered.json",
+      "report_sha256": "593a68cb0eb9d0f5fff55a4409bc33cb31d04205fa79faba25a2fd8264a7918b",
+      "source_archive": "artifacts\\boat-graph-bvp-renumbered.source",
+      "archive_hashes_verified": true,
+      "complete": true,
+      "body_panels": 84,
+      "grid_size": 129,
+      "box_length_m": 64.0,
+      "image_height_m": 0.45897993442766666,
+      "reference_height_m": 0.3672438906483191,
+      "total_seconds": 4.671544900018489,
+      "setup": {
+        "geometry_and_fields_seconds": 1.0228095999918878,
+        "source_operators_seconds": 1.8308921999996528,
+        "lift_map_seconds": 0.8384606000036001,
+        "source_trace_seconds": 0.46542439999757335,
+        "context_seconds": 3.1348727000004146,
+        "verification_tangent_plane_seconds": 0.03369929999462329
+      },
+      "peak_process_rss_bytes": 992485376,
+      "cupy_pool_reserved_bytes": 208131584,
+      "minimum_centroid_depth_below_represented_graph_m": 0.046720571386811516,
+      "manufactured_body_potential_relative_l2": [
+        2.7323006116163073,
+        0.38036836930514933
+      ],
+      "rigid_modes": [
+        {
+          "name": "unit heave",
+          "gmres_iterations": 7,
+          "operator_applications": 9,
+          "true_relative_residual": 6.217467619515241e-10,
+          "solve_seconds": 0.08231339999474585,
+          "instantaneous_added_mass_column": [
+            -447.9040692367687,
+            191.22763669886146,
+            12845.987694634183,
+            -175.7329987461349,
+            -2478.483452696706,
+            -54.89132022550871
+          ],
+          "tangent_plane_added_mass_column": [
+            -447.86415532265045,
+            195.69874112115525,
+            12940.822084032836,
+            -178.62778278276423,
+            -2495.179191914135,
+            -49.62047862407536
+          ]
+        },
+        {
+          "name": "unit world-x rotation",
+          "gmres_iterations": 7,
+          "operator_applications": 9,
+          "true_relative_residual": 2.73393980791263e-10,
+          "solve_seconds": 0.07530419999966398,
+          "instantaneous_added_mass_column": [
+            27.655685314348844,
+            -1653.1068598386482,
+            -189.83420602978185,
+            2000.2724208105658,
+            382.5129742293865,
+            -112.11617522399024
+          ],
+          "tangent_plane_added_mass_column": [
+            27.407285176709397,
+            -1718.4163821399816,
+            -192.17185759421696,
+            2054.5773290637203,
+            390.7268126037761,
+            -108.7210733458179
+          ]
+        }
+      ]
+    },
+    {
+      "report": "artifacts\\boat-graph-capytaine.json",
+      "report_sha256": "39d418052df6f02e862e3876b25c78f15c72babf9f9a927617b2a4e9cde37148",
+      "source_archive": "artifacts\\boat-graph-capytaine.source",
+      "archive_hashes_verified": true,
+      "complete": true,
+      "total_seconds": 2.790322599990759,
+      "peak_process_rss_bytes": 209379328,
+      "comparisons": [
+        {
+          "mode": "unit heave",
+          "capytaine_added_mass_column": [
+            -447.69324669569255,
+            194.37775661169636,
+            12935.530366591254,
+            -177.20882813820702,
+            -2493.068409601368,
+            -49.40308605108229
+          ],
+          "graph_minus_capytaine": [
+            -0.6025980738569388,
+            1.2034958016713233,
+            13.754294650463635,
+            -1.3328888600291862,
+            -3.948863900043307,
+            1.0847516678664988
+          ],
+          "tangent_plane_minus_capytaine": [
+            -0.17090862695772557,
+            1.320984509458782,
+            5.29171744157793,
+            -1.4189546445572887,
+            -2.1107823127658776,
+            -0.21739257299286407
+          ],
+          "graph_diagonal_relative_error": 0.0010632957645082541,
+          "tangent_plane_diagonal_relative_error": 0.00040908391783034403
+        },
+        {
+          "mode": "unit world-x rotation",
+          "capytaine_added_mass_column": [
+            27.289868964112596,
+            -1716.8133034813347,
+            -188.56568150087102,
+            2052.8556978176334,
+            389.9794539535001,
+            -108.58411067191004
+          ],
+          "graph_minus_capytaine": [
+            -0.03972855853457702,
+            -10.535724660402366,
+            -3.1166453950640687,
+            8.427139347795219,
+            1.4809616765710985,
+            0.26937609583197286
+          ],
+          "tangent_plane_minus_capytaine": [
+            0.11741621259684365,
+            -1.6030786586468366,
+            -3.6061760933466473,
+            1.7216312460868721,
+            0.7473586502761123,
+            -0.1369626739079024
+          ],
+          "graph_diagonal_relative_error": 0.0041050812079748145,
+          "tangent_plane_diagonal_relative_error": 0.0008386518584413416
+        }
+      ]
+    }
+  ]
+}

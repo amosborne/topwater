@@ -58,6 +58,18 @@ def window(coordinate, inner, outer):
     return result
 
 
+def tangent_graph(inputs, x, y, level, slope):
+    """Shared manufactured graph; exact tangent plane over the entire hull."""
+    cg = inputs.initial_state.position
+    beam = float(np.ptp(inputs.body.mesh.vertices[:, 1]))
+    world = (inputs.body.mesh.vertices-inputs.body.cg)@rotation_matrix(inputs.initial_state.orientation).T+cg
+    inner = np.max(np.abs(world[:, :2]-cg[:2]), axis=0)+beam
+    outer = inner+2*beam
+    xy = np.stack((x-cg[0], y-cg[1]), axis=-1)
+    eta = (level+xy@slope)*window(x-cg[0], inner[0], outer[0])*window(y-cg[1], inner[1], outer[1])
+    return eta, inner, outer
+
+
 def image_field(points, panels, density, heights):
     """Known harmonic field from two opposite EXTERIOR image layers."""
     value = np.empty((len(points), density.shape[1]))
@@ -79,24 +91,20 @@ def run(inputs, grid_cases, orders, prescribed_image_height=None):
     panels = TrianglePanels(triangles, -1)
     cg = inputs.initial_state.position
     beam = float(np.ptp(inputs.body.mesh.vertices[:, 1]))
-    world = (inputs.body.mesh.vertices-inputs.body.cg)@rotation_matrix(inputs.initial_state.orientation).T+cg
-    inner = np.max(np.abs(world[:, :2]-cg[:2]), axis=0)+beam
-    outer = inner+2*beam
     expansion_height = float(triangles[..., 2].max())
     modes = np.column_stack((panels.normals, np.cross(panels.centroids-cg, panels.normals)))
     density = modes[:, [2, 3]]
     load = -WATER_DENSITY*modes.T*panels.areas
     grids = []
     for length, size in grid_cases:
-        if np.any(outer >= length/2):
-            raise ValueError('smooth graph support must fit strictly inside the box')
         origin = cg[:2]-length/2
         x, y = np.meshgrid(origin[0]+np.arange(size)*length/size,
                            origin[1]+np.arange(size)*length/size)
-        xy = np.stack((x-cg[0], y-cg[1]), axis=-1)
-        eta = (level+xy@slope)*window(x-cg[0], inner[0], outer[0])*window(y-cg[1], inner[1], outer[1])
+        eta, inner, outer = tangent_graph(inputs, x, y, level, slope)
+        if np.any(outer >= length/2):
+            raise ValueError('smooth graph support must fit strictly inside the box')
         height, bound = image_height(triangles, eta, [length, length], origin)
-        grids.append((length, size, origin, x, y, eta, height, bound))
+        grids.append((length, size, origin, x, y, eta, height, bound, inner))
     true_plane_max = float(np.max(level+(triangles[..., :2]-cg[:2])@slope))
     safe_height = max([item[6] for item in grids]
                       +[.5*(expansion_height+true_plane_max), expansion_height])
@@ -105,7 +113,7 @@ def run(inputs, grid_cases, orders, prescribed_image_height=None):
             raise ValueError('prescribed manufactured image height must meet all graph bounds')
         safe_height = prescribed_image_height
     rows = []
-    for length, size, origin, x, y, eta, _, bound in grids:
+    for length, size, origin, x, y, eta, _, bound, inner in grids:
         padding = 2+1/(4*size)  # ceil gives odd2N+1: no Nyquist ambiguity at hull targets.
         padded = int(np.ceil(padding*size))
         targets = panels.centroids.copy()

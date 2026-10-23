@@ -41,3 +41,35 @@ def test_owned_graph_and_odd_fourier_amplitudes():
     assert_allclose(cp.asnumpy(graph.surface(graph.coefficients(mode))[1]), cp.asnumpy(before), atol=0, rtol=0)
     with pytest.raises(ValueError, match='odd'):
         GraphDirichlet(np.zeros((16, 17)), (1., 1.))
+
+
+def test_actual_hull_source_traces_against_cpu_reference():
+    from topwater.rankine import TrianglePanels
+    from tests.reference_boat import simulation_inputs
+    from tests.experiments.free_surface.boat_hos_continuation import tilted_geometry
+    from tests.experiments.free_surface.boat_image_plane import elevated_trace
+    from tests.experiments.free_surface.boat_graph_images import image_height
+
+    inputs = simulation_inputs()
+    triangles, _, _ = tilted_geometry(inputs)
+    panels = TrianglePanels(triangles, -1)
+    n, length = 33, 16.
+    origin = inputs.initial_state.position[:2]-length/2
+    x, y = np.meshgrid(origin[0]+np.arange(n)*length/n, origin[1]+np.arange(n)*length/n)
+    level = triangles[..., 2].max()+.08
+    eta = level+.02*np.cos(2*np.pi*x/length)+.02*np.sin(2*np.pi*y/length)
+    height, _ = image_height(triangles, eta, [length, length], origin)
+    trace, _ = elevated_trace(np.column_stack((x.ravel(), y.ravel(), eta.ravel())), panels, height+.15)
+    density = np.column_stack((panels.normals[:, 2],
+        np.cross(panels.centroids-inputs.initial_state.position, panels.normals)[:, 0]))
+    values = trace@density
+    graph = GraphDirichlet(eta-level, (length, length), order=4)
+    for col in range(2):
+        psi = values[:, col].reshape(n, n)
+        spectra = graph.coefficients(psi)
+        velocity, flux = graph.surface(spectra)
+        reference = graph_field(eta-level, psi, (length, length), order=4, padding=2+.25/n)
+        assert_allclose(cp.asnumpy(velocity), reference.velocity, atol=3e-12, rtol=3e-11)
+        assert_allclose(cp.asnumpy(flux), reference.normal_flux, atol=3e-12, rtol=3e-11)
+        for spectrum, term in zip(spectra, reference.flat_terms, strict=True):
+            assert_allclose(cp.asnumpy(cp.fft.ifft2(spectrum).real), term, atol=3e-13, rtol=3e-11)
