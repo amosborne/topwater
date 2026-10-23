@@ -127,6 +127,20 @@ def _envelope(frequency_hz, beam_m, gravity):
         raise ValueError('observed spectrum exceeds f<=0.6 Hz or wavelength>=2*beam; no bands were removed')
 
 
+
+def validate_envelope(waves, *, beam_m, gravity=9.81):
+    """Reject incident components outside f<=0.6 Hz and wavelength>=2*beam.
+
+    Zero-amplitude components carry no incident energy. Observed band-edge
+    support, when recorded, is checked as well as the realized frequencies.
+    """
+    if not isinstance(waves, WaveComponents):
+        raise TypeError('waves must be WaveComponents')
+    _envelope(waves.angular_frequencies[waves.amplitudes > 0]/(2*np.pi), beam_m, gravity)
+    support = waves.provenance.get('observed_active_frequency_max_hz')
+    if support is not None:
+        _envelope(float(support), beam_m, gravity)
+
 def _directional_weights(moment):
     """Positive MEM on 720 nautical FROM bearings; inherited marine-gyro method.
 

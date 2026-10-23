@@ -21,7 +21,7 @@ from .canoe import body_load
 from .p4_fluid_ordering import fresh
 
 
-def run(output, geometry, high_order=6, pressure_check=False, moving_check=False):
+def run(output, geometry, high_order=6, pressure_check=False):
     from . import cuda_operator as gpu
     if high_order not in (6, 12):
         raise ValueError('selected target rows require order 6 or 12')
@@ -39,7 +39,7 @@ def run(output, geometry, high_order=6, pressure_check=False, moving_check=False
         scope='Integration allocation on one canonical boat boundary; no spatial or trajectory qualification',
         source_sha256={name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
             for name in ('boat_adaptive_quadrature.py', 'cuda_operator.py', 'cuda_energy.cu',
-                         'cuda_pair.cuh', 'boat_world_field.py', 'boat_moving.py', 'canoe.py')})
+                         'cuda_pair.cuh', 'boat_world_field.py', 'canoe.py')})
     saved = {}
     # Same analytic pair integral; select one of two independent outer rules.
     # ALL source panels in a target row use the same rule. Pairwise proximity
@@ -119,12 +119,11 @@ extern "C" __global__ void adaptive_pairs(
             print(json.dumps(row), flush=True)
             np.savez(output.with_suffix('.npz'), **saved)
             output.write_text(json.dumps(report, indent=2, allow_nan=False)+'\n')
-        if pressure_check or moving_check:
+        if pressure_check:
             from .boat_pressure_audit import run as pressure_audit
             original_prepare = gpu.prepare_energy
             audits = {}
             report['pressure_checks'] = {}
-            report['moving_checks'] = {}
             try:
                 for strategy in ('uniform12', 'slender10'):
                     calls = []
@@ -160,26 +159,6 @@ extern "C" __global__ void adaptive_pairs(
                             sha256=sha256(path.read_bytes()).hexdigest(), integration_calls=list(calls),
                             derivatives=audits[strategy]['derivatives'],
                             directional_step_check=audits[strategy]['directional_step_check'])
-                    if moving_check:
-                        from .boat_moving import run as moving_pilot
-                        calls.clear()
-                        path = output.with_name(output.stem+'-moving-'+strategy+'.json')
-                        pilot = moving_pilot(path, duration=.2, refinement=2, max_rhs=25,
-                                             budget_seconds=90., max_step=.1)
-                        if not pilot['complete'] or pilot['accepted_simulated_seconds'] != .2:
-                            raise RuntimeError('moving comparison requires both complete 0.2 s endpoints')
-                        with np.load(path.with_suffix('.npz'), allow_pickle=False) as data:
-                            if data['accepted_times'][-1] != .2:
-                                raise RuntimeError('moving state checkpoint lacks the target endpoint')
-                            saved[strategy+'_moving_times'] = data['accepted_times']
-                            saved[strategy+'_moving_states'] = data['accepted_states']
-                        report['moving_checks'][strategy] = dict(path=str(path),
-                            sha256=sha256(path.read_bytes()).hexdigest(), integration_calls=list(calls),
-                            **{key: pilot[key] for key in ('seconds', 'accepted_simulated_seconds',
-                                'accepted_steps', 'cold_geometry_count', 'controls', 'source_sha256')},
-                            rhs_seconds=[row['seconds'] for row in pilot['rhs']],
-                            energy_seconds=[sum(field['energy_seconds'] for field in row['fields'])
-                                            for row in pilot['rhs']])
                     output.write_text(json.dumps(report, indent=2, allow_nan=False)+'\n')
                 if pressure_check:
                     report['pressure_load_difference_world'] = (
@@ -188,15 +167,6 @@ extern "C" __global__ void adaptive_pairs(
                     report['pressure_acceleration_difference_world'] = (
                         np.array(audits['slender10']['derivatives'][-1]['acceleration_world'])
                         -np.array(audits['uniform12']['derivatives'][-1]['acceleration_world'])).tolist()
-                if moving_check:
-                    from scipy.spatial.transform import Rotation
-                    reference_state = saved['uniform12_moving_states'][-1]
-                    candidate_state = saved['slender10_moving_states'][-1]
-                    report['moving_endpoint_state_difference'] = (
-                        candidate_state-reference_state).tolist()
-                    report['moving_endpoint_rotation_difference_rad'] = float((
-                        Rotation.from_quat(candidate_state[3:7], scalar_first=True)
-                        *Rotation.from_quat(reference_state[3:7], scalar_first=True).inv()).magnitude())
             finally:
                 gpu.prepare_energy = original_prepare
         report['complete'] = True
@@ -213,5 +183,4 @@ if __name__ == '__main__':
     parser.add_argument('--geometry', required=True)
     parser.add_argument('--high-order', type=int, choices=(6, 12), default=6)
     parser.add_argument('--pressure-check', action='store_true')
-    parser.add_argument('--moving-check', action='store_true')
     run(**vars(parser.parse_args()))

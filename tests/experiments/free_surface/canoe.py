@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 from time import perf_counter
 
+from topwater.surface import body_load
 import numpy as np
 from scipy.linalg import solve
 from scipy.spatial import ConvexHull, Delaunay
@@ -104,18 +105,6 @@ def join_wetted_hull(wetted_triangles, segments, walls, grid, *, constrained=Fal
     return mesh, body, free
 
 
-def body_load(mesh, panels, body, center):
-    """Exact P1 weak load for six rigid motions, including waterline nodes."""
-    points = mesh.vertices[mesh.faces[body]]
-    normal = panels.normals[body, None]
-    modes = np.concatenate((np.broadcast_to(normal, points.shape),
-                            np.cross(points-center, normal)), axis=2)
-    load = np.zeros((len(mesh.vertices), 6))
-    total = modes.sum(axis=1)
-    for corner in range(3):
-        values = panels.areas[body, None]*(total+modes[:, corner])/12
-        np.add.at(load, mesh.faces[body, corner], values)
-    return load
 
 
 def solve_mixed(energy, fixed, trace, normal_load):

@@ -6,7 +6,7 @@ explicit input. The finite-difference action path remains the reference.
 """
 import numpy as np
 
-from tests.reference_boat import GRAVITY, WATER_DENSITY
+from topwater.constants import GRAVITY, WATER_DENSITY
 from .boat_parent_action import parent_mass, factor_parent_mass, port_transport_covector
 from .boat_world_field import refine_boundary
 

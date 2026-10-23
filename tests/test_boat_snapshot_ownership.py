@@ -9,7 +9,7 @@ import pytest
 from topwater import InitialState
 from .experiments.free_surface import boat_contact_reaction as snapshot
 from .experiments.free_surface.boat_geometry_template import evaluate_template
-from .experiments.free_surface.boat_world_boundary import construct
+from .reference_boat import boundary_snapshot
 
 
 def test_moving_chart_replay_owns_cold_sources_and_rejects_changed_warm_code(tmp_path, monkeypatch):
@@ -17,7 +17,7 @@ def test_moving_chart_replay_owns_cold_sources_and_rejects_changed_warm_code(tmp
     state = np.array(case['state'])
     pose = InitialState(state[:3], state[3:7]/np.linalg.norm(state[3:7]))
     geometry = tmp_path/'moving-geometry.json'
-    _, chart, _ = construct(geometry, pose=pose, parent_eta=state[13:28],
+    _, chart, _ = boundary_snapshot(geometry, pose=pose, parent_eta=state[13:28],
                             parent_psi=state[28:], export_template=True)
     arrays, _ = evaluate_template(chart, pose=pose, parent_eta=state[13:28], parent_psi=state[28:])
     pilot = tmp_path/'pilot.json'

@@ -2,6 +2,10 @@
 
 Active investigation status and next experiments: [GitHub issue #30](https://github.com/amosborne/topwater/issues/30).
 This document retains technical reasoning and historical evidence.
+Historical commands and runtime switches below belong to their recorded commits.
+The current single-path, input-driven interface is documented in
+`tests/experiments/free_surface/README.md`; the canonical mesh is a fixture,
+not a supported-hull topology requirement.
 
 Scope: the 24 ft × 9 ft, 2,500 kg boat, water density 1,025 kg/m³,
 gravity 9.81 m/s², and selected observed SoCal sea with seed 42. This is an

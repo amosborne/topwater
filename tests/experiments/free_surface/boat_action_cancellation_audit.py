@@ -11,7 +11,8 @@ from topwater import sea_states
 from .boat_body_action import body_derivatives
 from .boat_contact_reaction import load_snapshot, refine_snapshot
 from .boat_geometry_template import evaluate_template
-from .boat_parent_action import action_rates, port_transport_covector
+from .boat_parent_action_reference import action_rates
+from .boat_parent_action import port_transport_covector
 from .boat_world_field import current_field
 from .incident_baseline_benchmark import coefficients
 from .p4_fluid_ordering import fresh
@@ -58,7 +59,7 @@ def run(reference, body_reference, output):
         scope='Exact incident-load/port cancellation parity and matched component timing; no physical or trajectory qualification.',
         input_sha256={str(p): sha256(p.read_bytes()).hexdigest() for p in (reference, reference.with_suffix('.npz'), body_reference)},
         source_sha256={name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest() for name in
-            ('boat_action_cancellation_audit.py', 'boat_parent_action.py', 'boat_body_action.py', 'boat_world_field.py',
+            ('boat_action_cancellation_audit.py', 'boat_parent_action.py', 'boat_parent_action_reference.py', 'boat_body_action.py', 'boat_world_field.py',
              'boat_geometry_template.py', 'boat_contact_reaction.py', 'boat_world_boundary.py', 'canoe.py', 'incident_baseline_benchmark.py')},
         original_source_sha256=control['source_sha256'], original_body_source_sha256=body_control['source_sha256'],
         calls=[])

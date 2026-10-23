@@ -17,7 +17,9 @@ from threadpoolctl import threadpool_info, threadpool_limits
 from topwater import sea_states
 from tests.benchmark_rankine import peak_rss_bytes
 
-G, L, B, RHO = 9.81, 24*.3048, 9*.3048, 1025.
+from topwater.constants import GRAVITY as G
+
+L, B, RHO = 24*.3048, 9*.3048, 1025.
 
 
 def coefficients(waves):

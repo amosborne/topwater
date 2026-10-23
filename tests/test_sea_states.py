@@ -133,3 +133,17 @@ def test_frequency_ceiling_rejects_full_positive_support_even_for_small_beam():
 def test_invalid_seed_is_not_coerced(seed):
     with pytest.raises(ValueError, match='uint32'):
         sea_states.realize(beam_m=9*.3048, seed=seed)
+
+
+def test_input_wave_envelope_checks_actual_components_and_observed_support():
+    from topwater import WaveComponents
+
+    waves = WaveComponents([.1, 0.], 2*np.pi*np.array([.2, 1.]), [0., 0.], [0., 0.])
+    sea_states.validate_envelope(waves, beam_m=3.)
+    energetic_short = WaveComponents([.1], [2*np.pi*.6], [0.], [0.])
+    with pytest.raises(ValueError, match='wavelength'):
+        sea_states.validate_envelope(energetic_short, beam_m=3.)
+    observed = WaveComponents([.1], [2*np.pi*.2], [0.], [0.],
+        provenance={'observed_active_frequency_max_hz': '.6'})
+    with pytest.raises(ValueError, match='no bands were removed'):
+        sea_states.validate_envelope(observed, beam_m=3.)

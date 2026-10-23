@@ -30,3 +30,16 @@ def point_source(points, source):
     delta = np.asarray(points)-source
     distance = np.linalg.norm(delta, axis=1)
     return (1/distance)[:, None], (-delta/distance[:, None]**3)[:, None, :]
+
+
+def affine(points):
+    return 1.7+np.asarray(points)@np.array([.2, -.1, .3])
+
+
+def normal_work(triangles, center, twist, field):
+    """Independent pointwise degree-two/oscillatory triangle quadrature."""
+    samples, weights = triangle_samples(triangles, 8)
+    area_normal = np.cross(triangles[:, 1]-triangles[:, 0],
+                           triangles[:, 2]-triangles[:, 0])/2
+    velocity = twist[:3]+np.cross(twist[3:], samples-center)
+    return float(np.einsum('q,fq,fi,fqi->', weights, field(samples), area_normal, velocity))

@@ -16,7 +16,8 @@ from .boat_chart_tangent import chart_tangent
 from .boat_geometry_template import evaluate_template,InvalidTemplate
 from .boat_action_tangent import refine_tangent,action_terms
 from .boat_world_field import current_field,refine_boundary
-from .boat_momentum_tangent import incident_load_rate,field_momentum_rate
+from .boat_momentum_reference import incident_load_rate
+from .boat_momentum_tangent import field_momentum_rate
 from .boat_body_action import momentum
 from .boat_ale_pressure import differentiate
 from .body_pressure import evaluate_body_pressure
@@ -58,7 +59,7 @@ def run(output,states=None,geometry=None,sample_indices=(0,2),order=3,analytic_i
     metadata=json.loads(geometry.read_text())
     values=coefficients(sea_states.loads_realization(json.dumps(metadata['actual_sea_realization'])))
     folder=Path(__file__).parent
-    files=('boat_momentum_tangent.py','boat_momentum_tangent_audit.py','cuda_directional.py',
+    files=('boat_momentum_tangent.py', 'boat_momentum_reference.py','boat_momentum_tangent_audit.py','cuda_directional.py',
            'cuda_directional.cu','cuda_pair.cuh','boat_chart_tangent.py','boat_action_tangent.py',
            'boat_world_field.py','boat_geometry_template.py','boat_ale_pressure.py','body_pressure.py',
            'incident_baseline_benchmark.py','boat_body_action.py','cuda_shape_gradient.py', 'cuda_panel_geometry.py','cuda_shape.cu',

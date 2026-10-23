@@ -9,6 +9,7 @@ import numpy as np
 from .boat_motion_metrics import (attitude_degrees, body_poses, motion_errors,
     ANGLE_ERROR_TARGET_DEGREES, POSITION_ERROR_TARGET_METERS, ACCURACY_DURATION_SECONDS)
 from .p4_fluid_ordering import fresh
+from .boat_moving import METHODS, SOURCES
 
 
 def run(reference, candidate, output, driver_change_note=None, integration_change_note=None,
@@ -18,97 +19,53 @@ def run(reference, candidate, output, driver_change_note=None, integration_chang
     inputs, trajectories = [], []
     for path in map(Path, (reference, candidate)):
         report = json.loads(path.read_text())
+        if (report['format_version'] != 1 or report['methods'] != METHODS
+                or set(report['source_sha256']) != set(SOURCES)):
+            raise ValueError('current single-path baseline report required')
+        physical_path = path.with_name(path.stem+'-inputs.json')
+        if sha256(physical_path.read_bytes()).hexdigest() != report['input_sha256']:
+            raise ValueError('owned physical inputs changed')
         with np.load(path.with_suffix('.npz'), allow_pickle=False) as data:
-            times, states = data['accepted_times'], data['accepted_states']
-            dense = data['accepted_dense_q'] if 'accepted_dense_q' in data else None
-        if report['controls'].get('integrator', 'RK23') != 'RK23' and dense is None:
-            raise ValueError('non-RK23 trajectory requires its owned dense coefficients')
-        method = report['controls'].get('integrator', 'RK23')
-        if method not in ('RK23', 'RK45') or (dense is not None and dense.shape[-1] != {'RK23': 3, 'RK45': 4}[method]):
-            raise ValueError('dense coefficient degree must match the declared integrator')
-        if len(times) < 2:
-            raise ValueError('at least two accepted states per trajectory required')
-        metadata_path = Path(report['geometry'][0]['path'])
-        metadata = json.loads(metadata_path.read_text())
+            times, states, dense = data['accepted_times'], data['accepted_states'], data['accepted_dense_q']
+        if len(times) < 2 or dense.shape[-1] != 3:
+            raise ValueError('accepted RK23 trajectory and its owned cubic coefficients required')
         inputs.append(dict(path=str(path), sha256=sha256(path.read_bytes()).hexdigest(),
             arrays_sha256=sha256(path.with_suffix('.npz').read_bytes()).hexdigest(),
-            initial_geometry_metadata_sha256=sha256(metadata_path.read_bytes()).hexdigest(),
-            complete=report['complete'], accepted_seconds=float(times[-1]-times[0]),
-            seconds=report['seconds'], operator_counts=report['operator_counts'],
-            refinement=report['boundary_refinement'],
-            quadrature_order=report['operator_policy']['quadrature_order']))
-        inputs[-1]['integrator'] = report['controls'].get('integrator', 'RK23')
-        inputs[-1]['integer_geometry'] = report['controls'].get('integer_geometry', False)
-        trajectories.append((times, states, report, metadata, dense))
-    ta, ya, ra, ma, da = trajectories[0]
-    tb, yb, rb, mb, db = trajectories[1]
-    if (ra['fixture_sha256'] != rb['fixture_sha256'] or not np.array_equal(ya[0], yb[0])
-            or ma['actual_sea_realization'] != mb['actual_sea_realization'] or ta[0] != tb[0]):
-        raise ValueError('same physical fixture, initial state/time and sea realization required')
-    physics = ('boat_world_boundary.py', 'boat_parent_clip_proof.py', 'boat_world_field.py',
-               'boat_geometry_template.py', 'body_pressure.py', 'incident_baseline_benchmark.py',
-               'boat_ale_pressure.py', 'cuda_operator.py', 'cuda_energy.cu', 'cuda_pair.cuh',
-               'canoe.py')
-    if any('boat_integer_intersections.py' in report['source_sha256'] for report in (ra, rb)):
-        physics += ('boat_integer_intersections.py',)
+            input_sha256=report['input_sha256'], complete=report['complete'],
+            accepted_seconds=float(times[-1]-times[0]), seconds=report['seconds'],
+            operator_counts=report['operator_counts'], discretization=report['discretization']))
+        trajectories.append((times, states, report, dense))
+    ta, ya, ra, da = trajectories[0]
+    tb, yb, rb, db = trajectories[1]
+    if (ra['input_sha256'] != rb['input_sha256'] or not np.array_equal(ya[0], yb[0]) or ta[0] != tb[0]):
+        raise ValueError('same physical inputs and initial state/time required')
+    if ra['methods'] != rb['methods'] or ra['discretization'] != rb['discretization']:
+        raise ValueError('same baseline methods and discretization required')
+    if ra['physical_source_sha256'] != rb['physical_source_sha256']:
+        raise ValueError('physical input/constants implementation differs')
+    if set(ra['source_sha256']) != set(rb['source_sha256']):
+        raise ValueError('producer graph differs; use a separately reviewed refactor audit')
+    derivative_owners = ('boat_action_stencil.py', 'boat_momentum_tangent.py',
+        'boat_incident_tangent.py', 'cuda_directional.py', 'cuda_directional.cu',
+        'cuda_reverse_gradient.py', 'cuda_scalar_reverse.cu')
     derivative_changes = {}
-    for name in ('action_coupling', 'action_tangent'):
-        if ra['controls'].get(name, False) != rb['controls'].get(name, False):
-            raise ValueError('action policy differs: '+name)
-    for name, default in (('momentum_tangent', False), ('shape_gradient', 'forward')):
-        if ra['controls'].get(name, default) != rb['controls'].get(name, default):
-            derivative_changes[name] = dict(reference=ra['controls'].get(name, default), candidate=rb['controls'].get(name, default))
-    if any(report['controls'].get('action_coupling', False) for report in (ra, rb)):
-        physics += ('boat_action_stencil.py', 'boat_body_action.py', 'boat_parent_action.py',
-                    'cuda_shape_gradient.py', 'cuda_shape.cu', 'cuda_dual.cuh', 'cuda_wide_dual.cuh')
-    if any(report['controls'].get('action_tangent', False) for report in (ra, rb)):
-        physics += ('boat_chart_tangent.py', 'boat_action_tangent.py')
-    if any(report['controls'].get('momentum_tangent', False) for report in (ra, rb)):
-        physics += ('boat_momentum_tangent.py', 'boat_incident_tangent.py', 'cuda_directional.py', 'cuda_directional.cu')
-    if any(report['controls'].get('shape_gradient', 'forward') == 'reverse' for report in (ra, rb)):
-        physics += ('cuda_reverse_gradient.py', 'cuda_scalar_reverse.cu')
-    derivative_owners = ('boat_action_stencil.py', 'boat_ale_pressure.py', 'boat_momentum_tangent.py',
-                         'boat_incident_tangent.py', 'cuda_directional.py', 'cuda_directional.cu',
-                         'cuda_reverse_gradient.py', 'cuda_scalar_reverse.cu')
-    momentum_owners = ('boat_momentum_tangent.py', 'boat_incident_tangent.py', 'cuda_directional.py', 'cuda_directional.cu')
-    reverse_owners = ('cuda_reverse_gradient.py', 'cuda_scalar_reverse.cu')
-    for name in physics:
-        for report in (ra, rb):
-            used = (report['controls'].get('momentum_tangent', False) if name in momentum_owners else
-                    report['controls'].get('shape_gradient', 'forward') == 'reverse' if name in reverse_owners else True)
-            if used and name not in report['source_sha256']:
-                raise ValueError('required physical helper provenance absent: '+name)
-        hashes = tuple(report['source_sha256'].get(name) for report in (ra, rb))
+    for name in sorted(ra['source_sha256'].keys()-{'boat_moving.py'}):
+        hashes = tuple(report['source_sha256'][name] for report in (ra, rb))
         if hashes[0] != hashes[1]:
             if name not in derivative_owners:
                 raise ValueError('physical helper differs between pilots: '+name)
             derivative_changes[name] = dict(reference=hashes[0], candidate=hashes[1])
     if derivative_changes and not derivative_change_note:
-        raise ValueError('physical helpers or action policies differ; explicit reviewed derivative implementation change note required')
+        raise ValueError('derivative helper changed; explicit reviewed implementation change note required')
     driver_changed = ra['source_sha256']['boat_moving.py'] != rb['source_sha256']['boat_moving.py']
     if driver_changed and not driver_change_note:
         raise ValueError('driver source changed; explicit reviewed change note required')
     integration_changes = {}
-    methods = tuple(report['controls'].get('integrator', 'RK23') for report in (ra, rb))
-    if methods[0] != methods[1]:
-        integration_changes['integrator'] = dict(reference=methods[0], candidate=methods[1])
     for name in ('rtol', 'absolute_tolerance_by_component', 'max_step_seconds', 'first_step_seconds'):
         if ra['controls'][name] != rb['controls'][name]:
             integration_changes[name] = dict(reference=ra['controls'][name], candidate=rb['controls'][name])
     if integration_changes and not integration_change_note:
         raise ValueError('integration controls differ; explicit reviewed change note required')
-    for name in ('derivative_step_seconds', 'minimum_chart_derivative_step_seconds', 'pressure_derivative'):
-        if ra['controls'][name] != rb['controls'][name]:
-            if not derivative_change_note:
-                raise ValueError('derivative control differs; explicit reviewed derivative implementation change note required')
-            derivative_changes[name] = dict(reference=ra['controls'][name], candidate=rb['controls'][name])
-    if ra['controls'].get('common_pressure_chart', False) != rb['controls'].get('common_pressure_chart', False):
-        raise ValueError('common pressure chart policy differs')
-    if ra['boundary_refinement']['region'] != rb['boundary_refinement']['region']:
-        raise ValueError('refinement region differs')
-    for name in ('enabled', 'kind', 'limits'):
-        if ra['operator_policy'][name] != rb['operator_policy'][name]:
-            raise ValueError('operator reuse policy differs: '+name)
     end = min(ta[-1], tb[-1])
     exact = np.intersect1d(ta[ta <= end], tb[tb <= end])
     # Evaluate both owned accepted-step polynomials, never a trial stage.
@@ -131,7 +88,6 @@ def run(reference, candidate, output, driver_change_note=None, integration_chang
             'Short weakly excited motion cannot qualify behavior over representative wave/roll periods.',
             'Accepted-step polynomials are integrator dense output, not extra temporal accuracy.',
             'Sampling them is a numerical comparison, not a rigorous continuous-time error bound.',
-            'Combined body/quadrature change does not isolate either source of sensitivity.',
             'Failed-run totals and differently achieved horizons are not a matched full-run speedup.'])
     saved = {}
     for label, times in (('exact_common_knots', exact), ('dense_common_grid', grid)):

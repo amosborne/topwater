@@ -1,0 +1,90 @@
+{
+  "complete": true,
+  "qualified": false,
+  "scope": "One supported second-boat smoke and one full nonlinear canonical one-second regression; not minute accuracy or open-water qualification.",
+  "cases": [
+    {
+      "case": "box",
+      "report": "artifacts\\boat-clean-box.json",
+      "report_sha256": "59f001564853e5c7889784ee34cc81c82d34699e735f3fd61088d9de198a2128",
+      "arrays_sha256": "bd92c285c2cf6ba5de67b1e88b9b1b81369daedec4f51fa23d2d4754bb693064",
+      "seconds": 4.894947399996454,
+      "simulated_seconds": 0.02,
+      "accepted_steps": 2,
+      "operator_counts": {
+        "rhs": 7,
+        "assemblies": 7
+      },
+      "cold_builds": 1
+    },
+    {
+      "case": "canonical",
+      "report": "artifacts\\boat-clean-canonical.json",
+      "report_sha256": "a15f17a17d8d6bda8881c87ab154b5d1ef589c7206be995fb4219cd74dc44cb9",
+      "arrays_sha256": "3a721e695ff0f0a718fcfafd14fd710c09138ff669ba5aaccf3be5dd157b0c75",
+      "seconds": 40.36177759998827,
+      "simulated_seconds": 1.0,
+      "accepted_steps": 14,
+      "operator_counts": {
+        "rhs": 64,
+        "assemblies": 64
+      },
+      "cold_builds": 29
+    }
+  ],
+  "regression": {
+    "complete": true,
+    "qualified": false,
+    "scope": "Explicit old-to-cleaned baseline refactor screen; producer graph/schema changed deliberately. Actual physical inputs/cold arrays checked; accepted RK23 polynomials compared over one second, not minute accuracy or physical qualification.",
+    "reference": {
+      "path": "artifacts\\boat-speed-reverse-order-reverse-q3-body1-1s.json",
+      "sha256": "77ed6f28d3f6e84a566bf2e31930d96d5fa5180fb776eec65646037ff7efd78a"
+    },
+    "candidate": {
+      "path": "artifacts\\boat-clean-canonical.json",
+      "sha256": "a15f17a17d8d6bda8881c87ab154b5d1ef589c7206be995fb4219cd74dc44cb9"
+    },
+    "same_incident_realization": true,
+    "initial_cold_common_array_count": 41,
+    "expected_initial_cold_difference": "node_chart_key now also owns derived facet CSR, artificial faces and rim",
+    "new_geometry_data": [
+      "source_body_artificial_faces",
+      "source_group_faces",
+      "source_group_offsets",
+      "source_physical_group_count"
+    ],
+    "maximum_initial_state_difference": 3.469446951953614e-18,
+    "samples": 525,
+    "maximum_translation_error_m": [
+      3.512420077012024e-10,
+      2.973548587914543e-09,
+      6.24193802201134e-09
+    ],
+    "maximum_roll_pitch_yaw_error_degrees": [
+      1.96086574533183e-07,
+      9.843085990723921e-08,
+      2.0307527393015334e-07
+    ],
+    "source_sha256": {
+      "boat_motion_metrics.py": "935a3ac08ccc93a4791d2bf236226cdb4932a06cf13779a700d08079a3695079"
+    }
+  },
+  "verification": {
+    "cpu_tests": 70,
+    "cuda_tests": 12,
+    "adversarial_source_review": "Approved; shared numerical owners, physical frame conventions, derived convex groups and explicit closure guards reviewed."
+  },
+  "architecture": {
+    "input_contract": "SimulationInputs; no reference boat import/default in moving driver or generic constructor.",
+    "methods": "RK23, exact integer clipping, analytic chart/action/momentum derivatives, reverse stationary energy gradient; fresh fluid operators.",
+    "independent_controls": "Forward CUDA, scalar/body FD, parent-action h/h2 and momentum incident FD remain in verification harnesses.",
+    "removed": "Driver alternate formulations/integrators/derivatives/pressure fallbacks, operator predictors, rejected material overlay and conservative mask experiment; preserved in Git."
+  },
+  "limits": [
+    "Full nonlinear one-second diagnostic-tank timing, not open ocean or 60-second accuracy.",
+    "40.36 wall seconds per simulated second remains above the 20x ceiling.",
+    "Historical 69-89s controls ran under varying conditions; no cleanup-only speed factor is claimed.",
+    "The second boat run is a data-flow smoke, not a physical or performance qualification.",
+    "Exact input convexity and conservative dry-closure certificate are current geometry requirements."
+  ]
+}

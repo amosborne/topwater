@@ -16,9 +16,8 @@ from scipy.linalg.lapack import dpocon
 from topwater import HullMesh, sea_states
 from topwater.rankine import TrianglePanels
 from tests.laplace_reference import triangle_samples
-from tests.reference_boat import GRAVITY, WATER_DENSITY
-from tests.reference_hull import surface_integrals
-from .canoe import body_load
+from topwater.constants import GRAVITY, WATER_DENSITY
+from topwater.surface import surface_integrals, body_load
 from .incident_baseline_benchmark import coefficients, fused_cpu
 from .p4_fluid_ordering import fresh
 

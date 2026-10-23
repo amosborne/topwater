@@ -14,7 +14,7 @@ from tests.reference_boat import WATER_DENSITY
 from . import boat_world_field as world
 from .boat_contact_reaction import load_snapshot, refine_snapshot
 from .boat_geometry_template import evaluate_template
-from .boat_parent_action import action_rates
+from .boat_parent_action_reference import action_rates
 from .incident_baseline_benchmark import coefficients
 from .p4_fluid_ordering import fresh
 
@@ -52,7 +52,7 @@ def run(reference, output):
         input_sha256={str(path): sha256(path.read_bytes()).hexdigest()
             for path in (reference, reference.with_suffix('.npz'), fixture, metadata_path)},
         source_sha256={name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
-            for name in ('boat_parent_action_audit.py', 'boat_parent_action.py', 'boat_contact_reaction.py',
+            for name in ('boat_parent_action_audit.py', 'boat_parent_action.py', 'boat_parent_action_reference.py', 'boat_contact_reaction.py',
                          'boat_world_field.py', 'boat_world_boundary.py', 'boat_geometry_template.py', 'canoe.py',
                          'incident_baseline_benchmark.py', 'cuda_operator.py', 'cuda_energy.cu', 'cuda_pair.cuh',
                          'cuda_shape_gradient.py', 'cuda_panel_geometry.py', 'cuda_shape.cu', 'cuda_dual.cuh', 'cuda_wide_dual.cuh')},

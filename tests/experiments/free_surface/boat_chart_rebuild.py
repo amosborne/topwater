@@ -15,27 +15,18 @@ import numpy as np
 from topwater import InitialState
 from topwater.frames import rotation_matrix
 from topwater.hydrostatics import hydrostatics
-from tests.laplace_reference import triangle_samples
+from tests.laplace_reference import triangle_samples, affine, normal_work
 from tests.reference_boat import GRAVITY, WATER_DENSITY
 from .boat_contact_preflight import make_chart, pose
 from .p4_fluid_ordering import fresh
 
 
-def affine(points):
-    return 1.7+np.asarray(points)@np.array([.2, -.1, .3])
 
 
 def smooth(points):
     return 1.7+.2*np.cos(.3*np.asarray(points)[..., 0]+.2*np.asarray(points)[..., 1])
 
 
-def normal_work(triangles, center, twist, field):
-    """Independent pointwise degree-two/oscillatory triangle quadrature."""
-    samples, weights = triangle_samples(triangles, 8)
-    area_normal = np.cross(triangles[:, 1]-triangles[:, 0],
-                           triangles[:, 2]-triangles[:, 0])/2
-    velocity = twist[:3]+np.cross(twist[3:], samples-center)
-    return float(np.einsum('q,fq,fi,fqi->', weights, field(samples), area_normal, velocity))
 
 
 def diagnostics(body, state, chart):

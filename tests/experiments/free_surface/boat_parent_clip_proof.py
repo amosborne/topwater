@@ -17,7 +17,7 @@ import numpy as np
 from scipy.spatial import ConvexHull
 
 from topwater import HullMesh
-from .boat_chart_rebuild import affine, normal_work
+from tests.laplace_reference import affine, normal_work
 from .p4_fluid_ordering import fresh
 
 

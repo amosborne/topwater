@@ -16,7 +16,7 @@ from topwater import sea_states
 from topwater.frames import rotation_matrix
 from topwater.hydrostatics import FloodingError, LossOfContactError
 from topwater.constants import GRAVITY
-from .boat_chart_rebuild import affine, normal_work
+from tests.laplace_reference import affine, normal_work
 from .boat_parent_clip_proof import (PlanePoints, coplanar_groups, columns, hull_planes,
                                     cell_polygons, triangulate, sub, cross, dot)
 from .p4_fluid_ordering import fresh
