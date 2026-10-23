@@ -26,6 +26,7 @@ from .boat_graph_bvp import GraphBody
 from .boat_graph_images import image_height
 from .boat_hos_continuation import tilted_geometry, tangent_graph
 from .boat_spatial_work import subdivide
+from .boat_parent_clip_proof import coplanar_groups
 from .cuda_graph import ExteriorTrace, body_maps, harmonic_velocity, cp
 from .panel_gradient_reference import checked_influence
 
@@ -104,6 +105,8 @@ def body_velocity(context, density, spectrum, length):
 
 def run(inputs, args, report):
     started = perf_counter()
+    mesh = inputs.body.mesh
+    coplanar_groups(mesh.vertices, mesh.faces, mesh.artificial_faces)
     initial = inputs.initial_state
     cg = initial.position
     _, level, slope = tilted_geometry(inputs)

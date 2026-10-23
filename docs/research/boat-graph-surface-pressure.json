@@ -611,5 +611,26 @@
     "archive_hashes_verified": true,
     "reference_report": "artifacts/boat-graph-bvp-plane129-roundtrip.json",
     "max_absolute_four_column_pressure_functional_change": 1.8189894035458565e-12
-  }
+  },
+  "convex_input_contract": [
+    {
+      "report": "artifacts\\box-graph-pressure-convex-contract.json",
+      "report_sha256": "d4fe37c138556a29f7453a79d1f0b068567be4a699f1e466d224b0349563a04f",
+      "archive_hashes_verified": true,
+      "complete": true,
+      "failure": null,
+      "solved_snapshots": 7
+    },
+    {
+      "report": "artifacts\\boat-graph-pressure-reject-nonconvex.json",
+      "report_sha256": "f23eecdd59989242bfef7b6853f64fd22744ad986263dd795731a7a3b75e9a97",
+      "archive_hashes_verified": true,
+      "complete": false,
+      "failure": {
+        "type": "ValueError",
+        "message": "hull must be exactly convex with outward faces"
+      },
+      "solved_snapshots": 0
+    }
+  ]
 }

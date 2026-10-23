@@ -28,6 +28,7 @@ from .boat_hos_continuation import tilted_geometry, tangent_graph
 from .boat_image_plane import elevated_potential
 from .boat_radiation_time import harmonic_maps
 from .boat_spatial_work import source_matrix, subdivide
+from .boat_parent_clip_proof import coplanar_groups
 from .cuda_graph import GraphDirichlet, body_maps, cp
 
 
@@ -152,6 +153,8 @@ def tangent_plane_reference(panels, cg, level, slope, normal_load):
 
 def run(inputs, args, report):
     started = perf_counter()
+    mesh = inputs.body.mesh
+    coplanar_groups(mesh.vertices, mesh.faces, mesh.artificial_faces)
     coarse, level, slope = tilted_geometry(inputs)
     fixture = internal_field(coarse)  # Fixed before changing body discretization.
     triangles = coarse
@@ -258,7 +261,8 @@ if __name__ == '__main__':
         *[Path(__file__).with_name(name) for name in ['body_internal_field.py', 'boat_hos_continuation.py',
           'boat_graph_images.py', 'boat_image_plane.py', 'boat_radiation_time.py', 'boat_spatial_work.py',
           'hos_graph.py', 'cuda_graph.py', 'cuda_operator.py', 'cuda_pair.cuh', 'cuda_energy.cu',
-          'incident_baseline_benchmark.py', 'panel_gradient_reference.py']]]
+          'incident_baseline_benchmark.py', 'panel_gradient_reference.py',
+          'boat_parent_clip_proof.py', 'p4_fluid_ordering.py']]]
     hashes = {}
     for source in sources:
         relative = source.resolve().relative_to(Path.cwd())
