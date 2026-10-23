@@ -794,6 +794,35 @@
           "tangent_plane_diagonal_relative_error": 0.0008386518584413416
         }
       ]
+    },
+    {
+      "report": "artifacts\\boat-graph-bvp-gpu-maps513.json",
+      "report_sha256": "2ce1ec127b77cbe887451821ad259e936f46ead0ab38f6b3d671d495bf078022",
+      "source_archive": "artifacts\\boat-graph-bvp-gpu-maps513.source",
+      "archive_hashes_verified": true,
+      "complete": true,
+      "total_seconds": 15.193104100006167,
+      "setup": {
+        "geometry_and_fields_seconds": 2.858417700015707,
+        "source_operators_seconds": 1.8293955000117421,
+        "lift_map_seconds": 0.3682833000202663,
+        "source_trace_seconds": 7.04039089998696,
+        "context_seconds": 9.238162499997998,
+        "verification_tangent_plane_seconds": 0.04122590000042692
+      },
+      "peak_process_rss_bytes": 1947885568,
+      "cupy_pool_reserved_bytes": 3271787008
     }
-  ]
+  ],
+  "gpu_map_optimization": {
+    "scope": "Exact implementation change in static candidate only; no sixDOF throughput claim",
+    "reference_report": "artifacts/boat-graph-bvp-plane513.json",
+    "candidate_report": "artifacts\\boat-graph-bvp-gpu-maps513.json",
+    "max_absolute_pressure_functional_change": 9.094947017729282e-13,
+    "whole_static_job_speed_ratio": 1.6907451848490391,
+    "map_build_speed_ratio": 26.880627222235805,
+    "process_peak_rss_ratio": 4.421008583600739,
+    "validation": "Five focused GPU checks passed5.30s, independent complex P/N parity and all four full-case load columns; source reviewer approved. One serial old/new timing comparison, not a statistical speed estimate.",
+    "decision": "Keep direct GPU map construction as the sole candidate path; CPU formula is an independent verification reference. Dense GPU map storage remains."
+  }
 }

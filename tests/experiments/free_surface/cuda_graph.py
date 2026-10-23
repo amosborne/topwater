@@ -8,6 +8,44 @@ import numpy as np
 from .cuda_operator import cp
 
 
+_body_maps = cp.ElementwiseKernel(
+    'raw float64 points, raw float64 normals, raw float64 origin, '
+    'raw float64 kx, raw float64 ky, raw float64 wave, int64 modes',
+    'complex128 potential, complex128 normal',
+    '''
+    const long long target = i / modes;
+    const long long mode = i % modes;
+    const double phase = (points[3*target]-origin[0])*kx[mode]
+                       + (points[3*target+1]-origin[1])*ky[mode];
+    const double amplitude = exp(points[3*target+2]*wave[mode])/modes;
+    potential = complex<double>(amplitude*cos(phase), amplitude*sin(phase));
+    normal = potential * complex<double>(normals[3*target+2]*wave[mode],
+        normals[3*target]*kx[mode] + normals[3*target+1]*ky[mode]);
+    ''', 'graph_body_harmonic_maps')
+
+
+def body_maps(points, normals, size, spacing, origin):
+    """Build flat harmonic potential/normal maps directly in GPU storage.
+
+    Points use z relative to the expansion plane; normals are fluid outward.
+    The independent NumPy formula remains in the radiation verification harness.
+    """
+    points, normals, origin = (np.ascontiguousarray(a, dtype=np.float64)
+                               for a in (points, normals, origin))
+    if (points.ndim != 2 or points.shape[1:] != (3,) or normals.shape != points.shape
+            or origin.shape != (2,) or not all(np.isfinite(a).all() for a in (points, normals, origin))
+            or np.any(points[:, 2] > 0)):
+        raise ValueError('finite submerged points, matching normals and two-dimensional origin required')
+    if isinstance(size, bool) or not isinstance(size, int) or size < 3 or size % 2 == 0 or not np.isfinite(spacing) or spacing <= 0:
+        raise ValueError('odd integer size>=3 and positive finite spacing required')
+    kx, ky = cp.meshgrid(2*np.pi*cp.fft.fftfreq(size, d=spacing),
+                         2*np.pi*cp.fft.fftfreq(size, d=spacing))
+    wave = cp.hypot(kx, ky)
+    potential, normal = _body_maps(cp.asarray(points), cp.asarray(normals), cp.asarray(origin),
+        kx.ravel(), ky.ravel(), wave.ravel(), np.int64(size*size), size=len(points)*size*size)
+    return potential.reshape(len(points), size*size), normal.reshape(len(points), size*size)
+
+
 def _resize(values, shape):
     """Fourier interpolate/project between odd grids, preserving amplitudes."""
     old = values.shape

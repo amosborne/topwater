@@ -27,7 +27,7 @@ from .boat_hos_continuation import tilted_geometry, tangent_graph
 from .boat_image_plane import elevated_trace
 from .boat_radiation_time import harmonic_maps
 from .boat_spatial_work import source_matrix, subdivide
-from .cuda_graph import GraphDirichlet, cp
+from .cuda_graph import GraphDirichlet, body_maps, cp
 
 
 class GraphBody:
@@ -46,8 +46,7 @@ class GraphBody:
         target = panels.centroids.copy()
         target[:, 2] -= reference_height
         padded = self.graph.padded_shape[0]
-        potential, normal, _ = harmonic_maps(target, panels.normals, padded, length/padded, origin)
-        self.potential, self.normal = cp.asarray(potential), cp.asarray(normal)
+        self.potential, self.normal = body_maps(target, panels.normals, padded, length/padded, origin)
         cp.cuda.get_current_stream().synchronize()
         self.lift_map_seconds = perf_counter()-before
         before = perf_counter()

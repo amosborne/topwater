@@ -4,8 +4,19 @@ from numpy.testing import assert_allclose
 import pytest
 
 pytest.importorskip('cupy')
-from tests.experiments.free_surface.cuda_graph import GraphDirichlet, cp, _resize
+from tests.experiments.free_surface.cuda_graph import GraphDirichlet, body_maps, cp, _resize
 from tests.experiments.free_surface.hos_graph import graph_field
+
+
+def test_gpu_body_maps_match_independent_complex_fourier_formula():
+    from tests.experiments.free_surface.boat_radiation_time import harmonic_maps
+    points = np.array([[-.2, .7, -.03], [1.3, -.5, -.8], [.4, .8, 0.]])
+    normals = np.array([[.6, 0., .8], [0., -.8, .6], [1., 0., 0.]])
+    for size in [17, 35]:
+        actual = body_maps(points, normals, size, .3, [-2., -1.])
+        expected = harmonic_maps(points, normals, size, .3, [-2., -1.])
+        for gpu, cpu in zip(actual, expected[:2], strict=True):
+            assert_allclose(cp.asnumpy(gpu), cpu, atol=3e-16, rtol=2e-13)
 
 
 @pytest.mark.parametrize('order', [2, 4])

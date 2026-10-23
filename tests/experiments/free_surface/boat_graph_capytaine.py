@@ -71,6 +71,8 @@ def run(work_path, output):
         transform[:3, :3] = transform[3:, 3:] = frame
         world = transform.T@result['added_mass']@transform
         comparisons = []
+        if [row['name'] for row in work['rows'][2:]] != ['unit heave', 'unit world-x rotation']:
+            raise ValueError('parent rigid-mode order differs')
         for row, column in zip(work['rows'][2:], [2, 3], strict=True):
             graph = np.asarray(row['instantaneous_added_mass_column'])
             plane = np.asarray(row['tangent_plane_added_mass_column'])
