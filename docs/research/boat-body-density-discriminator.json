@@ -1,0 +1,141 @@
+{
+  "status": "Reject blind body-density refinement: fixed-state boundary leakage and homogeneous instability worsen",
+  "producer_commit": "f525631 (integrated as7178994)",
+  "evidence": {
+    "artifacts\\body-density-discriminator-owned.json": "2e890ae77e433138d59bbccd5be4d4043540e1526be3bb232803aaa8a2328266",
+    "artifacts\\body-density-discriminator-kernel-ownership.json": "dd2cc53aa2d86c47b4bf73620805cd3ea8413b77998e7571c64c3a9613f61832"
+  },
+  "comparison": {
+    "physical_psi_moment_sha256": "abbd88299daffeecec7c74c41fa58c8a6452a8832d97a06b337b8b46a6cacf7f",
+    "probe_sha256": {
+      "old_gauss4_points": "b96ccaeb5c5328ed78c9a58148770640b9126e928ed5a0832719d388598e20da",
+      "normals": "86ac9f6a464f22477963f7b6c64ee4ecf693cadd61ed7943d0fb94588f7c9f69",
+      "weights": "99cd185d3248f5bbc9d6b04f7e32e1c11b14d00c27bcf61dc6ea3e418953661c",
+      "physical_offsets": "af89f753ea061f490cb04069e7e8c9e09a3ed689e1960ecd5b0f09491ec1e7dd"
+    },
+    "held_fixed": [
+      "Physical psi moments and mode amplitude",
+      "Hull shape, water source mesh, physical cut integration geometry and active state",
+      "Physical mass, hidden fill, signed-lag FFT/contact-row weak action",
+      "Cross quadrature q8",
+      "Original physical Gauss4 probes and identical h/h2 offsets",
+      "Zero homogeneous far chi closure"
+    ],
+    "changed": "Only body P0 source-density/collocation partition68-to272 coplanar subdivisions"
+  },
+  "body_levels": [
+    {
+      "level": 0,
+      "body_panels": 68,
+      "physical_cross_quadrature_order": 8,
+      "triangles_sha256": "0f1cc91a5ed4b165a0374751d684e8e0b4c1a50c7d5455dfe1fb40f71af9b258",
+      "body_normal_collocation_residual_max": 3.1086244689504383e-15,
+      "physical_trace_moment_residual_max": 5.9834407394043776e-18,
+      "physical_trace_moment_residual_relative": 2.7418577038275e-14,
+      "frozen_state_rate_mass_norm": 0.02431164153968134,
+      "effective_rayleigh_real": -60.25034804831416,
+      "effective_rayleigh_imag": 0.0,
+      "probes": [
+        {
+          "offset_factor": 1.0,
+          "potential_rms": 0.011109553989514803,
+          "normal_rms": 0.12821945018316144,
+          "normal_max": 2.7516405948321756,
+          "green_body_work_J": 15.857044060194154
+        },
+        {
+          "offset_factor": 0.5,
+          "potential_rms": 0.011112960822026959,
+          "normal_rms": 0.128301729091105,
+          "normal_max": 2.7652751361156356,
+          "green_body_work_J": 15.871355188530746
+        }
+      ],
+      "seconds": 66.05301100001088
+    },
+    {
+      "level": 1,
+      "body_panels": 272,
+      "physical_cross_quadrature_order": 8,
+      "triangles_sha256": "799cbe09baa94bda5406ba65ca1aa1b01aaa168f412661ffe97772bee39808d1",
+      "body_normal_collocation_residual_max": 1.7763568394002505e-14,
+      "physical_trace_moment_residual_max": 2.3960868011929648e-17,
+      "physical_trace_moment_residual_relative": 1.791522311346844e-13,
+      "frozen_state_rate_mass_norm": 0.12582801560629775,
+      "effective_rayleigh_real": -265.6431597233306,
+      "effective_rayleigh_imag": 0.0,
+      "probes": [
+        {
+          "offset_factor": 1.0,
+          "potential_rms": 0.025751255184975657,
+          "normal_rms": 0.41300219374742353,
+          "normal_max": 15.165116402774533,
+          "green_body_work_J": 108.61392326814799
+        },
+        {
+          "offset_factor": 0.5,
+          "potential_rms": 0.025767760775664204,
+          "normal_rms": 0.4133870135731744,
+          "normal_max": 15.250693631013732,
+          "green_body_work_J": 108.77937499871894
+        }
+      ],
+      "same_physical_state_rate_difference_mass_norm": 0.10588591328406693,
+      "seconds": 118.57514219998848
+    }
+  ],
+  "refined_spectrum": {
+    "status": "converged",
+    "matvecs": 372,
+    "values": [
+      {
+        "real": 52.12399058705067,
+        "imag": 0.0,
+        "weak_kinematic_relative_residual": 2.0888739398545972e-15,
+        "weak_dynamic_relative_residual": 1.347956918206359e-15,
+        "body_normal_residual_max": 6.821210263296962e-13,
+        "physical_trace_moment_residual_max": 2.628350011593672e-15
+      },
+      {
+        "real": 15.875511392471036,
+        "imag": 41.552656325529874,
+        "weak_kinematic_relative_residual": 1.481080119675642e-14,
+        "weak_dynamic_relative_residual": 1.387106104993778e-14,
+        "body_normal_residual_max": 4.4944285380292024e-13,
+        "physical_trace_moment_residual_max": 8.150364265874936e-16
+      },
+      {
+        "real": 15.875511392471036,
+        "imag": -41.552656325529874,
+        "weak_kinematic_relative_residual": 1.481080119675642e-14,
+        "weak_dynamic_relative_residual": 1.387106104993778e-14,
+        "body_normal_residual_max": 4.4944285380292024e-13,
+        "physical_trace_moment_residual_max": 8.150364265874936e-16
+      },
+      {
+        "real": 1.0946829731951238,
+        "imag": -12.487995951857686,
+        "weak_kinematic_relative_residual": 1.8239443541808741e-09,
+        "weak_dynamic_relative_residual": 6.863464216425432e-09,
+        "body_normal_residual_max": 8.015287401035548e-14,
+        "physical_trace_moment_residual_max": 1.8883004888260453e-16
+      }
+    ]
+  },
+  "limits": [
+    "Only body-density/collocation partition changes; old physical psi moments and flux operator fixed",
+    "Gauss4 and h/h2 body work are sampled diagnostics; quadrature convergence is not established",
+    "No transient, nonlinear motion, passivity repair or physical accuracy qualification"
+  ],
+  "interpretation": [
+    "Boundary collocation and weak trace residuals remain near roundoff but do not ensure continuous boundary enforcement or stability",
+    "Off-centroid sampled RMS leakage rises0.12830-to0.41339m/s, sampled Green work15.871-to108.779J, at identical old points/offsets",
+    "Frozen-old-mode Rayleigh changes-60.250-to-265.643; refined leading growth52.124/s vs24.312/s on coarse body",
+    "Neither Gauss4 body work nor all physical discretizations are continuum-converged; this is a controlled negative refinement result",
+    "Fixed q8 cross quadrature fixes its rule, not its error; finer body sources can make target integration harder. This rejects blind refinement of this assembled mixed scheme, not P0 BEM convergence in general.",
+    "Do not spend another refinement level or long transient on this alternative"
+  ],
+  "next_gate": "Test physical-psi P1 plus odd/Dirichlet image source correction, removing projected-trace Schur coupling and fixed-chi far tail. Hold current water/body discretization; compare cut-source-flux quadrature, frozen-state action, body leakage and bounded spectrum. This changes formulation/far closure together, not isolated causation.",
+  "baseline_promoted": false,
+  "qualification": "No nonlinear6DOF, Capytaine trajectory correlation,60s accuracy or throughput qualification"
+}
