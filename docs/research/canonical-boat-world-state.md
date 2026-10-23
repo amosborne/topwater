@@ -803,6 +803,39 @@ sample-local reverse/analytic scalar derivative); expanding forward batch width
 alone has not earned a larger investigation. No new trajectory or full-RHS
 speed claim follows from this component optimization.
 
+## Body work and pressure comparison
+
+The frozen-state action now includes all six body equations. At fixed world
+twist, its known fluid load is d(F_V)/dt - F_Q + the moving-surface one-form
+derivative - U_Q, plus external-port work and the rotational correction
+-omega cross F_omega. F_V=-rho B.T phi uses the full nodal body map, including
+contact rows. Both B and phi are differentiated. The action and pressure routes
+share exactly the same four offset fields and candidate surface rates.
+
+The q12 scalar functional checks of translation and roll derivatives agree
+within 0.0004 N or N m. Hydrostatic pose derivatives agree with direct pressure
+within 0.0007 N or N m. Independently assembled added masses agree within
+2e-11 in their corresponding mixed units; action reciprocity is 8.1e-17
+relative. These establish discrete identities and signs, not continuum accuracy.
+
+Dynamic action and pressure loads nevertheless disagree. At q12, h/2,
+action minus pressure is approximately [176, -862, -422] N and
+[534, 1494, 347] N m, producing a roll-acceleration difference of 0.261 rad/s2.
+The mismatch persists from q6 to q12 and under h/h2 changes. Subtracting the
+shared -rho B.T phi_dot term isolates it in the geometric terms: that temporal
+identity agrees to 1e-10, and the remaining centered-product error is below
+0.0005 N or N m. A constant potential gauge changes the complete action load
+by less than 0.00008 N or N m. The canonical boat's independent uniform-coflow
+test recovers equilibrium hydrostatics with the actual sliding chart velocity.
+
+Evidence and exact source/input ownership are in `boat-body-action.json`.
+The discrepancy's spatial convergence remains unresolved; neither formulation
+has earned physical qualification. The action equations provide a candidate
+consistent with the current discrete energy, not a calibrated pressure fix.
+Next exercise the complete action coupling in an explicitly experimental moving
+pilot, retaining these pressure diagnostics and no production adoption claim.
+Gradient cost and eventual motion/Capytaine convergence remain required gates.
+
 ## Primary context
 
 Variational free-surface discretization with moving boundaries is established;

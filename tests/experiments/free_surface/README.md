@@ -1754,3 +1754,13 @@ the SHA-verified archived field implementation, including all six acceleration
 responses. Evidence is in `docs/research/boat-parent-action.json`; these rates
 are not enabled in the moving solver. Body work/pressure consistency and
 trajectory convergence remain outstanding.
+
+`boat_body_action_audit --reference <parent-action-report> --output <report>
+--scalar-poses 0 3` checks the complete six body action equations against pressure
+on identical offset fields. Optional scalar pose controls independently rebuild
+the stationary functional; pose indices0..2 are world translations in meters,
+3..5 world rotations in radians. The audit includes hydrostatic signs, added
+mass, constant gauge and removal of the shared potential-time load. The q12
+dynamic geometric mismatch remains substantial despite passing those controls;
+see `docs/research/boat-body-action.json`. Neither load formulation has earned
+trajectory or continuum qualification.
