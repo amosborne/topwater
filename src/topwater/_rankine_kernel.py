@@ -13,7 +13,7 @@ import numpy as np
 @njit(cache=True, nogil=True, error_model="numpy")
 def analytic_block(targets, triangles, normals, outward, tangents, lengths,
                    areas, diameters, signs, self_indices, gradients, atol, rtol,
-                   single, double, gs, gk):
+                   single, double, gs, gk, single_trace=False):
     m, n = len(targets), len(triangles)
     unsafe = np.zeros((m, n), dtype=np.bool_)
     bad = 0
@@ -64,7 +64,7 @@ def analytic_block(targets, triangles, normals, outward, tangents, lengths,
             if near_plane and inside:
                 if not self_pair:
                     bad |= 4
-                if gradients:
+                if gradients and not (single_trace and self_pair):
                     bad |= 8
             p01, p12, p20 = 0., 0., 0.
             for j in range(3):
@@ -94,23 +94,25 @@ def analytic_block(targets, triangles, normals, outward, tangents, lengths,
                         edge_sum += term
                         edge_abs += abs(term)
                     g_s = (-edge_sum-angle*normals[col, j])/factor
-                    grad_d = ((l1*l2+p12)*r[0, j]/l0
-                              + (l0*l2+p20)*r[1, j]/l1
-                              + (l0*l1+p01)*r[2, j]/l2
-                              + l2*(r[0, j]+r[1, j])
-                              + l0*(r[1, j]+r[2, j])
-                              + l1*(r[2, j]+r[0, j]))
-                    grad_t = 2*areas[col]*normals[col, j]
-                    g_k = 2*(denominator*grad_t-determinant*grad_d)/squared_angle*signs[col]/factor
-                    gs[row, col, j], gk[row, col, j] = g_s, g_k
+                    gs[row, col, j] = g_s
                     gs_error = (32*eps*(edge_abs+abs(angle*normals[col, j]))
                                 + angle_error*abs(normals[col, j]))/factor
-                    gk_error = (128*eps*(abs(denominator*grad_t)+abs(determinant*grad_d))
-                                / squared_angle/factor)
-                    gk_error += (4*denominator_error*abs(grad_t)/squared_angle/factor
-                                 + 4*abs(g_k)*abs(denominator)*denominator_error/squared_angle)
-                    unresolved |= (not np.isfinite(g_s) or not np.isfinite(g_k)
-                                   or gs_error > atol+rtol*abs(g_s)
-                                   or gk_error*diameters[col] > atol+rtol*abs(g_k)*diameters[col])
+                    unresolved |= not np.isfinite(g_s) or gs_error > atol+rtol*abs(g_s)
+                    if not single_trace:
+                        grad_d = ((l1*l2+p12)*r[0, j]/l0
+                                  + (l0*l2+p20)*r[1, j]/l1
+                                  + (l0*l1+p01)*r[2, j]/l2
+                                  + l2*(r[0, j]+r[1, j])
+                                  + l0*(r[1, j]+r[2, j])
+                                  + l1*(r[2, j]+r[0, j]))
+                        grad_t = 2*areas[col]*normals[col, j]
+                        g_k = 2*(denominator*grad_t-determinant*grad_d)/squared_angle*signs[col]/factor
+                        gk[row, col, j] = g_k
+                        gk_error = (128*eps*(abs(denominator*grad_t)+abs(determinant*grad_d))
+                                    / squared_angle/factor)
+                        gk_error += (4*denominator_error*abs(grad_t)/squared_angle/factor
+                                     + 4*abs(g_k)*abs(denominator)*denominator_error/squared_angle)
+                        unresolved |= (not np.isfinite(g_k)
+                                       or gk_error*diameters[col] > atol+rtol*abs(g_k)*diameters[col])
             unsafe[row, col] = unresolved
     return unsafe, bad

@@ -81,7 +81,7 @@ class PanelInfluence:
     quadrature_evaluations: int = 0
 
 
-def _fallback(target, triangle, normal, controls, gradients):
+def _fallback(target, triangle, normal, controls, gradients, single_trace=False):
     """Resolve analytic cancellation with bounded additional work.
 
     Fixed-origin Gaussian rules can agree while missing a near-singular peak.
@@ -133,13 +133,14 @@ def _fallback(target, triangle, normal, controls, gradients):
         result = [np.sum(measure/distance), np.sum(measure*height/distance**3)]
         if gradients:
             result.extend(np.sum(-measure[:, :, None]*delta/distance[:, :, None]**3, axis=(0, 1)))
-            result.extend(np.sum(measure[:, :, None]*(normal/distance[:, :, None]**3
-                           - 3*height[:, :, None]*delta/distance[:, :, None]**5), axis=(0, 1)))
+            if not single_trace:
+                result.extend(np.sum(measure[:, :, None]*(normal/distance[:, :, None]**3
+                               - 3*height[:, :, None]*delta/distance[:, :, None]**5), axis=(0, 1)))
         result = np.asarray(result)
         evaluations += order*order
         scaled = result.copy()
         scaled[0] /= diameter
-        if gradients:
+        if gradients and not single_trace:
             scaled[5:8] *= diameter
         if previous is not None and np.all(
             np.abs(scaled-previous) <= controls.quadrature_atol + controls.quadrature_rtol*np.abs(scaled)
@@ -159,8 +160,27 @@ def panel_influence(targets, panels, *, controls=None, gradients=False, self_ind
                            self_indices=self_indices)
 
 
+def single_layer_trace(panels, indices, *, controls=None):
+    """S, principal-value K and domain-side grad(S) at indexed centroids.
+
+    The domain lies toward -panels.normals. Only the owned self pair receives
+    the +0.5*normal jump; no double-layer gradient is requested or evaluated.
+    Targets must fit controls.target_block_size, as for panel_influence.
+    """
+    if not isinstance(panels, TrianglePanels):
+        raise ValueError('expected cached TrianglePanels')
+    indices = np.asarray(indices)
+    if (indices.ndim != 1 or indices.dtype.kind not in 'iu'
+            or np.any(indices < 0) or np.any(indices >= len(panels))):
+        raise ValueError('indices must contain valid source-panel indices')
+    result = _evaluate_block(panels.centroids[indices], panels, controls=controls,
+                             gradients=True, self_indices=indices, single_trace=True)
+    result.gradient_single_layer[np.arange(len(indices)), indices] += .5*panels.normals[indices]
+    return result
+
+
 def _evaluate_block(targets, panels, *, controls=None, gradients=False, self_indices=None,
-                    outputs=None):
+                    outputs=None, single_trace=False):
     """Evaluate one target block against cached panels.
 
     S and K are (M,N), with no trace jump in K. Optional bulk gradients are
@@ -192,12 +212,12 @@ def _evaluate_block(targets, panels, *, controls=None, gradients=False, self_ind
     shape = (len(targets), len(panels))
     single, double = ((np.empty(shape), np.empty(shape)) if outputs is None else outputs)
     gradient_single = np.empty((*shape, 3 if gradients else 0))
-    gradient_double = np.empty_like(gradient_single)
+    gradient_double = np.empty((*shape, 3 if gradients and not single_trace else 0))
     unsafe, bad = analytic_block(
         targets, panels.triangles, panels.geometric_normals, panels.edge_outward,
         panels.tangents, panels.edge_lengths, panels.areas, panels.diameters,
         panels.normal_sign, indices, gradients, controls.quadrature_atol,
-        controls.quadrature_rtol, single, double, gradient_single, gradient_double,
+        controls.quadrature_rtol, single, double, gradient_single, gradient_double, single_trace,
     )
     if bad & 1:
         raise ValueError("targets on panel vertices are unsupported")
@@ -212,11 +232,13 @@ def _evaluate_block(targets, panels, *, controls=None, gradients=False, self_ind
     for row, column in zip(*np.nonzero(unsafe)):
         if indices[row] == column:
             raise QuadratureError("invalid analytic self-panel integral")
-        value, count = _fallback(targets[row], panels.triangles[column], panels.normals[column], controls, gradients)
+        value, count = _fallback(targets[row], panels.triangles[column], panels.normals[column], controls, gradients, single_trace)
         single[row, column], double[row, column] = value[:2]
         if gradients:
-            gradient_single[row, column], gradient_double[row, column] = value[2:5], value[5:8]
+            gradient_single[row, column] = value[2:5]
+            if not single_trace:
+                gradient_double[row, column] = value[5:8]
         fallbacks += 1
         evaluations += count
     return PanelInfluence(single, double, gradient_single if gradients else None,
-                          gradient_double if gradients else None, fallbacks, evaluations)
+                          gradient_double if gradients and not single_trace else None, fallbacks, evaluations)
