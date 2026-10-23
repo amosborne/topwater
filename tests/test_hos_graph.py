@@ -78,3 +78,18 @@ def test_spatial_and_padding_refinement_against_same_physical_graph():
     # frequencies. At n=16 the resolved product error decreases with padding.
     assert errors[1][1] < errors[1][0]
     assert abs(errors[1][2]-errors[1][1]) < 1e-10
+
+
+def test_ordered_flux_preserves_periodic_volume_and_reciprocity():
+    x, y, eta, psi, _, _ = harmonic_graph(32)
+    a, b = 2*np.pi/LENGTHS[0], 2*np.pi/LENGTHS[1]
+    first = np.sin(a*x+2*b*y)+.3*np.cos(2*a*x-b*y)
+    second = np.cos(3*a*x-b*y)-.2*np.sin(a*x+b*y)
+    for order in range(1, 6):
+        for padding in (2., 3.):
+            flux = graph_field(eta, psi, LENGTHS, order=order, padding=padding).normal_flux
+            ga = graph_field(eta, first, LENGTHS, order=order, padding=padding).normal_flux
+            gb = graph_field(eta, second, LENGTHS, order=order, padding=padding).normal_flux
+            assert abs(flux.mean()) < 5e-14*np.sqrt(np.mean(flux*flux))
+            scale = np.linalg.norm(first)*np.linalg.norm(gb)+np.linalg.norm(ga)*np.linalg.norm(second)
+            assert abs(np.vdot(first, gb)-np.vdot(ga, second)) < 5e-13*scale

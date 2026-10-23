@@ -1,0 +1,993 @@
+{
+  "complete": true,
+  "qualified": false,
+  "branch": "experiment/graph-source-coupling",
+  "scope": "Necessary HOS continuation component on actual supplied hull targets and smooth nonflat tangent graph; no unknown body-density BVP, rigid-body motion or60s accuracy qualification.",
+  "geometry": {
+    "body_panel_count": 84,
+    "panel_sha256": "6b5405b32026f18d9cbf571cd2bbd8dd10d1322bf248f924ed2560cbf76b72c5",
+    "tangent_level_m": 0.3283212749064258,
+    "tangent_slopes": [
+      -0.002643079569655394,
+      -0.024842745409417732
+    ],
+    "expansion_height_m": 0.3672438906483191
+  },
+  "normalization": "Acceleration potentials in m^2/s^2: density patterns multiply unit1m/s^2 translation or1rad/s^2 rotation; gradients are acceleration fields. No physical time derivative was solved.",
+  "order_sweep": {
+    "report": "artifacts\\boat-hos-continuation.json",
+    "sha256": "eac0c565cff4484fc09f6812e55c0701b029e8eaa5ea37dce5ec7a6e2c7b4ad4",
+    "producer_archive": "artifacts\\boat-hos-continuation.source",
+    "total_seconds": 79.29478689999087,
+    "peak_process_rss_bytes": 1994674176,
+    "rows": [
+      {
+        "grid_size": 65,
+        "image_clearance_m": 0.0,
+        "orders": [
+          2,
+          4,
+          6,
+          8
+        ],
+        "body_potential_relative_l2": [
+          [
+            0.008144712257617467,
+            0.03660672853780521
+          ],
+          [
+            0.007883120073321545,
+            0.03547161456146388
+          ],
+          [
+            0.0078830869027385,
+            0.03547204541397834
+          ],
+          [
+            0.007883088143091096,
+            0.03547202785155919
+          ]
+        ],
+        "body_normal_relative_l2": [
+          [
+            0.04415526730332462,
+            0.15074643246629352
+          ],
+          [
+            0.04404829390209709,
+            0.15024077253147833
+          ],
+          [
+            0.044046608108908016,
+            0.15023911105578383
+          ],
+          [
+            0.04404664373261431,
+            0.15023975853224103
+          ]
+        ],
+        "graph_gradient_relative_sample_l2": [
+          [
+            0.09907861437306915,
+            0.16443229094289186
+          ],
+          [
+            0.09910422522320035,
+            0.1644641639710422
+          ],
+          [
+            0.09910478713129903,
+            0.16446457503191667
+          ],
+          [
+            0.09910496322440422,
+            0.16446467975084406
+          ]
+        ]
+      },
+      {
+        "grid_size": 65,
+        "image_clearance_m": 0.27432000000000006,
+        "orders": [
+          2,
+          4,
+          6,
+          8
+        ],
+        "body_potential_relative_l2": [
+          [
+            0.0017030226486499588,
+            0.007931505502263689
+          ],
+          [
+            0.0014808269435627843,
+            0.006945281160178391
+          ],
+          [
+            0.0014808973445955137,
+            0.006946013641146255
+          ],
+          [
+            0.0014808966112753578,
+            0.006946008689032732
+          ]
+        ],
+        "body_normal_relative_l2": [
+          [
+            0.010287956090743351,
+            0.041886401634671666
+          ],
+          [
+            0.010320975469008786,
+            0.04177727013898181
+          ],
+          [
+            0.01032166099453963,
+            0.041780246671307336
+          ],
+          [
+            0.010321576981482651,
+            0.041780392942596105
+          ]
+        ],
+        "graph_gradient_relative_sample_l2": [
+          [
+            0.023820909418894455,
+            0.037552646161203795
+          ],
+          [
+            0.02378009299155659,
+            0.037579883431241926
+          ],
+          [
+            0.023780775521282455,
+            0.0375800981636417
+          ],
+          [
+            0.02378080918018529,
+            0.03758012853094898
+          ]
+        ]
+      },
+      {
+        "grid_size": 129,
+        "image_clearance_m": 0.0,
+        "orders": [
+          2,
+          4,
+          6,
+          8
+        ],
+        "body_potential_relative_l2": [
+          [
+            0.0006889860108129006,
+            0.002649474926165037
+          ],
+          [
+            0.00020803283728689414,
+            0.0008449573124863114
+          ],
+          [
+            0.00020798486247572718,
+            0.0008432543496671684
+          ],
+          [
+            0.00020796930098522292,
+            0.0008429074090546311
+          ]
+        ],
+        "body_normal_relative_l2": [
+          [
+            0.002699833797913062,
+            0.015491324797692784
+          ],
+          [
+            0.0017110027758967534,
+            0.013741207102290072
+          ],
+          [
+            0.0017108779046505855,
+            0.013758173565591756
+          ],
+          [
+            0.0017111446869320483,
+            0.013759996918818303
+          ]
+        ],
+        "graph_gradient_relative_sample_l2": [
+          [
+            0.012154325387258327,
+            0.03376604413366229
+          ],
+          [
+            0.012100894998737314,
+            0.03373281668960775
+          ],
+          [
+            0.012101412875453695,
+            0.0337331113999207
+          ],
+          [
+            0.012101407138311857,
+            0.033733099913589755
+          ]
+        ]
+      },
+      {
+        "grid_size": 129,
+        "image_clearance_m": 0.27432000000000006,
+        "orders": [
+          2,
+          4,
+          6,
+          8
+        ],
+        "body_potential_relative_l2": [
+          [
+            0.0004540748873591533,
+            0.0015224038592307975
+          ],
+          [
+            0.0001908131276125601,
+            5.050052512510281e-05
+          ],
+          [
+            0.0001907355205585405,
+            5.055046499521293e-05
+          ],
+          [
+            0.0001907350297775614,
+            5.0542331222107574e-05
+          ]
+        ],
+        "body_normal_relative_l2": [
+          [
+            0.0013289752563953134,
+            0.0026494594203245398
+          ],
+          [
+            0.0007446167934298887,
+            0.001003822678118767
+          ],
+          [
+            0.0007456508425584667,
+            0.0010128224425845073
+          ],
+          [
+            0.0007456556497933912,
+            0.0010129562528946984
+          ]
+        ],
+        "graph_gradient_relative_sample_l2": [
+          [
+            0.009740586463786588,
+            0.001935057769008954
+          ],
+          [
+            0.00962301610512317,
+            0.0018249829880780028
+          ],
+          [
+            0.009624164464377073,
+            0.001825078354117668
+          ],
+          [
+            0.00962414300795998,
+            0.0018250758488620275
+          ]
+        ]
+      },
+      {
+        "grid_size": 257,
+        "image_clearance_m": 0.0,
+        "orders": [
+          2,
+          4,
+          6,
+          8
+        ],
+        "body_potential_relative_l2": [
+          [
+            0.00066860993374717,
+            0.0022508703494021395
+          ],
+          [
+            0.0001488764878656108,
+            7.95492428620009e-05
+          ],
+          [
+            0.00014889250772826234,
+            7.921869026742537e-05
+          ],
+          [
+            0.0001488921057738021,
+            7.92178628255821e-05
+          ]
+        ],
+        "body_normal_relative_l2": [
+          [
+            0.0018303636331624509,
+            0.0034241243652487056
+          ],
+          [
+            0.00046620898753093937,
+            0.0003635776004192387
+          ],
+          [
+            0.00046693673322628876,
+            0.0003624826933758994
+          ],
+          [
+            0.0004669428291387549,
+            0.00036247421996529457
+          ]
+        ],
+        "graph_gradient_relative_sample_l2": [
+          [
+            0.0066281821040689,
+            0.0020399763619285733
+          ],
+          [
+            0.006520627226215876,
+            0.0019475298146332213
+          ],
+          [
+            0.006521476955119518,
+            0.0019475476568831301
+          ],
+          [
+            0.006521461201520862,
+            0.0019475472402664489
+          ]
+        ]
+      },
+      {
+        "grid_size": 257,
+        "image_clearance_m": 0.27432000000000006,
+        "orders": [
+          2,
+          4,
+          6,
+          8
+        ],
+        "body_potential_relative_l2": [
+          [
+            0.0004524448200918218,
+            0.0014971843343916413
+          ],
+          [
+            0.00019203774301972332,
+            2.5947407394354326e-05
+          ],
+          [
+            0.00019196843620491284,
+            2.6479880151112876e-05
+          ],
+          [
+            0.0001919680889660391,
+            2.648024579175099e-05
+          ]
+        ],
+        "body_normal_relative_l2": [
+          [
+            0.0013046749498097688,
+            0.0023231938246115846
+          ],
+          [
+            0.0007072125327886857,
+            9.645154159820136e-05
+          ],
+          [
+            0.0007080431296124592,
+            9.182330636139802e-05
+          ],
+          [
+            0.0007080437513419392,
+            9.181605551124491e-05
+          ]
+        ],
+        "graph_gradient_relative_sample_l2": [
+          [
+            0.009732635527048951,
+            0.0012156369274596865
+          ],
+          [
+            0.009614917379344917,
+            0.0010364119656807779
+          ],
+          [
+            0.009616066450750683,
+            0.0010365441153126881
+          ],
+          [
+            0.009616044954410964,
+            0.0010365412257080536
+          ]
+        ]
+      }
+    ]
+  },
+  "domain_control": {
+    "report": "artifacts\\boat-hos-continuation-domain.json",
+    "sha256": "101b7024b30df1027174081fca07860152545bbdab4c2fa100b91b48586df76d",
+    "producer_archive": "artifacts\\boat-hos-continuation-domain.source",
+    "total_seconds": 86.86091449999367,
+    "peak_process_rss_bytes": 7416721408,
+    "matched64m_continuation_max_change": 0.0,
+    "rows": [
+      {
+        "box_length_m": 64.0,
+        "grid_size": 257,
+        "padded_size": 515,
+        "hos_order": 4,
+        "image_clearance_from_common_bound_m": 0.0,
+        "image_heights_m": [
+          0.5359463222492725,
+          1.2217463222492726
+        ],
+        "minimum_image_gap_above_true_plane_m": [
+          0.3374048632019069,
+          1.7090048632019073
+        ],
+        "local_image_bound": {
+          "image_plane_height_m": 0.4115734535751135,
+          "source_maximum_height_m": 0.3672438906483191,
+          "local_graph_node_maximum_m": 0.3699164225616064,
+          "global_graph_node_maximum_m": 0.4694507775642062,
+          "graph_upper_over_source_projection_m": 0.4559030165019078,
+          "derivative_upper_bounds": [
+            0.31537346466451366,
+            0.3752063603802982
+          ],
+          "rounding_allowance_m": 9.386127430843771e-10,
+          "source_rectangle_node_low_xy": [
+            117,
+            123
+          ],
+          "source_rectangle_node_high_xy": [
+            145,
+            134
+          ],
+          "minimum_image_graph_gap_bound_m": 1.1102230246251565e-16,
+          "scope": "Analytic derivative bound for represented Fourier graph with explicit floating allowance; not interval arithmetic"
+        },
+        "body_potential_relative_l2": [
+          0.0001488764878656108,
+          7.95492428620009e-05
+        ],
+        "body_normal_relative_l2": [
+          0.00046620898753093937,
+          0.0003635776004192387
+        ],
+        "flat_control_body_potential_relative_l2": [
+          0.0001682245669677199,
+          7.772425729738582e-05
+        ],
+        "graph_gradient_relative_sample_l2": [
+          0.006520627226215876,
+          0.0019475298146332213
+        ],
+        "near_hull_graph_gradient_relative_sample_l2": [
+          0.0011181805018977216,
+          0.0018948915257980187
+        ],
+        "auxiliary_periodic_flux_integral": [
+          -2.7539999145268762e-17,
+          1.1015999658107505e-16
+        ],
+        "aperiodic_reference_graph_flux_integral": [
+          0.29844196631580466,
+          -0.005390746267679932
+        ],
+        "centroid_pressure_functional_error": [
+          [
+            -0.0013808743231819465,
+            -2.2934461701056826e-05
+          ],
+          [
+            -0.00401791213777645,
+            -0.011490327960719108
+          ],
+          [
+            -0.38728246979171754,
+            0.0027680006863167097
+          ],
+          [
+            0.005276820942982775,
+            0.007531279831918643
+          ],
+          [
+            0.05061101359884874,
+            -0.0020811602610828783
+          ],
+          [
+            0.00216559421429571,
+            0.002774088064845493
+          ]
+        ],
+        "exact_centroid_pressure_functionals": [
+          [
+            31.676666693203828,
+            -7.407102334371913
+          ],
+          [
+            -79.26923502636002,
+            298.90629583367974
+          ],
+          [
+            -2615.848124745085,
+            66.12464667500089
+          ],
+          [
+            64.38099271321198,
+            -278.2558027142719
+          ],
+          [
+            844.2805339868617,
+            -72.19269666049054
+          ],
+          [
+            -21.76100644134111,
+            40.12023397918858
+          ]
+        ],
+        "represented_minus_true_graph_at_hull_centroids_max_m": 8.854153353277106e-07,
+        "minimum_target_depth_below_represented_graph_m": 0.046825066508855345,
+        "hos_and_continuation_seconds": 3.7442317999957595
+      },
+      {
+        "box_length_m": 64.0,
+        "grid_size": 257,
+        "padded_size": 515,
+        "hos_order": 4,
+        "image_clearance_from_common_bound_m": 0.27432000000000006,
+        "image_heights_m": [
+          0.8102663222492725,
+          1.4960663222492725
+        ],
+        "minimum_image_gap_above_true_plane_m": [
+          0.8860448632019069,
+          2.2576448632019073
+        ],
+        "local_image_bound": {
+          "image_plane_height_m": 0.4115734535751135,
+          "source_maximum_height_m": 0.3672438906483191,
+          "local_graph_node_maximum_m": 0.3699164225616064,
+          "global_graph_node_maximum_m": 0.4694507775642062,
+          "graph_upper_over_source_projection_m": 0.4559030165019078,
+          "derivative_upper_bounds": [
+            0.31537346466451366,
+            0.3752063603802982
+          ],
+          "rounding_allowance_m": 9.386127430843771e-10,
+          "source_rectangle_node_low_xy": [
+            117,
+            123
+          ],
+          "source_rectangle_node_high_xy": [
+            145,
+            134
+          ],
+          "minimum_image_graph_gap_bound_m": 1.1102230246251565e-16,
+          "scope": "Analytic derivative bound for represented Fourier graph with explicit floating allowance; not interval arithmetic"
+        },
+        "body_potential_relative_l2": [
+          0.00019203774301972332,
+          2.5947407394354326e-05
+        ],
+        "body_normal_relative_l2": [
+          0.0007072125327886857,
+          9.645154159820136e-05
+        ],
+        "flat_control_body_potential_relative_l2": [
+          0.00021706000024105816,
+          2.998952619188703e-05
+        ],
+        "graph_gradient_relative_sample_l2": [
+          0.009614917379344917,
+          0.0010364119656807779
+        ],
+        "near_hull_graph_gradient_relative_sample_l2": [
+          0.00120585190383492,
+          5.924431700253441e-05
+        ],
+        "auxiliary_periodic_flux_integral": [
+          8.261999743580628e-17,
+          0.0
+        ],
+        "aperiodic_reference_graph_flux_integral": [
+          0.2975881815727184,
+          -0.0053972799494375005
+        ],
+        "centroid_pressure_functional_error": [
+          [
+            -0.0010260480091563004,
+            2.305390878541509e-05
+          ],
+          [
+            -0.00925538807064284,
+            0.00010761481099810167
+          ],
+          [
+            -0.3865392047255653,
+            0.006932686747724764
+          ],
+          [
+            0.008726470556446597,
+            -0.00013781656623678928
+          ],
+          [
+            0.049618317774207873,
+            -0.0007845369152405215
+          ],
+          [
+            0.0036930210945029032,
+            -5.74239177069744e-05
+          ]
+        ],
+        "exact_centroid_pressure_functionals": [
+          [
+            16.774740035937686,
+            -4.484887585907751
+          ],
+          [
+            -58.26160930034032,
+            158.8569449640041
+          ],
+          [
+            -1998.2229919726014,
+            47.88435304288021
+          ],
+          [
+            46.83898127970674,
+            -147.63132536305073
+          ],
+          [
+            631.4955605467593,
+            -47.59266414989281
+          ],
+          [
+            -16.161305522111327,
+            21.124616749253498
+          ]
+        ],
+        "represented_minus_true_graph_at_hull_centroids_max_m": 8.854153353277106e-07,
+        "minimum_target_depth_below_represented_graph_m": 0.046825066508855345,
+        "hos_and_continuation_seconds": 3.6397259999939706
+      },
+      {
+        "box_length_m": 128.0,
+        "grid_size": 513,
+        "padded_size": 1027,
+        "hos_order": 4,
+        "image_clearance_from_common_bound_m": 0.0,
+        "image_heights_m": [
+          0.5359463222492725,
+          1.2217463222492726
+        ],
+        "minimum_image_gap_above_true_plane_m": [
+          0.3374048632019069,
+          1.7090048632019073
+        ],
+        "local_image_bound": {
+          "image_plane_height_m": 0.4118521807155375,
+          "source_maximum_height_m": 0.3672438906483191,
+          "local_graph_node_maximum_m": 0.3699975047207783,
+          "global_graph_node_maximum_m": 0.4693223776681314,
+          "graph_upper_over_source_projection_m": 0.4564604707827558,
+          "derivative_upper_bounds": [
+            0.3165264145505371,
+            0.37652826781271476
+          ],
+          "rounding_allowance_m": 3.739856424544996e-09,
+          "source_rectangle_node_low_xy": [
+            245,
+            251
+          ],
+          "source_rectangle_node_high_xy": [
+            273,
+            262
+          ],
+          "minimum_image_graph_gap_bound_m": 5.551115123125783e-17,
+          "scope": "Analytic derivative bound for represented Fourier graph with explicit floating allowance; not interval arithmetic"
+        },
+        "body_potential_relative_l2": [
+          2.141887805446577e-05,
+          7.907231062144853e-05
+        ],
+        "body_normal_relative_l2": [
+          8.151106381402828e-05,
+          0.0003373938891354844
+        ],
+        "flat_control_body_potential_relative_l2": [
+          2.348103094350557e-05,
+          7.633242537030761e-05
+        ],
+        "graph_gradient_relative_sample_l2": [
+          0.0017901900573504671,
+          0.0019165399766223452
+        ],
+        "near_hull_graph_gradient_relative_sample_l2": [
+          0.0007811400896818376,
+          0.0019079244252771322
+        ],
+        "auxiliary_periodic_flux_integral": [
+          2.2117977768455782e-16,
+          0.0
+        ],
+        "aperiodic_reference_graph_flux_integral": [
+          0.14945757674370397,
+          -0.0026919368873561888
+        ],
+        "centroid_pressure_functional_error": [
+          [
+            -0.0005035589230640366,
+            -2.4376156225179476e-05
+          ],
+          [
+            0.003999940910540621,
+            -0.011506164228529753
+          ],
+          [
+            -0.04562164297419686,
+            -0.003508978278901007
+          ],
+          [
+            -0.0023199041536664253,
+            0.007582068671213983
+          ],
+          [
+            0.006838536419475836,
+            -0.0013506441309060885
+          ],
+          [
+            -0.0012325737075614153,
+            0.0028699514565216607
+          ]
+        ],
+        "exact_centroid_pressure_functionals": [
+          [
+            31.676666693203828,
+            -7.407102334371913
+          ],
+          [
+            -79.26923502636002,
+            298.90629583367974
+          ],
+          [
+            -2615.848124745085,
+            66.12464667500089
+          ],
+          [
+            64.38099271321198,
+            -278.2558027142719
+          ],
+          [
+            844.2805339868617,
+            -72.19269666049054
+          ],
+          [
+            -21.76100644134111,
+            40.12023397918858
+          ]
+        ],
+        "represented_minus_true_graph_at_hull_centroids_max_m": 9.762802936630344e-07,
+        "minimum_target_depth_below_represented_graph_m": 0.04682501075631676,
+        "hos_and_continuation_seconds": 10.686823399999412
+      },
+      {
+        "box_length_m": 128.0,
+        "grid_size": 513,
+        "padded_size": 1027,
+        "hos_order": 4,
+        "image_clearance_from_common_bound_m": 0.27432000000000006,
+        "image_heights_m": [
+          0.8102663222492725,
+          1.4960663222492725
+        ],
+        "minimum_image_gap_above_true_plane_m": [
+          0.8860448632019069,
+          2.2576448632019073
+        ],
+        "local_image_bound": {
+          "image_plane_height_m": 0.4118521807155375,
+          "source_maximum_height_m": 0.3672438906483191,
+          "local_graph_node_maximum_m": 0.3699975047207783,
+          "global_graph_node_maximum_m": 0.4693223776681314,
+          "graph_upper_over_source_projection_m": 0.4564604707827558,
+          "derivative_upper_bounds": [
+            0.3165264145505371,
+            0.37652826781271476
+          ],
+          "rounding_allowance_m": 3.739856424544996e-09,
+          "source_rectangle_node_low_xy": [
+            245,
+            251
+          ],
+          "source_rectangle_node_high_xy": [
+            273,
+            262
+          ],
+          "minimum_image_graph_gap_bound_m": 5.551115123125783e-17,
+          "scope": "Analytic derivative bound for represented Fourier graph with explicit floating allowance; not interval arithmetic"
+        },
+        "body_potential_relative_l2": [
+          2.4693782952916915e-05,
+          3.030783630729452e-06
+        ],
+        "body_normal_relative_l2": [
+          8.99900084928669e-05,
+          1.824835614632436e-05
+        ],
+        "flat_control_body_potential_relative_l2": [
+          2.7742973827560705e-05,
+          3.8091722759196857e-06
+        ],
+        "graph_gradient_relative_sample_l2": [
+          0.0024013922980542727,
+          0.00014205909061254092
+        ],
+        "near_hull_graph_gradient_relative_sample_l2": [
+          0.00015006302178508863,
+          8.983613310600025e-06
+        ],
+        "auxiliary_periodic_flux_integral": [
+          2.7647472210569727e-16,
+          5.5294944421139456e-17
+        ],
+        "aperiodic_reference_graph_flux_integral": [
+          0.14936255475536997,
+          -0.0027098620900197095
+        ],
+        "centroid_pressure_functional_error": [
+          [
+            -0.00015408518370507542,
+            2.7825149075258978e-06
+          ],
+          [
+            -0.001339055103533071,
+            -1.0811520064180963e-05
+          ],
+          [
+            -0.04964210956698906,
+            0.0007623175122260273
+          ],
+          [
+            0.0012313316854503068,
+            -3.147518001444655e-05
+          ],
+          [
+            0.006395786732748536,
+            -1.7911443133907073e-05
+          ],
+          [
+            0.0003671041115983829,
+            6.881973712596715e-06
+          ]
+        ],
+        "exact_centroid_pressure_functionals": [
+          [
+            16.774740035937686,
+            -4.484887585907751
+          ],
+          [
+            -58.26160930034032,
+            158.8569449640041
+          ],
+          [
+            -1998.2229919726014,
+            47.88435304288021
+          ],
+          [
+            46.83898127970674,
+            -147.63132536305073
+          ],
+          [
+            631.4955605467593,
+            -47.59266414989281
+          ],
+          [
+            -16.161305522111327,
+            21.124616749253498
+          ]
+        ],
+        "represented_minus_true_graph_at_hull_centroids_max_m": 9.762802936630344e-07,
+        "minimum_target_depth_below_represented_graph_m": 0.04682501075631676,
+        "hos_and_continuation_seconds": 11.147667700017337
+      }
+    ]
+  },
+  "ordered_flux_fix": {
+    "report": "artifacts\\hos-flux-order.json",
+    "sha256": "14b2ebe8a448361fbaefd5e7ffc218ac298dfec5b0b4a9698b4b4eb53ba4bd7e",
+    "producer_archive": "artifacts\\hos-flux-order.source",
+    "formula": "G_M = sum_m<=M w_m - grad(eta) dot sum_m<=M-1 u_m. Omit only the unmatched orderM+1 horizontal cross; do not project the mean.",
+    "rows": [
+      {
+        "order": 1,
+        "old_mean_flux": -0.010671863014358064,
+        "new_mean_flux": -2.507217523872729e-19,
+        "old_relative_flux_error": 0.10326513768832135,
+        "new_relative_flux_error": 0.01897579029118456,
+        "max_velocity_change": 0.0,
+        "max_flat_term_change": 0.0
+      },
+      {
+        "order": 2,
+        "old_mean_flux": -7.445669413417572e-05,
+        "new_mean_flux": -5.8648561267887755e-18,
+        "old_relative_flux_error": 0.008859689789655976,
+        "new_relative_flux_error": 0.0037965749801560497,
+        "max_velocity_change": 0.0,
+        "max_flat_term_change": 0.0
+      },
+      {
+        "order": 3,
+        "old_mean_flux": 0.0001231892516034599,
+        "new_mean_flux": -6.0647559023407904e-18,
+        "old_relative_flux_error": 0.001258833890359725,
+        "new_relative_flux_error": 0.0001649235624412286,
+        "max_velocity_change": 0.0,
+        "max_flat_term_change": 0.0
+      },
+      {
+        "order": 4,
+        "old_mean_flux": 1.202243208432302e-06,
+        "new_mean_flux": -6.2680438096818225e-18,
+        "old_relative_flux_error": 0.00010252376118036298,
+        "new_relative_flux_error": 2.481296283875494e-05,
+        "max_velocity_change": 0.0,
+        "max_flat_term_change": 0.0
+      },
+      {
+        "order": 5,
+        "old_mean_flux": -1.489256292860265e-06,
+        "new_mean_flux": -6.254491282525754e-18,
+        "old_relative_flux_error": 1.641907589548387e-05,
+        "new_relative_flux_error": 1.8873765122790248e-06,
+        "max_velocity_change": 0.0,
+        "max_flat_term_change": 0.0
+      },
+      {
+        "order": 6,
+        "old_mean_flux": -1.707299880855976e-08,
+        "new_mean_flux": -6.329030181884132e-18,
+        "old_relative_flux_error": 1.3400998246674839e-06,
+        "new_relative_flux_error": 2.2047768735113637e-07,
+        "max_velocity_change": 0.0,
+        "max_flat_term_change": 0.0
+      },
+      {
+        "order": 7,
+        "old_mean_flux": 1.8769220572315047e-08,
+        "new_mean_flux": -6.2680438096818225e-18,
+        "old_relative_flux_error": 2.256224701378935e-07,
+        "new_relative_flux_error": 2.111868184155314e-08,
+        "max_velocity_change": 0.0,
+        "max_flat_term_change": 0.0
+      },
+      {
+        "order": 8,
+        "old_mean_flux": 2.4029194330518104e-10,
+        "new_mean_flux": -6.044427111606687e-18,
+        "old_relative_flux_error": 1.8721377727055227e-08,
+        "new_relative_flux_error": 2.27359281126137e-09,
+        "max_velocity_change": 0.0,
+        "max_flat_term_change": 0.0
+      }
+    ],
+    "source": "https://www.cambridge.org/core/journals/journal-of-fluid-mechanics/article/abs/highorder-spectral-method-for-the-study-of-nonlinear-gravity-waves/89E8FAC1EA7D3FB5F70D37ED4A2B2054"
+  },
+  "verification": "Tilted-cut geometry/frame and fullimagegradientFD2tests passed3.92s. CorrectedHOS tests plus those controls6passed2.79s, including full-auxiliary volume and reciprocal work on resolved modes with padding2/3.",
+  "review": "Independent source reviewer approved CG/rotation/clipping, reflected gradients, odd padding/normalization and bodycontinuation; separate reviewer derived formalDNO truncation. True-plane imagegap guards and explicit accelerationpotential normalization were added. Whole-panel/Fouriergraph cutting and dynamics remain unqualified.",
+  "conclusions": [
+    "Order4 improves bodycontinuation substantially overorder2; order6/8 add little for these particular fields. At128m/513/order4, largerimageclearance case has bodypotential relativeerrors2.47e-5/3.03e-6 and normalerrors9.0e-5/1.82e-5. These are known exterior fields, not an unknown bodyBVP.",
+    "Doubling64->128m at~.25m spacing reduces larger-clearance heave-like globalgradienterror.009615->.002401 and nearhull.001206->.000150. Aperiodic referencegraphflux .2976->.1494 while periodicauxiliaryflux remainsroundoff. This exposes finiteperiodic/aperiodic boundary mismatch; do not call the referenceflux a conservationfailure.",
+    "Smaller-clearance rotation-like gradienterror stays~.0019 at fixedspacing underdomainenlargement, consistent with a separate resolutionlimit. A domaincontrol doesnot resolve all errors.",
+    "The old HOShelper included slope times horizontalorderM without matchingverticalorderM+1. Correcting formalorder preserves volume and reciprocity on resolvedperiodic controls without addedFFTs/meanprojection. AtM4 meanflux1.20e-6->~6e-18; exactreferenceflux error1.03e-4->2.48e-5. AllCartesianvelocities andflatcoefficients unchangedbitwise in the owned comparison.",
+    "Thefluxfix doesNOT explain or change the above Cartesiangradient errors. It also doesnot prove fullhull pressure/action consistency, physicalexterior massbalance or Hamiltonian coupling.",
+    "These favorable sourceimages all lie above the HOSreferenceplane. Exteriorpoles near a trough canlie below otherfluidtargets; global exponentialcontinuation then has a Rayleigh-type limitation. This remains an open risk, not a new productionrequirement or an established failure of the canonicalcase."
+  ],
+  "continuation_risk_primary_source": "https://arxiv.org/html/1406.5226",
+  "next": "Test actual unknown body-density coupling with matrix-free GPUHOS applications instead of assembling68HOSresponses; retain mappedfullgraphFEM as an alternative. Validate off-collocation/currentgraph loads, not only selectedinertia entries."
+}
