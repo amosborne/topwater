@@ -1,0 +1,74 @@
+{
+  "status": "Promising direct physical-trace alternative; bounded LR searches inconclusive, not qualified",
+  "producer_commit": "34d250e (integrated18c18e7)",
+  "evidence": {
+    "artifacts\\odd-physical-trace.json": "f86bc70331ad5ab73c5804894f3868ed09e1d882955ad123b724b885bc9347d5"
+  },
+  "formulation": [
+    "phi=H*physical_psi_P1+(Sreal-Simage)*sigma; exact represented physical trace on flat plane",
+    "JD*sigma=-N*physical_psi in homogeneous pinned-body case; JD is original guarded odd-source matrix",
+    "Weak flux=Kphysical*psi+F*sigma with direct EXTERIOR cut-target integration of2*d_zS and analytic P0 body-source integration",
+    "No Cw projected-trace Schur, no hidden physical mass, eigenvalue repair, symmetrization or query jitter"
+  ],
+  "ownership": {
+    "physical_inputs_sha256": "d4727637dd8b52ab90b0969c58341fbb033b844befae09340dae74a841d076d1",
+    "physical_psi_moment_sha256": "abbd88299daffeecec7c74c41fa58c8a6452a8832d97a06b337b8b46a6cacf7f",
+    "panel_sha256": "0f1cc91a5ed4b165a0374751d684e8e0b4c1a50c7d5455dfe1fb40f71af9b258"
+  },
+  "body_probes": [
+    {
+      "offset_factor": 1.0,
+      "normal_rms": 0.026826836553769915,
+      "normal_max": 0.4807308806277223,
+      "potential_rms": 0.0020239461252073774,
+      "green_body_work_J": 0.6659632566592609
+    },
+    {
+      "offset_factor": 0.5,
+      "normal_rms": 0.026847892023859555,
+      "normal_max": 0.481024811828049,
+      "potential_rms": 0.0020247096654806996,
+      "green_body_work_J": 0.6666368856518516
+    }
+  ],
+  "quadrature_and_frozen_mode": [
+    {
+      "order": 4,
+      "source_pairs": 5680448,
+      "assembly_seconds": 6.1270538000098895,
+      "effective_rayleigh_real": 6.984840478803175,
+      "effective_rayleigh_imag": 0.0,
+      "frozen_state_rate_mass_norm": 0.003616671338647786,
+      "spectrum": {
+        "status": "odd eigen matvec budget exhausted",
+        "matvecs": 801,
+        "modes": []
+      }
+    },
+    {
+      "order": 8,
+      "source_pairs": 22721792,
+      "assembly_seconds": 20.660171299998183,
+      "effective_rayleigh_real": 7.019279014547246,
+      "effective_rayleigh_imag": 0.0,
+      "frozen_state_rate_mass_norm": 0.003642528142972812,
+      "spectrum": {
+        "status": "odd eigen matvec budget exhausted",
+        "matvecs": 801,
+        "modes": []
+      },
+      "source_flux_qchange_rate_mass_norm": 4.88584218858723e-05,
+      "F_qchange_relative_frobenius": 0.0063059719766727015
+    }
+  ],
+  "interpretation": [
+    "Same recorded physical psi mode changes Rayleigh-60.25-to+7.0193; sampled body leakage RMS.12830-to.026848m/s and sampled Green work15.871-to.66664J",
+    "Source-flux q4-to8 Frobenius change0.6306%; same-state eta-rate mass-norm change4.8858e-5m/s; target contact integration remains a sensitivity concern",
+    "Both full-wave LR searches exhaust800 allowed matvecs without resolved eigenmodes; this is inconclusive, NOT evidence of stability",
+    "This candidate changes trace representation and homogeneous far closure together; no exclusive causal attribution",
+    "Zero physical psi outside patch is a truncated Dirichlet condition, not an evolving open-water far field"
+  ],
+  "next_gate": "ONE full dense second-order q8 spectrum in independent verification harness, assemble via original matrix-free actions and verify selected eigenmodes against original weak/body equations; q4/q8 action comparison on the same modes, no second full eigensolve",
+  "baseline_promoted": false,
+  "qualification": "No transient, nonlinear6DOF, Capytaine trajectory correlation,60s accuracy or speed qualification"
+}
