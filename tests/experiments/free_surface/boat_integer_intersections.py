@@ -15,6 +15,12 @@ def _dot(a, b):
     return sum(x*y for x, y in zip(a, b))
 
 
+def _point_homogeneous(point):
+    values = tuple(Fraction(value) for value in point)
+    denominator = lcm(*(value.denominator for value in values))
+    return tuple(value.numerator*(denominator//value.denominator) for value in values), denominator
+
+
 class IntegerIntersections:
     """One frozen plane arrangement; storage follows the existing exact cap."""
     def __init__(self, planes):
@@ -61,9 +67,19 @@ class IntegerIntersections:
 
     def sign_point(self, point, plane):
         """Preserve the original predicate for a caller-supplied exact point."""
-        values = tuple(Fraction(value) for value in point)
-        denominator = lcm(*(value.denominator for value in values))
-        numerator = tuple(value.numerator*(denominator//value.denominator) for value in values)
+        numerator, denominator = _point_homogeneous(point)
         row = self.planes[plane]
         value = _dot(row[:3], numerator)-row[3]*denominator
         return (value > 0)-(value < 0)
+
+    def signs(self, points):
+        """All plane signs; normalize each rational witness exactly once."""
+        result = []
+        for point in points:
+            numerator, denominator = _point_homogeneous(point)
+            row = []
+            for plane in self.planes:
+                value = _dot(plane[:3], numerator)-plane[3]*denominator
+                row.append((value > 0)-(value < 0))
+            result.append(row)
+        return result

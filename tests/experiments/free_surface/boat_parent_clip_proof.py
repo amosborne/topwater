@@ -78,6 +78,14 @@ class PlanePoints:
         plane = self.planes[i]
         return dot(plane[:3], point)-plane[3]
 
+    def exact_signs(self, points):
+        """Dense exact cold witness signs; no extra predicate cache."""
+        points = list(points)
+        signs = (self._integer_owner().signs(points) if self.integer_predicates else
+                 [[int(np.sign(self.value(index, point))) for index in range(len(self.planes))]
+                  for point in points])
+        return np.asarray(signs, dtype=np.int8).reshape(len(points), len(self.planes))
+
     def _sign(self, triple, point, plane):
         """Exact cached predicate; masks retain signs, never large Fractions."""
         self.sign_requests += 1
