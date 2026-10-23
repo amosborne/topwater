@@ -8,6 +8,47 @@ import numpy as np
 from .cuda_operator import cp
 
 
+class ExteriorTrace:
+    """Exterior values are state; hidden total trace is an algebraic harmonic fill."""
+    def __init__(self, inside):
+        inside = np.asarray(inside, dtype=bool)
+        if inside.ndim != 2 or inside.shape[0] != inside.shape[1]:
+            raise ValueError('square inside mask required')
+        size = inside.shape[0]
+        self.exterior = np.flatnonzero(~inside.ravel())
+        self.hidden = np.flatnonzero(inside.ravel())
+        if not len(self.exterior) or not len(self.hidden):
+            raise ValueError('both physical exterior and hidden nodes required')
+        def neighbors(index):
+            row, col = divmod(int(index), size)
+            return [row*size+(col-1) % size, row*size+(col+1) % size,
+                    ((row-1) % size)*size+col, ((row+1) % size)*size+col]
+        lookup = {int(index): row for row, index in enumerate(self.hidden)}
+        boundary = sorted({neighbor for index in self.hidden for neighbor in neighbors(index)
+                           if neighbor not in lookup})
+        boundary_lookup = {index: row for row, index in enumerate(boundary)}
+        matrix, right = np.eye(len(lookup))*4, np.zeros((len(lookup), len(boundary)))
+        for index, row in lookup.items():
+            for neighbor in neighbors(index):
+                if neighbor in lookup:
+                    matrix[row, lookup[neighbor]] -= 1
+                else:
+                    right[row, boundary_lookup[neighbor]] += 1
+        self.weights = cp.asarray(np.linalg.solve(matrix, right))
+        self._exterior, self._hidden, self._boundary = (cp.asarray(a) for a in
+            (self.exterior, self.hidden, np.asarray(boundary)))
+        self.count = size*size
+
+    def extend(self, exterior):
+        exterior = cp.asarray(exterior)
+        if exterior.ndim not in (1, 2) or len(exterior) != len(self.exterior):
+            raise ValueError('one value or column row per physical exterior node required')
+        full = cp.zeros((self.count, *exterior.shape[1:]), dtype=exterior.dtype)
+        full[self._exterior] = exterior
+        full[self._hidden] = self.weights@full[self._boundary]
+        return full
+
+
 _body_maps = cp.ElementwiseKernel(
     'raw float64 points, raw float64 normals, raw float64 origin, '
     'raw float64 kx, raw float64 ky, raw float64 wave, int64 modes',

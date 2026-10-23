@@ -4,8 +4,22 @@ from numpy.testing import assert_allclose
 import pytest
 
 pytest.importorskip('cupy')
-from tests.experiments.free_surface.cuda_graph import GraphDirichlet, body_maps, cp, _resize
+from tests.experiments.free_surface.cuda_graph import GraphDirichlet, ExteriorTrace, body_maps, cp, _resize
 from tests.experiments.free_surface.hos_graph import graph_field
+
+
+def test_exterior_state_is_preserved_and_hidden_trace_is_discrete_harmonic():
+    size = 17
+    x, y = np.meshgrid(np.arange(size)-8., np.arange(size)-8.)
+    inside = (abs(x) < 3) & (abs(y) < 2)
+    fill = ExteriorTrace(inside)
+    # Both are exactly discrete-harmonic; the hole is away from periodic seams.
+    fields = np.column_stack(((.3+x-.2*y).ravel(), (x*x-y*y+.1*x*y).ravel()))
+    exterior = fields[fill.exterior]
+    actual = cp.asnumpy(fill.extend(exterior))
+    assert_allclose(actual[fill.exterior], exterior, atol=0, rtol=0)
+    assert_allclose(actual[fill.hidden], fields[fill.hidden], atol=3e-14, rtol=2e-14)
+    assert_allclose(cp.asnumpy(fill.extend(exterior[:, 0])), actual[:, 0], atol=2e-15)
 
 
 def test_gpu_body_maps_match_independent_complex_fourier_formula():

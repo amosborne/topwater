@@ -6,6 +6,7 @@ Two rigid-mode columns are solved solely as verification right-hand sides.
 This is not a six-DOF trajectory or a baseline promotion.
 """
 import argparse
+from dataclasses import dataclass
 from hashlib import sha256
 import json
 from pathlib import Path
@@ -28,6 +29,14 @@ from .boat_image_plane import elevated_potential
 from .boat_radiation_time import harmonic_maps
 from .boat_spatial_work import source_matrix, subdivide
 from .cuda_graph import GraphDirichlet, body_maps, cp
+
+
+@dataclass(frozen=True)
+class GraphSolution:
+    potential: np.ndarray
+    density: np.ndarray
+    spectrum: object
+    diagnostics: dict
 
 
 class GraphBody:
@@ -78,11 +87,12 @@ class GraphBody:
             raise ValueError('nonfinite current body-operator result')
         return answer
 
-    def solve(self, trace, normal_load):
+    def right_hand_side(self, trace, normal_load):
+        lift = self.spectrum(cp.asarray(trace).reshape(-1))
+        return np.asarray(normal_load)-cp.asnumpy((self.normal@lift).real)
+
+    def solve_density(self, right):
         started, initial_evaluations = perf_counter(), self.evaluations
-        psi = cp.asarray(trace).reshape(-1)
-        lift = self.spectrum(psi)
-        right = np.asarray(normal_load)-cp.asnumpy((self.normal@lift).real)
         residual_history = []
         density, info = gmres(self.operator, right, M=self.precondition,
             rtol=1e-9, atol=0., restart=min(40, len(right)), maxiter=5,
@@ -92,13 +102,20 @@ class GraphBody:
         residual = defect/norm if norm else defect
         if info != 0 or not np.isfinite(residual) or residual > 2e-9:
             raise RuntimeError(f'current body GMRES failed: info={info}, true_relative_residual={residual}')
-        spectrum = self.spectrum(psi-self.trace@cp.asarray(density))
-        potential = cp.asnumpy((self.potential@spectrum).real+self.single@cp.asarray(density))
-        cp.cuda.get_current_stream().synchronize()
-        return potential, dict(gmres_iterations=len(residual_history),
+        return density, dict(gmres_iterations=len(residual_history),
             operator_applications=self.evaluations-initial_evaluations,
             true_relative_residual=residual, preconditioned_residual_history=residual_history,
             solve_seconds=perf_counter()-started)
+
+
+    def solve(self, trace, normal_load):
+        started = perf_counter()
+        density, diagnostics = self.solve_density(self.right_hand_side(trace, normal_load))
+        spectrum = self.spectrum(cp.asarray(trace).reshape(-1)-self.trace@cp.asarray(density))
+        potential = cp.asnumpy((self.potential@spectrum).real+self.single@cp.asarray(density))
+        cp.cuda.get_current_stream().synchronize()
+        diagnostics['solve_seconds'] = perf_counter()-started
+        return GraphSolution(potential, density, spectrum, diagnostics)
 
 
 def tangent_plane_reference(panels, cg, level, slope, normal_load):
@@ -194,7 +211,8 @@ def run(inputs, args, report):
         manufactured = col < 2
         psi = trace[:, col] if manufactured else np.zeros(args.grid**2)
         q = right[:, col] if manufactured else modes[:, [2, 3][col-2]]
-        potential, diagnostics = context.solve(psi, q)
+        solution = context.solve(psi, q)
+        potential, diagnostics = solution.potential, solution.diagnostics
         load = -WATER_DENSITY*weighted.T@potential
         row = dict(name=name, pressure_centroid_functional=load.tolist(), **diagnostics)
         if manufactured:

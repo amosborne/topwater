@@ -1,0 +1,142 @@
+{
+  "qualified": false,
+  "scope": "Prescribed sixDOF moving hull, fixed forced nonflat graph; bulk pressure/ALE consistency only, no trajectory or surface hull force.",
+  "decision": "Implicit linear-system derivative and ALE correction converge at approximately second order against independent full offset solves on both supported hull inputs. Retain as moving-pressure prerequisite, not baseline promotion.",
+  "ownership": [
+    "Only exterior values supplied; under-hull TOTAL potential filled algebraically, then FULL source trace subtracted.",
+    "World graph, clipping plane, spectral grid, image and expansion heights fixed across each stencil.",
+    "Require unchanged original-vertex plane signs, source-face sequence, child subdivision order and exterior grid labels.",
+    "Strict bulk-fluid and represented-graph-depth guards; no geometric gap inserted into physical hull.",
+    "One solve_density implementation; GraphSolution exposes solved density and spectrum without alternate execution mode."
+  ],
+  "limits": [
+    "Both derivative constructions share the elliptic model; no independent PDE accuracy qualification.",
+    "Probe pressures are not boundary traces or integrated hull loads.",
+    "Fixed forced free-surface geometry/potential is not free-surface evolution or rigid-body advancement.",
+    "No newly exposed state transfer; changing labels or clipping recipes stops this verification stencil.",
+    "Ending CUDA pool is not total/peak VRAM. Short component timing is not nonlinear trajectory throughput."
+  ],
+  "validation": "10 focused tests passed4.74s: independent material-point velocity kinematics, valid exact calm-rest zero-RHS solve, harmonic fill, complex GPU/CPU maps and source quadrature. Adversarial source review approves equations/ownership/scope.",
+  "reports": [
+    {
+      "report": "artifacts\\boat-graph-time-derivative.json",
+      "report_sha256": "6e4d6d0adef2676add21dfb6022afe3961958f314686110bc4720bc3d452881e",
+      "archive_hashes_verified": true,
+      "source_archive": "artifacts\\boat-graph-time-derivative.source",
+      "body_panels": 84,
+      "grid_size": 129,
+      "total_seconds": 7.484239299985347,
+      "peak_process_rss_bytes": 665141248,
+      "cupy_pool_reserved_bytes": 1667920896,
+      "image_height_m": 0.45902726862203064,
+      "reference_height_m": 0.36733855903704704,
+      "exterior_nodes": 16576,
+      "hidden_nodes": 65,
+      "bulk_pressure_successive_stencil_change_max_pa": [
+        0.110605829210499,
+        0.02343532920031066
+      ],
+      "rows": [
+        {
+          "step_seconds": 0.04,
+          "implicit_vs_resolved_fixed_phi_t_max_m2_per_s2": 8.031298382671359e-06,
+          "implicit_vs_resolved_material_phi_rate_max_m2_per_s2": 1.0435544962161813e-05,
+          "resolved_ale_vs_fixed_phi_t_max_m2_per_s2": 1.1942523543195804e-05,
+          "implicit_ale_vs_fixed_phi_t_max_m2_per_s2": 7.028942403480842e-06,
+          "omitting_operator_derivative_phi_t_max_change_m2_per_s2": 0.0007772369168216999,
+          "omitting_ale_correction_pressure_max_change_pa": 6.41816189941618,
+          "bulk_pressure_min_max_pa": [
+            -3046.50489876717,
+            4191.605335457212
+          ]
+        },
+        {
+          "step_seconds": 0.02,
+          "implicit_vs_resolved_fixed_phi_t_max_m2_per_s2": 2.0087615484054577e-06,
+          "implicit_vs_resolved_material_phi_rate_max_m2_per_s2": 2.609417073196063e-06,
+          "resolved_ale_vs_fixed_phi_t_max_m2_per_s2": 2.985538542721322e-06,
+          "implicit_ale_vs_fixed_phi_t_max_m2_per_s2": 1.7650280664804896e-06,
+          "omitting_operator_derivative_phi_t_max_change_m2_per_s2": 0.0007777312813990358,
+          "omitting_ale_correction_pressure_max_change_pa": 6.41816189941618,
+          "bulk_pressure_min_max_pa": [
+            -3046.5557024329382,
+            4191.644448575086
+          ]
+        },
+        {
+          "step_seconds": 0.01,
+          "implicit_vs_resolved_fixed_phi_t_max_m2_per_s2": 5.022507993390768e-07,
+          "implicit_vs_resolved_material_phi_rate_max_m2_per_s2": 6.523885171527688e-07,
+          "resolved_ale_vs_fixed_phi_t_max_m2_per_s2": 7.46364655801468e-07,
+          "implicit_ale_vs_fixed_phi_t_max_m2_per_s2": 4.4125552647877875e-07,
+          "omitting_operator_derivative_phi_t_max_change_m2_per_s2": 0.0007778381853588809,
+          "omitting_ale_correction_pressure_max_change_pa": 6.41816189941618,
+          "bulk_pressure_min_max_pa": [
+            -3046.5684092651986,
+            4191.65410569699
+          ]
+        }
+      ]
+    },
+    {
+      "report": "artifacts\\box-graph-time-derivative.json",
+      "report_sha256": "f1c4e2be51f10202f13e49d45b3bde10ffc2d376ce5b13091616793e29410b6d",
+      "archive_hashes_verified": true,
+      "source_archive": "artifacts\\box-graph-time-derivative.source",
+      "body_panels": 56,
+      "grid_size": 129,
+      "total_seconds": 5.509924999991199,
+      "peak_process_rss_bytes": 629329920,
+      "cupy_pool_reserved_bytes": 1237327872,
+      "image_height_m": 0.46506698253105394,
+      "reference_height_m": 0.3708514311746186,
+      "exterior_nodes": 16585,
+      "hidden_nodes": 56,
+      "bulk_pressure_successive_stencil_change_max_pa": [
+        0.09524900833775973,
+        0.0238176541915891
+      ],
+      "rows": [
+        {
+          "step_seconds": 0.04,
+          "implicit_vs_resolved_fixed_phi_t_max_m2_per_s2": 3.097549205438588e-06,
+          "implicit_vs_resolved_material_phi_rate_max_m2_per_s2": 5.5855520316450136e-06,
+          "resolved_ale_vs_fixed_phi_t_max_m2_per_s2": 6.952109861402267e-06,
+          "implicit_ale_vs_fixed_phi_t_max_m2_per_s2": 3.280162548968679e-06,
+          "omitting_operator_derivative_phi_t_max_change_m2_per_s2": 0.001090797521479895,
+          "omitting_ale_correction_pressure_max_change_pa": 5.822107076243426,
+          "bulk_pressure_min_max_pa": [
+            -2810.1441380558513,
+            2056.4543395771534
+          ]
+        },
+        {
+          "step_seconds": 0.02,
+          "implicit_vs_resolved_fixed_phi_t_max_m2_per_s2": 7.745415970539238e-07,
+          "implicit_vs_resolved_material_phi_rate_max_m2_per_s2": 1.3967064987630007e-06,
+          "resolved_ale_vs_fixed_phi_t_max_m2_per_s2": 1.7387499431364972e-06,
+          "implicit_ale_vs_fixed_phi_t_max_m2_per_s2": 8.20365507733789e-07,
+          "omitting_operator_derivative_phi_t_max_change_m2_per_s2": 0.0010908229353049428,
+          "omitting_ale_correction_pressure_max_change_pa": 5.822107076243426,
+          "bulk_pressure_min_max_pa": [
+            -2810.2103559627217,
+            2056.4965891161855
+          ]
+        },
+        {
+          "step_seconds": 0.01,
+          "implicit_vs_resolved_fixed_phi_t_max_m2_per_s2": 1.9364735698301772e-07,
+          "implicit_vs_resolved_material_phi_rate_max_m2_per_s2": 3.491834148772188e-07,
+          "resolved_ale_vs_fixed_phi_t_max_m2_per_s2": 4.3473265490256985e-07,
+          "implicit_ale_vs_fixed_phi_t_max_m2_per_s2": 2.051117427848137e-07,
+          "omitting_operator_derivative_phi_t_max_change_m2_per_s2": 0.0010908292871214722,
+          "omitting_ale_correction_pressure_max_change_pa": 5.822107076243426,
+          "bulk_pressure_min_max_pa": [
+            -2810.2269140923922,
+            2056.5071539646283
+          ]
+        }
+      ]
+    }
+  ]
+}
