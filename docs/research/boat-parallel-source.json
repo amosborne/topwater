@@ -148,5 +148,9 @@
     "tests\\experiments\\free_surface\\boat_graph_geometry.py": "a8e816a38b828a2536677ef572c2ec064f9d33797193c494d530d22256b35778",
     "tests\\experiments\\free_surface\\boat_image_plane.py": "daaa4037ffdb9be5d90b9f4d3ce2782df5f411b7b4e872c970050d1cfa3cb8b3",
     "tests\\experiments\\free_surface\\boat_source_sampling_benchmark.py": "25815e516df204942ecabdd915ca083c10b41e4af0418383de6ad71c7d045563"
+  },
+  "resource_contention": {
+    "user_report": "Another project is competing for CPU/GPU resources on this machine.",
+    "timing_interpretation": "Recent timing measurements are potentially contended; exact contention windows are unknown. Correctness/parity evidence remains valid. Absolute throughput and speedup need controlled reruns before performance promotion."
   }
 }

@@ -312,6 +312,8 @@ if __name__ == '__main__':
     parser.add_argument('--order', type=int, choices=range(2, 9), default=4)
     parser.add_argument('--max-rhs', type=int, default=40)
     parser.add_argument('--budget-seconds', type=float, default=90.)
+    parser.add_argument('--resource-context', default='Uncharacterized shared-machine load',
+                        help='declared competing workload/idle context for timing interpretation')
     args = parser.parse_args()
     if (args.output.exists() or args.output.with_suffix('.source').exists()
             or args.grid < 17 or args.grid % 2 != 1 or args.max_rhs < 4
@@ -333,6 +335,7 @@ if __name__ == '__main__':
     inputs = SimulationInputs.from_json(physical)
     report = dict(complete=False, integration_complete=False, qualified=False, scope=__doc__,
         input_sha256=sha256(inputs.to_json().encode()).hexdigest(), producer_sha256=hashes,
+        resource_context=args.resource_context,
         controls={k:str(v) if isinstance(v, Path) else v for k,v in vars(args).items()}, rhs=[],
         limitations=['Fixed forced graph; no evolving free-wave dynamics or free-wave energy-conservation claim',
                      'Planar clipping differs from the Fourier interpolant near contact; mismatch/depth are reported',

@@ -82,6 +82,7 @@ if __name__ == '__main__':
     parser.add_argument('--inputs', type=Path, required=True)
     parser.add_argument('--parent-motion', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--resource-context', default='Uncharacterized shared-machine load')
     args = parser.parse_args()
     if args.output.exists() or args.output.with_suffix('.source').exists():
         parser.error('fresh output and archive required')
@@ -100,6 +101,7 @@ if __name__ == '__main__':
     shutil.copyfile(boundary, archive/'boundary.npz')
     inputs = SimulationInputs.from_json(args.inputs.read_text())
     report = dict(complete=False, qualified=False, producer_sha256=hashes,
+        resource_context=args.resource_context,
         parent_motion_sha256=sha256(args.parent_motion.read_bytes()).hexdigest(),
         input_sha256=sha256(inputs.to_json().encode()).hexdigest())
     started = perf_counter()

@@ -523,5 +523,9 @@
         "tests\\experiments\\free_surface\\cuda_graph.py": "14d0895914660b3530db5c880b97aa977148a1792903eb7c51853c4f8b4f4cec"
       }
     }
-  ]
+  ],
+  "resource_contention": {
+    "user_report": "Another project is competing for CPU/GPU resources on this machine.",
+    "timing_interpretation": "Recent timing measurements are potentially contended; exact contention windows are unknown. Correctness/parity evidence remains valid. Absolute throughput and speedup need controlled reruns before performance promotion."
+  }
 }
