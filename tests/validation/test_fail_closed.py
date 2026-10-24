@@ -46,6 +46,7 @@ def test_changed_physical_conventions_are_rejected(tmp_path,key,value):
     ('reference_numerics','maximum_elapsed_seconds',float('nan')),
     ('reference_numerics','maximum_estimated_workspace_bytes',float('inf')),
     ('cases','frequencies_hz',[.1,.1]),('cases','propagation_headings_rad',[0.,0.]),
+    ('cases','propagation_headings_rad',[0.,2*np.pi]),
     ('cases','frequencies_hz',[.7])])
 def test_nonfinite_limits_duplicate_cases_or_outofband_frequency_fail(tmp_path,section,key,value):
     contract=contract_data();contract[section][key]=value

@@ -55,6 +55,7 @@ def load_contract(path):
             or len(set(cases['frequencies_hz']))!=len(cases['frequencies_hz'])
             or not np.isfinite(cases['propagation_headings_rad']).all()
             or len(set(cases['propagation_headings_rad']))!=len(cases['propagation_headings_rad'])
+            or len(set(np.remainder(cases['propagation_headings_rad'],2*np.pi)))!=len(cases['propagation_headings_rad'])
             or a['reference_required_finest_increments']!=2
             or set(a['required_gates'])!={'reference','all_six_added_mass','small_amplitude_time_domain_wave_responses'}):
         raise ValueError('missing finite cases or required gate/uncertainty policy')
