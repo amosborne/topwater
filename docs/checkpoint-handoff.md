@@ -1,52 +1,59 @@
-# Checkpoint handoff
+﻿# Checkpoint handoff
 
-Updated 2026-10-24. Read this before choosing work; latest user instructions take
-precedence. Stable startup/routing rules are in [AGENTS.md](../AGENTS.md).
+Updated 2026-10-24. Read before choosing work; latest user instructions control
+scope. Stable routing is in [AGENTS.md](../AGENTS.md).
 
 ## Authorization and phase
 
-Startup/delegation cleanup is complete and independently reviewed. The
-development-branch checkpoint records this cleanup; no implementation task is active.
-Reference simulation work awaits a future user request; queued assignments do
-not authorize resumption. Topwater solver implementation, tests, numerical runs
-and optimization remain HELD during the external-reference phase.
+User authorized completion of the minimum-mesh end-to-end reference. REF-001,
+CAP-001 and WEC-001 in [assignments](experts/assignments.md) are active: ten
+seconds of actual-rest six-DOF motion, upstream incoming waves and isometric
+video. Mesh refinement is subsequent work. Topwater implementation, tests,
+numerical runs and optimization remain HELD.
 
-The pending milestone is minimum-mesh Capytaine -> BEMIO -> WEC-Sim: ten seconds
-of six-DOF motion from actual rest, incoming upstream waves, isometric video,
-then motion variation with mesh. Physical requirements are in the
-[shared contract](experts/shared-contract.md); no motion/video result exists.
+## Current evidence and next priority
 
-## Preserved work and execution
+Minimum Capytaine export completed: 17 panels, 1086 solves, 69.9800752 seconds,
+terminal exit0, session84329. All14 producer finite/identity/metadata checks pass.
+Local outputs: artifacts/reference/minimum-20261024/native-attempt2. The original
+exporter is archived; failed attempt1 (pre-solve ImportError) remains preserved.
+[Producer evidence](experts/capytaine_expert/minimum-producer-2026-10-24.md).
 
-- Project branch: baseline/fluid-body. Preserve untracked
-  reference/capytaine/export_case.py: unfinished/unrun, SHA256
-  a1feb6e8581695c1a7562bf1e129bbd609f96b54ab7dcac25da9b5ecdaa92942.
-  Do not discard, stage as accepted export code or launch without owner review.
-- [Execution state](experts/execution-state.json) records idle/no lease. No
-  numerical jobs are authorized by this startup cleanup. Old MATLAB engine
-  observations are historical; recheck only when relevant to authorized work.
-- Earlier quadrature session36762 was user-interrupted, terminal exit1; preserved
-  partial data is not a task to resume or a numerical failure to relabel.
+Physical limitation: native centroid quadrature gives spurious hydrostatic
+cross-couplings on the asymmetric triangle partition of the symmetric surface.
+Producer owns a bounded exact degree2 hydrostatics-only correction with independent
+researcher review, retaining the same hydrodynamic coefficients and previous
+outputs. Do not treat the centroid hydrostatics as accepted motion physics.
 
-## Owners and evidence
+Stock WEC-Sim v7.1.0 imported-excitation cropping defect reproduced independently:
+future/past/interior errors [2,16,0]. A generic padding correction is authored;
+fixed regressions and final independent review are pending. Multiple-import
+omission is another focused reproduction, not yet a confirmed correction.
+[Startup review](experts/numerical_methods_researcher/startup-review-2026-10-24.md).
+Finite-band packet tails must meet the prospectively frozen numerical-calm and
+arrival gates in the [shared contract](experts/shared-contract.md); do not clip
+signals or crop body startup. No motion/video result exists yet.
 
-Four project roles were natively activated at setup checkpoint 9011cfe.
-[Activation/reuse](experts/activation.md) distinguishes historical receipts from
-current client capabilities. No repeated activation campaign is needed.
-[Assignments](experts/assignments.md) records completed setup and queued follow-up;
-read only the relevant expert's README/current-state when assigning work.
+Next priority: finish consumer reproductions/corrections, reviewed hydrostatics,
+then official BEMIO import, incident-only startup diagnostics, and ten-second
+WEC-Sim motion/video with executed producer/consumer signoff. No full library
+or coefficient campaign substitutes for this milestone.
 
-WEC-Sim fork/pin is recorded in [wecsim-fork.json](experts/wecsim-fork.json).
-No engine correction or numerical validation exists. The four marine-gyro leads
-remain unconfirmed on the selected release; detailed reproduction plans belong
-to the WEC-Sim expert. Producer/consumer executed signoff remains pending.
+## Execution and ownership
 
-Verification: four TOMLs parsed with required fields and no overrides; changed
-JSON/local Markdown links and whitespace checked; exporter hash unchanged. An
-independent fresh-context read-only review passed after correcting lease release
-ordering. A temporary non-numerical CreateNew probe rejected a duplicate claim.
-No new documents, solver changes, numerical jobs or activation campaign.
+[Execution state](experts/execution-state.json) owns numerical liveness. Producer
+session84329 was verified terminal and its lease released. Consumer owns the next
+serial stock-multiple-import/fixed-regression sequence; engine recovery may be
+needed because the prior shared MATLAB engine exited. Reconcile actual process
+identity and follow [claim/recovery](experts/coordination.md) before every launch.
+Never infer terminal status from a timeout or an idle record alone.
 
-Next permitted action after this cleanup checkpoint: respond to the user's next
-request. If reference work is requested, bound the relevant queued assignment
-and follow the execution claim/recovery procedure before any numerical launch.
+Active branch baseline/fluid-body; preserve other worktrees and artifacts.
+Coordinator owns handoff/assignments/integration, Capytaine owns producer,
+WEC-Sim owns BEMIO/case/fork, researcher independently reviews startup and physical
+corrections. Native roles are available; no activation campaign is needed.
+Maintained fork/pin: [wecsim-fork.json](experts/wecsim-fork.json). No engine
+correction has passed numerical review at this checkpoint.
+
+Earlier quadrature session36762 remains user-interrupted terminal exit1; partial
+data is historical, not a task to resume or a numerical failure to relabel.

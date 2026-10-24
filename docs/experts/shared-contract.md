@@ -41,6 +41,19 @@ inside10s is not required. A moving visual wavefront over globally forced or
 steady-state motion is invalid. Label prescribed incident surface distinctly
 from a computed scattered/radiated fluid field.
 
+Minimum-case startup interpretation, frozen prospectively 2026-10-24: finite-band
+deep-water packets have noncompact tails. Report those tails without clipping.
+Numerical local calm at t=0 requires hull-region maximum |eta| <= 1e-3 sum(a)
+(3.5e-5 m), maximum fluid vector speed <= 1e-3 sum(a*omega)
+(4.39823e-5 m/s), and every excitation component |F_i(0)| <= 1e-3 S_i AND
+<= 0.1 N or 0.1 Nm, where S_i = sum_j a_j |H_i(omega_j,heading_j)| using
+dimensional native carrier excitation. Report degenerate S_i explicitly.
+Body displacement/velocity and radiation-memory initial conditions remain zero.
+At least one incoming packet must reach 25% of canonical amplitude at the hull
+within ten seconds with nontrivial motion; retain initial/peak ratios. These
+are startup gates, not motion-accuracy or convergence claims. Independent
+reasoning and padding checks: numerical_methods_researcher/startup-review-2026-10-24.md.
+
 First obtain minimum-mesh end-to-end motion, then characterize changes in all
 six histories with refinement. Do not replace that milestone with whole-library
 audits, coefficient gates or optimization. Independently reproduce reported

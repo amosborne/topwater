@@ -7,9 +7,9 @@ schedules authorized work and never grants scope. Update status in place.
 
 ## CAP-001: first canonical producer/interface
 
-Status: queued. Owner capytaine_expert; consumer partner wecsim_expert. Readiness inspection
+Status: authorized (2026-10-24 minimum-mesh reference goal). Owner capytaine_expert; consumer partner wecsim_expert. Readiness inspection
 completed in capytaine_expert/native-setup-2026-10-24.md. Subsequent execution is
-queued, with no current numerical lease.
+authorized by the minimum-mesh goal, with no current numerical lease.
 
 Scope: make the minimum-mesh native Capytaine export needed by the first WEC-Sim
 case, preserving exact physical surface/full inertia/CG and agreed DOF/heading/
@@ -25,10 +25,9 @@ Stop at reviewed minimum-case export/interface; no automatic refinement.
 
 ## WEC-001: maintained fork, independent leads and exercised paths
 
-Status: queued. Owner wecsim_expert. Fork/source-map/setup inspection completed
-in wecsim_expert/native-setup-2026-10-24.md. Remaining reproductions await
-user-authorized reference work and a bounded coordinator assignment, then a
-sole numerical execution lease.
+Status: authorized (2026-10-24 minimum-mesh reference goal). Owner wecsim_expert. Fork/source-map/setup inspection completed
+in wecsim_expert/native-setup-2026-10-24.md. Remaining reproductions are authorized
+within the minimum-case exercised paths, under a sole numerical execution lease.
 
 Scope: pinned v7.1.0 maintained fork; independently reproduce the four specific
 marine-gyro leads (yaw-order/frame and velocity/acceleration mapping, unequal
@@ -75,3 +74,35 @@ video, followed by motion variation with mesh. Keep shared forcing/initial state
 and exact producer identity; no PTO/mooring/invented constraints. Coefficients
 remain diagnostics. Setup, fork creation and role confirmations do not claim
 that simulation/video or the four defect reproductions already exist.
+
+## REF-001: minimum-mesh end-to-end reference
+
+Status: authorized 2026-10-24. Coordinator owns acceptance/integration;
+capytaine_expert owns producer and wecsim_expert owns consumer, dynamics/video.
+numerical_methods_researcher supplies independent startup/interface review.
+
+Complete CAP-001/WEC-001 work needed for the frozen canonical minimum-mesh
+case. Exclude mesh refinement and Topwater implementation/tests/optimization.
+Required completion evidence:
+
+- Reproducible native Capytaine files, official BEMIO H5 conversion, exact
+  producer/input/dependency identities and joint executed interface signoff.
+- Canonical hull, equilibrium/world CG, mass/full inertia, physical constants,
+  headings/phase/units and six DOFs mapped without defaulted physical metadata.
+- Ten seconds of freely floating six-DOF WEC-Sim output, native time grids and
+  rotation representation retained, initialized at actual rest. No mooring/PTO
+  or invented constraints; no discarded startup or imposed temporal ramp.
+- Frozen upstream incident packet shared by elevation/forcing/display, with
+  documented arrival and convolution prehistory/padding. Verify locally calm
+  initial water and force history; no moving wavefront over globally forced
+  motion. Label visualization as prescribed incident surface.
+- Isometric video showing incoming waves and boat motion over the interval,
+  plus six motion histories and finite/output-duration/initial-state checks.
+- Independent physical review of consequential corrections and startup mapping;
+  confirmed result-invalidating defects resolved or affected result withheld.
+  Preserve failed runs and limitations; no coefficient convergence threshold.
+- Development-branch checkpoint committed/pushed, issue #30 updated and fresh
+  handoff with result paths, commands, limitations and exact terminal evidence.
+
+Stop at the verified minimum case; subsequent motion variation with mesh remains
+a separate follow-up. A compatible export or successful setup alone is incomplete.
