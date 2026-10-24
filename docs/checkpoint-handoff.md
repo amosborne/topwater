@@ -1,72 +1,79 @@
 # Checkpoint handoff
 
-- **Active goal/status:** establish a qualified, reproducible Capytaine reference
-  for the canonical 24 ft boat, resolving convergence failures until unchanged
-  acceptance gates pass. ACTIVE AND INCOMPLETE. Both hydrodynamic reference and
-  Topwater remain unqualified. The fixed-topology GEOMETRY checkpoint is complete.
-- **Branch/identity:** baseline/fluid-body. Numerical/source checkpoint for the
-  selected family and freeze: 96925446db194ed4f46e45ae74a3a62cf2d27525. Inspect live
-  git status/log; subsequent commits may contain documentation/evidence only.
-  Every owned manifest has actual commit and source hashes. No Topwater runtime
-  numerical source was changed. No PR was created and main was not pushed.
-- **Prior failures retained:** studies 001/002 each ran all four meshes/all 132
-  calls and failed the declared convergence gates. Vertex-order diagnostic 001
-  completed 48 calls and found material sensitivity; the reviewed farthest-first
-  convention is selected. Complete bundles and summaries are under
-  validation/evidence. Read docs/reference-study-002.md for these diagnoses.
-- **Completed geometry work:** a centroid-quad fan was rejected without a job
-  because it would preserve poor shapes in the real thin chine strip. Candidate 001
-  generated 382 seed panels, then correctly failed resource preflight for its
-  declared finest 9,550 panels. Candidate 002 uses broad-facet seed sizes 1.5 m / 0.5 m,
-  growth 0.3 and a facet-specific size target 20 times minimum planar width.
-  It has 308 seed panels and fixed affine Gmsh transfinite subdivisions 2/3/4/5,
-  producing 1,232 / 2,772 / 4,928 / 7,700 actual panels. Grading/patch topology is fixed;
-  levels are not all nested. No hydrodynamic solve ran in this checkpoint.
-- **Evidence:** docs/fixed-topology-preflight.md records decisions/review.
-  validation/evidence/transfinite-preflight-{001,002}.zip retain actual seeds,
-  meshes, producers, protocols and complete bound freezes. Companion summaries
-  give SHA256, geometry and per-facet shape statistics. All patch connectivity,
-  affine lattice, positive Jacobian, shared-curve and full seven-facet surface
-  checks passed for candidate 002. Genuine acute-apex slivers remain; small area
-  is not an accuracy claim. The next hydrodynamic study must measure their effect.
-- **Selected canonical freeze:** artifacts/validation/frozen-fixed-001.json
-  (complete durable bundle and proof at validation/evidence/frozen-fixed-001.*).
-  Current source/archives and physical identity verified. Seed and every mesh are
-  byte-exact to candidate 002; all original physical arrays/dtypes/input JSON
-  match reset. Capytaine's actual face radii equal maximum vertex distances on
-  every selected panel. The proof and verifier are in the bundle; no pressure
-  or radiation solve is involved. Regenerate fresh on any producer/input change.
-- **Controls/gates:** same canonical physical problem/cases/normalization and
-  full dry inertia/restoring. Capytaine 3.0.0, Gmsh 4.15.2, one thread, unchanged
-  1800s between-call budget, unchanged 12 GiB estimate cap/conservative estimator.
-  Finest estimate 11,703,102,464 bytes. Reference acceptance stays 0.1%+1e-6
-  normalized for every real/complex entry, both finest increments plus trend,
-  empirical envelope uncertainty; no Richardson/certified-bound claim.
-- **Regression/review:** 51 local gate/geometry tests passed. Missing selected
-  meshes/seed, incorrect seed_count*N? mapping and stale transfinite producers
-  fail closed. Independent fixed_topology_review recomputed all patch/surface
-  proofs, audited archives/identities/physical bytes, and approved geometry/control
-  adoption at 9692544 with no blocking findings. This is not reference qualification.
-- **Live jobs:** none. Preflight 001 returned terminal exit1 (resource failure),
-  preflight 002 terminal exit0 (geometry pass), canonical freezes and adoption proof
-  terminal exit0. No other numerical process from this checkpoint remains live.
-- **Next bounded action:** execute COMPLETE reference study 003, declared in
-  docs/reference-study-003.md. Recheck current repository/producer/input identity,
-  ensure fresh output, and record current available OS memory >= finest estimate
-  plus 2 GiB (13,850,586,112 bytes). Archive actual producers/input before launch and
-  keep immutable; run serially. Exact command:
-
-```powershell
-uv run --locked --no-sync --cache-dir artifacts/uv-cache --group correlation python -m tests.validation reference --frozen artifacts/validation/frozen-fixed-001.json --output artifacts/validation/reference-study-003.json
-```
-
-- **Stopping condition:** complete all 132 calls/all 36 Ainf entries, full finite
-  A/B and every frequency/heading complex excitation/RAO, or stop on a declared
-  resource/validity failure. Preserve raw data/increments/uncertainty and confirm
-  exact process handle terminal before edits or another job. Resolve independent
-  review and publish qualified/unqualified decision; commit/push, update issue #30
-  and hand off. A failed study leaves the overarching goal active. Do not repeat
-  unchanged failures, drop cases/finest meshes or loosen gates. Topwater comparison,
-  wave implementation, nonlinear qualification, new formulations and timing held.
-- **CI:** automatic CI only on PRs targeting main. Continue local tests. Never
-  merge/squash-merge unless every required current-head CI check passed.
+- **Active user outcome:** Topwater is TIME-DOMAIN ONLY. Deliver a small-motion
+  nonlinear six-DOF simulation of the canonical 24 ft boat in a frozen mild sea,
+  at least 1 s, matching a Capytaine-based time history within 0.1 degree per
+  rotation and 1 cm per translation including uncertainty, and practical at
+  <=200 wall seconds per simulated second including normal Topwater preparation.
+  Read docs/time-domain-baseline-goal.md. The reference-only goal is a prerequisite,
+  not the endpoint. These latest user instructions supersede older scope holds.
+- **Priority and speed:** validation before major optimization. Measure setup/a
+  few steps early and reject obviously impractical routes; do not spend indefinitely
+  on a 5000x model. Bounded feasibility fixes are allowed, but major architecture
+  or speed campaigns wait for an actual passing coupled comparison. Both accuracy
+  and practical runtime are required for final completion. No result exists yet.
+- **Current implementation:** same unqualified P0 Rankine-panel core extracted
+  from 4e8f511, with hydrostatics and instantaneous inertia. It still has no coupled
+  TD wave-response path. The archived P1 diagnostic runtime is a different
+  implementation. Reuse sound math/tests selectively, never substitute its results.
+- **Branch/source:** baseline/fluid-body. Study 003 producer commit 2de87a8, numerical
+  family source 9692544; full commits/hashes in manifests. Inspect live git status/log.
+  This checkpoint changes goal documentation/evidence only, not numerical Python
+  producers. No PR was created; main was not pushed. Preserve other worktrees.
+- **Study 003 completed NEGATIVE:** all four meshes/all 132 calls completed; every
+  original coefficient/trend family failed. All six Ainf diagonal latest increments
+  also fail (1.93-5.81 times budget), so failure is not solely tiny couplings.
+  Full coverage, meshes, source/input identity, signs, excitation/RAO construction
+  and every gate/uncertainty were independently audited. No sign/unit defect found.
+  Original decision stays unqualified; do not retroactively accept or overwrite it.
+- **Evidence:** docs/reference-study-003.md, validation/evidence/reference-study-003.zip
+  and companion summary. Includes raw matrices, producer archive, readiness/memory
+  observations and nested bound-freeze.zip. Its SHA256 is explicitly bound and
+  independently verified. Prior studies 001/002 and diagnostics remain preserved.
+- **Selected spatial data:** 308-panel fixed graded seed, affine transfinite N=2/3/4/5,
+  counts 1,232/2,772/4,928/7,700, farthest-first vertex order, exact canonical surface.
+  Frozen-fixed-001 is still source-current; complete data/proof are under
+  validation/evidence/frozen-fixed-001.*. Geometry passes, hydrodynamics unqualified.
+  Old reference policy 0.1%+1e-6 normalized and all 36 entries remain preserved.
+  The prospective time-history protocol must be explicit/reviewed before judging
+  a new mild case; no silent gate relaxation or automatic blanket mesh refinement.
+- **Interpretation limit:** existing nine steady single-wave RAOs at 0.01 m amplitude
+  show empirical mesh increments <=1.2883e-5 m / 0.001703 degree. They do not bound
+  continuum, frequency band/tails/spacing, memory, startup or transient error, and
+  are not a new mild-sea validation. Use output-budget analysis to select necessary
+  reference work, not to pretend the old failed coefficient gates passed.
+- **Recovered prior conversion work:** git show b568edd:tests/capytaine_time_reference.py;
+  analytic tests at 135c430:tests/test_capytaine_time_reference.py; old exporter at
+  b568edd:tests/experiments/capytaine_time_data.py. Cummins kernel, causal convolution
+  and back-transform signs/endpoints are sound, but it is radiation math for supplied
+  V/a histories, not a coupled motion/excitation solver. Its depth 4 m/1000 kg/m3 canoe
+  pin is inapplicable to this deep-water/1025 kg/m3 boat. Preserve generic tests;
+  do not restore old application runners or merge entire historical branches.
+- **Next bounded action:** choose/freeze a mild, nontrivial sea and >=1 s comparison
+  window, exact boat/body/fluid initial state and cost accounting; declare a new
+  prospective time-history/uncertainty contract. No phase/amplitude fitting after
+  comparison or quiet startup as validation. A scaled catalog case must say so.
+  Current catalog's lowest Hm0 is about 0.96 m; that label alone does not establish
+  small motion. Use amplitude/representation checks; chine submergence is only
+  about 2.8 mm at equilibrium. Report which DOFs are meaningfully excited.
+- **Reference choice:** steady harmonic histories need matching periodic body AND
+  fluid/history initialization. Rest-start transient histories need validated
+  broadband radiation/excitation and band/tail/spacing/memory/time controls. The
+  current three frequencies cannot automatically supply them. Reuse prior math
+  with current physical identity; Capytaine data remains outside Topwater runtime.
+  Complete minimum missing TD physics and early measured cost screens toward the
+  first real comparison. No frequency-domain Topwater substitute, imported Capytaine
+  loads on top of pressure, or new alternative-formulation/optimization campaign.
+- **Live jobs:** none. Study session 73213 terminal exit 1; memory observer 45767 terminal
+  exit 0, exact PID 25868 observed through exit. Reference generation 448.064 s is
+  offline validation work, not a Topwater speed result. Observed peak committed
+  memory 4,453,543,936 bytes. No own-model TD timing has been measured yet.
+- **Stopping checkpoints:** resolve case/reference uncertainty and physical failures,
+  retain complete evidence, run jobs serially with immutable producers, confirm
+  exact handles terminal before edits, obtain independent review, commit/push and
+  update issue #30. A negative checkpoint leaves the goal active. Do not claim the
+  one-second case establishes the later 60 s/20x target or general nonlinear accuracy.
+- **CI:** PRs targeting main only; continue local tests. 51 gate/geometry tests passed
+  at prior source checkpoint. No code changes in this documentation/evidence turn
+  require rerunning unchanged tests. Never merge/squash-merge without all required
+  current-head CI passing.

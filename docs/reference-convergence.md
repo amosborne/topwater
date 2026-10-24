@@ -3,6 +3,8 @@
 Objective: establish a qualified, reproducible Capytaine reference for the
 canonical 24 ft boat, resolving convergence failures until the declared
 acceptance gates pass. The completed foundation reset is the starting point.
+This reference work is a prerequisite of the broader user-directed
+[one-second time-domain baseline](time-domain-baseline-goal.md), not its endpoint.
 
 ## Scope and exclusions
 
@@ -81,3 +83,18 @@ Stop this geometry checkpoint after the current canonical freeze and evidence
 are reviewed, committed/pushed and handed off. The next bounded action is the
 complete 132-call reference study on those frozen meshes, after current-state
 identity/resource checks. No accuracy or resource gate is relaxed.
+
+## Study 003 outcome and updated user target
+
+Study 003 completed all 132 calls and failed its original coefficient/trend
+criteria. It remains unqualified; see reference-study-003.md and the preserved
+raw evidence. The user subsequently clarified the desired outcome: an actual
+small-motion nonlinear Topwater run in a mild sea, at least one second, within
+0.1 degree/1 cm of matched Capytaine-based time histories, and practical at
+200x real time. Validation precedes major speed improvements; early cost
+screens and bounded feasibility fixes are permitted.
+
+The next reference decision must address the selected case's time-history
+uncertainty and matched initialization before more blanket matrix refinement.
+No failed study is retroactively qualified, and no current gate is silently
+relaxed. Declare and review any prospective output-budget protocol first.

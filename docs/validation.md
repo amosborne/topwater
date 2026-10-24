@@ -12,10 +12,12 @@ diagnostic-tank runtime is a different implementation and is not substituted.
 
 ## Active qualification goal
 
-The foundation reset below is complete. The active goal is
-[qualified, reproducible Capytaine reference convergence](reference-convergence.md),
-including bounded diagnosis/correction checkpoints until the unchanged gates
-pass. A failed individual study leaves this qualification goal incomplete.
+The foundation reset below is complete. The active user-directed goal is a
+[validated, practical time-domain baseline](time-domain-baseline-goal.md).
+[Capytaine reference qualification](reference-convergence.md) is a prerequisite.
+Study 003 completed unqualified under the original coefficient policy. A new
+case-specific time-history protocol must be declared/reviewed before judging
+the selected mild-sea baseline; the old failure is not retroactively accepted.
 
 ## Completed foundation reset
 

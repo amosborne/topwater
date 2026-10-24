@@ -1,0 +1,150 @@
+{
+  "study": "reference-study-003",
+  "decision": "unqualified under original coefficient policy",
+  "complete": true,
+  "completed_physics_calls": 132,
+  "current_commit": "2de87a8df64e5bcfaf7b16f23e01e612ffb2a775",
+  "elapsed_seconds": 448.0644333999953,
+  "gates": {
+    "Ainf": {
+      "passed": false,
+      "previous_increment_max_ratio": 131.7907636218587,
+      "latest_increment_max_ratio": 74.54327362696999,
+      "trend_passed": true
+    },
+    "A": {
+      "passed": false,
+      "previous_increment_max_ratio": 42.30703143565059,
+      "latest_increment_max_ratio": 23.575306289993314,
+      "trend_passed": false
+    },
+    "B": {
+      "passed": false,
+      "previous_increment_max_ratio": 75.89849678020704,
+      "latest_increment_max_ratio": 44.95237291255521,
+      "trend_passed": false
+    },
+    "diffraction": {
+      "passed": false,
+      "previous_increment_max_ratio": 4.374936353067594,
+      "latest_increment_max_ratio": 2.703107226936829,
+      "trend_passed": true
+    },
+    "FK": {
+      "passed": false,
+      "previous_increment_max_ratio": 1.0687054898839747,
+      "latest_increment_max_ratio": 0.4943782093168333,
+      "trend_passed": true
+    },
+    "excitation": {
+      "passed": false,
+      "previous_increment_max_ratio": 4.090572581889074,
+      "latest_increment_max_ratio": 2.571652882644238,
+      "trend_passed": true
+    },
+    "RAO": {
+      "passed": false,
+      "previous_increment_max_ratio": 21.97240565274866,
+      "latest_increment_max_ratio": 10.210876997357195,
+      "trend_passed": false
+    }
+  },
+  "bundle_sha256": "e18bf7366eb651766edc5487addd84c798c1ae53183f58a0e88b3b623ed6729d",
+  "families": {
+    "Ainf": {
+      "increment_failing_entries": 18,
+      "trend_failing_entries": 0,
+      "entries": 36,
+      "worst_index": [
+        1,
+        5
+      ]
+    },
+    "A": {
+      "increment_failing_entries": 44,
+      "trend_failing_entries": 2,
+      "entries": 108,
+      "worst_index": [
+        1,
+        3,
+        5
+      ]
+    },
+    "B": {
+      "increment_failing_entries": 31,
+      "trend_failing_entries": 1,
+      "entries": 108,
+      "worst_index": [
+        0,
+        2,
+        0
+      ]
+    },
+    "diffraction": {
+      "increment_failing_entries": 13,
+      "trend_failing_entries": 0,
+      "entries": 54,
+      "worst_index": [
+        2,
+        2,
+        0
+      ]
+    },
+    "FK": {
+      "increment_failing_entries": 2,
+      "trend_failing_entries": 0,
+      "entries": 54,
+      "worst_index": [
+        2,
+        2,
+        3
+      ]
+    },
+    "excitation": {
+      "increment_failing_entries": 9,
+      "trend_failing_entries": 0,
+      "entries": 54,
+      "worst_index": [
+        2,
+        2,
+        0
+      ]
+    },
+    "RAO": {
+      "increment_failing_entries": 21,
+      "trend_failing_entries": 1,
+      "entries": 54,
+      "worst_index": [
+        0,
+        2,
+        5
+      ]
+    }
+  },
+  "exploratory_steady_harmonic_motion_increments": {
+    "incident_amplitude_m": 0.01,
+    "translation_max_m": 1.2882576323161479e-05,
+    "rotation_max_degrees": 0.0017025487459200821,
+    "scope": "Existing nine single-wave cases only; empirical last-two-increment envelope, not a continuum bound or transient/mild-sea qualification"
+  },
+  "observed_resources": {
+    "ProcessId": 25868,
+    "ProcessStartedUTC": "2026-10-24T04:17:20.8868914Z",
+    "Terminal": true,
+    "PeakWorkingSetBytes": 3019403264,
+    "PeakCommittedBytes": 4453543936
+  },
+  "Ainf_diagonal_latest_increment_budget_ratios": [
+    5.8149033267842,
+    1.9338782816463107,
+    2.6603505715162146,
+    1.95506100172515,
+    2.5570428267651693,
+    1.9453191373510375
+  ],
+  "bound_freeze_bundle": {
+    "entry": "bound-freeze.zip",
+    "sha256": "fcaf28963be08e4443410b8c19d680f1fb81cff3c44a291c34aa69c6e1a9847d",
+    "contents": "complete frozen-fixed-001 report, NPZ, input JSON and producer archive; nested geometry evidence"
+  }
+}

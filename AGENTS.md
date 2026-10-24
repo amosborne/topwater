@@ -11,16 +11,23 @@ added mass exist, coupled time-domain wave response does not. The archived P1
 diagnostic-tank runtime is a different implementation. Record current commit
 and source hashes in each manifest; the word "baseline" alone is insufficient.
 
-New formulations, optimization experiments, nonlinear 6DOF qualification and
-timing work are on hold until a validated fluid–body baseline exists. Work on
-reference convergence, regression gates and corrections exposed by those gates
-is the current priority. The active tracker is GitHub issue #30.
+The current user-directed goal is a validated, practical, time-domain-only
+Topwater baseline on the canonical boat in a frozen mild sea: at least one
+second, every rotation within 0.1 degree and translation within 1 cm of a matched
+Capytaine-derived reference, including uncertainty, and at most 200x real time.
+See docs/time-domain-baseline-goal.md. Necessary completion of the selected
+time-domain wave/fluid-body path and bounded cost screens are in scope. Major
+optimization/alternative-formulation campaigns remain held until an actual
+coupled comparison passes; do not spend indefinitely on a 5000x route. General
+nonlinear/full-minute qualification follows this case. The active tracker is
+GitHub issue #30.
 The user's reset instructions are preserved in `docs/validation-reset.md`.
 
 Every goal must declare scope, exclusions, deliverables, acceptance criteria
-and a stopping checkpoint before work begins. The current goal is qualified,
-reproducible Capytaine reference convergence (docs/reference-convergence.md);
-the foundation reset is complete. At each
+and a stopping checkpoint before work begins. The foundation reset is complete;
+reference qualification is now a prerequisite of the broader time-domain goal.
+The user's latest outcome and validation-before-major-optimization order take
+precedence over older scope/timing holds. At each
 checkpoint commit and push, update the tracker, resolve adversarial findings
 and write a fresh-context handoff naming the next bounded validation goal.
 A completed investigation may reject a candidate; it does not qualify it.
@@ -40,7 +47,10 @@ A completed investigation may reject a candidate; it does not qualify it.
 4. Make these comparisons blocking regressions after formulation changes.
    Missing dependencies, cases or reference data; skipped required comparisons;
    stale producer/input identity; and unresolved uncertainty cannot pass.
-5. Only after those gates pass, return to nonlinear 6DOF validation and timing.
+5. Establish the small-motion nonlinear, time-domain, one-second/200x case first.
+   Measure cost early and permit bounded feasibility fixes, but major speed work
+   and general nonlinear/full-minute qualification follow a passing physical
+   comparison. Capytaine is external reference data, never the runtime solver.
 
 Record numerical tolerances and acceptance criteria explicitly before judging
 a result. Residuals, symmetry, positive energy, fitted loads and local ODE

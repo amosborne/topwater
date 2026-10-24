@@ -9,9 +9,13 @@ implementation is the existing **P0 Rankine-panel core**, extracted from
 instantaneous added mass. It has **no coupled time-domain wave-response path**.
 The archived nonlinear diagnostic runtime is a different, unqualified experiment.
 
-A converged Capytaine reference and complete six-response and small-amplitude
-wave-response regressions are the immediate priority. New formulations,
-optimization experiments, nonlinear qualification and timing remain on hold.
+A validated, practical **time-domain** baseline is the immediate goal: the
+canonical boat in a frozen mild sea, at least one simulated second, matching a
+Capytaine-derived reference within 0.1 degree and 1 cm in every axis, including
+uncertainty, and costing at most 200 wall seconds per simulated second including
+normal Topwater preparation. Major optimization follows a passing physical
+comparison; early cost screens reject impractical routes. See the
+[current goal and checkpoints](docs/time-domain-baseline-goal.md).
 [Issue #30](https://github.com/amosborne/topwater/issues/30) owns promotion
 requirements and the concise investigation register.
 
@@ -67,10 +71,10 @@ Generic mathematical tests do not establish Capytaine agreement. The frozen
 [validation contract](validation/canonical-boat.json), [reset instructions](docs/validation-reset.md)
 and [AGENTS.md](AGENTS.md) define the validation-first work.
 
-The eventual requirement is 0.1 degree in each rotation and 1 cm in each
+The later requirement is 0.1 degree in each rotation and 1 cm in each
 translation throughout 60 seconds, at no more than 20 wall seconds per simulated
-second on the development machine. Real time is preferred. Neither requirement
-has been demonstrated.
+second on the development machine. Real time is preferred. Neither this longer
+target nor the first one-second/200x milestone has been demonstrated.
 
 Optimization history is preserved at Git tag `archive/optimization-2026-10-23`.
 The retired canoe and historical experimental paths do not qualify this boat.
