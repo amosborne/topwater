@@ -1,47 +1,58 @@
 # Checkpoint handoff
 
-- Current goal: qualified, reproducible Capytaine reference for the canonical
-  24 ft boat, resolving convergence failures until unchanged gates pass.
-  Active and incomplete; Topwater remains unqualified. See reference-convergence.md.
-- Active branch: baseline/fluid-body. Inspect live git status/log for the exact
-  current source checkpoint; every freeze/study manifest also records its commit
-  and complete producer hashes. No runtime solver sources changed.
-- Completed study: reference-study-001 ran all four midpoint meshes/all132 calls,
-  complete but unqualified in every convergence family. Durable raw results,
-  bound freeze/input and producers: validation/evidence/reference-study-001.zip;
-  summary and SHA256 alongside it. See docs/reference-study-001.md.
-- Correction: validation-only Gmsh4.15.2 graded planar facets on identical physical
-  surface, verified y=0 reflection. All thin chine strips retained. Original
-  eight physical arrays and input JSON match reset exactly. Mesh levels are
-  independently remeshed ordered refinement, not nested subdivision.
-- Geometry preflight: 2464/3538/5152/7604 panels; all surface checks passed. Initial
-  frozen-graded-001 failed the original8GiB cap before any hydrodynamic solves.
-  It remains locally preserved; summary in validation/evidence/graded-mesh-preflight-001.json.
-- Declared revision:12GiB estimate cap, same conservative estimator, finest
-  11,417,873,408bytes;1800s between calls unchanged. All accuracy gates unchanged:
-  0.1%+1e-6 normalized, both finest increments and trend, componentwise envelope.
-- Independent reviewer reference_adversarial_review approved readiness after
-  single-thread initialization, initial-report persistence, geometry tolerance
-  binding and missing-graded-mesh failclosed corrections.32 gate/geometry tests
-  passed. No convergence acceptance or physical qualification claim.
-- Live jobs: none at this source checkpoint. Confirm exact sessions terminal
-  before changing producers or launching another numerical job.
-- Study002 is now terminal, all132 calls complete, every family unqualified.
-  Durable complete bundle: validation/evidence/reference-study-002.zip; summary
-  alongside. Source6fae539, controls unchanged during run; later commits only
-  change automatic CI/merge policy. See docs/reference-study-002.md.
-- CI now triggers only PRs targeting main; local tests remain required. Never
-  merge/squash-merge a PR without all required current-head CI passing.
-- Next action: run bounded vertex-order diagnostic, reviewed and declared in
-  docs/reference-study-002.md. Command: uv run --locked --no-sync --cache-dir
-  artifacts/uv-cache --group correlation python -m tests.validation.diagnose_order
-  --frozen artifacts/validation/frozen-graded-002.json
-  --output artifacts/validation/vertex-order-diagnostic-001.json
-  It changes only cyclic triangle ordering;48 radiation calls, no qualification.
-  Existing freeze remains current because this new standalone diagnostic does
-  not change its required physical/validation producers or contract. Never
-  overwrite checkpoints. Keep all producers immutable while running.
-- Stop/checkpoint after the full declared study or resource/validity failure;
-  preserve every raw matrix, diagnose failed entries and declare/review the next
-  bounded correction. The qualification goal remains active until all gates and
-  final review pass. Topwater comparisons/waves, nonlinear work and timing excluded.
+- Active goal: establish a qualified, reproducible Capytaine reference for the
+  canonical 24 ft boat, resolving convergence failures until unchanged gates
+  pass. ACTIVE AND INCOMPLETE. Topwater also remains unqualified. The foundation
+  reset is complete; see docs/reference-convergence.md for scope and exclusions.
+- Branch: baseline/fluid-body. Inspect current git status/log before continuing.
+  Every freeze/study manifest owns its exact commit and source hashes. No
+  Topwater runtime numerical source was changed in this investigation.
+- Completed evidence: study001 (original midpoint family) and study002 (reviewed
+  graded planar family) each completed all four levels and all 132 calls, and
+  failed every convergence family. Durable bundles and summaries with SHA256:
+  validation/evidence/reference-study-{001,002}.{zip,-summary.json}. Each bundle
+  includes raw matrices, frozen inputs, actual input JSON and producer archives.
+- Study002 meshes: 2464/3538/5152/7604 panels, all seven original physical facets
+  retained; original eight physical arrays/input JSON exactly match reset.
+  Independently remeshed levels are ordered refinement, not nested subdivision.
+  Latest A-infinity increments reach 6.27 times budget; FK has three trend
+  failures despite all its increments fitting budget. Read docs/reference-study-002.md.
+- Completed diagnostic: all 48 calls in vertex-order-diagnostic-001. Equivalent
+  cyclic ordering changes responses by up to 280.27/76.52/16.59 reference budgets
+  for Ainf/A/B. Installed Capytaine uses only first-vertex distance as face radius.
+  Durable diagnostic bundle/summary under validation/evidence; bound freeze in
+  study002 bundle. Diagnostic is unqualified and cannot substitute for convergence.
+- Reviewed correction: reference_mesh.farthest_first preserves physical triangles
+  and winding while putting the farthest vertex first. Contract binds this choice;
+  actual ordered triangles are frozen. Independent reference_adversarial_review
+  approved adoption. This fixes representation sensitivity, not spatial convergence
+  or native kernel approximation error. All 33 gate/geometry tests passed.
+- Current contract: same physical problem and cases, unchanged 0.1% + 1e-6
+  normalized budget, both finest increments plus trend, empirical envelope;
+  no Richardson/continuum-bound claim. Explicit 12 GiB estimate cap; unchanged
+  12-dense-array estimator, 1800 seconds between physics calls. Do not use
+  partial memory observations from study002 as full final peak measurements.
+- Fresh freeze: old frozen-graded-002 is stale after the reviewed ordering/control
+  revision. Generate a fresh freeze before any subsequent current-source work;
+  preserve all previous archives. Recheck original physical arrays/input JSON.
+- Live jobs: none. Sessions 11777, 11118 and 52130 all terminal with nonzero
+  exits for failed convergence/representation gates. No numerical job is pending.
+- CI policy: automatic CI only on PRs targeting main. Continue local testing.
+  Never merge/squash-merge without all required current-head CI passing. No PR
+  was created; development checkpoints pushed only to baseline/fluid-body.
+- Exact next bounded action: design and geometry-preflight a FIXED-TOPOLOGY GRADED
+  reference mesh family, with NO hydrodynamic solves in that checkpoint.
+  Decompose the same convex planar facets into fixed triangular/quad patches;
+  use pinned Gmsh transfinite surfaces with shared compatible edge counts.
+  Keep patch topology, diagonal pattern and continuous grading map fixed; sample
+  it more finely over four nontrivial levels (target current 2500-7600-panel
+  range, but report actual counts). Derive per-segment ratios from a fixed grading
+  exponent; do not keep ratios fixed while changing counts. Disable independent
+  unstructured remeshing/optimization, reflect the verified half, apply farthest
+  first and require all existing geometry checks. Record patch definitions, curve
+  distributions, quality statistics, physical equality and resource preflight.
+- Stop at that reviewed geometry manifest; commit/push, update issue #30 and
+  refresh this handoff. Then declare the next complete convergence study. The
+  overarching qualification goal stays active until all gates and final review
+  pass. No Topwater comparisons, wave implementation, new formulations, nonlinear
+  work, optimization experiments or performance claims are authorized here.

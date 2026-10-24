@@ -8,6 +8,14 @@ GEOM_ATOL=1e-12
 GEOM_RTOL=1e-10
 
 
+def farthest_first(triangles):
+    """Keep winding/geometry, make Capytaine's first-vertex radius conservative."""
+    triangles=np.asarray(triangles)
+    centers=triangles.mean(axis=1)
+    first=np.argmax(np.linalg.norm(triangles-centers[:,None],axis=2),axis=1)
+    return np.take_along_axis(triangles,((first[:,None]+np.arange(3))%3)[:,:,None],axis=1)
+
+
 def moments(triangles):
     a,b,c=np.asarray(triangles).transpose(1,0,2)
     vector=np.cross(b-a,c-a)/2
@@ -172,7 +180,7 @@ def graded_mesh(original,bulk_size,edge_size,*,growth=.3):
         # Enforce the intended shared reflection boundary at coordinate roundoff.
         half[:,:,1][abs(half[:,:,1])<COORD_ATOL]=0
         reflected=half[:,[0,2,1]].copy();reflected[:,:,1]*=-1
-        result=np.concatenate((half,reflected))
+        result=farthest_first(np.concatenate((half,reflected)))
         quality=verify_surface(original,result)
         return result,dict(gmsh_version=gmsh.__version__,bulk_size_m=bulk_size,
             edge_size_m=edge_size,growth=growth,geometry=quality)

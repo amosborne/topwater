@@ -1,7 +1,7 @@
 """Geometry invariants for the reference-only planar mesher."""
 import numpy as np
 import pytest
-from .reference_mesh import facets,half_surface,moments,verify_surface
+from .reference_mesh import facets,half_surface,moments,verify_surface,farthest_first
 
 
 def wet_box():
@@ -18,6 +18,16 @@ def test_coplanar_reconstruction_and_reflection_keep_surface():
     quality=verify_surface(original,np.concatenate((half,reflected)))
     assert quality['facets']==5
     np.testing.assert_allclose(moments(original),moments(np.concatenate((half,reflected))),atol=1e-14)
+
+
+def test_canonical_vertex_order_preserves_winding_and_maximizes_radius():
+    original=np.array([[[0.,0.,-1.],[3.,0.,-1.],[0.,1.,-1.]]])
+    canonical=farthest_first(original)
+    for shift in range(3):
+        np.testing.assert_array_equal(farthest_first(np.roll(original,shift,axis=1)),canonical)
+    np.testing.assert_allclose(moments(canonical),moments(original),atol=1e-14)
+    radii=np.linalg.norm(canonical-canonical.mean(axis=1)[:,None],axis=2)
+    np.testing.assert_array_equal(radii[:,0],radii.max(axis=1))
 
 
 @pytest.mark.parametrize('defect',['missing','reversed','moved','overlap'])

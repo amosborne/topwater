@@ -1,0 +1,27 @@
+{
+  "kind": "vertex-order-diagnostic",
+  "complete": true,
+  "passed": false,
+  "current_commit": "e1f33e088b84538cf9dd8ab8715c86ec549647ff",
+  "completed_physics_calls": 48,
+  "comparisons_maximum_reference_budget_ratio": {
+    "Ainf": {
+      "original": 1.102879516481325,
+      "cyclic1": 280.2727959850782,
+      "cyclic2": 280.27279598513996
+    },
+    "A": {
+      "original": 0.3192062586087388,
+      "cyclic1": 76.51512440609145,
+      "cyclic2": 76.51512440577851
+    },
+    "B": {
+      "original": 0.43354023661818,
+      "cyclic1": 16.587890626417163,
+      "cyclic2": 16.587890626438245
+    }
+  },
+  "qualification_status": "unqualified; diagnostic only",
+  "bundle_sha256": "9e15b388493e9520625ac01f490d62ce4a93fa0bbf7ce71c5a3bf97f0119bf78",
+  "bound_freeze_bundle": "reference-study-002.zip"
+}

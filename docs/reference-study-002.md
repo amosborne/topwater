@@ -57,3 +57,29 @@ The final monitor attached after PID31160 had already exited. Last saved live
 observation (start of the final frequency) reports2.950GB peak working set and
 4.384GB peak committed memory. Those are lower bounds on the full-run peaks,
 not a final peak measurement. Do not use them as a certified resource bound.
+
+## Completed vertex-order diagnostic
+
+All 48 declared radiation calls completed. Equivalent cyclic orderings differ
+from the farthest-first convention by up to 280.27 reference budgets for
+A-infinity, 76.52 for finite A and 16.59 for B/omega. The largest differences
+occur in heave/roll couplings that should vanish by reflection symmetry.
+Original ordering also differs from farthest-first by 1.103 budgets for one
+A-infinity entry. Centers, areas and normals passed roundoff invariance checks.
+
+[Complete diagnostic evidence](../validation/evidence/vertex-order-diagnostic-001.zip)
+includes all matrices, radii, triangle variants, producer archive and inspected
+installed dependency sources. Its bound freeze is retained in the study002
+bundle. [Summary and SHA256](../validation/evidence/vertex-order-diagnostic-001-summary.json).
+This is a completed diagnostic with a failed representation-invariance gate,
+not a qualified reference.
+
+The next contract revision freezes every reference triangle in an
+orientation-preserving farthest-vertex-first cyclic order. This makes the
+first-vertex characteristic radius the maximum vertex-to-centroid distance
+without modifying Capytaine or any physical facet. The geometry test checks
+cyclic input invariance, winding/area moments and the actual maximum radius.
+All 33 gate/geometry tests pass. This control corrects a demonstrated numerical
+representation sensitivity; it does not resolve the remaining spatial or
+centroid-integration convergence failures. No full known-failing mesh family
+is rerun solely to demonstrate this local correction.

@@ -59,6 +59,7 @@ def load_contract(path):
                 or np.any(edge<=0) or np.any(edge>bulk) or np.any(np.diff(bulk)>=0)
                 or np.any(np.diff(edge)>=0) or not 0<r['edge_growth']<=1
                 or r['gmsh_version']!='4.15.2'
+                or r['triangle_vertex_order']!='farthest-first'
                 or r['geometry_coordinate_absolute_m']!=1e-11
                 or r['geometry_moments_relative']!=1e-10
                 or r['geometry_moments_absolute_SI']!=1e-12):
