@@ -3,7 +3,9 @@
 - **Current goal and qualification status:** bounded validation-foundation reset.
   Reset deliverables are complete; the Capytaine reference, selected fluid-body
   implementation, nonlinear accuracy and performance remain **unqualified**.
-- **Active branch and commit:** `baseline/fluid-body`; verified numerical/source
+- **Active branch and commit:** `baseline/fluid-body`; final reset commit is
+  identified by pushed tag `checkpoint/validation-reset-2026-10-23`.
+  Verified numerical/source
   checkpoint `3bd62bc5407fef1211032f74b634bd93bd3fee5e`. Subsequent checkpoint
   commits contain only durable documentation, evidence and inventory. Inspect
   live `git status` and `git log` before continuing.
@@ -41,7 +43,9 @@
   untracked paths with hashes; those worktrees were not reset or removed. The
   old optimization graph is pushed at `archive/optimization-2026-10-23`.
   Supporting retirement work is pushed at `archive/retire-canoe-preparation`.
-  All harness source changes were selectively integrated; do not merge entire
+  Supporting harness checkpoints `56a9e3f` through `42544de` were selectively
+  integrated through source checkpoint `3bd62bc`; no harness patch is pending.
+  Do not merge entire
   historical branches. One untracked benchmark file was preserved under
   `artifacts/retirement-preserved/benchmark_rankine.py` instead of deleting it.
 - **Live jobs:** none remain from this reset. Every launched local command has
