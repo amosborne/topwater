@@ -1,5 +1,22 @@
 # Current state: Topwater expert (solver implementation HELD)
 
+LATEST user regroup2026-10-24: stop bug-chasing and official-example variants;
+deliver one LESS energetic buoy-generated incoming sea, true locally calm boatrest,
+zero history/no ramp, full60s and centered video with wider physical field.
+Coordinator selected actual `ndbc-46086-20230319T0840Z`, Hm0.5351635264m,
+Tm027.42692891s, all48 observed bands .030-.495Hz and complete direction moments.
+Existing generator seed42/8perband/default bow toward actual realized arriving
+mean, no amplitude/phase fitting or rescaling. Neutral export independently SOURCE
+reviewed and coordinator-allocated072f1fb5: EXECUTED PASS1.110s, all384carriers,
+variance.0179m2/replay/support/frameclosure. Actual default bow201.308143deg,
+meanpropagation21.308143deg/resultant.454012. Exactproducer2568/guard29816 terminal0,
+allfrozenverified/idle/separatereadback/finalrelease done; no numerical owner/job.
+Output `artifacts/reference/calm-buoy-20261024/export-attempt1`.
+[Source/executed receipt](calm-buoy-export-readiness-2026-10-24.md).
+Topwater solver/tests/optimization/BEM/dynamics remain HELD. WEC/researcher own
+physical upstream train/calm-arrival construction and its derived statistics;
+stationary source carriers alone are not a calm initial water field.
+
 Latest user steering supersedes old queued follow-ups: finalcase60s, rest/zero
 velocity andzero radiation memory, viscousOFF, physics-based incident-band policy.
 Old unpruned/history-seeded case remains evidence, not the requested finalstartup.

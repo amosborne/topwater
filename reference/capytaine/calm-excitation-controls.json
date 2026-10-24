@@ -1,0 +1,50 @@
+{
+  "status": "ready_for_coordinator_execution_allocation",
+  "canonical_case": "reference/capytaine/canonical-boat.json",
+  "native_mat": "artifacts/reference/minimum-20261024/native-gl2/native.mat",
+  "native_npz": "artifacts/reference/minimum-20261024/native-gl2/native.npz",
+  "original_manifest": "artifacts/reference/minimum-20261024/native-gl2/source/original-native-manifest.json",
+  "bank_case": "artifacts/reference/calm-buoy-20261024/export-attempt1/case.json",
+  "bank_components": "artifacts/reference/calm-buoy-20261024/export-attempt1/components.npz",
+  "original_radiation_H5": "artifacts/reference/minimum-20261024/consumer/canonical.h5",
+  "input_sha256": {
+    "reference/capytaine/canonical-boat.json": "ea18844904e03bbfd72abc3396240c97b1994b3584e36c8149f8ae5f60a99e4f",
+    "artifacts/reference/minimum-20261024/native-gl2/native.mat": "3262befdfbc3effd9bac3c5a9688de613481f8846325d93f1fa38b0f60983705",
+    "artifacts/reference/minimum-20261024/native-gl2/native.npz": "c90d2db931876082c9a17256943c353166b2dc7268fd5a7b03c632af0dccab00",
+    "artifacts/reference/minimum-20261024/native-gl2/source/original-native-manifest.json": "e8273b54163d58f43b3dbadcb56b5d16cc05addd396af65591abaf94b1bb4f39",
+    "artifacts/reference/calm-buoy-20261024/export-attempt1/case.json": "b63d82d280b5fd3a70ef5dab93e707e300d1ca7cdbf156efcf66931fc15b26ee",
+    "artifacts/reference/calm-buoy-20261024/export-attempt1/components.npz": "814644c993a957528432a6b5aed92d16d1ee94d52119e65e2e7dc26916b7eaa3",
+    "artifacts/reference/minimum-20261024/consumer/canonical.h5": "d54d5f5474b2d71028e5953cb6fb59dcfdeaa950439955b86056ed7e5583033e"
+  },
+  "frequency_grid": {
+    "start_rad_s": 0.1,
+    "step_rad_s": 0.1,
+    "count": 34,
+    "last_rad_s": 3.4
+  },
+  "heading_grid": {
+    "start_deg": 0,
+    "step_deg": 15,
+    "independent_count": 24,
+    "stored_count": 25,
+    "exact_copied_360_seam": true
+  },
+  "expected_new_diffraction_solves": 816,
+  "new_radiation_solves": 0,
+  "cpu_threads": 1,
+  "maximum_elapsed_seconds": 180,
+  "expected_elapsed_seconds": [
+    60,
+    100
+  ],
+  "estimated_peak_memory_mb": 1024,
+  "interpolation": "Consumer bounded-frequency real/imag bilinear; headings modulo2pi; exact included2pi seam; unqualified interpolation accuracy",
+  "consumer_sideband_support": "Exclude Omega<.1 as numerical coverage policy; cap Omega<=2pi*.53345874095 by physical wavelength>=2beam. Both signed kappa branches retained, negative flips heading+pi; no renormalization; removal reported by consumer",
+  "convention": "Native exp(-i omega t); FK+diff per metre elevation; force N/m, moment Nm/m about meanCG; no conjugation or extra CG phase",
+  "exclusions": [
+    "No radiation, Ainf, H5 or CIC changes",
+    "No mesh, density, lid, geometry, mass changes",
+    "No motion or wavefield evolution in producer",
+    "No launch from draft"
+  ]
+}

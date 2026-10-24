@@ -113,7 +113,17 @@ Final startup: body initially at rest in TRUE locally calm water, incoming waves
 initially upstream, no prior body motion, zero velocity and zero radiation memory.
 Body rest in an established stationary sea is insufficient. Declare and verify
 full-hull initial surface/fluid-velocity tails and all six initial excitation
-loads, using the original numerical-calm gates with the new packet's scales.
+loads. REF001's original tiny-wave0.1N/Nm cap remains immutable for that result.
+For the new REF002 case, the coordinator declares an engineering calm-load
+tolerance epsilon=.001: initial force-vector norm<=epsilon*m*g and moment-vector
+norm<=epsilon*m*g*Lchar (Lchar=max full-hull length/beam), with each component also
+<=epsilon*S_i in the SAME fixed native basis as its carrier-load scale. Never
+rotate a positive scale vector as though it were a physical wrench. Use the
+original full-hull eta/u numerical-calm bounds with the new carrier scales.
+This is a scale-based engineering assumption, not a universal precision or
+linearity proof; report actual residuals. Preserve all old rejected attempts
+under their original0.1N/Nm policy. No wave/force/history changes follow from
+assessing an immutable train under the new explicitly recorded acceptance policy.
 No hidden temporal force ramp. Declare incident field and initial pose consistently.
 No stationary-history q/v/CIC seed in that final startup. Viscous damping remains
 off unless separately justified and authorized for matching physics in both models.

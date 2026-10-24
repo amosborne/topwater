@@ -6,32 +6,63 @@ requirements, acceptance, integration and serial execution allocation.
 
 ## Current priority
 
-Prepare ONE mild single incoming physical packet diagnostic, full60s, before
-returning to final buoy-sea selection. Water must be initially locally calm,
-body q/v/radiationmemory0, all6free, viscousOFF; no stationary-sea held release,
-nonzero history seed, hidden ramp, restraints, force fitting or cropped startup.
-A finite-band packet has noncompact tails: quantify original REF001 numerical
-calm gates over full hullregion and all6direct/retained initial forces BEFORE
-any body run. No new incident/body numerical job granted yet.
+LATEST regroup: deliver milder actual buoy-generator sea, physical incoming waves
+into numerical-local-calm water, bodyrest/v0/radiationmemory0/ramp0/viscousOFF,
+full60s and centeredvideo. STOP bugchasing/officialPTOsteps/meshstudies/parameterfit.
+PTOzero source proposal is UNRUN and cancelled, not a queued execution.
 
-[New mild packet source/readiness](mild-packet-diagnostic-readiness-2026-10-24.md):
-prospective .015m/.25Hz/45deg/cos4 halfbandwidth.5rad/s/focus40s, unchanged reviewed
-REF001 dispersive evaluator with only one nonzero slot. Full[-20,80] incident
-padding yields[0,60] excitation. Existing17panel/CIC40 operator is UNQUALIFIED;
-this simple diagnostic is not the final collected-buoy sea or a passivity remedy.
-Source/freeze independentlyPASS; ONE incident preflight completed309.922s and
-was REJECTED: fullregion eta2.069um/speed4.113um/s andarrival/bandpass, but initial
-heave retained.129757N/spectral.147764N exceed fixed.1N cap. Otherfiveforceaxespass.
-No body simulated, retiming/rerun/capchange. Completephysicalpacket/report preserved;
-allinputs unchanged, exactprocessesterminal/separateidleproof/finalrelease complete.
-Bodydraft SOURCEPASS but UNRUN/no bodymanifest orgrant. Coordinator now considers
-SOURCEONLY extension of ACCEPTED originalREF001threepacketfield to60s, preserving
-alloldcoefficients/initialcalmbounds/F0 andprovingfirst10excitationprefixidentity.
-[Exact extension](reference-extension-readiness-2026-10-24.md) incident now independently
-EXECUTEDPASS in.468s: allfield/waveprefix identities andfirst501forces EXACT0error;
-originalfullplanformcalm/F0 inherited. Exactprocessesterminal/leasefree. BodySOURCEPASS
-latest07e48e6f; originalH5/CIC10/fullM/nativechain frozen in newbodymanifest0766458d.
-Native60sbody notrun/granted; independentmanifestreview pending. No newpacketfit.
+[Calm buoy train source/readiness](calm-buoy-arrival-readiness-2026-10-24.md):
+actual2023-03-19T08:40Z observation Hm0.535m/Tm027.427s, seed42/full384carriers,
+bow201.308deg. FixedSPATIALflat-top W(s/cg+30), plateau15/support25/quintic;
+SIGNEDkappa propagated with exactdispersion, no temporal force/elevation ramp.
+Keep generatedcarriera/phases/directions; report actual finitePSD/MEM/support
+redistribution/prunedtails honestly, not unchangedstationaryHm0.
+Required fullheadingFK+diff H export passed on samefixed17; originalradiationH5/
+CIC10 staysUNCHANGED andaccuracyunqualified. Physicalpreflight SOURCE/FREEZE ready
+01e96e72, underindependentreview: cheap6F0 FIRST then efficient fullhull interval/
+rectanglecalmbounds, sharedfieldcoefficients forforcing/video. ONEready2physicalpreflight nowcompleteREJECT2.343s: initialheave194.544N/pitch
+-15.6305Nm exceedfixed.1caps (fiveaxesfail), combinedarrival1.0862at30.88sPASS;
+fullhullcalmboundsSKIPPED/no body/encoder. All11frozen/processesterminal/leasefree.
+Preserve originalattempt. Current INPUT-only nextproposal: restore missinglowOmega
+via independentlyderived H0=K[:,Heave] +boundedbridge toH(.1), no radiationpatch,
+retiming/phasechange/renormalization. Storedeta0+1.424mm accounts~93%initialheave
+instaticcomparison, notpromisedcure (dynamicdifference13.77Nremains). No newfield/
+body/job grant yet. Attempt2minimalSOURCEready fcea8dd2: fullOmega0..cap rebuilt
+trapzweights, analyticconstantpressureH0 checkedKheave, quadraticOmega?bridge below.1;
+C0Jac0/noDCstep/nooverwrite. Window/carriers/seed/uppercap/gates unchanged; oldattempt1
+immutable. IndependentSOURCE/FREEZEPASS thenallocatedattempt2 completed3.062s
+REJECT: F0heave12.7276N/pitch-1.1467Nm stillfail.1caps (fiveaxesfail), arrival1.08197
+at30.7sPASS/H0-Kerror2.36e-11. Fullhullbounds againSKIPPED, no calmbodyclaim.
+All11unchanged/exactprocessesterminal/idle2789d0/separatefa2bde/FINALrelease88686b.
+PreserveallC/PSD/support/arrival. RootdeclaredNEWREF002engineeringcalmpolicy: normF0
+<=.001mg/normM0<=.001mg*7.3152m ANDperaxis<=.001S inoriginalnativebasis; old.1N
+rejects stayattached. Immutabletrain2/C/forces unchanged. NEWread-only combinedp6
+fullhullassessment b6dd95cc independentlyEXECUTEDPASS20.984s: eta<=21.034um,
+fluid speed<=2.290736mm/s versusunchanged2.489977mm/s; allcoveragecomplete24/72
+boxes/no unresolved, train2unchanged. Exactprocessesterminal/leasefree.
+BODY SOURCE/FREEZEPASS0849bcdd (146inputs): originalH5/CIC10/.02/M/K/Ainf,
+zeroq/v/memory/visc/ramp, full3001Fe+CIC/NE/Archecks, globalR/tmetadataONLY
+(nativeHforce/Mbasis unchanged). Exactready2bodymanifest5e7f4836 aftersafeattachedclientcleanup tinyreview, then
+allocatedactual60sBODY implementationPASS27.776s. Peakmotions[.238,.274,.240m,
+1.481,.663,.617deg], all3001Fehistories EXACT0error/qv0memory0/finite/CIC/NE/Ar
+readbacksPASS. GlobalR201.308/t isACTUALsummarymetadataonly, nativeposes/forces/M
+basisunchanged. MotionSHAf822fde3/raw6b8a9adc/summaryaab25bc9. Independentstored
+MILD60reviewFINALPASS all146lineage/forces/CIC/mass/frame/NE/Ar; videoownerready
+actualbindingunderrootcontrol, no numericalaccuracyproof. Exact29068/
+39568terminal/session67588, all146unchanged/idleec580f/separateaf7ffc/FINALdd4b47.
+No furthernumerics/diagnostics/encoder bythisowner; STOP atreceipt.
+[Assessment basis/readiness](calm-buoy-assessment-2026-10-24.md). Existingeta/u gates
+remain required; boundsadaptivecomputationalonly, actualviolationvsunresolvedproof
+distinguished. No nextbody/encoder/fieldchange grant.
+
+Preserved simpler diagnostics: new1.5cm singlepacket rejected initialheaveforce
+.1298/.1478N>.1cap despiteeta/u calm; no bodyrun. ExactacceptedREF0013packet
+extension to60s then passed: originalfield/prefixidentities, native3001finite
+states/6forces/zeroIC/CIC/NE/Ar checks, boundedmotions max[.00596,.00584,.01005m,
+.0223,.0402,.0269deg]. First10q/v matches oldcase nearroundoff. Native engineelapsed
+32.182s, exactprocess4532/24680terminal/session25741, all142frozenunchanged,
+idle7d9476/separate91e81f/FINALreleaseef5ae3. Noencoder or accuracy/passivity claim.
+[Extension evidence](reference-extension-readiness-2026-10-24.md).
 
 ## Latest executed official controls
 

@@ -44,4 +44,5 @@ else:
     print(out.getvalue(), flush=True)
     print(json.dumps({'complete':True,'elapsed_s':time.time()-started}),flush=True)
 finally:
-    engine.exit()
+    # Drop only this attached client's reference; never request shared-engine shutdown.
+    del engine

@@ -1,6 +1,10 @@
-# Incremental official CIC example diagnostic: first step source ready
+# CANCELLED / UNRUN: incremental official CIC example diagnostic
 
-Latest user priority: progressively modify the actual passing WEC-Sim provided
+LATEST steering cancels this diagnostic path: no PTO-zero execution. Source and
+readiness artifacts below are preserved UNRUN. Current goal is the milder buoy
+physicalincoming train/full60s/video.
+
+Historical requested priority: progressively modify the actual passing WEC-Sim provided
 example toward our configuration. No new mesh study, coefficient repair, custom
 sea search or root-cause assumption. Coordinator owns each next allocation.
 This is a bounded PLAN and ONE first-step source/readiness proposal, not a suite.
