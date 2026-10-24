@@ -895,5 +895,53 @@
     "Independent references retain their own discretization and raw asymmetry",
     "Refinement changes both P1 trace and P0 auxiliary flux spaces; strict monotonic added mass is not asserted",
     "Whole-plane zero-potential instantaneous/infinite-frequency limit only; no finite-frequency, moving, nonlinear6DOF or trajectory qualification"
-  ]
+  ],
+  "refinement_level": 1,
+  "parent_triangle_sha256": "0f1cc91a5ed4b165a0374751d684e8e0b4c1a50c7d5455dfe1fb40f71af9b258",
+  "current_triangle_sha256": "799cbe09baa94bda5406ba65ca1aa1b01aaa168f412661ffe97772bee39808d1",
+  "refinement_geometry": {
+    "max_parent_plane_defect_m": 2.255627043287669e-16,
+    "max_parent_plane_arithmetic_allowance_m": 1.102978774005702e-13,
+    "area_difference": -1.7763568394002505e-15,
+    "first_moment_difference": [
+      4.933119884809045e-17,
+      -3.340172783543663e-16,
+      1.6569353449978714e-16
+    ],
+    "max_normal_difference_report_only": 3.8517843428675924e-13,
+    "scope": "Reviewed floating arithmetic plane/area/first-moment preflight, not a certified interval"
+  },
+  "predeclared_orders": [
+    4,
+    8
+  ],
+  "coarse_source_reconstruction_control": {
+    "evidence_sha256": "3c8998fcf65cf51ffb94c8dd6cb72363fedcac6aa8fb0a67acaa20138e58fe5f",
+    "scope": "Data-only owned original-body q16 reconstruction of cached coarse collocation densities; no new kernel or fluid solve",
+    "integrated_diagonal": [
+      92.42644815872683,
+      569.6194959257444,
+      8741.414452617108,
+      940.2776499550334,
+      15669.132520491521,
+      1157.7800511699093
+    ],
+    "relative_to_coarse_capy_centroid": [
+      -0.08004304581476776,
+      -0.09323873141136592,
+      -0.046682145358924614,
+      -0.14093375208855222,
+      -0.0594642487986579,
+      -0.11584762459975702
+    ],
+    "normal_relative_rms": [
+      0.4011185904406604,
+      0.5477253296787891,
+      0.7546775865467932,
+      0.8666011259701016,
+      0.8174005817693998,
+      0.6771878089846644
+    ],
+    "limitation": "Integrates the SAME approximate coarse field more faithfully; not a better physical truth and not the rigid Neumann solution"
+  }
 }
