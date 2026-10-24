@@ -1,12 +1,12 @@
 {
-  "as_of_commit": "3bd62bc5407fef1211032f74b634bd93bd3fee5e",
+  "as_of_commit": "fb106c3e3562d6721fb76d5c65615be43e0c34cb",
   "active_branch": "baseline/fluid-body",
   "optimization_archive_tag": "archive/optimization-2026-10-23",
   "optimization_archive_commit": "4e8f511faf541f61f36947dd2c48a96672ad8ab4",
   "branches": [
     {
       "ref": "refs/heads/baseline/fluid-body",
-      "commit": "3bd62bc5407fef1211032f74b634bd93bd3fee5e",
+      "commit": "fb106c3e3562d6721fb76d5c65615be43e0c34cb",
       "upstream": "origin/baseline/fluid-body",
       "role": "active implementation under qualification"
     },
@@ -696,7 +696,7 @@
     },
     {
       "ref": "refs/remotes/origin/baseline/fluid-body",
-      "commit": "3bd62bc5407fef1211032f74b634bd93bd3fee5e",
+      "commit": "fb106c3e3562d6721fb76d5c65615be43e0c34cb",
       "upstream": null,
       "role": "active implementation under qualification"
     },
@@ -1065,29 +1065,8 @@
     {
       "path": "C:\\Users\\alex\\topwater",
       "branch": "refs/heads/baseline/fluid-body",
-      "head": "3bd62bc5407fef1211032f74b634bd93bd3fee5e",
-      "dirty_files": [
-        {
-          "status": " M",
-          "path": "docs/validation.md",
-          "sha256": "0dca28e4a41f9bad3918e11011e1a86189b3aa95fd06f6c5205b7f1d018c7aa4"
-        },
-        {
-          "status": "??",
-          "path": "docs/reset-checks.json",
-          "sha256": "bcb852ca22adc20c80dccadad43ecc248c6e3ca2a8ec3a35b4078519848f3b2d"
-        },
-        {
-          "status": "??",
-          "path": "docs/reset-review.md",
-          "sha256": "de98f0d5b4e2daf6edc2a075d1ac332280725156b653d0222236ca082d42255f"
-        },
-        {
-          "status": "??",
-          "path": "validation/frozen-physical-inputs.json",
-          "sha256": "c6462ef766dc73245cd63066225b410822db49cdeac4f083f3d4f7f7b4450ed2"
-        }
-      ],
+      "head": "fb106c3e3562d6721fb76d5c65615be43e0c34cb",
+      "dirty_files": [],
       "preservation": "untouched; no worktree removed or uncommitted work discarded"
     },
     {
