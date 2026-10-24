@@ -82,3 +82,43 @@ with an exact next action for full periodic field initialization and minimum
 Topwater TD physics/cost screening. Commit/push, update issue #30 and hand off.
 No passing reference or actual simulation claim follows from a plan or traces
 alone. Jobs remain serial with archived immutable producers and fresh outputs.
+
+## Candidate 001 result
+
+Source checkpoint a5ebf7e. The declared array-only candidate completed; overall
+exit 1 / passed=false is required because periodic fluid fields, field uncertainty,
+nonlinear compatibility and linear-limit checks are missing. No Topwater TD
+simulation or pressure solve ran.
+
+The controlled sea's equivalent component Hm0 is 0.0648074 m. The spatial+sampling
+gate passed with non-increasing component increments, using at most 44.10% of
+the allocated 10% reference budget. This is not full reference qualification.
+The conservative frozen-pose negative control fails the user's tolerances in
+surge, heave, roll and pitch, so the one-second interval is informative. Sway
+and yaw are weaker; this sea alone does not establish every mode's accuracy.
+Six-mode/coupling checks remain required before baseline promotion.
+
+[Complete candidate/producer/input bundle](../validation/evidence/mild-periodic-001.zip)
+includes reference histories/derivatives, all raw matrix entries/increments,
+the body/wave-only initial packet and nested complete raw-reference evidence.
+[Summary and SHA256](../validation/evidence/mild-periodic-001-summary.json).
+The original study 003 decision is unchanged and failed; it is retained as raw
+input to this separate prospective, forcing-specific output assessment.
+
+The focused validation suite now passes 60 tests, including harmonic signs and
+derivatives, coupled-component uncertainty without cancellation, reference
+sampling allocation, exact rotation-map/body-rate consistency, conservative
+signal checks and rejection of changed case/readiness conventions.
+
+Independent review rebuilt the phasors, derivatives, uncertainty sums, sampling
+bound and conservative signal checks, and verified body angular velocity by
+independent rotation finite differences. Provenance and the nested raw dataset
+were verified; all four missing-readiness flags and overall passed=false remain
+correct. No blocking finding remains for this limited stage.
+
+Next bounded action: freeze the minimum Topwater TD fluid grid/domain and a safe
+reference-to-nonlinear geometry map; export the required total periodic eta0/phi0
+fields with field/mapping uncertainty. Reject invalid reference-fluid points.
+Only after a complete compatible initial-state packet exists, run a bounded
+preparation/actual coupled-RHS cost screen before a one-second simulation. No
+Capytaine trajectory/pressure/acceleration may drive the runtime.

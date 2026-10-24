@@ -87,3 +87,13 @@ No old failed study is retroactively qualified. Any prospective reference-policy
 revision must be explicit and reviewed; study 003's original gates/results remain
 unchanged. The former 60-second/20x targets remain later requirements, not claims
 established by this first one-second/200x milestone.
+
+## Current controlled case
+
+The first prospective case is frozen in validation/mild-periodic-case.json:
+a controlled three-component directional sea, not a buoy realization. Its
+periodic body-motion candidate and spatial/sampling assessment are documented
+in mild-periodic-protocol.md. This explicitly periodic benchmark avoids an
+unqualified broadband conversion, but it still requires matching fluid initial
+fields and nonlinear compatibility/representation checks. Body traces alone
+do not qualify the reference or Topwater.

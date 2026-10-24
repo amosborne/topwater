@@ -1,0 +1,83 @@
+{
+  "case_id": "canonical-boat-mild-periodic-001",
+  "current_commit": "a5ebf7eea9ec4efea25fdba87a0d6fce4e6f1e3e",
+  "complete": true,
+  "passed": false,
+  "equivalent_component_Hm0_m": 0.0648074069840786,
+  "motion_spatial_gate": {
+    "passed": true,
+    "trend_passed": true,
+    "maximum_budget_ratio": 0.44097780260448305
+  },
+  "case_informative": true,
+  "constant_initial_pose_error_lower_bound": [
+    0.018076830695622437,
+    0.005479203617316938,
+    0.01413119870937695,
+    0.00660130641965935,
+    0.0022878971497009904,
+    0.0007038079787172104
+  ],
+  "signal_to_user_tolerance": [
+    1.8194127409120107,
+    0.5613524744537981,
+    1.4336900792943519,
+    3.8704655317118664,
+    1.3217925108056143,
+    0.4071489024565529
+  ],
+  "required_readiness": {
+    "motion_spatial": true,
+    "informative_case": true,
+    "periodic_fluid_fields": false,
+    "field_uncertainty": false,
+    "nonlinear_compatibility": false,
+    "linear_limit": false
+  },
+  "qualification_status": "unqualified: periodic fluid initial fields, field uncertainty, compatibility and nonlinear-limit checks are missing",
+  "scope": "Periodic body-motion spatial candidate only; original raw coefficient decision unchanged",
+  "original_raw_passed": false,
+  "motion_coordinate_convention": "theta=Log(R*R_equilibrium^T), components in mean world axes; compare the same chart in both models",
+  "bundle_sha256": "20ace5b740c0715bec3c67221a3b32027cfd71d0ed55005070dc8af0c28ccfff",
+  "raw_reference_bundle": {
+    "entry": "validation/mild-periodic-001.source/raw-reference.zip",
+    "sha256": "e18bf7366eb651766edc5487addd84c798c1ae53183f58a0e88b3b623ed6729d"
+  },
+  "physical_constants": {
+    "fixture": "tests.reference_boat",
+    "body_function": "reference_body",
+    "pose_function": "equilibrium",
+    "density_kg_m3": 1025.0,
+    "gravity_m_s2": 9.81,
+    "water_depth": "infinite",
+    "forward_speed_m_s": 0.0,
+    "initial_body_velocity": "zero",
+    "axes": "right-handed world x/y/z, body bow/port/up",
+    "rotation_reference": "world CG, full rotated dry inertia",
+    "mode_order": [
+      "Surge",
+      "Sway",
+      "Heave",
+      "Roll",
+      "Pitch",
+      "Yaw"
+    ],
+    "time_convention": "Re(amplitude*exp(-i*omega*t))",
+    "wave_direction": "propagation, radians CCW from world+x",
+    "incident_phase_origin_world_xy_m": [
+      0.0,
+      0.0
+    ],
+    "incident_elevation_amplitude_m": 0.01,
+    "observed_sea_role": "separate future nonlinear case; not the linear reference forcing"
+  },
+  "motion_units": [
+    "m",
+    "m",
+    "m",
+    "rad",
+    "rad",
+    "rad"
+  ],
+  "review_scope": "Independent audit approved case and motion spatial/sampling stage only; full reference and simulation remain unqualified"
+}
