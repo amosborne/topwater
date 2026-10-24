@@ -100,12 +100,27 @@ def test_actual_wet_count_cannot_silently_drop_finest_mesh():
         study_preflight(68,[1,2,3,4],8*1024**3)
 
 
-def test_missing_graded_mesh_cannot_substitute_midpoint():
+@pytest.mark.parametrize('policy',['graded-planar','fixed-seed-transfinite'])
+def test_missing_graded_mesh_cannot_substitute_midpoint(policy):
     from .common import reference_plan
-    spec=dict(body_subdivision_levels=[1,2,3],mesh_policy='graded-planar',
+    spec=dict(body_subdivision_levels=[1,2,3],mesh_policy=policy,
         maximum_estimated_workspace_bytes=8*1024**3)
     with pytest.raises(ValueError,match='midpoint substitution forbidden'):
         reference_plan(dict(wetted_triangles=np.zeros((1,3,3))),spec)
+
+
+@pytest.mark.parametrize('defect',['missing_seed','wrong_count'])
+def test_fixed_seed_mesh_policy_requires_actual_seed_and_counts(defect):
+    from .common import reference_plan
+    spec=dict(body_subdivision_levels=[1,2,3,4],mesh_policy='fixed-seed-transfinite',
+        subdivisions=[2,3,4,5],maximum_estimated_workspace_bytes=8*1024**3)
+    data=dict(wetted_triangles=np.zeros((1,3,3)),reference_seed_triangles=np.zeros((2,3,3)))
+    for level,n in enumerate(spec['subdivisions'],1):
+        data[f'reference_triangles_{level}']=np.zeros((2*n*n,3,3))
+    if defect=='missing_seed':del data['reference_seed_triangles']
+    if defect=='wrong_count':data['reference_triangles_4']=data['reference_triangles_4'][:-1]
+    with pytest.raises(ValueError):
+        reference_plan(data,spec)
 
 
 def test_missing_finite_cases_cannot_qualify_reference():
@@ -170,13 +185,14 @@ def test_qualify_cannot_accept_fabricated_passed_wave_artifact(monkeypatch):
     assert not report['gates']['small_amplitude_time_domain_wave_responses']['passed']
 
 
-def test_stale_validator_source_rejects_previously_passed_inertia(monkeypatch):
+@pytest.mark.parametrize('owner',['tests/validation/__main__.py','tests/validation/reference_transfinite.py'])
+def test_stale_validator_source_rejects_previously_passed_inertia(monkeypatch,owner):
     args=SimpleNamespace(frozen=Path('frozen'),reference=Path('reference'),inertia=Path('inertia'),waves=Path('waves'))
     monkeypatch.setattr(cli,'frozen_input',lambda *a:({'input_sha256':'same','physical_identity_sha256':'physical'},{}))
     monkeypatch.setattr(cli,'digest',lambda path:str(path))
     monkeypatch.setattr(cli,'qualified_reference',lambda *a:({},{}))
     producer=hashes(CANDIDATE+VALIDATORS)
-    producer['tests/validation/__main__.py']='stale'
+    producer[owner]='stale'
     monkeypatch.setattr(cli,'read_owned',lambda *a,**k:(dict(input_sha256='same',frozen_physical_identity_sha256='physical',
         candidate_source_sha256=hashes(CANDIDATE),reference_sha256='reference',producer_sha256=producer),{}))
     report={'contract_sha256':'contract'}
@@ -184,3 +200,4 @@ def test_stale_validator_source_rejects_previously_passed_inertia(monkeypatch):
     assert not report['gates']['all_six_added_mass']['passed']
     assert 'source' in report['gates']['all_six_added_mass']['reason']
     assert 'tests/validation/__main__.py' in REFERENCE
+    assert 'tests/validation/reference_transfinite.py' in REFERENCE

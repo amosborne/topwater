@@ -11,6 +11,24 @@ from .reference_mesh import (graded_mesh,verify_surface,farthest_first,facets,
     COORD_ATOL)
 
 
+def validate_spec(spec):
+    if (spec.get('format_version',1)!=1 or spec['gmsh_version']!='4.15.2'
+            or spec['triangle_vertex_order']!='farthest-first'
+            or spec['smoothing_steps']!=0 or spec['mesh_optimization'] is not False
+            or spec['richardson_extrapolation'] is not False
+            or spec['barycentric_lattice_absolute']!=1e-7
+            or spec['child_area_relative']!=1e-8 or spec['child_area_absolute_m2']!=1e-14
+            or spec['seed_maximum_size_to_facet_width']!=20
+            or len(spec['subdivisions'])!=4 or spec['subdivisions']!=sorted(set(spec['subdivisions']))
+            or any(type(n)!=int or n<2 for n in spec['subdivisions'])):
+        raise ValueError('unsupported fixed-topology geometry protocol')
+    for name in ('seed_bulk_size_m','seed_edge_size_m','seed_edge_growth'):
+        if not np.isfinite(spec[name]) or spec[name]<=0:
+            raise ValueError('positive finite seed controls required')
+    if spec['seed_edge_size_m']>spec['seed_bulk_size_m'] or spec['seed_edge_growth']>1:
+        raise ValueError('inconsistent seed controls')
+
+
 def lattice_triangles(n):
     """One fixed diagonal pattern on the integer barycentric triangular grid."""
     triangles=[]
@@ -160,16 +178,7 @@ def main():
     parser.add_argument('--physical-reference',type=Path,default=Path('artifacts/validation-reset/frozen.json'))
     parser.add_argument('--output',type=Path,required=True)
     args=parser.parse_args();spec=json.loads(args.protocol.read_text());contract=load_contract(args.contract)
-    if (spec['format_version']!=1 or spec['gmsh_version']!='4.15.2'
-            or spec['triangle_vertex_order']!='farthest-first'
-            or spec['smoothing_steps']!=0 or spec['mesh_optimization'] is not False
-            or spec['richardson_extrapolation'] is not False
-            or spec['barycentric_lattice_absolute']!=1e-7
-            or spec['child_area_relative']!=1e-8 or spec['child_area_absolute_m2']!=1e-14
-            or spec['seed_maximum_size_to_facet_width']!=20
-            or len(spec['subdivisions'])!=4 or spec['subdivisions']!=sorted(set(spec['subdivisions']))
-            or any(type(n)!=int or n<2 for n in spec['subdivisions'])):
-        raise ValueError('unsupported fixed-topology geometry protocol')
+    validate_spec(spec)
     report=prepare(args.output,args.protocol,'transfinite-geometry-preflight');arrays={};started=perf_counter()
     try:
         frozen,data=read_owned(args.frozen,digest(args.contract),'freeze',passed=True)

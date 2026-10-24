@@ -1,7 +1,9 @@
 """Geometry gates for fixed affine triangular patches, without native solves."""
 import numpy as np
 import pytest
-from .reference_transfinite import lattice_triangles,verify_patch
+import json
+from pathlib import Path
+from .reference_transfinite import lattice_triangles,verify_patch,validate_spec
 
 
 SPEC=dict(barycentric_lattice_absolute=1e-7,child_area_relative=1e-8,child_area_absolute_m2=1e-14)
@@ -27,3 +29,13 @@ def test_affine_gate_rejects_fallback_or_defective_mesh(defect):
     if defect=='duplicate':children[0]=children[1]
     with pytest.raises((AssertionError,ValueError)):
         verify_patch(parent,children,3,SPEC)
+
+
+@pytest.mark.parametrize('key,value',[
+    ('subdivisions',[2,3,3,5]),('barycentric_lattice_absolute',1e-5),
+    ('seed_bulk_size_m',float('nan')),('mesh_optimization',True)])
+def test_changed_or_invalid_fixed_seed_controls_fail_before_meshing(key,value):
+    spec=json.loads(Path('validation/transfinite-preflight.json').read_text())
+    spec[key]=value
+    with pytest.raises(ValueError):
+        validate_spec(spec)

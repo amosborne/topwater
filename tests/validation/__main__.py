@@ -16,6 +16,7 @@ from .common import (PHYSICAL,CANDIDATE,REFERENCE,VALIDATORS,case_envelope,physi
 
 
 def freeze(args,contract,report,arrays):
+    started=perf_counter()
     from tests import reference_boat
     from topwater import SimulationInputs,WaveComponents
     from topwater.frames import rotation_matrix
@@ -51,6 +52,28 @@ def freeze(args,contract,report,arrays):
             arrays[f'reference_triangles_{level}']=triangles
             report['reference_meshes'].append(dict(level=level,**mesh))
             save(args.output,report,arrays)
+    elif spec.get('mesh_policy')=='fixed-seed-transfinite':
+        from .reference_mesh import graded_mesh,verify_surface
+        from .reference_transfinite import transfinite_refine,shape_statistics,facet_statistics
+        seed,settings=graded_mesh(arrays['wetted_triangles'],spec['seed_bulk_size_m'],spec['seed_edge_size_m'],
+            growth=spec['seed_edge_growth'],maximum_size_to_facet_width=spec['seed_maximum_size_to_facet_width'])
+        arrays['reference_seed_triangles']=seed
+        report['reference_seed']=dict(settings=settings,quality=shape_statistics(seed),facets=facet_statistics(arrays['wetted_triangles'],seed))
+        save(args.output,report,arrays)
+        if perf_counter()-started>spec['maximum_elapsed_seconds']:
+            raise TimeoutError('fixed-seed freeze elapsed budget exceeded after seed generation')
+        study_preflight(len(seed),spec['body_subdivision_levels'],spec['maximum_estimated_workspace_bytes'],
+            panel_counts=[len(seed)*n*n for n in spec['subdivisions']])
+        report['reference_meshes']=[]
+        for level,n in zip(spec['body_subdivision_levels'],spec['subdivisions'],strict=True):
+            triangles,mesh=transfinite_refine(seed,n,spec)
+            arrays[f'reference_triangles_{level}']=triangles
+            report['reference_meshes'].append(dict(level=level,**mesh,
+                geometry=verify_surface(arrays['wetted_triangles'],triangles),quality=shape_statistics(triangles),
+                facets=facet_statistics(arrays['wetted_triangles'],triangles)))
+            save(args.output,report,arrays)
+            if perf_counter()-started>spec['maximum_elapsed_seconds']:
+                raise TimeoutError('fixed-seed freeze elapsed budget exceeded after transfinite refinement')
     report['physical_identity_sha256']=physical_identity(report,arrays)
     save(args.output,report,arrays)
     report['reference_study_plan']=reference_plan(arrays,contract['reference_numerics'])

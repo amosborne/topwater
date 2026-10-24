@@ -56,7 +56,7 @@ physical/validator identities before solving. Declared meshes: 68, 272, 1088,
 1800 seconds checked between physics calls. This describes reset readiness;
 the subsequent [study 001](reference-study-001.md) is complete and unqualified.
 
-## Correction checkpoint after study 001
+## Historical correction checkpoint after study 001
 
 The original mesh family failed all response families. A reviewed contract
 revision declares graded Gmsh 4.15.2 meshes on the same frozen physical surface.
@@ -66,3 +66,18 @@ Geometry preflight gives 2464/3538/5152/7604 panels. The independent mesh levels
 are ordered refinement, not nested subdivision. No extrapolation is used.
 Resource revision, geometry proofs and review resolutions are recorded in the
 study report. The qualification goal remains active and incomplete.
+
+## Current geometry checkpoint
+
+Study 002 completed unqualified, exposing both spatial/trend failures and a
+separately diagnosed vertex-order sensitivity. The reviewed farthest-first
+control remains selected. The [fixed-topology preflight](fixed-topology-preflight.md)
+then qualified the geometry of a single graded seed and its affine transfinite
+refinements, retaining every physical facet and original input exactly.
+
+The canonical contract now selects 308 seed panels with N=2/3/4/5, giving
+1232/2772/4928/7700 panels. The full physical reference remains unqualified.
+Stop this geometry checkpoint after the current canonical freeze and evidence
+are reviewed, committed/pushed and handed off. The next bounded action is the
+complete 132-call reference study on those frozen meshes, after current-state
+identity/resource checks. No accuracy or resource gate is relaxed.

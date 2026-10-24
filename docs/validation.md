@@ -64,18 +64,21 @@ dry mass matrix, restoring matrix, current producer identities and the complete
 study preflight. Its successful exit only validates the freeze operation.
 The inspected reset snapshot is retained in
 [`validation/frozen-physical-inputs.json`](../validation/frozen-physical-inputs.json).
-The actual calm-water wet surface has 17 panels; the declared reference levels
+The actual calm-water wet surface has 17 panels; the reset reference levels
 have 68, 272, 1,088 and 4,352 panels. The finest conservative workspace estimate
 is approximately 3.85 GB, within the declared 8 GiB estimate cap. This is a
 preflight, not measured resource usage or a convergence result.
 
 That reset mesh family was executed and rejected in [study 001](reference-study-001.md).
-The active contract now uses Gmsh 4.15.2 graded planar-facet meshes, preserving
-the exact physical surface with a verified geometric reflection. Its four
-independently remeshed levels are an ordered refinement family, not nested
-midpoint subdivision. Geometry preflight produced 2464/3538/5152/7604 panels.
-The estimate cap is explicitly revised to 12 GiB; the estimator and accuracy
-gates are unchanged. See the study report for review and resource evidence.
+The independently remeshed graded family also failed in [study 002](reference-study-002.md).
+The active contract selects the reviewed [fixed graded seed/transfinite family](fixed-topology-preflight.md):
+Gmsh 4.15.2, 308 frozen seed panels, N=2/3/4/5 and actual counts
+1232/2772/4928/7700. The exact physical surface and all original physical inputs
+remain unchanged. Each level samples the same piecewise-affine grading map;
+the levels are not all nested. Farthest-first vertex order corrects the measured
+representation sensitivity. Geometry readiness is approved, hydrodynamic
+convergence remains unqualified. The 12 GiB cap, conservative estimator and
+accuracy gates are unchanged; finest workspace estimate is 11,703,102,464 bytes.
 
 **Active goal: Capytaine reference qualification.** Regenerate a fresh freeze
 under the current contract before reference generation. Execute:

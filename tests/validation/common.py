@@ -12,7 +12,7 @@ PHYSICAL = tuple('src/topwater/'+name+'.py' for name in
     ('__init__','inputs','_validation','frames','hydrostatics','_clipping','constants'))+('tests/reference_boat.py',)
 CANDIDATE = PHYSICAL+tuple('src/topwater/'+name+'.py' for name in
     ('inertia','bem','boundary','rankine','_rankine_kernel','_rankine_extended','numerics'))
-VALIDATORS = tuple('tests/validation/'+name+'.py' for name in ('__init__','__main__','common','reference','reference_mesh'))
+VALIDATORS = tuple('tests/validation/'+name+'.py' for name in ('__init__','__main__','common','reference','reference_mesh','reference_transfinite'))
 REFERENCE = PHYSICAL+('tests/capytaine_reference.py',)+VALIDATORS+('pyproject.toml','uv.lock')
 
 
@@ -50,7 +50,7 @@ def load_contract(path):
         if len(levels)<minimum or levels!=sorted(set(levels)) or any(type(n)!=int or n<0 for n in levels):
             raise ValueError('declared ordered reference/candidate refinement levels required')
     policy=r.get('mesh_policy','midpoint')
-    if policy not in ('midpoint','graded-planar'):
+    if policy not in ('midpoint','graded-planar','fixed-seed-transfinite'):
         raise ValueError('unsupported reference mesh policy')
     if policy=='graded-planar':
         bulk=np.asarray(r['bulk_sizes_m']);edge=np.asarray(r['edge_sizes_m'])
@@ -64,6 +64,14 @@ def load_contract(path):
                 or r['geometry_moments_relative']!=1e-10
                 or r['geometry_moments_absolute_SI']!=1e-12):
             raise ValueError('complete ordered graded reference controls required')
+    if policy=='fixed-seed-transfinite':
+        from .reference_transfinite import validate_spec
+        validate_spec(r)
+        if (len(r['body_subdivision_levels'])!=len(r['subdivisions'])
+                or r['geometry_coordinate_absolute_m']!=1e-11
+                or r['geometry_moments_relative']!=1e-10
+                or r['geometry_moments_absolute_SI']!=1e-12):
+            raise ValueError('fixed-seed controls differ from the declared geometry policy')
     if r['cpu_threads']!=1 or c['cpu_threads']!=1 or r['richardson_extrapolation'] is not False:
         raise ValueError('unsupported thread/extrapolation policy')
     cases=value['cases'];a=value['acceptance']
@@ -166,9 +174,14 @@ def reference_triangles(data,level):
 
 def reference_plan(data,spec):
     levels=spec['body_subdivision_levels']
-    if spec.get('mesh_policy')=='graded-planar' and any(f'reference_triangles_{n}' not in data for n in levels):
+    if spec.get('mesh_policy') in ('graded-planar','fixed-seed-transfinite') and any(f'reference_triangles_{n}' not in data for n in levels):
         raise ValueError('missing frozen graded reference mesh; midpoint substitution forbidden')
     counts=[len(reference_triangles(data,n)) for n in levels]
+    if spec.get('mesh_policy')=='fixed-seed-transfinite':
+        if 'reference_seed_triangles' not in data:
+            raise ValueError('missing frozen transfinite seed')
+        if counts!=[len(data['reference_seed_triangles'])*n*n for n in spec['subdivisions']]:
+            raise ValueError('fixed-seed mesh counts differ from the declared subdivisions')
     if any(b<=a for a,b in zip(counts,counts[1:])):
         raise ValueError('reference refinement must increase actual panel counts')
     return study_preflight(len(data['wetted_triangles']),levels,

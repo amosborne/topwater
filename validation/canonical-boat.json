@@ -57,32 +57,34 @@
       3,
       4
     ],
-    "subdivision": "Independently graded planar-facet triangles on the exact frozen surface; verified y=0 reflection; no smoothing or re-equilibration",
+    "subdivision": "One frozen graded seed on exact physical facets; fixed affine triangular transfinite patches with N=2/3/4/5, verified y=0 reflection, no smoothing or re-equilibration",
     "cpu_threads": 1,
     "maximum_estimated_workspace_bytes": 12884901888,
     "maximum_elapsed_seconds": 1800,
     "finite_green_settings": "Capytaine 3.0.0 Delhommeau defaults, recorded in output",
     "infinite_green_settings": "Delhommeau tabulation_nr=0, tabulation_nz=0",
     "richardson_extrapolation": false,
-    "mesh_policy": "graded-planar",
+    "mesh_policy": "fixed-seed-transfinite",
     "gmsh_version": "4.15.2",
-    "bulk_sizes_m": [
-      0.32,
-      0.24,
-      0.18,
-      0.135
-    ],
-    "edge_sizes_m": [
-      0.08,
-      0.06,
-      0.045,
-      0.03375
-    ],
-    "edge_growth": 0.3,
     "geometry_coordinate_absolute_m": 1e-11,
     "geometry_moments_relative": 1e-10,
     "geometry_moments_absolute_SI": 1e-12,
-    "triangle_vertex_order": "farthest-first"
+    "triangle_vertex_order": "farthest-first",
+    "seed_bulk_size_m": 1.5,
+    "seed_edge_size_m": 0.5,
+    "seed_edge_growth": 0.3,
+    "subdivisions": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "barycentric_lattice_absolute": 1e-07,
+    "child_area_relative": 1e-08,
+    "child_area_absolute_m2": 1e-14,
+    "smoothing_steps": 0,
+    "mesh_optimization": false,
+    "seed_maximum_size_to_facet_width": 20
   },
   "candidate_numerics": {
     "body_subdivision_levels": [
