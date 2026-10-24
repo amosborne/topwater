@@ -1,96 +1,89 @@
 ﻿# Checkpoint handoff
 
-Updated 2026-10-24. Read before choosing work; latest user instructions control
-scope. Stable routing is in [AGENTS.md](../AGENTS.md).
+Updated 2026-10-24. Latest user instructions control scope; stable routing is in
+[AGENTS.md](../AGENTS.md). Read [assignments](experts/assignments.md) and the
+[physical contract](experts/shared-contract.md) before assigning numerical work.
 
-## Authorization and phase
+## Current authorization and priority
 
-User authorized completion of the minimum-mesh end-to-end reference. REF-001,
-CAP-001 and WEC-001 in [assignments](experts/assignments.md) are active: ten
-seconds of actual-rest six-DOF motion, upstream incoming waves and isometric
-video. Mesh refinement is subsequent work. Topwater implementation, tests,
-numerical runs and optimization remain HELD.
+REF-001 minimum-mesh reference is COMPLETE and independently audited.
+Latest user steering authorizes REF-002: ONE credible, fresh collected-buoy
+sea-state-generator case with roll about5-10deg and appreciable other5DOF.
+No scaling the old sea, no bespoke fitted spectrum, no canonical suite.
+Default box direction faces dominant incoming energy; export all direction/frame
+conventions and chosen initialheading. Internal state/heading selection is allowed.
 
-## Current evidence and next priority
+Assume a linear operating range A PRIORI from wetted/buoyancy/righting curves
+against WEC-Sim's mean assumptions. User explicitly does not request a nonlinear
+trajectory model; prior weakNL/adapter proposals are superseded. Topwater SOLVER
+implementation/tests/simulation/optimization remain HELD. Existing-generator
+reference-input export and external-reference work are authorized.
 
-Minimum Capytaine export completed: 17 panels, 1086 solves, 69.9800752 seconds,
-terminal exit0, session84329. All14 producer finite/identity/metadata checks pass.
-Local outputs: artifacts/reference/minimum-20261024/native-attempt2. The original
-exporter is archived; failed attempt1 (pre-solve ImportError) remains preserved.
-[Producer evidence](experts/capytaine_expert/minimum-producer-2026-10-24.md).
+## Completed trusted baseline
 
-Native centroid quadrature's spurious hydrostatic cross-couplings are corrected
-in artifacts/reference/minimum-20261024/native-gl2 using native GL2 and zero new
-BEM solves. All8 independent analytic checks pass, fullK error4.37e-11; every
-original frequency variable/coordinate is unchanged. Independent executed review
-passes. Preserve the original centroid output as diagnosed historical evidence.
+- Same canonical boat input SHA256ea18844904e03bbfd72abc3396240c97b1994b3584e36c8149f8ae5f60a99e4f.
+  Minimum17-panel Capytaine export1086solves/69.9800752s; exactGL2 hydrostatics
+  independently checked with zero extra BEM solves, original coefficients retained.
+  Local native data: artifacts/reference/minimum-20261024/native-gl2.
+- Official BEMIO H5 and executed metadata/phase/matrix signoff pass. Maintained
+  fork pin f962103a348d63101ce669c2611f7d7c109755c3, published user-owned branch.
+  Four reviewed corrections: history padding, component sum, inertia boundary
+  order, actual rigid import dispatch once. No upstream PR/main push.
+- Accepted packet-attempt3 + packet-full-planform preserve fullhull continuous
+  eta3.324um/velocity25.496um/s bounds, six initialforce gates, band and59.4%
+  arrival. No ramp/clipping. [Independent input review](experts/numerical_methods_researcher/spectral-packet-proposal-2026-10-24.md).
+- Native case-attempt1:10s/501samples/dt0.02, actualrest, zero velocity/radiation
+  initialmemory, runtimeM+A error1.59e-12 and applied501x6excitation error1.61e-12.
+  Peak translations5.222/4.970/5.935mm, roll0.0191deg. All6motions finite.
+  [Independent output review](experts/capytaine_expert/native-motion-review-2026-10-24.md)
+  explains stock1e-7TransportDelay initialzero/extrapolation and verifies all501
+  Solid Newton-Euler balances. No correction warranted; temporal/mesh accuracy
+  remains UNESTABLISHED, not a continuum/Topwater qualification.
+- FINAL centered video: artifacts/reference/minimum-20261024/case-attempt1/render-attempt3/reference-isometric.mp4.
+  Literal encoded0/5/10s review PASS; H2641280x900,251frames25fps,10.04s including
+  lasttimestamp10 endpoint hold. Equal metres/orthographiciso/CGonce/native
+  RzRyRx, transparent prescribed incident surface and mm/degree telemetry.
+  SHA256a79a75cd88fa03c8b8d46d833cd445645e58a906995a826be9e5674ef345664f.
+  Six-motions.png samefolder. Draft1/2 unchanged/preserved; user has final link.
+  [Workflow/artifacts](../reference/wecsim/README.md),
+  [run record](experts/wecsim_expert/minimum-reference-2026-10-24.md).
 
-Stock WEC-Sim v7.1.0 imported-excitation cropping defect reproduced independently:
-future/past/interior errors [2,16,0]. Multiple-import omission independently
-reproduced with error32. Both generic corrections passed independent executed
-review: scalar dt1/.5, boundary/interior, insufficient support, multiple headings,
-full6DOF and asymmetric lag checks. These corrections were first published
-at 2f43f547301b223cd9a07e84dc88c9375249af0e; forkpin records current identity.
-[Startup review](experts/numerical_methods_researcher/startup-review-2026-10-24.md).
-Finite-band packet tails must meet the prospectively frozen numerical-calm and
-arrival gates in the [shared contract](experts/shared-contract.md); do not clip
-signals or crop body startup. Official BEMIO import/H5 write passed with exact
-metadata and phase residual1.455e-11; producer jointly approved stored import
-normalization/CG/CB/fullM/K/Ainf. Runtime H5/body inertia mapping remains pending.
-No motion/video result exists yet.
+## Active strong-motion case preparation
 
-Packet attempt2 is rejected prospectively: eta12.346um and fluid speed42.824um/s
-pass, arrival92.2% passes, but initial heave .37135N and pitch .13014Nm exceed
-the frozen .1 limits (direct spectral checks agree). Results preserved in
-artifacts/reference/minimum-20261024/packet-attempt2. No body run is authorized
-from that packet. Attempt1 failed report serialization; raw artifacts retained.
+Existing topwater.sea_states already generates higher-energy whole observed
+spectra; no generator/source change or Hs multiplier is needed. Three INTERNAL
+candidate exports are complete, seed42/384components each:
+artifacts/reference/generated-sea-candidates-20261024/manifest.json.
+Hm0=2.27842/2.27614/2.27033m with distinct periods; wholebandvariance, exactreplay,
+physicalsupport, source/binary hashes and global/bodyphase closure pass.
+Default incoming bow headings165.963/155.230/163.218deg. Keep observed/MEM
+spreading/phases/globalbank immutable; these are not yet selected canonical sea.
+[Generator review](experts/topwater_expert/sea-generator-review-2026-10-24.md).
 
-Fixed-order scalar screen [11,11.5,12,12.5]s selected first passing .25Hz packet
-focus11.5s; arrival59.4% canonical. Fullphysical-hull-footprint supplemental
-check and independent executed review PASS: eta3.3236um, fluidspeed25.4955um/s
-over587412samples plus valid Taylor bounds, unchanged35/43.9823um gates.
-Exactfieldidentity with packet-attempt3 is verified; accepted incident inputs
-are frozen. This proves input startup only, not body rest or applied model force.
+Next bounded numerical job: capytaine_expert geometry operating-envelope study,
+fullsamehull exactGL2, heel/freeheave-trim/righting plus wetset/waterplane/contact
+curves. Source/manifest independent review underway; do not launch without sole
+coordinator allocation. Proposed5%secant/10%tangent labels are exploratory
+engineering proposals, not adopted dynamic accuracy gates. Interpret displacements
+relative to local water level/slope; large global wave-following heave alone does
+not prove immersion/flooding. Then bind WEC producer frequency/heading coverage
+and faithful linear generated-bank consumer to select ONE actual strong6DOF case.
+WEC owner prepares explicit initialization/duration; stationary generator output
+is not the old calm-start packet or an initialized nonlinear fluid field.
 
-Actual H5/body/Simscape inertia reproduction confirmed xy/yz ordering error
-(native tensor error1071.6434kgm2). Three proper-API library boundary reorderings
-give roundoff errors (fullmatrix1.82e-12). Independent executed/semantic review
-PASS for selected rigid path, including unchanged connectivity/scripts and
-documented R2025b migration/defaults. Published fork now
-fcd7c365a1201bbb56ce7f571a5baf9b2a94d89b; forkpin owns exact dependency status.
-Preserve original coefficients and nonsymmetric residual, never zero couplings.
+## Execution and preservation
 
-Case/frame source review passes (CG/STL once, RzRyRx radians, worldomega,
-all6DOFfree/noPTOmoor/empiricaldamping, rest/memory reset). Body remains HELD:
-actual parent excitation mask clones a branch per importedwave, each consuming
-the same precomputed total. Without correction it would apply3*total. Consumer
-owns bounded actualmask reproduction, properAPI homogeneous-import singlebranch
-correction and fresh/repeated/reconfiguration regressions; researcher independently
-reviews. Prior preprocessing tests did not cover that compiledmask integration.
+[Execution ledger](experts/execution-state.json) owns current liveness. All
+baseline numerical/encoder/decode jobs terminal; generator exactPID1960 terminal
+and all producer checks complete, lease released. Direct Python exit code was
+null after Windows controller Refresh; do not relabel it exit0. Controller0,
+complete stdout/empty stderr/terminal identity and output checks are preserved.
+Shared MATLAB9168/launcher37656 is historical identity, not liveness proof.
+Follow [claim/recovery](experts/coordination.md); one serial owner, actual files
+frozen until exact process terminal. Preserve other worktrees, original exporter,
+all failures and interrupted quadrature36762 under original labels/policies.
 
-Next: resolve mask duplication with independent executed review, then first
-ten-second WEC-Sim motion/runtime mapping checks and isometricvideo. No full library
-or coefficient campaign substitutes for this milestone. Model remains unrun.
-
-## Execution and ownership
-
-[Execution state](experts/execution-state.json) owns numerical liveness. Producer
-session84329 and hydrostatics correction were verified terminal and leases
-released. Consumer fixed regressions and official BEMIO jobs are terminal exit0;
-consumer owns the next serial actualmask reproduction/correction/regressions,
-then conditionally authorized firstbodyrun after all independent gates pass.
-Recovered shared MATLAB engine9168/launcher37656 is the latest observed identity,
-not a durable liveness claim. Reconcile actual process
-identity and follow [claim/recovery](experts/coordination.md) before every launch.
-Never infer terminal status from a timeout or an idle record alone.
-
-Active branch baseline/fluid-body; preserve other worktrees and artifacts.
-Coordinator owns handoff/assignments/integration, Capytaine owns producer,
-WEC-Sim owns BEMIO/case/fork, researcher independently reviews startup and physical
-corrections. Native roles are available; no activation campaign is needed.
-Maintained fork/pin: [wecsim-fork.json](experts/wecsim-fork.json).
-Three exercised-path corrections have passed numerical/independent review; four
-historical marine-gyro leads remain separately recorded, without blind patches.
-
-Earlier quadrature session36762 remains user-interrupted terminal exit1; partial
-data is historical, not a task to resume or a numerical failure to relabel.
+Coordinator owns integration/handoff; Capytaine geometry/nativeproducer; WEC-Sim
+consumer/dynamics/video; Topwater expert generator only; researcher independent
+geometry assumptions. Baseline/follow-up checkpoint commit/push and issue30 update
+are integration work next. Never push main/create bookkeeping PR/merge/upstreampost.

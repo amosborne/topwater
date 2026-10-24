@@ -80,7 +80,7 @@ that simulation/video or the four defect reproductions already exist.
 
 ## REF-001: minimum-mesh end-to-end reference
 
-Status: authorized 2026-10-24. Coordinator owns acceptance/integration;
+Status: completed and independently audited 2026-10-24; final development checkpoint pending. Coordinator owns acceptance/integration;
 capytaine_expert owns producer and wecsim_expert owns consumer, dynamics/video.
 numerical_methods_researcher supplies independent startup/interface review.
 
@@ -109,3 +109,35 @@ Required completion evidence:
 
 Stop at the verified minimum case; subsequent motion variation with mesh remains
 a separate follow-up. A compatible export or successful setup alone is incomplete.
+
+## REF-002: one buoy-derived canonical strong-motion case
+
+Status: authorized by latest user steering, 2026-10-24. Preserve REF-001 unchanged.
+Target one WEC-Sim case with roll about5-10deg and appreciable other5DOF.
+Use the existing collected-buoy sea-state generator, genuinely higher-energy
+observations and complete seeded directional realizations; do not scale the
+baseline sea or invent a fitted spectrum. Internal candidate screening is
+permitted; deliver one frozen canonical state/seed/initialheading, not a suite.
+Initial box orientation follows the dominant incoming direction by default;
+store propagation/from and global/body-frame conventions explicitly. Heading
+offsets may be examined for choosing the one case, not silently adopted.
+
+Linearity is an a-priori engineering operating-envelope assumption established
+from full-hull buoyancy/righting/restoring, wetted material surface, waterplane
+and contact curves against WEC-Sim's fixed mean assumptions. No nonlinear
+trajectory model or native weak-nonlinear adapter is required. Quantify the
+curves and label assumptions; do not claim nonlinear dynamic validation.
+Same physical boat/mass/CG/inertia/constants; no damping/boat fitting to hit roll.
+
+Ownership: topwater_expert owns bounded existing-generator neutral export ONLY;
+Topwater solver implementation/tests/simulation/optimization remain HELD.
+capytaine_expert owns geometry operating-envelope and required native producer
+coverage. wecsim_expert owns faithful generated-bank consumption/linear dynamics
+and final video. numerical_methods_researcher independently reviews envelope
+math/assumptions. Coordinator owns selection/acceptance/serial execution.
+
+First jobs: three genuine high-energy observations with seed42, whole-band
+energy/replay/frame checks, and exact geometry static curves. Before dynamics,
+freeze new sea, heading coverage, initialization/duration, numerical controls
+and prospective operating-envelope interpretation. Do not silently inherit
+REF-001's artificial test packet or assume a generator realization is calm water.

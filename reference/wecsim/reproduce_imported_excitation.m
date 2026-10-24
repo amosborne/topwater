@@ -1,6 +1,5 @@
-%[text] # Imported excitation history reproduction
-%[text] Independent indexed convolution checks physical samples beyond the requested output interval.
-%%
+% Imported excitation history reproduction for the archived stock dependency.
+% Independent indexed convolution checks samples beyond the output interval.
 root = 'C:/Users/alex/topwater';
 addpath(genpath(fullfile(root,'artifacts/dependencies/topwater-wec-sim/source')));
 addpath(fullfile(root,'reference/wecsim'));

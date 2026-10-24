@@ -3,16 +3,24 @@
 Topwater is developing a time-domain potential-flow solver for a freely drifting
 boat with six rigid-body motions and a changing wetted surface.
 
-**There is no validated fluid-body simulation baseline yet.** The selected
+**Topwater's own fluid-body solver is not validated yet.** The selected
 implementation is the existing **P0 Rankine-panel core**, extracted from
 `4e8f511`: physical inputs, calm-water hydrostatics, Laplace boundary solves and
 instantaneous added mass. It has **no coupled time-domain wave-response path**.
 The archived nonlinear diagnostic runtime is a different, unqualified experiment.
 
-The pending external-reference milestone is Capytaine -> BEMIO -> WEC-Sim:
-ten seconds of six-DOF incoming-wave motion/video, then motion variation with
-mesh resolution. Reference execution awaits a user request; Topwater solver
-implementation and performance work are held. See [the current handoff](docs/checkpoint-handoff.md)
+The first minimum-mesh Capytaine -> official BEMIO -> WEC-Sim reference is
+complete: ten seconds of six-DOF motion from rest, a shared upstream incident
+packet and a centered isometric video. The17-panel,0.02s fixed-step result has
+independent input/interface/physics/video reviews; temporal and mesh accuracy
+remain unestablished. [Reproduction and artifacts](reference/wecsim/README.md).
+
+The active follow-up is ONE canonical case from the collected-buoy sea-state
+generator, targeting about5-10deg roll and appreciable motion in the other5DOF.
+Its linear operating range will be assumed a priori from wetted-surface and
+buoyancy/righting curves against WEC-Sim's fixed-mean assumptions. This work
+does not require a new nonlinear trajectory model. Topwater solver implementation
+and performance work remain held. See [the current handoff](docs/checkpoint-handoff.md)
 for authorization and [AGENTS.md](AGENTS.md) for startup and expert routing.
 The broader [Topwater comparison/runtime goal](docs/time-domain-baseline-goal.md)
 remains a later objective. [Issue #30](https://github.com/amosborne/topwater/issues/30)

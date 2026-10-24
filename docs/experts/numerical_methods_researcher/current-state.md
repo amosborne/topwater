@@ -1,32 +1,35 @@
 # Current state: numerical-methods research expert
 
-Reference support is queued, not authorized; follow the
-[handoff](../../checkpoint-handoff.md). Setup is complete. The downstream
-project need is the Capytaine/BEMIO/WEC-Sim incoming-wave reference.
-No broad formulation, optimization, adaptive-mesh or literature campaign is
-authorized. No numerical jobs or solver implementation on role activation.
+REF-001 minimum-mesh reference physics/video acceptance is owned by the
+[handoff](../../checkpoint-handoff.md) and Capytaine/consumer output reviews.
+This role's independent read-only reviews passed:
 
-Primary starting references: Capytaine3.0.0 official documentation; selected
-WEC-Sim7.1.0 source/docs and their theory references (radiation memory and
-excitation IRF). Current source-backed issue: imported elevation uses noncausal
-excitation convolution relative to a wave reference point, so spatial arrival,
-initial state and actual timeline padding must be consistent. This is an active
-interface question, not permission to invent a new solver.
+- Exact native GL2 planar hydrostatics, independent moments and unchanged
+  17-panel frequency coefficients: [hydrostatics review](hydrostatics-review-2026-10-24.md).
+- Excitation retained-history/component-sum preprocessing, source identities and
+  executed regressions: [startup review](startup-review-2026-10-24.md).
+- Selected Rigid Body actual imported-mask single-total dispatch, native graph
+  reproduction, proper-API correction and executed transition regressions:
+  [mask review](excitation-mask-review-2026-10-24.md).
+- Frozen incident packet's full-planform/depth calm bounds, six initial force
+  gates, physical band and arrival: [incident review](spectral-packet-proposal-2026-10-24.md).
 
-Native activation confirmed 2026-10-24 as `/root/researcher_setup` using exact
-`numerical_methods_researcher` registry role, with native developer instructions
-and inherited parent settings. Setup is complete and stopped; no numerical work
-or solver changes were performed and no execution lease exists.
+REF-002 now targets ONE fresh buoy-generated canonical case with appreciable
+5-10-degree roll and the other five motions. Preserve the generator's physical
+realization and selected heading convention. The physical linear regime is an
+a priori engineering assumption supported by wetted-surface/buoyancy/righting
+curves relative to WEC-Sim's mean-geometry assumptions; no nonlinear dynamic
+model or native nonlinear adapter is required. Current bounded assignment is
+independent source/assumption review of Cap's exact geometry operating-envelope
+study: [review](geometry-operating-envelope-review-2026-10-24.md).
 
-Reusable [proposal template](proposal-template.md) and
-[focused initialization/padding question](native-setup-2026-10-24.md) are ready.
-The latter records exact read paths, selected official source commit
-`a23d2993807410fe78cc63546c1ba9d81912024f`, source observations versus unproven
-project assumptions, and a later independent-index rejection plan. Source
-inspection is not a reproduction or physical validation.
+Interpret immersion as body motion relative to local water elevation/slope;
+large global heave while following a wave does not alone invalidate immersion.
+Geometry labels are exploratory engineering choices, not adopted motion-error
+requirements or proof of fixed-wet diffraction/radiation accuracy.
 
-Next action: await user-authorized reference work and a bounded coordinator
-assignment for a focused question from reference owners on consistent wave
-reference, excitation-IRF alignment and retained timeline padding. No broad
-literature search or numerical experiment is assigned. Topwater implementation
-and performance work remain held; durable evidence lives in these files.
+Earlier amplitude-ladder and weakly nonlinear backend/adapter proposals are
+explicitly superseded historical notes, not queued implementation. No numerical
+job or solver implementation was performed by this role. Numerical scheduling
+remains coordinator-owned and serial. Topwater implementation/tests/performance
+remain held unless the handoff/latest user explicitly changes authorization.

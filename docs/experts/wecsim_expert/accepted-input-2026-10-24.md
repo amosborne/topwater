@@ -1,8 +1,9 @@
 # Accepted minimum-case incident input and inertia boundary
 
-This checkpoint validates reference inputs and two exercised engine boundaries;
-it does **not** establish motion or video. Body execution remains held for the
-newly identified imported-excitation mask dispatch integration issue.
+This note records accepted reference inputs and inertia boundary evidence.
+Actual mask dispatch and the native ten-second motion subsequently passed;
+see [the minimum-reference record](minimum-reference-2026-10-24.md) for current
+runtime/artifact status. This input evidence alone is not a motion accuracy claim.
 
 ## Frozen incoming field
 
@@ -73,12 +74,14 @@ did not change. All variants are not compiled/physically validated. Evidence:
 `artifacts/reference-inertia-stock-attempt2`, `reference-inertia-fixed` and exact
 source snapshots/manifests; library-semantic-diff.json documents the save changes.
 
-## Remaining integration gate
+## Subsequent integration gate and resolution
 
 Native excitation parent mask creates one force branch per wave object, while
 each elevationImport branch reads the same precomputed body total. Source
-inspection predicts3times total for3imports. Actual mask reproduction is not yet
-complete because native cold-start model authoring required initialization-order
-fixes. No body simulation has been launched. Independently reproduce/correct
-dispatch, handle reinitialization/stale clones and mixed-type groups explicitly,
-then compare native applied excitation against all six accepted retained histories.
+inspection predicted3times total for3imports. Actual updated graph confirmed
+three active identical histories connected to positive sum ports1/4/5. Proper
+mask API correction and fresh/repeat/regular-to-import/stale-clone/mixed-group
+tests subsequently passed independent review. Actual501x6 native applied forcing
+then agreed with all accepted retained histories to1.61e-12. These later facts
+and exact evidence are in the minimum-reference record; no accepted incident
+field or earlier failure was modified to obtain them.

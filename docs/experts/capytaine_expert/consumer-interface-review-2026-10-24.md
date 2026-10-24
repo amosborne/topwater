@@ -203,3 +203,43 @@ Eventual renderer formula for original mean-world hull vertices is
 v(t)=CGmean+qtranslation(t)+R(t)*(vmean-CGmean). Equivalent localCG geometry
 uses CGmean+qtranslation+R*vlocal. Apply neither extra equilibrium quaternion
 nor extraCG shift. Renderer source and compiled/runtime case evidence pending.
+
+## Cold-start order and renderer source follow-up: PASS
+
+Final builder source SHA4bd47ddc2b87d0ad95d92985b5853a9562858e8759e2b8c77e442a49ba69167d;
+runner327c7d2aee5d23e4346e830640aa68094298d276009960fd5a60a7fe2a373354;
+input remains603a0ce666f7fa88d1d65fdf8abcdc65c990ea6240321574133a4df8dfabc48b;
+render_reference.py2c5d691814103b815859988f502dce318db2671643e8675980a97f38060c7c73.
+This supersedes the earlier builder/runner source identities for execution.
+
+Actual cold-start authoring exposed native mask dependencies on preparedHF/buses.
+Final order: input objects -> nativeGlobalFrame-only SLX template -> official
+initializeWecSim re-runs input, readsH5, createsHF/variants/buses/adjustedM and
+loads native physical configuration -> builder adds same body/free6DOF blocks ->
+save/close -> explicit fullpathreload -> update/run. Official radiation persistent
+reset remains before any dynamic integration. The change prepares dependencies
+before body-mask initialization; no newCG/M/geometry/rest state, prerun or warmup.
+Stockdispatchattempt4 compiled/updated this exact authoring sequence without a
+body simulation. Its actual3imported-branch dispatch defect is separately owned
+and reviewed by consumer/researcher; those uncorrected dynamics are not accepted.
+
+Current runner additionally asserts prepared excitation against independently
+accepted total, compiles selected actual FileSolid expression and checks full
+M+A, then compares native forceExcitation channels25:30 against accepted total
+on unchanged501sample nativegrid after solve. These are acceptance gates, not
+force replacements. Cold-start order passes source review for conditional first
+body launch after dispatch correction's independent executed regression and
+fullphysicalHullXY startup gate.
+
+Renderer source passes: original canonical material hull is transformed once
+into meanworld orientation, centered once at meanCG, then native measuredCG and
+scipy lowercase extrinsic'xyz' radians move it as local@R.T+worldCG. Native time
+and measurements remain preserved; linear interpolation is only for video frames.
+Exact packet3 complex coefficients evaluate the displayed prescribed incident
+surface. Camera35.26438968deg/-135deg fixed; boxaspect32:32:6 matches worldlimit
+spans32:32:6metres, no motion/height exaggeration. Six raw history plots preserve
+the native samples (angles displayed in degrees). Incident-only label explicitly
+excludes computed scattered/radiated field.251frames at25fps include t=0 and10;
+encoding lasts10.04s with last sample held one frame, documented in summary.
+Runtime data and rendered artifacts remain unproduced/unreviewed at this source
+checkpoint; independent final review required before motion/video acceptance.

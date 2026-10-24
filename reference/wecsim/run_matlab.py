@@ -28,9 +28,13 @@ try:
     script = str(args.script.resolve()).replace('\\','/').replace("'", "''")
     if args.script.read_text(encoding='utf-8').lstrip().startswith('function '):
         folder = str(args.script.resolve().parent).replace('\\','/').replace("'", "''")
-        engine.eval(f"addpath('{folder}'); {args.script.stem}()", nargout=0, stdout=out, stderr=err)
+        code = f"addpath('{folder}'); {args.script.stem}()"
     else:
-        engine.eval(f"run('{script}')", nargout=0, stdout=out, stderr=err)
+        code = f"run('{script}')"
+    code = ("try; " + code + "; catch referenceFailure; "
+            "fprintf(2,'%s\\n',getReport(referenceFailure,'extended','hyperlinks','off')); "
+            "rethrow(referenceFailure); end")
+    engine.eval(code, nargout=0, stdout=out, stderr=err)
 except BaseException:
     args.log.write_text(out.getvalue() + '\nSTDERR\n' + err.getvalue(),encoding='utf-8')
     print(out.getvalue(), flush=True)

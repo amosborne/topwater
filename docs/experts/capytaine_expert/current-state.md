@@ -1,60 +1,57 @@
 # Current state: Capytaine expert
 
-CAP-001 minimum producer is authorized by the 2026-10-24 reference goal; follow
-the [handoff](../../checkpoint-handoff.md). BEMIO and incident-packet/startup
-generation belong to wecsim_expert. Numerical scheduling follows coordination.md.
+Minimum17-panel producer and first whole10s/501sample native WEC-Sim motion are
+independently reviewed and coordinator-accepted at dt0.02. Final render3 video
+and plots passed independent literal encoded-frame audit. Authorization and execution
+ownership belong to the [handoff](../../checkpoint-handoff.md) and shared ledger;
+no numerical work is allocated to this role. Topwater solver/refinement remain held.
 
-Recorded setup: Capytaine 3.0.0 in project .venv. Physical canonical input
-reference/capytaine/canonical-boat.json remains unchanged (SHA256
-ea18844904e03bbfd72abc3396240c97b1994b3584e36c8149f8ae5f60a99e4f).
-Native export completed; no accepted motion result or video exists yet.
+Physical canonical input remains unchanged, SHA256
+ea18844904e03bbfd72abc3396240c97b1994b3584e36c8149f8ae5f60a99e4f.
+Original unfinished exporter and all failed/rejected/native centroid outputs
+are preserved; history and identities are in
+[minimum producer evidence](minimum-producer-2026-10-24.md).
 
-Original unfinished exporter preserved at
-artifacts/preserved-producers/export_case-a1feb6e8581695c1.py with original SHA256
-a1feb6e8581695c1a7562bf1e129bbd609f96b54ab7dcac25da9b5ecdaa92942.
-Active exporter is hydrodynamics-only; consumer owns forcing generation.
-Consumer approved reference/capytaine/interface-contract.json: omega0.1:0.1:12
-rad/s, propagation headings0/45/90deg, 17 panels, 1086 solves, native root
-netCDF/legacy files plus full dimensional M/K/Ainf and exact CG/CB/volume in
-native.mat/.npz. Official legacy text rounds metadata; retain exact auxiliary
-values downstream. This is producer signoff only; startup/motion remains pending.
+Accepted producer output: artifacts/reference/minimum-20261024/native-gl2.
+Native Capytaine3.0.0 performed1086solves on17triangles in69.9801s; all14 original
+identity/finite/metadata checks passed. Separate supported nativeGL2 hydrostatics
+reused all frequency arrays unchanged with zero new BEM solves. All8 independent
+analytic checks and external executed review passed; maxK discrepancy4.37e-11.
+CG/CB/fullM/K/Ainf identities retained; body_name importer alias explicit.
 
-First allocated attempt (artifacts/reference/minimum-20261024/native) terminated
-exit1 before solves: prototype imported Delhommeau from an unexported package
-namespace. Corrected to capytaine.green_functions.delhommeau after installed-source
-inspection. Failed manifest/log preserved. Attempt2 completed terminal exit0,
-1086solves in69.9800752s with one thread. All14 finite/identity/metadata checks passed
-in artifacts/reference/minimum-20261024/native-attempt2/producer-checks.json.
-Ledger was set idle under lease before final release. Source/input/dependency
-identity and command are preserved in producer-run-proposal-attempt2.json.
+Official BEMIO/H5 and actual runtime CG/CB/volume/fullK/Ainf readback pass.
+Single phase conversion residual1.455e-11. Consumer FileSolid products-order
+correction independently reviewed/executed PASS; fullM+A roundtrip~1.6e-12,
+original asymmetric residual retained. Proper R2025b save migration/graphs/
+ports/scripts, cold-start preparation and worldCG/STL/nativeRzRyRx/worldomega
+mapping reviewed. [Joint interface review](consumer-interface-review-2026-10-24.md).
+Consumer owns BEMIO/startup/engine corrections; no consumer physical edit authored
+by this reviewer. Startup/dispatch corrections have separate independent reviews.
 
-Native centroid hydrostatic limitation is resolved in unique corrected output
-artifacts/reference/minimum-20261024/native-gl2. Supported native GL2 integrates
-physical degree2 moments on the unchanged17 triangular panels; no BEM solves or
-coefficient transformations. Both correction/check commands terminal exit0;
-all8 independent analytic checks pass, maxK discrepancy4.3656e-11. CBxy~[4e-16,
-1.8e-17], spurious roll/pitch coupling reduced to roundoff while physical
-heave/pitch coupling retained. Official importer body_name alias added, original
-body preserved. Original centroid outputs remain immutable evidence. Independent
-startup_review executed signoff PASS; [producer evidence](minimum-producer-2026-10-24.md)
-and ../numerical_methods_researcher/hydrostatics-review-2026-10-24.md.
-Executed official BEMIO hydroimport joint signoff PASS: stored exact metadata,
-normalized fullK/nativeAinf and saved fullM preserve accepted native-gl2 inputs;
-phase residuals1.45519e-11 for real and single imaginary conversion. Evidence in
-[consumer interface review](consumer-interface-review-2026-10-24.md). H5 body
-readback and physical full-inertia/frame mapping remain pending. Focused native
-Simscape product-order defect now independently reproduced/reviewed: actual
-FileSolid xy/yz swap caused nativeM+Ainf tensor error1071.6434kgm2. Consumer's
-3expression boundary correction independently reviewed/executed PASS; native
-M+A roundtrip error1.819e-12 with original asymmetric residual retained. Proper
-R2025b save migration reviewed:531ports/146graphs/39scripts preserved, zero-choice
-rename equivalent; inactiveFlex default serialized. No consumer correction
-authored here. Compiled body/frame/outputpose evidence remains pending.
-Exact17panel frequency coefficients remain coarse: native wavelength/resolution/
-irregular-frequency warnings limit physical accuracy claims. No motion/video or
-mesh characterization yet; no automatic refinement/coefficient campaign.
+Accepted motion: artifacts/reference/minimum-20261024/case-attempt1. Actualq0/v0/
+radiation0 and signed prepared/applied501x6 forcing pass. Independent all501Solid
+NewtonEuler balance<=1.71e-13N/2.14e-14Nm and exact forcebus sum establish internal
+consistency. Initial apparent(M+A)*a mismatch is exactly stock1e-7TransportDelay
+zero initial output plus forward extrapolation at dt0.02, recovered from stored
+outputs<=1.18e-12; no frame/inertia/force-sign correction is justified.
+[Native motion review](native-motion-review-2026-10-24.md).
 
-Historical [setup/interface evidence](native-setup-2026-10-24.md) is background,
-not a motion validation. Next: independently review executed consumer matrix/
-phase/full-inertia mapping when BEMIO/case ready. No further numerical allocation;
-do not repeat role confirmation or launch additional work without assignment.
+Temporal and mesh motion accuracy remain unestablished.17panel frequency
+resolution/irregular-frequency warnings remain limits. No dt study/refinement
+allocated. Accepted video: case-attempt1/render-attempt3/reference-isometric.mp4,
+literalFFmpegframes0/125/250 reviewed at0/5/10s; h2641280x900,251frames25fps,
+10.04s endpoint hold documented. Nativepose/telemetry/centeredfullhull/equalmetre
+isometric labels pass, exact sharedpacket and all5renderinputs unchanged.
+
+Latest user steering: future higher-roll case must use the project's own
+sea-state generator and generator dominant heading, preserving this baseline.
+Bespoke period/heading RAO optimization is canceled; no such script or numerical
+study was launched. A bounded a-priori static geometry operating-envelope study
+is now assigned: samefullhull/nativeGL2, roll+/-12deg with freeheave/trim and
+explicitrelative-immersion/trim poses, wet-set turnover/rim/contact flags, exact
+buoyancy/righting vsfullmeanK. Source/controls and exactrun proposal are prepared,
+AST/JSONchecked only, awaiting independent source review and coordinator numerical
+allocation.5%Esec/10%Etan labels are exploratory engineering assumptions, not
+adopted finalcase gates. No new BEM or nonlineartrajectory/nativeNLadapter work.
+[Geometry proposal](geometry-envelope-2026-10-24.md).
+Producer [README](../../../reference/capytaine/README.md).
