@@ -1,0 +1,206 @@
+{
+  "current_commit": "ebaf281eace85b84e5b1aa0e403de66ebc629f9b",
+  "complete": true,
+  "passed": false,
+  "probe_feasible": true,
+  "full_run_authorized": false,
+  "full_reference_qualified": false,
+  "source_discretization_qualified": false,
+  "native_evaluated_points": 5256,
+  "new_bem_solves": 0,
+  "native_seconds": 10.400658299971838,
+  "preparation_seconds": 4.753586400009226,
+  "native_potential_ratio": 1.9541777240552546e-05,
+  "native_load_ratio": 1.6987428300851515e-06,
+  "orders": [
+    {
+      "order": 12,
+      "starts": [
+        0,
+        31054,
+        62108,
+        62208,
+        93262,
+        124316
+      ],
+      "block_seconds": [
+        0.3003536000032909,
+        0.3230685999733396,
+        0.3493558000191115,
+        0.2933744000038132,
+        0.31857360003050417,
+        0.3164939000271261
+      ],
+      "ownership": {
+        "maximum_plane_distance_m": 6.881765809868571e-16,
+        "minimum_barycentric_weight": 8.500255220902015e-05
+      },
+      "facet_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    {
+      "order": 16,
+      "starts": [
+        0,
+        55246,
+        110492,
+        110592,
+        165838,
+        221084
+      ],
+      "block_seconds": [
+        0.29066830000374466,
+        0.2897460000240244,
+        0.2927174000069499,
+        0.2969976000022143,
+        0.30805839999811724,
+        0.3223864000174217
+      ],
+      "ownership": {
+        "maximum_plane_distance_m": 5.440950903186894e-16,
+        "minimum_barycentric_weight": 2.8085044660223463e-05
+      },
+      "facet_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    {
+      "order": 20,
+      "starts": [
+        0,
+        86350,
+        172700,
+        172800,
+        259150,
+        345500
+      ],
+      "block_seconds": [
+        0.30745680001564324,
+        0.3069882999989204,
+        0.3024066999787465,
+        0.3245166999986395,
+        0.3012674999772571,
+        0.2862434000126086
+      ],
+      "ownership": {
+        "maximum_plane_distance_m": 9.390140414186317e-16,
+        "minimum_barycentric_weight": 1.1804037159011558e-05
+      },
+      "facet_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    }
+  ],
+  "projection": {
+    "maximum_sampled_seconds_per_pair": 1.0108674769071512e-06,
+    "projected_field_seconds": 2414.7472897320986,
+    "projected_upper_seconds": 3091.434935040088
+  },
+  "memory_records": [
+    {
+      "stage": "inputs",
+      "peak_working_set_bytes": 532029440,
+      "working_set_bytes": 277516288,
+      "peak_committed_bytes": 1925001216,
+      "private_bytes": 1698713600
+    },
+    {
+      "stage": "native",
+      "peak_working_set_bytes": 532029440,
+      "working_set_bytes": 327110656,
+      "peak_committed_bytes": 1925001216,
+      "private_bytes": 1741172736
+    },
+    {
+      "stage": "order12",
+      "peak_working_set_bytes": 532029440,
+      "working_set_bytes": 335056896,
+      "peak_committed_bytes": 1925001216,
+      "private_bytes": 1749159936
+    },
+    {
+      "stage": "order16",
+      "peak_working_set_bytes": 532029440,
+      "working_set_bytes": 342249472,
+      "peak_committed_bytes": 1925001216,
+      "private_bytes": 1756364800
+    },
+    {
+      "stage": "order20",
+      "peak_working_set_bytes": 532029440,
+      "working_set_bytes": 350216192,
+      "peak_committed_bytes": 1925001216,
+      "private_bytes": 1764352000
+    }
+  ],
+  "latest_memory": {
+    "peak_working_set_bytes": 532029440,
+    "working_set_bytes": 350216192,
+    "peak_committed_bytes": 1925001216,
+    "private_bytes": 1764352000
+  },
+  "elapsed_seconds": 21.05619229999138,
+  "inspected_dependency_sha256": {
+    "capytaine/bem/engines.py": "ff32da48270f084cd9fa029fca4e2f0bb09b47b90be1dede6700b05fd4cb2c65",
+    "capytaine/green_functions/delhommeau.py": "615abc6627c3484b4fda03679421f14e28540996df148b523e847c128ab4c05a",
+    "capytaine/green_functions/abstract_green_function.py": "9a97f4eb70c4870b18c19d92554154b305e7fe6ab0a22dec4818958a10d5ae6f"
+  },
+  "native_binary_sha256": {
+    "capytaine/green_functions/Delhommeau_float64.cp312-win_amd64.pyd": "72f8104256e3aa5d7e7e348a905587d010a9fed130b926f23d40f964e2d164f9"
+  },
+  "bundle_sha256": "cd5756817dcd38a99ae4931fa9f3befe5c8ba733a4cb1ace74cbe9852bb084cc",
+  "external_inputs": {
+    "external": [
+      {
+        "argument": "quadrature",
+        "filename": "frozen-source-gauss-continuation-001.zip",
+        "sha256": "7e999761722f68b52c9675abfb32bc02aff101c55f03ad76babf749154ab7a63",
+        "copy_to": "validation/finest-cost-probe-001.source/quadrature.zip"
+      },
+      {
+        "argument": "historical",
+        "filename": "frozen-source-gauss-001.zip",
+        "sha256": "28a35794d8c20d35e59f955e0b4ced8fec3cdebd4c6f8e01beffd1cb205fdbb0",
+        "copy_to": "validation/finest-cost-probe-001.source/historical.zip"
+      },
+      {
+        "argument": "common",
+        "filename": "common-output-sources-001.zip",
+        "sha256": "c208dffe223dffb1db87af8b8bf0eabd96d8ad6a40b358e924c26208dd7fbef1",
+        "copy_to": "validation/finest-cost-probe-001.source/common.zip"
+      }
+    ],
+    "study": {
+      "sha256": "052df7c50865340e7ef4ebaddfc48adfef191b24057646bd395a889515dc98f2",
+      "extract_entry": "validation/frozen-source-gauss-001.source/parent.zip",
+      "copy_to": "validation/finest-cost-probe-001.source/study.zip"
+    }
+  },
+  "tests": {
+    "tests": 280,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "native_load_reconstruction_ratio": 0.0,
+  "measured_peak_plus_future_fields_load_and_64MiB_reserve": 2108563456
+}

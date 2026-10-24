@@ -1,5 +1,43 @@
 # Checkpoint handoff
 
+## Latest checkpoint: finest timing feasible, full-output memory rehearsal needed
+
+Read docs/finest-cost-probe-001.md and its prospective protocol first.
+Branch baseline/fluid-body, numerical sourceebaf281. Goal ACTIVE/INCOMPLETE.
+Full reference/source convergence, own coupled motion and runtime remain unqualified.
+
+- Native3456 potential/all36load calibration passes1e-10 scaled;5256 total new
+  points including18x100 samples (six per commonorder12/16/20), all7facets and
+  both reflected halves covered. Full independent S*sigma, no BEM solve.
+  Exactsession4378 terminalexit0;21.056s<60s. completeTrue/passedFalse,
+  probe_feasibleTrue, full_run_authorizedFalse. Old physical failures stayfailed.
+- Native10.401s,prep4.754s,max sampledblock.349356s. Complete field projection
+  with native/safety/reserve3091.435s<3600s OFFLINE. Not Topwater speed.
+- Peakworking532,029,440B; peakcommit1,925,001,216B<2GiB. IMPORTANT: commit
+  exceeds oldengineeringestimate by599,169,460B. Future fields/load+64MiB added
+  to measuredpeak give2,108,563,456B, only37.1MiB headroom. Not a sufficient
+  full-output memory proof; serialization/verification copies remain to rehearse.
+- All280tests pass, JUnit archived; exacttestsession77091 terminalexit0.
+  Independent audit reconstructed native loads, samples/coverage/identities,
+  memorycaps andprojection. Fresh completegraph/input restoration verified.
+  No nativejoblive. Evidence finest-cost-probe-001.zip, summary; SHA
+  cd5756817dcd38a99ae4931fa9f3befe5c8ba733a4cb1ace74cbe9852bb084cc.
+  Preflightzip embedded; requires tracked common-output-sources001, Gauss
+  continuation001 and Gauss001 archives. Exact names/SHAs/restoreargs in resultdoc.
+
+**Exact next bounded goal:** actual minimal finest-source consumer plus separately
+declared60s output-buffer/lifetime rehearsal before a long-run decision. SAME
+input/import path as realrun; allocate AND touch all retained full six-mode
+fields/load buffers, actual checkpoint save/hash, verification AND packaging.
+Monitor peak working set/commit throughout; preserve2GiB process and2GiB extra
+disk caps, refreshed host/dependency identities. Do not load extra95MB quad-array
+graph already represented by boundcommoninput. Declare any native warmup workload
+and complete resource-only acceptance policy beforelaunch. Rehearsal cannot pass
+physics, fullrun/source/reference flags stayfalse. No fullfield run/BEMsolve/
+remeshing/newformulation/optimization campaign. Independent review, exact actual
+producer/input/stagememory evidence, checkpoint/tracker/handoff, then decide
+the separate full-job goal. Four-source and finite-wave physical gates remain.
+
 ## Latest checkpoint: complete finest-source preflight accepts a bounded screen
 
 Read docs/common-output-finest-preflight-001.md and prospective protocol first.
