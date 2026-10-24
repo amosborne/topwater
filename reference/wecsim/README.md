@@ -18,8 +18,9 @@ fresh output root or reviewed path adaptation, not overwrite these artifacts.
 
 ## Seeded strong-motion prototype: superseded startup
 
-Latest user requirements for the final60s validation case are rest/zero velocity,
-zero radiation memory, viscous damping off and a physics/accuracy-justified
+Latest user requirements for the final60s validation case are TRUE locally calm
+water with waves initially upstream, body rest/zero velocity, zero radiation
+memory, viscous damping off and a physics/accuracy-justified
 incident band. The nonzero-history prototype below is historical evidence,
 not that final requested startup. No final new band has been selected.
 

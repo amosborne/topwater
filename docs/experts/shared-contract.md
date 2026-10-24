@@ -84,6 +84,23 @@ loads and ODE tolerances do not establish motion accuracy.
 
 ## REF-002: buoy-derived strong-motion canonical case
 
+Latest regroup: stop unproven bug investigations and deliver ONE less energetic
+collected-buoy-derived60s case and video with true locally calm incoming-wave
+startup. No official PTO-zero or further mesh job is allocated. Use a genuinely
+milder observation, not a scaled old realization. Quantify resulting all6motions
+and applicability; do not tune amplitudes/phases to force a peak criterion.
+The close camera view must not limit the physical incident-wave construction.
+WEC-Sim here integrates body motion using open-water hydrodynamics, not a finite
+water-domain simulation. Displayed incident field is prescribed, not a computed
+scattered/radiated fluid field.
+
+Keep immutable generator parent amplitudes/directions/phases and source metadata.
+A derived physical finite incoming train necessarily broadens the stationary
+spectrum; report its actual support, energy/directional changes and any removed
+unsupported components. Do not claim exact stationary Hm0/bin closure for that
+finite train unless actually established. No global temporal force/elevation
+ramp, history seed or post-hoc amplitude/phase fitting. Native ramp remains zero.
+
 Latest user steering,2026-10-24: final validation duration is60s, with all startup
 retained. Prune unsupported incident frequencies using the actual physical model
 and defensible accuracy evidence, not an arbitrary WEC-Sim cutoff. Capytaine's

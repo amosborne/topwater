@@ -12,7 +12,7 @@ Owner capytaine_expert; consumer partner wecsim_expert. Native17-panel export,
 independently reviewed GL2 hydrostatics and stored official BEMIO import signoff
 are in capytaine_expert/minimum-producer-2026-10-24.md and
 consumer-interface-review-2026-10-24.md. Runtime body mapping/startup belongs to
-REF-001 and remains incomplete. No refinement is authorized by this completion.
+REF-001 and is now completed/audited there. No refinement is authorized by this completion.
 
 Scope: make the minimum-mesh native Capytaine export needed by the first WEC-Sim
 case, preserving exact physical surface/full inertia/CG and agreed DOF/heading/
@@ -145,8 +145,10 @@ REF-001's artificial test packet or assume a generator realization is calm water
 
 ### REF-002 latest user steering (2026-10-24)
 
-The full validation duration is60s. Final startup is rest with zero velocity and
-zero radiation memory; viscous damping remains off. The nonzero stationary-history
+The full validation duration is60s. Final startup is TRUE locally calm water with
+waves initially upstream, body rest, zero velocity and zero radiation memory;
+viscous damping remains off. Rest in an established sea is insufficient. No hidden
+force ramp. The nonzero stationary-history
 prototype and its unpruned-bank geometry/preview work are preserved under their
 original policies but superseded for the final requested case. No encoder or
 continuation of the stopped geometry audit is authorized.
@@ -158,8 +160,32 @@ No FK-only approximation or universal beam-based diffraction cutoff is assumed.
 Retained measured energy/MEM/phases must not be renormalized/fitted. Radiation-
 kernel integration coverage and response transients need separate qualification.
 
-Current bounded producer source: EXACT3 native energy witnesses (17 coupled2.2,
-17heave1,68samecoupled2.2), independent source review PASS60c618b7. No solve yet;
-coordinator allocation/claim/readback required. No Cap/WEC radiation implementation
+Three native energy witnesses completed:17 coupled2.2 negative mean outgoing work,
+17heave1 positive control,68samecoupled2.2 positive. Strong mesh sensitivity;
+see producer witness receipt. Both official RM3 standard400s and provided
+regularCIC200s regression also completed independently PASS; supplied CIC golden
+errors<=4.157e-13m versus1e-5m tolerance. These do not qualify our boat operator.
+
+Current diagnostic: new singlepacket preflight rejected by initial heave-force
+gate; no body run. Selected unchanged accepted REF001 threepacket extension
+to60s, with originalH5/CIC10. Incident extension independently EXECUTEDPASS:
+exact spectralidentity/oldwaveprefix and first501six-force samples; full3001
+forceconvolution independently reproduced. No retiming/scaling/new calm field.
+Originaloperator body extension also completed32.182s and independently PASS:
+bounded small motions, first10s q/v reproduced to roundoff. It is a diagnostic,
+not the final strong-motion reference. Stored-data CIC work stays cumulatively
+nonnegative in both this run (+7.390J final) and the earlier rejected Jan90
+large-response run (+237.894kJ final). No actual net radiation-energy creation or
+causal link to that response has been established. See the actual-radiation-work
+review. Cap read-only next-step recommendation is complete:
+a compact producer audit can reject, but only full6motion histories establish
+mesh variation. No further producer execution allocated. No Cap/WEC radiation implementation
 bug, valid cutoff or qualified replacement has been established. Topwater role
 scope remains existing-generator data/export only; all solver work held.
+
+Latest user priority: progressively modify the passing official regularCIC
+example. WEC owns bounded plan/first-step SOURCE readiness: sole physical change
+PTO damping1.2e6->0, official H5/heave constraints/ramp100/CIC20/dt.1/200s retained,
+native raw save/work accounting/baseline comparison. Researcher independently
+reviews exact source/freeze before coordinator grants a single execution.
+No suite, new mesh/custom sea or assumption that a solver energy bug exists.

@@ -1,0 +1,12 @@
+{
+  "kind": "exact accepted REF001 physicalfield extended in duration only",
+  "original_packet": "artifacts/reference/minimum-20261024/packet-attempt3",
+  "forcing_time_s": [-20.0, 80.0],
+  "output_time_s": [0.0, 60.0],
+  "dt_s": 0.02,
+  "radiation_memory_s": 10.0,
+  "maximum_elapsed_seconds": 60,
+  "physical_changes": "NONE: original a/omega/phase/headings/bandwidths/foci/weights preserved",
+  "startup": "original accepted numerical localcalm; q=v=radiationmemory0; ramp0; viscosity0",
+  "scope": "diagnostic duration extension, not finalbuoysea or BEM accuracy/passivity qualification"
+}

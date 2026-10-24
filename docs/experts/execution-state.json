@@ -6,29 +6,56 @@
   "manifest": null,
   "active_numerical_job": null,
   "last_terminal_evidence": {
-    "job": "Official provided regularCIC RM3 200s golden regression",
+    "job": "ORIGINALREF001 unchangedpacket/operator60s nativebody diagnostic",
     "owner": "/root/wecsim_reference",
-    "producer_pid": 34992,
-    "owner_launcher_pid": 25872,
-    "session_handle": 70311,
+    "producer_pid": 4532,
+    "owner_launcher_pid": 24680,
+    "session_handle": 25741,
     "exit_code": 0,
-    "terminal_chunk": "e1c9a2",
-    "authoritative_terminal_chunk": "68b7b4",
-    "only_engine_child": "known nonnumerical mwdocsearch33628",
+    "terminal_chunk": "ca4f20",
+    "authoritative_terminal_chunk": "b84eef",
+    "only_engine_child": "known nonnumerical docsserver33628",
     "frozen_inputs_match": true,
-    "output": "artifacts/reference/official-examples-20261024-ready2/cic/official/tests/RegressionTests/RegularWaves/regularCIC",
+    "output": "artifacts/reference/reference-extension-20261024/case-attempt1",
     "output_sha256": {
-      "audit.json": "e8386d8b2eedf138c681f5aa7395b2f286b0b5f175f6a8eb61a99741cbe613b9",
-      "audit.mat": "57b4179a177117b11888c79e1273d13b346817648bd27c7a6bf47a6cfbe996fb"
+      "native-output.mat": "722759da50e958b748e386e6a5024443c6a5f2ea5b742b3a12993f66c1cef6f0",
+      "native-cic-output.mat": "f78bf91043c190f2266356717ac6fb17e1301a6142310d8bc78632ecb3aea5c5",
+      "motion.mat": "d052bdf0831bed728f255a4a928e9f9411b804cc4e2f5abc0d1611f5abf5ce8a",
+      "summary.json": "f9053df22159261f838921fa3a3943eb8a89147ed7f66148d0ce08c3a996b56e",
+      "preflight.json": "50756dfa7a119bb5d08c85d77c58c2e3455f106cf73c9d98ab1f9538731f303e",
+      "seeded-cic-verification.mat": "0a9af958f4bcb93b120fd7b3c89be219942155506fc68e8c6d00784077b277d9",
+      "zero-history-cic-check.mat": "275416bfe1bc42e41db18397b3651cde592febc83a0e890b54ea423dc7b9eafd",
+      "native-balance-check.mat": "eb09f9e0d691c91f46aebc4d1c5c87118d5e167170d89cadd52e6f73a7ec11df",
+      "first10-repeatability.mat": "3794ae51ecab179ff74ec674d536e521d8d7cfc8bc4e22f90b125390585a8fa5"
     },
+    "complete": true,
     "implementation_checks_pass": true,
-    "elapsed_s": 28.2803306,
-    "golden_errors_m": [
-      4.156675004196586e-13,
-      1.0658141036401503e-13,
-      3.126388037344441e-13
+    "native_engine_elapsed_s": 32.18226480484009,
+    "maximum_abs_motion": [
+      0.0059644151309135715,
+      0.005843707393473506,
+      0.010048221051811829,
+      0.0003892737946939355,
+      0.0007018077545997616,
+      0.0004698125714879794
     ],
-    "limits": "Provided official golden1e-5 passed; does not validate customboat BEM/energy/passivity"
+    "first10_q_max_error": [
+      1.734723475976807e-18,
+      1.5178830414797062e-18,
+      2.7755575615628914e-17,
+      6.938893903907228e-18,
+      4.336808689942018e-19,
+      5.421010862427522e-20
+    ],
+    "first10_v_max_error": [
+      4.336808689942018e-18,
+      3.0357660829594124e-18,
+      7.806255641895632e-18,
+      2.4665599424045226e-18,
+      7.589415207398531e-19,
+      5.421010862427522e-19
+    ],
+    "limits": "Bounded60sresponse/nativeconsumption checks only; no BEMaccuracy/passivity/rootcause claim"
   },
-  "note": "Idle recorded UNDER lease; separate idle readback then final release required."
+  "note": "Successfuloriginal60sbody diagnostic terminal; idleUNDERlease; separateidleproof beforeFINALrelease."
 }
