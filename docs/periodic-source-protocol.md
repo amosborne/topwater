@@ -12,6 +12,11 @@ estimated workspace ceiling. There are exactly 84 solves: four meshes, three
 frequencies, six unit-displacement radiation modes and one selected diffraction
 heading at each frequency. Preserve every basis source, potential, pressure and
 Neumann boundary trace, not just the combined state.
+Reapply the exact cached indirect operators to every source basis: S*sigma must
+reproduce its saved potential and K*sigma its prescribed normal velocity at the
+trace tolerances below. Preserve these produced traces separately from input
+boundary data. Apply the elapsed budget after Green construction, after every
+solve, after operator verification and before accepting completion as well.
 
 For each original complex load component and all 36 A/B entries, require
 abs(recovered-original) <= 1e-12*physical_scale + 1e-11*abs(original).

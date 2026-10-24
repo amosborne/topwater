@@ -43,7 +43,7 @@ def require_close(actual,expected,scale,relative=1e-11,absolute=1e-12):
 def generate(args,controls,case,report,out):
     contract,raw,r,frozen,data=raw_inputs(args,report)
     spec=contract['reference_numerics'];physical=contract['physical_problem']
-    if (controls['required_physics_calls']!=84 or controls['cpu_threads']!=1
+    if (controls['format_version']!=1 or controls['required_physics_calls']!=84 or controls['cpu_threads']!=1
             or controls['maximum_elapsed_seconds']!=1800
             or controls['maximum_estimated_workspace_bytes']!=spec['maximum_estimated_workspace_bytes']
             or controls['reproduction_relative']!=1e-11
@@ -79,7 +79,12 @@ def generate(args,controls,case,report,out):
             raise ValueError('pinned Capytaine and single native thread required')
         report['capytaine_version']=cpt.__version__
         save(args.output,report,out)
+        def budget():
+            if perf_counter()-started>controls['maximum_elapsed_seconds']:
+                raise TimeoutError('source-recovery elapsed budget exhausted')
+        budget()
         green=cpt.Delhommeau(tabulation_cache_dir=None)
+        budget()
         report['green_settings']=green.exportable_settings
         if green.exportable_settings!=raw['green_settings']['finite']:
             raise ValueError('finite Green settings differ from pinned raw study')
@@ -110,7 +115,8 @@ def generate(args,controls,case,report,out):
             solver=cpt.BEMSolver(green_function=green)
             prefix=f'level{level}_';out[prefix+'triangles']=triangles
             row=dict(level=level,panels=n,complete=False);report['levels'].append(row)
-            fields={name:np.zeros((3,n,7),complex) for name in ('sources','potential','pressure','normal_velocity')}
+            fields={name:np.zeros((3,n,7),complex) for name in
+                    ('sources','potential','pressure','normal_velocity','source_potential','source_normal_velocity')}
             for name,value in fields.items():out[prefix+name]=value
             combined={name:np.zeros((3,n),complex) for name in ('scattered_sources','total_hull_potential','total_hull_pressure','total_hull_normal_velocity')}
             for name,value in combined.items():out[prefix+name]=value
@@ -119,11 +125,12 @@ def generate(args,controls,case,report,out):
             for f,w in enumerate(omega):
                 common=dict(body=body,omega=w,rho=rho,g=g,water_depth=np.inf,forward_speed=0.)
                 for column in range(7):
-                    if perf_counter()-started>controls['maximum_elapsed_seconds']:
-                        raise TimeoutError('source-recovery budget exhausted between calls')
+                    budget()
                     problem=(cpt.RadiationProblem(**common,radiating_dof=MODES[column]) if column<6
                              else cpt.DiffractionProblem(**common,wave_direction=headings[f]))
                     result=solver.solve(problem,method='indirect',keep_details=True)
+                    report['completed_physics_calls']+=1
+                    budget()
                     for name in ('sources','potential','pressure'):
                         value=np.asarray(getattr(result,name))
                         if value.shape!=(n,) or not np.isfinite(value).all():
@@ -141,21 +148,34 @@ def generate(args,controls,case,report,out):
                         check(label+'/diffraction',force,r['diffraction'][index,f,f],force_scale)
                         fk=np.array([froude_krylov_force(problem)[m] for m in MODES])
                         check(label+'/FK',fk,r['FK'][index,f,f],force_scale)
-                    report['completed_physics_calls']+=1
                     save(args.output,report,out)
                     print(f'source recovery: {report["completed_physics_calls"]}/84',flush=True)
+                # Same pinned indirect operators as Capytaine's solve; cached for
+                # these immutable mesh/frequency inputs. Check produced fields,
+                # not merely a recombination of prescribed boundary conditions.
+                S,K=solver.engine.build_matrices(body.mesh,body.mesh,
+                    free_surface=problem.free_surface,water_depth=problem.water_depth,
+                    wavenumber=problem.wavenumber,adjoint_double_layer=True,
+                    diagonal_term_in_double_layer=True)
+                fields['source_potential'][f]=S@fields['sources'][f]
+                fields['source_normal_velocity'][f]=K@fields['sources'][f]
+                del S,K
+                check(f'L{level}/f{f}/source_potential',fields['source_potential'][f],fields['potential'][f],1.,True)
+                check(f'L{level}/f{f}/source_normal',fields['source_normal_velocity'][f],fields['normal_velocity'][f],1.,True)
+                budget()
                 xi=r['RAO'][index,f,f]*zeta[f]
                 incident=airy_waves_potential(body.mesh.faces_centers,problem)*zeta[f]
                 incident_normal=np.einsum('ni,ni->n',airy_waves_velocity(body.mesh.faces_centers,problem),body.mesh.faces_normals)*zeta[f]
                 combined['scattered_sources'][f]=combine(fields['sources'][f],zeta[f],xi)
-                combined['total_hull_potential'][f]=combine(fields['potential'][f],zeta[f],xi)+incident
+                combined['total_hull_potential'][f]=combine(fields['source_potential'][f],zeta[f],xi)+incident
                 combined['total_hull_pressure'][f]=1j*rho*w*combined['total_hull_potential'][f]
-                combined['total_hull_normal_velocity'][f]=combine(fields['normal_velocity'][f],zeta[f],xi)+incident_normal
+                combined['total_hull_normal_velocity'][f]=combine(fields['source_normal_velocity'][f],zeta[f],xi)+incident_normal
                 check(f'L{level}/f{f}/normal',combined['total_hull_normal_velocity'][f],-1j*w*(mode_normal@xi),1.,True)
                 expected=(w*w*r['A'][index,f]+1j*w*r['B'][index,f])@xi+zeta[f]*r['excitation'][index,f,f]
                 check(f'L{level}/f{f}/total_load',integrate_pressure(triangles,data['world_cg'],combined['total_hull_pressure'][f]),expected,force_scale)
             row['complete']=True;save(args.output,report,out)
         if report['completed_physics_calls']!=84:raise ValueError('missing source solves')
+        budget()
         report.update(complete=True,passed=True,elapsed_seconds=perf_counter()-started,
             qualification_scope='Source recovery/reproduction only; no field spatial or nonlinear restart qualification')
 
