@@ -1,6 +1,56 @@
 # Checkpoint handoff
 
-## Latest checkpoint: periodic source recovery
+## Latest checkpoint: exterior fields and surface-map candidate
+
+Numerical producer **05cc94e**, branch **baseline/fluid-body**. The goal remains
+ACTIVE/INCOMPLETE. No own coupled TD run, complete restart or usable speed exists.
+Read docs/periodic-field-map-001.md and docs/periodic-grid-protocol.md first.
+
+- periodic-fields-001 completed all 12 evaluations in 124.014 offline seconds.
+  Exact session 86292 is terminal exit 1 intentionally: complete=true/passed=false.
+  All 1,518 reference points are strictly exterior at z0; archived sources reused,
+  no new radiation/diffraction solves. Maximum Green block 100 by 7,700.
+- Full/half/quarter-amplitude maps pass geometry only: 145 contacts, seven inserted
+  facet switches, 2,030 triangles, positive projected areas, no whole-triangle
+  hull-interior overlap, every contact edge on a hull facet. Conservative opening
+  clearance >=0.584 m. Mapped scalar potential is a pullback, not a compatible state.
+- Both prospective source-mesh and waterline-limit trends FAIL. Combined field
+  envelopes <=11.076 micrometres eta /0.000051836 m^2/s phi do not waive the failed
+  trend requirement. Total angular envelope reaches 9.667 mm /0.034599 m^2/s.
+  Full reference/restart, body compatibility, domain and nonlinear-limit flags false.
+- field-sampling-001 is an archived array-only diagnosis: outer incident eta
+  envelope 9.667406 mm versus total9.667362 mm; scattered maximum across all rows
+  0.065735 mm /0.000301874 m^2/s. The angular defect is mostly interpolation of
+  known incident waves. Preserve those analytically when correcting representation;
+  do not blindly refine the far grid or retroactively pass the failed diagnostics.
+- Complete evidence validation/evidence/periodic-fields-001.zip, summary nearby;
+  SHA cc35d61aa1febeb6b9389d9f756304fa15a411fdbd14c01b6ae932eeabc45d65.
+  Includes actual producers, controls, physical inputs, nested source/raw/freeze
+  evidence and diagnostic code/identities. All 246 local tests passed; exact
+  session88691 terminal exit0. No numerical jobs live. No runtime Python changed.
+- Independent review rebuilt field signs/phases, all envelopes/trends, maps,
+  contacts/whole-triangle overlap and source identities; no blocker for preserving
+  this explicitly unqualified candidate. Original coefficient failures unchanged.
+
+**Next bounded work:** correct representation of the analytically known incident
+waves, then construct the minimum complete body-fitted fluid boundary and selected-
+P0 pressure/acceleration compatibility calculation needed to measure initialization
+sensitivity in motion units. Declare equations, normals, gravity counting, error
+controls and a stopping point; review before numerical jobs. Body-boundary
+projection, complete domain and nonlinear-limit evidence remain missing; mean
+stern chine submergence is only ~2.8 mm. Radius/depth24 m are candidate controls,
+not a qualified truncation; 32/48 m remain future domain checks. Use actual coupled
+prep/RHS cost to reject impractical candidates before a long run; never infer
+motion accuracy from a small residual. No major optimization/global refinement
+campaign before physical validation. Earlier physical/source details follow.
+One initial acceleration difference is not a one-second motion-error bound;
+an unvalidated RHS sensitivity cannot be the sole qualified reference uncertainty.
+Exact analytic incident fields also do not eliminate total-surface geometry error.
+At0.1 Hz, k=0.040243/m and exp(-kH)=0.3807 at24 m /0.1449 at48 m. Do not use
+a zero-flux24 m bottom as if it were infinite depth. Outer/bottom truncation and
+their initial compatibility must be declared and checked before coupled work.
+
+## Prior checkpoint: periodic source recovery
 
 Source checkpoint **785c3d1**, branch **baseline/fluid-body**. Read
 docs/periodic-source-recovery.md and docs/periodic-source-protocol.md first.
