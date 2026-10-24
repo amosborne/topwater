@@ -1,7 +1,7 @@
 """Geometry invariants for the reference-only planar mesher."""
 import numpy as np
 import pytest
-from .reference_mesh import facets,half_surface,moments,verify_surface,farthest_first
+from .reference_mesh import facets,half_surface,moments,verify_surface,farthest_first,facet_width
 
 
 def wet_box():
@@ -28,6 +28,14 @@ def test_canonical_vertex_order_preserves_winding_and_maximizes_radius():
     np.testing.assert_allclose(moments(canonical),moments(original),atol=1e-14)
     radii=np.linalg.norm(canonical-canonical.mean(axis=1)[:,None],axis=2)
     np.testing.assert_array_equal(radii[:,0],radii.max(axis=1))
+
+
+def test_facet_width_uses_actual_narrow_geometry():
+    polygon=np.array([[0.,0.,-1.],[1.,0.,-1.],[0.,.003,-1.]])
+    expected=.003/np.sqrt(1+.003**2)
+    assert facet_width(polygon,np.array([0.,0.,1.]))==pytest.approx(expected)
+    moved=polygon+np.array([100.,-100.,50.])
+    assert facet_width(moved,np.array([0.,0.,1.]))==pytest.approx(expected)
 
 
 @pytest.mark.parametrize('defect',['missing','reversed','moved','overlap'])

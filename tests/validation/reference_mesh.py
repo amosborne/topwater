@@ -120,13 +120,23 @@ def verify_surface(original,triangles):
         maximum_moment_difference=float(np.max(abs(moments(triangles)-moments(original)))))
 
 
-def graded_mesh(original,bulk_size,edge_size,*,growth=.3):
+def facet_width(polygon,normal):
+    edges=np.roll(polygon,-1,axis=0)-polygon
+    inward=np.cross(normal,edges)
+    inward/=np.linalg.norm(inward,axis=1)[:,None]
+    return float(np.min(np.ptp(polygon@inward.T,axis=0)))
+
+
+def graded_mesh(original,bulk_size,edge_size,*,growth=.3,maximum_size_to_facet_width=None):
     """Pinned Gmsh, half-surface + reflected panels, full physical entry solves."""
     import gmsh
     if gmsh.__version__!='4.15.2':
         raise ValueError('pinned Gmsh 4.15.2 required')
     if not 0<edge_size<=bulk_size or not 0<growth<=1:
         raise ValueError('positive bulk/edge sizes and bounded growth required')
+    if maximum_size_to_facet_width is not None and (
+            not np.isfinite(maximum_size_to_facet_width) or maximum_size_to_facet_width<=0):
+        raise ValueError('positive finite facet-width size factor required')
     half=half_surface(original)
     reflection=half[:,[0,2,1]].copy();reflection[:,:,1]*=-1
     verify_surface(original,np.concatenate((half,reflection)))
@@ -162,7 +172,22 @@ def graded_mesh(original,bulk_size,edge_size,*,growth=.3):
         gmsh.model.mesh.field.setNumber(distance,'Sampling',1000)
         size=gmsh.model.mesh.field.add('MathEval')
         gmsh.model.mesh.field.setString(size,'F',f'Min({bulk_size}, {edge_size}+{growth}*F{distance})')
-        gmsh.model.mesh.field.setAsBackgroundMesh(size)
+        fields=[size];facet_limits=[]
+        if maximum_size_to_facet_width is not None:
+            for surface,facet in zip(surfaces,polygons,strict=True):
+                width=facet_width(facet['polygon'],facet['normal'])
+                limit=maximum_size_to_facet_width*width
+                constant=gmsh.model.mesh.field.add('MathEval')
+                gmsh.model.mesh.field.setString(constant,'F',str(limit))
+                restrict=gmsh.model.mesh.field.add('Restrict')
+                gmsh.model.mesh.field.setNumber(restrict,'InField',constant)
+                gmsh.model.mesh.field.setNumbers(restrict,'SurfacesList',[surface])
+                gmsh.model.mesh.field.setNumber(restrict,'IncludeBoundary',1)
+                fields.append(restrict)
+                facet_limits.append(dict(surface=surface,minimum_width_m=width,maximum_size_target_m=limit))
+        background=gmsh.model.mesh.field.add('Min')
+        gmsh.model.mesh.field.setNumbers(background,'FieldsList',fields)
+        gmsh.model.mesh.field.setAsBackgroundMesh(background)
         gmsh.model.mesh.generate(2)
         tags,xyz,_=gmsh.model.mesh.getNodes();xyz=np.asarray(xyz).reshape(-1,3)
         lookup={int(tag):i for i,tag in enumerate(tags)}
@@ -183,6 +208,7 @@ def graded_mesh(original,bulk_size,edge_size,*,growth=.3):
         result=farthest_first(np.concatenate((half,reflected)))
         quality=verify_surface(original,result)
         return result,dict(gmsh_version=gmsh.__version__,bulk_size_m=bulk_size,
-            edge_size_m=edge_size,growth=growth,geometry=quality)
+            edge_size_m=edge_size,growth=growth,geometry=quality,
+            maximum_size_to_facet_width=maximum_size_to_facet_width,facet_size_limits=facet_limits)
     finally:
         gmsh.finalize()
