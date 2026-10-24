@@ -58,6 +58,10 @@ silently relax a gate to accept a change.
   exact process handle is terminal before changing them or starting another job.
 - Preserve checkpoints and push development branches. Never push to `main`.
   Do not create PRs for bookkeeping.
+- Automatic CI runs only for pull requests targeting `main`. Continue local
+  testing on development branches. Never merge or squash-merge a PR unless all
+  required CI checks passed for its current head; missing, pending, skipped or
+  failed required checks do not permit a merge.
 - Keep one active implementation branch, `baseline/fluid-body`. Classify other
   branches as supporting or historical. Preserve commits before retiring refs;
   do not delete active worktrees or discard uncommitted work.
