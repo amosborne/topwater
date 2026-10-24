@@ -1,0 +1,627 @@
+{
+  "source_commit": "223050dc4815e6302caa6b7d3de0d05c1dd09f6c",
+  "complete": true,
+  "passed": false,
+  "full_reference_qualified": false,
+  "added_mass_reference_qualified": false,
+  "elapsed_seconds": 9.930093200004194,
+  "actual_panels": [
+    54,
+    216,
+    864,
+    3456
+  ],
+  "completed_capytaine_calls": 24,
+  "completed_topwater_levels": 4,
+  "gates": {
+    "reference": {
+      "passed": false,
+      "previous_increment_max_ratio": 2091.3982781519776,
+      "latest_increment_max_ratio": 1149.9621170837909,
+      "trend_passed": false
+    },
+    "candidate_mesh": {
+      "passed": false,
+      "maximum_tolerance_ratio": 63.68603574001638
+    },
+    "candidate_comparison": {
+      "passed": false,
+      "maximum_tolerance_ratio": 309.44656494611803
+    }
+  },
+  "failed_entries": {
+    "reference_previous": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        4,
+        2
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        5,
+        1
+      ],
+      [
+        5,
+        3
+      ],
+      [
+        5,
+        5
+      ]
+    ],
+    "reference_latest": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        4,
+        2
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        5,
+        1
+      ],
+      [
+        5,
+        3
+      ],
+      [
+        5,
+        5
+      ]
+    ],
+    "reference_trend": [
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        4
+      ]
+    ],
+    "candidate_mesh": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        4,
+        2
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        5,
+        1
+      ],
+      [
+        5,
+        3
+      ],
+      [
+        5,
+        5
+      ]
+    ],
+    "candidate_comparison": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        4,
+        2
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        5,
+        1
+      ],
+      [
+        5,
+        3
+      ],
+      [
+        5,
+        5
+      ]
+    ]
+  },
+  "odd_parity": {
+    "capytaine": 3.3392317947574146e-07,
+    "topwater": 1.07968766090752e-14
+  },
+  "maximum_trace_operator_ratio": 0.0004996805402446516,
+  "maximum_archived_load_reconstruction_ratio": 8.936540418988684e-06,
+  "capytaine_diagonals": [
+    [
+      108.82437939587433,
+      692.020507152958,
+      10360.36654445057,
+      1073.8348380776285,
+      5631.897217878689,
+      545.9740833270969
+    ],
+    [
+      98.05833408060053,
+      626.9653292393892,
+      9139.440259683553,
+      1088.9084497964554,
+      16273.028073412564,
+      1270.669091559389
+    ],
+    [
+      93.90234789209562,
+      594.8773729084153,
+      8437.753411570437,
+      1042.1781071126343,
+      16947.629029265347,
+      1365.0245790516838
+    ],
+    [
+      91.72189550928161,
+      577.785636395122,
+      8126.075717048832,
+      1011.0325131214222,
+      16518.086647962387,
+      1335.5195252227422
+    ]
+  ],
+  "topwater_diagonals": [
+    [
+      115.53214317873864,
+      860.6747920476164,
+      11571.443513858829,
+      1344.2493047084954,
+      6055.7069627561,
+      621.4391816233139
+    ],
+    [
+      101.17420113135674,
+      713.89664188853,
+      9673.435648041912,
+      1309.0599599676543,
+      17256.448232872473,
+      1441.5231778719005
+    ],
+    [
+      94.39079201349531,
+      637.4247403779541,
+      8725.344397902467,
+      1172.1967761710494,
+      17636.439147428588,
+      1469.690054280888
+    ],
+    [
+      90.91341353024733,
+      598.647272880051,
+      8286.558110241234,
+      1079.673305700046,
+      16967.581284483924,
+      1396.14526826755
+    ]
+  ],
+  "geometry": [
+    {
+      "level": 0,
+      "panels": 54,
+      "proof": {
+        "facets": 7,
+        "panels": 54,
+        "waterline_edges": 44,
+        "maximum_moment_difference": 7.105427357601002e-15
+      },
+      "maximum_capytaine_radius_error_m": 0.0,
+      "maximum_edge_m": 5.504795951128672,
+      "minimum_area_m2": 3.116279677086555e-06,
+      "maximum_aspect_indicator": 50600.986521404775
+    },
+    {
+      "level": 1,
+      "panels": 216,
+      "proof": {
+        "facets": 7,
+        "panels": 216,
+        "waterline_edges": 88,
+        "maximum_moment_difference": 2.1316282072803006e-14
+      },
+      "maximum_capytaine_radius_error_m": 0.0,
+      "maximum_edge_m": 2.752397975564336,
+      "minimum_area_m2": 7.790699192716387e-07,
+      "maximum_aspect_indicator": 50600.986521404775
+    },
+    {
+      "level": 2,
+      "panels": 864,
+      "proof": {
+        "facets": 7,
+        "panels": 864,
+        "waterline_edges": 176,
+        "maximum_moment_difference": 2.6645352591003757e-14
+      },
+      "maximum_capytaine_radius_error_m": 0.0,
+      "maximum_edge_m": 1.376198987782168,
+      "minimum_area_m2": 1.9476747981790968e-07,
+      "maximum_aspect_indicator": 50600.986521404775
+    },
+    {
+      "level": 3,
+      "panels": 3456,
+      "proof": {
+        "facets": 7,
+        "panels": 3456,
+        "waterline_edges": 352,
+        "maximum_moment_difference": 5.684341886080802e-14
+      },
+      "maximum_capytaine_radius_error_m": 0.0,
+      "maximum_edge_m": 0.6880994938910843,
+      "minimum_area_m2": 4.869186995447742e-08,
+      "maximum_aspect_indicator": 50600.986521404775
+    }
+  ],
+  "localization": [
+    {
+      "method": "capytaine",
+      "level": 1,
+      "reconstruction_ratio": 4.27747180754021e-06,
+      "failed_entry_score_fraction_by_depth": [
+        0.00015385770865410873,
+        0.0,
+        0.0,
+        0.3535262502351455,
+        0.6463198920562003
+      ],
+      "area_fraction_by_depth": [
+        0.002915019093800567,
+        0.0,
+        0.0,
+        0.27674027785008964,
+        0.7203447030561098
+      ],
+      "aspect_over_1000_panel_fraction": 0.48148148148148145,
+      "aspect_over_1000_area_fraction": 0.0021160779585287937,
+      "aspect_over_1000_score_fraction": 0.00011751070532928447
+    },
+    {
+      "method": "capytaine",
+      "level": 2,
+      "reconstruction_ratio": 2.9415654738610093e-06,
+      "failed_entry_score_fraction_by_depth": [
+        0.00013957918514393805,
+        2.4094382277601955e-05,
+        0.0,
+        0.2769868854157586,
+        0.7228494410168199
+      ],
+      "area_fraction_by_depth": [
+        0.002735181743511287,
+        0.0001798373502892642,
+        0.0,
+        0.26987301969420474,
+        0.7272119612119947
+      ],
+      "aspect_over_1000_panel_fraction": 0.48148148148148145,
+      "aspect_over_1000_area_fraction": 0.0021160779585287785,
+      "aspect_over_1000_score_fraction": 0.00011127178750805214
+    },
+    {
+      "method": "capytaine",
+      "level": 3,
+      "reconstruction_ratio": 3.2347046873296587e-06,
+      "failed_entry_score_fraction_by_depth": [
+        0.00021422819386364357,
+        2.1777982058577497e-05,
+        0.10492509199430848,
+        0.20809627694795174,
+        0.6867426248818175
+      ],
+      "area_fraction_by_depth": [
+        0.002735181743511287,
+        0.00017983735028925286,
+        0.06918506946252242,
+        0.20068795023168232,
+        0.7272119612119947
+      ],
+      "aspect_over_1000_panel_fraction": 0.48148148148148145,
+      "aspect_over_1000_area_fraction": 0.0021160779585287686,
+      "aspect_over_1000_score_fraction": 0.00017214080692806868
+    },
+    {
+      "method": "topwater",
+      "level": 1,
+      "reconstruction_ratio": 4.8561010717805605e-06,
+      "failed_entry_score_fraction_by_depth": [
+        0.0014229147431782075,
+        0.0,
+        0.0,
+        0.359875850950802,
+        0.6387012343060199
+      ],
+      "area_fraction_by_depth": [
+        0.002915019093800567,
+        0.0,
+        0.0,
+        0.27674027785008964,
+        0.7203447030561098
+      ],
+      "aspect_over_1000_panel_fraction": 0.48148148148148145,
+      "aspect_over_1000_area_fraction": 0.0021160779585287937,
+      "aspect_over_1000_score_fraction": 0.0011940151739170768
+    },
+    {
+      "method": "topwater",
+      "level": 2,
+      "reconstruction_ratio": 2.800768532269416e-06,
+      "failed_entry_score_fraction_by_depth": [
+        0.0015509682047094408,
+        0.0001207715924232924,
+        0.0,
+        0.3129436921925658,
+        0.6853845680103013
+      ],
+      "area_fraction_by_depth": [
+        0.002735181743511287,
+        0.0001798373502892642,
+        0.0,
+        0.26987301969420474,
+        0.7272119612119947
+      ],
+      "aspect_over_1000_panel_fraction": 0.48148148148148145,
+      "aspect_over_1000_area_fraction": 0.0021160779585287785,
+      "aspect_over_1000_score_fraction": 0.001372363115480777
+    },
+    {
+      "method": "topwater",
+      "level": 3,
+      "reconstruction_ratio": 4.061921076360258e-06,
+      "failed_entry_score_fraction_by_depth": [
+        0.00163890509965811,
+        0.00023722088743325764,
+        0.12656195399200104,
+        0.19917256622257112,
+        0.6723893537983365
+      ],
+      "area_fraction_by_depth": [
+        0.002735181743511287,
+        0.00017983735028925286,
+        0.06918506946252242,
+        0.20068795023168232,
+        0.7272119612119947
+      ],
+      "aspect_over_1000_panel_fraction": 0.48148148148148145,
+      "aspect_over_1000_area_fraction": 0.0021160779585287686,
+      "aspect_over_1000_score_fraction": 0.001403109811234757
+    }
+  ],
+  "interpretation": "Exact redistribution of measured refinement increments only; no continuum/local error bound or qualified reference follows",
+  "preserved_attempt": "Study001 incomplete AttributeError before Capytaine calls; corrected freeze numerical arrays are bitwise equal",
+  "shared_input_bindings": {
+    "sha256": "ec77f90b85b6a101efa81b65cf714100ab95b9c4f7ca44ce4b9f20ce66914236",
+    "payload_entry": "validation/paired-body-freeze-002.source/parent.zip",
+    "expected_entries": [
+      "validation/paired-body-freeze-001.source/parent.zip",
+      "validation/paired-body-study-001.source/parent.zip",
+      "validation/paired-body-freeze-002.source/parent.zip",
+      "validation/paired-body-study-002.source/parent.zip",
+      "validation/paired-body-localization-001.source/parent.zip"
+    ]
+  },
+  "tests": {
+    "tests": 261,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "bundle_sha256": "052df7c50865340e7ef4ebaddfc48adfef191b24057646bd395a889515dc98f2",
+  "next": "Frozen-coarse-Capytaine-source pressure quadrature diagnostic; exact telescoping with unresolved remainder, no remesh/optimization or promotion"
+}

@@ -11,7 +11,9 @@ added mass exist, coupled time-domain wave response does not.
 An unqualified conforming fluid boundary and mixed pressure/body component now
 exists in `topwater.fluid_boundary`/`topwater.pressure`; boundary derivative
 recovery and a complete nonlinear RHS remain missing. Its coarse-mesh physical
-comparisons fail; see `docs/mixed-pressure-001.md`. The archived P1
+comparisons fail; see `docs/mixed-pressure-001.md`.
+The paired body-only uniform family also fails the unchanged gates; current
+reference diagnosis is recorded in `docs/paired-body-study-001.md`. The archived P1
 diagnostic-tank runtime is a different implementation. Record current commit
 and source hashes in each manifest; the word "baseline" alone is insufficient.
 

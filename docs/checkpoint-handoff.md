@@ -1,6 +1,56 @@
 # Checkpoint handoff
 
-## Latest checkpoint: unqualified P0 pressure component and error attribution
+## Latest checkpoint: paired body-only uniform family rejected
+
+Read docs/paired-body-study-001.md and docs/paired-body-protocol.md first. Branch
+baseline/fluid-body; numerical source223050d. Goal ACTIVE/INCOMPLETE. No qualified
+Capytaine reference, complete nonlinear RHS, TD motion run or usable speed exists.
+
+- Controlled reflected half-seed, no matrix averaging/zeroing. Exact physical
+  canonical hull/CG/full dryM/rho1025/g9.81/infinite depth preserved. Nested body
+  counts54/216/864/3456; all7facets/moments/conforming edges verified. Actual
+  Capytaine radii checked at every level, both resource preflights passed.
+- Complete paired-body-study-002:4Topwater levels/24Capytaine calls, elapsed9.930s
+  offline. Exact session17509 terminalexit1 by design, completeTrue/passedFalse.
+  All18even entries fail reference prev/latest and candidate mesh/comparison;
+  trendfails[0,2],[0,4]. Maximum ratios2091/1150(ref) and63.69/309.45(candidate).
+  Failure masks/ratios and raw36entry matrices/U retained. Original strict gates
+  unchanged; same-mesh correlation is not convergence. Previous fine reference
+  also unqualified and used only diagnostically.
+- Odd-parity normalized couplings reduced toCpt3.34e-7 /Top1.08e-14. This addresses
+  seed triangulation symmetry, not full accuracy. All6χaux at every level retained
+  for both solvers, normalized Cpt sources/bc retained. All8 complete A matrices
+  reconstruct from savedχ; originalS/K checks pass beforeLU. No finite-wave or
+  complete reference promotion. The general pressure-block producer still needs
+  to save all7 known/aux fields on its next revision.
+- Poor shape persists:48.15%panels aspect>1000 /0.2116%area. Exact matrix-increment
+  accounting in paired-body-localization-001: latestCpt weighted increment68.7%
+  below.1m depth,0.0172%in that sliver subset (Top67.2%/.1403%). This describes
+  measured load increments only, not continuum-error location or harmless slivers.
+- Preserved study001 API failure beforeCpt calls: wrongfaces_radii name, oneTop
+  level complete, overallincomplete. Corrected faces_radiuses checked in freeze002;
+  freeze001/002 numerical arrays bitwise equal. All native handles terminal.
+- Durable evidence validation/evidence/paired-body-001.zip, summary nearby. SHA
+  052df7c50865340e7ef4ebaddfc48adfef191b24057646bd395a889515dc98f2.
+  Includes both freezes/studies, failedattempt, complete sources/physical inputs,
+  auxiliary fields/failure masks, exact accounting code, JUnit and parent payload.
+  Run restore_shared_inputs.py after extraction; five input paths SHA-verified.
+  Fresh extraction/owned graphs checked. All261tests passed, exact session19563
+  terminalexit0. Independent audit rebuilt matrices/masks/accountings; no blocker
+  for preserving this failed investigation. No live numerical jobs.
+
+**Exact next bounded diagnosis:** separate frozen-source pressure quadrature from
+remaining discretization before remeshing. Use existing864-panel normalized Cpt
+indirect sources and same physical surface, evaluateS at strict interior descendant
+centroids (prospectively declare e.g.4/16/64subcells, all36 loads, limits/stabilization).
+First reproduce native centroid loads, then preserve exact telescoping
+A_f-A_c=(A_Q-A_c)+(A_f-A_Q). The remainder also contains finest-output quadrature
+error; never label it uniquely pure source error. Topwaterχaux is NOT an indirect
+source density. No newBEM solves or runtime/formulation/optimization campaign.
+Full finiteA/B/excitation/phase, initial compatibility, nonlinear/time/domain and
+complete runtime gates remain unresolved. Earlier pressure/field context follows.
+
+## Prior checkpoint: unqualified P0 pressure component and error attribution
 
 Read docs/mixed-pressure-001.md and both prospective protocols first. Goal
 ACTIVE/INCOMPLETE: canonical boat, own nonlinear time-domain six-DOF response,
