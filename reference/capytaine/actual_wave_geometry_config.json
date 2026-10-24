@@ -1,0 +1,29 @@
+{
+  "status": "draft_source_only_actual_motion_hash_unbound",
+  "case": "reference/capytaine/canonical-boat.json",
+  "heading_file": "artifacts/reference/generated-sea-candidates-20261024/ndbc-46086-20250105T1140Z/heading-offset-90deg.json",
+  "global_bank": "artifacts/reference/generated-sea-candidates-20261024/ndbc-46086-20250105T1140Z/realization-global.json",
+  "motion_mat": "artifacts/reference/generated-bank-consumer-20261024/case-jan90-attempt1/motion.mat",
+  "input_sha256": {
+    "reference/capytaine/actual_wave_geometry.py": "5ea25c1422e5529f724bbb7802b7dae55167be66068dbc7ed7fd50931c567af4",
+    "reference/capytaine/actual_wave_geometry_core.py": "7dda063b57328c0e72b6f0fe390d9a8ffd92724cfc37d0051fc39c3af68cb104",
+    "reference/capytaine/canonical-boat.json": "ea18844904e03bbfd72abc3396240c97b1994b3584e36c8149f8ae5f60a99e4f",
+    "artifacts/reference/generated-sea-candidates-20261024/ndbc-46086-20250105T1140Z/heading-offset-90deg.json": "2233438e4abaa8672f5db154758c12f1a549c91fed933261fd06fe02999d3291",
+    "artifacts/reference/generated-sea-candidates-20261024/ndbc-46086-20250105T1140Z/realization-global.json": "8594ce2bb7a4b08e76f9df4d30fd02f6e6dcdf5ed3c8fafae99b47d710a39c58"
+  },
+  "actual_motion_hash_binding_required": true,
+  "expected_runtime_evidence_paths": [
+    "artifacts/reference/generated-bank-consumer-20261024/case-jan90-attempt1/summary.json",
+    "artifacts/reference/generated-bank-consumer-20261024/case-jan90-attempt1/prepared-case.mat"
+  ],
+  "relative_area_interval_target": 0.001,
+  "rim_interval_target_m": 0.001,
+  "maximum_elapsed_seconds": 300,
+  "maximum_depth": 8,
+  "maximum_triangle_evaluations": 2000000,
+  "cpu_threads": 1,
+  "wave_point_batch": 2048,
+  "scope": "Saved-time geometry only; no hydrodynamicloads/NLtrajectory/ODE; incomplete unknowns explicit",
+  "maximum_active_triangles_per_sample": 8192,
+  "current_case_status": "Actual Jan90 trajectory REJECTED as far outside operating envelope. No geometryjob allocated; do not infer cause from geometry."
+}

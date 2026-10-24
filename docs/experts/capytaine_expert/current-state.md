@@ -100,8 +100,8 @@ No coefficients replaced, no further numerical allocation. [API audit/control](i
 
 Actual Jan90 native run is REJECTED far outside intended operating envelope;
 WEC owner/researcher diagnose the stored actual dynamics. Geometry audit must not
-guess cause. Source-only actual-wave geometry tool is prepared for independent
-review with analytic wet/rim bounds, actual pose schema, explicit budget/coverage
+guess cause. Source-only actual-wave geometry tool has independent source PASS
+(runner5ea25c14/core7dda063b) with analytic wet/rim bounds, actual pose schema, explicit budget/coverage
 unknowns and unexecuted fixtures. Actual motion hash remains unbound/draft config;
 no geometry evaluation or further numerical job allocated.
 [Geometry source proposal](actual-wave-geometry-postprocess-proposal-2026-10-24.md).
