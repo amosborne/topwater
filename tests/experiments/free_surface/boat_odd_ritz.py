@@ -150,6 +150,9 @@ def run(args, report):
         RH += R[first:last].T@(w*normal)
         BH += T[first:last].T@(w*p)
         hp[first:last], hn[first:last] = p@psi_old, normal@psi_old
+        if last % 512 == 0 or last == nq:
+            print(json.dumps(dict(stage='streamed_H16', completed_points=last,
+                total_points=nq, seconds=perf_counter()-started, source_pairs=pairs)), flush=True)
     report['stages'].append(dict(stage='streamed_H16', seconds=perf_counter()-started))
     rp, rn = R@sigma_old, J@sigma_old
     for actual, cached in ((hp, cached_h), (hn, cached_n), (rp, cached_r), (rn, cached_j)):
@@ -171,28 +174,70 @@ def run(args, report):
     # Independent evaluation of the raw physical Green integrand, not the
     # already-contracted symmetric block quadratic. Only the fixed old-mode
     # real/imaginary span is used; all body fields are streamed/cached above.
-    def field_functional(a, sigma, u):
+    def field_functional(a, sigma, u, *, with_scale=False):
         psi = a[0]*psi_old.real+a[1]*psi_old.imag
         H = a[0]*hp.real+a[1]*hp.imag
         N = a[0]*hn.real+a[1]*hn.imag
         source, derivative = R@sigma, J@sigma
-        return .5*(psi@K@psi+psi@F@sigma+weights@((H+source)*(N+derivative)))-u@(T.T@(weights*(H+source)))
+        k, f = K@psi, F@sigma
+        value = .5*(psi@k+psi@f+weights@((H+source)*(N+derivative)))-u@(T.T@(weights*(H+source)))
+        scale = .5*(abs(psi*k).sum()+abs(psi*f).sum()
+            +weights@(abs(H+source)*abs(N+derivative)))+abs(u)@(abs(T).T@(weights*abs(H+source)))
+        return (value, float(scale)) if with_scale else value
 
     a, sigma, u = np.array([1., 0.]), sigma_old.real, np.zeros(6)
     psi = psi_old.real
     gp, gs, gu = energy.gradients(psi, sigma, u)
     direction = (np.array([0., 1.]), sigma_old.imag, np.array([.1, -.2, .3, -.04, .05, -.06]))
     expected = gp@psi_old.imag+gs@direction[1]+gu@direction[2]
+    directional_scale = abs(gp*psi_old.imag).sum()+abs(gs*direction[1]).sum()+abs(gu*direction[2]).sum()
+    # Dimension-dependent binary64 arithmetic allowance; this gates ownership
+    # of the quadratic functional, not continuum or physical force accuracy.
+    arithmetic_factor = 64*np.finfo(float).eps*(n+nq+nb)
     fd = []
+    report['raw_field_FD'] = fd
     for h in (1e-4, 5e-5):
-        plus = field_functional(a+h*direction[0], sigma+h*direction[1], u+h*direction[2])
-        minus = field_functional(a-h*direction[0], sigma-h*direction[1], u-h*direction[2])
-        fd.append(dict(h=h, derivative=float((plus-minus)/(2*h)), absolute_error=float(abs((plus-minus)/(2*h)-expected))))
+        plus, plus_scale = field_functional(a+h*direction[0], sigma+h*direction[1], u+h*direction[2], with_scale=True)
+        minus, minus_scale = field_functional(a-h*direction[0], sigma-h*direction[1], u-h*direction[2], with_scale=True)
+        error = float(abs((plus-minus)/(2*h)-expected))
+        allowance = arithmetic_factor*(directional_scale+(plus_scale+minus_scale)/(2*h))
+        fd.append(dict(h=h, derivative=float((plus-minus)/(2*h)), absolute_error=error,
+            absolute_directional_gradient_scale=float(directional_scale), arithmetic_allowance=float(allowance)))
+        if error > allowance:
+            raise ValueError('raw physical-field functional derivative ownership gate failed')
+    # Old physical psi with zero velocity and every unit body velocity: these
+    # are algebraic reduction/derivative controls, not radiation validation.
+    case_psi = np.repeat(psi_old[:, None], 7, axis=1)
+    case_u = np.column_stack((np.zeros(6), np.eye(6)))
+    case_sigma = energy.solve_density(case_psi, case_u)
+    gp_cases, gs_cases, gu_cases = energy.gradients(case_psi, case_sigma, case_u)
+    source_scale = (abs(energy.cross_energy).T@abs(case_psi)
+        +abs(energy.source_energy)@abs(case_sigma)+abs(energy.BR).T@abs(case_u)).max()
+    wave_scale = (abs(energy.wave_energy)@abs(case_psi)
+        +abs(energy.cross_energy)@abs(case_sigma)+abs(energy.BH).T@abs(case_u)).max()
+    port_scale = (abs(energy.BH)@abs(case_psi)+abs(energy.BR)@abs(case_sigma)).max()
+    algebraic_controls = []
+    report['algebraic_reduction_controls'] = algebraic_controls
+    for name, error, scale in (
+            ('source_stationarity', abs(gs_cases).max(), source_scale),
+            ('wave_flux_unreduced_gradient', abs(energy.wave_flux(case_psi, case_u)-gp_cases).max(), wave_scale),
+            ('body_port_unreduced_gradient', abs(energy.body_port(case_psi, case_u)+gu_cases).max(), port_scale)):
+        allowance = arithmetic_factor*scale
+        algebraic_controls.append(dict(name=name, maximum_absolute=float(error), arithmetic_allowance=float(allowance)))
+        if error > allowance:
+            raise ValueError('algebraic Ritz reduction ownership gate failed: '+name)
     sigma_ritz = energy.solve_density(psi_old, np.zeros(6))
     physical_flux = K@psi_old+F@sigma_ritz
     variational_flux = energy.wave_flux(psi_old, np.zeros(6))
-    pressure_port = -T.T@(weights*(hp+R@sigma_ritz))
+    potential_port = -T.T@(weights*(hp+R@sigma_ritz))
     body_port = energy.body_port(psi_old, np.zeros(6))
+    port_error = float(abs(potential_port+body_port).max())
+    port_scale = float((abs(T).T@(weights*(abs(hp)+abs(R)@abs(sigma_ritz)))).max())
+    port_allowance = arithmetic_factor*port_scale
+    report.update(body_potential_port_quadrature_parity_max=port_error,
+                  body_potential_port_arithmetic_allowance=float(port_allowance))
+    if port_error > port_allowance:
+        raise ValueError('quadrature body potential-port ownership gate failed')
     qbody = hn+J@sigma_ritz
     flux_difference = physical_flux-variational_flux
     flux_mass_norm = np.sqrt(np.real(np.vdot(flux_difference, snapshot.mass_solve(flux_difference))))
@@ -200,7 +245,10 @@ def run(args, report):
         variational_flux=variational_flux, raw_body_neumann=qbody)
     report.update(raw_field_FD=fd, raw_field_derivative_expected=float(expected),
         raw_functional_parity_absolute=float(abs(field_functional(a, sigma, u)-energy.mixed_functional(psi, sigma, u))),
-        body_pressure_port_parity_max=float(abs(pressure_port+body_port).max()),
+        body_potential_port_quadrature_parity_max=port_error,
+        body_potential_port_arithmetic_allowance=float(port_allowance),
+        algebraic_reduction_controls=algebraic_controls,
+        algebraic_control_scope='Old physical psi with zero and all six unit body velocities; not physics validation',
         raw_body_neumann_work=record(np.vdot(hp+R@sigma_ritz, weights*qbody)),
         old_nystrom_body_neumann_work=record(np.vdot(hp+rp, weights*(hn+rn))),
         old_physical_flux_mass_norm=float(np.sqrt(np.real(np.vdot(K@psi_old+F@sigma_old,
@@ -210,6 +258,13 @@ def run(args, report):
     checkpoint(args, report, arrays)
 
     started = perf_counter()
+    g_error = float(abs(energy.G-energy.G.T).max())
+    g_scale = float(2*abs(energy.wave_energy).max()+abs(energy.G).max())
+    g_allowance = 64*np.finfo(float).eps*(nb+1)*g_scale
+    report['G_transpose_gate'] = dict(maximum_absolute=g_error, arithmetic_allowance=g_allowance,
+                                     scope='Floating arithmetic of the same symmetric energy Gram; no repair')
+    if g_error > g_allowance:
+        raise ValueError('reduced Green energy exceeds transpose roundoff gate')
     mu, vectors = eigh(energy.G, patch.mass.toarray(), check_finite=True)
     growth = np.sqrt((-GRAVITY*mu).astype(complex))
     if not np.isfinite(mu).all() or not np.isfinite(growth).all():
