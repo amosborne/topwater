@@ -1,0 +1,16 @@
+{
+  "format_version": 1,
+  "protocol": "docs/fixed-asset-preflight-protocol.md",
+  "maximum_elapsed_seconds": 60.0,
+  "maximum_peak_bytes": 2147483648,
+  "maximum_additional_disk_bytes": 2147483648,
+  "counts": [1232,2772,4928,7700],
+  "subdivisions": [2,3,4,5],
+  "seed_panels": 308,
+  "gauss_orders": [12,16,20],
+  "canonical_contract_sha256": "1d0be3bc7fd20c08bffdd6b7241a58ada74fb74467ce0dd8921eb089d2621ad1",
+  "frozen_bundle_sha256": "fcaf28963be08e4443410b8c19d680f1fb81cff3c44a291c34aa69c6e1a9847d",
+  "raw_bundle_sha256": "e18bf7366eb651766edc5487addd84c798c1ae53183f58a0e88b3b623ed6729d",
+  "sources_bundle_sha256": "4a317cbb91cc51348b0059b40b4a6437315e3656624ad2903743dec4721214e5",
+  "full_reference_scope": false
+}
