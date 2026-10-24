@@ -12,7 +12,7 @@ PHYSICAL = tuple('src/topwater/'+name+'.py' for name in
     ('__init__','inputs','_validation','frames','hydrostatics','_clipping','constants'))+('tests/reference_boat.py',)
 CANDIDATE = PHYSICAL+tuple('src/topwater/'+name+'.py' for name in
     ('inertia','bem','boundary','rankine','_rankine_kernel','_rankine_extended','numerics'))
-VALIDATORS = tuple('tests/validation/'+name+'.py' for name in ('__init__','__main__','common','reference'))
+VALIDATORS = tuple('tests/validation/'+name+'.py' for name in ('__init__','__main__','common','reference','reference_mesh'))
 REFERENCE = PHYSICAL+('tests/capytaine_reference.py',)+VALIDATORS+('pyproject.toml','uv.lock')
 
 
@@ -48,7 +48,21 @@ def load_contract(path):
         raise ValueError('unsupported canonical physical/implementation contract')
     for levels,minimum in ((r['body_subdivision_levels'],3),(c['body_subdivision_levels'],2)):
         if len(levels)<minimum or levels!=sorted(set(levels)) or any(type(n)!=int or n<0 for n in levels):
-            raise ValueError('declared ordered nested reference/candidate levels required')
+            raise ValueError('declared ordered reference/candidate refinement levels required')
+    policy=r.get('mesh_policy','midpoint')
+    if policy not in ('midpoint','graded-planar'):
+        raise ValueError('unsupported reference mesh policy')
+    if policy=='graded-planar':
+        bulk=np.asarray(r['bulk_sizes_m']);edge=np.asarray(r['edge_sizes_m'])
+        if (bulk.shape!=(len(r['body_subdivision_levels']),) or edge.shape!=bulk.shape
+                or not np.isfinite(bulk).all() or not np.isfinite(edge).all()
+                or np.any(edge<=0) or np.any(edge>bulk) or np.any(np.diff(bulk)>=0)
+                or np.any(np.diff(edge)>=0) or not 0<r['edge_growth']<=1
+                or r['gmsh_version']!='4.15.2'
+                or r['geometry_coordinate_absolute_m']!=1e-11
+                or r['geometry_moments_relative']!=1e-10
+                or r['geometry_moments_absolute_SI']!=1e-12):
+            raise ValueError('complete ordered graded reference controls required')
     if r['cpu_threads']!=1 or c['cpu_threads']!=1 or r['richardson_extrapolation'] is not False:
         raise ValueError('unsupported thread/extrapolation policy')
     cases=value['cases'];a=value['acceptance']
@@ -144,11 +158,30 @@ def triangles_at(base,level):
     return base
 
 
-def study_preflight(base_count,levels,limit):
+def reference_triangles(data,level):
+    key=f'reference_triangles_{level}'
+    return data[key] if key in data else triangles_at(data['wetted_triangles'],level)
+
+
+def reference_plan(data,spec):
+    levels=spec['body_subdivision_levels']
+    if spec.get('mesh_policy')=='graded-planar' and any(f'reference_triangles_{n}' not in data for n in levels):
+        raise ValueError('missing frozen graded reference mesh; midpoint substitution forbidden')
+    counts=[len(reference_triangles(data,n)) for n in levels]
+    if any(b<=a for a,b in zip(counts,counts[1:])):
+        raise ValueError('reference refinement must increase actual panel counts')
+    return study_preflight(len(data['wetted_triangles']),levels,
+        spec['maximum_estimated_workspace_bytes'],
+        panel_counts=counts)
+
+
+def study_preflight(base_count,levels,limit,*,panel_counts=None):
     # Twelve dense complex128 arrays plus geometry/solver overhead. An estimate,
     # not an OS memory limit. NO declared finest mesh can be silently omitted.
-    rows=[dict(level=n,panels=base_count*4**n,
-        estimated_workspace_bytes=12*16*(base_count*4**n)**2+32768*(base_count*4**n)+64*1024**2) for n in levels]
+    counts=panel_counts if panel_counts is not None else [base_count*4**n for n in levels]
+    rows=[dict(level=n,panels=count,
+        estimated_workspace_bytes=12*16*count**2+32768*count+64*1024**2)
+        for n,count in zip(levels,counts,strict=True)]
     if any(row['estimated_workspace_bytes']>limit for row in rows):
         raise MemoryError('declared study exceeds workspace budget; revise contract, do not omit finest mesh')
     return rows
@@ -167,7 +200,7 @@ def entrywise(candidate,reference,uncertainty,atol,rtol):
 def mesh_quality(values,acceptance):
     values=np.asarray(values)
     if len(values)<3 or not np.isfinite(values).all():
-        raise ValueError('three or more complete finite nested levels required')
+        raise ValueError('three or more complete finite ordered refinement levels required')
     previous,last=abs(values[-2]-values[-3]),abs(values[-1]-values[-2])
     atol=acceptance['reference_mesh_absolute_normalized'];rtol=acceptance['reference_mesh_relative']
     allowance=atol+rtol*abs(values[-1])

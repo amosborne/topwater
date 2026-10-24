@@ -53,4 +53,16 @@ Initial clean worktree: baseline/fluid-body at
 artifacts/validation-reset/frozen.json; the reference command verifies current
 physical/validator identities before solving. Declared meshes: 68, 272, 1088,
 4352 panels; estimated finest workspace 3,846,176,768 bytes, 8 GiB estimate cap,
-1800 seconds checked between physics calls. No reference result exists yet.
+1800 seconds checked between physics calls. This describes reset readiness;
+the subsequent [study 001](reference-study-001.md) is complete and unqualified.
+
+## Correction checkpoint after study 001
+
+The original mesh family failed all response families. A reviewed contract
+revision declares graded Gmsh 4.15.2 meshes on the same frozen physical surface.
+All original physical arrays and input JSON are unchanged; the overall identity
+changes because it also binds the contract and derived reference meshes.
+Geometry preflight gives 2464/3538/5152/7604 panels. The independent mesh levels
+are ordered refinement, not nested subdivision. No extrapolation is used.
+Resource revision, geometry proofs and review resolutions are recorded in the
+study report. The qualification goal remains active and incomplete.

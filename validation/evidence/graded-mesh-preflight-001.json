@@ -1,0 +1,73 @@
+{
+  "status": "geometry_verified_resource_preflight_failed_no_hydrodynamic_calls",
+  "meshes": [
+    {
+      "level": 1,
+      "gmsh_version": "4.15.2",
+      "bulk_size_m": 0.32,
+      "edge_size_m": 0.08,
+      "growth": 0.3,
+      "geometry": {
+        "facets": 7,
+        "panels": 2464,
+        "waterline_edges": 198,
+        "maximum_moment_difference": 1.4210854715202004e-14
+      }
+    },
+    {
+      "level": 2,
+      "gmsh_version": "4.15.2",
+      "bulk_size_m": 0.24,
+      "edge_size_m": 0.06,
+      "growth": 0.3,
+      "geometry": {
+        "facets": 7,
+        "panels": 3538,
+        "waterline_edges": 266,
+        "maximum_moment_difference": 9.237055564881302e-14
+      }
+    },
+    {
+      "level": 3,
+      "gmsh_version": "4.15.2",
+      "bulk_size_m": 0.18,
+      "edge_size_m": 0.045,
+      "growth": 0.3,
+      "geometry": {
+        "facets": 7,
+        "panels": 5152,
+        "waterline_edges": 352,
+        "maximum_moment_difference": 6.394884621840902e-14
+      }
+    },
+    {
+      "level": 4,
+      "gmsh_version": "4.15.2",
+      "bulk_size_m": 0.135,
+      "edge_size_m": 0.03375,
+      "growth": 0.3,
+      "geometry": {
+        "facets": 7,
+        "panels": 7604,
+        "waterline_edges": 466,
+        "maximum_moment_difference": 2.7711166694643907e-13
+      }
+    }
+  ],
+  "error": {
+    "type": "MemoryError",
+    "message": "declared study exceeds workspace budget; revise contract, do not omit finest mesh"
+  },
+  "physical_equality_checks": {
+    "wetted_triangles": true,
+    "world_cg": true,
+    "orientation": true,
+    "dry_mass": true,
+    "hydrostatic_stiffness": true,
+    "body_mass": true,
+    "hull_length": true,
+    "hull_beam": true,
+    "input_json_bytes": true
+  },
+  "elapsed_seconds": 3.53020170002128
+}

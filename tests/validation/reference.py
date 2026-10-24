@@ -1,8 +1,9 @@
 """Declared offline Capytaine study; never a runtime force model."""
 from time import perf_counter
+from importlib import import_module
 import numpy as np
-from threadpoolctl import threadpool_limits
-from .common import REFERENCE,current_sources,hashes,mesh_quality,save,study_preflight,triangles_at
+from threadpoolctl import threadpool_limits,threadpool_info
+from .common import REFERENCE,current_sources,hashes,mesh_quality,save,reference_plan,reference_triangles
 
 
 def normalized(raw,mass,length,rho,gravity,omega):
@@ -16,6 +17,7 @@ def normalized(raw,mass,length,rho,gravity,omega):
 
 
 def require_qualified(report,arrays,contract,frozen):
+    reference_plan(frozen,contract['reference_numerics'])
     levels=contract['reference_numerics']['body_subdivision_levels']
     nf,nh=len(contract['cases']['frequencies_hz']),len(contract['cases']['propagation_headings_rad'])
     shapes=dict(Ainf=(len(levels),6,6),A=(len(levels),nf,6,6),B=(len(levels),nf,6,6),
@@ -28,9 +30,9 @@ def require_qualified(report,arrays,contract,frozen):
         if arrays[name].shape!=shape or not np.isfinite(arrays[name]).all():
             raise ValueError('missing complete raw reference entries: '+name)
     for row,level in zip(report['levels'],levels,strict=True):
-        expected=triangles_at(frozen['wetted_triangles'],level)
+        expected=reference_triangles(frozen,level)
         if row['panels']!=len(expected):
-            raise ValueError('reference panel count differs from declared nested physical mesh')
+            raise ValueError('reference panel count differs from declared frozen physical mesh')
         np.testing.assert_array_equal(expected,arrays[f'triangles_{level}'])
     p=contract['physical_problem'];omega=2*np.pi*np.asarray(contract['cases']['frequencies_hz'])
     np.testing.assert_array_equal(arrays['excitation'],arrays['diffraction']+arrays['FK'])
@@ -51,6 +53,18 @@ def require_qualified(report,arrays,contract,frozen):
 
 def generate(args,contract,frozen,data,report,arrays):
     started=perf_counter()
+    save(args.output,report,arrays)
+    # Load the native library BEFORE discovering/limiting its OpenMP pool.
+    import_module('capytaine.green_functions.Delhommeau_float64')
+    with threadpool_limits(contract['reference_numerics']['cpu_threads']):
+        report['native_thread_pools']=threadpool_info()
+        if any(pool['num_threads']!=1 for pool in report['native_thread_pools']):
+            raise ValueError('reference native pools do not obey single-thread contract')
+        save(args.output,report,arrays)
+        return _generate(args,contract,frozen,data,report,arrays,started)
+
+
+def _generate(args,contract,frozen,data,report,arrays,started):
     import capytaine as cpt
     from tests.capytaine_reference import body_from_triangles,MODES
     from capytaine.bem.airy_waves import froude_krylov_force
@@ -58,7 +72,7 @@ def generate(args,contract,frozen,data,report,arrays):
     if cpt.__version__!=spec['capytaine_version']:
         raise ValueError('required pinned Capytaine dependency/version unavailable')
     levels=spec['body_subdivision_levels']
-    plan=study_preflight(len(data['wetted_triangles']),levels,spec['maximum_estimated_workspace_bytes'])
+    plan=reference_plan(data,spec)
     rho,g=physical['density_kg_m3'],physical['gravity_m_s2']
     omega=2*np.pi*np.asarray(contract['cases']['frequencies_hz'])
     headings=contract['cases']['propagation_headings_rad']
@@ -71,11 +85,12 @@ def generate(args,contract,frozen,data,report,arrays):
         study_plan=plan,levels=[],completed_physics_calls=0,
         reference_scope='Raw all36 Ainf and A/B, Cartesian complex excitation/RAO; measured mesh uncertainty, no Richardson')
     raw={name:[] for name in ('Ainf','A','B','diffraction','FK','excitation','RAO')}
+    save(args.output,report,arrays)
     inf_green=cpt.Delhommeau(tabulation_nr=0,tabulation_nz=0,tabulation_cache_dir=None)
     finite_green=cpt.Delhommeau(tabulation_cache_dir=None)
     report['green_settings']=dict(infinite=inf_green.exportable_settings,finite=finite_green.exportable_settings)
     for level in levels:
-        budget();triangles=triangles_at(data['wetted_triangles'],level)
+        budget();triangles=reference_triangles(data,level)
         body=body_from_triangles(triangles,data['world_cg'],float(data['body_mass']))
         row=dict(level=level,panels=len(triangles),complete=False)
         report['levels'].append(row);arrays[f'triangles_{level}']=triangles
@@ -84,34 +99,33 @@ def generate(args,contract,frozen,data,report,arrays):
         arrays.update({f'level{level}_Ainf':Ainf,f'level{level}_A':A,f'level{level}_B':B,
                        f'level{level}_diffraction':D,f'level{level}_FK':FK})
         save(args.output,report,arrays)
-        with threadpool_limits(1):
-            solver=cpt.BEMSolver(green_function=inf_green)
+        solver=cpt.BEMSolver(green_function=inf_green)
+        for column,mode in enumerate(MODES):
+            budget();result=solver.solve(cpt.RadiationProblem(body=body,radiating_dof=mode,
+                omega=np.inf,rho=rho,g=g,water_depth=np.inf,forward_speed=0.))
+            Ainf[:,column]=[result.added_mass[name] for name in MODES]
+            if any(result.radiation_damping[name]!=0 for name in MODES):
+                raise ValueError('infinite-frequency reference returned nonzero damping')
+            if not np.isfinite(Ainf[:,column]).all():
+                raise FloatingPointError('nonfinite raw Ainf column')
+            report['completed_physics_calls']+=1;save(args.output,report,arrays)
+        solver=cpt.BEMSolver(green_function=finite_green)
+        for f,w in enumerate(omega):
+            common=dict(body=body,omega=w,rho=rho,g=g,water_depth=np.inf,forward_speed=0.)
             for column,mode in enumerate(MODES):
-                budget();result=solver.solve(cpt.RadiationProblem(body=body,radiating_dof=mode,
-                    omega=np.inf,rho=rho,g=g,water_depth=np.inf,forward_speed=0.))
-                Ainf[:,column]=[result.added_mass[name] for name in MODES]
-                if any(result.radiation_damping[name]!=0 for name in MODES):
-                    raise ValueError('infinite-frequency reference returned nonzero damping')
-                if not np.isfinite(Ainf[:,column]).all():
-                    raise FloatingPointError('nonfinite raw Ainf column')
+                budget();result=solver.solve(cpt.RadiationProblem(**common,radiating_dof=mode))
+                A[f,:,column]=[result.added_mass[name] for name in MODES]
+                B[f,:,column]=[result.radiation_damping[name] for name in MODES]
+                if not np.isfinite([A[f,:,column],B[f,:,column]]).all():
+                    raise FloatingPointError('nonfinite finite-frequency radiation column')
                 report['completed_physics_calls']+=1;save(args.output,report,arrays)
-            solver=cpt.BEMSolver(green_function=finite_green)
-            for f,w in enumerate(omega):
-                common=dict(body=body,omega=w,rho=rho,g=g,water_depth=np.inf,forward_speed=0.)
-                for column,mode in enumerate(MODES):
-                    budget();result=solver.solve(cpt.RadiationProblem(**common,radiating_dof=mode))
-                    A[f,:,column]=[result.added_mass[name] for name in MODES]
-                    B[f,:,column]=[result.radiation_damping[name] for name in MODES]
-                    if not np.isfinite([A[f,:,column],B[f,:,column]]).all():
-                        raise FloatingPointError('nonfinite finite-frequency radiation column')
-                    report['completed_physics_calls']+=1;save(args.output,report,arrays)
-                for h,heading in enumerate(headings):
-                    budget();problem=cpt.DiffractionProblem(**common,wave_direction=heading)
-                    result=solver.solve(problem);incident=froude_krylov_force(problem)
-                    D[f,h]=[result.forces[name] for name in MODES];FK[f,h]=[incident[name] for name in MODES]
-                    if not np.isfinite([D[f,h],FK[f,h]]).all():
-                        raise FloatingPointError('nonfinite complex excitation')
-                    report['completed_physics_calls']+=1;save(args.output,report,arrays)
+            for h,heading in enumerate(headings):
+                budget();problem=cpt.DiffractionProblem(**common,wave_direction=heading)
+                result=solver.solve(problem);incident=froude_krylov_force(problem)
+                D[f,h]=[result.forces[name] for name in MODES];FK[f,h]=[incident[name] for name in MODES]
+                if not np.isfinite([D[f,h],FK[f,h]]).all():
+                    raise FloatingPointError('nonfinite complex excitation')
+                report['completed_physics_calls']+=1;save(args.output,report,arrays)
         X=D+FK;rao=np.empty_like(X)
         for f,w in enumerate(omega):
             impedance=-w*w*(data['dry_mass']+A[f])-1j*w*B[f]+data['hydrostatic_stiffness']

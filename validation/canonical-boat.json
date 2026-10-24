@@ -18,33 +18,78 @@
     "initial_body_velocity": "zero",
     "axes": "right-handed world x/y/z, body bow/port/up",
     "rotation_reference": "world CG, full rotated dry inertia",
-    "mode_order": ["Surge", "Sway", "Heave", "Roll", "Pitch", "Yaw"],
+    "mode_order": [
+      "Surge",
+      "Sway",
+      "Heave",
+      "Roll",
+      "Pitch",
+      "Yaw"
+    ],
     "time_convention": "Re(amplitude*exp(-i*omega*t))",
     "wave_direction": "propagation, radians CCW from world+x",
-    "incident_phase_origin_world_xy_m": [0.0, 0.0],
+    "incident_phase_origin_world_xy_m": [
+      0.0,
+      0.0
+    ],
     "incident_elevation_amplitude_m": 0.01,
     "observed_sea_role": "separate future nonlinear case; not the linear reference forcing"
   },
   "cases": {
     "instantaneous_added_mass": "all 36 entries, omega=infinity",
-    "frequencies_hz": [0.1, 0.25, 0.5],
-    "propagation_headings_rad": [0.0, 0.7853981633974483, 1.5707963267948966],
+    "frequencies_hz": [
+      0.1,
+      0.25,
+      0.5
+    ],
+    "propagation_headings_rad": [
+      0.0,
+      0.7853981633974483,
+      1.5707963267948966
+    ],
     "finite_response_set": "Cartesian product; full radiation A/B, diffraction, Froude-Krylov, total excitation and coupled complex six-DOF RAO"
   },
   "reference_numerics": {
     "capytaine_version": "3.0.0",
-    "body_subdivision_levels": [1, 2, 3, 4],
-    "subdivision": "four midpoint children of the same frozen wetted triangles; no new equilibrium or hull smoothing",
+    "body_subdivision_levels": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "subdivision": "Independently graded planar-facet triangles on the exact frozen surface; verified y=0 reflection; no smoothing or re-equilibration",
     "cpu_threads": 1,
-    "maximum_estimated_workspace_bytes": 8589934592,
+    "maximum_estimated_workspace_bytes": 12884901888,
     "maximum_elapsed_seconds": 1800,
     "finite_green_settings": "Capytaine 3.0.0 Delhommeau defaults, recorded in output",
     "infinite_green_settings": "Delhommeau tabulation_nr=0, tabulation_nz=0",
-    "richardson_extrapolation": false
+    "richardson_extrapolation": false,
+    "mesh_policy": "graded-planar",
+    "gmsh_version": "4.15.2",
+    "bulk_sizes_m": [
+      0.32,
+      0.24,
+      0.18,
+      0.135
+    ],
+    "edge_sizes_m": [
+      0.08,
+      0.06,
+      0.045,
+      0.03375
+    ],
+    "edge_growth": 0.3,
+    "geometry_coordinate_absolute_m": 1e-11,
+    "geometry_moments_relative": 1e-10,
+    "geometry_moments_absolute_SI": 1e-12
   },
   "candidate_numerics": {
-    "body_subdivision_levels": [2, 3, 4],
-    "quadrature_rtol": 1e-8,
+    "body_subdivision_levels": [
+      2,
+      3,
+      4
+    ],
+    "quadrature_rtol": 1e-08,
     "quadrature_atol": 1e-10,
     "max_refinement": 8,
     "target_block_size": 128,
@@ -61,22 +106,33 @@
   "acceptance": {
     "scope": "initial linear verification policy; does not establish 60-second nonlinear motion accuracy",
     "reference_mesh_relative": 0.001,
-    "reference_mesh_absolute_normalized": 1e-6,
+    "reference_mesh_absolute_normalized": 1e-06,
     "reference_required_finest_increments": 2,
     "reference_uncertainty": "U=max(abs(Q4-Q3),abs(Q3-Q2)) componentwise on normalized real/complex quantities; empirical measured mesh uncertainty, not a certified continuum bound",
     "reference_trend": "both finest increments <= reference_atol+reference_rtol*abs(Q4), and abs(Q4-Q3) <= abs(Q3-Q2)+reference_atol",
     "candidate_relative": 0.01,
-    "candidate_absolute_normalized": 1e-5,
+    "candidate_absolute_normalized": 1e-05,
     "comparison": "abs(candidate-reference)+reference_mesh_uncertainty <= atol+rtol*abs(reference), every declared entry",
     "candidate_mesh_convergence": "abs(Cfinest-Cprevious) <= candidate_atol+candidate_rtol*abs(Cfinest) entrywise after the same normalization; no single same-mesh pass",
     "complex_response": "compare complex differences, not magnitudes alone; no phase-only test at zero amplitude",
-    "required_gates": ["reference", "all_six_added_mass", "small_amplitude_time_domain_wave_responses"],
+    "required_gates": [
+      "reference",
+      "all_six_added_mass",
+      "small_amplitude_time_domain_wave_responses"
+    ],
     "missing_skipped_stale_or_unsupported": "fail",
     "policy_rationale": "0.1%/1% are predeclared linear engineering verification criteria, not derived motion-error budgets"
   },
   "time_domain_wave_controls": {
     "status": "unsupported; blocks wave comparison and qualification",
-    "required_before_enablement": ["actual coupled time-domain implementation identity", "open-water/domain convergence", "time-step refinement", "startup/ramp and observation window", "small-amplitude refinement", "complex response extraction and phase uncertainty"],
+    "required_before_enablement": [
+      "actual coupled time-domain implementation identity",
+      "open-water/domain convergence",
+      "time-step refinement",
+      "startup/ramp and observation window",
+      "small-amplitude refinement",
+      "complex response extraction and phase uncertainty"
+    ],
     "revision_rule": "resolve through a separately reviewed contract revision; no substitution of a frequency-domain runtime or archived diagnostic tank"
   },
   "eventual_qualification": {

@@ -1,80 +1,38 @@
 # Checkpoint handoff
 
-- **Current goal and qualification status:** bounded validation-foundation reset.
-  Reset deliverables are complete; the Capytaine reference, selected fluid-body
-  implementation, nonlinear accuracy and performance remain **unqualified**.
-- **Active branch and commit:** `baseline/fluid-body`; final reset commit is
-  identified by pushed tag `checkpoint/validation-reset-2026-10-23`.
-  Verified numerical/source
-  checkpoint `3bd62bc5407fef1211032f74b634bd93bd3fee5e`. Subsequent checkpoint
-  commits contain only durable documentation, evidence and inventory. Inspect
-  live `git status` and `git log` before continuing.
-- **Implementation under qualification:** existing P0 Rankine-panel core,
-  through `topwater.inertia.instantaneous_added_mass` and its `bem`/`boundary`/
-  `rankine` owners. Extraction origin `4e8f511`. Hydrostatics and instantaneous
-  inertia exist; a coupled time-domain wave path does not. The archived P1
-  diagnostic runtime is a different implementation and is not substituted.
-- **What passed:** 199 owned unit, mathematical, fixture and gate-policy tests.
-  CI passed Ubuntu Python 3.12/3.13/3.14, Windows Python 3.12 and packaging at
-  the source checkpoint. Physical-input freeze succeeded. Canoe application
-  imports/runners/fixture/image are absent from active code and CI. Generic
-  hydrostatics and mathematical BEM coverage are retained.
-- **What failed or remains unproven:** missing-reference inertia comparison,
-  unsupported-wave comparison and overall qualification returned their required
-  nonzero exits. Physical qualification CI is intentionally red. No Capytaine
-  convergence study ran; no physical accuracy or speed claim follows.
-- **Authoritative evidence and commands:** [issue #30](https://github.com/amosborne/topwater/issues/30),
-  [reset checks](reset-checks.json), [validation sequence](validation.md),
-  [independent review](reset-review.md), and
-  [CI source-checkpoint run](https://github.com/amosborne/topwater/actions/runs/40055853746).
-  Full owned local artifacts are `artifacts/reset-units-3bd62bc.*` and
-  `artifacts/validation-reset/{frozen,waves,inertia,qualification}.*`.
-- **Numerical controls and acceptance:** [canonical contract](../validation/canonical-boat.json).
-  Actual frozen input snapshot: [frozen physical inputs](../validation/frozen-physical-inputs.json).
-  Physical identity: `6b9b330b5d1b666875b675a1136623c8f234465c5c54ea14fbe65e48be3553c3`.
-  The calm wet mesh has 17 panels; study levels have 68/272/1088/4352 panels.
-  Finest estimated workspace is 3,846,176,768 bytes, below the 8 GiB estimate cap.
-  Four declared levels, all 36 A-infinity entries, 0.10/0.25/0.50 Hz radiation
-  and all combinations of 0/45/90 degree waves, full complex excitation/RAOs.
-  Reference 0.1% + 1e-6 normalized; candidate 1% + 1e-5 normalized, charged for
-  reference uncertainty. These are linear policy choices, not minute accuracy.
-- **Uncommitted work and other worktrees:** root is required clean at final
-  push. [Branch inventory](branch-inventory.json) records historical dirty and
-  untracked paths with hashes; those worktrees were not reset or removed. The
-  old optimization graph is pushed at `archive/optimization-2026-10-23`.
-  Supporting retirement work is pushed at `archive/retire-canoe-preparation`.
-  Supporting harness checkpoints `56a9e3f` through `42544de` were selectively
-  integrated through source checkpoint `3bd62bc`; no harness patch is pending.
-  Do not merge entire
-  historical branches. One untracked benchmark file was preserved under
-  `artifacts/retirement-preserved/benchmark_rankine.py` instead of deleting it.
-- **Live jobs:** none remain from this reset. Every launched local command has
-  returned terminal status; no Capytaine convergence or optimization job is live.
-- **Adversarial review:** fresh reviewer `baseline_adversarial_audit` found no
-  remaining blocking issue after explicit identity, generic coverage, physical
-  entry scaling, uncertainty/resource controls, stale-validator checks and
-  stable physical-identity fixes. Approval is for the reset only.
-- **Next bounded goal:** execute the frozen **Capytaine reference convergence**
-  protocol and publish an explicit qualified/unqualified decision with measured
-  uncertainty. Do not start Topwater wave qualification, new formulations,
-  nonlinear qualification or timing in that goal.
-
-## Exact next action and stopping condition
-
-Inspect current repository, contract and owned freeze sources. If unchanged,
-run serially, with fresh output and immutable producers:
-
-```powershell
-uv run --locked --group correlation python -m tests.validation reference --frozen artifacts/validation-reset/frozen.json --output artifacts/validation/reference-study-001.json
-```
-
-If the local freeze is unavailable, regenerate it using the documented `freeze`
-command and inspect its identity before reference generation. Do not reuse stale
-evidence or overwrite checkpoints.
-
-Stop once the declared study completes or hits a declared resource/validity
-failure. Retain all raw matrices, case coverage, mesh increments and uncertainty;
-record a qualified/unqualified reference decision. An unqualified result is a
-completed bounded investigation, not baseline qualification: identify the next
-bounded reference problem and hand off in a fresh conversation. Do not silently
-drop a finest level, loosen criteria or start another formulation.
+- Current goal: qualified, reproducible Capytaine reference for the canonical
+  24 ft boat, resolving convergence failures until unchanged gates pass.
+  Active and incomplete; Topwater remains unqualified. See reference-convergence.md.
+- Active branch: baseline/fluid-body. Inspect live git status/log for the exact
+  current source checkpoint; every freeze/study manifest also records its commit
+  and complete producer hashes. No runtime solver sources changed.
+- Completed study: reference-study-001 ran all four midpoint meshes/all132 calls,
+  complete but unqualified in every convergence family. Durable raw results,
+  bound freeze/input and producers: validation/evidence/reference-study-001.zip;
+  summary and SHA256 alongside it. See docs/reference-study-001.md.
+- Correction: validation-only Gmsh4.15.2 graded planar facets on identical physical
+  surface, verified y=0 reflection. All thin chine strips retained. Original
+  eight physical arrays and input JSON match reset exactly. Mesh levels are
+  independently remeshed ordered refinement, not nested subdivision.
+- Geometry preflight: 2464/3538/5152/7604 panels; all surface checks passed. Initial
+  frozen-graded-001 failed the original8GiB cap before any hydrodynamic solves.
+  It remains locally preserved; summary in validation/evidence/graded-mesh-preflight-001.json.
+- Declared revision:12GiB estimate cap, same conservative estimator, finest
+  11,417,873,408bytes;1800s between calls unchanged. All accuracy gates unchanged:
+  0.1%+1e-6 normalized, both finest increments and trend, componentwise envelope.
+- Independent reviewer reference_adversarial_review approved readiness after
+  single-thread initialization, initial-report persistence, geometry tolerance
+  binding and missing-graded-mesh failclosed corrections.32 gate/geometry tests
+  passed. No convergence acceptance or physical qualification claim.
+- Live jobs: none at this source checkpoint. Confirm exact sessions terminal
+  before changing producers or launching another numerical job.
+- Next action: create fresh freeze under committed current contract at
+  artifacts/validation/frozen-graded-002.json. Recheck available memory and verify
+  all original physical arrays/input JSON match reset. Then serially run reference
+  with that freeze to artifacts/validation/reference-study-002.json. Never overwrite
+  an output/archive or reuse stale freeze/producer identities. Use workspace
+  uv cache: uv run --locked --no-sync --cache-dir artifacts/uv-cache --group correlation.
+- Stop/checkpoint after the full declared study or resource/validity failure;
+  preserve every raw matrix, diagnose failed entries and declare/review the next
+  bounded correction. The qualification goal remains active until all gates and
+  final review pass. Topwater comparisons/waves, nonlinear work and timing excluded.

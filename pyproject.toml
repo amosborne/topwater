@@ -25,6 +25,7 @@ Issues = "https://github.com/amosborne/topwater/issues"
 [dependency-groups]
 correlation = [
     "capytaine==3.0.0",
+    "gmsh==4.15.2",
 ]
 dev = [
     "pytest>=8",

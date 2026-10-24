@@ -12,7 +12,7 @@ from time import perf_counter
 import numpy as np
 from threadpoolctl import threadpool_limits
 from .common import (PHYSICAL,CANDIDATE,REFERENCE,VALIDATORS,case_envelope,physical_identity,digest,hashes,load_contract,prepare,
-    save,read_owned,current_sources,study_preflight,triangles_at,entrywise)
+    save,read_owned,current_sources,study_preflight,triangles_at,entrywise,reference_plan)
 
 
 def freeze(args,contract,report,arrays):
@@ -42,11 +42,18 @@ def freeze(args,contract,report,arrays):
         physical_freeze_only=True,qualification_scope='Not physical solver qualification',
         equilibrium_force_N=hydro.force.tolist(),equilibrium_moment_Nm=hydro.moment.tolist(),
         wet_panel_count=len(hydro.wetted_triangles),complete=False)
+    spec=contract['reference_numerics']
+    if spec.get('mesh_policy')=='graded-planar':
+        from .reference_mesh import graded_mesh
+        report['reference_meshes']=[]
+        for level,bulk,edge in zip(spec['body_subdivision_levels'],spec['bulk_sizes_m'],spec['edge_sizes_m'],strict=True):
+            triangles,mesh=graded_mesh(arrays['wetted_triangles'],bulk,edge,growth=spec['edge_growth'])
+            arrays[f'reference_triangles_{level}']=triangles
+            report['reference_meshes'].append(dict(level=level,**mesh))
+            save(args.output,report,arrays)
     report['physical_identity_sha256']=physical_identity(report,arrays)
     save(args.output,report,arrays)
-    report['reference_study_plan']=study_preflight(len(hydro.wetted_triangles),
-        contract['reference_numerics']['body_subdivision_levels'],
-        contract['reference_numerics']['maximum_estimated_workspace_bytes'])
+    report['reference_study_plan']=reference_plan(arrays,contract['reference_numerics'])
     report.update(complete=True,passed=True)
 
 
@@ -173,8 +180,7 @@ def main(argv=None):
         if args.command=='reference':
             from .reference import generate
             frozen,data=frozen_input(args,contract,report)
-            study_preflight(len(data['wetted_triangles']),contract['reference_numerics']['body_subdivision_levels'],
-                contract['reference_numerics']['maximum_estimated_workspace_bytes'])
+            reference_plan(data,contract['reference_numerics'])
             generate(args,contract,frozen,data,report,arrays)
         else:
             {'freeze':freeze,'compare-inertia':compare_inertia,'compare-waves':compare_waves,'qualify':qualify}[args.command](

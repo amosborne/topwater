@@ -69,7 +69,16 @@ have 68, 272, 1,088 and 4,352 panels. The finest conservative workspace estimate
 is approximately 3.85 GB, within the declared 8 GiB estimate cap. This is a
 preflight, not measured resource usage or a convergence result.
 
-**Next separate goal: Capytaine reference convergence.** Execute only:
+That reset mesh family was executed and rejected in [study 001](reference-study-001.md).
+The active contract now uses Gmsh 4.15.2 graded planar-facet meshes, preserving
+the exact physical surface with a verified geometric reflection. Its four
+independently remeshed levels are an ordered refinement family, not nested
+midpoint subdivision. Geometry preflight produced 2464/3538/5152/7604 panels.
+The estimate cap is explicitly revised to 12 GiB; the estimator and accuracy
+gates are unchanged. See the study report for review and resource evidence.
+
+**Active goal: Capytaine reference qualification.** Regenerate a fresh freeze
+under the current contract before reference generation. Execute:
 
 ```powershell
 uv run --locked --group correlation python -m tests.validation reference --frozen artifacts/validation/frozen.json --output artifacts/validation/reference.json

@@ -1,0 +1,117 @@
+{
+  "study": "reference-study-001",
+  "decision": "unqualified",
+  "complete": true,
+  "completed_physics_calls": 132,
+  "current_commit": "4d9428ad82ee3f5f70355f62ccd71002e87de842",
+  "elapsed_seconds": 155.75230200000806,
+  "gates": {
+    "Ainf": {
+      "passed": false,
+      "previous_increment_max_ratio": 10570.122232495924,
+      "latest_increment_max_ratio": 2877.086387694678,
+      "trend_passed": false
+    },
+    "A": {
+      "passed": false,
+      "previous_increment_max_ratio": 8323.773668619113,
+      "latest_increment_max_ratio": 1921.062420458436,
+      "trend_passed": false
+    },
+    "B": {
+      "passed": false,
+      "previous_increment_max_ratio": 5513.876899378016,
+      "latest_increment_max_ratio": 1452.8690840630131,
+      "trend_passed": false
+    },
+    "diffraction": {
+      "passed": false,
+      "previous_increment_max_ratio": 141.7852265904186,
+      "latest_increment_max_ratio": 66.743254310538,
+      "trend_passed": false
+    },
+    "FK": {
+      "passed": false,
+      "previous_increment_max_ratio": 86.28525548235501,
+      "latest_increment_max_ratio": 20.05863122622019,
+      "trend_passed": true
+    },
+    "excitation": {
+      "passed": false,
+      "previous_increment_max_ratio": 125.0216899436774,
+      "latest_increment_max_ratio": 66.6378259726499,
+      "trend_passed": true
+    },
+    "RAO": {
+      "passed": false,
+      "previous_increment_max_ratio": 12119.687836271869,
+      "latest_increment_max_ratio": 2655.58262924384,
+      "trend_passed": true
+    }
+  },
+  "bundle_sha256": "ef26b42519bb95811869a06a2808bc5257663171c0127a6f342d80bb277344cc",
+  "families": {
+    "Ainf": {
+      "failing_entries": 36,
+      "entries": 36,
+      "worst_index": [
+        4,
+        3
+      ]
+    },
+    "A": {
+      "failing_entries": 106,
+      "entries": 108,
+      "worst_index": [
+        0,
+        3,
+        4
+      ]
+    },
+    "B": {
+      "failing_entries": 96,
+      "entries": 108,
+      "worst_index": [
+        2,
+        2,
+        3
+      ]
+    },
+    "diffraction": {
+      "failing_entries": 52,
+      "entries": 54,
+      "worst_index": [
+        2,
+        0,
+        1
+      ]
+    },
+    "FK": {
+      "failing_entries": 36,
+      "entries": 54,
+      "worst_index": [
+        2,
+        0,
+        1
+      ]
+    },
+    "excitation": {
+      "failing_entries": 50,
+      "entries": 54,
+      "worst_index": [
+        2,
+        2,
+        4
+      ]
+    },
+    "RAO": {
+      "failing_entries": 46,
+      "entries": 54,
+      "worst_index": [
+        2,
+        0,
+        3
+      ]
+    }
+  }
+}

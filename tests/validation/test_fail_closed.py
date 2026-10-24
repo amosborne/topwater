@@ -100,12 +100,39 @@ def test_actual_wet_count_cannot_silently_drop_finest_mesh():
         study_preflight(68,[1,2,3,4],8*1024**3)
 
 
+def test_missing_graded_mesh_cannot_substitute_midpoint():
+    from .common import reference_plan
+    spec=dict(body_subdivision_levels=[1,2,3],mesh_policy='graded-planar',
+        maximum_estimated_workspace_bytes=8*1024**3)
+    with pytest.raises(ValueError,match='midpoint substitution forbidden'):
+        reference_plan(dict(wetted_triangles=np.zeros((1,3,3))),spec)
+
+
 def test_missing_finite_cases_cannot_qualify_reference():
     contract=dict(reference_numerics=dict(body_subdivision_levels=[1,2,3],capytaine_version='3.0.0'),
                   cases=dict(frequencies_hz=[.1],propagation_headings_rad=[0.]))
     report=dict(levels=[dict(level=n,complete=True) for n in [1,2,3]],capytaine_version='3.0.0')
     with pytest.raises((ValueError,KeyError)):
         require_qualified(report,dict(Ainf=np.ones((3,6,6))),contract,{})
+
+
+def test_native_initialization_and_solves_share_declared_thread_limit(monkeypatch):
+    from contextlib import contextmanager
+    from . import reference
+    events=[]
+    monkeypatch.setattr(reference,'save',lambda *a:events.append('save'))
+    monkeypatch.setattr(reference,'import_module',lambda name:events.append('load native'))
+    @contextmanager
+    def limit(threads):
+        assert threads==1
+        events.append('limit')
+        yield
+        events.append('restore')
+    monkeypatch.setattr(reference,'threadpool_limits',limit)
+    monkeypatch.setattr(reference,'threadpool_info',lambda:[dict(num_threads=1)])
+    monkeypatch.setattr(reference,'_generate',lambda *a:events.append('initialize and solve'))
+    reference.generate(SimpleNamespace(output='unused'),contract_data(),{},{},{},{})
+    assert events==['save','load native','limit','save','initialize and solve','restore']
 
 
 def test_corrupted_or_wrong_kind_artifact_fails(tmp_path):
