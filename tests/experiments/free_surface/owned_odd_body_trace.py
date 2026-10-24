@@ -37,21 +37,20 @@ def self_scalar_trace(panels, owners, barycentric):
                         chart_edge_metric_max_relative_diameter=relative_metric_error)
 
 
-def owned_odd_trace(panels, sigma, points, owners, barycentric):
-    """Return R sigma and its fluid-outward normal, without normal offsets.
+def owned_odd_maps(panels, points, owners, barycentric):
+    """Return R/J maps and their true fluid-outward normal, without offsets.
 
     Only the flat self-panel normal PV is replaced by its analytic value zero,
     with exactly one +1/2 domain jump. Every other pair keeps bulk guards.
     Self scalar S uses the strict owned-interior API in its intrinsic chart.
     Original positive barycentrics are mandatory; no world point is projected.
     """
-    points, owners, sigma = np.asarray(points), np.asarray(owners), np.asarray(sigma)
+    points, owners = np.asarray(points), np.asarray(owners)
     if (not isinstance(panels, TrianglePanels) or owners.ndim != 1
             or points.shape != (len(owners), 3) or owners.dtype.kind not in 'iu'
             or np.any(owners < 0) or np.any(owners >= len(panels))
-            or sigma.shape != (len(panels),) or not np.isfinite(sigma).all()
             or np.iscomplexobj(points) or not np.isfinite(points).all() or np.any(points[:, 2] >= 0)):
-        raise ValueError('finite owned body-face interiors below the plane and one source field required')
+        raise ValueError('finite owned body-face interiors below the plane required')
     self_value, chart_diagnostics = self_scalar_trace(panels, owners, barycentric)
     barycentric = np.asarray(barycentric)
     expected = np.einsum('mj,mjk->mk', barycentric, panels.triangles[owners])
@@ -59,8 +58,8 @@ def owned_odd_trace(panels, sigma, points, owners, barycentric):
         barycentric, abs(panels.triangles[owners]))
     if np.any(abs(points-expected) > coordinate_allowance):
         raise ValueError('world target does not correspond to its declared original barycentrics')
-    potential = np.empty(len(points), dtype=np.result_type(sigma, float))
-    normal = np.empty_like(potential)
+    potential = np.zeros((len(points), len(panels)))
+    normal = np.zeros_like(potential)
     pairs = 0
     for owner in np.unique(owners):
         indices = np.flatnonzero(owners == owner)
@@ -69,18 +68,26 @@ def owned_odd_trace(panels, sigma, points, owners, barycentric):
         for first in range(0, len(indices), 128):
             ids = indices[first:first+128]
             target = points[ids]
-            value = self_value[ids]*sigma[owner]
-            derivative = np.full(len(ids), .5*sigma[owner], dtype=normal.dtype)
+            potential[ids, owner] = self_value[ids]
+            normal[ids, owner] = .5
             if other is not None:
                 influence = checked_influence(target, other)
-                value += influence.single_layer@sigma[mask]
-                derivative += np.einsum('mni,i->mn', influence.gradient_single_layer,
-                                        panels.normals[owner])@sigma[mask]
+                potential[np.ix_(ids, mask)] = influence.single_layer
+                normal[np.ix_(ids, mask)] = np.einsum('mni,i->mn', influence.gradient_single_layer,
+                                                     panels.normals[owner])
             image = checked_influence(target*[1., 1., -1.], panels)
-            value -= image.single_layer@sigma
-            derivative -= np.einsum('mni,i->mn', image.gradient_single_layer,
-                                    panels.normals[owner]*[1., 1., -1.])@sigma
-            potential[ids], normal[ids] = value, derivative
+            potential[ids] -= image.single_layer
+            normal[ids] -= np.einsum('mni,i->mn', image.gradient_single_layer,
+                                    panels.normals[owner]*[1., 1., -1.])
             pairs += len(ids)*2*len(panels)
     return potential, normal, dict(source_pairs=pairs, analytic_self_normal_jumps=len(points),
         **chart_diagnostics, maximum_world_barycentric_difference=float(abs(points-expected).max(initial=0)))
+
+
+def owned_odd_trace(panels, sigma, points, owners, barycentric):
+    """Apply the single owned map implementation to one finite source field."""
+    sigma = np.asarray(sigma)
+    if sigma.shape != (len(panels),) or not np.isfinite(sigma).all():
+        raise ValueError('one finite source field required')
+    potential, normal, diagnostics = owned_odd_maps(panels, points, owners, barycentric)
+    return potential@sigma, normal@sigma, diagnostics

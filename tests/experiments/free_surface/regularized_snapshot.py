@@ -29,7 +29,9 @@ class SavedPhysicalFlux:
         self.patch = patch
         self.shape = tuple(int(v) for v in arrays['weak_full_shape'])
         self.fft_shape = tuple(int(v) for v in arrays['weak_fft_shape'])
-        kernel = arrays['weak_full_kernel']
+        self.kernel = arrays['weak_full_kernel'].copy()
+        self.spacing = (float(patch.x[1]-patch.x[0]), float(patch.y[1]-patch.y[0]))
+        kernel = self.kernel
         self.rows = arrays['physical_contact_active_rows'].copy()
         self.contact = arrays['physical_contact_rows'].copy()
         if self.shape != (len(patch.y)-2, len(patch.x)-2) or self.contact.shape != (len(self.rows), len(patch.active_nodes)):
@@ -45,6 +47,22 @@ class SavedPhysicalFlux:
         self.audit_error = float(abs(replay-arrays['operator_audit_loads']).max())
         np.testing.assert_allclose(replay, arrays['operator_audit_loads'], rtol=1e-11, atol=1e-12)
 
+    def apply_host(self, values):
+        """Owned recorded FULL-plane FFT action; no physical row replacement."""
+        values = np.asarray(values)
+        if values.ndim not in (2, 3) or values.shape[:2] != self.shape or not np.isfinite(values).all():
+            raise ValueError('finite full-interior tensor with matching recorded dimensions required')
+        if np.iscomplexobj(values):
+            return self.apply_host(values.real)+1j*self.apply_host(values.imag)
+        single = values.ndim == 2
+        if single:
+            values = values[:, :, None]
+        padded = np.zeros((*self.fft_shape, values.shape[2]))
+        padded[:self.shape[0], :self.shape[1]] = values
+        result = irfft2(rfft2(padded, axes=(0, 1))*self.spectrum[:, :, None],
+            s=self.fft_shape, axes=(0, 1))[:self.shape[0], :self.shape[1]]
+        return result[:, :, 0] if single else result
+
     def __call__(self, values):
         if np.iscomplexobj(values):
             return self(values.real)+1j*self(values.imag)
@@ -52,10 +70,7 @@ class SavedPhysicalFlux:
         if vector:
             values = values[:, None]
         expanded = self.patch.expand(values)[self.patch.interior_nodes].reshape(*self.shape, -1)
-        padded = np.zeros((*self.fft_shape, values.shape[1]))
-        padded[:self.shape[0], :self.shape[1]] = expanded
-        result = irfft2(rfft2(padded, axes=(0, 1))*self.spectrum[:, :, None],
-            s=self.fft_shape, axes=(0, 1))[:self.shape[0], :self.shape[1]].reshape(-1, values.shape[1])[self.active].copy()
+        result = self.apply_host(expanded).reshape(-1, values.shape[1])[self.active].copy()
         result[self.rows] = self.contact @ values
         return result[:, 0] if vector else result
 
