@@ -1,0 +1,15 @@
+{
+  "url": "https://github.com/amosborne/WEC-Sim",
+  "origin": "https://github.com/amosborne/WEC-Sim.git",
+  "upstream": "https://github.com/WEC-Sim/WEC-Sim.git",
+  "checkout": "artifacts/dependencies/topwater-wec-sim",
+  "project_branch": "topwater/reference-v7.1.0",
+  "upstream_release": "v7.1.0",
+  "base_commit": "a23d2993807410fe78cc63546c1ba9d81912024f",
+  "current_commit": "a23d2993807410fe78cc63546c1ba9d81912024f",
+  "published_project_branch": true,
+  "clean_checkout": true,
+  "engine_corrections": 0,
+  "numerically_tested": false,
+  "publication": "Coordinator checkpoint push after expert setup; only unchanged upstream commit, no PR or main push"
+}

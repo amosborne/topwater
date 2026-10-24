@@ -1,0 +1,53 @@
+{
+    "agent_id":  "/root/wecsim_setup",
+    "agent_type":  "wecsim_expert",
+    "native_developer_instructions_recognized":  true,
+    "files_read":  [
+                       ".codex/agents/wecsim_expert.toml",
+                       "docs/experts/wecsim_expert/README.md",
+                       "docs/experts/wecsim_expert/current-state.md",
+                       "docs/experts/wecsim_expert/marine-gyro-leads.md",
+                       "docs/experts/shared-contract.md",
+                       "docs/experts/coordination.md",
+                       "docs/experts/setup-instructions.md",
+                       "docs/capytaine-wecsim-workflow.md",
+                       "C:/Users/alex/.codex/skills/matlab/SKILL.md",
+                       "C:/Users/alex/marine-gyro/data/case_study.json",
+                       "C:/Users/alex/marine-gyro/artifacts/dependencies/WEC-Sim/.git/config",
+                       "C:/Users/alex/marine-gyro/reports/wec-sim/run_case.m",
+                       "C:/Users/alex/marine-gyro/reports/wec-sim/marineKinYaw.m",
+                       "C:/Users/alex/marine-gyro/docs/branch-review.md"
+                   ],
+    "maintained_checkout_source_files_read_or_targeted_search":  [
+                                                                     "artifacts/dependencies/topwater-wec-sim/source/functions/simulink/model/kinYawTransformNoB2B.m",
+                                                                     "artifacts/dependencies/topwater-wec-sim/source/functions/simulink/model/irregnLYaw.m",
+                                                                     "artifacts/dependencies/topwater-wec-sim/source/functions/stopWecSim.m",
+                                                                     "artifacts/dependencies/topwater-wec-sim/source/functions/postProcessWecSim.m",
+                                                                     "artifacts/dependencies/topwater-wec-sim/source/functions/BEMIO/readCAPYTAINE.m",
+                                                                     "artifacts/dependencies/topwater-wec-sim/source/functions/initializeWecSim.m",
+                                                                     "artifacts/dependencies/topwater-wec-sim/source/objects/waveClass.m",
+                                                                     "artifacts/dependencies/topwater-wec-sim/source/objects/bodyClass.m",
+                                                                     "artifacts/dependencies/topwater-wec-sim/source/objects/responseClass.m"
+                                                                 ],
+    "git_metadata_inspected_via_git":  [
+                                           "artifacts/dependencies/wec-sim-v7.1.0 HEAD",
+                                           "artifacts/dependencies/topwater-wec-sim HEAD/status/remotes/branch",
+                                           "C:/Users/alex/marine-gyro/artifacts/dependencies/WEC-Sim HEAD/status/remotes/branch"
+                                       ],
+    "missing_paths_attempted":  [
+                                    "artifacts/dependencies/WEC-Sim",
+                                    "artifacts/dependencies/topwater-wec-sim/source/functions/simulink/model/eulXYZ2RotMat.m",
+                                    "artifacts/dependencies/topwater-wec-sim/source/functions/simulink/model/rotMatXYZ2Eul.m"
+                                ],
+    "changed_kb_files":  [
+                             "docs/experts/wecsim_expert/current-state.md",
+                             "docs/experts/wecsim_expert/native-setup-2026-10-24.md",
+                             "docs/experts/wecsim_expert/native-setup-read-manifest.json"
+                         ],
+    "numerical_jobs_run":  0,
+    "engine_corrections":  0,
+    "unresolved_setup_issues":  [
+
+                                ],
+    "deferred_followup":  "Four independent reproductions require coordinator sole numerical lease and independent review of confirmed corrections"
+}

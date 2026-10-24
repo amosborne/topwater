@@ -1,0 +1,103 @@
+{
+  "parent_thread_id": "01a16e43-80df-71c3-b381-492c683bae13",
+  "source": "Exact local native parent rollout, no full prompts copied",
+  "spawn_receipts": [
+    {
+      "timestamp": "2026-10-24T14:14:56.995Z",
+      "call_id": "call_9a58145f984944d5a70a303ef5571ea2",
+      "tool": "spawn_agent",
+      "agent_type": "capytaine_expert",
+      "task_name": "capytaine_setup",
+      "parameter_names": [
+        "agent_type",
+        "message",
+        "task_name"
+      ],
+      "raw_arguments_sha256": "0883749c2e46787c54d6e99c0012b5a7c0db4994ff457c93a226ba49e6f6be39",
+      "tool_response": "{\"task_name\":\"/root/capytaine_setup\"}"
+    },
+    {
+      "timestamp": "2026-10-24T14:15:11.074Z",
+      "call_id": "call_5e06da653f784d3f9569ebfb4d21a0a0",
+      "tool": "spawn_agent",
+      "agent_type": "wecsim_expert",
+      "task_name": "wecsim_setup",
+      "parameter_names": [
+        "agent_type",
+        "message",
+        "task_name"
+      ],
+      "raw_arguments_sha256": "7e55896d38ddabd608d2b822be77c726413b0a7a0d86479c97ee12e99f34c222",
+      "tool_response": "{\"task_name\":\"/root/wecsim_setup\"}"
+    },
+    {
+      "timestamp": "2026-10-24T14:15:18.012Z",
+      "call_id": "call_a57b64ccb83f42a19d9019fcb7bbd0a6",
+      "tool": "spawn_agent",
+      "agent_type": "topwater_expert",
+      "task_name": "topwater_setup",
+      "parameter_names": [
+        "agent_type",
+        "message",
+        "task_name"
+      ],
+      "raw_arguments_sha256": "cb89b7fd1969dbcd2fa025461afaadbd3f32cffaabea8b89e3ee03ae970250ff",
+      "tool_response": "{\"task_name\":\"/root/topwater_setup\"}"
+    },
+    {
+      "timestamp": "2026-10-24T14:16:53.458Z",
+      "call_id": "call_1b02f1a5135143b3bb110fb3ebf50eb3",
+      "tool": "spawn_agent",
+      "agent_type": "numerical_methods_researcher",
+      "task_name": "researcher_setup",
+      "parameter_names": [
+        "agent_type",
+        "message",
+        "task_name"
+      ],
+      "raw_arguments_sha256": "b9a7eff942693768a4da96f292a8ead922562e256cb91a5924e15be34546080d",
+      "tool_response": "{\"task_name\":\"/root/researcher_setup\"}"
+    }
+  ],
+  "child_session_metadata": [
+    {
+      "thread_id": "01a16e43-c317-7bc3-b80a-2831a92a7c6d",
+      "parent_thread_id": "01a16e43-80df-71c3-b381-492c683bae13",
+      "agent_path": "/root/capytaine_setup",
+      "agent_role": "capytaine_expert",
+      "filename": "rollout-2026-10-24T07-14-57-01a16e43-c317-7bc3-b80a-2831a92a7c6d.jsonl",
+      "selected_model": "gpt-6.1-sol",
+      "reasoning_effort": "medium"
+    },
+    {
+      "thread_id": "01a16e43-fa08-7cd2-90c7-6cd888a588a3",
+      "parent_thread_id": "01a16e43-80df-71c3-b381-492c683bae13",
+      "agent_path": "/root/wecsim_setup",
+      "agent_role": "wecsim_expert",
+      "filename": "rollout-2026-10-24T07-15-11-01a16e43-fa08-7cd2-90c7-6cd888a588a3.jsonl",
+      "selected_model": "gpt-6.1-sol",
+      "reasoning_effort": "medium"
+    },
+    {
+      "thread_id": "01a16e44-151f-7ac2-8066-9da1dff46d11",
+      "parent_thread_id": "01a16e43-80df-71c3-b381-492c683bae13",
+      "agent_path": "/root/topwater_setup",
+      "agent_role": "topwater_expert",
+      "filename": "rollout-2026-10-24T07-15-18-01a16e44-151f-7ac2-8066-9da1dff46d11.jsonl",
+      "selected_model": "gpt-6.1-sol",
+      "reasoning_effort": "medium"
+    },
+    {
+      "thread_id": "01a16e45-8a34-7651-b056-f2b166ae6342",
+      "parent_thread_id": "01a16e43-80df-71c3-b381-492c683bae13",
+      "agent_path": "/root/researcher_setup",
+      "agent_role": "numerical_methods_researcher",
+      "filename": "rollout-2026-10-24T07-16-53-01a16e45-8a34-7651-b056-f2b166ae6342.jsonl",
+      "selected_model": "gpt-6.1-sol",
+      "reasoning_effort": "medium"
+    }
+  ],
+  "parent_selected_model": "gpt-6.1-sol",
+  "parent_reasoning_effort": "medium",
+  "verified_parent_settings_inheritance": true
+}

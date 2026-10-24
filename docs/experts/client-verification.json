@@ -1,0 +1,45 @@
+{
+  "client": "codex-cli0.164.0",
+  "configuration_format": "standalone .codex/agents/*.toml",
+  "config_validation": "app-server --strict-config --print-startup-config exited0",
+  "native_selector_discovery": true,
+  "discovered_roles": [
+    "capytaine_expert",
+    "wecsim_expert",
+    "topwater_expert",
+    "numerical_methods_researcher"
+  ],
+  "role_files": [
+    {
+      "name": "capytaine_expert",
+      "path": ".codex/agents/capytaine_expert.toml",
+      "sha256": "63181ec18330c0c067b9b8b3fee0dccd04150a32b269dc3407c0d3f0cd9a1d17",
+      "model_override": false
+    },
+    {
+      "name": "wecsim_expert",
+      "path": ".codex/agents/wecsim_expert.toml",
+      "sha256": "4b80bec057697e091f4f62b25928e5f885e9c4d703f6de9ee46c0f80d3083095",
+      "model_override": false
+    },
+    {
+      "name": "topwater_expert",
+      "path": ".codex/agents/topwater_expert.toml",
+      "sha256": "568dbb6a17a96f09ec75ac55399e20555e68eaebc5cceeb0cb622dc708407620",
+      "model_override": false
+    },
+    {
+      "name": "numerical_methods_researcher",
+      "path": ".codex/agents/numerical_methods_researcher.toml",
+      "sha256": "5e104376c84260d658d35674984b2dcc4dac5285763fdf8d4f91b5a626659733",
+      "model_override": false
+    }
+  ],
+  "source_document": "https://learn.chatgpt.com/docs/agent-configuration/subagents",
+  "activation": "All four exact native agent_type invocations confirmed and returned; native CLI session31290 terminalexit0",
+  "numerical_jobs_started": false,
+  "activation_evidence": "docs/experts/native-activation.json",
+  "current_chat_limit": "Pre-existing host spawn wrapper has no agent_type parameter. Native installed CLI named-role invocation was used and verified; no claim of hot-reloading that old host schema.",
+  "raw_spawn_and_session_evidence": "docs/experts/native-spawn-receipts.json",
+  "actual_parent_settings_inheritance_verified": true
+}

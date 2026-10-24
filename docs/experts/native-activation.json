@@ -1,0 +1,288 @@
+{
+  "schema_version": 1,
+  "recorded_date": "2026-10-24",
+  "project_root": "C:/Users/alex/topwater",
+  "scope": "ONLY native expert-agent setup; downstream simulation not resumed",
+  "activation_evidence_basis": "Exact custom agent_type spawn calls and canonical IDs returned by the native client plus child developer-instruction confirmations. Spawn responses expose canonical IDs; independently inspected forensic session metadata additionally provides UUID/role/parent bindings in native-spawn-receipts.json.",
+  "model_or_reasoning_overrides": false,
+  "concurrency": {
+    "maximum_children_running": 3,
+    "spawn_order": [
+      "/root/capytaine_setup",
+      "/root/wecsim_setup",
+      "/root/topwater_setup",
+      "/root/researcher_setup"
+    ],
+    "fourth_started_after": "/root/capytaine_setup FINAL_ANSWER"
+  },
+  "constraints": {
+    "numerical_execution_lease_granted": false,
+    "numerical_jobs_run": 0,
+    "matlab_runs": 0,
+    "solver_edits": 0,
+    "engine_corrections": 0,
+    "parent_commits_or_pushes": 0,
+    "new_goals_created": 0,
+    "main_goal_changed": false
+  },
+  "agents": [
+    {
+      "agent_id": "/root/capytaine_setup",
+      "agent_type": "capytaine_expert",
+      "role_name": "capytaine_expert",
+      "native_activation": {
+        "spawn_agent_agent_type": "capytaine_expert",
+        "registry_call_succeeded": true,
+        "developer_instructions_delivered_and_recognized": true,
+        "evidence": "docs/experts/capytaine_expert/native-setup-2026-10-24.md"
+      },
+      "confirmation_status": "confirmed_returned",
+      "task_ownership": "Producer geometry/native exports/readiness/interface; BEMIO remains consumer-owned",
+      "exact_paths_read": [
+        ".codex/agents/capytaine_expert.toml",
+        "docs/experts/capytaine_expert/README.md",
+        "docs/experts/capytaine_expert/current-state.md",
+        "docs/experts/shared-contract.md",
+        "docs/experts/coordination.md",
+        "reference/capytaine/canonical-boat.json",
+        "reference/capytaine/export_case.py",
+        "docs/capytaine-wecsim-environment.json",
+        ".venv/Lib/site-packages/capytaine-3.0.0.dist-info/METADATA",
+        ".venv/Lib/site-packages/capytaine/io/legacy.py",
+        ".venv/Lib/site-packages/capytaine/io/xarray.py",
+        "artifacts/dependencies/wec-sim-v7.1.0/examples/BEMIO/CAPYTAINE/sphere/main.py",
+        "artifacts/dependencies/wec-sim-v7.1.0/examples/BEMIO/CAPYTAINE/sphere/bemio.m"
+      ],
+      "role_instructions_recognized": [
+        "Producer ownership and consumer BEMIO boundary",
+        "No numerical lease or source changes",
+        "Immutable running inputs and independent physical-result review",
+        "Inherited settings and durable file context; Topwater held"
+      ],
+      "changed_knowledge_files": [
+        "docs/experts/capytaine_expert/current-state.md",
+        "docs/experts/capytaine_expert/native-setup-2026-10-24.md"
+      ],
+      "unresolved_setup_issues": [],
+      "deferred_reference_questions": [
+        "Missing incident_packet/export_controls in unfinished exporter",
+        "Joint transient timeline, frequency coverage, full inertia/Ainf mapping and executed interface approval pending",
+        "Consumer confirmed separate hydrostatics subdirectory support; no exporter edit made"
+      ],
+      "native_session_uuid": "01a16e43-c317-7bc3-b80a-2831a92a7c6d"
+    },
+    {
+      "agent_id": "/root/wecsim_setup",
+      "agent_type": "wecsim_expert",
+      "role_name": "wecsim_expert",
+      "native_activation": {
+        "spawn_agent_agent_type": "wecsim_expert",
+        "registry_call_succeeded": true,
+        "developer_instructions_delivered_and_recognized": true,
+        "evidence": "docs/experts/wecsim_expert/native-setup-2026-10-24.md"
+      },
+      "confirmation_status": "confirmed_returned",
+      "task_ownership": "BEMIO/maintained fork/source map/four-lead independent reproduction plans; no reproductions now",
+      "exact_paths_read": [
+        ".codex/agents/wecsim_expert.toml",
+        "docs/experts/wecsim_expert/README.md",
+        "docs/experts/wecsim_expert/current-state.md",
+        "docs/experts/wecsim_expert/marine-gyro-leads.md",
+        "docs/experts/shared-contract.md",
+        "docs/experts/coordination.md",
+        "docs/experts/setup-instructions.md",
+        "docs/capytaine-wecsim-workflow.md",
+        "C:/Users/alex/.codex/skills/matlab/SKILL.md",
+        "C:/Users/alex/marine-gyro/data/case_study.json",
+        "C:/Users/alex/marine-gyro/artifacts/dependencies/WEC-Sim/.git/config",
+        "C:/Users/alex/marine-gyro/reports/wec-sim/run_case.m",
+        "C:/Users/alex/marine-gyro/reports/wec-sim/marineKinYaw.m",
+        "C:/Users/alex/marine-gyro/docs/branch-review.md"
+      ],
+      "role_instructions_recognized": [
+        "Native BEMIO/fork/startup/memory/six-DOF/output ownership",
+        "No numerical lease; idle MATLAB is not permission",
+        "Four marine-gyro leads are hypotheses",
+        "Independent review required for confirmed physical corrections; no broad audit",
+        "Inherited settings and durable file context"
+      ],
+      "changed_knowledge_files": [
+        "docs/experts/wecsim_expert/current-state.md",
+        "docs/experts/wecsim_expert/native-setup-2026-10-24.md",
+        "docs/experts/wecsim_expert/native-setup-read-manifest.json"
+      ],
+      "unresolved_setup_issues": [],
+      "targeted_source_read_paths": [
+        "artifacts/dependencies/topwater-wec-sim/source/functions/simulink/model/kinYawTransformNoB2B.m",
+        "artifacts/dependencies/topwater-wec-sim/source/functions/simulink/model/irregnLYaw.m",
+        "artifacts/dependencies/topwater-wec-sim/source/functions/stopWecSim.m",
+        "artifacts/dependencies/topwater-wec-sim/source/functions/postProcessWecSim.m",
+        "artifacts/dependencies/topwater-wec-sim/source/functions/BEMIO/readCAPYTAINE.m",
+        "artifacts/dependencies/topwater-wec-sim/source/functions/initializeWecSim.m",
+        "artifacts/dependencies/topwater-wec-sim/source/objects/waveClass.m",
+        "artifacts/dependencies/topwater-wec-sim/source/objects/bodyClass.m",
+        "artifacts/dependencies/topwater-wec-sim/source/objects/responseClass.m"
+      ],
+      "git_metadata_inspected": [
+        "artifacts/dependencies/wec-sim-v7.1.0 HEAD",
+        "artifacts/dependencies/topwater-wec-sim HEAD/status/remotes/branch",
+        "C:/Users/alex/marine-gyro/artifacts/dependencies/WEC-Sim HEAD/status/remotes/branch"
+      ],
+      "attempted_missing_paths": [
+        "artifacts/dependencies/WEC-Sim",
+        "artifacts/dependencies/topwater-wec-sim/source/functions/simulink/model/eulXYZ2RotMat.m",
+        "artifacts/dependencies/topwater-wec-sim/source/functions/simulink/model/rotMatXYZ2Eul.m"
+      ],
+      "fork": {
+        "url": "https://github.com/amosborne/WEC-Sim",
+        "checkout": "artifacts/dependencies/topwater-wec-sim",
+        "origin": "https://github.com/amosborne/WEC-Sim.git",
+        "upstream": "https://github.com/WEC-Sim/WEC-Sim.git",
+        "branch": "topwater/reference-v7.1.0",
+        "base_commit": "a23d2993807410fe78cc63546c1ba9d81912024f",
+        "current_commit": "a23d2993807410fe78cc63546c1ba9d81912024f",
+        "release": "v7.1.0",
+        "clean_reported_by_owner": true,
+        "project_branch_published": false,
+        "numerically_tested": false
+      },
+      "marine_gyro": {
+        "recorded_commit": "0753b2e47f2457c078751dcfe5d251d1767b80ab",
+        "actual_checkout_head": "0753b2e47f2457c078751dcfe5d251d1767b80ab",
+        "verification": "Independent read-only git queries; clean main, official origin",
+        "four_leads_status": "unconfirmed_unexecuted"
+      },
+      "native_session_uuid": "01a16e43-fa08-7cd2-90c7-6cd888a588a3"
+    },
+    {
+      "agent_id": "/root/topwater_setup",
+      "agent_type": "topwater_expert",
+      "role_name": "topwater_expert",
+      "native_activation": {
+        "spawn_agent_agent_type": "topwater_expert",
+        "registry_call_succeeded": true,
+        "developer_instructions_delivered_and_recognized": true,
+        "evidence": "docs/experts/topwater_expert/held-source-map.md"
+      },
+      "confirmation_status": "confirmed_returned",
+      "task_ownership": "Documentation-only governing-equation/code/evidence map; all implementation/performance held",
+      "exact_paths_read": [
+        ".codex/agents/topwater_expert.toml",
+        "docs/experts/topwater_expert/README.md",
+        "docs/experts/topwater_expert/current-state.md",
+        "docs/experts/shared-contract.md",
+        "docs/experts/coordination.md",
+        "docs/validation-reset.md",
+        "docs/mixed-pressure-001.md",
+        "docs/time-domain-baseline-goal.md",
+        "docs/reference-convergence.md",
+        "docs/mixed-pressure-protocol.md",
+        "docs/validation.md",
+        "docs/branches.md",
+        "docs/capytaine-wecsim-workflow.md"
+      ],
+      "role_instructions_recognized": [
+        "Implementation requires separate authorization",
+        "No source inspection, tests, simulations or performance campaign",
+        "External loads cannot replace independent Topwater physics",
+        "Historical failures remain unqualified; inherited settings; durable files"
+      ],
+      "changed_knowledge_files": [
+        "docs/experts/topwater_expert/current-state.md",
+        "docs/experts/topwater_expert/held-source-map.md"
+      ],
+      "unresolved_setup_issues": [],
+      "additional_targeted_documentation_search_paths": [
+        "docs/fixed-asset-preflight-001.md",
+        "docs/pressure-discrepancy-protocol.md",
+        "docs/reset-review.md",
+        "docs/experts/setup-instructions.md"
+      ],
+      "native_session_uuid": "01a16e44-151f-7ac2-8066-9da1dff46d11"
+    },
+    {
+      "agent_id": "/root/researcher_setup",
+      "agent_type": "numerical_methods_researcher",
+      "role_name": "numerical_methods_researcher",
+      "native_activation": {
+        "spawn_agent_agent_type": "numerical_methods_researcher",
+        "registry_call_succeeded": true,
+        "developer_instructions_delivered_and_recognized": true,
+        "evidence": "docs/experts/numerical_methods_researcher/native-setup-2026-10-24.md"
+      },
+      "confirmation_status": "confirmed_returned",
+      "task_ownership": "Reusable proposal template and focused local-calm incoming-wave/IRF-padding question",
+      "exact_paths_read": [
+        ".codex/agents/numerical_methods_researcher.toml",
+        "docs/experts/numerical_methods_researcher/README.md",
+        "docs/experts/numerical_methods_researcher/current-state.md",
+        "docs/experts/shared-contract.md",
+        "docs/experts/coordination.md",
+        "docs/experts/capytaine_expert/native-setup-2026-10-24.md",
+        "artifacts/dependencies/wec-sim-v7.1.0/source/objects/bodyClass.m",
+        "artifacts/dependencies/wec-sim-v7.1.0/source/objects/waveClass.m"
+      ],
+      "role_instructions_recognized": [
+        "Evidence-backed bounded proposals; coordinator selects experiments",
+        "Reference experts own implementation",
+        "No broad search, experiment or solver edits; no numerical lease",
+        "Source observations are not reproduced defects; inherited settings; durable files"
+      ],
+      "changed_knowledge_files": [
+        "docs/experts/numerical_methods_researcher/current-state.md",
+        "docs/experts/numerical_methods_researcher/proposal-template.md",
+        "docs/experts/numerical_methods_researcher/native-setup-2026-10-24.md"
+      ],
+      "unresolved_setup_issues": [],
+      "native_session_uuid": "01a16e45-8a34-7651-b056-f2b166ae6342"
+    }
+  ],
+  "unresolved_setup_issues": [],
+  "deferred_work": "Separate bounded assignment and sole execution lease before reproductions or simulations; independent review before relying on consequential fixes. Topwater implementation held.",
+  "protected_files_baseline": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "0255FE5D2D02A2CA5EC93DA652442CF9C55B2FA01DA573F65BEA7B3C42021C90"
+    },
+    {
+      "path": "docs/checkpoint-handoff.md",
+      "sha256": "286103E94F97F8F494783A5E2D2A050999AC64CCE76580A337653B728161F20C"
+    },
+    {
+      "path": "docs/experts/execution-state.json",
+      "sha256": "F4F3C93E4B6D319874D971F01869ABAC1FB0D457CF4A7935A08E4B0558125155"
+    },
+    {
+      "path": "docs/experts/shared-contract.md",
+      "sha256": "BEA8DDE00CC5201C58DFB9A646101B70CA14B24D7711AB470CB8EC0AB87DDF02"
+    },
+    {
+      "path": "reference/capytaine/export_case.py",
+      "sha256": "A1FEB6E8581695C1A7562BF1E129BBD609F96B54AB7DCAC25DA9B5ECDAA92942"
+    }
+  ],
+  "protected_file_verification": "All listed SHA256 hashes unchanged after expert setup",
+  "protected_files_after": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "0255FE5D2D02A2CA5EC93DA652442CF9C55B2FA01DA573F65BEA7B3C42021C90"
+    },
+    {
+      "path": "docs/checkpoint-handoff.md",
+      "sha256": "286103E94F97F8F494783A5E2D2A050999AC64CCE76580A337653B728161F20C"
+    },
+    {
+      "path": "docs/experts/execution-state.json",
+      "sha256": "F4F3C93E4B6D319874D971F01869ABAC1FB0D457CF4A7935A08E4B0558125155"
+    },
+    {
+      "path": "docs/experts/shared-contract.md",
+      "sha256": "BEA8DDE00CC5201C58DFB9A646101B70CA14B24D7711AB470CB8EC0AB87DDF02"
+    },
+    {
+      "path": "reference/capytaine/export_case.py",
+      "sha256": "A1FEB6E8581695C1A7562BF1E129BBD609F96B54AB7DCAC25DA9B5ECDAA92942"
+    }
+  ],
+  "independent_followup_evidence": "native-spawn-receipts.json contains exact calls/returns and actual child role/parent/model bindings; wecsim-fork.json records later branch publication."
+}
