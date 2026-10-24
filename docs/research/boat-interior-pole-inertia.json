@@ -1,0 +1,164 @@
+{
+  "status": "Fixed interior-pole family FAILED physical gate; quadrature convergence remains unresolved",
+  "producer_commits": [
+    "d131a10 (integrated ad08304)",
+    "b52f664 (integrated 316d653)"
+  ],
+  "evidence": {
+    "artifacts\\interior-pole-inertia.json": "e6dca4c8ae63273af48cd1f1400d4a4499cdac75d41741a40a81bc04ffac36db"
+  },
+  "parents": {
+    "water": "1d08ce85d78eb1d6dad8991fd5de32e3f4ec7b2ece0212d654be7bee0687941f",
+    "phase": "d20a59d621b3eb3e1df4d9b24b70d207475f977e1b4851b739d550bfc31a4ab0",
+    "mode": "fec498d46ab11e5a2f9c02c0151701a26d15877379615db018590f347f835fb9",
+    "reference": "339b448797a12097c297ad0680f73e7670a0e498fa87805ddabb122ed60808d0"
+  },
+  "scope": "Same reference wet hull and six physical rigid-body ports; flat zero-Dirichlet plane/infinite-frequency limiting case only",
+  "placement": {
+    "alpha": 0.25,
+    "center": [
+      -0.7681236783841704,
+      0.22156567415041745,
+      -0.07772381774994984
+    ],
+    "unique_wet_vertices": 46,
+    "exact_center_rational": [
+      "-318257579080576841/414331165718085632",
+      "367206256215424001/1657324662872342528",
+      "-257627200099173979/3314649325744685056"
+    ],
+    "constructive_tetrahedra": 68,
+    "exact_signs": "Original float poles, exact positive mean of original vertices, exact tetrahedral determinants",
+    "minimum_barycentric_margin_lower_bound": 0.24999999999986067,
+    "pole_tetra_face_clearance_lower_bound_m": 0.0001908842121211849,
+    "clearance_definition": "Exact |n dot displacement|/sum|n| <= Euclidean face distance; converted downward",
+    "pole_maximum_z_m": -0.019776752882377957,
+    "image_minimum_z_m": 0.019776752882377957
+  },
+  "quadrature": [
+    {
+      "order": 16,
+      "raw_adjoint_relative": 0.0594211675999353,
+      "positive_energy": false,
+      "rejected": {
+        "type": "ValueError",
+        "message": "point-source energy has a nonpositive diagonal"
+      }
+    },
+    {
+      "order": 32,
+      "raw_adjoint_relative": 0.017144006095480533,
+      "positive_energy": false,
+      "arithmetic_rank_threshold": 8.337475231426293e-14,
+      "resolved_rank": 66,
+      "rejected": {
+        "type": "ValueError",
+        "message": "point-source energy is negative or numerically rank deficient; no repair"
+      }
+    },
+    {
+      "order": 64,
+      "raw_adjoint_relative": 0.0014754279886948563,
+      "positive_energy": true,
+      "arithmetic_rank_threshold": 8.308473723773242e-14,
+      "resolved_rank": 68,
+      "scaled_energy_condition": 2337168.3427063716
+    }
+  ],
+  "q64": {
+    "diagonal": [
+      4.694051231156356,
+      189.4040254672166,
+      3043.6544650762403,
+      203.01778435490132,
+      7264.938686598615,
+      503.9978237792496
+    ],
+    "capytaine_comparison": {
+      "diagonal_relative_difference": [
+        -0.9532782535796676,
+        -0.698493054333878,
+        -0.6680662882828413,
+        -0.8145167799389882,
+        -0.5639238766986074,
+        -0.6151161244826274
+      ],
+      "dry_mass_whitened_difference": [
+        [
+          -0.03830967207084445,
+          0.0012546402188128064,
+          0.0654324718123085,
+          -0.005981737913723802,
+          -0.058336050700947675,
+          4.4193227976828816e-05
+        ],
+        [
+          -0.0001299671855504756,
+          -0.17551489032458853,
+          0.02116011277231377,
+          0.2981633789072084,
+          -0.001887985409244542,
+          -0.004219122520724717
+        ],
+        [
+          0.052848362557664966,
+          0.019466701284676587,
+          -2.450324109328929,
+          -0.009836592291472414,
+          0.1525679137636072,
+          0.027738657460080585
+        ],
+        [
+          -0.0010492091831166164,
+          0.29858865382916727,
+          -0.014884730393268266,
+          -0.6580203187268471,
+          -0.0329851736153999,
+          -0.001270508542932738
+        ],
+        [
+          -0.04196126367617854,
+          0.02069413728708987,
+          0.18804097463866767,
+          -0.09424767473201695,
+          -0.970129737358958,
+          -0.002026842024669407
+        ],
+        [
+          0.00023450629989298612,
+          -0.0061028795676939095,
+          0.00489001551857913,
+          0.004080044627012881,
+          -0.0018126432170403977,
+          -0.07543687465337358
+        ]
+      ],
+      "dry_mass_whitened_relative_operator_norm": 0.6737641161240262
+    },
+    "heldout_neumann_relative_rms": [
+      0.9846495985606852,
+      1.1861360146730437,
+      1.5007617348839377,
+      1.1237599450094338,
+      1.2464422000725024,
+      1.1038571494993477
+    ],
+    "heldout_pressure_port_difference_max": 368.54731002802146,
+    "stationarity_max": 2.643718577388654e-15
+  },
+  "diagnostic_cost": {
+    "driver_seconds": 5.315591000020504,
+    "peak_rss_bytes": 129273856,
+    "source_pairs": 49865216
+  },
+  "decision": "Do not promote. Test same-pole weighted normal least-squares with independent probes to distinguish sampled approximation-space inadequacy from energy-quadrature error; no placement sweep.",
+  "limitations": [
+    "One predeclared alpha=.25 interior-pole family; no placement/refinement sweep",
+    "Symmetric Green integrand defines energy; raw reciprocity retained and never repaired as an evolution operator",
+    "Fixed Gauss4 field/load controls are sampled diagnostics, not certified continuum error norms",
+    "Finite-q body energy can have placement/rank/conditioning error despite algebraic stationarity",
+    "No free-surface wave operator, new transient, nonlinear6DOF, moving-domain or performance qualification",
+    "Only q64 is positive; this does not establish energy convergence",
+    "Reject this family, not desingularized sources generally"
+  ]
+}
