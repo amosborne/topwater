@@ -1,0 +1,344 @@
+{
+  "status": "Trace projection and known-harmonic-field diagnostic; no rigid-body physical qualification",
+  "producer_commits": [
+    "4faaf10 (integrated c46373c)",
+    "481d95c (integrated f5d4f6e)",
+    "67cdd9c (integrated 0a371b0)"
+  ],
+  "evidence": {
+    "artifacts\\p1-trace-projection.json": "0145739b0197d92052a90181399f0eb534aaaab35aa943dd935ff53e7b39515c"
+  },
+  "parents": {
+    "galerkin": "c43d52b12b527d4c098f57d530b5a66b6f11784b3e47adee7f2af98918bd4bdb",
+    "family": "e6dca4c8ae63273af48cd1f1400d4a4499cdac75d41741a40a81bc04ffac36db",
+    "reference": "339b448797a12097c297ad0680f73e7670a0e498fa87805ddabb122ed60808d0",
+    "odd": "f86bc70331ad5ab73c5804894f3868ed09e1d882955ad123b724b885bc9347d5"
+  },
+  "scope": "Cached coarse original-panel P0 odd-source reconstruction, NOT converged Capytaine truth",
+  "dimensions": {
+    "coarse_source_panels": 68,
+    "physical_target_faces": 272,
+    "trace_unknowns": 115
+  },
+  "source_owner_vs_fine_normal_max": 3.8517843428675924e-13,
+  "known_rhs_q4_q8_relative_change": [
+    0.056646342172903784,
+    0.0067927309973873475,
+    0.009230906816096689,
+    0.007710074121687903,
+    0.011219297247366478,
+    0.012487875961241086
+  ],
+  "orders": [
+    {
+      "order": 4,
+      "points": 4352,
+      "seconds": 1.7756933999771718,
+      "source_diagnostics": {
+        "source_pairs": 591872,
+        "analytic_self_normal_jumps": 4352,
+        "chart_edge_metric_max_absolute": 6.106226635438361e-16,
+        "chart_edge_metric_max_relative_diameter": 2.2982426659434683e-16,
+        "maximum_world_barycentric_difference": 8.881784197001252e-16
+      },
+      "relative_trace_L2": {
+        "galerkin_minus_reference": [
+          0.2799815000344487,
+          0.1540688985245072,
+          0.1631093685253751,
+          0.25153272102540253,
+          0.22231549035147313,
+          0.29024691456812285
+        ],
+        "projection_minus_reference": [
+          0.2331811332836588,
+          0.10395550488596458,
+          0.06004288133607061,
+          0.14932951926650245,
+          0.18252990036926484,
+          0.21820826375754054
+        ],
+        "galerkin_minus_projection": [
+          0.15497160850326183,
+          0.11371226185622646,
+          0.15165592141953832,
+          0.20240900281874305,
+          0.12691340638956247,
+          0.19138554032171481
+        ]
+      },
+      "projection_orthogonality_max": 1.7780915628762273e-16,
+      "pythagorean_squared_norm_defect": [
+        6.613633252161577e-18,
+        1.7780915628762273e-17,
+        -2.7755575615628914e-17,
+        1.196959198423997e-16,
+        -4.163336342344337e-16,
+        4.5102810375396984e-17
+      ],
+      "arithmetic_ownership_gates": {
+        "mass_parity": 8.326672684688674e-17,
+        "mass_allowance": 2.541764349472488e-11,
+        "orthogonality_allowance": 1.0740916211905824e-10,
+        "pythagorean_allowance": 1.2856254819057362e-09,
+        "polynomial_port_allowance": 5.852837525933191e-06
+      },
+      "reference_normal_relative_rms": [
+        0.3357112521278032,
+        0.5306539563529173,
+        0.7303097433400452,
+        0.8517592294423246,
+        0.8009495254901365,
+        0.6636534863021499
+      ],
+      "reference_normal_max": [
+        1.4292660777289599,
+        5.335082310227124,
+        18.954284403406948,
+        10.858921668307964,
+        26.82876676078829,
+        8.24204858151088
+      ],
+      "known_harmonic_field_consistency": {
+        "scope": "Same reconstructed harmonic coarse field with its OWN normal flux, not a rigid-motion/added-mass validation",
+        "relative_trace_L2_minus_reference": [
+          0.2610763504611078,
+          0.1107508199134947,
+          0.0690708022497663,
+          0.15851981174864674,
+          0.1904438596757614,
+          0.2279197270880261
+        ],
+        "relative_trace_L2_minus_projection": [
+          0.11741984436473864,
+          0.03819682075010308,
+          0.03414129646467553,
+          0.05319046336009582,
+          0.05432954223429028,
+          0.06582215146742056
+        ],
+        "energy_solve_residual_max": 4.440892098500626e-16,
+        "energy_solve_relative_residual": [
+          1.902699915029993e-16,
+          2.5714999277862523e-16,
+          2.3523263240294033e-16,
+          2.3934107148079823e-16,
+          2.2147842062954e-16,
+          2.316268255863327e-16
+        ],
+        "diagonal_port_minus_reference": [
+          -10.03714268096499,
+          -23.21163161725474,
+          -176.35745298972506,
+          -30.68767656365901,
+          -477.5176262471632,
+          -68.99341416606717
+        ],
+        "diagonal_port_minus_projection": [
+          -4.519650933191883,
+          -10.85883277031985,
+          -152.6665989944904,
+          -23.385308900322116,
+          -432.6231128031086,
+          -39.03364572181499
+        ]
+      },
+      "polynomial_galerkin_load_reconstruction_max": 3.637978807091713e-12,
+      "polynomial_projection_load_reconstruction_max": 5.4569682106375694e-12,
+      "load_decomposition_max_closure": 7.105427357601002e-15,
+      "diagonal_load_contributions": {
+        "galerkin_minus_projection": [
+          -9.562556925243598,
+          -26.928668299383503,
+          -1063.3069322916272,
+          -46.45199721993163,
+          -561.9820457087462,
+          37.69889792942536
+        ],
+        "projection_minus_reference": [
+          -5.517491747773107,
+          -12.352798846934888,
+          -23.690853995234647,
+          -7.302367663336895,
+          -44.89451344405461,
+          -29.959768444252177
+        ],
+        "reference_integrated_minus_cached_capy_centroid": [
+          -8.031316229077547,
+          -58.22166745502068,
+          -424.793279804122,
+          -153.40895675068498,
+          -981.4307353370568,
+          -150.37460758545922
+        ]
+      }
+    },
+    {
+      "order": 8,
+      "points": 17408,
+      "seconds": 5.858680200006347,
+      "source_diagnostics": {
+        "source_pairs": 2367488,
+        "analytic_self_normal_jumps": 17408,
+        "chart_edge_metric_max_absolute": 6.106226635438361e-16,
+        "chart_edge_metric_max_relative_diameter": 2.2982426659434683e-16,
+        "maximum_world_barycentric_difference": 1.3322676295501878e-15
+      },
+      "relative_trace_L2": {
+        "galerkin_minus_reference": [
+          0.28451401124961206,
+          0.15482296573102547,
+          0.16338752015101435,
+          0.2520502471463813,
+          0.22356614593355906,
+          0.2922687423940691
+        ],
+        "projection_minus_reference": [
+          0.23973485560241445,
+          0.10647070046615932,
+          0.06237323531054552,
+          0.1522010814873715,
+          0.18426109814227182,
+          0.22105127633579907
+        ],
+        "galerkin_minus_projection": [
+          0.15321691031552007,
+          0.11240169331462854,
+          0.15101344727537835,
+          0.20090833203385666,
+          0.12660833036964558,
+          0.1911997672878418
+        ]
+      },
+      "projection_orthogonality_max": 2.727852665973529e-16,
+      "pythagorean_squared_norm_defect": [
+        -5.095750210681871e-18,
+        -3.3393426912553537e-17,
+        -2.220446049250313e-16,
+        5.204170427930421e-18,
+        1.5265566588595902e-15,
+        2.6020852139652106e-17
+      ],
+      "arithmetic_ownership_gates": {
+        "mass_parity": 2.220446049250313e-16,
+        "mass_allowance": 9.970749204344394e-11,
+        "orthogonality_allowance": 4.2133573186766316e-10,
+        "pythagorean_allowance": 5.048844593717482e-09,
+        "polynomial_port_allowance": 2.2965766292945488e-05
+      },
+      "reference_normal_relative_rms": [
+        0.38755569028920184,
+        0.5443723278011073,
+        0.7499006824918428,
+        0.863763849676203,
+        0.8142053666425407,
+        0.674287982191452
+      ],
+      "reference_normal_max": [
+        2.1277753423847026,
+        8.007879995096014,
+        28.555603176188647,
+        16.363954566788365,
+        40.35834662670799,
+        12.31906288848622
+      ],
+      "known_harmonic_field_consistency": {
+        "scope": "Same reconstructed harmonic coarse field with its OWN normal flux, not a rigid-motion/added-mass validation",
+        "relative_trace_L2_minus_reference": [
+          0.2798766681108086,
+          0.11361718164488636,
+          0.07163913288969476,
+          0.16174939099012153,
+          0.19275197395767407,
+          0.2317275668856482
+        ],
+        "relative_trace_L2_minus_projection": [
+          0.14442350349613153,
+          0.03965922222097305,
+          0.035238400617546004,
+          0.05475122171924366,
+          0.05657889337892342,
+          0.06952696228842789
+        ],
+        "energy_solve_residual_max": 4.440892098500626e-16,
+        "energy_solve_relative_residual": [
+          1.9190862435724382e-16,
+          2.471595092002384e-16,
+          3.0710233002614998e-16,
+          2.3889109240495895e-16,
+          2.36414140850551e-16,
+          2.528323299798103e-16
+        ],
+        "diagonal_port_minus_reference": [
+          -8.959638379336212,
+          -23.01290672581831,
+          -160.03445355491203,
+          -30.67848715614673,
+          -446.8328449209512,
+          -70.03990665034667
+        ],
+        "diagonal_port_minus_projection": [
+          -3.4830063206829607,
+          -10.725256372447348,
+          -136.43958245311842,
+          -23.401701537293093,
+          -402.2644942015595,
+          -40.305078261930475
+        ]
+      },
+      "polynomial_galerkin_load_reconstruction_max": 5.4569682106375694e-12,
+      "polynomial_projection_load_reconstruction_max": 4.320099833421409e-12,
+      "load_decomposition_max_closure": 7.105427357601002e-15,
+      "diagonal_load_contributions": {
+        "galerkin_minus_projection": [
+          -9.593488021236425,
+          -26.65965668660658,
+          -1060.293237052605,
+          -45.66768954270651,
+          -553.517468017837,
+          38.74014914558552
+        ],
+        "projection_minus_reference": [
+          -5.4766320586532515,
+          -12.287650353370964,
+          -23.594871101793615,
+          -7.276785618853637,
+          -44.568350719391674,
+          -29.73482838841619
+        ],
+        "reference_integrated_minus_cached_capy_centroid": [
+          -8.041244822204604,
+          -58.55582756136141,
+          -427.9029579365888,
+          -154.218846472393,
+          -990.2214757526308,
+          -151.64079885745514
+        ]
+      }
+    }
+  ],
+  "diagnostic_cost": {
+    "total_seconds": 7.799981999996817,
+    "process_peak_rss": 194891776,
+    "source_pair_bound": 2959360,
+    "array_workspace_bound_bytes": 88383104
+  },
+  "interpretation": [
+    "The coarse source control substantially violates rigid normal data; its own-flux manufactured problem isolates that mismatch",
+    "Known own-flux solve remains close to the best sampled L2 projection in several directions; representation error and residual operator/energy-norm error both remain",
+    "The sampled best-fit error is not an unavoidable force-error floor; Galerkin minus projection is not pure operator error",
+    "Native coarse Capytaine centroid loads and integrated reconstructed-source loads differ; neither coarse control is promoted to converged truth",
+    "Surge own-flux RHS changes 5.66% between q4/q8, preventing clean attribution there"
+  ],
+  "decision": "Do not promote or assemble an automatic next mesh. Localize sampled representation error on existing data before choosing graded/higher-order approximation or another formulation.",
+  "limitations": [
+    "The reference is finite coarse source-collocation data; integrated loads expose its difference from cached centroid Capytaine values",
+    "L2 projection minimizes only its sampled trace norm, not six loads or the Ritz energy norm",
+    "Galerkin minus L2 projection is not a pure operator error; projection minus reference is not an unavoidable load floor",
+    "Orthogonality/Pythagoras apply to the declared quadrature projection, not the continuum problem",
+    "Original source normals own reference Neumann checks; fine physical normals own load ports",
+    "Known-flux consistency uses only the SAME loaded fine q8 energy and source field; it is not rigid accuracy and q4/q8 flux sampling remains approximate",
+    "No new source/control BVP solve or body operator assembly; same saved factor is reused for known-field right-hand sides",
+    "No new energy quadrature, mesh refinement, placement, moving domain, nonlinear6DOF or trajectory qualification"
+  ]
+}
