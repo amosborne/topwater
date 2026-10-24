@@ -1,0 +1,12 @@
+{
+  "format_version": 1,
+  "protocol": "docs/pressure-discrepancy-protocol.md",
+  "maximum_elapsed_seconds": 60.0,
+  "cpu_threads": 1,
+  "required_capytaine_calls": 6,
+  "density_kg_m3": 1025.0,
+  "gravity_m_s2": 9.81,
+  "diagnostic_relative": 0.01,
+  "diagnostic_absolute_normalized": 0.00001,
+  "qualification_allowed": false
+}
