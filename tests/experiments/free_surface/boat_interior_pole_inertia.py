@@ -1,4 +1,4 @@
-"""One fixed 68-interior-pole Ritz infinity family on the owned physical hull."""
+"""One fixed interior-pole-per-input-facet Ritz infinity verification family."""
 import argparse
 from fractions import Fraction
 from hashlib import sha256
@@ -8,7 +8,6 @@ import shutil
 from time import perf_counter
 import numpy as np
 from scipy.linalg import cholesky, cho_solve, eigvalsh, solve_triangular
-from scipy.spatial import ConvexHull
 from topwater.constants import WATER_DENSITY
 from topwater.rankine import TrianglePanels
 from tests.laplace_reference import triangle_samples
@@ -27,57 +26,78 @@ def ratio(a, b):
 
 
 def certified_poles(triangles):
-    """Exact signs of ORIGINAL binary64 data; Qhull only discovers facets."""
+    """Constructive exact tetrahedron certificates for actual binary64 poles.
+
+    The exact positive mean of all unique input vertices lies in conv(V).
+    Strict barycentrics inside a nonzero tetrahedron (face vertices, mean)
+    therefore place the actual floating pole strictly inside conv(V), without
+    assuming rounded nominally coplanar faces are exact support planes.
+    """
     vertices = np.unique(triangles.reshape(-1, 3), axis=0)
-    hull = ConvexHull(vertices)
     center = vertices.mean(axis=0)
     poles = .75*triangles.mean(axis=1)+.25*center
     rational = [tuple(Fraction(float(v)) for v in point) for point in vertices]
-    targets = [tuple(Fraction(float(v)) for v in point) for point in np.vstack((center, poles))]
-    clearance = []
-    for facet in hull.simplices:
-        a, b, c = [rational[i] for i in facet]
-        ab, ac = [b[i]-a[i] for i in range(3)], [c[i]-a[i] for i in range(3)]
-        normal = (ab[1]*ac[2]-ab[2]*ac[1], ab[2]*ac[0]-ab[0]*ac[2], ab[0]*ac[1]-ab[1]*ac[0])
-        if not any(normal):
-            raise ValueError('degenerate discovered closed-solid facet')
-        offset = sum(normal[i]*a[i] for i in range(3))
-        signs = [sum(normal[i]*v[i] for i in range(3))-offset for v in rational]
-        if any(s > 0 for s in signs) and any(s < 0 for s in signs):
-            raise ValueError('Qhull facet is not an exact original-float supporting plane')
-        if any(s > 0 for s in signs):
-            normal, offset = tuple(-v for v in normal), -offset
-        if not any(signs):
-            raise ValueError('closed wet solid has no three-dimensional interior')
-        distances = [offset-sum(normal[i]*v[i] for i in range(3)) for v in targets]
-        if any(d <= 0 for d in distances):
-            raise ValueError('fixed inset center/pole is not strictly inside exact wet-solid halfspaces')
-        scale = np.linalg.norm([float(v) for v in normal])
-        clearance.append([float(d)/scale for d in distances])
+    exact_center = tuple(sum(point[i] for point in rational)/len(rational) for i in range(3))
+
+    def subtract(a, b):
+        return tuple(a[i]-b[i] for i in range(3))
+
+    def cross(a, b):
+        return (a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0])
+
+    def dot(a, b):
+        return sum(a[i]*b[i] for i in range(3))
+
+    def det(a, b, c):
+        return dot(a, cross(b, c))
+
+    margins, clearance = [], []
+    for triangle, pole in zip(triangles, poles, strict=True):
+        a, b, c = [tuple(Fraction(float(v)) for v in point) for point in triangle]
+        point = tuple(Fraction(float(v)) for v in pole)
+        ab, ac, ad, ap = (subtract(v, a) for v in (b, c, exact_center, point))
+        determinant = det(ab, ac, ad)
+        if not determinant:
+            raise ValueError('input-facet/exact-center tetrahedron has zero volume')
+        weights = [det(ap, ac, ad)/determinant, det(ab, ap, ad)/determinant, det(ab, ac, ap)/determinant]
+        weights = [1-sum(weights), *weights]
+        if any(v <= 0 for v in weights):
+            raise ValueError('actual floating pole is not strictly inside its constructive tetrahedron')
+        margins.append(min(weights))
+        tet = (a, b, c, exact_center)
+        for face in ((0, 1, 2), (0, 1, 3), (0, 2, 3), (1, 2, 3)):
+            v0, v1, v2 = [tet[i] for i in face]
+            normal = cross(subtract(v1, v0), subtract(v2, v0))
+            distance = abs(dot(normal, subtract(point, v0)))/sum(abs(v) for v in normal)
+            clearance.append(distance)
     if any(Fraction(float(z)) >= 0 for z in poles[:, 2]):
         raise ValueError('all fixed poles must lie strictly below the plane')
     image = poles*np.array([1., 1., -1.])
     if np.any(image[:, 2] <= 0):
         raise ValueError('reflected poles must lie strictly above the plane')
     return poles, dict(alpha=.25, center=center.tolist(), unique_wet_vertices=len(vertices),
-        closed_support_facets=len(hull.simplices), exact_signs='Fraction.from_float original coordinates; strict, no tolerance',
-        center_minimum_clearance_m=float(np.min(np.asarray(clearance)[:, 0])),
-        pole_minimum_clearance_m=float(np.min(np.asarray(clearance)[:, 1:])),
+        exact_center_rational=[str(v) for v in exact_center], constructive_tetrahedra=len(poles),
+        exact_signs='Original float poles, exact positive mean of original vertices, exact tetrahedral determinants',
+        minimum_barycentric_margin_lower_bound=float(np.nextafter(float(min(margins)), -np.inf)),
+        pole_tetra_face_clearance_lower_bound_m=float(np.nextafter(float(min(clearance)), -np.inf)),
+        clearance_definition='Exact |n dot displacement|/sum|n| <= Euclidean face distance; converted downward',
         pole_maximum_z_m=float(poles[:, 2].max()), image_minimum_z_m=float(image[:, 2].min()))
 
 
 def point_maps(points, normals, poles):
     """Ordinary target derivatives of positive 1/r minus its flat image."""
-    potential = np.zeros((len(points), len(poles)))
-    normal = np.zeros_like(potential)
-    for sign, source in ((1., poles), (-1., poles*[1., 1., -1.])):
-        delta = points[:, None]-source
-        radius = np.linalg.norm(delta, axis=2)
-        if not np.isfinite(radius).all() or np.any(radius <= 0):
-            raise ValueError('finite ordinary point-kernel targets distinct from poles required')
-        inverse = 1/(4*np.pi*radius)
-        potential += sign*inverse
-        normal -= sign*np.einsum('mni,mi->mn', delta, normals)*(inverse/radius**2)
+    delta = points[:, None]-poles
+    image_delta = points[:, None]-poles*[1., 1., -1.]
+    r, ri = np.linalg.norm(delta, axis=2), np.linalg.norm(image_delta, axis=2)
+    if not np.isfinite(r).all() or not np.isfinite(ri).all() or np.any(r <= 0) or np.any(ri <= 0):
+        raise ValueError('finite ordinary point-kernel targets distinct from poles required')
+    # ri^2-r^2=4*z*zs: preserve the exact plane-zero potential without a
+    # cancellation of two large 1/r values. No softening or self jump.
+    potential = points[:, 2, None]*poles[None, :, 2]/(np.pi*r*ri*(r+ri))
+    inverse_cube_difference = potential*(1/r**2+1/(r*ri)+1/ri**2)
+    horizontal = -np.einsum('mni,mi->mn', delta[:, :, :2], normals[:, :2])*inverse_cube_difference
+    vertical = (-delta[:, :, 2]/r**3+image_delta[:, :, 2]/ri**3)/(4*np.pi)
+    normal = horizontal+vertical*normals[:, 2, None]
     if not np.isfinite(potential).all() or not np.isfinite(normal).all():
         raise FloatingPointError('nonfinite ordinary pole trace')
     return potential, normal
@@ -97,8 +117,6 @@ def run(args, report):
     panels = TrianglePanels(snapshot.triangles, -1)
     poles, certificate = certified_poles(snapshot.triangles)
     b = len(poles)
-    if b != 68:
-        raise ValueError('this verification family requires the owned 68 physical-face centroids')
     pair_bound = 2*b*b*(16**2+32**2+64**2+4**2)
     if pair_bound > args.maximum_pairs:
         raise RuntimeError('predeclared pole-family source-pair budget exceeded')
