@@ -28,6 +28,7 @@ def test_reproduction_fails_on_phase_sign_and_nonfinite():
 
 
 def test_geometry_modes_match_pinned_capytaine_motion_objects_without_green_solve():
+    pytest.importorskip('capytaine',reason='optional correlation API check; recovery command requires dependency')
     from tests.capytaine_reference import body_from_triangles,MODES
     triangles=np.array([[[0.,0.,-1.],[2.,0.,-1.],[0.,3.,-1.]],
                         [[0.,0.,-1.],[0.,3.,-1.],[0.,0.,-2.]]])

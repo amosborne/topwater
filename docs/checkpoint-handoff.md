@@ -1,5 +1,52 @@
 # Checkpoint handoff
 
+## Latest checkpoint: periodic source recovery
+
+Source checkpoint **785c3d1**, branch **baseline/fluid-body**. Read
+docs/periodic-source-recovery.md and docs/periodic-source-protocol.md first.
+The broader goal remains ACTIVE/INCOMPLETE. No Topwater coupled TD run exists.
+
+- Recovered all required Capytaine basis sources on the four unchanged meshes:
+  84 solves and 384 reproduction checks passed, offline elapsed 329.246 s.
+  artifacts/validation/periodic-sources-003.json/.npz/.source is complete.
+  Exact session 32728 is terminal exit 0. This is not Topwater speed evidence.
+- Saved source, hull potential/pressure, prescribed normal velocity and produced
+  S/K traces for all seven bases per frequency. Raw S/K retained before cached K
+  becomes LU. Independent pressure integration and geometry-derived rigid modes
+  check signs/world-CG moments; all finite A/B entries and selected complex loads
+  reproduce the pinned study. Largest tolerance ratio 0.0405471.
+- Full reference qualification and nonlinear restart readiness remain false.
+  No nonlinear-grid eta0/phi0 exists. Original coefficient-convergence failures
+  are unchanged. Basis sources are Capytaine indirect densities, not interchangeable
+  with Topwater Rankine densities, and never runtime force/trajectory drivers.
+- Complete evidence: validation/evidence/periodic-sources-003.zip, SHA256
+  4a317cbb91cc51348b0059b40b4a6437315e3656624ad2903743dec4721214e5; summary nearby.
+  Includes complete nested raw/freeze evidence and unsuccessful attempts 001/002,
+  each with zero completed physics calls. Session 50564 was interrupted for review
+  corrections; session 69350 failed the symbolic-DOF array API. Both terminal exit 1.
+- All 238 local tests passed (session 2470 terminal exit 0). The only post-run
+  Python edit is an optional-Capytaine API-test skip guard; numerical producers
+  are unchanged. Actual recovery still fails without the dependency. Source
+  hashes were verified before that test-only change; archived producers preserved.
+- No numerical jobs live. Preserve serial-job and immutable-producer discipline.
+  Review and promotion scope is source reproduction only, never full qualification.
+  Independent review rebuilt all basis/composed loads and phase/normal checks,
+  verified identity/bundle/mesh evidence and found no remaining stage blocker.
+
+**Next bounded goal:** freeze the minimum TD grid/domain and an admissible
+reference-to-nonlinear geometry map, then sample the archived sources (avoid a
+new 84-solve batch if possible) into total eta0/phi0 with measured field/mapping
+uncertainty. Reject points inside the mean hull or above the reference fluid.
+Check actual body-boundary compatibility, projection transients and amplitude/
+wetting controls in motion units; a small boundary residual is insufficient.
+Mean stern chine is only about 2.8 mm submerged. After a compatible packet exists,
+screen actual coupled preparation/RHS cost before 1 s; reject a route projected
+above 200 wall s/s including normal preparation. Major optimization stays held.
+Declare controls/acceptance/stopping point first, review, checkpoint/push/update
+issue #30, then write a fresh handoff. Never push main or merge without CI.
+
+## Prior checkpoint context (retained physical/motion details)
+
 - **Active outcome:** Topwater TIME-DOMAIN ONLY, canonical 24 ft boat in a frozen
   mild sea, small-motion nonlinear six-DOF run for >=1 s; errors plus uncertainty
   <=0.1 degree per rotation /1 cm per translation; <=200 wall s per simulated s
