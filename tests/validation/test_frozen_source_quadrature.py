@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from .frozen_source_quadrature import integration_cells,owned_points,pressure_matrix,telescoping,duffy_rule,mirrored_gauss_targets
+from .frozen_source_quadrature import integration_cells,owned_points,pressure_matrix,telescoping,duffy_rule,mirrored_gauss_targets,reused_trace
 
 
 def test_descendant_centroids_are_owned_and_preserve_area_weights():
@@ -64,3 +64,14 @@ def test_mirrored_targets_preserve_ownership_and_areas_without_mirroring_fields(
     assert np.max(abs(A[1]))>1e-3
     bad=triangles.copy();bad[1,:,1]-=.1
     with pytest.raises(ValueError):mirrored_gauss_targets(bad,4)
+
+
+def test_reused_fields_reject_changed_target_ownership_or_weights():
+    points=np.array([[1.,2.,-1.]]);owners=np.array([0]);weights=np.array([.5])
+    a=dict(p_points=points.copy(),p_owners=owners.copy(),p_weights=weights.copy(),p_potential=np.ones((1,6),complex))
+    np.testing.assert_array_equal(reused_trace(points,owners,weights,a,'p_'),a['p_potential'])
+    for key in ('p_points','p_owners','p_weights'):
+        corrupt={k:v.copy() for k,v in a.items()};corrupt[key].flat[0]+=1
+        with pytest.raises(AssertionError):reused_trace(points,owners,weights,corrupt,'p_')
+    a['p_potential'][0,0]=np.nan
+    with pytest.raises(ValueError):reused_trace(points,owners,weights,a,'p_')

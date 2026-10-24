@@ -68,6 +68,15 @@ def telescoping(coarse,fine,quadrature,scale,tolerance):
     return total,output,remainder
 
 
+def reused_trace(points,owners,weights,arrays,prefix):
+    """Reuse fields only on exactly identical physical integration targets."""
+    for key,value in (('points',points),('owners',owners),('weights',weights)):
+        np.testing.assert_array_equal(value,arrays[prefix+key])
+    phi=arrays[prefix+'potential']
+    if phi.shape!=(len(points),6) or not np.isfinite(phi).all():raise ValueError('invalid reused potential')
+    return phi.copy()
+
+
 def generate(args,c,r,a):
     fixed=dict(format_version=1,source_level=2,finer_level=3,source_panels=864,evaluation_chunk_points=100,
         density_kg_m3=1025.,gravity_m_s2=9.81,trace_scaled_tolerance=1e-10,ownership_absolute_m=1e-10,
@@ -77,7 +86,11 @@ def generate(args,c,r,a):
         fixed.update(integration_refinements=[0,1,2,3],required_target_counts=[864,3456,13824,55296],maximum_elapsed_seconds=180.)
         parameters=c.get('integration_refinements')
     elif rule=='duffy-gauss-mirrored':
-        fixed.update(gauss_orders=[0,8,12,16],required_target_counts=[864,55296,124416,221184],maximum_elapsed_seconds=600.)
+        if c.get('gauss_orders')==[0,12,16,20]:
+            fixed.update(gauss_orders=[0,12,16,20],required_target_counts=[864,124416,221184,345600],maximum_elapsed_seconds=400.,
+                reuse_orders=[12,16],reuse_bundle_sha256='28a35794d8c20d35e59f955e0b4ced8fec3cdebd4c6f8e01beffd1cb205fdbb0',
+                reuse_controls_sha256='bbe5c441da37a98188a213f4eef996afd99eab7be1ad7d42224ec6d95283825b')
+        else:fixed.update(gauss_orders=[0,8,12,16],required_target_counts=[864,55296,124416,221184],maximum_elapsed_seconds=600.)
         parameters=c.get('gauss_orders')
     else:raise ValueError('undeclared integration rule')
     if any(c.get(k)!=v for k,v in fixed.items()):raise ValueError('unsupported frozen-source quadrature controls')
@@ -103,6 +116,26 @@ def generate(args,c,r,a):
         parent_bundle_sha256=digest(args.bundle),input_sha256=digest(archive/'inputs.json'),protocol_sha256=digest(c['protocol']),
         completed_levels=0,levels=[],new_bem_solves=0,full_reference_qualified=False,source_discretization_qualified=False,
         scope=__doc__,trace_normalization=parent['trace_normalization'],integration_rule=rule)
+    reuse={};reused={}
+    if c.get('reuse_orders'):
+        if args.reuse_study is None or args.reuse_bundle is None:raise ValueError('required reused study/bundle missing')
+        prior,reused=read_owned(args.reuse_study,c['reuse_controls_sha256'],'frozen-source-pressure-quadrature')
+        if digest(args.reuse_bundle)!=c['reuse_bundle_sha256']:raise ValueError('reused bundle identity differs')
+        with ZipFile(args.reuse_bundle) as z:
+            for suffix in ('.json','.npz'):
+                if z.read('validation/'+args.reuse_study.stem+suffix)!=args.reuse_study.with_suffix(suffix).read_bytes():raise ValueError('reused study differs from pinned bundle')
+        for key in ('parent_manifest_sha256','parent_arrays_sha256','parent_bundle_sha256','input_sha256','trace_normalization'):
+            if prior[key]!=r[key]:raise ValueError('reused physical/source identity differs: '+key)
+        for key in ('source_triangles','normalized_sources','world_cg','dry_mass','native_coarse_A','native_finer_A','native_coarse_potential'):
+            np.testing.assert_array_equal(reused[key],a[key])
+        if (prior['completed_levels']!=4 or prior['new_bem_solves']!=0 or prior['full_reference_qualified'] is not False
+                or prior['source_discretization_qualified'] is not False or prior['integration_rule']!=rule
+                or [item['rule_parameter'] for item in prior['levels']]!=[0,8,12,16]):raise ValueError('reused study scope/coverage differs')
+        reuse={order:'level'+str(next(item['level'] for item in prior['levels'] if item['rule_parameter']==order))+'_' for order in c['reuse_orders']}
+        shutil.copyfile(args.reuse_bundle,archive/'reuse.zip')
+        r.update(reused_manifest_sha256=digest(args.reuse_study),reused_arrays_sha256=digest(args.reuse_study.with_suffix('.npz')),
+            reused_bundle_sha256=digest(args.reuse_bundle),reused_orders=c['reuse_orders'])
+    elif args.reuse_study is not None or args.reuse_bundle is not None:raise ValueError('undeclared reused input')
     save(args.output,r,a)
     def budget():
         if perf_counter()-STARTED>c['maximum_elapsed_seconds']:raise TimeoutError('frozen-source quadrature wall budget exhausted')
@@ -116,6 +149,7 @@ def generate(args,c,r,a):
         r['maximum_radius_error_m']=capytaine_radius_check(body,triangles)
         green=cpt.Delhommeau(tabulation_nr=0,tabulation_nz=0,tabulation_cache_dir=None);budget()
         if green.exportable_settings!=parent['green_settings']:raise ValueError('frozen-source Green settings differ')
+        if reuse and green.exportable_settings!=prior['green_settings']:raise ValueError('reused Green settings differ')
         r['green_settings']=green.exportable_settings;engine=cpt.BEMSolver(green_function=green).engine
         scale=np.sqrt(data['dry_mass'].diagonal()[:,None]*data['dry_mass'].diagonal()[None,:]);matrices=[]
         for level,(parameter,count) in enumerate(zip(parameters,c['required_target_counts'],strict=True)):
@@ -131,10 +165,11 @@ def generate(args,c,r,a):
             if abs(weights.sum()-body.mesh.faces_areas.sum())>1e-10:raise ValueError('quadrature area conservation failed')
             face_error=float(np.max(abs(np.bincount(owner,weights,minlength=len(triangles))-body.mesh.faces_areas)))
             if face_error>1e-10:raise ValueError('individual face quadrature weights differ')
-            phi=np.zeros((len(points),6),complex);prefix=f'level{level}_'
+            phi=reused_trace(points,owner,weights,reused,reuse[parameter]) if parameter in reuse else np.zeros((len(points),6),complex)
+            prefix=f'level{level}_'
             a.update({prefix+'points':points,prefix+'owners':owner,prefix+'weights':weights,prefix+'potential':phi})
             save(args.output,r,a);begin=perf_counter()
-            for start in range(0,len(points),c['evaluation_chunk_points']):
+            for start in range(0,0 if parameter in reuse else len(points),c['evaluation_chunk_points']):
                 budget();end=min(start+c['evaluation_chunk_points'],len(points))
                 S=engine.build_S_matrix(points[start:end],body.mesh,free_surface=0.,water_depth=np.inf,wavenumber=np.inf)
                 phi[start:end]=S@sigma;del S;budget()
@@ -142,8 +177,10 @@ def generate(args,c,r,a):
             matrix=pressure_matrix(points,-body.mesh.faces_normals[owner],weights,phi,data['world_cg'],c['density_kg_m3'])
             imaginary=scaled_check(matrix.imag,np.zeros((6,6)),scale,c['trace_scaled_tolerance'])
             record=dict(level=level,rule_parameter=parameter,points=len(points),seconds=perf_counter()-begin,
+                reused=parameter in reuse,
                 ownership=proof,imaginary_ratio=imaginary,maximum_face_area_error_m2=face_error,
                 maximum_reflection_geometry_error_m=geometry_error)
+            if parameter in reuse:record['reused_load_ratio']=scaled_check(matrix,reused[reuse[parameter]+'A_complex'],scale,c['trace_scaled_tolerance'])
             if level==0:
                 record['native_potential_ratio']=scaled_check(phi,data['capytaine_aux_2'],1.,c['trace_scaled_tolerance'])
                 record['native_load_ratio']=scaled_check(matrix,data['capytaine_Ainf'][2],scale,c['trace_scaled_tolerance'])
@@ -168,6 +205,7 @@ def generate(args,c,r,a):
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--controls',type=Path,default=Path('validation/frozen-source-quadrature-controls.json'))
+    p.add_argument('--reuse-study',type=Path);p.add_argument('--reuse-bundle',type=Path)
     for name in ('study','bundle','output'):p.add_argument('--'+name,type=Path,required=True)
     args=p.parse_args();c=json.loads(args.controls.read_text());r=prepare(args.output,args.controls,'frozen-source-pressure-quadrature');a={};save(args.output,r,a)
     try:generate(args,c,r,a)
