@@ -1,0 +1,22 @@
+{
+  "format_version": 1,
+  "protocol": "docs/common-output-source-protocol.md",
+  "source_levels": [0,1,2],
+  "source_counts": [54,216,864],
+  "gauss_orders": [12,16,20],
+  "target_counts": [124416,221184,345600],
+  "evaluation_chunk_points": 100,
+  "cpu_threads": 1,
+  "maximum_elapsed_seconds": 360.0,
+  "density_kg_m3": 1025.0,
+  "gravity_m_s2": 9.81,
+  "trace_scaled_tolerance": 1e-10,
+  "ownership_absolute_m": 1e-10,
+  "reference_relative": 0.001,
+  "reference_absolute_normalized": 0.000001,
+  "full_reference_scope": false,
+  "study_bundle_sha256": "052df7c50865340e7ef4ebaddfc48adfef191b24057646bd395a889515dc98f2",
+  "quadrature_bundle_sha256": "7e999761722f68b52c9675abfb32bc02aff101c55f03ad76babf749154ab7a63",
+  "historical_bundle_sha256": "28a35794d8c20d35e59f955e0b4ced8fec3cdebd4c6f8e01beffd1cb205fdbb0",
+  "quadrature_controls_sha256": "a691b8e5724689917bcb212599471c3530af2b02a3208bf85f012e764bc337d9"
+}

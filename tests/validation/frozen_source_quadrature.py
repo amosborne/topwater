@@ -77,6 +77,17 @@ def reused_trace(points,owners,weights,arrays,prefix):
     return phi.copy()
 
 
+def evaluate_trace(engine,mesh,points,sigma,chunk,budget):
+    """One bounded full-source evaluator for frozen-source diagnostics."""
+    phi=np.empty((len(points),6),complex)
+    for start in range(0,len(points),chunk):
+        budget();end=min(start+chunk,len(points))
+        S=engine.build_S_matrix(points[start:end],mesh,free_surface=0.,water_depth=np.inf,wavenumber=np.inf)
+        phi[start:end]=S@sigma;del S;budget()
+    if not np.isfinite(phi).all():raise ValueError('nonfinite frozen-source trace')
+    return phi
+
+
 def generate(args,c,r,a):
     fixed=dict(format_version=1,source_level=2,finer_level=3,source_panels=864,evaluation_chunk_points=100,
         density_kg_m3=1025.,gravity_m_s2=9.81,trace_scaled_tolerance=1e-10,ownership_absolute_m=1e-10,
@@ -169,10 +180,7 @@ def generate(args,c,r,a):
             prefix=f'level{level}_'
             a.update({prefix+'points':points,prefix+'owners':owner,prefix+'weights':weights,prefix+'potential':phi})
             save(args.output,r,a);begin=perf_counter()
-            for start in range(0,0 if parameter in reuse else len(points),c['evaluation_chunk_points']):
-                budget();end=min(start+c['evaluation_chunk_points'],len(points))
-                S=engine.build_S_matrix(points[start:end],body.mesh,free_surface=0.,water_depth=np.inf,wavenumber=np.inf)
-                phi[start:end]=S@sigma;del S;budget()
+            if parameter not in reuse:phi[:]=evaluate_trace(engine,body.mesh,points,sigma,c['evaluation_chunk_points'],budget)
             if not np.isfinite(phi).all():raise ValueError('nonfinite frozen-source trace')
             matrix=pressure_matrix(points,-body.mesh.faces_normals[owner],weights,phi,data['world_cg'],c['density_kg_m3'])
             imaginary=scaled_check(matrix.imag,np.zeros((6,6)),scale,c['trace_scaled_tolerance'])
