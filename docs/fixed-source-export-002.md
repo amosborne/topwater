@@ -2,13 +2,14 @@
 
 Producer `242c839c047d9965f1d941e1d1e2047a50a0a254` completed the
 [prospective source-only export](fixed-source-export-protocol.md).
-Exact session37573 terminated exit0. Eighteen fresh native solves on2772/4928/
-7700 panels, plus six bitwise-reused1232 pilot cases, provide all24 source
-bases. Every36-entry native matrix equals its original raw matrix exactly.
+Exact session37573 terminated exit0. Eighteen fresh single-mode solves on2772/
+4928/7700 panels, plus six bitwise-reused1232 pilot cases, provide24 source
+columns across four six-mode bases. Every36-entry native matrix equals its
+original raw matrix exactly.
 Potential, normal and integrated-load reproduction pass declared1e-10 scaled
 gates. Maximum trace tolerance ratio0.000228949 is a fraction of the gate,
 not physical relative error. All six cache checks per fresh mesh pass;
-pristine operators were checked before LU.
+pristine operators were captured before LU; trace checks followed the solves.
 
 No common-grid field evaluation ran. Complete/source_export_complete are true;
 passed/source-discretization/full-reference qualification remain false. Native

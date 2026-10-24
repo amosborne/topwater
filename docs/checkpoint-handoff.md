@@ -6,7 +6,8 @@ Read docs/fixed-source-export-002.md and its prospective protocol first.
 Branch baseline/fluid-body; producer242c839. Goal ACTIVE/INCOMPLETE: no full
 source-mesh/finite-wave reference, coupled Topwater motion or runtime qualifies.
 
-- Actual18 fresh six-mode solves on2772/4928/7700; historical1232 reused bitwise.
+- Actual18 fresh single-mode solves form three six-mode bases on2772/4928/7700;
+  historical1232 six-mode basis reused bitwise.
   All24 source cases represented; all36 native entries equal old raw Ainf on
   every mesh. Operator/normal/load gates pass1e-10 scaled; cache6/6 per mesh.
   Pristine hashes, normalized sigma/chi/BC, traces/residuals/matrices retained.
