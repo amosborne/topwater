@@ -1,5 +1,45 @@
 # Checkpoint handoff
 
+## Latest checkpoint: conditional pressure integration passes, source control next
+
+Read docs/frozen-source-gauss-continuation-001.md and prospective protocol first.
+Branch baseline/fluid-body; numerical source81d42a4. Goal ACTIVE/INCOMPLETE.
+Full qualified reference, own coupled TD6DOF comparison and <=200wall s/s remain
+unachieved. No native numerical job is live.
+
+- SAME864 frozen normalized sources; new native+Gauss20, SHA-bound reused12/16.
+  All692064 retained targets/owners/weights/fields,346464 newly evaluated,
+  zeroBEM solves. Exact session81910 terminalexit1, completeTrue/passedFalse.
+  Conditional quadrature gate PASSES all36 previous/latest/trend, maxratios
+  .246235/.082461. Overall/source/reference flags stayfalse, old failures stay.
+- Native controls pass, reconstructed reused-load ratios0. Per-face positive
+  weights, strict ownership and independently evaluated reflected halves verified.
+  Total318.337s<400s cap OFFLINE, not Topwater speed. All273tests pass; exact
+  testsession83436 terminalexit0, JUnit archived. Independent review and fresh
+  restoration check numerical/provenance scope, no full qualification claim.
+- Pitch outputchange -672.247631, remainder +242.705250, native meshchange
+  -429.542381 kg m². Exact telescope, not pure source error or continuum bound.
+- Evidence requires BOTH tracked continuation001.zip AND prior Gauss001.zip.
+  NewSHA7e999761722f68b52c9675abfb32bc02aff101c55f03ad76babf749154ab7a63;
+  priorSHA28a35794d8c20d35e59f955e0b4ced8fec3cdebd4c6f8e01beffd1cb205fdbb0.
+  Run restore_shared_inputs.py --reuse-bundle PATH_TO_PRIOR_ZIP after extraction.
+  Restores exact logical graphs with SHA checks without duplicating70MB payload.
+
+**Exact next bounded goal:** compare existing54/216/864 source solutions on ONE
+COMMON physical output grid: retained864-source Gauss12/16/20 targets/normals/
+weights. Reuse864 with exact source/physical/archive identity; repeat each new
+source solution's own native calibration. Verify complete physical facet/surface
+identity. Common nodes separate source changes from output-node changes.
+Observed rate estimates195s new field work; declare360s total serial offline cap
+and complete all36 source/quad uncertainty/gate policy before launch. Keep
+integration/source uncertainties separate and charge both; missing/failed
+integration cannot pass a source gate. Zero newBEM solves/remeshing/formulation.
+This three-source diagnostic does not qualify/replace the original4level study.
+Deliver raw fields/matrices, producer graph, independent review/tracker/handoff
+and checkpoint, then stop. Separately preflight3456 sources on COMMON targets
+(order20~1247s offline plus requiredcontrols), no automatic launch. Full source
+levels, finite-wave/phase and Topwater TD/runtime work remain open.
+
 ## Latest checkpoint: frozen-source Gauss integration needs one further control
 
 Read docs/frozen-source-gauss-001.md and its prospective protocol first.
