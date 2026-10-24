@@ -1,0 +1,20 @@
+{
+  "format_version": 1,
+  "protocol": "docs/mixed-pressure-protocol.md",
+  "field_bundle_sha256": "cc35d61aa1febeb6b9389d9f756304fa15a411fdbd14c01b6ae932eeabc45d65",
+  "calm_angular_divisions": 32,
+  "outer_radius_m": 24.0,
+  "depth_m": 24.0,
+  "radial_offsets_m": [0.0,0.15,0.4,1.0,2.5,6.0,12.0],
+  "density_kg_m3": 1025.0,
+  "gravity_m_s2": 9.81,
+  "pressure_body_balance_scaled_tolerance": 1e-10,
+  "calm_acceleration_absolute_SI": 1e-10,
+  "provisional_midpoint_step_s": 0.01,
+  "pressure_evaluations_per_simulated_second": 200,
+  "runtime_limit_wall_seconds_per_simulated_second": 200.0,
+  "maximum_elapsed_seconds": 180.0,
+  "cpu_threads": 1,
+  "calm_outer_bottom_chi": "homogeneous Neumann; finite-cylinder approximation, domain unqualified",
+  "nonlinear_derivatives": "exactly zero for calm/rest probe only; mild pressure call prohibited until derivatives available"
+}
