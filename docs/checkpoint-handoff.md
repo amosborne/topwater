@@ -32,11 +32,16 @@
   no Richardson/continuum-bound claim. Explicit 12 GiB estimate cap; unchanged
   12-dense-array estimator, 1800 seconds between physics calls. Do not use
   partial memory observations from study002 as full final peak measurements.
-- Fresh freeze: old frozen-graded-002 is stale after the reviewed ordering/control
-  revision. Generate a fresh freeze before any subsequent current-source work;
-  preserve all previous archives. Recheck original physical arrays/input JSON.
+- Fresh freeze: frozen-graded-003 passed at source checkpoint d160eae. Its
+  complete bundle and summary are in validation/evidence/frozen-graded-003.*.
+  All original physical arrays/input JSON exactly match reset. Capytaine's
+  actual face radii match maximum vertex distances within 3.1e-16 m on all
+  four meshes. This is geometry/control evidence, not new hydrodynamic evidence.
+  Old frozen-graded-002 is stale for current-source work. Any mesh-family or
+  validator revision requires another fresh freeze; preserve previous archives.
 - Live jobs: none. Sessions 11777, 11118 and 52130 all terminal with nonzero
   exits for failed convergence/representation gates. No numerical job is pending.
+  Freeze003 session 71959 and radius-proof session 23010 also terminal, exit0.
 - CI policy: automatic CI only on PRs targeting main. Continue local testing.
   Never merge/squash-merge without all required current-head CI passing. No PR
   was created; development checkpoints pushed only to baseline/fluid-body.

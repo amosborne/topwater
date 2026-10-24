@@ -83,3 +83,12 @@ All 33 gate/geometry tests pass. This control corrects a demonstrated numerical
 representation sensitivity; it does not resolve the remaining spatial or
 centroid-integration convergence failures. No full known-failing mesh family
 is rerun solely to demonstrate this local correction.
+
+Independent reviewer approved adoption at source checkpoint d160eae. The
+[fresh freeze/control bundle](../validation/evidence/frozen-graded-003.zip) and
+[proof summary](../validation/evidence/frozen-graded-003-summary.json) show exact
+equality of the original physical arrays and input JSON, and verify Capytaine's
+actual radii equal maximum vertex distances within 3.1e-16 m on every panel.
+This evidence does not imply new hydrodynamic convergence. The approved next
+checkpoint is design/geometry preflight of a fixed-topology graded family,
+before another complete hydrodynamic study. See checkpoint-handoff.md.
