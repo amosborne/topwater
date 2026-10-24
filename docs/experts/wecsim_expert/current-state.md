@@ -44,9 +44,27 @@ stability or forced-case validity. [Executed receipt](free-decay-control-proposa
 
 CURRENT assignment: SOURCE/PHYSICAL IC PROPOSAL ONLY for future same Jan90sea
 with deterministic particular q/v, native worldomega and consistent CIC plus
-acceleration-delay prehistory. No implementation/numerical grant. Cannot merely
+unchanged native acceleration-delay startup. No implementation/numerical grant. Cannot merely
 set q/v while zeroing memory, prescribe a trajectory, suppress an unstable mode,
 or use initialized state as proof of passive/accurate hydrodynamics.
+[Concrete proposed interface/math and remaining short-delay timing gate](stationary-history-ic-proposal-2026-10-24.md):
+case-only missinghistory correction on three force rows BEFORE nativePCHIP and
+proper Bushing state/CGpivot map. Coordinator EXCLUDES delayprefix/state changes
+from first proposal; native startup uncertainty/residual explicit. Independent
+Reduced adapter/seven helpers and ONE fixture now independently EXECUTEDPASS:
+attempt3/22.951s, actual17fastPCHIP/threehistoryrows/tail/nativejointq-CGv-worldomega
+all pass nearroundoff; Ar unchanged. Attempts1/2 harness failures preserved.
+[Fixture receipt](seed-initialization-fixture-proposal-2026-10-24.md).
+ONE initialized60s Jan90 native case now completed38.318s after source/fixture
+PASS. All3001knownq0/nonzeroCGv-worldomega/6Fe checks passed(EXACT0Feerror); seeded
+CIC3rows/PCHIP<=1.10e-11/FradbusEXACT0. Peaks[m thenrad]=[.36788,1.54928,1.52026,
+.08948494,.03007128,.03839487], approximatelyroll5.127deg/pitch1.723/yaw2.200.
+Whole drift/startup and nonzeroinitial native-vs-harmonic residuals retained.
+[Actual initialized case/source/evidence](seeded-native-case-proposal-2026-10-24.md).
+Coordinator accepted for geometry-audit PREPARATION ONLY; actual independent
+physical review/geometry/accuracy not yet accepted. No passivity remedy/exact
+native stationarity claim, no new numerical/body/encoder allocation. Files stable;
+current owner stopping for coordinator integration and other-role audit/binding.
 
 All owned jobs terminal/leasefree; shared execution ledger owns current liveness.
 Before engine replacement query authoritative outside-sandbox IPC/exactPID:

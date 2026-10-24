@@ -98,11 +98,15 @@ to2.39e-12; B12heave/pitch flip positive, but sway/yaw remain negative. Passive
 operator NOT obtained; partial-lid sensitivity does not uniquely attribute error.
 No coefficients replaced, no further numerical allocation. [API audit/control](infinite-frequency-lid-control-2026-10-24.md).
 
-Actual Jan90 native run is REJECTED far outside intended operating envelope;
+Earlier held-release Jan90 native run is REJECTED far outside intended operating envelope;
 WEC owner/researcher diagnose the stored actual dynamics. Geometry audit must not
 guess cause. Source-only actual-wave geometry tool has independent source PASS
 (runner5ea25c14/core7dda063b) with analytic wet/rim bounds, actual pose schema, explicit budget/coverage
-unknowns and unexecuted fixtures. Actual motion hash remains unbound/draft config;
-no geometry evaluation or further numerical job allocated.
+unknowns and unexecuted fixtures. Its rejected motion remains excluded/unbound.
+New seeded Jan90 actual3001-sample motion has provisional global roll5.127deg;
+fresh audit config binds ONLY that motion (SHAd69652e3), rawbus/runtimeprovenance,
+unchanged hull/bank/frame and nonzero seeded q0/v0. Algorithms unchanged. Bound
+manifest232cee24 awaits coordinator checkpoint/allocation; no geometry or fixture
+execution, no linearity/physical acceptance implied.
 [Geometry source proposal](actual-wave-geometry-postprocess-proposal-2026-10-24.md).
 Producer [README](../../../reference/capytaine/README.md).

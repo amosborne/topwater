@@ -145,3 +145,40 @@ prevent a decimated history being called complete or near-zero floating-point
 contact being falsely proved immersed. No geometric fixture or numerical job
 was run to obtain source readiness. The floating-point margin remains an
 engineering allowance, not interval-arithmetic machine certification.
+
+## New seeded candidate binding, no execution
+
+Coordinator authorized CONFIG/PROVENANCE binding only to the distinct actual run
+`artifacts/reference/generated-bank-consumer-20261024/case-jan90-seeded-attempt1`.
+The earlier rejected held-release trajectory stays excluded and its unbound draft
+config is preserved. Algorithms remain exactly reviewed runner5ea25c14/core7dda063b.
+No geometry, fixture, force or additional dynamics calculation was executed.
+
+Fresh config `reference/capytaine/actual_wave_geometry_seeded_config.json`, SHA
+b391798a6e182a8bb1bc117006958ec648fa9e157fa41edccc881b506b9efeaa.
+Bound manifest `artifacts/reference/actual-wave-geometry-seeded-20261024/proposal-bound.json`,
+SHA232cee24da6b174ed01acd3cc8659421960b8cae5ed3e882a5c86c4bea72e7c6.
+Actual motion SHA d69652e3ca838afd2df6ddc249762d58321d833324038c51798399a36d055a95;
+raw bus SHA fe30d8eae1e082a44538cb8a40a5300098becd1cd63dbb4c63a07dbc998758b6.
+Runtime summary/preflight/prepared case/initialization/native CIC/CSV/wave table and
+source execution proposal are pinned alongside physical hull and both bank frames.
+
+Read-only binding verified native3001x6 motion/velocity schema and q0/v0 identity
+against the actual runtime summary. This is a seeded nonzero pose/velocity with
+specified pre0 CIC history, not the rejected zero-memory held-body release.
+q0=[.2352088266,.1369840195,-.2581506302,-.0042929977,-.0074847329,-.0001247014]
+in metres/radians; worldv0=[-.0492457069,-.1937764303,-.0553151674,-.0023321518,
+.0037216769,.0111987962] in m/s and worldrad/s. No q0/heading/CG transform is added
+again; audit uses actual absolute CG and native RzRyRx at every saved time.
+
+```powershell
+.venv/Scripts/python.exe -u reference/capytaine/actual_wave_geometry.py --config reference/capytaine/actual_wave_geometry_seeded_config.json --output artifacts/reference/actual-wave-geometry-seeded-20261024/attempt1
+```
+
+Prospective ONE job:1CPU/300s/depth8/2million triangle evaluations,8192 active
+triangles and2048 wave-point batches. Prepared numerical fixtures would run inside
+that allocation, followed by all3001 saved poses or explicitly incomplete/unknown
+coverage. No relaxation/decimation/retry. Config/manifest are bound but NOT READY:
+coordinator checkpoint/grant and actual-case independent review remain pending.
+Target global roll~5.127deg is provisional and does not certify physical linearity,
+full-hull wetting, radiation adequacy or a nonlinear force model.

@@ -133,14 +133,53 @@ Swaydrift only.01576m/yaw.00347deg. Exactclient36696/guard30692 terminal and
 lease released after separateidleproof. This small initialdirection doesnot show
 severegrowth; doesnot prove fulloperatorstability/passivity/forcedcaseadequacy.
 
-Next: WEC SOURCE/PHYSICALICPROPOSAL ONLY for sameJan90 sea with deterministic
-stationaryparticular initialq/v and CONSISTENT nativeCIC prehistory, properCG/
-pivot/angularvelocity and residualaccelerationdelay initialstates. No customODE,
-forcedtrajectory duringreportedinterval, damping/phase/bankfit or implementation
-yet; independentmath/APIreview before sourceimplementation/grant. Need avoid
-held-release free-mode drift without hiding knownoperator/geometryuncertainty.
-No numericaljob currently allocated. Actual-wave geometryaudit source prepared,
-actualhash UNBOUND and rejectedcase excluded; fixtures/evaluations unexecuted.
+WEC concrete IC proposal is ready (SOURCE/PHYSICALPROPOSAL ONLY):
+experts/wecsim_expert/stationary-history-ic-proposal-2026-10-24.md. SameJan90 bank,
+finite40sK particular q/v as deterministic seed, exactworldomega and CG/pivot map;
+missing CIC velocity prehistory must be added to all THREE native force-history
+rows BEFORE native PCHIP extrapolation (PCHIP is not additive). No prescribed
+motion after0/customODE/damping/phasefit. Meanlinear initializer is NOT exact
+stationary native nonlinearrigidbody/discrete/delay solution; report residuals.
+
+Seededinitializer fixture attempt3 COMPLETE22.951s/terminal0, independent
+EXECUTED PASS. Actual17fastCIC/PCHIP error1.89e-14; independentSciPy7.44e-15;
+forcehistoryrows2.55e-15/nativejointq-v-worldomega roundoff. Exact39780/1420
+terminal/idle-underlease-separateverify-release complete. Attempts1/2 failed
+beforephysics (danglingkernelinputline, theninvalidFromWorkspaceafter-final mode);
+alllogs/partialmodels/originalsources preserved. Fixturefinalsource5385c4c7.
+
+Seeded60sJan90 nativecase COMPLETE38.318s/terminal0, independent EXECUTED
+implementation PASS. Output generated-bank-consumer-20261024/case-jan90-seeded-attempt1.
+Actual3001q0/nonzeroCGv-worldomega/Fe allPASS(excitationerrorEXACT0). Independent
+pre0+ACTUALpost0 convolution/threeforcehistoryrows/nativePCHIP<=1.10e-11;Fradbus0.
+ActualrotatedSolid NewtonEuler<=1.46e-11N/5.92e-12Nm; unchangedArrecurrence2.88e-10.
+Peaks surge.367880m/sway1.549284m/heave1.520261m/roll5.12711deg/pitch1.72296deg/
+yaw2.19986deg. Roll>=5deg ONLY final60.00s sample (peakcriterion, not sustained
+5-10degstatistics); whole60 motion oscillatory/no oldrunaway. Fullsixplot:
+artifacts/reference/researcher-review-20261024/jan90-seeded-six-motions.png.
+Finalphysicaldisplacementis wavephase, not itselfseculardrift. ActualminusQ40
+finaloffsets[.1292,.05936,.000116m,.09381,-.00948,.2694deg].
+
+Source run8d8b8115/preparef5d07823/adapterd33cdfa5/verifierb783e5f4 andfixturePASS
+helpers; same384bank/17operator/60s/dt.02/CIC40. Ardefaultzero/extrap UNCHANGED;
+initialactualminusmeanlinear accelerations and nativeinitialwrenchresidual are
+explicitlynonzero (max6404.65N/124.45Nm), uncompensated/fullstartupretained.
+Not exactnativeperiodicity, not nonpassivityrepair. Exact7044/30896 terminal,
+frozenIDs unchanged, separateidle-underleaseb436e0 and finalrelease complete.
+MotionSHAd69652e3ca838afd2df6ddc249762d58321d833324038c51798399a36d055a95.
+
+ONEcandidate now retained for GEOMETRYAUDIT and previewpreparation ONLY; no
+linear/finalphysicalaccuracyacceptance. Cap config/provenance binding complete
+(reference/capytaine/actual_wave_geometry_seeded_config.json;sourcealgorithms
+unchanged). No geometryjob yet: coordinator commitscheckpoint thenexplicitgrant.
+All3001poses/fixtures with1CPU300s/depth8/2Mtri/8192active/2048wavebatch caps;
+unknowns explicit. RendererroleSOURCE/configbinding only; no render/encode grant.
+Preserve old107degcase asREJECTED. No auto rerun/refinement/NLmodel/Topwaterunhold.
+
+Geometryaudit SOURCE independently PASS runner5ea25c14/core7dda063b/config45da2e20;
+source-only provenance666cfcaa. ActualmotionhashUNBOUND/rejectedcaseexcluded,
+fixtures/evaluations UNEXECUTED. OneCPU300s/depth8/2Mtri prospectivecaps; unknowns
+explicit, roundoffallowanceengineeringconservative not formalintervalproof.
 
 Completed24call SAME68nativepartial-lid control (55.1033s/terminal0) also remains
 diagnostic:83lidfaces/77.27%waterplane, physicalhull unchanged, Ainf unchanged.
@@ -173,5 +212,9 @@ Coordinator owns integration/handoff; Capytaine geometry/nativeproducer; WEC-Sim
 consumer/dynamics/video; Topwater expert generator only; researcher independent
 geometry assumptions. Baseline+generatorcheckpoint8d3755b and geometry/nativeproducer/consumer/Jan90
 checkpoint3d5cedb and rejectednativecase/lidcheckpoint0c0c9e2 are pushed; issue30
-updated for the rejectedcase; calmcontrol/newICproposal checkpoint pending. Actualbodycase and24call lidcontrol are terminal; no numerical grant remains.
-Geometryaudit is source-only; renderer held because the actualcase was rejected. Never push main/create bookkeeping PR/merge/upstreampost.
+updated through calmcontrolcheckpointd09c354; geometrysourcecheckpointbc8dc4f
+is also pushed. NewICproposal/handoff refresh pending next checkpoint. Actualbodycase and24call lidcontrol are terminal; no numerical grant remains.
+Geometryaudit and generatedrenderer independently SOURCEPASS, stillUNBOUND/nojobs.
+Renderer source6f3f5626/controls7212083b,12.5fps751nativeframes/60.08s,equalmetres
+12mXYtracking/fixedz. BindonlyNEWusablemotion, previewbeforeencode. Owner for
+newrendererfiles: /root/generated_video; WECinitializer: /root/wecsim_reference. Never push main/create bookkeeping PR/merge/upstreampost.
