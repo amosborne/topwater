@@ -129,7 +129,7 @@ def test_cancellation_fallback_and_explicit_failure_for_unresolved_gradients():
                   LaplaceControls(max_refinement=0), False)
 
 
-def test_closed_canonical_hull_interior_exterior_identities_and_actual_result_roundtrip(tmp_path):
+def test_closed_surface_interior_exterior_identities_and_actual_result_roundtrip(tmp_path):
     vertices, faces = sphere_mesh()
     mesh = HullMesh(vertices, faces)
     panels = TrianglePanels.from_mesh(mesh)
@@ -140,7 +140,7 @@ def test_closed_canonical_hull_interior_exterior_identities_and_actual_result_ro
     assert_allclose(reversed_operators.double_layer.sum(axis=1), 0.5, atol=1e-8)
     assert_allclose(reversed_operators.single_layer, operators.single_layer, atol=0)
     # Interior/exterior evaluation identities are independent of a linear solve.
-    points = np.array([[0, 0, -0.175], [0, 0, 1]])
+    points = np.array([[0, 0, 0], [0, 0, 2]])
     field = panel_influence(points, panels, gradients=True)
     assert_allclose(field.double_layer.sum(axis=1), [-1, 0], atol=1e-8)
     assert_allclose(field.gradient_double_layer.sum(axis=1), 0, atol=1e-8)
