@@ -29,7 +29,10 @@ Inventory all finite source/potential/pressure/normal and operator-produced trac
 at3frequencies×Npanels×7basis columns, finite and complete at all4meshes. Compare
 actual meshes/worldCG/fullM/restoring and rawAinf/A/B to original data. Record
 the finite Green settings, unit-displacement radiation/unit-elevation diffraction
-normalization and exp(-iωt) convention. This archive covers6 radiation modes at
+normalization and exp(-iωt) convention. Contract Green settings are named text
+profiles: compare recovered finite settings to the original recorded dictionary,
+and verify its infinite profile has zero tabulation counts. Never interpret the
+profile text as a settings dictionary. This archive covers6 radiation modes at
 each frequency, but diffraction only at the PAIRED heading for each frequency:
 3of9 original frequency-heading cases. Record six missing cases per mesh.
 raw_Ainf coefficients are NOT Ainf source densities. Search inventory explicitly;

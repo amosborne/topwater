@@ -40,6 +40,14 @@ def require_calm_state(current,archived):
     if np.any(current.linear_velocity) or np.any(current.angular_velocity):raise ValueError('canonical calm zero-velocity state required')
 
 
+def recorded_green_identity(spec,original,recovered):
+    if (spec['finite_green_settings']!='Capytaine 3.0.0 Delhommeau defaults, recorded in output'
+            or spec['infinite_green_settings']!='Delhommeau tabulation_nr=0, tabulation_nz=0'
+            or original['finite']!=recovered or original['infinite'].get('tabulation_nr')!=0
+            or original['infinite'].get('tabulation_nz')!=0):raise ValueError('named/recorded Green profiles differ')
+    return dict(finite_profile=spec['finite_green_settings'],infinite_profile=spec['infinite_green_settings'],recorded=original)
+
+
 def generate(args,c,r,a):
     fixed=dict(format_version=1,maximum_elapsed_seconds=60.,maximum_peak_bytes=2147483648,maximum_additional_disk_bytes=2147483648,
         counts=[1232,2772,4928,7700],subdivisions=[2,3,4,5],seed_panels=308,gauss_orders=[12,16,20],
@@ -79,12 +87,12 @@ def generate(args,c,r,a):
     if (sources['time_convention']!=contract['physical_problem']['time_convention'] or sources['density_kg_m3']!=1025.
             or sources['gravity_m_s2']!=9.81 or sources['water_depth']!='infinite' or sources['forward_speed_m_s']!=0.
             or sources['basis_columns']!=contract['physical_problem']['mode_order']+['Diffraction']):raise ValueError('finite source conventions differ')
-    if any(sources['green_settings'].get(key)!=value for key,value in contract['reference_numerics']['finite_green_settings'].items()):raise ValueError('finite Green controls differ')
+    green_identity=recorded_green_identity(contract['reference_numerics'],raw['green_settings'],sources['green_settings'])
     if version('capytaine')!='3.0.0':raise ValueError('archived radius convention requires pinned dependency')
     r.update(scope=__doc__,bundle_sha256=identities,input_sha256=frozen['input_sha256'],
         physical_identity_sha256=frozen['physical_identity_sha256'],protocol_sha256=digest(c['protocol']),
         historical_commits={name:report['current_commit'] for name,report in [('frozen',frozen),('raw',raw),('sources',sources)]},
-        physical_problem=contract['physical_problem'],original_gates=raw['gates'],original_raw_passed=False,
+        physical_problem=contract['physical_problem'],green_identity=green_identity,original_gates=raw['gates'],original_raw_passed=False,
         source_reproduction_passed=sources['passed'],full_reference_qualified=False,source_discretization_qualified=False,
         native_evaluations=0,new_bem_solves=0,levels=[],memory_records=[])
     def budget(stage):
