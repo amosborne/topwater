@@ -1,0 +1,17 @@
+{
+  "format_version": 1,
+  "protocol": "docs/finest-consumer-rehearsal-protocol.md",
+  "mode": "resource-rehearsal",
+  "maximum_elapsed_seconds": 60.0,
+  "maximum_peak_bytes": 2147483648,
+  "maximum_additional_disk_bytes": 2147483648,
+  "source_panels": 3456,
+  "gauss_orders": [12,16,20],
+  "target_counts": [124416,221184,345600],
+  "chunk_points": 100,
+  "cpu_threads": 1,
+  "trace_scaled_tolerance": 1e-10,
+  "ownership_absolute_m": 1e-10,
+  "probe_bundle_sha256": "cd5756817dcd38a99ae4931fa9f3befe5c8ba733a4cb1ace74cbe9852bb084cc",
+  "full_reference_scope": false
+}

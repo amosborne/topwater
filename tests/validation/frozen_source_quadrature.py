@@ -77,9 +77,10 @@ def reused_trace(points,owners,weights,arrays,prefix):
     return phi.copy()
 
 
-def evaluate_trace(engine,mesh,points,sigma,chunk,budget):
+def evaluate_trace(engine,mesh,points,sigma,chunk,budget,out=None):
     """One bounded full-source evaluator for frozen-source diagnostics."""
-    phi=np.empty((len(points),6),complex)
+    phi=np.empty((len(points),6),complex) if out is None else out
+    if phi.shape!=(len(points),6) or phi.dtype!=np.dtype(complex) or not phi.flags.writeable:raise ValueError('complete writable complex128 output required')
     for start in range(0,len(points),chunk):
         budget();end=min(start+chunk,len(points))
         S=engine.build_S_matrix(points[start:end],mesh,free_surface=0.,water_depth=np.inf,wavenumber=np.inf)

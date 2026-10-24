@@ -55,7 +55,7 @@ def process_memory():
         peak_committed_bytes=int(counters.peak_pagefile),private_bytes=int(counters.private))
 
 
-def owned_zip(bundle,stem,kind,control_hash):
+def owned_zip(bundle,stem,kind,control_hash,selected=None):
     base='validation/'+stem
     with ZipFile(bundle) as z:
         r=json.loads(z.read(base+'.json'));payload=z.read(base+'.npz')
@@ -64,7 +64,10 @@ def owned_zip(bundle,stem,kind,control_hash):
                 or sha256(z.read(base+'.source/contract.json')).hexdigest()!=control_hash):raise ValueError('corrupt or wrong-kind input graph')
         for name,h in r['producer_sha256'].items():
             if sha256(z.read(base+'.source/'+name)).hexdigest()!=h:raise ValueError('corrupt historical producer')
-        with np.load(BytesIO(payload)) as a:arrays={name:a[name].copy() for name in a.files}
+        with np.load(BytesIO(payload)) as a:
+            names=a.files if selected is None else list(selected)
+            if not set(names)<=set(a.files):raise ValueError('required historical arrays missing')
+            arrays={name:a[name].copy() for name in names}
     return r,arrays
 
 
