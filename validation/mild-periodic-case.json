@@ -1,0 +1,50 @@
+{
+  "format_version": 1,
+  "case_id": "canonical-boat-mild-periodic-001",
+  "scope": "Prospective one-second periodic small-motion validation case; no rest-start/transient claim",
+  "sea": {
+    "kind": "controlled three-component directional sea; not an observed buoy realization",
+    "amplitudes_m": [0.02, 0.01, 0.005],
+    "frequencies_hz": [0.1, 0.25, 0.5],
+    "propagation_headings_degrees": [0.0, 45.0, 90.0],
+    "phases_rad": [0.0, 1.5707963267948966, 3.141592653589793],
+    "phase_origin_world_xy_m": [0.0, 0.0],
+    "time_convention": "Re(amplitude*exp(-i*omega*t))"
+  },
+  "comparison": {
+    "duration_s": 1.0,
+    "sample_step_s": 0.005,
+    "translation_error_limit_m": 0.01,
+    "rotation_error_limit_degrees": 0.1,
+    "rotation_error_chart": "theta=Log(R*R_equilibrium^T), components in mean world axes; compare the same chart in both models",
+    "runtime_limit_wall_seconds_per_simulated_second": 200.0,
+    "reference_budget_fraction": 0.1,
+    "require_nontrivial_translation_and_rotation": true,
+    "reference_roundoff_floor_m": 1e-10,
+    "reference_roundoff_floor_rad": 1e-10,
+    "reference_uncertainty": "Sum over forcing components of max(abs(H4-H3),abs(H3-H2))*incident amplitude, componentwise in physical DOF units; empirical spatial envelope only",
+    "reference_acceptance": "Both finest increments fit the allocated motion budget, and latest componentwise increment <= previous + roundoff floor; all complex component phases retained",
+    "comparison_acceptance": "Actual Topwater-minus-reference motion error plus independently estimated reference/comparison uncertainty <= full per-axis motion limit; reference allocation does not waive other uncertainty sources"
+  },
+  "initialization": {
+    "kind": "periodic steady state with prehistory extending before t=0",
+    "body": "Mean equilibrium plus reconstructed generalized displacement; exact exponential rotation map about mean world axes; velocity derived consistently",
+    "fluid": "Total incident+diffraction+radiation periodic surface elevation/potential at t=0, pulled from the mean plane to the nonlinear surface and projected onto the current body Neumann condition",
+    "compatibility": "Periodic prehistory is exact only for the linear reference; nonlinear compatibility projection may launch adjustment transients. Projection, sampling and nonlinear representation errors must be measured and charged; body-only initialization is insufficient",
+    "runtime_boundary_forcing": "Analytic prescribed incident waves only; no future Capytaine body trajectory, pressure or force injection",
+    "rest_start_reference": false
+  },
+  "amplitude_controls": {
+    "scales": [1.0, 0.5, 0.25],
+    "purpose": "Check approach to linear limit and wetting changes without changing the frozen full-amplitude comparison case after judging Topwater"
+  },
+  "raw_reference": {
+    "study_id": "reference-study-003",
+    "bundle_sha256": "e18bf7366eb651766edc5487addd84c798c1ae53183f58a0e88b3b623ed6729d",
+    "original_decision": "unqualified under original coefficient policy; never relabeled",
+    "selected_frequency_indices": [0, 1, 2],
+    "selected_heading_indices": [0, 1, 2],
+    "required_levels": [1, 2, 3, 4],
+    "periodic_field_data_status": "not exported; blocks complete initial-state/reference qualification"
+  }
+}
