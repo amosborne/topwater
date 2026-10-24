@@ -1,78 +1,85 @@
-﻿# Checkpoint handoff
+# Checkpoint handoff
 
-## Latest: cold2772 fields complete, output integration fails three couplings
+## Active goal: canonical Capytaine -> BEMIO -> WEC-Sim,10s movie and mesh variation
 
-Read docs/fixed-field-2772-001.md and prospective protocol first. Branch
-baseline/fluid-body; producer858bba6. Overall goal ACTIVE/INCOMPLETE: no qualified
-source-mesh/finite-wave reference, coupled Topwater motion or usable runtime.
-Previous goal turn is concrete progress: actual saved fields now expose the
-output error that must be resolved before larger source jobs.
+The USER replaced the old goal and expressly excludes ALL Topwater-specific
+code work. Read docs/capytaine-wecsim-workflow.md and current AGENTS override.
+Goal ACTIVE/INCOMPLETE. No10s boat simulation or movie exists yet.
 
-- Exactsession94492 TERMINAL exit1 expected gate failure, no exception. Complete
-  true, native_calibration_passed true, integration_passed FALSE, passed false.
-  ZERO BEM solves, three full both-half Gauss12/16/20 fields retained.
-- Native S*sigma/load calibration1e-10 passed5.94284s. Actual fields took
-  102.8695/174.0592/265.4823s, total558.1784s<900. Peakworking234,070,016B,
-  peakcommit1,647,284,224B<2GiB; disk186,309,340B<2GiB. No native job live.
-- BOTH integration increments fail exactly[1,5],[3,5],[5,1] (zero-based modes:
-  sway-yaw,roll-yaw,yaw-sway). Ratios3.175457/1.646947; trend passes. All36
-  diagonal/coupling comparisons retained; no symmetry fitting/zeroing/relaxation.
-- Uq remains empirical max of both increments. One charged1232->2772 source
-  interval fails15 entries,max421.0975, DIAGNOSTIC ONLY; unresolved integration
-  prevents source-error attribution. No two-level/source/full qualification.
-- All294tests pass8.63s (session5629 exit0), JUnit archived. Verifier reconstructs
-  all native/order loads, links field loads to gate arrays, checks imaginary
-  loads, all36 gates/Uq/masks and interval metadata. Fresh restoration verifies
-  complete actual graph, exact arrays and external inputs. Independent postrun
-  audit passed; preserved FAILED evidence, no physics promotion. Evidence fixed-field-2772-001.zip
-  SHA5c24ecbfba6a8ff839c77e5fb33085b9f729c72b9c108b329a950050e4523924;
-  resultdoc lists restore command/external inputs. Failed result preserved.
-- Source-export002 still provides24 columns across four six-mode bases, all
-  native A exactly reproduce old raw. Producer242c839,18new+6historical,
-  66.4498s, source-only8GiB cap. This is not the field cap or source convergence.
-  Old1232 G12/16/20 conditional output gates pass (producercde8f2c); all original
-  native/finite failures remain failed. See prior resultdocs/source packet.
+User requirements:
+- Minimum hull mesh supplies geometry. Solvers may refine that same surface.
+- Boat initially at equilibrium/rest in locally calm water, rho1025,g9.81,
+  infinite depth. Full dry inertia/products/CG must be preserved.
+- Waves START ROLLING IN from upstream. NO temporal amplitude ramp, global
+  wave appearance under hull, or suddenly switched harmonic loads as surrogate.
+- Canonical mild directional sea. Initial waves may be upstream; excitation
+  and the rendered incident field must share the same actual arrival input.
+- Capytaine frequency-domain outputs -> official BEMIO -> WEC-Sim six-DOF
+  time-domain dynamics. Do not build another custom reference integrator.
+- First produce the working minimum-mesh10s result/isometric video. Then compare
+  actual six-motion histories as solver meshes refine. Intermediate added-mass,
+  damping or coupling coefficients are diagnostics, NOT standalone gates.
+  Preserve old failed studies under their original policies; never relabel them.
 
-**Exact next bounded goal:** FIXED2772 OUTPUT CONTINUATION ONLY, G24/28 plus
-verified reuse of priorG20. First implement executable controls/protocol and
-prelaunch adversarial review. Scope: same saved002 level2 six-mode sources,
-same308seed physical output surface, zero BEM solves. Native calibration repeated
-in a fresh cold process at1e-10 scaled. Regenerate/verify priorG20 points, owners,
-normals, weights and fields' exact producer/input/payload identity before reuse.
-Independently evaluate both halves for newG24/G28 targets177408/241472, total
-1,161,135,360 new field pairs,100-target chunks, one native thread.
+Verified setup:
+- MATLABR2025b25.2, Simulink/Simscape/SimscapeMultibody installed and all3license
+  tests returned1. Inventorysession5520terminalexit0 (default sandbox startup
+  initially lacked writable preferences; normal approved MATLAB run succeeded).
+- OfficialWEC-Simv7.1.0 cloned at artifacts/dependencies/wec-sim-v7.1.0,
+  commita23d2993807410fe78cc63546c1ba9d81912024f. Clone40953terminalexit0.
+- MATLABsession53356terminalexit0 loads WECSim_Lib, instantiates simulationClass
+  and waveClass(elevationImport), resolves official readCAPYTAINE. Source path
+  added in batch only; no global MATLAB path was saved. Setup evidence:
+  docs/capytaine-wecsim-environment.json. This is NOT a boat simulation.
+- Capytaine3.0.0 installed; FFmpeg9.0.1available. Matplotlib3.11.2 installed in
+  the analysis venv only, no projectdependency or Topwaterruntime changes.
+- Neutral geometry/data: reference/capytaine/canonical-boat.json, full minimum
+  hull plus exact17wet triangles, full dry M, world CG/pose and sea. Exported
+  from exact existing frozen input/NPZ (hashes included), no solver imports.
+  Arrival mapping remains explicitly prospective: freeze it before actual run.
+- The brief custom Python dynamics experiment has been set aside under
+  reference/capytaine/history and is NOTused. Four analytic math checks passed;
+  they establish no boat accuracy. Do not extend that prototype.
+- Old b64cb63 quadrature job session36762 was USER-INTERRUPTED terminalexit1 after
+  G24, with G20 reused/G28 unfinished. Local partial artifacts remain at
+  artifacts/validation/fixed-field-2772-continuation-001.*, unchanged. Not a
+  numerical failure. All older coefficient studies remain historical.
+- No live numerical jobs. No src/topwater or existing tests were modified.
 
-Prospective1500s TOTAL walltime (imports/inputs/calibration/verification/packaging
-included),2GiB peak working AND commit,2GiB accounted disk. Max actual measured
-rate8.36720097e-7s/pair: (rate*newpairs +5.94284s native) *1.25 +60s =1281.8602s
-<1500; this screen is
-not an accuracy guarantee. Model retained prior/new fields and input/archive
-copies before launch; keep the prior62.6MB packet as an explicit SHA-bound
-external dependency if needed rather than recursively duplicating payloads.
-Fresh host margin/identities, minimal selected input loading, archive actual
-producer/physical graph BEFORE native work; immutable until exact process terminal.
-Use existing shared evaluator/consumer/streamed checkpoints/payload verification.
-Do not alter source reconstruction or run a larger source mesh at this stage.
+Important WEC-Sim source findings:
+- examples/BEMIO/CAPYTAINE/sphere/main.py and bemio.m show native netCDF plus
+  legacy hydrostatics export, readCAPYTAINE/radiationIRF/excitationIRF/writeBEMIOH5.
+- waveClass elevationImport interpolates an imported elevation history; with
+  rampTime0 it imposes no ramp. bodyClass.userDefinedExcitation applies the
+  official NONCAUSAL excitation-IRF convolution relative to the wave reference
+  point, choosing direction from native hydroData. Do not mistake zero local
+  elevation alone for zero prearrival body forcing. Check padding and phase.
+- Imported-wave markers are disabled; built-in imported surface FFT reconstruction
+  warns qualitative. Use a consistent incident-wave visualization and label it;
+  do not pretend it is a total scattered/radiated CFD field.
+- bodyClass supports inertiaProducts[Ixy Ixz Iyz] as well as diagonal inertia.
+  Preserve product signs/conventions through the full body model.
+- Independent setup review passed; no checkpoint blocker. Before launch: use
+  per-direction imported components (one scalar with one heading loses the sea),
+  explicitly set simu.rampTime=0 (default100), verify missing hydrostatic fields
+  are not replaced with importer zero CG/CB/volume defaults. CSV padding beyond
+  simu.time is discarded before convolution: pad ACTUAL timeline. Preserve the
+  first10s from the true rest initial condition, never crop to an already-moving
+  later window. See workflow doc for these resolved prospective requirements.
 
-Acceptance: SAME all36 relative0.001 +1e-6 normalized entrywise policy for BOTH
-20->24 and24->28 increments, latest<=previous+1e-6; explicit Uq=max both. Preserve
-failed12/16/20 evidence unchanged; higher resolution resolves a failed gate,
-not relaxation. Require native calibration, finite complete actual fields,
-resource/identity/ownership checks. No Richardson or continuum-certification
-claim. Single1232->2772 comparison with BOTH Uq remains diagnostic only even
-if this integration control passes; no source/full reference promotion.
-
-Deliver actual new fields/matrices/uncertainty/masks/resources, source and reused
-field identities, independent postrun audit, durable evidence with fresh full
-restore including bound external packets, all tests, checkpoint commit/push,
-issue30 update and fresh handoff; THEN STOP. Failure requires review before more
-work; no automatic4928/7700 job. Their field cost/quadrature controls must be
-separately assessed only after this output control passes.
-
-Exclusions: finite solves, remesh/formulation/major speed campaigns, source/full
-promotion, coupled Topwater simulation. All finite A/B/complex excitation/phase
-and24 missing diffraction exports remain open. Broader time-domain target still
->=1s matched mild-sea histories within1cm/0.1deg including uncertainty, then
-<=200 wallseconds/s including normal preparation. Reject5000x routes early;
-major runtime optimization waits physical validation. Offline Capytaine cost
-is separate and establishes no Topwater simulation throughput.
+**Next bounded action:** FIRST end-to-end minimum-mesh boat run and10s isometric
+movie using Capytaine/BEMIO/WEC-Sim. Scope: generate minimum-mesh native Capytaine
+netCDF/hydrostatics; officialBEMIO H5; single freely-floating six-DOF Simulink
+model, no PTO/mooring/invented damping; freeze incoming spatial arrival input
+and its force/rendering mapping; run10s from rest, retain all startup. Archive
+actual code/inputs/dependency hashes BEFORE each numerical launch; declare
+frequency band/spacing/IRF/time step/resources prospectively, serial jobs,
+immutable producers until exact process terminal. Review startup, full inertia,
+phase/sign/units and surface interpretation before promotion. Deliver actual
+raw native data, histories, plots/movie, reproducible commands and honest limits,
+reviewed evidence, checkpoint commit/push, issue30 and fresh handoff; THENSTOP.
+No coefficient or extra-quadrature qualification campaign. No automatic large
+mesh sweep: after first working result, characterize motion variation over at
+least3 actual panel resolutions and relevant time/frequency/IRF refinements,
+all judged in six motion units. The full video/mesh-study goal remains active
+until those deliverables exist and are checked. No Topwater work.

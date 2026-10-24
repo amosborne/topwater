@@ -1,5 +1,10 @@
 # Validated, practical time-domain baseline
 
+Historical broader Topwater goal, now HELD by the user's instruction to work
+only on Capytaine plus WEC-Sim. Current reference-only goal and motion-based
+policy are in capytaine-wecsim-workflow.md; conflicting prerequisite coefficient
+gates below no longer control that workflow. No Topwater code work is authorized.
+
 The user clarified this goal on 2026-10-23. Reference qualification is a
 prerequisite, not the final deliverable. Topwater's runtime is time-domain only.
 

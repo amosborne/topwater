@@ -1,5 +1,10 @@
 # Capytaine reference qualification goal
 
+Historical coefficient-first goal, REPLACED by the user's Capytaine/BEMIO/
+WEC-Sim10s video and motion-convergence goal. Read capytaine-wecsim-workflow.md.
+Preserve every old failure under its original rules; do not continue this old
+campaign or apply its intermediate coefficient thresholds as new motion gates.
+
 Objective: establish a qualified, reproducible Capytaine reference for the
 canonical 24 ft boat, resolving convergence failures until the declared
 acceptance gates pass. The completed foundation reset is the starting point.

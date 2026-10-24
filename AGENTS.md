@@ -1,5 +1,29 @@
 # Validation before experimentation
 
+## Current user direction: Capytaine plus WEC-Sim only
+
+The user replaced the previous goal. Establish an end-to-end canonical
+Capytaine -> BEMIO -> WEC-Sim reference: a10s six-DOF simulation, isometric video
+and characterization of motion variation with solver mesh resolution. Start
+the boat at rest in locally calm water; waves must roll in from upstream, not
+appear under the hull. No global load/amplitude step or imposed ramp is the
+accepted startup. Use the same traveling input for forces and visualization.
+No Topwater-specific solver code, implementation, comparison or timing work.
+
+Begin with the minimum hull geometry as input; refine solver panels on that
+same surface as needed. Obtain the first working time history before pursuing
+refinement. Gate the SIX time-domain motions, including startup, and characterize
+their numerical variation. Intermediate added mass/damping/coupling entries
+are diagnostics, not independent qualification gates for this workflow. Keep
+all original failed studies and their original policies/results unchanged.
+No more blanket coefficient/quadrature campaigns. Missing/corrupt evidence or
+invalid solves cannot establish a result, but old0.1% coefficient thresholds
+must not block this new motion-based workflow.
+
+This direction supersedes conflicting historical scope/order below. Read
+docs/capytaine-wecsim-workflow.md and docs/checkpoint-handoff.md first. The
+previous Topwater goal and coefficient-first qualification path are held.
+
 The active application fixture is the 24 ft boat in `tests/reference_boat.py`.
 The former canoe case is retired. Preserve old experiments in Git history;
 do not use their passing checks or timings to qualify this boat.
