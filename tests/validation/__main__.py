@@ -28,7 +28,7 @@ def freeze(args,contract,report,arrays):
         raise ValueError('canonical reference must freeze a calm zero-velocity equilibrium')
     inputs=SimulationInputs(body,WaveComponents([],[],[],[]),pose)
     text=inputs.to_json();input_path=args.output.with_suffix('.source')/'inputs.json'
-    input_path.write_text(text)
+    input_path.write_text(text,encoding='utf-8',newline='\n')
     R=rotation_matrix(pose.orientation)
     dry=np.zeros((6,6));dry[:3,:3]=body.mass*np.eye(3);dry[3:,3:]=R@body.inertia_cg@R.T
     length=float(np.ptp(body.mesh.vertices[np.unique(body.mesh.faces[body.mesh.physical_faces]),0]))
