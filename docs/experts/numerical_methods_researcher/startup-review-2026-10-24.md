@@ -141,3 +141,42 @@ The stock first-wave-only path predicts missing `2*K`, maximum error 32. It is
 adequate to test omitted component handling, but its equal headings do not test
 direction dispatch. The fixed regression must include unequal direction kernels
 and distinct headings as well as the actual production preprocessing call.
+
+## Final independent executed correction signoff
+
+PASS for retained excitation history and multiple-import summation in the
+exercised linear `elevationImport` path. Independently inspected
+`artifacts/reference-multiple-imports-stock-attempt5/result.json`: native stock
+returns `K`, independent expected `3*K`, maximum error 32 exactly. This confirms
+the second omitted component independently of the earlier scalar crop defect.
+
+Final correction source review verifies each imported file retains its physical
+history, uses its own direction, requires common output times, initializes its
+full time-by-DOF force matrix, and contributes to a separate total; radiation
+preparation occurs once. Explicit physical lag indexing handles asymmetric
+support and fails closed on missing incident history or nonfinite kernels.
+
+Independently inspected
+`artifacts/reference-imported-excitation-fixed-attempt2/result.json` and its log:
+
+- Past/future/interior scalar expectations for `dt=1` and `dt=0.5`: all errors
+  exactly zero.
+- Short input is explicitly rejected; native nonzero-ramp and output-wave-grid
+  invariance assertions execute before final pass.
+- Actual `hydroForcePre` with unequal 0/90-degree kernels and input amplitudes,
+  across all six DOFs, agrees with independently indexed summed expectation:
+  zero error.
+- Asymmetric physical lag support `[-1,2]` agrees: zero error.
+
+Recomputed current and archived snapshot hashes match the attempt-two frozen
+manifest: bodyClass
+`697552816c164c34207a7cdb32002d43a139871203864571764ef9b08f0a59bd`, test
+`e8cdbf73f80506fbfbae35ba783996c3d88589b13e84a556a1b22d51afb30ddc`, probe
+`182e0a9bd3efe628e74d1f0ad63af57037d8ea0984108e8d749e216c93683f0f`.
+The correction author and reviewer are distinct. First fixed attempt's exposed
+force-array shape failure remains preserved; its owner-authored preallocation
+correction was separately reviewed and then exercised by successful attempt two.
+
+This signoff permits physical reliance on this preprocessing correction within
+the tested path. It does not validate radiation, Simulink body dynamics, packet
+calm/arrival, motion accuracy or a full WEC-Sim library audit.

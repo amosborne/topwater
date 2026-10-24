@@ -28,17 +28,28 @@ in artifacts/reference/minimum-20261024/native-attempt2/producer-checks.json.
 Ledger was set idle under lease before final release. Source/input/dependency
 identity and command are preserved in producer-run-proposal-attempt2.json.
 
-Physical limitation requiring resolution before motion reliance: native one-centroid
-triangle quadrature integrates degree2 CB and hydrostatic integrands inexactly.
-It produces CBxy=[-0.0130379264,0.00111213018] and spurious roll/pitch hydrostatic
-coupling19607.59 despite the symmetric physical surface. Source evidence and
-proposed exact hydrostatic-only triangle integration are in
-[minimum producer evidence](minimum-producer-2026-10-24.md). No output was altered
-or symmetry imposed. Await coordinator scope and independent correction review.
-High-frequency native wavelength/resolution/irregular-frequency warnings also
-remain diagnostic limits; no automatic refinement/coefficient campaign.
+Native centroid hydrostatic limitation is resolved in unique corrected output
+artifacts/reference/minimum-20261024/native-gl2. Supported native GL2 integrates
+physical degree2 moments on the unchanged17 triangular panels; no BEM solves or
+coefficient transformations. Both correction/check commands terminal exit0;
+all8 independent analytic checks pass, maxK discrepancy4.3656e-11. CBxy~[4e-16,
+1.8e-17], spurious roll/pitch coupling reduced to roundoff while physical
+heave/pitch coupling retained. Official importer body_name alias added, original
+body preserved. Original centroid outputs remain immutable evidence. Independent
+startup_review executed signoff PASS; [producer evidence](minimum-producer-2026-10-24.md)
+and ../numerical_methods_researcher/hydrostatics-review-2026-10-24.md.
+Executed official BEMIO hydroimport joint signoff PASS: stored exact metadata,
+normalized fullK/nativeAinf and saved fullM preserve accepted native-gl2 inputs;
+phase residuals1.45519e-11 for real and single imaginary conversion. Evidence in
+[consumer interface review](consumer-interface-review-2026-10-24.md). H5 body
+readback and physical full-inertia/frame mapping remain pending. Focused native
+Simscape product-order lead is with consumer for independent reproduction; no
+consumer correction authored here.
+Exact17panel frequency coefficients remain coarse: native wavelength/resolution/
+irregular-frequency warnings limit physical accuracy claims. No motion/video or
+mesh characterization yet; no automatic refinement/coefficient campaign.
 
 Historical [setup/interface evidence](native-setup-2026-10-24.md) is background,
-not a motion validation. Next: resolve bounded hydrostatic quadrature issue if
-assigned and independently review consumer matrix mapping when ready. Do not
-repeat role confirmation or launch additional numerical work without allocation.
+not a motion validation. Next: independently review executed consumer matrix/
+phase/full-inertia mapping when BEMIO/case ready. No further numerical allocation;
+do not repeat role confirmation or launch additional work without assignment.

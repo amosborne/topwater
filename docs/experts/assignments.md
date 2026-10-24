@@ -7,9 +7,12 @@ schedules authorized work and never grants scope. Update status in place.
 
 ## CAP-001: first canonical producer/interface
 
-Status: authorized (2026-10-24 minimum-mesh reference goal). Owner capytaine_expert; consumer partner wecsim_expert. Readiness inspection
-completed in capytaine_expert/native-setup-2026-10-24.md. Subsequent execution is
-authorized by the minimum-mesh goal, with no current numerical lease.
+Status: completed (minimum export and stored BEMIO interface, 2026-10-24).
+Owner capytaine_expert; consumer partner wecsim_expert. Native17-panel export,
+independently reviewed GL2 hydrostatics and stored official BEMIO import signoff
+are in capytaine_expert/minimum-producer-2026-10-24.md and
+consumer-interface-review-2026-10-24.md. Runtime body mapping/startup belongs to
+REF-001 and remains incomplete. No refinement is authorized by this completion.
 
 Scope: make the minimum-mesh native Capytaine export needed by the first WEC-Sim
 case, preserving exact physical surface/full inertia/CG and agreed DOF/heading/

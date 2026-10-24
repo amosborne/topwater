@@ -1,14 +1,23 @@
 # Current state: WEC-Sim / BEMIO expert
 
-Setup, fork creation and source-map/reproduction planning are complete.
-Reference work is queued, not authorized; follow the
+Minimum-mesh reference work is authorized by the 2026-10-24 user goal; follow
 [handoff](../../checkpoint-handoff.md). WEC-001 scope and acceptance are in
 [assignments](../assignments.md); numerical scheduling follows coordination.md.
-No engine corrections or numerical tests have occurred. No motion/video exists.
+Stock imported-excitation cropping is independently reproduced on selected
+v7.1.0: actual wave setup discards past/future input before noncausal convolution.
+Evidence: artifacts/reference-imported-excitation-stock/result.json and archived
+source/manifest in artifacts/reference-imported-excitation-stock-source.
+Scalar independent expected/actual maximum errors are [2,16,0] for future,
+past and interior impulses. The allocated job terminated exit0; lease released.
+The retained-history and component-sum corrections passed independent executed
+review and are committed/pushed on the maintained project branch at
+2f43f547301b223cd9a07e84dc88c9375249af0e. Exact tests, failures and scope are in
+[the imported-excitation checkpoint](imported-excitation-2026-10-24.md).
+No motion/video exists.
 
 Maintained fork: https://github.com/amosborne/WEC-Sim, local
 artifacts/dependencies/topwater-wec-sim, branch topwater/reference-v7.1.0,
-published at official v7.1.0 commit a23d2993807410fe78cc63546c1ba9d81912024f.
+based on official v7.1.0 commit a23d2993807410fe78cc63546c1ba9d81912024f.
 See [fork pin](../wecsim-fork.json); recheck checkout identity before relying on it.
 The historical setup note records its earlier local-only state.
 
@@ -18,7 +27,12 @@ angular-bin normalization and row/column directions remain unreproduced leads
 on selected v7.1.0. No workaround is accepted without independent reproduction.
 
 BEMIO supports a separate hydrostatics directory as its third argument (suffix
-with leading separator); joint executed producer/consumer signoff is pending.
+with leading separator). Joint producer interface is approved for provisional
+0.1:0.1:12 rad/s, 0/45/90-degree headings; executed consumer signoff is pending.
+Native corrected files under artifacts/reference/minimum-20261024/native-gl2
+passed independent physical review. reference/wecsim/prepare_bemio.m executed
+official import/write with exact native MAT metadata and phase checks; H5 and
+interface-check.json are in artifacts/reference/minimum-20261024/consumer.
 Open first-case questions: full inertia/frame/Ainf mapping, per-direction imports,
 excitation-IRF noncausality and actual convolution prehistory/padding, upstream
 arrival shared by forcing and display, and explicit simu.rampTime=0. Keep the
@@ -31,5 +45,10 @@ Preserve the unfinished exporter; its packet/export controls are not approved.
 [historical leads](marine-gyro-leads.md) and
 docs/capytaine-wecsim-environment.json contain evidence and limits. Recorded
 MATLAB/engine setup is historical, not live readiness or an execution lease.
-Next: await user-authorized reference work and a bounded coordinator assignment;
-independent review is required before relying on physical-result corrections.
+Next: prospective packet/startup diagnostic and actual dry/added inertia mapping
+reproduction; then actual six-DOF case. Four historical marine leads
+remain unconfirmed on selected release; passive-yaw/full-direction spectrum
+paths are unexercised by the proposed linear imported-packet case. Equal-grid
+fixed ode4 output is proposed; output-grid behavior still requires verification.
+No historical workaround has been carried over. Independent review is required
+before relying on physical-result corrections.
