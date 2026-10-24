@@ -113,7 +113,8 @@ def generate(args,c,r,a):
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--controls',type=Path,default=Path('validation/fixed-source-export-controls.json'))
     for name in ('pilot','pilot-bundle','output'):p.add_argument('--'+name,type=Path,required=True)
-    args=p.parse_args();c=json.loads(args.controls.read_text());r=prepare(args.output,args.controls,'fixed-seed-infinite-source-export');a={};checkpoint_arrays(args.output,r,a)
+    args=p.parse_args();c=json.loads(args.controls.read_text());r=prepare(args.output,args.controls,'fixed-seed-infinite-source-export');a={}
+    r.update(source_export_complete=False,completed_capytaine_calls=0,common_grid_evaluations=0);checkpoint_arrays(args.output,r,a)
     try:generate(args,c,r,a)
     except (Exception,KeyboardInterrupt) as error:r.update(complete=False,passed=False,source_export_complete=False,error=dict(type=type(error).__name__,message=str(error)))
     write_report(args.output,r);print(json.dumps({key:r.get(key) for key in ('complete','passed','source_export_complete','completed_capytaine_calls','total_source_cases_represented','latest_memory','elapsed_seconds','error')}))

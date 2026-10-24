@@ -2,6 +2,8 @@
 from time import perf_counter
 STARTED=perf_counter()
 import argparse,json,shutil
+from io import BytesIO
+from hashlib import sha256
 from pathlib import Path
 from zipfile import ZipFile
 from importlib import import_module
@@ -32,9 +34,26 @@ def source_quality(values,quadrature_uncertainty,scale,relative=.001,absolute=1e
 
 
 def pinned_bytes(bundle,stem,path):
+    def stream_hash(stream):
+        h=sha256()
+        while chunk:=stream.read(1024*1024):h.update(chunk)
+        return h.hexdigest()
     with ZipFile(bundle) as z:
-        for suffix in ('.json','.npz'):
-            if z.read('validation/'+stem+suffix)!=path.with_suffix(suffix).read_bytes():raise ValueError('input differs from pinned bundle')
+        raw=path.with_suffix('.json').read_bytes();report=json.loads(raw)
+        if z.read('validation/'+stem+'.json')!=raw:raise ValueError('input manifest differs from pinned bundle')
+        with path.with_suffix('.npz').open('rb') as stream:
+            if stream_hash(stream)!=report['arrays_sha256']:raise ValueError('local input arrays differ')
+        direct='validation/'+stem+'.npz'
+        if direct in z.namelist():
+            with z.open(direct) as stream:
+                if stream_hash(stream)!=report['arrays_sha256']:raise ValueError('pinned input arrays differ')
+        else:
+            entry='validation/'+stem+'.payload.zip'
+            with z.open(entry) as stream:
+                if stream_hash(stream)!=report['payload_package']['sha256']:raise ValueError('pinned payload differs')
+            with ZipFile(BytesIO(z.read(entry))) as payload:
+                with payload.open('arrays.npz') as stream:
+                    if stream_hash(stream)!=report['arrays_sha256']:raise ValueError('nested input arrays differ')
 
 
 def generate(args,c,r,a):

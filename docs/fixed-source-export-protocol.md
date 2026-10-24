@@ -59,3 +59,9 @@ reproducible durable data and checkpoint/tracker/handoff; then stop. No automati
 field job follows. All common-grid source uncertainty, finite A/B/excitation/phase
 gates and24missing finite diffraction exports remain open. Offline time does not
 qualify Topwater200x or coupled motion.
+
+Pinned artifact readers must accept both historical top-level NPZ archives and
+the immutable payload-ZIP layout: exact manifest bytes, local NPZ SHA, complete
+payload ZIP SHA and streamed inner arrays.npz SHA are all required. A reader
+failure before native execution is preserved separately, not relabeled as source
+failure or overwritten by a rerun.
