@@ -10,7 +10,14 @@ Status: **unqualified**. Hydrostatics and instantaneous added mass are
 implemented. Coupled time-domain wave response is not. The archived P1
 diagnostic-tank runtime is a different implementation and is not substituted.
 
-## Current bounded goal
+## Active qualification goal
+
+The foundation reset below is complete. The active goal is
+[qualified, reproducible Capytaine reference convergence](reference-convergence.md),
+including bounded diagnosis/correction checkpoints until the unchanged gates
+pass. A failed individual study leaves this qualification goal incomplete.
+
+## Completed foundation reset
 
 Restore a controlled validation-first foundation. Deliver the canonical-only
 fixture, one implementation identity, the reviewed contract and executable

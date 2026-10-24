@@ -18,8 +18,9 @@ is the current priority. The active tracker is GitHub issue #30.
 The user's reset instructions are preserved in `docs/validation-reset.md`.
 
 Every goal must declare scope, exclusions, deliverables, acceptance criteria
-and a stopping checkpoint before work begins. The current bounded goal is the
-foundation reset, not execution of the reference-convergence study. At each
+and a stopping checkpoint before work begins. The current goal is qualified,
+reproducible Capytaine reference convergence (docs/reference-convergence.md);
+the foundation reset is complete. At each
 checkpoint commit and push, update the tracker, resolve adversarial findings
 and write a fresh-context handoff naming the next bounded validation goal.
 A completed investigation may reject a candidate; it does not qualify it.
