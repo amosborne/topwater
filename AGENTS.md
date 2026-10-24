@@ -27,8 +27,10 @@ are complete. Fresh six-mode Ainf export/native reproduction and conditional
 output integration now pass on its1232-panel mesh; source-mesh/full reference
 remain unqualified. All four source bases now reproduce native matrices;
 18 remaining source solves completed in66.45s under declared limits. Next is
-a separate cold2772 field-integration job, with no automatic larger job.
-See docs/fixed-source-export-002.md and docs/checkpoint-handoff.md.
+a fixed2772 output continuation: cold12/16/20 fields completed but three
+couplings fail both unchanged integration gates. Resolve output error before
+larger source jobs; no automatic continuation or qualification claim.
+See docs/fixed-field-2772-001.md and docs/checkpoint-handoff.md.
 Existing finite source data do not contain
 Ainf densities or all9 frequency-heading diffraction cases.
 Source/reference qualification remains false.
