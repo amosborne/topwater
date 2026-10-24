@@ -128,6 +128,16 @@ def generate(args,controls,case,report,out):
                     budget()
                     problem=(cpt.RadiationProblem(**common,radiating_dof=MODES[column]) if column<6
                              else cpt.DiffractionProblem(**common,wave_direction=headings[f]))
+                    if column==0:
+                        # Keep original operators before solve replaces cached K
+                        # with its LU factorization. Default LU does not overwrite.
+                        if solver.engine.exportable_settings['linear_solver']!='lu_decomposition':
+                            raise ValueError('non-overwriting default LU required for retained operator audit')
+                        S,K=solver.engine.build_matrices(body.mesh,body.mesh,
+                            free_surface=problem.free_surface,water_depth=problem.water_depth,
+                            wavenumber=problem.wavenumber,adjoint_double_layer=True,
+                            diagonal_term_in_double_layer=True)
+                        budget()
                     result=solver.solve(problem,method='indirect',keep_details=True)
                     report['completed_physics_calls']+=1
                     budget()
@@ -150,13 +160,7 @@ def generate(args,controls,case,report,out):
                         check(label+'/FK',fk,r['FK'][index,f,f],force_scale)
                     save(args.output,report,out)
                     print(f'source recovery: {report["completed_physics_calls"]}/84',flush=True)
-                # Same pinned indirect operators as Capytaine's solve; cached for
-                # these immutable mesh/frequency inputs. Check produced fields,
-                # not merely a recombination of prescribed boundary conditions.
-                S,K=solver.engine.build_matrices(body.mesh,body.mesh,
-                    free_surface=problem.free_surface,water_depth=problem.water_depth,
-                    wavenumber=problem.wavenumber,adjoint_double_layer=True,
-                    diagonal_term_in_double_layer=True)
+                # Apply retained raw operators, not the engine's cached LU.
                 fields['source_potential'][f]=S@fields['sources'][f]
                 fields['source_normal_velocity'][f]=K@fields['sources'][f]
                 del S,K
