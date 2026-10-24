@@ -22,8 +22,11 @@ The common-output54/216/864 source diagnostic confirms all three integration
 controls pass while source increments fail; see docs/common-output-sources-001.md.
 Do not spend the long one-level paired-family continuation seeking qualification;
 its retained prior increment is already far outside the unchanged policy. The
-consumer resource rehearsal is complete; next assess the existing fixed-seed003
-assets/physical identity/quality before any fresh export (docs/finest-consumer-rehearsal-001.md).
+consumer resource rehearsal and fixed-seed003 asset/physical/quality preflight
+are complete. Next is a prospectively bounded fresh six-mode Ainf export and
+controlled-output pilot on its1232-panel mesh; old gates stayfailed. See
+docs/fixed-asset-preflight-001.md. Existing finite source data do not contain
+Ainf densities or all9 frequency-heading diffraction cases.
 Source/reference qualification remains false.
 The archived P1
 diagnostic-tank runtime is a different implementation. Record current commit

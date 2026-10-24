@@ -1,5 +1,50 @@
 # Checkpoint handoff
 
+## Latest checkpoint: fixed-seed assets admissible; fresh Ainf pilot next
+
+Read docs/fixed-asset-preflight-001.md and prospective protocol first.
+Branch baseline/fluid-body; correctedproducer5c55945. Goal ACTIVE/INCOMPLETE.
+No full reference/source/Topwater motion/runtime qualification.
+
+- Read-only0023.364s<60, exactcommandchunkfb7674 terminalexit0. Complete body,
+  full calmzero InitialState/wet/CG/orientation/fullM/restoring AND serialized
+  physical input bytes equal original freeze. All4mesh copies1232/2772/4928/7700
+  match freeze/raw/finite-source archives;7facets/moments/conformity/154halfpatches/
+  reflection/first-vertex-radius+archived actualradius0 proof pass. Maxaspect
+ 315.12536, minangle.181820deg. Shape improvement is NOT convergence/causal proof.
+- Common308seed Gauss12/16/20 targets44352/78848/123200; all4source fieldpairs
+ 4,098,124,800, finest1,897,280,000. Zero native evaluations or source solves.
+- Finite recovery contains84solves:6radiationx3freq +ONLY3paired diffraction
+  cases per mesh. Missing6diffractioncases/mesh=24fresh exports. raw_Ainf is
+  COEFFICIENTS, no infinite densities;24fresh six-mode Ainf exports needed overall.
+  Finite Green/normalization cannot be relabeled as infinite-density data.
+- Readerfailure001 at1035672 preserved (profiletext treated asdict); fixed by
+  named-profile/recorded-dictionary comparison before002. CompleteFalse/error,
+  not a physical-data failure. All287tests pass; exactsession81145 terminalexit0.
+  Independent audit and fresh restoredgraphs/inputs verified. Peakworking222MB,
+  peakcommit1.626GB, disk56.44MB<2GiB. No nativejoblive; oldstudy003failures stay.
+- Evidence fixed-asset-preflight-001.zip +summary, SHA
+  cd66598c22357706b8517065a886e79742e887500a63c388c559fc70e7fc924f.
+  Requires frozen-fixed001,reference-study003,periodic-sources003 trackedarchives.
+  Exact names/SHAs/restorearguments in resultdoc. Assets_usableTrue, overallpassed
+  and source/full-referenceFalse; no numerical promotion.
+
+**Exact next bounded goal:** ACTUAL fresh6-mode Ainf source export + controlled
+pressure-output PILOT on COARSEST1232 fixed-seed mesh only. Prospectively declare
+600s TOTAL,2GiB process+additionaldisk, one native thread,100targetblocks. Exact
+producer/input graph archivedbeforelaunch; original infinite GF settings and
+explicit symbolic-infinity normalization. Preserve6normalized sigma/chi/BC bases,
+operator-produced traces/residuals; verify pristine S/K before cache becomesLU,
+then release dense operators/source caches before common-grid field evaluation.
+Fresh native/operator traces must agree and all36originalrawAinf must reproduce
+1e-10 scaled first. Actual
+commonseed12/16/20 fields cost303,564,800pairs. Use checked consumer memory/IO path
+with ACTUAL fields, never synthetic. Declare unchanged all36 quadrature0.001+
+1e-6 normalized increments/trend andUq beforelaunch. No all-source-level/finite
+wave qualification, remesh/formulation/runtimeoptimization/pairedlongrun. Raw
+sources/fields/loads/Uq, independentreview/checkpoint/tracker/handoff, then stop.
+Other18Ainf +24missingfinite exports and every physicalreference gate remain.
+
 ## Latest checkpoint: output rehearsal passes; stop costly rejected-family extension
 
 Read docs/finest-consumer-rehearsal-001.md and prospective protocol first.
