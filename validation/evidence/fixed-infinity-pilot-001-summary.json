@@ -1,0 +1,214 @@
+{
+  "current_commit": "cde8f2c73d89d9b93ecb17a092d3858a4a0c0778",
+  "complete": true,
+  "passed": false,
+  "pilot_passed": true,
+  "source_export_verified": true,
+  "completed_capytaine_calls": 6,
+  "completed_orders": 3,
+  "source_checks": {
+    "rigid_normal": 0.0,
+    "potential": 1.1956786337495975e-05,
+    "normal": 0.00011269046376080016,
+    "native_load": 4.6067561019105015e-06,
+    "original_native_Ainf": 0.0
+  },
+  "source_export_seconds": 0.617837600002531,
+  "orders": [
+    {
+      "order": 12,
+      "points": 44352,
+      "seconds": 39.56509220000589
+    },
+    {
+      "order": 16,
+      "points": 78848,
+      "seconds": 71.75674119999167
+    },
+    {
+      "order": 20,
+      "points": 123200,
+      "seconds": 104.23402629996417
+    }
+  ],
+  "quadrature_stabilization": {
+    "passed": true,
+    "previous_increment_max_ratio": 0.5547358042464855,
+    "latest_increment_max_ratio": 0.1392385272446027,
+    "trend_passed": true
+  },
+  "pristine_operators": {
+    "S": {
+      "shape": [
+        1232,
+        1232
+      ],
+      "dtype": "complex128",
+      "sha256": "e37add052093989267f1319e629b8d77487268fd2ce0d0517725a67fb90a8cb3"
+    },
+    "K": {
+      "shape": [
+        1232,
+        1232
+      ],
+      "dtype": "complex128",
+      "sha256": "b076324f0764e160edb044d874894a9b0e01ae758bdbc93bc331f39b06f288ae"
+    }
+  },
+  "trace_normalization": "potential/sources/bc divided by -i*encounter_omega before symbolic infinity cancellation; unit CG acceleration potentials",
+  "auxiliary_potential_units": [
+    "m",
+    "m",
+    "m",
+    "m^2",
+    "m^2",
+    "m^2"
+  ],
+  "memory_records": [
+    {
+      "stage": "inputs",
+      "peak_working_set_bytes": 155009024,
+      "working_set_bytes": 115601408,
+      "peak_committed_bytes": 1556357120,
+      "private_bytes": 1536049152
+    },
+    {
+      "stage": "source_export_verified",
+      "peak_working_set_bytes": 289247232,
+      "working_set_bytes": 168550400,
+      "peak_committed_bytes": 1732276224,
+      "private_bytes": 1611235328
+    },
+    {
+      "stage": "order12",
+      "peak_working_set_bytes": 289247232,
+      "working_set_bytes": 181309440,
+      "peak_committed_bytes": 1732276224,
+      "private_bytes": 1624317952
+    },
+    {
+      "stage": "order16",
+      "peak_working_set_bytes": 289247232,
+      "working_set_bytes": 191016960,
+      "peak_committed_bytes": 1732276224,
+      "private_bytes": 1633714176
+    },
+    {
+      "stage": "order20",
+      "peak_working_set_bytes": 289247232,
+      "working_set_bytes": 202825728,
+      "peak_committed_bytes": 1732276224,
+      "private_bytes": 1645469696
+    },
+    {
+      "stage": "array_verification",
+      "peak_working_set_bytes": 289247232,
+      "working_set_bytes": 202670080,
+      "peak_committed_bytes": 1732276224,
+      "private_bytes": 1645277184
+    },
+    {
+      "stage": "package_verification",
+      "peak_working_set_bytes": 289247232,
+      "working_set_bytes": 203235328,
+      "peak_committed_bytes": 1732276224,
+      "private_bytes": 1646206976
+    }
+  ],
+  "latest_memory": {
+    "peak_working_set_bytes": 289247232,
+    "working_set_bytes": 203235328,
+    "peak_committed_bytes": 1732276224,
+    "private_bytes": 1646206976
+  },
+  "accounted_disk_upper_bytes": 112069679,
+  "elapsed_seconds": 222.55737579998095,
+  "payload_package": {
+    "path": "fixed-infinity-pilot-001.payload.zip",
+    "bytes": 25498666,
+    "sha256": "0cd3259a348f8a548dd5d196c036591ac3dc1c24feb32189de0665e21c988ff8",
+    "snapshot_sha256": "68b1c180d6d36dfa66373c3a08c5c98620273e6865b157a686e5babbe6b43a8d"
+  },
+  "interpretation": "One source mesh only; conditional output integration, no source-mesh or finite-wave qualification",
+  "bundle_sha256": "e4d43719636db7ac67731b5f98d418b247371b585f2bd89069b3405eaaee2e79",
+  "external_inputs": [
+    {
+      "argument": "frozen",
+      "filename": "frozen-fixed-001.zip",
+      "sha256": "fcaf28963be08e4443410b8c19d680f1fb81cff3c44a291c34aa69c6e1a9847d",
+      "copy_to": [
+        "validation/fixed-infinity-pilot-001.source/frozen.zip"
+      ]
+    },
+    {
+      "argument": "raw",
+      "filename": "reference-study-003.zip",
+      "sha256": "e18bf7366eb651766edc5487addd84c798c1ae53183f58a0e88b3b623ed6729d",
+      "copy_to": [
+        "validation/fixed-infinity-pilot-001.source/raw.zip"
+      ]
+    },
+    {
+      "argument": "sources",
+      "filename": "periodic-sources-003.zip",
+      "sha256": "4a317cbb91cc51348b0059b40b4a6437315e3656624ad2903743dec4721214e5",
+      "copy_to": [
+        "validation/fixed-infinity-pilot-001.source/sources.zip"
+      ]
+    }
+  ],
+  "tests": {
+    "tests": 288,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "maximum_load_reconstruction_ratio": 4.6067561019105015e-06,
+  "native_diagonal": [
+    91.11518311965278,
+    577.6123918291142,
+    8153.42750879634,
+    1004.0696557892427,
+    16574.58485295726,
+    1329.8541250589974
+  ],
+  "quadrature_diagonals": [
+    [
+      88.68803558293527,
+      568.8903438975627,
+      8110.990440605692,
+      985.0200108523355,
+      16469.324353187705,
+      1306.9768307003233
+    ],
+    [
+      88.68872136140817,
+      568.8983733318025,
+      8111.0565362238085,
+      985.057791849492,
+      16469.42989170645,
+      1306.9908530557382
+    ],
+    [
+      88.68848490677145,
+      568.894687630072,
+      8111.035901701069,
+      985.037506881763,
+      16469.40563345622,
+      1306.9842939415018
+    ]
+  ],
+  "output_change_diagonal": [
+    -2.426698212881334,
+    -8.71770419904226,
+    -42.391607095270956,
+    -19.032148907479723,
+    -105.1792195010421,
+    -22.86983111749555
+  ],
+  "failure_entries": {
+    "previous_failed": [],
+    "latest_failed": [],
+    "trend_failed": []
+  }
+}

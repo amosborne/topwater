@@ -1,5 +1,45 @@
 # Checkpoint handoff
 
+## Latest checkpoint: actual fixed1232 Ainf source/output pilot passes conditionally
+
+Read docs/fixed-infinity-pilot-001.md and prospective protocol first.
+Branch baseline/fluid-body; producercde8f2c. Goal ACTIVE/INCOMPLETE: no full
+source-mesh/finite-wave reference, coupled Topwater motion or runtime qualifies.
+
+- Six FRESH actual infiniteσ/χ/BC solves1232, symbolic(-iω) cancellation; native
+  S/K-produced traces/residuals/rigidnormals/load checks pass1e-10 scaled. All36
+  solverA equal original nativeA EXACTLY. Source-export0.618s, density bases
+  retained; pristine operator hashes checked beforeLU, dense cache released.
+- Common308seed Gauss12/16/20 ACTUAL fields44352/78848/123200,303,564,800pairs,
+  all36 integration gatesPASS maxprevious.554736/latest.139239,trendpass. Native
+  heave8153.4275→Gauss20 8111.0359kg, pitch16574.5849→16469.4056kgm². Measured
+  output corrections, NOT source-error estimates. Uq/complex/signed/absolute
+  matrices/masks/fields/weights/owners retained, independent reflected halves.
+- Exactsession59843 terminalexit0;222.557s<600s. Peakworking289MB, peakcommit
+  1,732,276,224B<2GiB,disk112,069,679B<2GiB. completeTrue/passedFalse,
+  pilot_passedTrue/source_export_verifiedTrue,source/fullFalse. Old failures stay.
+- All288tests pass, JUnit; exactsession73676 terminalexit0. Independent full
+  audit and fresh graph/input restoration pass. No nativejoblive. Evidence
+  fixed-infinity-pilot-001.zip+summary; SHA
+  e4d43719636db7ac67731b5f98d418b247371b585f2bd89069b3405eaaee2e79.
+  Actual NPZ/source in immutablepayload; preflightembedded. External exact frozen/
+  raw/finite-source archives and restorearguments are listed in resultdoc.
+
+**Exact next bounded goal:** SOURCE-EXPORT ONLY for remaining2772/4928/7700
+meshes,6modes each=18native solves. Prospectively600s total,8GiB NATIVE process,
+2GiB disk,one thread. FIRST allocation/LU/cache/host preflight of actual installed
+path; every7700 complexmatrix=948,640,000B. Model all copies/caches/LU workspace,
+require explicitfit and refreshed host margin beforelaunch. Match warmup/solve
+cache keys; row-stream canonicaloperatorhashing to avoid giant bytecopies.
+Preserve originalGF/physical/mode identities,pristine S/K/source traces/residuals,
+all36native/rawA reproduction1e-10 eachmesh. Release each dense state, no field
+evaluation. Immutable actual graph/model/host proof,serial exactprocess/memory
+discipline, independentreview/evidence/checkpoint/tracker/handoff,thenstop.
+No automaticlarger/fieldjob; later COLD fieldconsumer jobs keep2GiB and fresh
+cost/quadrature controls (native high-water counters cannotstandin forfield).
+No finite solves/remesh/formulation/runtimeoptimization or fullsource promotion.
+24missing finite diffraction exports and all fullreferencephysical gates remain.
+
 ## Latest checkpoint: fixed-seed assets admissible; fresh Ainf pilot next
 
 Read docs/fixed-asset-preflight-001.md and prospective protocol first.

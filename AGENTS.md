@@ -23,9 +23,11 @@ controls pass while source increments fail; see docs/common-output-sources-001.m
 Do not spend the long one-level paired-family continuation seeking qualification;
 its retained prior increment is already far outside the unchanged policy. The
 consumer resource rehearsal and fixed-seed003 asset/physical/quality preflight
-are complete. Next is a prospectively bounded fresh six-mode Ainf export and
-controlled-output pilot on its1232-panel mesh; old gates stayfailed. See
-docs/fixed-asset-preflight-001.md. Existing finite source data do not contain
+are complete. Fresh six-mode Ainf export/native reproduction and conditional
+output integration now pass on its1232-panel mesh; source-mesh/full reference
+remain unqualified. Next is a separately modeled source-only export for the
+other three meshes, then cold field jobs. See docs/fixed-infinity-pilot-001.md.
+Existing finite source data do not contain
 Ainf densities or all9 frequency-heading diffraction cases.
 Source/reference qualification remains false.
 The archived P1
