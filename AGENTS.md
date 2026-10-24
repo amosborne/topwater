@@ -7,7 +7,11 @@ do not use their passing checks or timings to qualify this boat.
 The single implementation under qualification is the P0 Rankine-panel core
 extracted from `4e8f511`, through `topwater.inertia.instantaneous_added_mass` and
 its `bem`/`boundary` owners. Status: **unqualified**; hydrostatics and instantaneous
-added mass exist, coupled time-domain wave response does not. The archived P1
+added mass exist, coupled time-domain wave response does not.
+An unqualified conforming fluid boundary and mixed pressure/body component now
+exists in `topwater.fluid_boundary`/`topwater.pressure`; boundary derivative
+recovery and a complete nonlinear RHS remain missing. Its coarse-mesh physical
+comparisons fail; see `docs/mixed-pressure-001.md`. The archived P1
 diagnostic-tank runtime is a different implementation. Record current commit
 and source hashes in each manifest; the word "baseline" alone is insufficient.
 

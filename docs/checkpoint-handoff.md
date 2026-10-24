@@ -1,6 +1,55 @@
 # Checkpoint handoff
 
-## Latest checkpoint: exterior fields and surface-map candidate
+## Latest checkpoint: unqualified P0 pressure component and error attribution
+
+Read docs/mixed-pressure-001.md and both prospective protocols first. Goal
+ACTIVE/INCOMPLETE: canonical boat, own nonlinear time-domain six-DOF response,
+>=1s, <=1cm /0.1degree including uncertainty, <=200wall s/s including preparation.
+No complete nonlinear RHS, motion run, usable speed or qualified reference exists.
+
+- New runtime owners src/topwater/fluid_boundary.py and pressure.py use the same
+  P0 Rankine/boundary path. Generic convex wet-facet graph/ear triangulation keeps
+  contact vertices/concavity, exact physical facets and manifold closure; artificial
+  hull closures carry no pressure. Owned pressure factors cannot pair another pose.
+  Body-normal chi terms include rotation and Hessian, which remain mandatory inputs.
+- Producer6213d96 mixed-pressure-001 completed, passed=false/exit1 deliberately.
+  Calm exact-rest probe has762 panels(48body); preserved mild geometry closes2616
+  (151body) but receives NO pressure call with invented zero derivatives. Calm
+  accelerationmax3.12e-15 and combined pressure load independently reconstructs.
+  All six raw A columns saved, but NOT six chi_aux traces: retain all seven chi
+  fields in the next producer before claiming artifact-level rawA reconstruction.
+- Timing: warmup.279s once; calmgeometry.100s/assembly-factor.073s/pressure.0062s.
+  Projection36.17wall s/s for pressure component at provisional midpointdt.01 only.
+  This excludes remaining derivative/RHS work and is NOT a speed pass.
+- Added-mass diagnostics fail all four36entry comparisons. Attribution902c2be
+  pressure-discrepancy-001 completed six Capytaine infinity-frequency calls on the
+  exact48body panels; seven facets/edges/moments proved, FFF order. Topwater
+  halfspace vs same-body Capytaine differs5.1–26.0% diagonally; closed vs halfspace
+  differs5.3–19.2%; same-body Capytaine vs finest differs-56.3% to+30.3%. Finest
+  reference itself remains unqualified. Multiple unresolved resolution/formulation
+  and surface/domain effects, not an established absolute-error attribution.
+- Complete evidence validation/evidence/mixed-pressure-001.zip and summary. SHA
+  ec77f90b85b6a101efa81b65cf714100ab95b9c4f7ca44ce4b9f20ce66914236.
+  Shared parent field payload appears once; run bundled restore_shared_inputs.py
+  after extraction to restore both original paths with verified SHA. Fresh extraction
+  and both complete producer/input graphs verified. Independent review rebuilt all
+  144 comparisons and combined pressure load. All255 local tests passed, JUnit
+  saved; exact test session32046 terminalexit0. Both native jobs terminalexit1,
+  completeTrue/passedFalse, no live numerical processes. Branch baseline/fluid-body.
+
+**Next bounded validation:** assess independent body resolution before changing
+surface/domain or optimizing. Design/preflight controlled nested refinement of
+the same physical wet facets (including all contact/feature edges), then run a
+prospectively declared paired Topwater-halfspace/Capytaine study. Actual counts,
+memory/time limits, all36 entries/uncertainties and at least three/four useful
+levels must be declared before solves. Same-mesh agreement is not convergence.
+Retain original reference gates; do not relax them. Preserve all auxiliary chi
+fields in the next pressure producer. Body-interior resolution is currently tied
+to sparse wet-facet triangulation; current closure is not a qualified spatial mesh.
+Later address surface/domain controls and derivative recovery, then physical
+motion comparison before major optimization. Previous field/source context follows.
+
+## Prior checkpoint: exterior fields and surface-map candidate
 
 Numerical producer **05cc94e**, branch **baseline/fluid-body**. The goal remains
 ACTIVE/INCOMPLETE. No own coupled TD run, complete restart or usable speed exists.
