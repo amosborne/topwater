@@ -151,6 +151,11 @@ def generate(args,c,case,report,out):
         actual=hull_planes(world_vertices(mean.body,state),mean.body.mesh.faces)
         entry=dict(amplitude_scale=scale,geometry_passed=False)
         try:
+            if len(mean.body.mesh.opening_rim):
+                rim=world_vertices(mean.body,state)[mean.body.mesh.opening_rim]
+                clearance=float(rim[:,2].min()-np.max(out['initial_elevation']*scale))
+                entry['conservative_opening_clearance_m']=clearance
+                if clearance<=0:raise ValueError('opening rim may intersect represented surface; no artificial-cap contact allowed')
             a,v,f,checks=mapped_surface(angles,out['initial_elevation']*scale,planes,actual,origin,c['outer_radius_m'],c['radial_offsets_m'])
             prefix='scale_'+str(scale)+'_';out.update({prefix+'angles_rad':a,prefix+'vertices':v,prefix+'faces':f,
                 prefix+'hull_planes':actual,prefix+'full_hull_vertices':world_vertices(mean.body,state),
