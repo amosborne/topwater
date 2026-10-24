@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from .paired_body import symmetric_family,scaled_check,entry_diagnostics,controls
+from .paired_body import symmetric_family,scaled_check,entry_diagnostics,controls,capytaine_radius_check
 from .reference_mesh import verify_surface
 from .common import midpoint_children
 
@@ -34,6 +34,15 @@ def test_infinity_trace_normalization_cancels_symbolic_factor():
     np.testing.assert_array_equal(np.asarray(phi/(-1j*omega)),chi)
     pressure=1j*omega*1025*phi
     np.testing.assert_array_equal(np.asarray(pressure/(omega*omega)),1025*chi)
+
+
+def test_pinned_capytaine_radius_api_without_green_solve():
+    pytest.importorskip('capytaine',reason='optional installed-Capytaine geometry API check')
+    from tests.reference_boat import equilibrium
+    from tests.capytaine_reference import body_from_triangles
+    state,loads=equilibrium();family,_,_=symmetric_family(loads.wetted_triangles,refinements=(0,))
+    body=body_from_triangles(family[0],state.position,2500.)
+    assert capytaine_radius_check(body,family[0])<=1e-12
 
 
 def test_trace_check_rejects_missing_and_nonfinite_values():

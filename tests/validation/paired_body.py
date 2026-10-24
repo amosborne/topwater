@@ -75,6 +75,14 @@ def owned_parent(bundle,c):
     return r,data,physical,sha256(raw).hexdigest()
 
 
+def capytaine_radius_check(body,triangles):
+    actual=body.mesh.faces_radiuses
+    expected=np.linalg.norm(triangles-body.mesh.faces_centers[:,None],axis=2).max(axis=1)
+    error=float(np.max(abs(actual-expected)))
+    if not np.isfinite(error) or error>1e-12:raise ValueError('Capytaine radius control differs from maximum vertex distance')
+    return error
+
+
 def freeze(args,c,r,a):
     parent,data,physical,parent_hash=owned_parent(args.parent_bundle,c)
     archive=args.output.with_suffix('.source');shutil.copyfile(args.parent_bundle,archive/'parent.zip')
@@ -93,10 +101,12 @@ def freeze(args,c,r,a):
         parent_body_triangles=data['body_triangles'],previous_fine_Ainf=data['fine_reference_Ainf'],
         previous_fine_uncertainty=data['fine_reference_uncertainty'])
     rows=[]
+    from tests.capytaine_reference import body_from_triangles
     for level,(triangles,half) in enumerate(zip(family,halves,strict=True)):
         proof=verify_surface(original.wetted_triangles,triangles)
         panels=TrianglePanels(triangles,-1);edges=panels.edge_lengths
         rows.append(dict(level=level,panels=len(triangles),proof=proof,
+            maximum_capytaine_radius_error_m=capytaine_radius_check(body_from_triangles(triangles,mean.initial_state.position,mean.body.mass),triangles),
             maximum_edge_m=float(edges.max()),minimum_area_m2=float(panels.areas.min()),
             maximum_aspect_indicator=float((edges.max(axis=1)**2/(2*panels.areas)).max())))
         a[f'triangles_{level}']=triangles;a[f'half_{level}']=half
@@ -180,8 +190,7 @@ def study(args,c,r,a):
                 topwater_load_ratio=ratio,topwater_diagnostics=t.diagnostics)
             r['levels'].append(record);r['completed_topwater_levels']+=1
             body=body_from_triangles(triangles,data['world_cg'],mean.body.mass)
-            radius_error=float(abs(body.mesh.faces_radii-np.linalg.norm(triangles-body.mesh.faces_centers[:,None],axis=2).max(axis=1)).max())
-            if radius_error>1e-12:raise ValueError('Capytaine panel radii differ from farthest-vertex control')
+            radius_error=capytaine_radius_check(body,triangles)
             record['maximum_radius_error_m']=radius_error
             solver=cpt.BEMSolver(green_function=green)
             if solver.engine.exportable_settings['linear_solver']!='lu_decomposition':raise ValueError('non-overwriting default LU required')
