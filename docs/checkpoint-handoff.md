@@ -1,5 +1,44 @@
 # Checkpoint handoff
 
+## Latest checkpoint: common-output source increments fail, integration controlled
+
+Read docs/common-output-sources-001.md and its prospective protocol first.
+Branch baseline/fluid-body, numerical source1005feb. Goal ACTIVE/INCOMPLETE.
+No qualified full reference, coupled Topwater motion or usable runtime exists.
+
+- SAME physical hull/source54/216/864 solutions, ONE common Gauss12/16/20 output
+  grid with exact targets/normals/weights. Native54/216 controls and complete
+  physical-facet/producer/input/source identities pass;864 fields SHA-bound reuse.
+  All nine matrices/fields retained, zero BEM solves. Exact session56519 terminal
+  exit1, completeTrue/passedFalse,185.941s<360s OFFLINE cap.
+- ALL three integration gates pass; previous/latest maxima .013451/.003595,
+  .065159/.021549,.246235/.082461. Source charged gates fail18previous/18latest
+  entries, max7541.47/2656.03, robust trendpasses. No four-level/full promotion.
+  Old failed studies stayfailed. Us and Uq separately retained with all36 signed/
+  absolute increments, charges, ratios and masks. Latest heave change-457.641kg
+  vsUqcharge.007870kg, pitch+922.220 vs.073400kg m². Source error is unresolved.
+- All276tests pass, JUnit archived; exact testsession28461 terminalexit0.
+  Independent audit reproduced all geometry/fields/nine matrices/Uq/Us/gates and
+  all hashes. Fresh complete graph/input restoration verified. No live nativejob.
+- Evidence requires THREE tracked archives: common-output-sources-001.zip,
+  frozen-source-gauss-continuation-001.zip, frozen-source-gauss-001.zip.
+  NewSHA c208dffe223dffb1db87af8b8bf0eabd96d8ad6a40b358e924c26208dd7fbef1.
+  Input SHAs and exact restoration arguments in resultdoc/summary. Run extracted
+  restore_inputs.py --quadrature-bundle PATH --historical-bundle PATH.
+
+**Exact next bounded goal:** resource preflight ONLY for3456 archived sources
+on the SAME common output targets. Include ALL3orders (691200targets,
+2,388,787,200pairs), native calibration, preparation, storage and immutable input
+graph. Order20 alone is half the native work. Declare memory/disk/time ceilings
+and models before any representative cost screen; no full run automatically.
+Measured864-source rate suggests~2500s for all3orders before overhead, OFFLINE.
+Deliver preflight + independent review/accept-or-reject decision, checkpoint,
+tracker and fresh handoff, then stop. A short representative native screen needs
+its own prospective controls and serial-job discipline. Use results to choose
+next source-control correction/continuation without relabeling old failures.
+Full4source levels, finite A/B/excitation/phase and complete reference remain
+required; no Topwater simulation timing or motion claim follows.
+
 ## Latest checkpoint: conditional pressure integration passes, source control next
 
 Read docs/frozen-source-gauss-continuation-001.md and prospective protocol first.

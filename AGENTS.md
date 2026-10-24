@@ -18,6 +18,8 @@ reference diagnoses are recorded in `docs/paired-body-study-001.md` and
 material; frozen-source Gauss12/16/20 now passes conditional output integration
 (docs/frozen-source-gauss-continuation-001.md). This does not qualify source
 discretization; all earlier native-mesh and finite-wave failures remain failed.
+The common-output54/216/864 source diagnostic confirms all three integration
+controls pass while source increments fail; see docs/common-output-sources-001.md.
 Source/reference qualification remains false.
 The archived P1
 diagnostic-tank runtime is a different implementation. Record current commit

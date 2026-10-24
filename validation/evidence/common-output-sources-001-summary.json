@@ -1,0 +1,334 @@
+{
+  "current_commit": "1005feb4dd0693948c99daacdde58b95b2f82e17",
+  "complete": true,
+  "passed": false,
+  "completed_sources": 3,
+  "new_bem_solves": 0,
+  "full_reference_qualified": false,
+  "source_discretization_qualified": false,
+  "required_four_level_coverage": false,
+  "source_records": [
+    {
+      "level": 0,
+      "panels": 54,
+      "surface_proof": {
+        "facets": 7,
+        "panels": 54,
+        "waterline_edges": 44,
+        "maximum_moment_difference": 1.4210854715202004e-14
+      },
+      "reused": false,
+      "orders": [
+        {
+          "order": 12,
+          "seconds": 6.604759500012733,
+          "imaginary_ratio": 0.0
+        },
+        {
+          "order": 16,
+          "seconds": 11.824326000001747,
+          "imaginary_ratio": 0.0
+        },
+        {
+          "order": 20,
+          "seconds": 20.039301299955696,
+          "imaginary_ratio": 0.0
+        }
+      ],
+      "radius_error_m": 0.0,
+      "native_potential_ratio": 2.3304970314075612e-06,
+      "native_load_ratio": 5.1896174741545385e-06,
+      "quadrature_stabilization": {
+        "passed": true,
+        "previous_increment_max_ratio": 0.01345115872690435,
+        "latest_increment_max_ratio": 0.0035951916921152407,
+        "trend_passed": true
+      }
+    },
+    {
+      "level": 1,
+      "panels": 216,
+      "surface_proof": {
+        "facets": 7,
+        "panels": 216,
+        "waterline_edges": 88,
+        "maximum_moment_difference": 1.4210854715202004e-14
+      },
+      "reused": false,
+      "orders": [
+        {
+          "order": 12,
+          "seconds": 26.73808340000687,
+          "imaginary_ratio": 0.0
+        },
+        {
+          "order": 16,
+          "seconds": 44.52968570002122,
+          "imaginary_ratio": 0.0
+        },
+        {
+          "order": 20,
+          "seconds": 67.57386750000296,
+          "imaginary_ratio": 0.0
+        }
+      ],
+      "radius_error_m": 0.0,
+      "native_potential_ratio": 5.140304687079671e-06,
+      "native_load_ratio": 4.560092304080399e-06,
+      "quadrature_stabilization": {
+        "passed": true,
+        "previous_increment_max_ratio": 0.06515930476637817,
+        "latest_increment_max_ratio": 0.021548620104574808,
+        "trend_passed": true
+      }
+    },
+    {
+      "level": 2,
+      "panels": 864,
+      "surface_proof": {
+        "facets": 7,
+        "panels": 864,
+        "waterline_edges": 176,
+        "maximum_moment_difference": 2.4868995751603507e-14
+      },
+      "reused": true,
+      "orders": [
+        {
+          "order": 12,
+          "seconds": 0.01786969997920096,
+          "imaginary_ratio": 0.0
+        },
+        {
+          "order": 16,
+          "seconds": 0.04204040003241971,
+          "imaginary_ratio": 0.0
+        },
+        {
+          "order": 20,
+          "seconds": 0.06480419996660203,
+          "imaginary_ratio": 0.0
+        }
+      ],
+      "radius_error_m": 0.0,
+      "quadrature_stabilization": {
+        "passed": true,
+        "previous_increment_max_ratio": 0.24623486059850094,
+        "latest_increment_max_ratio": 0.08246133872566519,
+        "trend_passed": true
+      }
+    }
+  ],
+  "source_diagnostic": {
+    "passed": false,
+    "previous_max_ratio": 7541.472641709958,
+    "latest_max_ratio": 2656.0304262595923,
+    "robust_trend_passed": true,
+    "all_quadrature_passed": true
+  },
+  "elapsed_seconds": 185.94137269997736,
+  "interpretation": "Three source solutions, common output targets, empirical quadrature uncertainty charged; not full four-level or finite-wave qualification",
+  "bundle_sha256": "c208dffe223dffb1db87af8b8bf0eabd96d8ad6a40b358e924c26208dd7fbef1",
+  "external_inputs": [
+    {
+      "argument": "quadrature",
+      "filename": "frozen-source-gauss-continuation-001.zip",
+      "sha256": "7e999761722f68b52c9675abfb32bc02aff101c55f03ad76babf749154ab7a63",
+      "copy_to": "validation/common-output-sources-001.source/quadrature.zip"
+    },
+    {
+      "argument": "historical",
+      "filename": "frozen-source-gauss-001.zip",
+      "sha256": "28a35794d8c20d35e59f955e0b4ced8fec3cdebd4c6f8e01beffd1cb205fdbb0",
+      "copy_to": "validation/common-output-sources-001.source/historical.zip"
+    }
+  ],
+  "study_binding": {
+    "sha256": "052df7c50865340e7ef4ebaddfc48adfef191b24057646bd395a889515dc98f2",
+    "extract_entry": "validation/frozen-source-gauss-001.source/parent.zip",
+    "copy_to": "validation/common-output-sources-001.source/study.zip"
+  },
+  "tests": {
+    "tests": 276,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "maximum_load_reconstruction_ratio": 0.0,
+  "source_diagonals": [
+    [
+      90.79519052978388,
+      535.9431523174745,
+      9463.055172812432,
+      710.3611503997126,
+      5980.206275746893,
+      520.3726041863233
+    ],
+    [
+      91.37170411180847,
+      566.8717800217067,
+      8704.232500696664,
+      933.1446554776302,
+      15353.161463927281,
+      1137.9449726607422
+    ],
+    [
+      91.57011046337917,
+      571.2060869648589,
+      8246.591058316768,
+      982.408698304236,
+      16275.3813977965,
+      1282.1097747533977
+    ]
+  ],
+  "source_failure_entries": {
+    "source_previous_ratio_failed": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        4,
+        2
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        5,
+        1
+      ],
+      [
+        5,
+        3
+      ],
+      [
+        5,
+        5
+      ]
+    ],
+    "source_latest_ratio_failed": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        4,
+        2
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        5,
+        1
+      ],
+      [
+        5,
+        3
+      ],
+      [
+        5,
+        5
+      ]
+    ],
+    "source_trend_failed": []
+  }
+}
