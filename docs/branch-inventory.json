@@ -1,0 +1,1265 @@
+{
+  "as_of_commit": "db90d40d88dac6e28e1efaad3a8f584ff54b2afe",
+  "active_branch": "baseline/fluid-body",
+  "optimization_archive_tag": "archive/optimization-2026-10-23",
+  "optimization_archive_commit": "4e8f511faf541f61f36947dd2c48a96672ad8ab4",
+  "branches": [
+    {
+      "ref": "refs/heads/baseline/fluid-body",
+      "commit": "db90d40d88dac6e28e1efaad3a8f584ff54b2afe",
+      "upstream": "origin/baseline/fluid-body",
+      "role": "active implementation under qualification"
+    },
+    {
+      "ref": "refs/heads/design/numerical-contracts",
+      "commit": "427b755eba939011684230010ee1b0138109acdf",
+      "upstream": "origin/design/numerical-contracts",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/design/realtime-architecture",
+      "commit": "15fc2debb7e433beb725bb8634bf466e41952574",
+      "upstream": "origin/design/realtime-architecture",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/body-density-discriminator",
+      "commit": "de81051039f0b9c04bbf11eb46e9a1182ecd7bbd",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/canoe-auxiliary-shape",
+      "commit": "acfe6d392edfa7a385c0e370eaa60ad91e5889ca",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/canoe-energy-audit",
+      "commit": "c8fe377197bf2a05ffd082537a41c65f9a589ae3",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/canoe-envelope-check",
+      "commit": "7c31655cd7b79de09259d0d909fcc332a9cc4c72",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/canoe-nonbem-gradient",
+      "commit": "7c31655cd7b79de09259d0d909fcc332a9cc4c72",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/canoe-work-audit",
+      "commit": "8c7ba135b0c7bacdc10eca8d817313cd5a87964c",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/canonical-boat-sea",
+      "commit": "3a4f61f01ef75596b85d1659ef9c4a04024432bf",
+      "upstream": "origin/experiment/canonical-boat-sea",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/canonical-canoe",
+      "commit": "0775c0f38aed9fe25d31d09f9b1a66ce5ee76d5e",
+      "upstream": "origin/experiment/canonical-canoe",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/canonical-canoe-reference",
+      "commit": "d7e1c8521dad0f67f21133d77803566fbbd311f3",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/canonical-geometry-gradient",
+      "commit": "450b7e9bbd984abdade1118ed0a980ff4a85ba1e",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/capytaine-time-data",
+      "commit": "a0e37683ffb8c71cdf4a75e674662010c0238dd9",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/capytaine-time-reference",
+      "commit": "d0f9397640cf502e14abd7482a7f146086e4f5f3",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/cell-clipping",
+      "commit": "8ff75b6321f5e9bb4325d1c9845b192f18ac4b13",
+      "upstream": "origin/experiment/cell-clipping",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/cold-intersection-filter",
+      "commit": "8da8d129d40a25a5b6e1e24035097dd6be26931f",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/compact-p1-lift",
+      "commit": "08ee761080fd4bce71afafc669abd89007f1f885",
+      "upstream": "origin/experiment/compact-p1-lift",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/contact-defect-split",
+      "commit": "f9c2ddc378a0e88295263d0c9e7471f86a0d6466",
+      "upstream": "origin/experiment/contact-defect-split",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/current-domain-pressure",
+      "commit": "f6c390f662dcfe9c17818ea88722f40da8007753",
+      "upstream": "origin/experiment/current-domain-pressure",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/cut-hat-geometry",
+      "commit": "5b7e4885187186130d37bc95aef594071440fecb",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/forced-graph-motion",
+      "commit": "af77ed10c246eca16fd22a08d6770098437c672d",
+      "upstream": "origin/experiment/forced-graph-motion",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/forced-motion-tolerances",
+      "commit": "bfb6bd199b343262c620b1037c2151793ad2a78d",
+      "upstream": "origin/experiment/forced-motion-tolerances",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/frozen-field-pressure",
+      "commit": "da0c268c6824a8c597591d75e581df028bcc0c93",
+      "upstream": "origin/experiment/frozen-field-pressure",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/gpu-source-gradient",
+      "commit": "475ea90c35447bf8a7e85e8b9264ea88ab79866b",
+      "upstream": "origin/experiment/gpu-source-gradient",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/gpu-source-potential",
+      "commit": "8e31da0f91fbaa60609c3242fe7ec5471e6bee59",
+      "upstream": "origin/experiment/gpu-source-potential",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/graph-moving-pressure",
+      "commit": "fa27b4418daa2322180f791fddf40754b8796698",
+      "upstream": "origin/experiment/graph-moving-pressure",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/graph-source-coupling",
+      "commit": "cc5fa68ebf8661877b66ac0231403794e468e287",
+      "upstream": "origin/experiment/graph-source-coupling",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/hos-dirichlet",
+      "commit": "6dec39d5f83f15a26760e200415a19f7551ce427",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/kernel-linearization",
+      "commit": "a051564be0d6b595064bb2ed77849b5b6ade2553",
+      "upstream": "origin/experiment/kernel-linearization",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/linear-canoe-transient",
+      "commit": "79eb21c2c9b992d30fee49c5be7a5b11833bb290",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/local-trace-enrichment",
+      "commit": "4843de85159221b4986ebbb09567d3d317a3abd0",
+      "upstream": "origin/experiment/local-trace-enrichment",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/material-panel-layout",
+      "commit": "7a6e56ed83af16699a2b4ee245bd7edfca4f1d3c",
+      "upstream": "origin/experiment/material-panel-layout",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/nonplanar-graph-clipping",
+      "commit": "8200bdfbffc87668bd669c4085536f79e62c5399",
+      "upstream": "origin/experiment/nonplanar-graph-clipping",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/p4-affine-rest-bridge",
+      "commit": "432c6da86f73c86f829d97006918e5e3f1427952",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/p4-body-action-audit",
+      "commit": "6ebf32661cec5747c36e1a86abca3c9b1ac4f8da",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/p4-boundary-action",
+      "commit": "a1c3a49636a0f724b966edf034e2a905f67139af",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/p4-calm-release-seed",
+      "commit": "9fdf9a0d5849b247a610a570a63694009117c6be",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/p4-canoe-contact",
+      "commit": "f745e22cc03c8ea5a2c5b8c6882377cd363b86a7",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/p4-canoe-release",
+      "commit": "c62eae6b9dfd372697438bbd9aaeb460bbe0ca27",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/p4-first-variation",
+      "commit": "b53786147815927d5f5096c54c0f1ed7e79d56a8",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/p4-fluid-ordering",
+      "commit": "9abe136a1ed351c74a7051a25ff63ebcc5660b05",
+      "upstream": "origin/experiment/p4-fluid-ordering",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/p4-lagged-preconditioner",
+      "commit": "3eceb3de877e9f276e19acc7be0dd797ca7447d7",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/p4-pocket-coupling",
+      "commit": "01717d04c4b2c6005ef74ad9c32faaa900eac498",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/p4-prescribed-reaction",
+      "commit": "31781abd5e9cf13cf57ab2fb62100f21dba23696",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/p4-prescribed-transient",
+      "commit": "863df0a18502e3883b22aacd0ecefc9d36938997",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/p4-reproducible-stage",
+      "commit": "284135ee604e532fe1361b04df37e5e857a8e582",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/p4-rest-geometry-checks",
+      "commit": "cd82d99c3a0502e65d65d0284e62918efedfe3c1",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/p4-six-directions",
+      "commit": "75fe2a04b45665c3df22f0d0e96b121c4f0b8c62",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/p4-spectrum",
+      "commit": "5bb46b65cb15718164aedc0b9a36e47adb325fc5",
+      "upstream": "origin/experiment/p4-spectrum",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/p4-sponge-strip",
+      "commit": "6509ed6b5924e31db73395f8f000fc912649b45e",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/p4-stage-energy-audit",
+      "commit": "6485a01c59f18d7b1ec381fb4a5434bc99287e55",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/p4-surface-oneform",
+      "commit": "30c2b2608d9f78848fecac387333e6ed8dbf7f1c",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/p4-whole-canoe-geometry",
+      "commit": "f3d76359491aa2e6b5db1281225d52d6c2e284e6",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/parallel-source-trace",
+      "commit": "95bd3ccfc5a7e698e6e90add323f4c49c95a7ee3",
+      "upstream": "origin/experiment/parallel-source-trace",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/physical-cut-mass",
+      "commit": "d14e2ed6b9a799c9d34eb9fa49f6f9a71c889025",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/physical-flux-fft",
+      "commit": "ae6f87baf3f882281648a5bec425081a3fd24526",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/physical-potential-weak-water",
+      "commit": "4e8f511faf541f61f36947dd2c48a96672ad8ab4",
+      "upstream": "origin/experiment/physical-potential-weak-water",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/physical-weak-flux",
+      "commit": "a860fc14d1da78131bd7b7e80fb0f7023f3b7b3f",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/projected-source-trace",
+      "commit": "454325b02b82e6a49b65d00539ea410d09a02e4a",
+      "upstream": "origin/experiment/projected-source-trace",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/quadratic-free-surface",
+      "commit": "6ce19f90d1a3db36a886e689128319280cf0e580",
+      "upstream": "origin/experiment/quadratic-free-surface",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/quarter-canoe-family",
+      "commit": "452087e226e1ae5bbce21ac03fafa7358f8fba4e",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/radiation-device",
+      "commit": "65e4c0eaf5072432f00686ae62010b860c291d23",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/radiation-field-defect",
+      "commit": "cd2885a4fcedf98be4a1a17faa1f6515fbe75011",
+      "upstream": "origin/experiment/radiation-field-defect",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/regularized-contact-trace",
+      "commit": "52e5bd54f251e88c2720c982ec7a7657379b9824",
+      "upstream": "origin/experiment/regularized-contact-trace",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/regularized-phase-rhs",
+      "commit": "90fcf664f897ec02f40adad4ec8f169b164f9349",
+      "upstream": "origin/experiment/regularized-phase-rhs",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/regularized-water-transient",
+      "commit": "e422a65ddf417e24c8eb6105fb0fe0ec4b7a76ba",
+      "upstream": "origin/experiment/regularized-water-transient",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/source-matrix-trace",
+      "commit": "1bd22ef6b21f7a219c32b701b0b0d9454b122d83",
+      "upstream": "origin/experiment/source-matrix-trace",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/spatial-interface",
+      "commit": "53b17607c0f4d9e60bcab7886b6de8d3b79412be",
+      "upstream": "origin/experiment/spatial-interface",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/spatial-pocket",
+      "commit": "73cb1e2039bbe417c3de67a066b5a200ff0e7d69",
+      "upstream": "origin/experiment/spatial-pocket",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/symmetric-free-surface",
+      "commit": "20050cc0613c40938346d5e61041a8895400cb7b",
+      "upstream": "origin/experiment/symmetric-free-surface",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/variational-radiation-controller",
+      "commit": "a93ebde581bb5311bd643f324c0f3dcf812d2208",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/weak-contact-rows",
+      "commit": "3c4bd883bbe9ffe05fbe875f2ec1e336a5e6ccb0",
+      "upstream": "origin/experiment/weak-contact-rows",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/weak-exterior-moments",
+      "commit": "7197e2e8f9dab20e3c6fd090a281b8b5139b15e7",
+      "upstream": "origin/experiment/weak-exterior-moments",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/weak-local-fft",
+      "commit": "228bebdb40eba3c33a7871fe4cee970cde6761a5",
+      "upstream": "origin/experiment/weak-local-fft",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/experiment/weak-poisson-work",
+      "commit": "4da096b584968d86e755f01b0bbe13a1df1a56bc",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/feat/boat-world-boundary",
+      "commit": "81c1a0aea6886de8db652d3cbb800dc66fd6213d",
+      "upstream": "origin/feat/boat-world-boundary",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/feat/calm-water-hydrostatics",
+      "commit": "5f3710dbf17280ec4791a53f29c8f3adc473ad38",
+      "upstream": "origin/feat/calm-water-hydrostatics",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/feat/canoe-patch-geometry",
+      "commit": "e97a349d4c51955aa9b4854a76e5586cd2a27e9a",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/feat/canoe-radiation",
+      "commit": "d20d299ca76bb312dec20b4146f794ab332e161f",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/feat/canoe-radiation-modes",
+      "commit": "f566e6ce862228e5913a69a4c42891752ba14079",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/feat/cuda-shape-gradient",
+      "commit": "b9710643a1d1d642367275c5dbd80e8887774a34",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/feat/instantaneous-fluid-inertia",
+      "commit": "a6fb601b399c5755e1c81641db5fc2b5cfb15653",
+      "upstream": "origin/feat/instantaneous-fluid-inertia",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/feat/laplace-boundary-solves",
+      "commit": "456abf7b52ec8857ccacac25418bf8b399ed89ad",
+      "upstream": "origin/feat/laplace-boundary-solves",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/feat/near-far-baseline",
+      "commit": "764b6e82733143e6e3e718f6f684ca6615473b8d",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/feat/nonlinear-ale-redistribution",
+      "commit": "a2975b28dbb273c675fbd167f07e87ea49a115f5",
+      "upstream": "origin/feat/nonlinear-ale-redistribution",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/feat/nonlinear-canoe",
+      "commit": "7be7048e5ff9edce8004e1e95b4a2418f4e5c062",
+      "upstream": "origin/feat/nonlinear-canoe",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/feat/nonlinear-canoe-contact",
+      "commit": "fe61ee4d651aeb2adf690a0fee2f3c68003ad195",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/feat/nonlinear-canoe-pressure",
+      "commit": "f453c50deb84c25c8d416303cd98209ec5612a29",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/feat/radiation-family-validation",
+      "commit": "eba605f4e1c5c3054cee8938a2045d4e15710be8",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/feat/rankine-panel-kernels",
+      "commit": "186f23eed3445a802c507a64f67f0d3396798750",
+      "upstream": "origin/feat/rankine-panel-kernels",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/feat/reference-center-console",
+      "commit": "8d69af81af5522c64ea48ce04dd8d3c1b1d4cafd",
+      "upstream": "origin/feat/reference-center-console",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/feat/targeted-boundary-refinement",
+      "commit": "61dbf8d9ab4fc56192c5c00a78ea3bc7dd4d20b3",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/fix/capytaine-prony-reproducibility",
+      "commit": "b568eddec9dcab4ad504fca8ee6dd208d30a6acc",
+      "upstream": "origin/fix/capytaine-prony-reproducibility",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/fix/close-panel-cancellation",
+      "commit": "4db0035153556ebbad2db18503188b318a3dd4ef",
+      "upstream": "origin/fix/close-panel-cancellation",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/fix/p4-invalid-stage-rejection",
+      "commit": "ac2dbe24cb7db0e8bdcd1f3d5fc56163c090c8b4",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/fix/p4-release-failure",
+      "commit": "e93c5b9a5b5dd0ef24ed77fbbbbf6c26bcc7731d",
+      "upstream": "origin/fix/p4-release-failure",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/fix/shared-waterline-intersections",
+      "commit": "d023dd2f0a55c18616b70d7b7a082c6c37779842",
+      "upstream": "origin/fix/shared-waterline-intersections",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/main",
+      "commit": "5fb579af30ed297c0826668063a623b471063ead",
+      "upstream": "origin/main",
+      "role": "released input/API checkpoint; not a qualified simulator"
+    },
+    {
+      "ref": "refs/heads/perf/gram-energy",
+      "commit": "b999e02156bea391efa34eefdcf10cbd0fab1eec",
+      "upstream": "origin/perf/gram-energy",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/perf/implicit-moving-stage",
+      "commit": "d1199999632d646c1ce9fd79c20c4417fd47cef7",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/perf/p4-boundary-transport",
+      "commit": "5dfa79eef869e30eebcea7b374f9c81555f19a56",
+      "upstream": "origin/perf/p4-boundary-transport",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/perf/p4-metric-shape-tangent",
+      "commit": "d700db8f9c4422c8e0ee4a980331a72efb48df61",
+      "upstream": "origin/perf/p4-metric-shape-tangent",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/perf/pocket-mesh-construction",
+      "commit": "69f425b6853af913eea94bdc6b587e1640c18b03",
+      "upstream": "origin/perf/pocket-mesh-construction",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/refactor/moving-baseline",
+      "commit": "28613d3569bf6479452b1f0c59cba3171fb7d474",
+      "upstream": "origin/refactor/moving-baseline",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/test/boat-deepwater-inertia",
+      "commit": "54936b5916c2db71c65986c06f415eb849e21438",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/test/canoe-shape-work",
+      "commit": "5d0d822263e9d446c7457c2053ed24f8ab2492c2",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/test/capytaine-mesh-cost",
+      "commit": "6d0f76e8b018dc401ce4d4409824ae4b2aceb2fc",
+      "upstream": "origin/test/capytaine-mesh-cost",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/test/capytaine-rankine-correlation",
+      "commit": "7d7f022a672ff12a9cf4df32c7d85d1182eef884",
+      "upstream": "origin/test/capytaine-rankine-correlation",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/test/laplace-field-verification",
+      "commit": "5a6ba7356ea5339f23c7ce9a0e91c740a01bf200",
+      "upstream": "origin/test/laplace-field-verification",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/test/nonlinear-wave-refinement",
+      "commit": "d1199999632d646c1ce9fd79c20c4417fd47cef7",
+      "upstream": "origin/test/nonlinear-wave-refinement",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/test/prescribed-canoe-work",
+      "commit": "1f7a34d4a7423fc3ab0124a7ab10a7e4670f85c8",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/test/prescribed-radiation-first-variation",
+      "commit": "fe28967f0112128bf3a7bbab1feaccb6a76c414a",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/validation/fluid-body-reference",
+      "commit": "4e8f511faf541f61f36947dd2c48a96672ad8ab4",
+      "upstream": "origin/validation/fluid-body-reference",
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/heads/validation/retire-canoe",
+      "commit": "8c7767e637e4f619a2ec89bab24dcc291488c018",
+      "upstream": null,
+      "role": "supporting reset work"
+    },
+    {
+      "ref": "refs/remotes/origin/baseline/fluid-body",
+      "commit": "db90d40d88dac6e28e1efaad3a8f584ff54b2afe",
+      "upstream": null,
+      "role": "active implementation under qualification"
+    },
+    {
+      "ref": "refs/remotes/origin/design/numerical-contracts",
+      "commit": "427b755eba939011684230010ee1b0138109acdf",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/design/realtime-architecture",
+      "commit": "15fc2debb7e433beb725bb8634bf466e41952574",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/canonical-boat-sea",
+      "commit": "3a4f61f01ef75596b85d1659ef9c4a04024432bf",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/canonical-canoe",
+      "commit": "95515f83166b6889de8afd80224f08dcb6a0ee5a",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/cell-clipping",
+      "commit": "fa7510764f887f391afb09ff206e1e76b69056d6",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/cold-intersection-filter",
+      "commit": "8da8d129d40a25a5b6e1e24035097dd6be26931f",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/compact-p1-lift",
+      "commit": "08ee761080fd4bce71afafc669abd89007f1f885",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/contact-defect-split",
+      "commit": "f9c2ddc378a0e88295263d0c9e7471f86a0d6466",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/current-domain-pressure",
+      "commit": "f6c390f662dcfe9c17818ea88722f40da8007753",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/forced-graph-motion",
+      "commit": "af77ed10c246eca16fd22a08d6770098437c672d",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/forced-motion-tolerances",
+      "commit": "bfb6bd199b343262c620b1037c2151793ad2a78d",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/frozen-field-pressure",
+      "commit": "da0c268c6824a8c597591d75e581df028bcc0c93",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/gpu-source-gradient",
+      "commit": "475ea90c35447bf8a7e85e8b9264ea88ab79866b",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/gpu-source-potential",
+      "commit": "8e31da0f91fbaa60609c3242fe7ec5471e6bee59",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/graph-moving-pressure",
+      "commit": "fa27b4418daa2322180f791fddf40754b8796698",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/graph-source-coupling",
+      "commit": "cc5fa68ebf8661877b66ac0231403794e468e287",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/kernel-linearization",
+      "commit": "cc890a6dfdb4909f8e52ef33a94ddf6e904ac6f8",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/local-trace-enrichment",
+      "commit": "4843de85159221b4986ebbb09567d3d317a3abd0",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/material-panel-layout",
+      "commit": "7a6e56ed83af16699a2b4ee245bd7edfca4f1d3c",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/nonplanar-graph-clipping",
+      "commit": "8200bdfbffc87668bd669c4085536f79e62c5399",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/p4-fluid-ordering",
+      "commit": "9abe136a1ed351c74a7051a25ff63ebcc5660b05",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/p4-spectrum",
+      "commit": "5bb46b65cb15718164aedc0b9a36e47adb325fc5",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/parallel-source-trace",
+      "commit": "95bd3ccfc5a7e698e6e90add323f4c49c95a7ee3",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/physical-potential-weak-water",
+      "commit": "4e8f511faf541f61f36947dd2c48a96672ad8ab4",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/projected-source-trace",
+      "commit": "454325b02b82e6a49b65d00539ea410d09a02e4a",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/quadratic-free-surface",
+      "commit": "6ce19f90d1a3db36a886e689128319280cf0e580",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/radiation-field-defect",
+      "commit": "cd2885a4fcedf98be4a1a17faa1f6515fbe75011",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/regularized-contact-trace",
+      "commit": "52e5bd54f251e88c2720c982ec7a7657379b9824",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/regularized-phase-rhs",
+      "commit": "90fcf664f897ec02f40adad4ec8f169b164f9349",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/regularized-water-transient",
+      "commit": "e422a65ddf417e24c8eb6105fb0fe0ec4b7a76ba",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/source-matrix-trace",
+      "commit": "1bd22ef6b21f7a219c32b701b0b0d9454b122d83",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/spatial-interface",
+      "commit": "53b17607c0f4d9e60bcab7886b6de8d3b79412be",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/spatial-pocket",
+      "commit": "73cb1e2039bbe417c3de67a066b5a200ff0e7d69",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/symmetric-free-surface",
+      "commit": "20050cc0613c40938346d5e61041a8895400cb7b",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/weak-contact-rows",
+      "commit": "3c4bd883bbe9ffe05fbe875f2ec1e336a5e6ccb0",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/weak-exterior-moments",
+      "commit": "7197e2e8f9dab20e3c6fd090a281b8b5139b15e7",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/experiment/weak-local-fft",
+      "commit": "228bebdb40eba3c33a7871fe4cee970cde6761a5",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/feat/boat-world-boundary",
+      "commit": "81c1a0aea6886de8db652d3cbb800dc66fd6213d",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/feat/calm-water-hydrostatics",
+      "commit": "5f3710dbf17280ec4791a53f29c8f3adc473ad38",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/feat/instantaneous-fluid-inertia",
+      "commit": "a6fb601b399c5755e1c81641db5fc2b5cfb15653",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/feat/laplace-boundary-solves",
+      "commit": "456abf7b52ec8857ccacac25418bf8b399ed89ad",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/feat/nonlinear-ale-redistribution",
+      "commit": "a2975b28dbb273c675fbd167f07e87ea49a115f5",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/feat/nonlinear-canoe",
+      "commit": "7be7048e5ff9edce8004e1e95b4a2418f4e5c062",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/feat/rankine-panel-kernels",
+      "commit": "186f23eed3445a802c507a64f67f0d3396798750",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/feat/reference-center-console",
+      "commit": "8d69af81af5522c64ea48ce04dd8d3c1b1d4cafd",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/fix/capytaine-prony-reproducibility",
+      "commit": "b568eddec9dcab4ad504fca8ee6dd208d30a6acc",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/fix/close-panel-cancellation",
+      "commit": "4db0035153556ebbad2db18503188b318a3dd4ef",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/fix/p4-release-failure",
+      "commit": "e93c5b9a5b5dd0ef24ed77fbbbbf6c26bcc7731d",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/fix/shared-waterline-intersections",
+      "commit": "d023dd2f0a55c18616b70d7b7a082c6c37779842",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/main",
+      "commit": "5fb579af30ed297c0826668063a623b471063ead",
+      "upstream": null,
+      "role": "released input/API checkpoint; not a qualified simulator"
+    },
+    {
+      "ref": "refs/remotes/origin/perf/gram-energy",
+      "commit": "b999e02156bea391efa34eefdcf10cbd0fab1eec",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/perf/p4-boundary-transport",
+      "commit": "5dfa79eef869e30eebcea7b374f9c81555f19a56",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/perf/p4-metric-shape-tangent",
+      "commit": "d700db8f9c4422c8e0ee4a980331a72efb48df61",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/perf/pocket-mesh-construction",
+      "commit": "69f425b6853af913eea94bdc6b587e1640c18b03",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/refactor/moving-baseline",
+      "commit": "28613d3569bf6479452b1f0c59cba3171fb7d474",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/test/capytaine-mesh-cost",
+      "commit": "6d0f76e8b018dc401ce4d4409824ae4b2aceb2fc",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/test/capytaine-rankine-correlation",
+      "commit": "7d7f022a672ff12a9cf4df32c7d85d1182eef884",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/test/laplace-field-verification",
+      "commit": "5a6ba7356ea5339f23c7ce9a0e91c740a01bf200",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/test/nonlinear-wave-refinement",
+      "commit": "d1199999632d646c1ce9fd79c20c4417fd47cef7",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    },
+    {
+      "ref": "refs/remotes/origin/validation/fluid-body-reference",
+      "commit": "4e8f511faf541f61f36947dd2c48a96672ad8ab4",
+      "upstream": null,
+      "role": "historical; held, not an active implementation"
+    }
+  ],
+  "worktrees": [
+    {
+      "path": "C:\\Users\\alex\\topwater",
+      "branch": "refs/heads/baseline/fluid-body",
+      "head": "db90d40d88dac6e28e1efaad3a8f584ff54b2afe",
+      "dirty_files": [],
+      "preservation": "untouched; no worktree removed or uncommitted work discarded"
+    },
+    {
+      "path": "C:\\Users\\alex\\topwater\\artifacts\\worktrees\\body-density-discriminator",
+      "branch": "refs/heads/experiment/body-density-discriminator",
+      "head": "de81051039f0b9c04bbf11eb46e9a1182ecd7bbd",
+      "dirty_files": [
+        {
+          "status": "M ",
+          "path": "rc/topwater/_rankine_extended.py",
+          "sha256": null
+        },
+        {
+          "status": " M",
+          "path": "src/topwater/constants.py",
+          "sha256": "155171c6dabbc0aadeb31c5ae1bb320a62fe0ad02c80303e6803dc1979d6650d"
+        },
+        {
+          "status": " M",
+          "path": "src/topwater/numerics.py",
+          "sha256": "ae19d8de790451206fc8986832fa0e46cf2412912f45ad4a737ea0674cd6bb1e"
+        },
+        {
+          "status": " M",
+          "path": "tests/experiments/free_surface/compact_p1_maps.py",
+          "sha256": "436026cce9f8a9daafd907d85863ca6141c8e4643462d1bc5db4f6d809f19f22"
+        },
+        {
+          "status": " M",
+          "path": "tests/experiments/free_surface/panel_gradient_reference.py",
+          "sha256": "2951fe95b0d7fbdf773f7643e56153d178bc82b6c75af9911edc676a42a96062"
+        },
+        {
+          "status": " M",
+          "path": "tests/experiments/free_surface/plane_p1_field.py",
+          "sha256": "f45eb73263ab072f2ec37ee740a76e96db210b85f8ebe4006aea2e96578304d7"
+        },
+        {
+          "status": "??",
+          "path": "tests/validation/__init__.py",
+          "sha256": "63afd3c16b54aaa2b76576ab650f511ee9ebd52c4224dcf83d350c6cf747b9bf"
+        },
+        {
+          "status": "??",
+          "path": "tests/validation/__main__.py",
+          "sha256": "53b682f326090bd72c08074d654a8ba6326ed1e7695bfc0a99d11bf7ed9d3a03"
+        },
+        {
+          "status": "??",
+          "path": "tests/validation/common.py",
+          "sha256": "b727c742b61ed2fe101cf59f6d9f59942164962229f1ce5e82adab7279879d55"
+        },
+        {
+          "status": "??",
+          "path": "tests/validation/reference.py",
+          "sha256": "33fff9114911175dea4326cd8d673703deac5714bffa8ef85d781b07ca192463"
+        }
+      ],
+      "preservation": "untouched; no worktree removed or uncommitted work discarded"
+    },
+    {
+      "path": "C:\\Users\\alex\\topwater\\artifacts\\worktrees\\canoe-contact",
+      "branch": "refs/heads/feat/nonlinear-canoe-contact",
+      "head": "fe61ee4d651aeb2adf690a0fee2f3c68003ad195",
+      "dirty_files": [
+        {
+          "status": "??",
+          "path": "tests/experiments/free_surface/ale_surface.py",
+          "sha256": "261a5222ba3134f55c0eb499a78d9920ffdc4c9633ffbebdc44916a93900365c"
+        }
+      ],
+      "preservation": "untouched; no worktree removed or uncommitted work discarded"
+    },
+    {
+      "path": "C:\\Users\\alex\\topwater\\artifacts\\worktrees\\canoe-patch-geometry",
+      "branch": "refs/heads/experiment/p4-lagged-preconditioner",
+      "head": "3eceb3de877e9f276e19acc7be0dd797ca7447d7",
+      "dirty_files": [
+        {
+          "status": "M ",
+          "path": "ests/experiments/free_surface/p4_coupled_solve.py",
+          "sha256": null
+        },
+        {
+          "status": " M",
+          "path": "tests/experiments/free_surface/p4_fluid_ordering.py",
+          "sha256": "7b61c5e897829eb1fe5f2ad211c4781b15eee3dfe627956d406868e5ac612add"
+        }
+      ],
+      "preservation": "untouched; no worktree removed or uncommitted work discarded"
+    },
+    {
+      "path": "C:\\Users\\alex\\topwater\\artifacts\\worktrees\\canoe-pressure",
+      "branch": "refs/heads/test/boat-deepwater-inertia",
+      "head": "54936b5916c2db71c65986c06f415eb849e21438",
+      "dirty_files": [],
+      "preservation": "untouched; no worktree removed or uncommitted work discarded"
+    },
+    {
+      "path": "C:\\Users\\alex\\topwater\\artifacts\\worktrees\\canoe-spectrum",
+      "branch": "refs/heads/experiment/p4-spectrum",
+      "head": "5bb46b65cb15718164aedc0b9a36e47adb325fc5",
+      "dirty_files": [],
+      "preservation": "untouched; no worktree removed or uncommitted work discarded"
+    },
+    {
+      "path": "C:\\Users\\alex\\topwater\\artifacts\\worktrees\\cell-clipping",
+      "branch": "refs/heads/experiment/cell-clipping",
+      "head": "8ff75b6321f5e9bb4325d1c9845b192f18ac4b13",
+      "dirty_files": [],
+      "preservation": "untouched; no worktree removed or uncommitted work discarded"
+    },
+    {
+      "path": "C:\\Users\\alex\\topwater\\artifacts\\worktrees\\chart-tangent",
+      "branch": "refs/heads/experiment/cold-intersection-filter",
+      "head": "8da8d129d40a25a5b6e1e24035097dd6be26931f",
+      "dirty_files": [
+        {
+          "status": "??",
+          "path": "tests/experiments/free_surface/boat_chart_tangent.py",
+          "sha256": "705ca2f6bd8748adaf882405f3090f0cf388188403d727d6b59569778c55b829"
+        },
+        {
+          "status": "??",
+          "path": "tests/test_boat_chart_tangent.py",
+          "sha256": "00a7301d3c3e6db9c1a22affd8cdc03ffb3f96517428d848aa8025038b587335"
+        }
+      ],
+      "preservation": "untouched; no worktree removed or uncommitted work discarded"
+    },
+    {
+      "path": "C:\\Users\\alex\\topwater\\artifacts\\worktrees\\hos-dirichlet",
+      "branch": "refs/heads/experiment/hos-dirichlet",
+      "head": "6dec39d5f83f15a26760e200415a19f7551ce427",
+      "dirty_files": [],
+      "preservation": "untouched; no worktree removed or uncommitted work discarded"
+    },
+    {
+      "path": "C:\\Users\\alex\\topwater\\artifacts\\worktrees\\kernel-linearization",
+      "branch": "refs/heads/experiment/kernel-linearization",
+      "head": "a051564be0d6b595064bb2ed77849b5b6ade2553",
+      "dirty_files": [],
+      "preservation": "untouched; no worktree removed or uncommitted work discarded"
+    },
+    {
+      "path": "C:\\Users\\alex\\topwater\\artifacts\\worktrees\\moving-baseline-controls",
+      "branch": "refs/heads/refactor/moving-baseline",
+      "head": "28613d3569bf6479452b1f0c59cba3171fb7d474",
+      "dirty_files": [],
+      "preservation": "untouched; no worktree removed or uncommitted work discarded"
+    },
+    {
+      "path": "C:\\Users\\alex\\topwater\\artifacts\\worktrees\\physical-flux-fft",
+      "branch": "refs/heads/experiment/physical-flux-fft",
+      "head": "ae6f87baf3f882281648a5bec425081a3fd24526",
+      "dirty_files": [],
+      "preservation": "untouched; no worktree removed or uncommitted work discarded"
+    },
+    {
+      "path": "C:\\Users\\alex\\topwater\\artifacts\\worktrees\\physical-weak-flux",
+      "branch": "refs/heads/experiment/physical-weak-flux",
+      "head": "a860fc14d1da78131bd7b7e80fb0f7023f3b7b3f",
+      "dirty_files": [],
+      "preservation": "untouched; no worktree removed or uncommitted work discarded"
+    },
+    {
+      "path": "C:\\Users\\alex\\topwater\\artifacts\\worktrees\\radiation-device",
+      "branch": "refs/heads/experiment/radiation-device",
+      "head": "65e4c0eaf5072432f00686ae62010b860c291d23",
+      "dirty_files": [],
+      "preservation": "untouched; no worktree removed or uncommitted work discarded"
+    },
+    {
+      "path": "C:\\Users\\alex\\topwater\\artifacts\\worktrees\\regularized-phase-mass",
+      "branch": "refs/heads/experiment/physical-cut-mass",
+      "head": "d14e2ed6b9a799c9d34eb9fa49f6f9a71c889025",
+      "dirty_files": [],
+      "preservation": "untouched; no worktree removed or uncommitted work discarded"
+    },
+    {
+      "path": "C:\\Users\\alex\\topwater\\artifacts\\worktrees\\retire-canoe",
+      "branch": "refs/heads/validation/retire-canoe",
+      "head": "8c7767e637e4f619a2ec89bab24dcc291488c018",
+      "dirty_files": [],
+      "preservation": "untouched; no worktree removed or uncommitted work discarded"
+    },
+    {
+      "path": "C:\\Users\\alex\\topwater\\artifacts\\worktrees\\source-matrix-trace",
+      "branch": "refs/heads/experiment/cut-hat-geometry",
+      "head": "5b7e4885187186130d37bc95aef594071440fecb",
+      "dirty_files": [],
+      "preservation": "untouched; no worktree removed or uncommitted work discarded"
+    }
+  ],
+  "note": "Snapshot for preservation and purpose, not permission to resume historical work. Inspect live Git state before use."
+}

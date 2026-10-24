@@ -3,7 +3,7 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [main, baseline/fluid-body]
 
 permissions:
   contents: read
@@ -43,3 +43,34 @@ jobs:
       - run: uv sync --locked
       - run: uv build
       - run: uv run --locked python scripts/check_distributions.py
+
+  physical-qualification:
+    name: Physical baseline qualification
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: '0.12.10'
+          python-version: '3.12'
+          enable-cache: true
+      - run: uv sync --locked --group correlation
+      - name: Freeze current canonical physical inputs
+        run: uv run --locked python -m tests.validation freeze --output artifacts/validation/frozen.json
+      - name: Require every physical promotion gate
+        # Expected to fail while accepted references/comparisons are absent or
+        # the selected implementation lacks time-domain wave support.
+        # CI never generates convergence data or blesses missing cases.
+        run: >-
+          uv run --locked python -m tests.validation qualify
+          --frozen artifacts/validation/frozen.json
+          --reference validation/accepted/reference.json
+          --inertia validation/accepted/inertia.json
+          --waves validation/accepted/waves.json
+          --output artifacts/validation/qualification.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: canonical-physical-qualification
+          path: artifacts/validation/
+          if-no-files-found: error
