@@ -1,5 +1,42 @@
 # Checkpoint handoff
 
+## Latest checkpoint: frozen-source Gauss integration needs one further control
+
+Read docs/frozen-source-gauss-001.md and its prospective protocol first.
+Branch baseline/fluid-body; numerical producer d7af5e0. Goal ACTIVE/INCOMPLETE:
+canonical own time-domain nonlinear 6DOF >=1 s, <=1 cm/.1 degree including
+uncertainty, <=200 wall s/s including normal Topwater numerical preparation.
+Screen cost early; a 5000x route is unacceptable. No complete nonlinear RHS,
+TD comparison or usable runtime exists. Offline reference costs are separate.
+
+- Gauss001 completed native+orders8/12/16, 401760 owned target evaluations on
+  the SAME864 frozen normalized Capytaine sources, zero BEM solves, 324.115 s
+  below600 s cap. Exact session64310 terminalexit1, completeTrue/passedFalse.
+- Native potentials/all36 loads reproduce. Geometry-only target reflection,
+  full independent field evaluation on both halves, positive per-face weights.
+  Unchanged gate fails only previous[1,5] (sway force/yaw acceleration),1.562861x;
+  latest max.246215 passes, trendpasses. One passing increment is insufficient.
+  Earlier centroid/body/source/finite-wave failures remain failed.
+- Order16 pitch output change -672.238818 vs native meshchange -429.542381,
+  remainder +242.696436 kg m². Exact telescope, not pure source error or a
+  continuum bound. All fields, complex/signed/absolute matrices/masks retained.
+- Durable validation/evidence/frozen-source-gauss-001.zip, summary alongside.
+  SHA28a35794d8c20d35e59f955e0b4ced8fec3cdebd4c6f8e01beffd1cb205fdbb0.
+  Restore shared inputs after extraction; fresh complete graphs verified.
+  Independent audit rebuilt all401760 targets/weights/loads/telescopes/gates.
+  All272tests passed, JUnit archived, exact session85636 terminalexit0.
+  No live native jobs; no source/reference/motion/runtime promotion.
+
+**Exact next bounded validation goal:** append ONE Gauss20 evaluation on the
+same864 sources (345600 targets), with native calibration and SHA-bound reuse
+of12/16 data. Measured rate projects279 s offline; declare400 s total cap and
+unchanged all36 criteria before launch. Test both12→16 and16→20 against A20 and
+trend; never relabel failed Gauss001 or assume a spectral/Richardson rate.
+Archive actual producers/inputs and review before native work. Deliver complete
+evidence or concrete rejection, independent review, commit/push/tracker/handoff,
+then stop. A conditional integration pass still requires source-mesh control
+and finite-wave qualification; no remeshing/major optimization/motion run here.
+
 ## Latest checkpoint: fixed-source centroid pressure quadrature rejected
 
 Read docs/frozen-source-quadrature-001.md and its prospective protocol first.

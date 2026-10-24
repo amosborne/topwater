@@ -1,0 +1,167 @@
+{
+  "current_commit": "d7af5e04c45aad2758202d24f16fb34c6d79facc",
+  "complete": true,
+  "passed": false,
+  "completed_levels": 4,
+  "new_bem_solves": 0,
+  "full_reference_qualified": false,
+  "source_discretization_qualified": false,
+  "elapsed_seconds": 324.1150602999842,
+  "levels": [
+    {
+      "level": 0,
+      "rule_parameter": 0,
+      "points": 864,
+      "seconds": 0.8220056000282057,
+      "ownership": {
+        "maximum_plane_distance_m": 5.921203987301264e-16,
+        "minimum_barycentric_weight": 0.3333333333258072
+      },
+      "imaginary_ratio": 0.0,
+      "maximum_face_area_error_m2": 0.0,
+      "maximum_reflection_geometry_error_m": 0.0,
+      "native_potential_ratio": 7.868525339922078e-06,
+      "native_load_ratio": 2.790810379755457e-06
+    },
+    {
+      "level": 1,
+      "rule_parameter": 8,
+      "points": 55296,
+      "seconds": 47.46556330000749,
+      "ownership": {
+        "maximum_plane_distance_m": 7.657786760148526e-16,
+        "minimum_barycentric_weight": 0.00039422387064449435
+      },
+      "imaginary_ratio": 0.0,
+      "maximum_face_area_error_m2": 8.326672684688674e-17,
+      "maximum_reflection_geometry_error_m": 0.0
+    },
+    {
+      "level": 2,
+      "rule_parameter": 12,
+      "points": 124416,
+      "seconds": 93.2712121999939,
+      "ownership": {
+        "maximum_plane_distance_m": 1.000700632223771e-15,
+        "minimum_barycentric_weight": 8.500254963106158e-05
+      },
+      "imaginary_ratio": 0.0,
+      "maximum_face_area_error_m2": 1.3877787807814457e-16,
+      "maximum_reflection_geometry_error_m": 0.0
+    },
+    {
+      "level": 3,
+      "rule_parameter": 16,
+      "points": 221184,
+      "seconds": 178.46991390001494,
+      "ownership": {
+        "maximum_plane_distance_m": 8.835216660172418e-16,
+        "minimum_barycentric_weight": 2.8085042095081638e-05
+      },
+      "imaginary_ratio": 0.0,
+      "maximum_face_area_error_m2": 2.498001805406602e-16,
+      "maximum_reflection_geometry_error_m": 0.0
+    }
+  ],
+  "quadrature_stabilization": {
+    "passed": false,
+    "previous_increment_max_ratio": 1.5628610324853218,
+    "latest_increment_max_ratio": 0.24621455741648265,
+    "trend_passed": true
+  },
+  "failed_entries": {
+    "previous": [
+      [
+        1,
+        5
+      ]
+    ],
+    "latest": [],
+    "trend": []
+  },
+  "interpretation": "Fixed-source output-quadrature diagnosis only; remainder also contains changed collocation solution and finer-output quadrature, not pure source error",
+  "bundle_sha256": "28a35794d8c20d35e59f955e0b4ced8fec3cdebd4c6f8e01beffd1cb205fdbb0",
+  "shared_input_bindings": [
+    {
+      "sha256": "052df7c50865340e7ef4ebaddfc48adfef191b24057646bd395a889515dc98f2",
+      "payload_entry": "validation/frozen-source-gauss-001.source/parent.zip",
+      "expected_entries": [
+        "validation/frozen-source-gauss-001.source/parent.zip",
+        "validation/frozen-gauss-attribution-001.source/parent.zip"
+      ]
+    },
+    {
+      "sha256": "deb1e3997332a6a392c1fed9a02ebd98073d3bdfe7003670fbc04920cbe4f0f7",
+      "payload_entry": "validation/frozen-source-gauss-001.npz",
+      "expected_entries": [
+        "validation/frozen-source-gauss-001.npz",
+        "validation/frozen-gauss-attribution-001.source/quadrature.npz"
+      ]
+    }
+  ],
+  "tests": {
+    "tests": 272,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "maximum_archived_load_reconstruction_ratio": 0.0,
+  "quadrature_diagonals": [
+    [
+      93.9023478920956,
+      594.8773729084153,
+      8437.753411570435,
+      1042.178107112634,
+      16947.62902926535,
+      1365.0245790516838
+    ],
+    [
+      91.57058572791135,
+      571.21428612174,
+      8246.638502215517,
+      982.4180428223242,
+      16275.71529192256,
+      1282.1557615298148
+    ],
+    [
+      91.57019841788652,
+      571.2071097811909,
+      8246.594505524981,
+      982.4072225620916,
+      16275.435746471474,
+      1282.117663415301
+    ],
+    [
+      91.57011985444848,
+      571.2062472738224,
+      8246.590790692047,
+      982.4080105486364,
+      16275.39021171231,
+      1282.1113786850547
+    ]
+  ],
+  "finer_native_diagonal": [
+    91.72189550928161,
+    577.785636395122,
+    8126.075717048832,
+    1011.0325131214222,
+    16518.086647962387,
+    1335.5195252227422
+  ],
+  "output_change_diagonal": [
+    -2.332228037647141,
+    -23.67112563459284,
+    -191.16262087838913,
+    -59.77009656399787,
+    -672.2388175530359,
+    -82.9132003666291
+  ],
+  "unresolved_remainder_diagonal": [
+    0.1517756548331306,
+    6.579389121299528,
+    -120.51507364321515,
+    28.624502572785786,
+    242.69643625007666,
+    53.40814653768757
+  ]
+}

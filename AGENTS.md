@@ -15,7 +15,9 @@ comparisons fail; see `docs/mixed-pressure-001.md`.
 The paired body-only uniform family also fails the unchanged gates; current
 reference diagnoses are recorded in `docs/paired-body-study-001.md` and
 `docs/frozen-source-quadrature-001.md`. Frozen-source pressure integration is
-material and still under-resolved; source/reference qualification remains false.
+material; the Duffy–Gauss continuation still fails its previous-increment gate
+despite passing its latest increment (docs/frozen-source-gauss-001.md).
+Source/reference qualification remains false.
 The archived P1
 diagnostic-tank runtime is a different implementation. Record current commit
 and source hashes in each manifest; the word "baseline" alone is insufficient.
