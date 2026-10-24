@@ -116,13 +116,31 @@ compile2.978s,dynamics4.352s; guarded total43.762s terminal0, exactclient16928/
 guard31416 absent and lease released after separate idle readback. NOT goal
 achieved, not a canonicalcase; no croppedwindow/rerun/encoder authorized.
 
-Current priority: bounded READ-ONLY storednative trajectory/source diagnosis.
-Researcher reviews onset/growth/drift and actualrotatedbody/delay forcebalance;
-WEC reviews fullradiation-matrix/passivity/effective-mass/feedback issues, without
-customODE/newsolver or numericalsim. No cause asserted from bounded particular
-RAOs. Need one cheapest decisive next nativecontrol proposal, not open-ended
-campaign. Geometryaudit SOURCE implementation may finish but DO NOT run it on
-this obvious outside-envelope trajectory or claim it explains dynamics.
+Stored native review: all3001 actualSolid NewtonEuler balances close to4e-10;
+force sums exact and documented residualacceleration extrapolation closes to9e-9.
+Roll firstcrosses5deg34.64s/10deg34.86s/20deg36.54s; free sway/yaw drift precedes
+runaway. Harmonic particularv0 sway-.1938m/s,yaw+.643deg/s differs from heldrelease
+v0=0, consistent with large free modes. No posthoc croppedcanonicalwindow.
+Full36radiation has confirmed negative harmonicpowerdirections in incidentband
+(native scaledminimum-184.99; CIC40-196.28); independent checks PASS. This doesnot
+attribute capsize. Effective mass stayspositive; simple frozenfeedback gains<1
+throughonset do not explain fullcoupled/timevaryinggrowth. No coefficientrepair.
+
+Calmwater0.5degroll control COMPLETE30.555s/terminal0, independently reviewed
+PASS: all3001x6excitationexact0, nativeworldwrenchbalance6.83e-13/Ardelay1.14e-12.
+Maxroll initial.5deg; final.0000426deg; successive10swindows decay strongly.
+Swaydrift only.01576m/yaw.00347deg. Exactclient36696/guard30692 terminal and
+lease released after separateidleproof. This small initialdirection doesnot show
+severegrowth; doesnot prove fulloperatorstability/passivity/forcedcaseadequacy.
+
+Next: WEC SOURCE/PHYSICALICPROPOSAL ONLY for sameJan90 sea with deterministic
+stationaryparticular initialq/v and CONSISTENT nativeCIC prehistory, properCG/
+pivot/angularvelocity and residualaccelerationdelay initialstates. No customODE,
+forcedtrajectory duringreportedinterval, damping/phase/bankfit or implementation
+yet; independentmath/APIreview before sourceimplementation/grant. Need avoid
+held-release free-mode drift without hiding knownoperator/geometryuncertainty.
+No numericaljob currently allocated. Actual-wave geometryaudit source prepared,
+actualhash UNBOUND and rejectedcase excluded; fixtures/evaluations unexecuted.
 
 Completed24call SAME68nativepartial-lid control (55.1033s/terminal0) also remains
 diagnostic:83lidfaces/77.27%waterplane, physicalhull unchanged, Ainf unchanged.
@@ -154,5 +172,6 @@ all failures and interrupted quadrature36762 under original labels/policies.
 Coordinator owns integration/handoff; Capytaine geometry/nativeproducer; WEC-Sim
 consumer/dynamics/video; Topwater expert generator only; researcher independent
 geometry assumptions. Baseline+generatorcheckpoint8d3755b and geometry/nativeproducer/consumer/Jan90
-checkpoint3d5cedb are pushed; issue30 updated. Actualbodycase and24call lidcontrol are terminal; no numerical grant remains.
+checkpoint3d5cedb and rejectednativecase/lidcheckpoint0c0c9e2 are pushed; issue30
+updated for the rejectedcase; calmcontrol/newICproposal checkpoint pending. Actualbodycase and24call lidcontrol are terminal; no numerical grant remains.
 Geometryaudit is source-only; renderer held because the actualcase was rejected. Never push main/create bookkeeping PR/merge/upstreampost.

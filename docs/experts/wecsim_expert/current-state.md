@@ -1,58 +1,54 @@
 # Current state: WEC-Sim / BEMIO expert
 
-Updated2026-10-24. Scope/authorization: [handoff](../../checkpoint-handoff.md).
-Owner: consumer/BEMIO/maintained fork/dynamics/startup/output/video. Coordinator
-owns selection, acceptance and numerical allocation; no automatic follow-up.
+Updated2026-10-24. Authorization/phase: [handoff](../../checkpoint-handoff.md).
+Coordinator owns selection/acceptance/allocation. No automatic next numerical job.
 
-REF-001 minimum reference is COMPLETE and independently audited. Frozen10s/501
-native samples, actualrest, six signed applied-force histories and full mass/frame
-checks passed. Final centered12m isometric video/plots passed literal encoded
-frame review. [Run/evidence](minimum-reference-2026-10-24.md).
-Maintained fork f962103a348d63101ce669c2611f7d7c109755c3 on user-owned
-`topwater/reference-v7.1.0`, based on officialv7.1.0. Four reviewed corrections:
-import history, component sum, actual Solid inertia order, selected rigid imported
-force dispatch once. [Pin/limits](../wecsim-fork.json). No upstream/main publication.
+REF-001 trusted minimum reference is COMPLETE/frozen:10s/501native samples,
+actualrest and full6force/mass/frame checks, final centered equal-scale video
+independently audited. [Record](minimum-reference-2026-10-24.md).
+Maintained user fork pin f962103a348d63101ce669c2611f7d7c109755c3 (officialv7.1.0
+base): reviewed import history/component sum/Solid inertia order/selected rigid
+force dispatch corrections. [Pin/scope](../wecsim-fork.json). No upstream/main push.
 
-REF-002 goal is ONE fresh buoy-generator case, roll5-10deg plus appreciable other
-five motions, with an a-priori geometric linear-operating assumption. No bespoke
-spectrum/phase/amplitude fit, canonical suite, new nonlinear adapter or custom
-integrator. Topwater solver remains held. Generated whole banks/MEM spread/seed42
-are immutable; internal heading selection does not itself select the canonical case.
+REF-002 goal remains ONE fresh buoy-generated case, roll5-10deg plus appreciable
+other5DOF, a-priori geometry applicability stated. No spectrum/phase/amplitude
+fit, suite, nonlinear adapter or custom integrator. Topwater solver remains held.
+Three immutable seed42/full MEM384component banks are internal candidates only.
 
-Native17panel3-default-bank exact-pair H and .05:.05:12rad/s radiation completed.
-Official BEMIO40sIRF/exact H5 metadata/full K/Ainf/all36kernel readback passed.
-Native-vs40sK harmonic comparison completed1.859s, independently reviewed integrity
-PASS. April globalroll7.551/7.802deg, max history difference.396deg roll/.05393m
-heave; fixedmean relative-roll subtraction SCREEN proxy peaks5.929/6.069deg.
-March globalroll10.201/10.228deg; January3.810deg native. These stationary
-particular histories do NOT qualify initial pose, radiation history, startup/free
-surge-sway-yaw drift, actual wet set or linearity. Flatwater5deg righting is already
-12.3% below mean-K prediction; large globalroll has not rescued that issue.
+Official new BEMIO40sCIC/H5/fullM/K/Ainf readbacks and harmonic-only comparisons
+passed integrity review. Native/CIC particular responses differ materially, but
+DO NOT qualify startup/free-mode drift. [Stored evidence/limits](generated-bank-consumer-execution-2026-10-24.md).
+Jan05offset90 harmonic roll5.119/5.221deg and fixedmean-plane relative roll2.105/
+2.133deg retained one provisional candidate; sampled initial/peak plane departures
+.183/.307m do not establish actual wet set. [Screen](jan90-screen-proposal-2026-10-24.md).
 
-Signed A33native-minus-finiteband ranges-3573.04kg to+375.79kg over incidentomega;
-314/384negative. Raw sampled B33 is positive. Passive upper-tail-only explanation
-is sign-inconsistent with dominant negative mismatch. Dominant error is native
-versus truncatedbandPV, rather than40s/time quadrature alone; missing tails versus
-coarse mesh/native consistency unresolved. No Ainf/damping repair or fit accepted.
-[Executed evidence, arrays, normalizations, limits](generated-bank-consumer-execution-2026-10-24.md).
+ONE actual60s Jan90held-release case completed43.762s: all3001signed6appliedforce
+errors EXACTZERO; independent knownq0/v0/memory0/H5/parameterM and native physical
+balance checks pass. BUT roll~107.53deg/sway11.47m/yaw27.88deg REJECT intended
+linear candidate. Entire raw60s preserved, no crop/rerun/encoder. Neutral-world
+free-mode drift/heading departure precedes late runaway; mechanism not proved.
+[Actual case/source/history](jan90-native-case-proposal-2026-10-24.md).
 
-Jan05offset90 source/math review passed and ONE allocated stored screen completed
-1.828s/exit0. Native/CIC roll5.119/5.221deg, exactfixedmeanplane relativeroll
-2.105/2.133deg and pitch2.484/2.508deg; sampledfootprintdeparture.307m, initial.183m.
-Provisional global-roll hypothesis retained, NOT canonical/linearity/IC acceptance.
-Independent executed review requested. No body/ODE/BEM/MATLAB run follows.
-[Executed screen, source/manifest and practical next step](jan90-screen-proposal-2026-10-24.md).
-Coordinator then allocated ONE actual60s Jan90 native held-release case. It
-completed43.762s; all knownq0/v0/memory0/H5/parameterM/3001x6 applied-force checks
-passed (force error EXACTZERO). BUT roll reached~107.53deg, sway11.47m/yaw27.88deg;
-final surge/sway drift2.533/9.766m. This REJECTS the intended linear candidate,
-not a successful strong-motion physical reference. Whole raw60s preserved; no
-crop/rerun/renderer. Attribution pending bounded independent stored physical
-review; no source/coefficients/input correction assumed. [Actual run record](jan90-native-case-proposal-2026-10-24.md).
-All owned numerical jobs terminal/leasefree; consult shared execution ledger
-for CURRENT other-owner liveness, never infer it from this document.
+Stored full radiation matrices have guaranteed nonpassive harmonic directions,
+even in incident band (symmetric scaled native B min-184.99,40sK min-196.28).
+Sampled diagonal B33 positivity was insufficient. Symmetric M+Ainf is positive;
+actual residual gain/frozen feedback checks do not establish a simple mass-loop
+instability. Cutoff/coarsemesh/native consistency remain unresolved; no coefficient
+repair/damping fit accepted. Report: case-jan90-attempt1/stored-passivity-diagnosis.json.
 
-Four old marine-gyro leads remain unconfirmed/unexercised as applicable; no old
-workaround carried over. Historical setup/open questions live in linked records,
-not current blockers. Before engine replacement, query authoritative outside-
-sandbox IPC/exact recorded process identity; restricted visibility is insufficient.
+ONE calm-water control, same unchanged17operator/CIC40/dt.02, initial0.5degroll,
+zero allv/memory/excitation, completed30.555s. Independent executed review PASS:
+roll decays to.00004258deg, all3001zero force/wrench/Ar checks pass, sway drift
+.01576m retained. This ONE small perturbation does not prove passivity/all-state
+stability or forced-case validity. [Executed receipt](free-decay-control-proposal-2026-10-24.md).
+
+CURRENT assignment: SOURCE/PHYSICAL IC PROPOSAL ONLY for future same Jan90sea
+with deterministic particular q/v, native worldomega and consistent CIC plus
+acceleration-delay prehistory. No implementation/numerical grant. Cannot merely
+set q/v while zeroing memory, prescribe a trajectory, suppress an unstable mode,
+or use initialized state as proof of passive/accurate hydrodynamics.
+
+All owned jobs terminal/leasefree; shared execution ledger owns current liveness.
+Before engine replacement query authoritative outside-sandbox IPC/exactPID:
+restricted process visibility is insufficient. Historical leads/setup live in
+linked records; no untested marine-gyro workaround is accepted.
