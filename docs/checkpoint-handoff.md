@@ -26,12 +26,21 @@
   passed. No convergence acceptance or physical qualification claim.
 - Live jobs: none at this source checkpoint. Confirm exact sessions terminal
   before changing producers or launching another numerical job.
-- Next action: create fresh freeze under committed current contract at
-  artifacts/validation/frozen-graded-002.json. Recheck available memory and verify
-  all original physical arrays/input JSON match reset. Then serially run reference
-  with that freeze to artifacts/validation/reference-study-002.json. Never overwrite
-  an output/archive or reuse stale freeze/producer identities. Use workspace
-  uv cache: uv run --locked --no-sync --cache-dir artifacts/uv-cache --group correlation.
+- Study002 is now terminal, all132 calls complete, every family unqualified.
+  Durable complete bundle: validation/evidence/reference-study-002.zip; summary
+  alongside. Source6fae539, controls unchanged during run; later commits only
+  change automatic CI/merge policy. See docs/reference-study-002.md.
+- CI now triggers only PRs targeting main; local tests remain required. Never
+  merge/squash-merge a PR without all required current-head CI passing.
+- Next action: run bounded vertex-order diagnostic, reviewed and declared in
+  docs/reference-study-002.md. Command: uv run --locked --no-sync --cache-dir
+  artifacts/uv-cache --group correlation python -m tests.validation.diagnose_order
+  --frozen artifacts/validation/frozen-graded-002.json
+  --output artifacts/validation/vertex-order-diagnostic-001.json
+  It changes only cyclic triangle ordering;48 radiation calls, no qualification.
+  Existing freeze remains current because this new standalone diagnostic does
+  not change its required physical/validation producers or contract. Never
+  overwrite checkpoints. Keep all producers immutable while running.
 - Stop/checkpoint after the full declared study or resource/validity failure;
   preserve every raw matrix, diagnose failed entries and declare/review the next
   bounded correction. The qualification goal remains active until all gates and
