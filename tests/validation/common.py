@@ -134,7 +134,7 @@ def save(output,report,arrays):
     output.write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')
 
 
-def read_owned(path,contract_hash,kind,*,passed=False):
+def read_owned(path,contract_hash,kind,*,passed=False,selected=None):
     path=Path(path);report=json.loads(path.read_text())
     if (report['kind']!=kind or report['contract_sha256']!=contract_hash
             or report['complete'] is not True or (passed and report['passed'] is not True)
@@ -147,7 +147,9 @@ def read_owned(path,contract_hash,kind,*,passed=False):
         if digest(archive/name)!=expected:
             raise ValueError('corrupted archived producer: '+name)
     with np.load(path.with_suffix('.npz')) as z:
-        arrays={name:z[name].copy() for name in z.files}
+        names=z.files if selected is None else list(selected)
+        if not set(names)<=set(z.files):raise ValueError('required owned arrays missing')
+        arrays={name:z[name].copy() for name in names}
     return report,arrays
 
 

@@ -1,0 +1,19 @@
+{
+  "format_version": 1,
+  "protocol": "docs/fixed-field-2772-protocol.md",
+  "maximum_elapsed_seconds": 900.0,
+  "maximum_peak_bytes": 2147483648,
+  "maximum_additional_disk_bytes": 2147483648,
+  "source_level": 2,
+  "source_panels": 2772,
+  "gauss_orders": [12,16,20],
+  "target_counts": [44352,78848,123200],
+  "cpu_threads": 1,
+  "chunk_points": 100,
+  "trace_scaled_tolerance": 1e-10,
+  "ownership_absolute_m": 1e-10,
+  "reference_relative": 0.001,
+  "reference_absolute_normalized": 0.000001,
+  "source_bundle_sha256": "fa306c4fd38fbda08debad105816aaf1e21a270617ae15d00d9f524773d0fc31",
+  "full_reference_scope": false
+}
