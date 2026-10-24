@@ -95,7 +95,12 @@ def test_invalid_meshes(mesh, change, message):
         vertices = np.vstack([vertices, vertices + [10, 0, 0]])
         faces = np.vstack([faces, faces + len(mesh.vertices)])
     elif change == "nonmanifold":
-        faces = np.vstack([faces, [faces[0, 0], faces[0, 1], 1]])
+        a, b = faces[0, :2]
+        corner = next(i for i in range(len(vertices))
+            if i not in (a, b)
+            and np.linalg.norm(np.cross(vertices[b]-vertices[a], vertices[i]-vertices[a])) > 0
+            and not np.any(np.all(np.sort(faces, axis=1) == np.sort([a, b, i]), axis=1)))
+        faces = np.vstack([faces, [a, b, corner]])
     with pytest.raises(ValueError, match=message):
         HullMesh(vertices, faces)
 
