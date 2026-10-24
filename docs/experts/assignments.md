@@ -80,7 +80,7 @@ that simulation/video or the four defect reproductions already exist.
 
 ## REF-001: minimum-mesh end-to-end reference
 
-Status: completed and independently audited 2026-10-24; final development checkpoint pending. Coordinator owns acceptance/integration;
+Status: completed and independently audited 2026-10-24; checkpoint8d3755b pushed. Coordinator owns acceptance/integration;
 capytaine_expert owns producer and wecsim_expert owns consumer, dynamics/video.
 numerical_methods_researcher supplies independent startup/interface review.
 

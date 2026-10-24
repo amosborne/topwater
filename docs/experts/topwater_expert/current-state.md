@@ -28,6 +28,20 @@ coverage and wetted/righting validity remain pending other owners/coordinator.
 Generated waves are stationary harmonic realizations, not calm-start packets or
 consistent initialized nonlinear fluid states. Do not infer roll from Hm0 alone.
 
+One separately allocated incident-input diagnostic completed after geometry's
+terminal/released checkpoint. Same3banks and offsets0/45/90, no generation or
+solver calls:0..60s/dt0.02,57projected full-hull/CG points, exact eta/slopes/Hessian
+and eta_t, localCG plane departures, initial values and time histories.
+[Executed input diagnostics](incident-input-proposal-2026-10-24.md) contain tables
+and artifact identities. CG rolllike WATER-PLANE slope-proxy peaks range4.24-11.85deg;
+they are not boat angles or response qualification. Sampled plane departures
+reach0.265-0.780m; initial surface/verticalvelocity/curvature are nonzero. Setting
+boat pose to a tangent plane alone cannot initialize fluid/radiation state.
+ExactPID7120/Popen.wait0, shell0,2.2994226s; all field/check/hash gates pass,
+stderr empty and producer/launcher inventories terminal. Idle ledger recorded
+under claim, separate idle readback passed, then lease released. No further
+numerical allocation remains for this owner.
+
 Historical selected solver foundation remains the P0 Rankine-panel core from
 4e8f511; hydrostatics/instantaneous added mass do not supply coupled wave-response
 qualification. [Held source map](held-source-map.md) is historical evidence,

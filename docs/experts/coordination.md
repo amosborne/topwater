@@ -51,7 +51,12 @@ A lease schedules already-authorized work. Before any numerical launch:
 3. Under that claim, update execution-state.json to `claimed`: record owner
    session/task, assignment, timestamp and archived manifest path containing exact
    producer/input/dependency identities, command, resources and expectations.
-   Freeze those files before launch. Launch only this job, then record `running`
+   Freeze those files before launch. Read back the ledger and verify `claimed`,
+   owner, assignment and manifest before launch. Any failed preparation or ledger
+   command stops the launch; orchestration must inspect each nested command's
+   exit status rather than treating a completed tool wrapper as success. Python
+   readers use UTF-8-sig because PowerShell may write a UTF-8 BOM.
+   Launch only this job, then record `running`
    with its tool session handle or PID plus start time, host and output paths.
 4. On completion, verify the exact process and any numerical child processes are
    terminal; record exit status/evidence and result location. Record `idle` with

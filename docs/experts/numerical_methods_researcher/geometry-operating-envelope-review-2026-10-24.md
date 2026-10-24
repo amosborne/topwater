@@ -122,3 +122,122 @@ zero, with unresolved outer coverage explicit. An invalid solver trial or failed
 root is not proof that no physical equilibrium exists. Also retain the distinction
 between world-x equivalent righting arm and torque about the actual heel axis.
 Final source signoff awaits this correction; no numerical result exists here.
+
+## Final independent source signoff
+
+PASS for the bounded static-geometry study source before coordinator allocation.
+Reviewed current source SHA256
+`d2c395d26f478bb7e5b42bb3b179585ce529d477d66bce1c54c6213c646651c7`
+and draft controls
+`59eb2dc920f6dceb8c4942bafba9aa205723e5dfb7473fc0b749fc8937fe7219`
+(controls status still awaiting owner readiness flip/refreeze).
+
+The required connected-coverage correction is resolved: the component containing
+zero retains valid inner coverage despite failed outer points; failed inner
+points do not bridge disconnected islands; unresolved zero yields no connected
+branch. Synthetic expectations correctly retain +/-11.5 degrees when only
+outer +/-12-degree points fail. Tangents and labels use that component, with
+one-sided boundary differences explicit and invalid plot gaps left unbridged.
+
+Root/trial failures explicitly leave physical equilibrium existence unknown.
+Native-versus-independent moment inconsistency now raises a distinct runtime
+error that cannot be hidden as a root failure. World-x and projected heel-axis
+arms are separately labelled. Only a residual report wording cleanup was
+recommended to keep its short physical-limit description consistent with these
+statuses; there is no remaining blocking mathematical issue.
+
+Cap owns implementation and the reviewer authored none of this correction.
+No numerical study was executed by this reviewer. Source PASS supports the
+coordinator's allocation of the already authorized bounded study; it does not
+grant scope or accept an operating envelope or a 5-10-degree generated-sea result.
+
+## First execution failure and bounded correction review
+
+Owner attempt one terminated exit one before producing an accepted curve:
+`abs(residual(solution.x))` applied Python's scalar `abs` to a list. Independent
+diff review of current source
+`f5604fa1e8195d436f61b1e5758a88c98411226d7c2157c4ca01933ccb5fd4be`
+passes: `np.abs` performs the intended vector residual absolute value; remaining
+changes only persist earlier successful checks and record tracebacks/evaluation
+counts on failure. No force, geometry, root or engineering-label criterion changes.
+
+The ledger honestly records a separate orchestration deviation: an atomic lease
+was held, but the claimed-ledger read failed on a UTF8 BOM and the orchestrator
+continued despite the preparation failure. No concurrency occurred. Future
+launch preparation must read JSON as UTF8-sig, stop explicitly on every nested
+nonzero exit, and obtain a separate successful claimed-ledger readback before
+any numerical launch. Protocol implementation/proposal review is pending;
+source math PASS alone does not justify a retry.
+
+Final independent retry source/protocol review PASS: geometry source remains
+`f5604fa1...`; reviewed stdlib guard is
+`1d85dd2a94391a48fd48664b66e6b23429267e135fb04e99adc0d026b804534d`.
+Its UTF8-sig reads and separate Claim/Verify/Run invocations stop preparation
+failure from launching numerical work. A successful separate claimed-ledger
+readback creates a receipt bound to owner, claim timestamp, proposal hash and
+frozen input/dependency checks; Run requires that matching receipt before its
+only spawn site. Inline PowerShell commands explicitly return native exit codes,
+and each prior tool result must be inspected as exit zero before advancing.
+No execution-policy modification or blocked `-File` invocation is used.
+
+One additional source-review finding was corrected before PASS: if writing the
+running ledger fails after Popen, the guard now preserves the claim/freeze,
+waits for that exact child to terminate, prints its PID/actual exit, and only
+then propagates the bookkeeping failure. Completion still belongs to the owner:
+terminal evidence, idle write under the lease, a separate successful idle
+readback under that lease, and lease removal as the final operation.
+
+At review, draft proposal/control status still blocks execution pending a fresh
+coordinator retry allocation and owner refreeze. No retry was executed by this
+reviewer and no geometry result is accepted by this source/protocol PASS.
+
+## Final independent executed geometry review
+
+PASS for the integrity and interpretation of the bounded static geometry study;
+this does NOT accept a 5-10-degree relative-heel linearity assumption.
+
+Inspected authoritative attempt-two `manifest.json`, `geometry-results.json`,
+`postcheck.json`, plot and frozen proposal under
+`artifacts/reference/geometry-envelope-20261024`. Recomputed every declared
+input and output hash, including archived source/control/physical input: all
+match. Claim readback's proposal hash
+`2f24e09a1c6b8d022ca279dff307f09991eba57caafddc585b5a4f5892d6647b`
+matches the actual frozen proposal. Separate claimed readback preceded launch;
+guard waited exact producer PID 40832, terminal exit zero; separate idle readback
+was performed while the lease remained held, then the lease was released. The
+lease is absent at review. Attempt one and its protocol deviation are preserved.
+
+All 49 free-heave/trim roots converge; maximum normalized root residual is
+`5.5351e-14`. All 175 additional static rows are retained, with 11 opening-contact
+invalid states explicitly excluded. All 262 valid retained fixed/free/grid poses
+pass independent analytic-versus-native geometry checks. Upright K, analytic box,
+reflection parity and connected-coverage checks pass. Independently recomputed
+secant and centered-grid tangent metrics at 5 and 10 degrees from the stored
+righting moments; differences from reported values are below `4e-16`. The
+rendered curves agree with the stored results and label their limited scope.
+
+| Relative flat-water heel | Mean-K righting departure | Tangent-stiffness departure | Material wet-set turnover |
+|---|---:|---:|---:|
+| 5 degrees | 12.33% | 24.03% | 15.87% |
+| 10 degrees | 22.33% | 39.32% | 28.82% |
+
+The mean K is too stiff relative to these exact righting curves. Net wet area
+changes are smaller (-4.98% and -8.33%), illustrating why wet-set turnover matters.
+Free-heave equilibria move upward by 5.95 and 21.15 mm. The free branch remains
+restoring and avoids opening immersion through +/-12 degrees; that is distinct
+from small-departure applicability. The connected +/-1.5-degree 5%/10% label is
+an exploratory engineering label, not a final user-adopted operating limit.
+
+These results contradict describing 5-10 degrees of RELATIVE flat-water heel as
+a small geometry/restoring perturbation for this hull. A large GLOBAL wave-following
+roll need not equal relative heel, just as global heave need not equal relative
+immersion. That possibility is not evidence that the generated sea rescues the
+assumption. The next evidence must examine the one selected generated sea's
+actual relative immersion, body-versus-local-wave slopes and footprint curvature/
+wet-set changes, with frame conventions explicit. Flat-water curves remain a
+conditional diagnostic; a tilted-water geometric comparison is not an exact
+nonlinear wave-load calculation. Do not fit thresholds, invent another sea,
+require a cancelled nonlinear model, or claim dynamic motion accuracy here.
+
+The implementation author and this reviewer are distinct. Reviewer performed
+only stored-artifact identity/algebra/visual checks, no geometry/BEM/dynamics job.

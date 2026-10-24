@@ -22,6 +22,15 @@ curves relative to WEC-Sim's mean-geometry assumptions; no nonlinear dynamic
 model or native nonlinear adapter is required. Current bounded assignment is
 independent source/assumption review of Cap's exact geometry operating-envelope
 study: [review](geometry-operating-envelope-review-2026-10-24.md).
+Executed geometry study independently passes identity/analytic/root/parity/
+coverage/visual review: all 49 free roots, 175 extra poses retained. At relative
+flat-water heel 5/10 degrees, righting departs 12.33/22.33%, tangent stiffness
+24.03/39.32%, wet-set turnover 15.87/28.82%. This does not support a small-departure
+assumption at those relative heels, although the branch remains restoring and
+opening-clear through 12 degrees. No generated-sea operating envelope is accepted.
+First failed execution and the BOM/orchestration deviation remain historical;
+retry used reviewed fail-closed claim/readback/child-terminal handling and ended
+terminal zero with a separate idle-under-lease readback and final lease release.
 
 Interpret immersion as body motion relative to local water elevation/slope;
 large global heave while following a wave does not alone invalidate immersion.

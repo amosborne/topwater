@@ -6,23 +6,20 @@
     "manifest":  null,
     "active_numerical_job":  null,
     "last_terminal_evidence":  {
-                                   "job":  "REF-002 unchanged observed-sea generator candidate export",
-                                   "owner":  "/root/sea_generator",
-                                   "pid":  1960,
-                                   "exit_code":  null,
-                                   "observed_shell_exit_code":  0,
-                                   "producer_completed":  true,
-                                   "terminal_at":  "2026-10-24T17:00:48.1044721Z",
-                                   "command_session":  "exec chunkabb526 synchronous shell terminal0, exact Process.HasExited true; postcheck9c6aad terminal0",
-                                   "outcome":  "Three unscaled observed realizations, seed42/384components each; band variance/replay/support/frame closure and all output hashes pass",
-                                   "manifest":  "artifacts/reference/generated-sea-candidates-20261024/manifest.json",
-                                   "proposal":  "artifacts/reference/generated-sea-candidates-executed-source/proposal.json",
-                                   "terminal_record":  "artifacts/reference/generated-sea-candidates-terminal.json",
-                                   "postcheck":  "artifacts/reference/generated-sea-candidates-postcheck.json",
-                                   "stdout":  "artifacts/reference/generated-sea-candidates-run.log",
-                                   "stderr":  "artifacts/reference/generated-sea-candidates-run.err",
-                                   "elapsed_s":  0.15647610003361478,
-                                   "terminal_proof":  "Exact Process.WaitForExit returned and HasExited true; PID1960 and Python process inventory absent. Producer has no subprocess launches. Start-Process after Refresh did not expose Python ExitCode; null preserved, not relabeled. Producer complete true only after all assertions/hash invariance, stderr empty."
+                                   "exit_code":  0,
+                                   "elapsed_seconds":  1.8279999999795109,
+                                   "owner":  "/root/wecsim_reference",
+                                   "manifest":  "artifacts/reference/generated-bank-consumer-20261024/jan90-attempt1-source/proposal.json",
+                                   "tool_terminal_chunk":  "967da7",
+                                   "owner_launcher_pid":  25492,
+                                   "source_sha256":  "0eff175461f59761f610c80ae74d68f4e278a64a4fbdb1e4f072883b46e90aeb",
+                                   "job":  "REF002ONEJan05offset90storedscreenONLY",
+                                   "terminal_at":  "2026-10-24T18:31:48.8560468Z",
+                                   "producer_pid":  39260,
+                                   "all_frozen_identities_match":  true,
+                                   "output":  "artifacts/reference/generated-bank-consumer-20261024/jan90-attempt1",
+                                   "limits":  "Internalheading90stationaryparticular/meanplaneproxyONLY; nobody/BEM/ODE/MATLAB/IC/drift/linearityqualification",
+                                   "terminal_proof":  "Exactguardwait39260exit0; authoritativeCim39260/25492absent; nosubprocessesinscreen"
                                },
-    "note":  "Generator export terminal and checks pass; no solver calls or new canonical selection. Python direct exitcode unavailable, exact terminal process and complete producer evidence preserved. Idle written under lease; release final."
+    "note":  "ONEallocatedJan90screencomplete; idleunderlease pendingseparatereadback/finalrelease. Noautomaticbodylaunch."
 }

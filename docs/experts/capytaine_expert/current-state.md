@@ -47,11 +47,43 @@ Latest user steering: future higher-roll case must use the project's own
 sea-state generator and generator dominant heading, preserving this baseline.
 Bespoke period/heading RAO optimization is canceled; no such script or numerical
 study was launched. A bounded a-priori static geometry operating-envelope study
-is now assigned: samefullhull/nativeGL2, roll+/-12deg with freeheave/trim and
+is complete: samefullhull/nativeGL2, roll+/-12deg with freeheave/trim and
 explicitrelative-immersion/trim poses, wet-set turnover/rim/contact flags, exact
-buoyancy/righting vsfullmeanK. Source/controls and exactrun proposal are prepared,
-AST/JSONchecked only, awaiting independent source review and coordinator numerical
-allocation.5%Esec/10%Etan labels are exploratory engineering assumptions, not
-adopted finalcase gates. No new BEM or nonlineartrajectory/nativeNLadapter work.
-[Geometry proposal](geometry-envelope-2026-10-24.md).
+buoyancy/righting vsfullmeanK. Attempt2 terminal0:15.218s/951geometryevals, all9
+postcheckgroups and independent executed review PASS;49/49free roots,175static
+poses (11rim-immersion flags).5/10deg RELATIVE calm-water heel gives righting
+secant deviations12.33%/22.33%, tangent24.03%/39.32%, wet-set turnover15.87%/28.82%.
+Stable/no-opening through12deg does not rescue the fixedmeanK assumption. The
+exploratory5%/10% labels yield+/-1.5deg; not adopted finalcase gates or automatic
+GLOBALroll ceiling. Wave-following requires actual generated-case relative-water
+geometry evidence, not a blanket rescue. First failed abs-list attempt and BOM
+claim-ledger protocol deviation preserved honestly; guarded retry used separate
+verified claim/readback and exactchildwait, separate idle-underlease verification
+before final release. No further numericalallocation, BEM or trajectory adapter.
+[Geometry study](geometry-envelope-2026-10-24.md).
+
+Next producer completed after independent/joint source review and sole allocation:
+2838new native calls in67.119s terminal0, same17panels, .05:.05:12radiation/directAinf, realheading0
+officialBEMIOcompatibility plus3x384exact untouched default-offset0 FK/diff/H pairs.
+Paired MAT schema keeps native exp(-iomega*t) phase and full6DOF, no Cartesian
+missing-data fabrication. Preliminary SCREEN-only A/B interpolation is explicit;
+H is direct. All9 postchecks pass; independent FK max2.91e-11, phase reconstruction
+5.82e-11, spatial frame closure2.22e-16. Sources frozen through exact terminal;
+separate idle-under-lease readback passed and lease released. Executed independent
+producer/interface review PASS; mesh/kernel/temporal/relative-wave applicability unassessed.
+No further numerical allocation. [Executed producer](generated-bank-native-export-2026-10-24.md).
+
+Stored native/CIC comparison exposes an unresolved radiation issue: heave
+A(12)-Ainf=-8230.20kg, with substantial B(12); April particular-history difference
+0.39567deg roll/0.05393m heave. This does not attribute error to cutoff, mesh or
+irregular frequencies. One combined diagnostic source is independently reviewed
+PASS (ff75f6bc):66 radiation scout calls across17/68 unchanged-surface panels plus
+384 exact Jan05 existingoffset90 pairs, all raw coupling/phase/frame preserved.
+No272 cascade, coefficient repair or canonical heading adoption. One allocated
+450-call run completed56.9945s terminal0; all geometry/reuse/pair/hash checks pass,
+lease released with separate idle-under-lease proof. Raw68-panel omega12 has
+negative heave B=-48117.68kg/s; direct Ainf and highfinite probes show strong mesh/
+asymptotic mismatch. Diagnostic only; independent executed review requested.
+No further numerical launch allocation.
+[Diagnostic proposal](radiation-heading-scout-2026-10-24.md).
 Producer [README](../../../reference/capytaine/README.md).

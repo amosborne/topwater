@@ -1,0 +1,14 @@
+{
+  "purpose": "Internal incident-input diagnostics; no generation, response or canonical selection",
+  "bank_directory": "artifacts/reference/generated-sea-candidates-20261024",
+  "physical_input": "reference/capytaine/canonical-boat.json",
+  "observation_ids": [
+    "ndbc-46086-20220424T0740Z",
+    "ndbc-46086-20250307T0540Z",
+    "ndbc-46086-20250105T1140Z"
+  ],
+  "relative_heading_offsets_deg": [0, 45, 90],
+  "samples": 3001,
+  "dt_s": 0.02,
+  "duration_s": 60
+}

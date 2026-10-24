@@ -1,72 +1,51 @@
 # Current state: WEC-Sim / BEMIO expert
 
-Minimum-mesh reference work is authorized by the 2026-10-24 user goal; follow
-[handoff](../../checkpoint-handoff.md). WEC-001 scope and acceptance are in
-[assignments](../assignments.md); numerical scheduling follows coordination.md.
-Stock imported-excitation cropping is independently reproduced on selected
-v7.1.0: actual wave setup discards past/future input before noncausal convolution.
-Evidence: artifacts/reference-imported-excitation-stock/result.json and archived
-source/manifest in artifacts/reference-imported-excitation-stock-source.
-Scalar independent expected/actual maximum errors are [2,16,0] for future,
-past and interior impulses. The allocated job terminated exit0; lease released.
-The retained-history and component-sum corrections passed independent executed
-review and are committed/pushed on the maintained project branch at
-2f43f547301b223cd9a07e84dc88c9375249af0e. Exact tests, failures and scope are in
-[the imported-excitation checkpoint](imported-excitation-2026-10-24.md).
-The first native whole10s/501sample motion is independently reviewed and
-coordinator-accepted atdt0.02. Centered video iteration3 is complete/decoded and
-passed independent literal encoded-frame/telemetry/ffprobe/invariance audit.
-Coordinator final integration is pending. All jobs terminal, ledger idle and
-lease released. Exact current facts are in the
-[minimum-reference record](minimum-reference-2026-10-24.md) and
-[accepted-input checkpoint](accepted-input-2026-10-24.md).
+Updated2026-10-24. Scope/authorization: [handoff](../../checkpoint-handoff.md).
+Owner: consumer/BEMIO/maintained fork/dynamics/startup/output/video. Coordinator
+owns selection, acceptance and numerical allocation; no automatic follow-up.
 
-Maintained fork: https://github.com/amosborne/WEC-Sim, local
-artifacts/dependencies/topwater-wec-sim, branch topwater/reference-v7.1.0,
-based on official v7.1.0 commit a23d2993807410fe78cc63546c1ba9d81912024f.
-See [fork pin](../wecsim-fork.json); recheck checkout identity before relying on it.
-The historical setup note records its earlier local-only state.
+REF-001 minimum reference is COMPLETE and independently audited. Frozen10s/501
+native samples, actualrest, six signed applied-force histories and full mass/frame
+checks passed. Final centered12m isometric video/plots passed literal encoded
+frame review. [Run/evidence](minimum-reference-2026-10-24.md).
+Maintained fork f962103a348d63101ce669c2611f7d7c109755c3 on user-owned
+`topwater/reference-v7.1.0`, based on officialv7.1.0. Four reviewed corrections:
+import history, component sum, actual Solid inertia order, selected rigid imported
+force dispatch once. [Pin/limits](../wecsim-fork.json). No upstream/main publication.
 
-Marine-gyro's recorded engine commit was independently matched to clean checkout
-0753b2e47f2457c078751dcfe5d251d1767b80ab. Yaw order, unequal postprocessing grids,
-angular-bin normalization and row/column directions remain unreproduced leads
-on selected v7.1.0. No workaround is accepted without independent reproduction.
+REF-002 goal is ONE fresh buoy-generator case, roll5-10deg plus appreciable other
+five motions, with an a-priori geometric linear-operating assumption. No bespoke
+spectrum/phase/amplitude fit, canonical suite, new nonlinear adapter or custom
+integrator. Topwater solver remains held. Generated whole banks/MEM spread/seed42
+are immutable; internal heading selection does not itself select the canonical case.
 
-BEMIO supports a separate hydrostatics directory as its third argument (suffix
-with leading separator). Joint producer interface is approved for provisional
-0.1:0.1:12 rad/s, 0/45/90-degree headings; executed consumer signoff is pending.
-Native corrected files under artifacts/reference/minimum-20261024/native-gl2
-passed independent physical review. reference/wecsim/prepare_bemio.m executed
-official import/write with exact native MAT metadata and phase checks; H5 and
-interface-check.json are in artifacts/reference/minimum-20261024/consumer.
-Open first-case questions: full inertia/frame/Ainf mapping, per-direction imports,
-excitation-IRF noncausality and actual convolution prehistory/padding, upstream
-arrival shared by forcing and display, and explicit simu.rampTime=0. Keep the
-first ten seconds from actual rest. v7.1.0 disallows elevationImport with
-nonlinearHydro=1; initial case is linear, with qualitative imported surface display.
-Preserve the unfinished exporter; its packet/export controls are not approved.
+Native17panel3-default-bank exact-pair H and .05:.05:12rad/s radiation completed.
+Official BEMIO40sIRF/exact H5 metadata/full K/Ainf/all36kernel readback passed.
+Native-vs40sK harmonic comparison completed1.859s, independently reviewed integrity
+PASS. April globalroll7.551/7.802deg, max history difference.396deg roll/.05393m
+heave; fixedmean relative-roll subtraction SCREEN proxy peaks5.929/6.069deg.
+March globalroll10.201/10.228deg; January3.810deg native. These stationary
+particular histories do NOT qualify initial pose, radiation history, startup/free
+surge-sway-yaw drift, actual wet set or linearity. Flatwater5deg righting is already
+12.3% below mean-K prediction; large globalroll has not rescued that issue.
 
-[Setup/source map and reproduction plans](native-setup-2026-10-24.md),
-[read manifest](native-setup-read-manifest.json),
-[historical leads](marine-gyro-leads.md) and
-docs/capytaine-wecsim-environment.json contain evidence and limits. Recorded
-MATLAB/engine setup is historical, not live readiness or an execution lease.
-Incoming packet startup passed independent full-physical-hull review; exact
-packet-attempt3 spectral/input files remain frozen. Inertia and imported dispatch
-boundary corrections are independently reviewed/published at
-f962103a348d63101ce669c2611f7d7c109755c3; see pin for R2025b serialization limits.
-Actual mask fresh/repeat/regular transition/mixed rejection passed. Cold-start
-official preprocessing precedes masked body instantiation; no simulated warmup.
-Native runtimeH5/fullM+A/q0/v0/radiation0/501x6prepared+appliedforce all pass.
-Independent all501 Solid Newton-Euler/force sum and native residual acceleration
-feedback review passed. The apparent initial fullM+a mismatch is explained by
-stock1e-7sTransportDelay zero output/forward extrapolation, not a mapping error.
-Temporal/mesh motion accuracy remains unestablished; no optional dt/refinement
-campaign allocated. Next: coordinator final checkpoint/handoff; larger-response
-nonlinear feasibility is separately bounded, no Topwater unhold.
-Four historical marine leads
-remain unconfirmed on selected release; passive-yaw/full-direction spectrum
-paths are unexercised by the proposed linear imported-packet case. Equal-grid
-fixed ode4 output is proposed; output-grid behavior still requires verification.
-No historical workaround has been carried over. Independent review is required
-before relying on physical-result corrections.
+Signed A33native-minus-finiteband ranges-3573.04kg to+375.79kg over incidentomega;
+314/384negative. Raw sampled B33 is positive. Passive upper-tail-only explanation
+is sign-inconsistent with dominant negative mismatch. Dominant error is native
+versus truncatedbandPV, rather than40s/time quadrature alone; missing tails versus
+coarse mesh/native consistency unresolved. No Ainf/damping repair or fit accepted.
+[Executed evidence, arrays, normalizations, limits](generated-bank-consumer-execution-2026-10-24.md).
+
+Jan05offset90 source/math review passed and ONE allocated stored screen completed
+1.828s/exit0. Native/CIC roll5.119/5.221deg, exactfixedmeanplane relativeroll
+2.105/2.133deg and pitch2.484/2.508deg; sampledfootprintdeparture.307m, initial.183m.
+Provisional global-roll hypothesis retained, NOT canonical/linearity/IC acceptance.
+Independent executed review requested. No body/ODE/BEM/MATLAB run follows.
+[Executed screen, source/manifest and practical next step](jan90-screen-proposal-2026-10-24.md).
+All owned numerical jobs terminal/leasefree; consult shared execution ledger
+for CURRENT other-owner liveness, never infer it from this document.
+
+Four old marine-gyro leads remain unconfirmed/unexercised as applicable; no old
+workaround carried over. Historical setup/open questions live in linked records,
+not current blockers. Before engine replacement, query authoritative outside-
+sandbox IPC/exact recorded process identity; restricted visibility is insufficient.
