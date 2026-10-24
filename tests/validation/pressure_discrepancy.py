@@ -19,13 +19,21 @@ from .reference_mesh import farthest_first,verify_surface
 def generate(args,c,r,a):
     if (c['format_version']!=1 or c['maximum_elapsed_seconds']!=60 or c['cpu_threads']!=1
             or c['required_capytaine_calls']!=6 or c['qualification_allowed'] is not False
-            or c['diagnostic_relative']!=.01 or c['diagnostic_absolute_normalized']!=1e-5):
+            or c['diagnostic_relative']!=.01 or c['diagnostic_absolute_normalized']!=1e-5
+            or c['density_kg_m3']!=1025. or c['gravity_m_s2']!=9.81):
         raise ValueError('unsupported discrepancy attribution controls')
     parent,p=read_owned(args.probe,digest('validation/mixed-pressure-controls.json'),'mixed-pressure-component')
     current_sources(parent,tuple(parent['producer_sha256']))
+    if (parent['full_reference_qualified'] is not False or parent['nonlinear_rhs_ready'] is not False
+            or parent['complete_runtime_speed_qualified'] is not False
+            or parent['scope']!='Bounded calm pressure component and nonflat boundary closure; no TD speed pass.'):
+        raise ValueError('parent scope or unqualified status differs')
     archive=args.output.with_suffix('.source');source=args.probe.with_suffix('.source')
     if digest(source/'calm-inputs.json')!=parent['calm_inputs_sha256']:raise ValueError('probe physical input differs')
     physical=(source/'calm-inputs.json').read_bytes();(archive/'calm-inputs.json').write_bytes(physical)
+    if digest(source/'protocol.md')!=parent['protocol_sha256']:raise ValueError('parent protocol differs')
+    shutil.copyfile(source/'contract.json',archive/'probe-controls.json')
+    shutil.copyfile(source/'protocol.md',archive/'probe-protocol.md')
     shutil.copyfile(source/'field-map.zip',archive/'field-map.zip');shutil.copyfile(c['protocol'],archive/'protocol.md')
     if digest(archive/'field-map.zip')!=parent['field_bundle_sha256']:raise ValueError('parent evidence bundle differs')
     for suffix in ('.json','.npz'):shutil.copyfile(args.probe.with_suffix(suffix),archive/('probe'+suffix))
