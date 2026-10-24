@@ -126,7 +126,7 @@ def run(args, report):
             scale=float((WATER_DENSITY*abs(T).T@(weights[:,None]*abs(potential))).max())
             port_allowance=128*np.finfo(float).eps*(len(weights)+nv)*scale
             if port_error>port_allowance:
-                raise ValueError('independent physical P1 load-port/sign/half-factor ownership gate failed')
+                raise ValueError('independent polynomial P1 load-port quadrature parity failed')
             row.update(accepted=True,diagonal=A.diagonal().tolist(),
                 raw_added_mass_asymmetry_max=float(abs(A-A.T).max()),
                 half_energy_condition=float(spectrum[-1]/spectrum[0]),
@@ -153,7 +153,8 @@ def run(args, report):
     report.update(complete=True,process_peak_rss=peak_rss_bytes(),limits=[
         'Existing assembler averages raw V quadrature asymmetry as part of its symmetric Galerkin definition; diagnostics retained',
         'No new kernel, fitted-force correction, energy eigenvalue clipping, or jitter',
-        'Physical q4 port verifies polynomial load/sign/factor ownership, not continuum added-mass accuracy',
+        'Physical q4 port checks polynomial lower-P1 load reconstruction, not the half-energy factor or continuum added-mass accuracy',
+        'The half-energy factor follows odd-reflection energy symmetry and is tested physically through external added-mass comparisons',
         'Independent references retain their own discretization and raw asymmetry',
         'Whole-plane zero-potential instantaneous/infinite-frequency limit only; no finite-frequency, moving, nonlinear6DOF or trajectory qualification'])
     checkpoint(args,report,arrays)
