@@ -1,0 +1,302 @@
+{
+  "status": "Sampled error allocation rejects trace-score-driven seam grading as the next experiment",
+  "producer_commit": "83512e5 (integrated 8008b4c)",
+  "evidence": {
+    "artifacts\\projection-allocation.json": "bfdef6304b54205b06703e45c804602334d39416f866f85cf121643fa4bc5daf"
+  },
+  "parents": {
+    "projection": "0145739b0197d92052a90181399f0eb534aaaab35aa943dd935ff53e7b39515c",
+    "galerkin": "c43d52b12b527d4c098f57d530b5a66b6f11784b3e47adee7f2af98918bd4bdb"
+  },
+  "physical_facets": 272,
+  "seam_touching_facets": 82,
+  "seam_touching_area_share": 0.15290875785347835,
+  "area_concentration_scope": "Area of minimal-count descending-score facet set; NOT a minimum-area optimization",
+  "orders": [
+    {
+      "order": 4,
+      "seconds": 0.00821999998879619,
+      "relative_projection_L2": [
+        0.23318113328365936,
+        0.10395550488596467,
+        0.06004288133607071,
+        0.14932951926650231,
+        0.1825299003692646,
+        0.2182082637575405
+      ],
+      "total_equal_six_score": 0.02866944195665728,
+      "concentration": {
+        "50": {
+          "facets": 24,
+          "facet_share": 0.08823529411764706,
+          "area_m2": 4.59398952342274,
+          "area_share": 0.32862215899863967,
+          "captured_score_share": 0.506786963096218
+        },
+        "80": {
+          "facets": 54,
+          "facet_share": 0.19852941176470587,
+          "area_m2": 9.21244778548602,
+          "area_share": 0.6589946419105207,
+          "captured_score_share": 0.8039195837895025
+        },
+        "90": {
+          "facets": 74,
+          "facet_share": 0.27205882352941174,
+          "area_m2": 10.788408184486245,
+          "area_share": 0.7717279222489476,
+          "captured_score_share": 0.9016791897469462
+        }
+      },
+      "aggregate_load_parity_max": 6.057376822354854e-12,
+      "aggregate_load_arithmetic_allowance": 1.84027008467185e-07,
+      "groups": {
+        "all": {
+          "facets": 272,
+          "area_share": 1.0,
+          "sampled_score_share": 1.0,
+          "signed_diagonal_load": [
+            -5.517491747773063,
+            -12.352798846934858,
+            -23.69085399522859,
+            -7.3023676633369545,
+            -44.89451344405246,
+            -29.95976844425226
+          ],
+          "absolute_diagonal_load_sum": [
+            8.820085408291654,
+            38.80320625907349,
+            262.0708272255665,
+            87.75206232792218,
+            777.3200592217344,
+            92.96733240791104
+          ],
+          "cancellation_fraction": [
+            0.374440099799245,
+            0.6816552022928167,
+            0.9096013308843502,
+            0.9167840906570536,
+            0.9422444938716729,
+            0.6777387532988648
+          ]
+        },
+        "seam_touching": {
+          "facets": 82,
+          "area_share": 0.15290875785347835,
+          "sampled_score_share": 0.09885701778568563,
+          "signed_diagonal_load": [
+            -2.7709298960778352,
+            -2.0266859716182926,
+            -17.758297022082907,
+            -6.471007735526168,
+            -3.1244587851712455,
+            -3.5422159202732737
+          ],
+          "absolute_diagonal_load_sum": [
+            3.0933698654357524,
+            4.954869652088773,
+            43.765367132623126,
+            24.512152906249355,
+            113.56808559084321,
+            14.663892945474648
+          ],
+          "cancellation_fraction": [
+            0.10423582804007703,
+            0.5909708803815004,
+            0.5942385912525409,
+            0.7360081849898876,
+            0.9724882323329119,
+            0.7584395948985416
+          ]
+        },
+        "not_seam_touching": {
+          "facets": 190,
+          "area_share": 0.8470912421465217,
+          "sampled_score_share": 0.9011429822143143,
+          "signed_diagonal_load": [
+            -2.7465618516952266,
+            -10.326112875316573,
+            -5.9325569731456955,
+            -0.8313599278107908,
+            -41.77005465888114,
+            -26.417552523978994
+          ],
+          "absolute_diagonal_load_sum": [
+            5.726715542855905,
+            33.848336606984724,
+            218.30546009294335,
+            63.23990942167281,
+            663.7519736308907,
+            78.30343946243644
+          ],
+          "cancellation_fraction": [
+            0.5203949225098894,
+            0.6949299755786007,
+            0.972824514006109,
+            0.9868538722554546,
+            0.9370697846209204,
+            0.6626258986151947
+          ]
+        }
+      }
+    },
+    {
+      "order": 8,
+      "seconds": 0.009802599990507588,
+      "relative_projection_L2": [
+        0.23973485560241467,
+        0.10647070046615911,
+        0.06237323531054564,
+        0.1522010814873715,
+        0.1842610981422723,
+        0.22105127633579913
+      ],
+      "total_equal_six_score": 0.029780036632629563,
+      "concentration": {
+        "50": {
+          "facets": 24,
+          "facet_share": 0.08823529411764706,
+          "area_m2": 4.587687412980803,
+          "area_share": 0.32817134971204504,
+          "captured_score_share": 0.5097977661439365
+        },
+        "80": {
+          "facets": 54,
+          "facet_share": 0.19852941176470587,
+          "area_m2": 9.212447785486019,
+          "area_share": 0.6589946419105206,
+          "captured_score_share": 0.8044191355350463
+        },
+        "90": {
+          "facets": 74,
+          "facet_share": 0.27205882352941174,
+          "area_m2": 10.954420237649618,
+          "area_share": 0.7836032735209065,
+          "captured_score_share": 0.9022185106150846
+        }
+      },
+      "aggregate_load_parity_max": 4.803268893738277e-12,
+      "aggregate_load_arithmetic_allowance": 7.427846817559231e-07,
+      "groups": {
+        "all": {
+          "facets": 272,
+          "area_share": 1.0,
+          "sampled_score_share": 1.0,
+          "signed_diagonal_load": [
+            -5.4766320586532,
+            -12.287650353371207,
+            -23.594871101798418,
+            -7.276785618853299,
+            -44.568350719387226,
+            -29.734828388415547
+          ],
+          "absolute_diagonal_load_sum": [
+            8.7666643636125,
+            38.708734349707605,
+            261.71308151186065,
+            87.32242527296309,
+            776.1187225090758,
+            92.68284641091249
+          ],
+          "cancellation_fraction": [
+            0.3752889546695921,
+            0.6825612988954772,
+            0.9098445100050182,
+            0.9166676189294258,
+            0.9425753439173528,
+            0.6791765732292554
+          ]
+        },
+        "seam_touching": {
+          "facets": 82,
+          "area_share": 0.15290875785347835,
+          "sampled_score_share": 0.0960327436720825,
+          "signed_diagonal_load": [
+            -2.7554447540874865,
+            -2.007772236806079,
+            -17.57139448221552,
+            -6.381309985348328,
+            -2.6922483875713863,
+            -3.478599044611672
+          ],
+          "absolute_diagonal_load_sum": [
+            3.0744147415759926,
+            4.943511927601583,
+            43.66031459276011,
+            24.439215787964617,
+            113.36958857506231,
+            14.644701550163727
+          ],
+          "cancellation_fraction": [
+            0.10374982372254604,
+            0.593857106807836,
+            0.5975431087450463,
+            0.7388905584895699,
+            0.9762524639860641,
+            0.7624670579529303
+          ]
+        },
+        "not_seam_touching": {
+          "facets": 190,
+          "area_share": 0.8470912421465217,
+          "sampled_score_share": 0.9039672563279176,
+          "signed_diagonal_load": [
+            -2.721187304565713,
+            -10.279878116565127,
+            -6.023476619582911,
+            -0.8954756335049675,
+            -41.876102331815844,
+            -26.256229343803895
+          ],
+          "absolute_diagonal_load_sum": [
+            5.692249622036503,
+            33.76522242210605,
+            218.05276691910046,
+            62.88320948499848,
+            662.7491339340135,
+            78.03814486074877
+          ],
+          "cancellation_fraction": [
+            0.5219487047737446,
+            0.6955483370417574,
+            0.9723760596818398,
+            0.9857597021392714,
+            0.9368145498987778,
+            0.663546213320992
+          ]
+        }
+      }
+    }
+  ],
+  "topset_q4_q8_overlap": {
+    "50": {
+      "intersection": 22,
+      "union": 26,
+      "jaccard": 0.8461538461538461
+    },
+    "80": {
+      "intersection": 53,
+      "union": 55,
+      "jaccard": 0.9636363636363636
+    },
+    "90": {
+      "intersection": 73,
+      "union": 75,
+      "jaccard": 0.9733333333333334
+    }
+  },
+  "normalized_score_distribution_overlap": 0.969825058615766,
+  "diagnostic_cost": {
+    "total_seconds": 0.12253500000224449,
+    "process_peak_rss": 100532224
+  },
+  "decision": "No graded-mesh assembly. First compare continuous seam-zero P2 on original panels against refined P1 at the same 115 unknowns using the identical saved fields and quadrature. No new BEM kernel before a useful approximation gain.",
+  "limitations": [
+    "Sampled coarse P0 source control is not converged physical truth; its original triangulation edges may create artificial roughness",
+    "Do not adapt future hull meshes to coarse-source artifacts; no automatic marking/refinement is implemented",
+    "Equal-six normalized trace error is not a certified motion/load estimator or unavoidable load floor",
+    "Stable input-order tie breaks are only for reporting minimal-count concentration, not a geometric region rule",
+    "Signed load cancellation is retained; trace-error concentration alone does not locate load accuracy",
+    "q4/q8 sensitivity is reported before any mesh recommendation; no new source kernel, solve, mesh or quadrature targets"
+  ]
+}
