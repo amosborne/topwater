@@ -1,5 +1,49 @@
 # Checkpoint handoff
 
+## Latest checkpoint: output rehearsal passes; stop costly rejected-family extension
+
+Read docs/finest-consumer-rehearsal-001.md and prospective protocol first.
+Branch baseline/fluid-body; producerd0786ad. Goal ACTIVE/INCOMPLETE: no qualified
+reference, source convergence, own coupled motion or Topwater runtime exists.
+
+- Actual minimal shared consumer: selected loading AFTER full archived-payload
+  checks, caller-owned fields, full loads, streamed checkpoints/hashes, per-array
+  restore, actual ZIP/CRC/embedded SHA. Streaming-hash review blocker fixed before
+  launch. All8stages passed; exactsession15358 terminalexit0,24.503s<60s.
+- All691200x6 synthetic complex fields retained/touched66,355,200B +native331,776B.
+  Native3456 calibration passed1e-10 scaled; no BEMsolve/fullfieldrun. Resource-only
+  and syntheticflagsTrue; completeTrue/passedFalse,rehearsal_passedTrue,
+  full_run_authorizedFalse, source/referenceFalse. NEVER use dummy fields asphysics.
+- Peakworking533,397,504B, peakcommit1,926,377,472B<2GiB; alloutput-stage peaks
+  stayed below input-stage peak. Diskupper434,347,893B<2GiB. Exact raw/payload
+  snapshots/SHAs preserve resource graph, not reference coefficients.
+- All284tests pass, JUnit; exactsession84363 terminalexit0. Independent audit
+  rebuilt all seededfields/loads/ownership/identities/stages/resources/roundtrips.
+  Fresh complete graph/input restoration passed. No nativejoblive.
+  Evidence finest-consumer-rehearsal-001.zip, summary; SHA
+  74dc090f8b4dfc1a5aaedd1c5340f4342e1e3ae2b2e76862c9769493564bb657.
+  Restorehelper extracts immutableNPZ/source from includedpayload, then bound
+  common/quadrature/historical inputs. Exact filenames/SHAs/arguments in resultdoc.
+- STOP ~52min3456-source fullfield continuation as a QUALIFICATION strategy for
+  this rejected paired family. Retained216→864 increment alone would require
+  hypothetical finest |heave|>=457647kg, |pitch|>=922284kgm², versus current864
+  8246.6/16275.4. All36 necessary thresholds archived, not extrapolation/bounds.
+  No normal finer result can plausibly rescue that previous increment. Slivers
+  are NOT proven causal; preserve all native4level/controlled3source failures.
+
+**Exact next bounded goal:** READ-ONLY fixed-seed study003 asset/physical/quality
+preflight. Actual existing archives reference-study-003.zip,frozen-fixed-001.zip,
+periodic-sources-003.zip. Verify hashes/archived producers, SAME canonical physical
+inputs/CG/fullM/depth/conventions; inventory all4meshes1232/2772/4928/7700 and
+facets/moments/conformity/radii/vertexorder/quality before claiming improvement.
+Inventory available finite-frequency sources separately from absent Ainf sources;
+fresh Ainf export needs its own prospective producer/controls/reproduction gate.
+Assess common physical output grid and complete work/uncertainty needs. Declare
+60s read-only/2GiB memory+additionaldisk caps beforeexecution. No Green/source
+solve/remesh/formulation/runtime/optimization changes, no oldgate relabeling.
+Independent review, inventory/quality/cost decision +checkpoint/tracker/handoff,
+then stop. Full36 source and finite-wave/phase physical gates remain required.
+
 ## Latest checkpoint: finest timing feasible, full-output memory rehearsal needed
 
 Read docs/finest-cost-probe-001.md and its prospective protocol first.

@@ -20,6 +20,10 @@ material; frozen-source Gauss12/16/20 now passes conditional output integration
 discretization; all earlier native-mesh and finite-wave failures remain failed.
 The common-output54/216/864 source diagnostic confirms all three integration
 controls pass while source increments fail; see docs/common-output-sources-001.md.
+Do not spend the long one-level paired-family continuation seeking qualification;
+its retained prior increment is already far outside the unchanged policy. The
+consumer resource rehearsal is complete; next assess the existing fixed-seed003
+assets/physical identity/quality before any fresh export (docs/finest-consumer-rehearsal-001.md).
 Source/reference qualification remains false.
 The archived P1
 diagnostic-tank runtime is a different implementation. Record current commit
