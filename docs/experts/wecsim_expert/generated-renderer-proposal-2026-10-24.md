@@ -1,16 +1,20 @@
-# Generated-buoy-sea renderer: source ready, unexecuted
+# Generated-buoy-sea renderer:10m preview complete, encoder held
 
-Bounded ownership: `/root/generated_video` owns only the new Python renderer,
-controls and this note. No native case, fork, original renderer, current-state,
-handoff or execution ledger was changed. The parent coordinator owns binding,
-review acceptance and serial allocation. No render, fixture, encoding or sea/
-motion evaluation has run. The January held-release motion remains rejected.
+Bounded source ownership: `/root/generated_video` owns the renderer, controls
+and its notes. Native case/fork/originalrenderer remain untouched. A subsequent
+explicitly allocated12m preview1 completed, including its required ledger
+bookkeeping; its terminal receipt is preserved in the seeded binding note. No
+encoder has run. The10m revision independently passed source review, then
+completed separately allocated preview2; receipt is in the seeded binding note.
+Independent literal-preview acceptance and a separate encoder grant remain.
+The January held-release motion remains rejected.
 
 Source: `reference/wecsim/render_generated_reference.py`, SHA256
-`6f3f5626d4ec20572faefc78d0491efe3fc589e1c6341b4b586ae02643064572`.
+`82083d9b5936ce45d93cc01db83c6fd26fcb33f26bbe001254a09cc76d20bb26`.
 Controls: `reference/wecsim/render_generated_reference_controls.json`, SHA256
-`7212083be127f32f40bc2d6c1bf578dd30a292a49aba53d07a5bf89eadbe1ad4`.
-AST parsing passes. Runtime/visual/source-independent review remains pending.
+`df16ae8078c54dac66657f9e02953913653230cc34bc3c468e43c131a2fdea37`.
+AST parsing and independent10m source review passed. Preview2 completed with
+clipping/phase/data-invariance checks; literal-preview acceptance is separate.
 Metadata inspected: Python3.12.8, NumPy2.5.4, SciPy1.18.1,
 Matplotlib3.11.2, threadpoolctl3.7.0. Eventual execution must freeze actual
 dependency/Python/encoder identities under the normal execution manifest.
@@ -56,7 +60,7 @@ global coordinates: `sum a*cos(k.x+phase-omega*t)`. Global/native phase and wave
 vector closure, an independent scalar sum, raw native pose identity and known
 CG reconstruction are checked in the eventual preflight.
 
-The close view spans12mx12m; orthographic isometric elevation35.264deg and
+The close view spans10mx10m; orthographic isometric elevation35.264deg and
 azimuth meanheading-135deg. Camera follows the actual full-hull midpoint XY,
 never vertical heave or yaw. Global z bounds remain[-3,3]m. Equal physical metre
 scales, true wave heights and literal rotations are retained. Global axis ticks,
@@ -106,8 +110,8 @@ the last t60 endpoint held for one frame. H2641280x900/yuv420p/one FFmpeg thread
 The child encoder PID and exact waited exit are printed for execution evidence.
 Input/config/preview-review invariance is checked before marking output complete.
 
-Resource proposal: one allowed logicalCPU, estimated preview10-90s and
-encode150-450s, both unmeasured for this full384component path. Declared caps:
+Resource proposal: one allowed logicalCPU. Actual10m preview2 took1.797s;
+encode estimate150-450s remains unmeasured. Declared caps:
 preview180s, encode900s; expected memory<1GiB. Baseline251frame rendering took
 71.94s, so751frames alone suggests about215s before additional preflight cost.
 The analytic field is factored into bounded64frame matrix batches; no component
@@ -116,5 +120,17 @@ coordinator decision, not an automatic rerun or reduced physical resolution.
 
 After encoding, independently inspect FFmpeg-decoded0/30/60sframes and a frame
 at actual roll extremum, ffprobe codec/resolution/frame count/duration, the full
-six-motion plot and source/data invariance. This source assignment stops here:
-no accepted trajectory, job grant, preview receipt or physical acceptance exists.
+six-motion plot and source/data invariance. The initial source-only assignment stopped before any job. Subsequently root
+approved provisional visualization and preview2 ran under its separate grant;
+see the binding note. No encoder or physical acceptance follows automatically.
+
+## View-only revision after the first preview
+
+Root inspected the actual12m preview and requested a closer10m footprint. The
+initial mean-heading-minus135deg camera was already correct and remains FIXED;
+only XY limits/aspect change from12m to10m. Equal units, z[-3,3], motion, sea bank,
+heading mapping and tracking behavior are unchanged. The maximum displayed hull
+horizontal distance from the tracking center in preview1 was3.7124m, below the
+new5m halfwidth. Separately allocated preview2 checked all751new displayed frames and grids.
+Previous preview/source archive and ready controls remain untouched. No encoder
+is authorized by source review or by a successful preview alone.

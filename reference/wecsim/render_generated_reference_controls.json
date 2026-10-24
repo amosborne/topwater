@@ -8,7 +8,7 @@
   "native_output_mat": null,
   "motion_acceptance_receipt": null,
   "input_sha256": {
-    "reference/wecsim/render_generated_reference.py": "6f3f5626d4ec20572faefc78d0491efe3fc589e1c6341b4b586ae02643064572",
+    "reference/wecsim/render_generated_reference.py": "82083d9b5936ce45d93cc01db83c6fd26fcb33f26bbe001254a09cc76d20bb26",
     "reference/capytaine/canonical-boat.json": "ea18844904e03bbfd72abc3396240c97b1994b3584e36c8149f8ae5f60a99e4f",
     "artifacts/reference/generated-sea-candidates-20261024/ndbc-46086-20250105T1140Z/heading-offset-90deg.json": "2233438e4abaa8672f5db154758c12f1a549c91fed933261fd06fe02999d3291",
     "artifacts/reference/generated-sea-candidates-20261024/ndbc-46086-20250105T1140Z/realization-global.json": "8594ce2bb7a4b08e76f9df4d30fd02f6e6dcdf5ed3c8fafae99b47d710a39c58"
@@ -16,7 +16,7 @@
   "rejected_motion_sha256": [
     "190deabd054b255218f27ad602271ccaf2ce39274ea067f6a4a4009824457cd3"
   ],
-  "viewport_width_xy_m": 12,
+  "viewport_width_xy_m": 10,
   "surface_grid_nodes": 65,
   "z_bounds_m": [
     -3,

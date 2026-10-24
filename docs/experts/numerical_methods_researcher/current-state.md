@@ -1,44 +1,41 @@
-# Current state: numerical-methods research expert
+# Current state: independent numerical-methods review
 
-REF-001 minimum-mesh reference physics/video acceptance is owned by the
-[handoff](../../checkpoint-handoff.md) and Capytaine/consumer output reviews.
-This role's independent read-only reviews passed:
+Updated2026-10-24. Authorization/currentnumericalowner belong to the
+[handoff](../../checkpoint-handoff.md) and execution ledger. This role reviews;
+no implementation, physical correction or numerical simulation was authored.
 
-- Exact native GL2 planar hydrostatics, independent moments and unchanged
-  17-panel frequency coefficients: [hydrostatics review](hydrostatics-review-2026-10-24.md).
-- Excitation retained-history/component-sum preprocessing, source identities and
-  executed regressions: [startup review](startup-review-2026-10-24.md).
-- Selected Rigid Body actual imported-mask single-total dispatch, native graph
-  reproduction, proper-API correction and executed transition regressions:
-  [mask review](excitation-mask-review-2026-10-24.md).
-- Frozen incident packet's full-planform/depth calm bounds, six initial force
-  gates, physical band and arrival: [incident review](spectral-packet-proposal-2026-10-24.md).
+REF-001 minimum native motion and centered video are independently audited.
+Historical reviews: [hydrostatics](hydrostatics-review-2026-10-24.md),
+[startup](startup-review-2026-10-24.md),
+[mask dispatch](excitation-mask-review-2026-10-24.md) and
+[incident packet](spectral-packet-proposal-2026-10-24.md).
 
-REF-002 now targets ONE fresh buoy-generated canonical case with appreciable
-5-10-degree roll and the other five motions. Preserve the generator's physical
-realization and selected heading convention. The physical linear regime is an
-a priori engineering assumption supported by wetted-surface/buoyancy/righting
-curves relative to WEC-Sim's mean-geometry assumptions; no nonlinear dynamic
-model or native nonlinear adapter is required. Current bounded assignment is
-independent source/assumption review of Cap's exact geometry operating-envelope
-study: [review](geometry-operating-envelope-review-2026-10-24.md).
-Executed geometry study independently passes identity/analytic/root/parity/
-coverage/visual review: all 49 free roots, 175 extra poses retained. At relative
-flat-water heel 5/10 degrees, righting departs 12.33/22.33%, tangent stiffness
-24.03/39.32%, wet-set turnover 15.87/28.82%. This does not support a small-departure
-assumption at those relative heels, although the branch remains restoring and
-opening-clear through 12 degrees. No generated-sea operating envelope is accepted.
-First failed execution and the BOM/orchestration deviation remain historical;
-retry used reviewed fail-closed claim/readback/child-terminal handling and ended
-terminal zero with a separate idle-under-lease readback and final lease release.
+REF-002 targets ONE genuine buoy-generator case with appreciable all6DOF,
+roll about5-10deg, and an a-priori geometry-based linear assumption. A canonical
+suite and nonlinear trajectory adapter are not requested. Topwater solver held.
+The original held-release Jan90 run is REJECTED; the unchanged-operator0.5deg
+calm control decays. Confirmed coupled negative radiation-power directions remain;
+no operator-passivity or numerical-accuracy acceptance follows from bounded motion.
 
-Interpret immersion as body motion relative to local water elevation/slope;
-large global heave while following a wave does not alone invalidate immersion.
-Geometry labels are exploratory engineering choices, not adopted motion-error
-requirements or proof of fixed-wet diffraction/radiation accuracy.
+The seeded Jan90 native60s case (motiond69652e3) passes independent complete3001
+initialstate/excitation/CIC/world-wrench/Ar/grid checks. Peaks are0.368/1.549/1.520m
+and5.127/1.723/2.200deg. Roll>=5deg occurs ONLY at final60sendpoint; no sustained
+statistics claim. Native acceleration-delay startup remains unchanged/nonzero
+residual reported. No exactnativeperiodicity or nonlinear fluid initialization.
+[Actual case and review evidence](../wecsim_expert/seeded-native-case-proposal-2026-10-24.md).
 
-Earlier amplitude-ladder and weakly nonlinear backend/adapter proposals are
-explicitly superseded historical notes, not queued implementation. No numerical
-job or solver implementation was performed by this role. Numerical scheduling
-remains coordinator-owned and serial. Topwater implementation/tests/performance
-remain held unless the handoff/latest user explicitly changes authorization.
+Static geometry study is independently accepted as geometry, not nonlinear
+trajectory proof: [review](geometry-operating-envelope-review-2026-10-24.md).
+At relative5degheel restoring departs12.33%, tangent24.03%, wet-set15.87%;2.5deg
+freeheel gives5.96/12.83/8.53%. Exploratorylabels are not adopted physical gates.
+Scalar actual-wave audit covers ONLY123/3001poses: valid/incomplete, early maximum
+wetturnover at least9.7087%, resolvedrimdry. Full60geometry remains unqualified.
+Batched recovery source PASS61c3598f/core3b04e8f2, fixtures prepared/unexecuted;
+1%area/10mmrim are reportingprecision only. All3001times or explicitUNKNOWN;
+oldmatchedintervals must overlap, originalscalar source/results preserved.
+
+Renderer preview2 independently literal/provenance PASS: source82083d9b,
+10m equal-unit XYtracking/fixedglobalz, actual0/30/60 images andall3001plot,
+all751displayframeclipguards/source-data/phase checks. Preflightba7d7f9f;
+rootreceipt119b3893. Visualization acceptance is separate from physical geometry,
+linearity, mesh/time accuracy and passivity. No encoder or further job inferred.

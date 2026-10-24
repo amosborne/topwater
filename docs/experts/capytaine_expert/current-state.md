@@ -106,7 +106,20 @@ unknowns and unexecuted fixtures. Its rejected motion remains excluded/unbound.
 New seeded Jan90 actual3001-sample motion has provisional global roll5.127deg;
 fresh audit config binds ONLY that motion (SHAd69652e3), rawbus/runtimeprovenance,
 unchanged hull/bank/frame and nonzero seeded q0/v0. Algorithms unchanged. Bound
-manifest232cee24 awaits coordinator checkpoint/allocation; no geometry or fixture
-execution, no linearity/physical acceptance implied.
+manifest232cee24 was checkpointed/allocated with READYstatus only. One actual
+geometry job ended terminal0 at300s with INCOMPLETE coverage123/3001 through2.44s;
+2878 later samples UNKNOWN. Fixtures allPASS;122wet/rimtargets met and rims dry,
+lastrowcoarsewet/rimunknown. No full-case geometry/linearity acceptance. Old narrow
+precision and original source preserved. ONE reportingprecision/batched clipping
+recovery has source-only authorization below; no recovery numerical grant/job.
+[Attempt1 evidence/recovery proposal](actual-wave-geometry-attempt1-2026-10-24.md).
+Recovery SOURCEONLY: new batched module/
+runner/config prepared, original scalar oracle and all inputs unchanged. Prospective
+1%area/10mmrim reporting bounds,600s/1CPU/10Mtri/depth8; no physicalgate change.
+AST only; fixtures unexecuted, independent batch source/math PASS; reporting-only
+linear JSONL/checkpoint and strict pinned-prefix overlap change also reviewed PASS
+at runner61c3598f/core3b04e8f2/configa411d7aa. No recovery
+job allocated; renderer preview owns next numerical slot.
+[Batched source proposal](actual-wave-geometry-batch-recovery-2026-10-24.md).
 [Geometry source proposal](actual-wave-geometry-postprocess-proposal-2026-10-24.md).
 Producer [README](../../../reference/capytaine/README.md).

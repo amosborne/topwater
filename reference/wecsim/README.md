@@ -1,4 +1,4 @@
-# Minimum-mesh native reference
+# Native WEC-Sim references
 
 The accepted minimum17-panel case has501 native six-DOF samples covering0..10s
 from rest at dt0.02s. The same frozen dispersive incoming field drives the
@@ -15,6 +15,42 @@ Preserve accepted outputs and failed attempts; many scripts intentionally reject
 existing output directories/logs. The commands below reproduce the recorded
 pipeline with fresh artifact paths. A new run must use a separately assigned
 fresh output root or reviewed path adaptation, not overwrite these artifacts.
+
+## One buoy-derived strong-motion candidate
+
+REF-002 uses observed record `ndbc-46086-20250105T1140Z`, generator seed42 and
+all384 directional components without amplitude or phase fitting. Hm0 is2.270m
+and Tm02 is9.296s. The initial mean bow is253.218deg CCW from global east,
+90deg from the incoming-aligned default to excite roll. This is a physical
+heading/frame change, applied once in the force inputs and display.
+
+The native60s case has3001samples at dt0.02 and40s CIC memory. Peak motions are:
+
+| Surge | Sway | Heave | Roll | Pitch | Yaw |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+|0.368m|1.549m|1.520m|5.127deg|1.723deg|2.200deg|
+
+Roll exceeds5deg only at the final60.00s sample; this is a peak criterion,
+not sustained5-10deg statistics. Full startup and all six histories are retained.
+Pose/velocity and physical radiation prehistory come from a deterministic
+mean-linear particular solution. All post0 motion is native and free. Native
+acceleration-feedback startup is unchanged; its nonzero initial residual is
+reported, rather than cancelled. Independent native fixture and complete
+actual-state/force/history/wrench reviews pass.
+
+This remains a **provisional17-panel model trajectory**. Full incident-water
+geometry assessment is in progress, and radiation passivity, mesh/time accuracy
+and nonlinear equivalence are unqualified. The rejected held-from-rest sea run
+and calm-water control are preserved as diagnostics, not additional canonical
+sea cases. Topwater solver implementation remains held.
+
+Source entry: [run_seeded_jan90_case.m](run_seeded_jan90_case.m).
+[Case, initialization, commands and evidence](../../docs/experts/wecsim_expert/seeded-native-case-proposal-2026-10-24.md)
+records the frozen generator/native/BEMIO dependencies and fixture prerequisites.
+Actual outputs are in
+`artifacts/reference/generated-bank-consumer-20261024/case-jan90-seeded-attempt1`.
+The generated renderer preserves the full bank and native motion in an equal-metre
+10m XY tracking view. Previews pass; encoding has not yet been allocated.
 
 ## Dependencies and engine
 

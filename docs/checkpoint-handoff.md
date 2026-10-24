@@ -168,18 +168,38 @@ Not exactnativeperiodicity, not nonpassivityrepair. Exact7044/30896 terminal,
 frozenIDs unchanged, separateidle-underleaseb436e0 and finalrelease complete.
 MotionSHAd69652e3ca838afd2df6ddc249762d58321d833324038c51798399a36d055a95.
 
-ONEcandidate now retained for GEOMETRYAUDIT and previewpreparation ONLY; no
-linear/finalphysicalaccuracyacceptance. Cap config/provenance binding complete
-(reference/capytaine/actual_wave_geometry_seeded_config.json;sourcealgorithms
-unchanged). No geometryjob yet: coordinator commitscheckpoint thenexplicitgrant.
-All3001poses/fixtures with1CPU300s/depth8/2Mtri/8192active/2048wavebatch caps;
-unknowns explicit. RendererroleSOURCE/configbinding only; no render/encode grant.
-Preserve old107degcase asREJECTED. No auto rerun/refinement/NLmodel/Topwaterunhold.
+ONEcandidate retained for geometry/visualization ONLY; no finalphysicalaccuracy
+acceptance. Geometryattempt1 validINCOMPLETE after300s:123/3001poses0..2.44s,
+122area/rimtargetsmet; remaining2878 UNKNOWN. Fixtures/independentprefixintegrity
+PASS, meanwetarea13.97955m2; prefixmaxXOR lower/upper9.7087/9.8047%, dryrimlower
+.46776m, curvaturedeparturealready>=.23573m. No full60linearityclaim. Exact33716/
+3436 terminal/idle/separateverify/releasecomplete. Originalsource/policy preserved.
 
-Geometryaudit SOURCE independently PASS runner5ea25c14/core7dda063b/config45da2e20;
-source-only provenance666cfcaa. ActualmotionhashUNBOUND/rejectedcaseexcluded,
-fixtures/evaluations UNEXECUTED. OneCPU300s/depth8/2Mtri prospectivecaps; unknowns
-explicit, roundoffallowanceengineeringconservative not formalintervalproof.
+BATCH recovery SOURCE independently PASS runner61c3598f/core3b04e8f2/configa411d7aa;
+432oldscalaroraclefixtures PREPARED butUNEXECUTED. Newreportingprecision1%meanwet
+area/10mmrim is numerical, notphysicalgate. Prospective1CPU600s/10Mtri/depth8/
+65536active/2048wavebatches, all3001times orUNKNOWN. Oldmatchedprefix/newenclosures
+must overlap. Linear JSONL/checkpoint reporting avoids quadratic writes; onefinal
+fullJSON includesserializationelapsed. NO recoveryjob grantyet; Capawaitingroot
+checkpoint+grant. No NLforces.
+
+Preview1 COMPLETE2.344s(render)/6.225s(guard), exact31792/9188terminal/leasefree;
+three literal0/30/60s images+all3001sixplot. All751displayframe clipping/phase/data
+checksPASS. Rootviewedall3; source/data faithful, closer10mviewnowrequested.
+Rootprovisionalvisualizationreceipt6cdb258e andartifactreadycontrols2811d87b:
+case-jan90-seeded-attempt1/render-motion-acceptance.json and render-ready-controls.json.
+ReceiptEXPLICIT geometry incomplete/nonpassivity/peakonlyendpoint limits, not
+physicalqualification. Source6f3f5626 used12mXYtracking/fixedz[-3,3]; fixedcamera
+alreadymeanheading-135deg, notinstantyaw. Preview2 COMPLETE1.797s(render)/6.098s(guard), source82083d9b/readyv2controls861b1282.
+Root+independentliteral0/30/60 andprovenance PASS, all751clipchecks, phase2.44e-15.
+Source/data unchanged; exact31120/35800terminal/released. Rootpreviewreviewreceipt
+render-preview-review.json SHA119b3893 binds preflightba7d7f9f. No encodergrant.
+Nextserialqueue:batchgeometryrecovery?encoder ONLYafterexplicitrootallocation.
+
+Allstate/history/body sourcesandrenderer1 are committed/pushed e5dc02a; issue30
+updated. Newbatchsource andnewrendererbindings notcheckpointed yet. Rendererowner
+/root/generated_video; geometryowner/root/briefing_readiness; bodyownerfinished.
+Topwater solver/NLadapter remainHELD; old107degcase REJECTED; no autocrop/rerun.
 
 Completed24call SAME68nativepartial-lid control (55.1033s/terminal0) also remains
 diagnostic:83lidfaces/77.27%waterplane, physicalhull unchanged, Ainf unchanged.

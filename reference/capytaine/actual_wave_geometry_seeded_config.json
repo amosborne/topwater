@@ -1,5 +1,5 @@
 {
-  "status": "bound_pending_coordinator_checkpoint_and_allocation_no_execution",
+  "status": "ready_for_coordinator_execution_allocation",
   "case": "reference/capytaine/canonical-boat.json",
   "heading_file": "artifacts/reference/generated-sea-candidates-20261024/ndbc-46086-20250105T1140Z/heading-offset-90deg.json",
   "global_bank": "artifacts/reference/generated-sea-candidates-20261024/ndbc-46086-20250105T1140Z/realization-global.json",

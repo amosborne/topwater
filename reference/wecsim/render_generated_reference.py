@@ -141,7 +141,7 @@ def prepare_frames(data, config, started, budget):
     # preserving visible heave. Camera azimuth never follows instantaneous yaw.
     centers = (posed_global[:, :, :2].min(axis=1)+posed_global[:, :, :2].max(axis=1))/2
     width, nodes = float(config['viewport_width_xy_m']), int(config['surface_grid_nodes'])
-    assert width == 12 and nodes == 65
+    assert width == 10 and nodes == 65
     dx, dy = np.meshgrid(np.linspace(-width/2, width/2, nodes), np.linspace(-width/2, width/2, nodes))
     offsets = np.c_[dx.ravel(), dy.ravel()]
     spatial = data['k']@offsets.T
@@ -236,7 +236,7 @@ def main():
     fig = plt.figure(figsize=(12.8, 9))
     ax = fig.add_axes([.025, .04, .80, .69], projection='3d', computed_zorder=False)
     ax.set(xlabel='Global east (m)', ylabel='Global north (m)', zlabel='Global up (m)', zlim=config['z_bounds_m'])
-    ax.set_box_aspect((12, 12, 6))
+    ax.set_box_aspect((10, 10, 6))
     ax.set_proj_type('ortho')
     yaw = data['heading']['mean_box_yaw_global_rad']
     azimuth = np.rad2deg(yaw)-135
@@ -262,8 +262,8 @@ def main():
         nonlocal surface
         check_deadline(started, budget)
         center = frames['center'][index]
-        ax.set_xlim(center[0]-6, center[0]+6)
-        ax.set_ylim(center[1]-6, center[1]+6)
+        ax.set_xlim(center[0]-5, center[0]+5)
+        ax.set_ylim(center[1]-5, center[1]+5)
         x, y = frames['dx']+center[0], frames['dy']+center[1]
         if surface is not None:
             surface.remove()
@@ -304,7 +304,8 @@ def main():
         native_sample_stride=4, fps=12.5, encoded_duration_seconds=60.08 if args.mode == 'encode' else None,
         endpoint_note='Native t=60 endpoint held for one12.5fps frame; no temporal interpolation',
         camera=dict(projection='orthographic', elevation_deg=35.26438968, azimuth_deg=float(azimuth),
-            follows='actual physical full-hull midpoint XY; no vertical/yaw following', width_xy_m=12, z_bounds_m=[-3, 3]),
+            follows='actual physical full-hull midpoint XY; no vertical/yaw following', width_xy_m=10, z_bounds_m=[-3, 3],
+            azimuth_basis='FIXED initial mean global bow heading minus135deg; no instantaneous yaw following'),
         mapping='equilibrium full hull minus known meanCG once; nativeRzRyRx + actualCG; globalheadingR/t once',
         field='all384unchanged global harmonics at actual global coordinates, Re(a*exp(i(k.x+phase-omega*t)))',
         color_scale='±3standard deviations only affects colors; actual elevations are unmodified',

@@ -1,0 +1,71 @@
+{
+  "status": "draft_batch_recovery_source_only_no_execution",
+  "case": "reference/capytaine/canonical-boat.json",
+  "heading_file": "artifacts/reference/generated-sea-candidates-20261024/ndbc-46086-20250105T1140Z/heading-offset-90deg.json",
+  "global_bank": "artifacts/reference/generated-sea-candidates-20261024/ndbc-46086-20250105T1140Z/realization-global.json",
+  "motion_mat": "artifacts/reference/generated-bank-consumer-20261024/case-jan90-seeded-attempt1/motion.mat",
+  "input_sha256": {
+    "reference/capytaine/actual_wave_geometry.py": "5ea25c1422e5529f724bbb7802b7dae55167be66068dbc7ed7fd50931c567af4",
+    "reference/capytaine/actual_wave_geometry_core.py": "7dda063b57328c0e72b6f0fe390d9a8ffd92724cfc37d0051fc39c3af68cb104",
+    "reference/capytaine/canonical-boat.json": "ea18844904e03bbfd72abc3396240c97b1994b3584e36c8149f8ae5f60a99e4f",
+    "artifacts/reference/generated-sea-candidates-20261024/ndbc-46086-20250105T1140Z/heading-offset-90deg.json": "2233438e4abaa8672f5db154758c12f1a549c91fed933261fd06fe02999d3291",
+    "artifacts/reference/generated-sea-candidates-20261024/ndbc-46086-20250105T1140Z/realization-global.json": "8594ce2bb7a4b08e76f9df4d30fd02f6e6dcdf5ed3c8fafae99b47d710a39c58",
+    "artifacts/reference/generated-bank-consumer-20261024/case-jan90-seeded-attempt1/motion.mat": "d69652e3ca838afd2df6ddc249762d58321d833324038c51798399a36d055a95",
+    "artifacts/reference/generated-bank-consumer-20261024/case-jan90-seeded-attempt1/motion.csv": "a50a73e0b71fdfb4044c09c6c7faffd5f4157c615b83e0e8532beaa97f9f487b",
+    "artifacts/reference/generated-bank-consumer-20261024/case-jan90-seeded-attempt1/native-output.mat": "fe30d8eae1e082a44538cb8a40a5300098becd1cd63dbb4c63a07dbc998758b6",
+    "artifacts/reference/generated-bank-consumer-20261024/case-jan90-seeded-attempt1/summary.json": "9cb8dcc38b91a77a4c860329061bbe681fe9944487bcc3e6e8d3aa99c501bbd3",
+    "artifacts/reference/generated-bank-consumer-20261024/case-jan90-seeded-attempt1/prepared-case.mat": "61a604243283d5dba712ba6a0257a07ec784ef3caaa1fe38d59847af222ae2e3",
+    "artifacts/reference/generated-bank-consumer-20261024/case-jan90-seeded-attempt1/initialization.json": "2140982553f6047dc917931d1a6ccdec50c6e707c592cb2dc1515ed3213ceec7",
+    "artifacts/reference/generated-bank-consumer-20261024/case-jan90-seeded-attempt1/preflight.json": "1428b93bc99960dcaadc8949276e377ebad1f803a30a19b4f5c6fbedeae2ad5e",
+    "artifacts/reference/generated-bank-consumer-20261024/case-jan90-seeded-attempt1/native-cic-output.mat": "2d889ef72e1a896fe6d10de9fbc0d826819b8fcf96ff4547bf0655c76c6d7d1e",
+    "artifacts/reference/generated-bank-consumer-20261024/case-jan90-seeded-attempt1/seeded-cic-verification.mat": "641ea44b9961aa77ccdeb20af7fbcb5ea7dc13fc5249e0395358093379b9ff7f",
+    "artifacts/reference/generated-bank-consumer-20261024/case-jan90-seeded-attempt1/wave-full-bank.txt": "41312c439abf995db676c3ec07e452c5551f8505ae4466ae8bb7a809fbbdd663",
+    "artifacts/reference/generated-bank-consumer-20261024/case-jan90-seeded-attempt1-source/proposal.json": "f4b0a624b1c0cb9adfd1f8f572119e26b2e84be827df3eb3015fe124c4d971b5",
+    "reference/capytaine/actual_wave_geometry_batch.py": "61c3598f3478b8d1cf98fcb915c138a87919758f7f722200c4926476e348bf26",
+    "reference/capytaine/actual_wave_geometry_batch_core.py": "3b04e8f28e8c9787b78c1d622fbfd7a232c15375e79e21555ed05cb6a0582d1a",
+    "artifacts/reference/actual-wave-geometry-seeded-20261024/attempt1/geometry-results.json": "6bc8bea487932835538a1c5dfbfe1203c1f8325ec53ab0f1357296a67c9b0196"
+  },
+  "actual_motion_hash_binding_required": false,
+  "expected_runtime_evidence_paths": [
+    "artifacts/reference/generated-bank-consumer-20261024/case-jan90-seeded-attempt1/summary.json",
+    "artifacts/reference/generated-bank-consumer-20261024/case-jan90-seeded-attempt1/prepared-case.mat",
+    "artifacts/reference/generated-bank-consumer-20261024/case-jan90-seeded-attempt1/initialization.json",
+    "artifacts/reference/generated-bank-consumer-20261024/case-jan90-seeded-attempt1/preflight.json"
+  ],
+  "relative_area_interval_target": 0.01,
+  "rim_interval_target_m": 0.01,
+  "maximum_elapsed_seconds": 600,
+  "maximum_depth": 8,
+  "maximum_triangle_evaluations": 10000000,
+  "cpu_threads": 1,
+  "wave_point_batch": 2048,
+  "scope": "Saved-time geometry only; no hydrodynamicloads/NLtrajectory/ODE; incomplete unknowns explicit",
+  "maximum_active_triangles_per_sample": 65536,
+  "current_case_status": "Same seeded actual60s candidate PROVISIONAL; oldattempt1 retained; no recoveryjob allocated",
+  "initial_state_provenance": {
+    "kind": "nonzero harmonic pose/velocity with specified pre0 CIC history; actual native post0 dynamics",
+    "q0": [
+      0.23520882661142592,
+      0.13698401953617254,
+      -0.2581506302114167,
+      -0.004292997705125511,
+      -0.007484732908354044,
+      -0.0001247013872475246
+    ],
+    "world_v0": [
+      -0.04924570694448008,
+      -0.19377643028041472,
+      -0.055315167352397686,
+      -0.002332151818002212,
+      0.00372167694008177,
+      0.011198796192486914
+    ],
+    "samples": 3001,
+    "duration_s": 60,
+    "dt_s": 0.02
+  },
+  "excluded_rejected_motion": "artifacts/reference/generated-bank-consumer-20261024/case-jan90-attempt1/motion.mat",
+  "precision_interpretation": "Prospective numerical reporting width only; no userphysicsrequirement or physicalgatechange",
+  "prior_prefix_geometry": "artifacts/reference/actual-wave-geometry-seeded-20261024/attempt1/geometry-results.json",
+  "checkpoint_reporting": "Append-only JSONL rows; compact manifest each20; full JSON/list once final; strict preserved-prefix area/XOR/rim overlap"
+}
