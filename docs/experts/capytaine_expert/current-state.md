@@ -83,7 +83,26 @@ No272 cascade, coefficient repair or canonical heading adoption. One allocated
 450-call run completed56.9945s terminal0; all geometry/reuse/pair/hash checks pass,
 lease released with separate idle-under-lease proof. Raw68-panel omega12 has
 negative heave B=-48117.68kg/s; direct Ainf and highfinite probes show strong mesh/
-asymptotic mismatch. Diagnostic only; independent executed review requested.
+asymptotic mismatch. Independent executed integrity review PASS; numerical
+adequacy fails. Diagnostic only, no coefficient replacement.
 No further numerical launch allocation.
 [Diagnostic proposal](radiation-heading-scout-2026-10-24.md).
+
+Read-only native infinity API audit finds no exporter misuse: omega=inf is
+supported, k is symbolic infinity, free_surface remains0, and native symbolic
+normalization produces Ainf. Finite default low_freq GF decomposition and native
+infinite high_freq branch differ; coarse finite/direct discrepancy remains unresolved.
+Same68 hull plus native interior lid24-call control completed55.103s terminal0,
+independent executed integrity PASS;83 panels cover77.27% waterplane. Ainf unchanged
+to2.39e-12; B12heave/pitch flip positive, but sway/yaw remain negative. Passive
+operator NOT obtained; partial-lid sensitivity does not uniquely attribute error.
+No coefficients replaced, no further numerical allocation. [API audit/control](infinite-frequency-lid-control-2026-10-24.md).
+
+Actual Jan90 native run is REJECTED far outside intended operating envelope;
+WEC owner/researcher diagnose the stored actual dynamics. Geometry audit must not
+guess cause. Source-only actual-wave geometry tool is prepared for independent
+review with analytic wet/rim bounds, actual pose schema, explicit budget/coverage
+unknowns and unexecuted fixtures. Actual motion hash remains unbound/draft config;
+no geometry evaluation or further numerical job allocated.
+[Geometry source proposal](actual-wave-geometry-postprocess-proposal-2026-10-24.md).
 Producer [README](../../../reference/capytaine/README.md).

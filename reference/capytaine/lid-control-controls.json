@@ -1,0 +1,34 @@
+{
+  "status": "ready_for_coordinator_execution_allocation",
+  "no_lid_mat": "artifacts/reference/radiation-heading-scout-20261024/attempt1/radiation-68.mat",
+  "native_mat": "artifacts/reference/generated-bank-native-20261024/attempt1/native.mat",
+  "original_manifest": "artifacts/reference/minimum-20261024/native-gl2/source/original-native-manifest.json",
+  "input_sha256": {
+    "artifacts/reference/radiation-heading-scout-20261024/attempt1/radiation-68.mat": "62fff64a00d0709ac831772dbe286fb668fff38885a7a2eba1f81a7c9b49b118",
+    "artifacts/reference/generated-bank-native-20261024/attempt1/native.mat": "b17dfb282ba90f8e4e08144cd5106c3d505763252bc6b1f716ef5e881e07e4b0",
+    "artifacts/reference/minimum-20261024/native-gl2/source/original-native-manifest.json": "e8273b54163d58f43b3dbadcb56b5d16cc05addd396af65591abaf94b1bb4f39",
+    "artifacts/reference/radiation-heading-scout-20261024/attempt1/manifest.json": "94c3c29dd0de40cdc6302726a585519e3f90c9964caa0cf61ff4287f5127e9de",
+    "reference/capytaine/canonical-boat.json": "ea18844904e03bbfd72abc3396240c97b1994b3584e36c8149f8ae5f60a99e4f"
+  },
+  "frequencies_rad_s": [
+    1,
+    2,
+    12,
+    "infinity"
+  ],
+  "new_calls": 24,
+  "hull_faces": 68,
+  "lid": {
+    "api": "Mesh.generate_lid",
+    "z_m": 0.0,
+    "faces_max_radius_m": 0.25,
+    "maximum_lid_faces": 512
+  },
+  "cpu_threads": 1,
+  "maximum_elapsed_seconds": 300,
+  "estimated_elapsed_seconds": [
+    20,
+    90
+  ],
+  "scope": "Only native internal lid changes; no hull/DOF/M/K/CG changes or replacement coefficient claim"
+}

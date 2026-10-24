@@ -42,6 +42,13 @@ Jan05offset90 source/math review passed and ONE allocated stored screen complete
 Provisional global-roll hypothesis retained, NOT canonical/linearity/IC acceptance.
 Independent executed review requested. No body/ODE/BEM/MATLAB run follows.
 [Executed screen, source/manifest and practical next step](jan90-screen-proposal-2026-10-24.md).
+Coordinator then allocated ONE actual60s Jan90 native held-release case. It
+completed43.762s; all knownq0/v0/memory0/H5/parameterM/3001x6 applied-force checks
+passed (force error EXACTZERO). BUT roll reached~107.53deg, sway11.47m/yaw27.88deg;
+final surge/sway drift2.533/9.766m. This REJECTS the intended linear candidate,
+not a successful strong-motion physical reference. Whole raw60s preserved; no
+crop/rerun/renderer. Attribution pending bounded independent stored physical
+review; no source/coefficients/input correction assumed. [Actual run record](jan90-native-case-proposal-2026-10-24.md).
 All owned numerical jobs terminal/leasefree; consult shared execution ledger
 for CURRENT other-owner liveness, never infer it from this document.
 

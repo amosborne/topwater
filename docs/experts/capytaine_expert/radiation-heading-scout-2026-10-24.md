@@ -155,6 +155,8 @@ coefficient or repaired value. Strong mesh sensitivity also appears in direct Ai
 No unique attribution to irregular frequencies, finite cutoff or discretization
 is established. No272 run, lid change, coefficient fit or production replacement.
 
-Independent executed review requested directly with exact artifacts and terminal
-evidence. January90 table is available to the consumer for separately allocated
+Independent executed integrity review PASS: reviewer hash-audited source/outputs,
+MAT arrays/reuse/axes and check results, exact terminal/idle/release evidence;
+numerical adequacy explicitly fails on negative radiation power and mesh dependence.
+January90 table is available to the consumer for separately allocated
 native/CIC particular/global/relative proxy comparison, not canonical adoption.

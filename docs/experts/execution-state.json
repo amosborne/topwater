@@ -6,20 +6,24 @@
     "manifest":  null,
     "active_numerical_job":  null,
     "last_terminal_evidence":  {
-                                   "exit_code":  0,
-                                   "elapsed_seconds":  1.8279999999795109,
+                                   "manifest":  "artifacts/reference/generated-bank-consumer-20261024/case-jan90-attempt1-source/proposal.json",
+                                   "output":  "artifacts/reference/generated-bank-consumer-20261024/case-jan90-attempt1",
+                                   "runtime_checks":  "3001samples/q0/v0/radiation0/H5/parameterfullmass/all6preparedvsappliedforceEXACT0pass",
                                    "owner":  "/root/wecsim_reference",
-                                   "manifest":  "artifacts/reference/generated-bank-consumer-20261024/jan90-attempt1-source/proposal.json",
-                                   "tool_terminal_chunk":  "967da7",
-                                   "owner_launcher_pid":  25492,
-                                   "source_sha256":  "0eff175461f59761f610c80ae74d68f4e278a64a4fbdb1e4f072883b46e90aeb",
-                                   "job":  "REF002ONEJan05offset90storedscreenONLY",
-                                   "terminal_at":  "2026-10-24T18:31:48.8560468Z",
-                                   "producer_pid":  39260,
+                                   "elapsed_seconds":  43.761982917785645,
+                                   "physical_outcome":  "CandidateREJECTS5to10deglinearhypothesis:107.53degroll,11.474msway; all60srawpreserved, no crop/rerun/renderer",
+                                   "exit_code":  0,
+                                   "job":  "REF002ONEprovisionalnativeJan90heldrelease60s",
+                                   "limitations":  "Provisional17panelmodeltrajectory; instability/sourcecauseunattributed; nottrustedvalidation",
+                                   "tool_terminal_chunk":  "458aa0",
+                                   "source_sha256":  "b58b5bb60ba1338c9f699361d033040f47564978869581591e3559dc36306ec4",
                                    "all_frozen_identities_match":  true,
-                                   "output":  "artifacts/reference/generated-bank-consumer-20261024/jan90-attempt1",
-                                   "limits":  "Internalheading90stationaryparticular/meanplaneproxyONLY; nobody/BEM/ODE/MATLAB/IC/drift/linearityqualification",
-                                   "terminal_proof":  "Exactguardwait39260exit0; authoritativeCim39260/25492absent; nosubprocessesinscreen"
+                                   "engine_pid":  9168,
+                                   "producer_pid":  16928,
+                                   "session_handle":  9437,
+                                   "terminal_at":  "2026-10-24T18:44:07.9977176Z",
+                                   "terminal_proof":  "Exactguardwait16928exit0; authoritativeCim16928/31416absent; synchronousMATLABsimulationreturned",
+                                   "owner_launcher_pid":  31416
                                },
-    "note":  "ONEallocatedJan90screencomplete; idleunderlease pendingseparatereadback/finalrelease. Noautomaticbodylaunch."
+    "note":  "ONEcaseexecutioncompletebutphysicalcandidateoutsideintendedregime. Idleunderlease awaitingseparatereadback/finalrelease. Noautomaticretry."
 }

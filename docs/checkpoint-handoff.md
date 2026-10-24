@@ -107,22 +107,36 @@ heading90 candidate for a provisional actualnativeWEC run, not canonicalaccuracy
 or geometric acceptance. This explicit beamheading is an internal selected-case
 hypothesis, not a rendered-box rotation or change to the global bank.
 
-WEC owns SOURCE/PROPOSAL ONLY for60s/dt.02/40smemory held-release case: prospective
-q0 follows deterministic localtangentplane, zeroallvelocity/radiationmemory;
-priorholdingload and initializedincident/diffraction assumptions explicit. No
-nativebody launch allocated yet. Cap owns source-only one24-call SAME68hull
-native numerical-lid control at1,2,12,infinity; no launch yet. Source check confirms
-native omega=infinity API is correct; default finite low_freq and infinity
-high_freq Green decompositions differ numerically on coarse meshes. No repair.
-The lid control could test irregular-frequency mechanism; not fullkernel adequacy.
+Actual native Jan90 held-release60s case is COMPLETE but REJECTED for the
+requested operating envelope: roll107.53deg/sway11.474m/yaw27.88deg. Full native
+3001samples and60columns preserved at generated-bank-consumer-20261024/
+case-jan90-attempt1. Sourceb58b5bb6; exactq0/v0/radiation0, H5/M/frame checks PASS,
+all3001x6 actually applied excitation errors EXACT0. Preprocessing29.624s,
+compile2.978s,dynamics4.352s; guarded total43.762s terminal0, exactclient16928/
+guard31416 absent and lease released after separate idle readback. NOT goal
+achieved, not a canonicalcase; no croppedwindow/rerun/encoder authorized.
+
+Current priority: bounded READ-ONLY storednative trajectory/source diagnosis.
+Researcher reviews onset/growth/drift and actualrotatedbody/delay forcebalance;
+WEC reviews fullradiation-matrix/passivity/effective-mass/feedback issues, without
+customODE/newsolver or numericalsim. No cause asserted from bounded particular
+RAOs. Need one cheapest decisive next nativecontrol proposal, not open-ended
+campaign. Geometryaudit SOURCE implementation may finish but DO NOT run it on
+this obvious outside-envelope trajectory or claim it explains dynamics.
+
+Completed24call SAME68nativepartial-lid control (55.1033s/terminal0) also remains
+diagnostic:83lidfaces/77.27%waterplane, physicalhull unchanged, Ainf unchanged.
+Heave/pitch B(12) flippositive but sway/yaw remainnegative; stillnonpassive. No
+kernelrepair/furtherBEM/refined-motion grant. NativeinfinityAPI iscorrect; coarse
+finite low_freq vs infinity high_freq Green representation remains unresolved.
+
 Fullfootprint actualpose geometry evidence remains needed before applicability
 claim.2.5deg freeflatwaterheel gives5.96%secant/12.83%tangent departure and8.53%
 wetsetturnover; these are context, not adopted acceptance gates or combined
 heave/trim/curvature bounds. No nonlineartrajectory model/adapter requested.
 
-Then choose ONE case/initialheading/explicitduration+initialstate and verify
-relativeimmersion/slopes/curvature with the actualnativeWEC trajectory. No actual
-REF002 bodyrun or canonicalselection yet. Stationary generatedinput is not the old
+After resolving the result-invalidating growth, choose ONE crediblecase and verify
+relativeimmersion/slopes/curvature with the actualnativeWEC trajectory. One REF002 bodyrun failed the operating envelope; no accepted canonicalselection yet. Stationary generatedinput is not the old
 calm-start packet or an initialized nonlinearfluid. No custom integrator/NLmodel.
 
 ## Execution and preservation
@@ -139,6 +153,6 @@ all failures and interrupted quadrature36762 under original labels/policies.
 
 Coordinator owns integration/handoff; Capytaine geometry/nativeproducer; WEC-Sim
 consumer/dynamics/video; Topwater expert generator only; researcher independent
-geometry assumptions. Baseline+generatorcheckpoint8d3755b is pushed and issue30
-updated; geometry/nativeproducer/consumer/Jan90 screen form the next substantive
-checkpoint; source-only follow-ups remain separately unallocated. Never push main/create bookkeeping PR/merge/upstreampost.
+geometry assumptions. Baseline+generatorcheckpoint8d3755b and geometry/nativeproducer/consumer/Jan90
+checkpoint3d5cedb are pushed; issue30 updated. Actualbodycase and24call lidcontrol are terminal; no numerical grant remains.
+Geometryaudit is source-only; renderer held because the actualcase was rejected. Never push main/create bookkeeping PR/merge/upstreampost.
