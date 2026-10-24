@@ -30,6 +30,14 @@ def integrate_pressure(triangles,center,pressure):
     return -load.T@p
 
 
+def rigid_normal_modes(triangles,center):
+    """Six unit world-axis motions about the frozen world CG, body-outward n."""
+    t=np.asarray(triangles)
+    normal=np.cross(t[:,1]-t[:,0],t[:,2]-t[:,0])
+    normal/=np.linalg.norm(normal,axis=1)[:,None]
+    return np.concatenate((normal,np.cross(t.mean(axis=1)-center,normal)),axis=1)
+
+
 def require_close(actual,expected,scale,relative=1e-11,absolute=1e-12):
     actual,expected=np.asarray(actual),np.asarray(expected)
     if actual.shape!=expected.shape or not np.isfinite(actual).all() or not np.isfinite(expected).all():
@@ -120,8 +128,7 @@ def generate(args,controls,case,report,out):
             for name,value in fields.items():out[prefix+name]=value
             combined={name:np.zeros((3,n),complex) for name in ('scattered_sources','total_hull_potential','total_hull_pressure','total_hull_normal_velocity')}
             for name,value in combined.items():out[prefix+name]=value
-            modes=np.stack([body.dofs[m] for m in MODES],axis=2)
-            mode_normal=np.einsum('nic,ni->nc',modes,body.mesh.faces_normals)
+            mode_normal=rigid_normal_modes(triangles,data['world_cg'])
             for f,w in enumerate(omega):
                 common=dict(body=body,omega=w,rho=rho,g=g,water_depth=np.inf,forward_speed=0.)
                 for column in range(7):

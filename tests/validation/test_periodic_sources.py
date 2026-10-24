@@ -1,7 +1,7 @@
 """Source convention tests independent of the expensive external reference."""
 import numpy as np
 import pytest
-from .periodic_sources import combine,integrate_pressure,require_close
+from .periodic_sources import combine,integrate_pressure,require_close,rigid_normal_modes
 
 
 def test_complex_source_combination_preserves_phase_and_column_order():
@@ -25,3 +25,14 @@ def test_reproduction_fails_on_phase_sign_and_nonfinite():
     assert require_close(expected,expected,1.)==0
     for actual in (expected.conj(),np.array([np.nan,0]),np.ones(1)):
         with pytest.raises(ValueError):require_close(actual,expected,1.)
+
+
+def test_geometry_modes_match_pinned_capytaine_motion_objects_without_green_solve():
+    from tests.capytaine_reference import body_from_triangles,MODES
+    triangles=np.array([[[0.,0.,-1.],[2.,0.,-1.],[0.,3.,-1.]],
+                        [[0.,0.,-1.],[0.,3.,-1.],[0.,0.,-2.]]])
+    center=np.array([.3,-.4,.2])
+    body=body_from_triangles(triangles,center,2500.)
+    expected=np.stack([np.einsum('ni,ni->n',body.dofs[m].evaluate_motion(body.mesh),
+                        body.mesh.faces_normals) for m in MODES],axis=1)
+    np.testing.assert_allclose(rigid_normal_modes(triangles,center),expected,atol=1e-15)
