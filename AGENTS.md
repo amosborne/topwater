@@ -25,8 +25,10 @@ its retained prior increment is already far outside the unchanged policy. The
 consumer resource rehearsal and fixed-seed003 asset/physical/quality preflight
 are complete. Fresh six-mode Ainf export/native reproduction and conditional
 output integration now pass on its1232-panel mesh; source-mesh/full reference
-remain unqualified. Next is a separately modeled source-only export for the
-other three meshes, then cold field jobs. See docs/fixed-infinity-pilot-001.md.
+remain unqualified. All four source bases now reproduce native matrices;
+18 remaining source solves completed in66.45s under declared limits. Next is
+a separate cold2772 field-integration job, with no automatic larger job.
+See docs/fixed-source-export-002.md and docs/checkpoint-handoff.md.
 Existing finite source data do not contain
 Ainf densities or all9 frequency-heading diffraction cases.
 Source/reference qualification remains false.

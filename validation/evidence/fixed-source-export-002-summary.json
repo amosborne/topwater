@@ -1,0 +1,276 @@
+{
+  "current_commit": "242c839c047d9965f1d941e1d1e2047a50a0a254",
+  "complete": true,
+  "passed": false,
+  "source_export_complete": true,
+  "completed_capytaine_calls": 18,
+  "total_source_cases_represented": 24,
+  "covered_source_levels": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "common_grid_evaluations": 0,
+  "levels": [
+    {
+      "level": 2,
+      "panels": 2772,
+      "complete": true,
+      "solved_cases": 6,
+      "modes_completed": 6,
+      "surface_proof": {
+        "facets": 7,
+        "panels": 2772,
+        "waterline_edges": 204,
+        "maximum_moment_difference": 1.2789769243681803e-13
+      },
+      "radius_error_m": 0.0,
+      "modes": [
+        "Surge",
+        "Sway",
+        "Heave",
+        "Roll",
+        "Pitch",
+        "Yaw"
+      ],
+      "cache_reuse": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "pristine_operators": {
+        "S": {
+          "shape": [
+            2772,
+            2772
+          ],
+          "dtype": "complex128",
+          "sha256": "f728b40e292b63b1954b377cb068205f8a3de97507ae588d8201686ebdbd9afc"
+        },
+        "K": {
+          "shape": [
+            2772,
+            2772
+          ],
+          "dtype": "complex128",
+          "sha256": "6426a1a5508a38a545fec2081213bd4142c86dfe04d648548d1382916f46e534"
+        }
+      },
+      "source_checks": {
+        "rigid_normal": 0.0,
+        "potential": 2.1465536373718822e-05,
+        "normal": 0.0001346129178106554,
+        "native_load": 2.205794141091344e-06,
+        "original_native_Ainf": 0.0
+      },
+      "source_export_seconds": 3.4625276000006124
+    },
+    {
+      "level": 3,
+      "panels": 4928,
+      "complete": true,
+      "solved_cases": 6,
+      "modes_completed": 6,
+      "surface_proof": {
+        "facets": 7,
+        "panels": 4928,
+        "waterline_edges": 272,
+        "maximum_moment_difference": 4.263256414560601e-14
+      },
+      "radius_error_m": 0.0,
+      "modes": [
+        "Surge",
+        "Sway",
+        "Heave",
+        "Roll",
+        "Pitch",
+        "Yaw"
+      ],
+      "cache_reuse": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "pristine_operators": {
+        "S": {
+          "shape": [
+            4928,
+            4928
+          ],
+          "dtype": "complex128",
+          "sha256": "9250ef4297627ade9106eebc9fcda7d93b513e79de1a059d676d7b05c195e4b9"
+        },
+        "K": {
+          "shape": [
+            4928,
+            4928
+          ],
+          "dtype": "complex128",
+          "sha256": "2e1b323a1812d5b0dce3974eb9c615ea042d0dc5b505ae391b2dde079fdcb811"
+        }
+      },
+      "source_checks": {
+        "rigid_normal": 0.0,
+        "potential": 2.3075692403068978e-05,
+        "normal": 0.00020463522319596239,
+        "native_load": 1.2141364266854933e-06,
+        "original_native_Ainf": 0.0
+      },
+      "source_export_seconds": 13.777406900015194
+    },
+    {
+      "level": 4,
+      "panels": 7700,
+      "complete": true,
+      "solved_cases": 6,
+      "modes_completed": 6,
+      "surface_proof": {
+        "facets": 7,
+        "panels": 7700,
+        "waterline_edges": 340,
+        "maximum_moment_difference": 3.730349362740526e-14
+      },
+      "radius_error_m": 0.0,
+      "modes": [
+        "Surge",
+        "Sway",
+        "Heave",
+        "Roll",
+        "Pitch",
+        "Yaw"
+      ],
+      "cache_reuse": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "pristine_operators": {
+        "S": {
+          "shape": [
+            7700,
+            7700
+          ],
+          "dtype": "complex128",
+          "sha256": "9501584de34710b0eecb21e1c6a772fd969cefe7fd3db325a8b4ca262cc812c6"
+        },
+        "K": {
+          "shape": [
+            7700,
+            7700
+          ],
+          "dtype": "complex128",
+          "sha256": "85966ed4c28a4ea44c68fcd7d909a0dd99d57e2fca82424476d4e532cf0046b1"
+        }
+      },
+      "source_checks": {
+        "rigid_normal": 0.0,
+        "potential": 4.4571474809099065e-05,
+        "normal": 0.00022894880084593533,
+        "native_load": 3.3704393676544703e-06,
+        "original_native_Ainf": 0.0
+      },
+      "source_export_seconds": 41.41097510000691
+    }
+  ],
+  "reused_coarsest": {
+    "current_commit": "cde8f2c73d89d9b93ecb17a092d3858a4a0c0778",
+    "cases": 6,
+    "source_checks": {
+      "rigid_normal": 0.0,
+      "potential": 1.1956786337495975e-05,
+      "normal": 0.00011269046376080016,
+      "native_load": 4.6067561019105015e-06,
+      "original_native_Ainf": 0.0
+    }
+  },
+  "allocation_model": [
+    {
+      "panels": 2772,
+      "one_complex_matrix_bytes": 122943744,
+      "dense_matrices": 6,
+      "dense_bytes": 737662464,
+      "baseline_allowance_bytes": 2147483648,
+      "workspace_allowance_bytes": 268435456,
+      "basis_allowance_bytes": 2128896,
+      "estimated_peak_bytes": 3155710464
+    },
+    {
+      "panels": 4928,
+      "one_complex_matrix_bytes": 388562944,
+      "dense_matrices": 6,
+      "dense_bytes": 2331377664,
+      "baseline_allowance_bytes": 2147483648,
+      "workspace_allowance_bytes": 268435456,
+      "basis_allowance_bytes": 3784704,
+      "estimated_peak_bytes": 4751081472
+    },
+    {
+      "panels": 7700,
+      "one_complex_matrix_bytes": 948640000,
+      "dense_matrices": 6,
+      "dense_bytes": 5691840000,
+      "baseline_allowance_bytes": 2147483648,
+      "workspace_allowance_bytes": 268435456,
+      "basis_allowance_bytes": 5913600,
+      "estimated_peak_bytes": 8113672704
+    }
+  ],
+  "latest_memory": {
+    "peak_working_set_bytes": 4940664832,
+    "working_set_bytes": 196804608,
+    "peak_committed_bytes": 6372937728,
+    "private_bytes": 1619517440
+  },
+  "accounted_disk_upper_bytes": 121204962,
+  "elapsed_seconds": 66.44978359999368,
+  "payload_package": {
+    "path": "fixed-source-export-002.payload.zip",
+    "bytes": 36699155,
+    "sha256": "8efd0e4d9bc577bc56be6c296f56b86820aba7dde88ce1422ecb3808e82f1d21",
+    "snapshot_sha256": "0e6b590ee40374e0724c08c2043a4de746e8e2ee7e41b5ab8509dcf84f9e3b9c"
+  },
+  "bundle_sha256": "fa306c4fd38fbda08debad105816aaf1e21a270617ae15d00d9f524773d0fc31",
+  "tests": {
+    "tests": 292,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "external_inputs": [
+    {
+      "argument": "frozen",
+      "filename": "frozen-fixed-001.zip",
+      "sha256": "fcaf28963be08e4443410b8c19d680f1fb81cff3c44a291c34aa69c6e1a9847d",
+      "copy_to": [
+        "validation/fixed-source-export-002.source/frozen.zip"
+      ]
+    },
+    {
+      "argument": "raw",
+      "filename": "reference-study-003.zip",
+      "sha256": "e18bf7366eb651766edc5487addd84c798c1ae53183f58a0e88b3b623ed6729d",
+      "copy_to": [
+        "validation/fixed-source-export-002.source/raw.zip"
+      ]
+    },
+    {
+      "argument": "sources",
+      "filename": "periodic-sources-003.zip",
+      "sha256": "4a317cbb91cc51348b0059b40b4a6437315e3656624ad2903743dec4721214e5",
+      "copy_to": [
+        "validation/fixed-source-export-002.source/sources.zip"
+      ]
+    }
+  ],
+  "independent_audit": "Provenance, coarsest reuse, all four native load matrices, operator traces/residuals, cache, allocation, payload and resource checks passed; source/full qualification remains false."
+}
