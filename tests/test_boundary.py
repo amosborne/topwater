@@ -11,12 +11,12 @@ from topwater.boundary import BoundarySystem
 from topwater.frames import rotation_matrix
 from topwater.rankine import TrianglePanels, panel_influence
 from .laplace_reference import harmonic_field, point_source, triangle_samples
-from .reference_hull import mesh_arrays
+from .analytic_geometry import sphere_mesh
 
 
 @pytest.fixture(scope="module")
 def canonical():
-    vertices, faces = mesh_arrays()
+    vertices, faces = sphere_mesh()
     panels = TrianglePanels.from_mesh(HullMesh(vertices, faces))
     return panels, assemble_laplace(panels)
 
@@ -32,7 +32,7 @@ def test_reused_factors_batch_fields_scaling_and_independent_harmonic_convergenc
     errors = []
     with threadpool_limits(1):
         for refinement in (2, 3, 4):
-            v, f = mesh_arrays(refinement)
+            v, f = sphere_mesh(refinement)
             p = TrianglePanels.from_mesh(HullMesh(v, f))
             operators = assemble_laplace(p)
             phi, q = harmonic_fields(p)
@@ -204,7 +204,7 @@ def test_decaying_exterior_source_allows_net_flux_and_converges_in_bulk_velocity
     flux_errors = []
     with threadpool_limits(1):
         for refinement in (2, 3, 4):
-            v, f = mesh_arrays(refinement)
+            v, f = sphere_mesh(refinement)
             panels = TrianglePanels.from_mesh(HullMesh(v, f), -1)
             _, gradient = point_source(panels.centroids, source)
             q = np.einsum('nrj,nj->nr', gradient, panels.normals)

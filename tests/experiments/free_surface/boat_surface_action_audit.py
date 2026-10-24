@@ -11,7 +11,7 @@ from scipy.spatial.transform import Rotation
 from topwater import InitialState, sea_states
 from topwater.rankine import TrianglePanels
 from tests.reference_boat import GRAVITY, WATER_DENSITY
-from tests.reference_hull import surface_integrals
+from topwater.surface import surface_integrals
 from .boat_contact_reaction import load_snapshot, refine_snapshot
 from .boat_geometry_template import evaluate_template, InvalidTemplate
 from .boat_world_field import current_field, surface_rates

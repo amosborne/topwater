@@ -16,7 +16,7 @@ from topwater.boundary import BoundarySystem
 from topwater.rankine import TrianglePanels, panel_influence
 from .benchmark_rankine import benchmark_environment
 from .laplace_reference import harmonic_field, point_source, triangle_samples
-from .reference_hull import mesh_arrays
+from .analytic_geometry import sphere_mesh
 
 
 def field(points, case):
@@ -31,7 +31,7 @@ def verify():
     with threadpool_limits(1):
         for bounded in (True, False):
             for refinement in (2, 3, 4):
-                v, f = mesh_arrays(refinement)
+                v, f = sphere_mesh(refinement)
                 panels = TrianglePanels.from_mesh(HullMesh(v, f), 1 if bounded else -1)
                 operators = assemble_laplace(panels)
                 points = np.array([[-.5, 0, -.15], [0, .1, -.15], [.5, -.1, -.1]] if bounded else

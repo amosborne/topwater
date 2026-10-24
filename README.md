@@ -6,8 +6,9 @@ Topwater is a planned open-source, three-dimensional time-domain potential-flow 
 
 **Status: calm-water hydrostatics, instantaneous fluid inertia and Laplace
 kernels are implemented. Checkout-only experiments advance a nonlinear moving
-free surface and all six canoe motions. Fluid accuracy and finite-frequency
-Capytaine validation remain incomplete; there is no public simulation API.**
+free surface and all six boat motions. The 24 ft boat is the sole application
+reference. Converged Capytaine mesh uncertainty and physical response gates
+remain incomplete; there is no qualified public simulation API.**
 
 The [nonlinear validation experiments](tests/experiments/free_surface/README.md)
 record the current candidate, measured failures and reproducible commands.
@@ -52,11 +53,11 @@ laminate specification. See the [definition and physical checks](docs/reference-
 Regenerate the image with
 `uv run --locked --with matplotlib python -m tests.plot_reference_boat`.
 
-The original [single-person canoe](tests/reference_hull.py) remains unchanged
-as an analytical geometry, loading and solver verification control. Earlier
-canoe timings do not describe the new boat or qualify its simulation speed.
-Calm-water checks stop at rim immersion or complete loss of water contact;
-general moving-surface breaking, slamming and contact guards remain unqualified.
+The former canoe application has been retired; its source and evidence remain
+in Git history. Generic analytical geometry and kernel tests do not constitute
+additional application reference cases. Calm-water checks stop at rim immersion
+or complete loss of water contact; general moving-surface breaking, slamming and
+contact guards remain unqualified.
 
 ## Observed Southern California seas
 
@@ -124,7 +125,7 @@ defines fluid-domain normals and the pressure gauge separately.
 
 `SimulationInputs.to_json()` and `SimulationInputs.from_json(text)` round-trip
 the physical inputs using `format_version: 2` and revalidate on import. For a
-small synthetic example, see [the shared reference case](tests/reference_hull.py).
+small synthetic example, see [the shared boat/sea reference](tests/reference_case.py).
 This format contains no numerical controls, evolving fluid state, integrator
 state or solver outputs and cannot serve as a restart. It is a development API;
 the initial solver scope remains the one-body, zero-forward-speed case above.
@@ -149,16 +150,10 @@ Physical numerical panels consume `TrianglePanels(result.wetted_triangles, -1)`;
 manufactured mathematical tests. Boundary factorization belongs to the current
 panel geometry and boundary conditions, with repeated right-hand sides reusing it.
 
-The shared canoe checks analytical ellipsoid convergence, buoyancy balance,
-independent pressure moments, all six load derivatives and contact failures.
-Pinned Capytaine independently clips the original physical mesh and matches
-displacement, buoyancy center, wetted/waterplane areas and restoring stiffness.
-Run `uv run --locked --group correlation pytest tests/test_capytaine_hydrostatics.py`.
-Benchmark clipping, pressure and equilibrium with
-`uv run --locked python -m tests.benchmark_hydrostatics`; reports first-call and
-warm execution and process peak memory. The first pressure call includes JIT
-compilation; equilibrium follows that warmup. These are static calculations,
-not timestep or wave-force validation.
+The reference boat and independent analytical geometries check buoyancy,
+pressure moments, restoring derivatives and contact failures. Physical validation
+requires a converged Capytaine reference with recorded mesh uncertainty; a
+passing kernel or same-panel comparison is not that qualification.
 
 ## Instantaneous fluid inertia
 
@@ -186,8 +181,8 @@ remain future work.
 Capytaine comparisons cover all six modes and couplings on matching wetted
 meshes. Mesh-refinement uncertainty remains separate from that agreement.
 Run `uv run --locked --group correlation pytest tests/test_capytaine_inertia.py`
-and benchmark equilibrium through the complete inertia solve with
-`uv run --locked python -m tests.benchmark_inertia`.
+for the application correlation tests. The converged six-mode reference and
+selected small-amplitude response gates are not yet qualified.
 
 ## Roadmap
 
@@ -225,7 +220,8 @@ The validation-only Capytaine group checks Rankine kernels on the same triangles
 run `uv run --locked --group correlation pytest tests/test_capytaine_rankine.py`.
 The [numerical record](docs/numerics.md) explains reference approximation branches
 and normalization. Instantaneous added mass is compared separately above;
-finite-frequency forces, damping and excitation remain future work.
+converged finite-frequency forces, damping, excitation and selected wave
+responses are required before nonlinear qualification or timing claims.
 
 Requirements, implementation stages and acceptance criteria live in [GitHub issues](https://github.com/amosborne/topwater/issues/1). Each stage requires verification evidence and measured execution time before later stages rely on it.
 

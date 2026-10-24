@@ -14,14 +14,14 @@ import numpy as np
 import scipy
 
 from topwater import HullMesh
-from .reference_hull import mesh_arrays
+from .reference_boat import mesh_arrays
 
 
 def main():
     results = []
     for refinement in (2, 4, 6):
         start = perf_counter()
-        vertices, faces = mesh_arrays(refinement)
+        vertices, faces, _, _ = mesh_arrays(refinement)
         generation_seconds = perf_counter() - start
         HullMesh(vertices, faces)  # Warm up imports and numerical libraries.
         times = []
@@ -37,7 +37,7 @@ def main():
             mesh_bytes=vertices.nbytes + faces.nbytes,
         ))
     print(json.dumps(dict(
-        case="canonical truncated ellipsoid; initial geometry validation only",
+        case="canonical 24 ft boat; initial geometry validation only",
         python=platform.python_version(), numpy=np.__version__, scipy=scipy.__version__,
         platform=platform.platform(), processor=platform.processor(),
         results=results,

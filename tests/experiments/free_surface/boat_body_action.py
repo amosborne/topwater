@@ -8,7 +8,7 @@ from scipy.spatial.transform import Rotation
 
 from topwater import InitialState
 from tests.reference_boat import GRAVITY, WATER_DENSITY
-from tests.reference_hull import surface_integrals
+from topwater.surface import surface_integrals
 from .boat_geometry_template import InvalidTemplate
 from .boat_parent_action import parent_mass, port_transport_covector
 from .boat_world_field import boundary_data

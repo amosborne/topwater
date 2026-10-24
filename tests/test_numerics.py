@@ -6,13 +6,11 @@ import numpy as np
 import pytest
 
 from topwater.numerics import DenseOperatorPlan, LaplaceControls
-from .reference_hull import mesh_arrays
 
 
-def test_canonical_dense_storage_and_portable_preflight_record():
-    # Actual canonical refinement count, not fabricated assembly coefficients.
-    _, faces = mesh_arrays(refinement=4)
-    plan = DenseOperatorPlan(len(faces))
+def test_dense_storage_and_portable_preflight_record():
+    # Storage arithmetic is independent of any application mesh.
+    plan = DenseOperatorPlan(2048)
     assert plan.operator_bytes == 64 * 1024**2
     fixture = (Path(__file__).parent / "fixtures/laplace-preflight.json").read_text()
     assert json.loads(plan.to_json()) == json.loads(fixture)

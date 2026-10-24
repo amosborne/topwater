@@ -18,12 +18,12 @@ from topwater import HullMesh
 from topwater.bem import assemble_laplace
 from topwater.rankine import TrianglePanels
 from .rankine_reference import panel_reference
-from .reference_hull import mesh_arrays
+from .analytic_geometry import sphere_mesh
 
 
 def compare_rankine(refinement):
     assert cpt.__version__ == '3.0.0', 'review the reference branch rules before upgrading'
-    vertices, faces = mesh_arrays(refinement)
+    vertices, faces = sphere_mesh(refinement)
     panels = TrianglePanels.from_mesh(HullMesh(vertices, faces))
     # Preserve the exact triangles/order. Do not let mesh healing change the case.
     mesh = cpt.Mesh(vertices=vertices, faces=faces, auto_clean=False, auto_check=False)

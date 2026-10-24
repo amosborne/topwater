@@ -1,12 +1,13 @@
 import pytest
 
 from topwater import HullMesh
-from .reference_hull import input_data as reference_input_data
+import json
+from .reference_case import reference_inputs
 
 
 @pytest.fixture
 def input_data():
-    return reference_input_data()
+    return json.loads(reference_inputs().to_json())
 
 
 @pytest.fixture

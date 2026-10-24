@@ -2,8 +2,7 @@
 
 `tests/reference_boat.py` defines a simple open hard-chine V hull for the new
 boat application. It is an authored example, not a measured center-console
-design or a reconstruction of a manufacturer's boat. The canoe remains a
-separate numerical and stress-test fixture.
+design or a reconstruction of a manufacturer's boat. The 24 ft boat is the sole application reference; the former canoe case is retired.
 
 The hull is 24 ft long, 9 ft wide and 1 m deep, with 20 degree bottom deadrise.
 The chine spans 80% of the maximum beam and the topsides flare outward. The

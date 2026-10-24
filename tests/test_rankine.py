@@ -10,7 +10,7 @@ from topwater.bem import LaplaceOperators, assemble_laplace
 from topwater.numerics import LaplaceControls
 from topwater.rankine import QuadratureError, TrianglePanels, _fallback, panel_influence
 from .rankine_reference import panel_reference
-from .reference_hull import mesh_arrays
+from .analytic_geometry import sphere_mesh
 
 
 TRIANGLE = np.array([[0, 0, 0], [1, 0, 0], [0, 1, 0]], dtype=float)
@@ -130,7 +130,7 @@ def test_cancellation_fallback_and_explicit_failure_for_unresolved_gradients():
 
 
 def test_closed_canonical_hull_interior_exterior_identities_and_actual_result_roundtrip(tmp_path):
-    vertices, faces = mesh_arrays()
+    vertices, faces = sphere_mesh()
     mesh = HullMesh(vertices, faces)
     panels = TrianglePanels.from_mesh(mesh)
     operators = assemble_laplace(panels)

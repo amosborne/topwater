@@ -27,7 +27,7 @@ from topwater import HullMesh
 from topwater.bem import assemble_laplace
 from topwater.numerics import LaplaceControls
 from topwater.rankine import TrianglePanels, panel_influence
-from .reference_hull import mesh_arrays
+from .analytic_geometry import sphere_mesh
 
 
 def benchmark_environment():
@@ -62,7 +62,7 @@ def peak_rss_bytes():
 
 
 def worker(args):
-    vertices, faces = mesh_arrays(args.refinement)
+    vertices, faces = sphere_mesh(args.refinement)
     panels = TrianglePanels.from_mesh(HullMesh(vertices, faces))
     controls = LaplaceControls(target_block_size=args.block)
     # Every target lies outside the closed hull; K integrates to zero.

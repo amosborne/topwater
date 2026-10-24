@@ -17,11 +17,11 @@ from topwater.bem import assemble_laplace
 from topwater.boundary import BoundarySystem
 from topwater.rankine import TrianglePanels
 from .benchmark_rankine import benchmark_environment, peak_rss_bytes
-from .reference_hull import mesh_arrays
+from .analytic_geometry import sphere_mesh
 
 
 def worker(args):
-    v, f = mesh_arrays(args.refinement)
+    v, f = sphere_mesh(args.refinement)
     p = TrianglePanels.from_mesh(HullMesh(v, f))
     x, y, z = p.centroids.T
     phi = np.column_stack((x, y, z, x*x-y*y, x*y, x*z))
