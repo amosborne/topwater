@@ -6,12 +6,14 @@
   "project_branch": "topwater/reference-v7.1.0",
   "upstream_release": "v7.1.0",
   "base_commit": "a23d2993807410fe78cc63546c1ba9d81912024f",
-  "current_commit": "2f43f547301b223cd9a07e84dc88c9375249af0e",
+  "current_commit": "fcd7c365a1201bbb56ce7f571a5baf9b2a94d89b",
   "published_project_branch": true,
   "clean_checkout": true,
-  "engine_corrections": 2,
+  "engine_corrections": 3,
   "numerically_tested": true,
-  "validation_scope": "Imported linear excitation only: retain noncausal past/future history and sum each directional imported component. Independent stock reproductions and executed fixed regressions; no body simulation yet.",
+  "validation_scope": "Imported linear excitation history/component sum and File Solid inertia product boundary order. Independent stock reproductions, fixed excitation regressions, actual selected rigid path dry/full added tensor roundtrip and independent semantic review; no body simulation yet.",
   "validation_evidence": "artifacts/reference-imported-excitation-fixed-attempt2/result.json",
-  "publication": "Reviewed correction pushed only to user-owned fork project branch; no upstream PR/message or main push"
+  "library_save": "Proper Simulink API save migrated body library R2020b to R2025b. Independent semantic review: 146 system connectivities and 39 embedded MATLAB scripts unchanged, all 531 migrated port counts match; three intended inertia expressions, variant empty-choice migration equivalent; inactive Flex sensor default serialized. All variants not compiled/physically validated.",
+  "inertia_evidence": "artifacts/reference-inertia-fixed/result.json; artifacts/reference-inertia-fixed/library-semantic-diff.json",
+  "publication": "Reviewed corrections pushed only to user-owned fork project branch; no upstream PR/message or main push"
 }

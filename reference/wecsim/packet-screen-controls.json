@@ -1,0 +1,7 @@
+{
+  "leading_component_index": 1,
+  "focus_time_candidates_s_in_order": [11.0, 11.5, 12.0, 12.5],
+  "selection": "first candidate passing unchanged direct+retained initial force and arrival gates; full hull-region check still required",
+  "maximum_elapsed_seconds": 60,
+  "base_controls": "reference/wecsim/packet-controls.json"
+}

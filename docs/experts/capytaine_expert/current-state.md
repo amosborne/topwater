@@ -43,8 +43,13 @@ normalized fullK/nativeAinf and saved fullM preserve accepted native-gl2 inputs;
 phase residuals1.45519e-11 for real and single imaginary conversion. Evidence in
 [consumer interface review](consumer-interface-review-2026-10-24.md). H5 body
 readback and physical full-inertia/frame mapping remain pending. Focused native
-Simscape product-order lead is with consumer for independent reproduction; no
-consumer correction authored here.
+Simscape product-order defect now independently reproduced/reviewed: actual
+FileSolid xy/yz swap caused nativeM+Ainf tensor error1071.6434kgm2. Consumer's
+3expression boundary correction independently reviewed/executed PASS; native
+M+A roundtrip error1.819e-12 with original asymmetric residual retained. Proper
+R2025b save migration reviewed:531ports/146graphs/39scripts preserved, zero-choice
+rename equivalent; inactiveFlex default serialized. No consumer correction
+authored here. Compiled body/frame/outputpose evidence remains pending.
 Exact17panel frequency coefficients remain coarse: native wavelength/resolution/
 irregular-frequency warnings limit physical accuracy claims. No motion/video or
 mesh characterization yet; no automatic refinement/coefficient campaign.

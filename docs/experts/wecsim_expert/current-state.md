@@ -13,7 +13,8 @@ The retained-history and component-sum corrections passed independent executed
 review and are committed/pushed on the maintained project branch at
 2f43f547301b223cd9a07e84dc88c9375249af0e. Exact tests, failures and scope are in
 [the imported-excitation checkpoint](imported-excitation-2026-10-24.md).
-No motion/video exists.
+No motion/video exists. Accepted input and inertia facts are in the
+[accepted-input checkpoint](accepted-input-2026-10-24.md).
 
 Maintained fork: https://github.com/amosborne/WEC-Sim, local
 artifacts/dependencies/topwater-wec-sim, branch topwater/reference-v7.1.0,
@@ -45,8 +46,15 @@ Preserve the unfinished exporter; its packet/export controls are not approved.
 [historical leads](marine-gyro-leads.md) and
 docs/capytaine-wecsim-environment.json contain evidence and limits. Recorded
 MATLAB/engine setup is historical, not live readiness or an execution lease.
-Next: prospective packet/startup diagnostic and actual dry/added inertia mapping
-reproduction; then actual six-DOF case. Four historical marine leads
+Incoming packet startup passed independent full-physical-hull review; the exact
+packet-attempt3 spectral/input files remain frozen. Inertia boundary correction
+is independently reviewed and published at fcd7c365a1201bbb56ce7f571a5baf9b2a94d89b;
+see fork pin for R2025b serialization limits. Native excitation parent mask may
+dispatch the precomputed imported total once per wave object; actual-mask
+reproduction/correction and stale-clone/mixed-group policy now block body run.
+Cold-start model authoring is in progress, no simulated warmup or trajectory.
+Next: complete actual-mask gate, then exact native10s case/force/frame checks and
+video. Four historical marine leads
 remain unconfirmed on selected release; passive-yaw/full-direction spectrum
 paths are unexercised by the proposed linear imported-packet case. Equal-grid
 fixed ode4 output is proposed; output-grid behavior still requires verification.

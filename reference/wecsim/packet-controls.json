@@ -1,0 +1,17 @@
+{
+  "kind": "three compact-spectrum one-way deep-water packets",
+  "spectral_weight": "cos(pi*nu/(2*B))^4 on abs(nu)<B; normalized discrete quadrature",
+  "phase": "canonical phase + (omega-carrier_omega)*focus_time; no temporal amplitude multiplication",
+  "half_bandwidth_rad_s": [0.3, 1.47, 0.18],
+  "focus_time_s": [100.0, 11.5, 200.0],
+  "spectral_samples_per_component": 401,
+  "forcing_time_s": [-20.0, 30.0],
+  "output_time_s": [0.0, 10.0],
+  "dt_s": 0.02,
+  "initial_grid_spacing_m": 0.025,
+  "calm_fraction": 0.001,
+  "maximum_initial_force_N_or_Nm": 0.1,
+  "minimum_arrival_fraction": 0.25,
+  "maximum_elapsed_seconds": 180,
+  "acceptance_status": "prospective diagnostics only; no motion authorization"
+}
