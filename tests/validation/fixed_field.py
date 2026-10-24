@@ -1,4 +1,4 @@
-"""Cold fixed2772 infinite-frequency common-grid field check; zero BEM solves."""
+"""Cold fixed2772 infinite-frequency field integration and bounded continuation."""
 from time import perf_counter
 STARTED=perf_counter()
 import argparse,json,shutil
@@ -28,11 +28,28 @@ def source_interval(coarse,fine,coarse_u,fine_u,scale):
     return dict(source_difference=fine-coarse,charged_difference=charged,source_interval_ratio=charged/allowance,source_interval_failed=charged>allowance)
 
 
+def continuation_plan(previous):
+    pairs=2772*308*(24**2+28**2)
+    rate=max(row['seconds']/(2772*row['points']) for row in previous['orders'])
+    field_bytes=sum(308*q*q for q in (20,24,28))*6*16
+    target_bytes=sum(308*q*q for q in (20,24,28))*64
+    peak=previous['latest_memory']['peak_committed_bytes']
+    return dict(new_field_pairs=pairs,maximum_measured_seconds_per_pair=rate,
+        projected_upper_seconds=(rate*pairs+previous['native_seconds'])*1.25+60.,
+        previous_peak_committed_bytes=peak,retained_field_bytes=field_bytes,target_bytes=target_bytes,
+        selected_input_allowance_bytes=32*1024**2,io_allowance_bytes=128*1024**2,
+        estimated_peak_bytes=peak+field_bytes+target_bytes+160*1024**2)
+
+
 def generate(args,c,r,a):
+    continuation=c.get('continuation',False)
     fixed=dict(format_version=1,maximum_elapsed_seconds=900.,maximum_peak_bytes=2147483648,maximum_additional_disk_bytes=2147483648,
         source_level=2,source_panels=2772,gauss_orders=[12,16,20],target_counts=[44352,78848,123200],cpu_threads=1,chunk_points=100,
         trace_scaled_tolerance=1e-10,ownership_absolute_m=1e-10,reference_relative=.001,reference_absolute_normalized=1e-6,
         source_bundle_sha256='fa306c4fd38fbda08debad105816aaf1e21a270617ae15d00d9f524773d0fc31',full_reference_scope=False)
+    if continuation:
+        fixed.update(continuation=True,maximum_elapsed_seconds=1500.,gauss_orders=[20,24,28],target_counts=[123200,177408,241472],
+            previous_bundle_sha256='5c24ecbfba6a8ff839c77e5fb33085b9f729c72b9c108b329a950050e4523924')
     if any(c.get(k)!=v for k,v in fixed.items()):raise ValueError('undeclared cold2772 controls')
     if digest(args.source_bundle)!=c['source_bundle_sha256']:raise ValueError('source packet differs')
     basis=['source_triangles','native_points','native_potential','normalized_sources','native_Ainf']
@@ -51,7 +68,26 @@ def generate(args,c,r,a):
     pinned_bytes(src/'pilot.zip',args.pilot.stem,args.pilot)
     if digest(src/'pilot.zip')!=source['pilot_bundle_sha256'] or digest(args.pilot)!=source['pilot_manifest_sha256'] or not pilot['pilot_passed'] or not pilot['source_export_verified']:raise ValueError('coarse conditional integration proof differs')
     for key in ('world_cg','dry_mass'):np.testing.assert_array_equal(sd[key],pd[key])
-    keys=['wetted_triangles','world_cg','dry_mass','reference_seed_triangles','reference_triangles_2']+[f'target_{order}_{name}' for order in c['gauss_orders'] for name in ('points','owners','weights','normal')]
+    previous=None;prior=None
+    if continuation:
+        if args.previous is None or args.previous_bundle is None:raise ValueError('exact previous field packet required')
+        if digest(args.previous_bundle)!=c['previous_bundle_sha256']:raise ValueError('previous packet differs')
+        selected=['world_cg','dry_mass','source_triangles','normalized_sources','target_triangles','order_20_potential','order_20_A_complex']+[f'target_20_{name}' for name in ('points','owners','weights','normal')]
+        previous,prior=read_owned(args.previous,digest('validation/fixed-field-2772-controls.json'),'fixed-seed-cold-field',selected=selected)
+        pinned_bytes(args.previous_bundle,args.previous.stem,args.previous);current_sources(previous,PHYSICAL)
+        if (previous['source_manifest_sha256']!=digest(args.source) or previous['source_bundle_sha256']!=digest(args.source_bundle)
+                or previous['input_sha256']!=source['input_sha256'] or previous['completed_orders']!=3 or not previous['native_calibration_passed']
+                or previous['completed_capytaine_calls']!=0 or previous['integration_passed'] or previous['green_settings']!=source['green_settings']):raise ValueError('previous failed integration scope differs')
+        for key in ('world_cg','dry_mass'):np.testing.assert_array_equal(prior[key],sd[key])
+        for key in ('source_triangles','normalized_sources'):np.testing.assert_array_equal(prior[key],sd['level2_'+key])
+        plan=continuation_plan(previous)
+        if plan['projected_upper_seconds']>c['maximum_elapsed_seconds'] or plan['estimated_peak_bytes']>c['maximum_peak_bytes']:raise ValueError('measured continuation plan exceeds controls')
+        shutil.copyfile(args.previous_bundle,archive/'previous.zip')
+        r.update(continuation=True,previous_manifest_sha256=digest(args.previous),previous_bundle_sha256=digest(args.previous_bundle),
+            previous_integration_passed=False,resource_model=plan)
+    elif args.previous is not None or args.previous_bundle is not None:raise ValueError('prior field reuse requires declared continuation controls')
+    admitted=[order for order in c['gauss_orders'] if order in (12,16,20)]
+    keys=['wetted_triangles','world_cg','dry_mass','reference_seed_triangles','reference_triangles_2']+[f'target_{order}_{name}' for order in admitted for name in ('points','owners','weights','normal')]
     preflight,data=owned_zip(archive/'preflight.zip','fixed-asset-preflight-002','fixed-seed-asset-preflight',digest('validation/fixed-asset-preflight-controls.json'),keys)
     if not preflight['assets_usable'] or preflight['input_sha256']!=source['input_sha256']:raise ValueError('preflight physical identity differs')
     for key in ('world_cg','dry_mass'):np.testing.assert_array_equal(sd[key],data[key])
@@ -69,7 +105,10 @@ def generate(args,c,r,a):
         source_manifest_sha256=digest(args.source),source_bundle_sha256=digest(args.source_bundle),preflight_bundle_sha256=source['preflight_bundle_sha256'],
         pilot_manifest_sha256=digest(args.pilot),pilot_bundle_sha256=source['pilot_bundle_sha256'],dependency_sha256=identities,protocol_sha256=digest(c['protocol']),
         host_resources=host,completed_orders=0,orders=[],memory_records=[],dof_order=source['dof_order'],trace_normalization=source['trace_normalization'],
-        source_level=2,source_panels=2772,native_pair_count=2772**2,field_pair_count=2772*sum(c['target_counts']))
+        source_level=2,source_panels=2772,native_pair_count=2772**2,
+        field_pair_count=2772*sum(count for order,count in zip(c['gauss_orders'],c['target_counts'],strict=True) if not(continuation and order==20)),
+        reused_field_pair_count=2772*123200 if continuation else 0)
+    if continuation:r['input_bundle_sha256']={**source['input_bundle_sha256'],'previous':digest(args.previous_bundle)}
     a.update(world_cg=sd['world_cg'],dry_mass=sd['dry_mass'],source_triangles=triangles,normalized_sources=sd['level2_normalized_sources'],
         exported_native_potential=sd['level2_native_potential'],exported_native_Ainf=sd['level2_native_Ainf'],
         coarse_quadrature_A=pd['quadrature_A'],coarse_quadrature_uncertainty=pd['quadrature_uncertainty'])
@@ -99,17 +138,25 @@ def generate(args,c,r,a):
         a.update(native_points=body.mesh.faces_centers,native_normal=-body.mesh.faces_normals,native_weights=body.mesh.faces_areas,native_potential=native,native_A_complex=native_A)
         checkpoint_arrays(args.output,r,a);stage('native_calibration')
         seed=data['reference_seed_triangles'];panels=TrianglePanels(seed,-1)
+        if continuation:np.testing.assert_array_equal(seed,prior['target_triangles'])
         for order,count in zip(c['gauss_orders'],c['target_counts'],strict=True):
             key=f'target_{order}_';pts,owners,relative,error=mirrored_gauss_targets(seed,order)
             if len(pts)!=count:raise ValueError('missing common targets')
-            for name,value in [('points',pts),('owners',owners),('weights',panels.areas[owners]*relative),('normal',panels.normals[owners])]:np.testing.assert_array_equal(value,data[key+name])
+            for name,value in [('points',pts),('owners',owners),('weights',panels.areas[owners]*relative),('normal',panels.normals[owners])]:
+                if order in admitted:np.testing.assert_array_equal(value,data[key+name])
+                else:data[key+name]=value
+                if continuation and order==20:np.testing.assert_array_equal(value,prior[key+name])
             owned_points(pts,owners,seed,c['ownership_absolute_m']);budget()
         a['target_triangles']=seed
         def fill(order,query,out):
-            begin=perf_counter();evaluate_trace(engine,body.mesh,query,a['normalized_sources'],100,budget,out=out)
+            begin=perf_counter()
+            if continuation and order==20:
+                np.testing.assert_array_equal(query,prior['target_20_points']);np.copyto(out,prior['order_20_potential'])
+            else:evaluate_trace(engine,body.mesh,query,a['normalized_sources'],100,budget,out=out)
             if np.any(abs(out.imag)>1e-10*(1+abs(out.real))):raise ValueError('unexpected complex infinite trace')
-            r['orders'].append(dict(order=order,points=len(query),seconds=perf_counter()-begin));r['completed_orders']+=1
+            r['orders'].append(dict(order=order,points=len(query),seconds=perf_counter()-begin,reused=bool(continuation and order==20)));r['completed_orders']+=1
         def checkpoint(order):
+            if continuation and order==20:np.testing.assert_array_equal(a['order_20_A_complex'],prior['order_20_A_complex'])
             checkpoint_arrays(args.output,r,a);stage(f'order{order}');print(f'cold2772: order{order} complete',flush=True)
         matrices=consume_orders(data,c['gauss_orders'],a,fill,budget,checkpoint)
         scaled_check(matrices.imag,np.zeros_like(matrices.real),scale,1e-10)
@@ -132,6 +179,7 @@ def generate(args,c,r,a):
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--controls',type=Path,default=Path('validation/fixed-field-2772-controls.json'))
     for name in ('source','source-bundle','pilot','output'):p.add_argument('--'+name,type=Path,required=True)
+    for name in ('previous','previous-bundle'):p.add_argument('--'+name,type=Path)
     args=p.parse_args();c=json.loads(args.controls.read_text());r=prepare(args.output,args.controls,'fixed-seed-cold-field');a={}
     r.update(completed_capytaine_calls=0,integration_passed=False,native_calibration_passed=False,full_reference_qualified=False,source_discretization_qualified=False,full_run_authorized=False)
     checkpoint_arrays(args.output,r,a)
