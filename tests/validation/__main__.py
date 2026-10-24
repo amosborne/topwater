@@ -11,7 +11,7 @@ from pathlib import Path
 from time import perf_counter
 import numpy as np
 from threadpoolctl import threadpool_limits
-from .common import (PHYSICAL,CANDIDATE,REFERENCE,VALIDATORS,case_envelope,digest,hashes,load_contract,prepare,
+from .common import (PHYSICAL,CANDIDATE,REFERENCE,VALIDATORS,case_envelope,physical_identity,digest,hashes,load_contract,prepare,
     save,read_owned,current_sources,study_preflight,triangles_at,entrywise)
 
 
@@ -42,6 +42,7 @@ def freeze(args,contract,report,arrays):
         physical_freeze_only=True,qualification_scope='Not physical solver qualification',
         equilibrium_force_N=hydro.force.tolist(),equilibrium_moment_Nm=hydro.moment.tolist(),
         wet_panel_count=len(hydro.wetted_triangles),complete=False)
+    report['physical_identity_sha256']=physical_identity(report,arrays)
     save(args.output,report,arrays)
     report['reference_study_plan']=study_preflight(len(hydro.wetted_triangles),
         contract['reference_numerics']['body_subdivision_levels'],
@@ -55,7 +56,11 @@ def frozen_input(args,contract,report):
     case_envelope(contract,float(data['hull_beam']))
     if digest(Path(args.frozen).with_suffix('.source')/'inputs.json')!=frozen['input_sha256']:
         raise ValueError('frozen physical input JSON changed')
-    report.update(input_sha256=frozen['input_sha256'],frozen_sha256=digest(args.frozen))
+    if physical_identity(frozen,data)!=frozen['physical_identity_sha256']:
+        raise ValueError('frozen stable physical identity differs from its actual arrays/inputs')
+    report.update(input_sha256=frozen['input_sha256'],
+        frozen_physical_identity_sha256=frozen['physical_identity_sha256'],
+        frozen_manifest_sha256_provenance=digest(args.frozen))
     return frozen,data
 
 
@@ -63,7 +68,7 @@ def qualified_reference(args,contract,report,frozen,frozen_data):
     from .reference import require_qualified
     reference,data=read_owned(args.reference,report['contract_sha256'],'reference',passed=True)
     if (reference['input_sha256']!=frozen['input_sha256']
-            or reference['frozen_sha256']!=digest(args.frozen)):
+            or reference['frozen_physical_identity_sha256']!=frozen['physical_identity_sha256']):
         raise ValueError('qualified reference belongs to different frozen inputs')
     current_sources(reference,REFERENCE)
     require_qualified(reference,data,contract,frozen_data)
@@ -131,8 +136,8 @@ def qualify(args,contract,report,arrays):
             item,_=read_owned(getattr(args,name),report['contract_sha256'],kind,passed=True)
             if item.get('input_sha256')!=frozen['input_sha256']:
                 raise ValueError('gate frozen physical input identity differs')
-            if item.get('frozen_sha256')!=digest(args.frozen):
-                raise ValueError('gate freeze artifact identity differs')
+            if item.get('frozen_physical_identity_sha256')!=frozen['physical_identity_sha256']:
+                raise ValueError('gate stable physical identity differs')
             if kind=='reference':
                 qualified_reference(args,contract,report,frozen,frozen_data)
             elif kind=='compare-inertia' and item.get('candidate_source_sha256')!=hashes(CANDIDATE):

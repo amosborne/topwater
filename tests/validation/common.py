@@ -24,6 +24,15 @@ def hashes(paths):
     return {name:digest(name) for name in paths}
 
 
+def physical_identity(report,arrays):
+    """Stable physical binding; execution metadata is provenance only."""
+    payload=dict(contract_sha256=report['contract_sha256'],input_sha256=report['input_sha256'],
+        arrays={name:dict(dtype=np.asarray(value).dtype.str,shape=list(np.asarray(value).shape),
+            sha256=sha256(np.ascontiguousarray(value).tobytes()).hexdigest())
+            for name,value in sorted(arrays.items())})
+    return sha256(json.dumps(payload,sort_keys=True,separators=(',',':')).encode()).hexdigest()
+
+
 def load_contract(path):
     value=json.loads(Path(path).read_text())
     p=value['physical_problem'];r=value['reference_numerics'];c=value['candidate_numerics']

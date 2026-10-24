@@ -5,7 +5,7 @@ from types import SimpleNamespace
 import numpy as np
 import pytest
 from .common import (entrywise,mesh_quality,study_preflight,read_owned,digest,
-                     load_contract,case_envelope,hashes,CANDIDATE,VALIDATORS,REFERENCE)
+                     load_contract,case_envelope,physical_identity,hashes,CANDIDATE,VALIDATORS,REFERENCE)
 from .reference import require_qualified
 from . import __main__ as cli
 
@@ -63,6 +63,18 @@ def test_actual_beam_wavelength_bound_allows_equality():
     case_envelope(contract,minimum/2)
 
 
+def test_stable_physical_identity_ignores_execution_metadata_but_owns_data():
+    report=dict(contract_sha256='contract',input_sha256='input',elapsed_seconds=1.,current_commit='first')
+    arrays=dict(wetted_triangles=np.arange(9,dtype='<f8').reshape(1,3,3),dry_mass=np.eye(6))
+    identity=physical_identity(report,arrays)
+    changed=dict(report,elapsed_seconds=100.,current_commit='next',passed=True)
+    assert physical_identity(changed,arrays)==identity
+    assert physical_identity(dict(report,input_sha256='other'),arrays)!=identity
+    moved={name:value.copy() for name,value in arrays.items()};moved['wetted_triangles'][0,0,0]=.01
+    assert physical_identity(report,moved)!=identity
+    assert physical_identity(report,dict(arrays,dry_mass=arrays['dry_mass'].astype('<f4')))!=identity
+
+
 def test_each_physical_entry_has_its_own_allowance():
     reference=np.eye(6)*1e9;candidate=reference.copy();candidate[0,4]=1e-3
     assert not entrywise(candidate,reference,np.zeros((6,6)),1e-5,.01)['passed']
@@ -118,12 +130,12 @@ def test_unsupported_wave_gate_cannot_be_enabled_by_contract_flag():
 
 def test_qualify_cannot_accept_fabricated_passed_wave_artifact(monkeypatch):
     args=SimpleNamespace(frozen=Path('frozen'),reference=Path('reference'),inertia=Path('inertia'),waves=Path('waves'))
-    monkeypatch.setattr(cli,'frozen_input',lambda *a:({'input_sha256':'same'},{}))
+    monkeypatch.setattr(cli,'frozen_input',lambda *a:({'input_sha256':'same','physical_identity_sha256':'physical'},{}))
     monkeypatch.setattr(cli,'digest',lambda path:str(path))
     monkeypatch.setattr(cli,'hashes',lambda paths:{'candidate':'owned'})
     monkeypatch.setattr(cli,'qualified_reference',lambda *a:({},{}))
     monkeypatch.setattr(cli,'current_sources',lambda *a:None)
-    monkeypatch.setattr(cli,'read_owned',lambda *a,**k:(dict(input_sha256='same',frozen_sha256='frozen',
+    monkeypatch.setattr(cli,'read_owned',lambda *a,**k:(dict(input_sha256='same',frozen_physical_identity_sha256='physical',
         candidate_source_sha256={'candidate':'owned'},reference_sha256='reference'),{}))
     report={'contract_sha256':'contract'}
     cli.qualify(args,{},report,{})
@@ -133,12 +145,12 @@ def test_qualify_cannot_accept_fabricated_passed_wave_artifact(monkeypatch):
 
 def test_stale_validator_source_rejects_previously_passed_inertia(monkeypatch):
     args=SimpleNamespace(frozen=Path('frozen'),reference=Path('reference'),inertia=Path('inertia'),waves=Path('waves'))
-    monkeypatch.setattr(cli,'frozen_input',lambda *a:({'input_sha256':'same'},{}))
+    monkeypatch.setattr(cli,'frozen_input',lambda *a:({'input_sha256':'same','physical_identity_sha256':'physical'},{}))
     monkeypatch.setattr(cli,'digest',lambda path:str(path))
     monkeypatch.setattr(cli,'qualified_reference',lambda *a:({},{}))
     producer=hashes(CANDIDATE+VALIDATORS)
     producer['tests/validation/__main__.py']='stale'
-    monkeypatch.setattr(cli,'read_owned',lambda *a,**k:(dict(input_sha256='same',frozen_sha256='frozen',
+    monkeypatch.setattr(cli,'read_owned',lambda *a,**k:(dict(input_sha256='same',frozen_physical_identity_sha256='physical',
         candidate_source_sha256=hashes(CANDIDATE),reference_sha256='reference',producer_sha256=producer),{}))
     report={'contract_sha256':'contract'}
     cli.qualify(args,{},report,{})
