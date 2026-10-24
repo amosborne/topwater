@@ -1,9 +1,13 @@
 {
   "state": "idle",
   "execution_owner": null,
+  "assignment": null,
+  "claimed_at": null,
+  "manifest": null,
   "active_numerical_job": null,
-  "rule": "Coordinator assigns one execution owner before launch; exact process terminal proof required before producer edits or another numerical job.",
-  "preserved_work": "reference/capytaine/export_case.py is uncommitted, incomplete and never launched. Do not discard it or assume its missing packet/export controls are approved.",
-  "matlab": "Uniquely named CAPYTAINE_REFERENCE shared engine was started by helper session8651, which terminated exit0 with started. Verify engine status before use; no numerical job was launched.",
-  "historical_interruption": "Quadrature session36762 user-interrupted terminalexit1 after G24; not a numerical failure, not authorized to resume."
+  "last_terminal_evidence": {
+    "job": "historical quadrature session36762",
+    "outcome": "user-interrupted, terminal exit1; not a numerical failure"
+  },
+  "note": "Recorded checkpoint, not live process proof. Follow coordination.md for claim/recovery; authorization is in checkpoint-handoff.md."
 }

@@ -1,12 +1,13 @@
 # Owned bounded assignments
 
-These assignments are active ownership records, not authorization to launch
-unleased numerical work. The expert setup ends at confirmation/fork/knowledge/
-assignment checkpoint. Main coordinator schedules the next execution lease.
+Task statuses are `queued` (owned but not authorized), `authorized` (within the
+current user request), `running`, or `completed`. Current project authorization
+is recorded only in [the handoff](../checkpoint-handoff.md); an execution lease
+schedules authorized work and never grants scope. Update status in place.
 
 ## CAP-001: first canonical producer/interface
 
-Owner capytaine_expert; consumer partner wecsim_expert. Readiness inspection
+Status: queued. Owner capytaine_expert; consumer partner wecsim_expert. Readiness inspection
 completed in capytaine_expert/native-setup-2026-10-24.md. Subsequent execution is
 queued, with no current numerical lease.
 
@@ -24,9 +25,10 @@ Stop at reviewed minimum-case export/interface; no automatic refinement.
 
 ## WEC-001: maintained fork, independent leads and exercised paths
 
-Owner wecsim_expert. Fork/source-map/setup inspection completed in
-wecsim_expert/native-setup-2026-10-24.md. Remaining reproductions are ASSIGNED
-and queued, awaiting the coordinator's sole numerical execution lease.
+Status: queued. Owner wecsim_expert. Fork/source-map/setup inspection completed
+in wecsim_expert/native-setup-2026-10-24.md. Remaining reproductions await
+user-authorized reference work and a bounded coordinator assignment, then a
+sole numerical execution lease.
 
 Scope: pinned v7.1.0 maintained fork; independently reproduce the four specific
 marine-gyro leads (yaw-order/frame and velocity/acceleration mapping, unequal
@@ -53,13 +55,14 @@ must not delay the first working minimum-mesh10s simulation indefinitely.
 
 ## TOP-001: held-state ownership
 
-Owner topwater_expert. Activation/documented equation/code/evidence map completed
+Status: completed (setup only; implementation held). Owner topwater_expert.
+Activation/documented equation/code/evidence map completed
 in topwater_expert/held-source-map.md. No solver implementation, simulations,
 test runs, optimization or method experiments. Stop pending future user authority.
 
 ## NUM-001: focused research support
 
-Owner numerical_methods_researcher. Proposal template and targeted initial
+Status: completed (setup only). Owner numerical_methods_researcher. Proposal template and targeted initial
 wave/IRF-padding question completed in its KB. No broad literature/optimization
 survey or numerical lease. Next only a focused question requested by reference
 owners; proposed experiments go through coordinator selection and implementation

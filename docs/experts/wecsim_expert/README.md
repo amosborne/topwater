@@ -1,11 +1,13 @@
 # wecsim_expert: start here
 
-Read [current-state.md](current-state.md), [shared contract](../shared-contract.md)
-and [coordination](../coordination.md) first. Your role is defined in
-[.codex/agents/wecsim_expert.toml](../../../.codex/agents/wecsim_expert.toml).
+Read [the handoff](../../checkpoint-handoff.md) for current authorization and
+phase restrictions, then [current-state.md](current-state.md),
+[coordination](../coordination.md) and [the shared contract](../shared-contract.md).
+Work only on a bounded coordinator assignment; queued ownership is not permission.
+Read detailed evidence as needed, not the whole history.
 
-Keep this entry point short. Put detailed findings in evidence-backed topic notes,
-regression reproductions and source maps linked from current-state.md. Separate
-confirmed facts from hypotheses and decisions. Update current state after every
-substantive task. Agent memory is these version-controlled files, not permanent
-model learning or a long chat. No numerical run without the execution-owner lease.
+[Role definition](../../../.codex/agents/wecsim_expert.toml).
+Keep current-state concise and replace stale facts; put history, source versions
+and reproductions in linked notes. Update owned knowledge after substantive work;
+for read-only assignments, return suggested updates instead. Durable context is
+these files, not permanent model learning or guaranteed live agent threads.

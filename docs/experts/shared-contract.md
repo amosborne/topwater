@@ -1,7 +1,7 @@
 # Shared physical and producer/consumer contract
 
-Current scope: standalone Capytaine -> official BEMIO -> WEC-Sim external
-reference. Ten-second six-DOF motion, isometric video, then variation of those
+Reference requirements (authorization is in the [handoff](../checkpoint-handoff.md)):
+standalone Capytaine -> official BEMIO -> WEC-Sim external reference. Ten-second six-DOF motion, isometric video, then variation of those
 motions with solver mesh. Topwater solver implementation is held.
 
 Authoritative neutral physical input:
@@ -9,8 +9,9 @@ Authoritative neutral physical input:
 It carries the minimum full24ft hull and frozen17-triangle wet surface, mean
 equilibrium pose/world CG, full dry mass/inertia including products, canonical
 three-component mild sea and provenance hashes. Density1025kg/m3, gravity9.81m/s2,
-infinite depth, zero forward speed. Solver remeshing must preserve this physical
-surface and physical properties. The retired canoe is not this boat.
+infinite depth, zero forward speed. Keep minimum full hull geometry separate
+from derived solver meshes; remeshing preserves the physical surface, equilibrium
+and mass properties. The retired canoe and archived P1 do not qualify this boat.
 
 World axes: x forward, y port, z up; right-handed. Modes Surge/Sway/Heave/Roll/
 Pitch/Yaw, rotations about mean WORLD CG. Capytaine complex convention
@@ -22,9 +23,8 @@ verify the interface once, never manually conjugate a second time.
 
 Producer, accountable capytaine_expert: native netCDF, native hydrostatic files,
 physical body/mesh/CG/inertia/DOF identities, exact frequencies/headings, versions,
-code/input/source hashes and reproducible export commands. Keep input geometry
-distinct from derived meshes. Existing export_case.py is an unfinished/unrun
-prototype with undeclared packet/export controls; it is NOT accepted data.
+code/input/source hashes and reproducible export commands. Current producer
+readiness and unfinished work are in the producer current-state and handoff.
 
 Consumer, accountable wecsim_expert: official BEMIO parsing/normalization and H5,
 hydrostatics and full inertia/frame mapping, transient excitation/radiation
@@ -41,22 +41,23 @@ inside10s is not required. A moving visual wavefront over globally forced or
 steady-state motion is invalid. Label prescribed incident surface distinctly
 from a computed scattered/radiated fluid field.
 
-Known integration questions, not yet resolved physical results: per-direction
-imported components; excitation IRF noncausality relative to its wave reference
-point; padding must exist in actual convolution timeline (extra CSV rows can be
-discarded); explicit simu.rampTime=0 instead of default100; preserve the first
-ten seconds from actual rest, never a later already-moving cropped window.
-WEC-Sim7.1 disallows elevationImport with nonlinearHydro=1; label the initial
-case linear hydrodynamics. Imported surface display is qualitative. Check missing
-hydrostatic-file zero defaults, full inertia products and frame signs.
+First obtain minimum-mesh end-to-end motion, then characterize changes in all
+six histories with refinement. Do not replace that milestone with whole-library
+audits, coefficient gates or optimization. Independently reproduce reported
+engine defects on the selected version; resolve confirmed result-invalidating
+issues or withhold the affected result. Do not blindly carry old workarounds.
 
 Only resulting six time histories determine numerical motion variation and
 reference uncertainty. Intermediate A/B/Ainf/coupling differences are diagnostics,
 not standalone0.1% acceptance gates. Missing/corrupt data and invalid solves do
 not establish a result. Preserve old failures under original policies.
 
-Pinned known-working setup: Capytaine3.0.0; MATLABR2025b with installed/licensed
+Historical environment setup (not numerical validation): Capytaine3.0.0;
+MATLABR2025b with installed/licensed
 Simulink/Simscape/Multibody; upstream WEC-Simv7.1.0 commit
 a23d2993807410fe78cc63546c1ba9d81912024f. Library/importer/class loading checked,
 NOT an actual boat simulation. See [setup evidence](../capytaine-wecsim-environment.json).
-The maintained fork and its tested commit are owned/recorded by wecsim_expert.
+The maintained fork pin and validation status are in [wecsim-fork.json](wecsim-fork.json).
+Broader Topwater comparison/runtime goals and major speed campaigns remain held
+until the required physical comparison; local residuals, energy checks, fitted
+loads and ODE tolerances do not establish motion accuracy.

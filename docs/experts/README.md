@@ -1,24 +1,14 @@
-# Project expert agents
+# Project experts
 
-Read [coordination](coordination.md), [shared physical/interface contract](shared-contract.md)
-and [current setup checklist](setup-checklist.md). The main thread coordinates;
-solver depth, reproductions and evidence belong to the named owners.
+Start with [AGENTS.md](../../AGENTS.md) and [the current handoff](../checkpoint-handoff.md).
+Read only the owner needed for the authorized task:
 
-| Role | Start here | Current boundary |
-|---|---|---|
-| capytaine_expert | [Capytaine](capytaine_expert/README.md) | Native producer/interface for minimum-mesh reference |
-| wecsim_expert | [WEC-Sim/BEMIO](wecsim_expert/README.md) | Maintained fork, reproduction leads, consumer/startup/motion/video |
-| topwater_expert | [Topwater](topwater_expert/README.md) | Knowledge ready; solver implementation HELD |
-| numerical_methods_researcher | [Research](numerical_methods_researcher/README.md) | Focused primary-source proposals only; no broad survey |
+- [Capytaine](capytaine_expert/README.md): native producer and solver meshes.
+- [WEC-Sim](wecsim_expert/README.md): BEMIO, dynamics, maintained fork and video.
+- [Topwater](topwater_expert/README.md): later independent solver implementation.
+- [Research](numerical_methods_researcher/README.md): focused method proposals.
 
-Agent definitions are under .codex/agents. They omit model/reasoning overrides.
-Supported format and native selector discovery are recorded in
-[client-verification.json](client-verification.json). Actual activation evidence is in [native-activation.json](native-activation.json)
-and [raw spawn/session receipts](native-spawn-receipts.json); all four returned.
-See [activation/reuse](activation.md), [owned assignments](assignments.md) and
-[maintained fork pin](wecsim-fork.json). Do not equate
-file creation, selector discovery or library loading with a completed simulation.
-
-The user's original setup instruction is preserved in
-[setup-instructions.md](setup-instructions.md). Durable knowledge lives in this
-repository, not permanent model learning or an unrecorded conversation.
+[Coordination](coordination.md) defines document ownership and numerical scheduling;
+[the shared contract](shared-contract.md) defines physics and interfaces.
+[Assignments](assignments.md) records task scope/status.
+[Activation](activation.md) explains role reuse and links historical setup evidence.

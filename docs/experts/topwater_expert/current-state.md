@@ -1,12 +1,16 @@
 # Current state: Topwater expert (implementation HELD)
 
+Follow the [handoff](../../checkpoint-handoff.md) for current authorization.
+Setup is complete; no reference or Topwater implementation work is authorized
+by a role activation or queued assignment.
+
 2026-10-24 native activation confirmed as `topwater_expert`, actual agent ID
 `/root/topwater_setup`, with native developer instructions and inherited settings.
 Documentation-only setup completed; see [held evidence/code map](held-source-map.md)
 for exact read paths, governing equations, source checkpoints, evidence limits and
 missing capabilities. No source inspection, tests, numerical jobs or MATLAB runs.
-Only this expert's knowledge files changed. No execution lease exists. No role
-setup blocker identified; await a bounded coordinator assignment.
+That setup changed only this expert's knowledge files. No role setup blocker
+was identified; consult execution-state.json for scheduling, not this history.
 
 Role setup and durable knowledge only. User expressly forbids Topwater solver
 code work during external-reference phase. No simulation, optimization, solver

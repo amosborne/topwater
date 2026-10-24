@@ -1,6 +1,8 @@
 # Current state: numerical-methods research expert
 
-Current project need is the Capytaine/BEMIO/WEC-Sim incoming-wave reference.
+Reference support is queued, not authorized; follow the
+[handoff](../../checkpoint-handoff.md). Setup is complete. The downstream
+project need is the Capytaine/BEMIO/WEC-Sim incoming-wave reference.
 No broad formulation, optimization, adaptive-mesh or literature campaign is
 authorized. No numerical jobs or solver implementation on role activation.
 
@@ -23,7 +25,8 @@ The latter records exact read paths, selected official source commit
 project assumptions, and a later independent-index rejection plan. Source
 inspection is not a reproduction or physical validation.
 
-Next action: await a focused question from reference owners on consistent wave
+Next action: await user-authorized reference work and a bounded coordinator
+assignment for a focused question from reference owners on consistent wave
 reference, excitation-IRF alignment and retained timeline padding. No broad
 literature search or numerical experiment is assigned. Topwater implementation
 and performance work remain held; durable evidence lives in these files.

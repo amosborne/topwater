@@ -9,15 +9,14 @@ implementation is the existing **P0 Rankine-panel core**, extracted from
 instantaneous added mass. It has **no coupled time-domain wave-response path**.
 The archived nonlinear diagnostic runtime is a different, unqualified experiment.
 
-A validated, practical **time-domain** baseline is the immediate goal: the
-canonical boat in a frozen mild sea, at least one simulated second, matching a
-Capytaine-derived reference within 0.1 degree and 1 cm in every axis, including
-uncertainty, and costing at most 200 wall seconds per simulated second including
-normal Topwater preparation. Major optimization follows a passing physical
-comparison; early cost screens reject impractical routes. See the
-[current goal and checkpoints](docs/time-domain-baseline-goal.md).
-[Issue #30](https://github.com/amosborne/topwater/issues/30) owns promotion
-requirements and the concise investigation register.
+The pending external-reference milestone is Capytaine -> BEMIO -> WEC-Sim:
+ten seconds of six-DOF incoming-wave motion/video, then motion variation with
+mesh resolution. Reference execution awaits a user request; Topwater solver
+implementation and performance work are held. See [the current handoff](docs/checkpoint-handoff.md)
+for authorization and [AGENTS.md](AGENTS.md) for startup and expert routing.
+The broader [Topwater comparison/runtime goal](docs/time-domain-baseline-goal.md)
+remains a later objective. [Issue #30](https://github.com/amosborne/topwater/issues/30)
+tracks checkpoints.
 
 ## Canonical boat and sea
 
@@ -69,7 +68,7 @@ uv sync --locked --group correlation
 
 Generic mathematical tests do not establish Capytaine agreement. The frozen
 [validation contract](validation/canonical-boat.json), [reset instructions](docs/validation-reset.md)
-and [AGENTS.md](AGENTS.md) define the validation-first work.
+describe historical validation requirements; current scope is in the handoff.
 
 The later requirement is 0.1 degree in each rotation and 1 cm in each
 translation throughout 60 seconds, at no more than 20 wall seconds per simulated
