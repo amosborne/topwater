@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from .frozen_source_quadrature import integration_cells,owned_points,pressure_matrix,telescoping
+from .frozen_source_quadrature import integration_cells,owned_points,pressure_matrix,telescoping,duffy_rule,mirrored_gauss_targets
 
 
 def test_descendant_centroids_are_owned_and_preserve_area_weights():
@@ -32,3 +32,35 @@ def test_telescope_preserves_cancellation_without_calling_remainder_source_error
     total,output,remainder=telescoping(coarse,fine,quadrature,np.ones((6,6)),1e-10)
     np.testing.assert_array_equal(output,3);np.testing.assert_array_equal(remainder,-2)
     np.testing.assert_array_equal(total,output+remainder)
+
+
+@pytest.mark.parametrize('order,degree',[(2,2),(4,4),(8,6)])
+def test_duffy_gauss_exact_polynomial_moments(order,degree):
+    from math import factorial
+    bary,w=duffy_rule(order)
+    assert np.all(bary>0) and np.all(w>0)
+    np.testing.assert_allclose(bary.sum(axis=1),1.,atol=1e-14)
+    for a in range(degree+1):
+        for b in range(degree-a+1):
+            for c in range(degree-a-b+1):
+                expected=2*factorial(a)*factorial(b)*factorial(c)/factorial(a+b+c+2)
+                actual=w@(bary[:,0]**a*bary[:,1]**b*bary[:,2]**c)
+                assert actual==pytest.approx(expected,abs=1e-13)
+
+
+def test_mirrored_targets_preserve_ownership_and_areas_without_mirroring_fields():
+    t=np.array([[[0.,.2,-1.],[2.,.4,-1.],[0.,3.,-.5]]])
+    triangles=np.r_[t,t[:,[1,0,2]]*np.array([1,-1,1])]
+    points,owner,w,error=mirrored_gauss_targets(triangles,4)
+    assert error==0 and len(points)==32
+    np.testing.assert_array_equal(points[16:],points[:16]*np.array([1,-1,1]))
+    np.testing.assert_allclose(np.bincount(owner,w),1.,atol=1e-14)
+    owned_points(points,owner,triangles,1e-10)
+    # A deliberately asymmetric scalar field must retain its odd contribution.
+    from topwater.rankine import TrianglePanels
+    panels=TrianglePanels(triangles,-1)
+    potential=np.broadcast_to((1+.1*points[:,1])[:,None],(len(points),6))
+    A=pressure_matrix(points,panels.normals[owner],w*panels.areas[owner],potential,np.zeros(3),1.)
+    assert np.max(abs(A[1]))>1e-3
+    bad=triangles.copy();bad[1,:,1]-=.1
+    with pytest.raises(ValueError):mirrored_gauss_targets(bad,4)

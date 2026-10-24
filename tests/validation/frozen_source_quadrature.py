@@ -20,6 +20,31 @@ def integration_cells(triangles,level):
     return cells,owners
 
 
+def duffy_rule(order):
+    """Positive triangle weights normalized to unit area, from [0,1]^2."""
+    if not isinstance(order,(int,np.integer)) or isinstance(order,bool) or order<1:raise ValueError('positive Gauss order required')
+    x,w=np.polynomial.legendre.leggauss(order);x=(x+1)/2;w=w/2
+    u,v=np.meshgrid(x,x,indexing='ij');wu,wv=np.meshgrid(w,w,indexing='ij')
+    bary=np.stack(((1-u)*(1-v),u,(1-u)*v),axis=-1).reshape(-1,3)
+    weights=(2*(1-u)*wu*wv).ravel()
+    return bary,weights
+
+
+def mirrored_gauss_targets(triangles,order):
+    """Mirror target geometry only; caller must evaluate all full source fields."""
+    t=np.asarray(triangles);half=len(t)//2
+    if t.ndim!=3 or t.shape[1:]!=(3,3) or not half or len(t)!=2*half:raise ValueError('paired reflected source triangles required')
+    def canonical(values):return np.array([p[np.lexsort((p[:,2],p[:,1],p[:,0]))] for p in values])
+    error=float(np.max(abs(canonical(t[:half]*np.array([1,-1,1]))-canonical(t[half:]))))
+    if error>1e-12 or np.min(t[:half,:,1])<-1e-12:raise ValueError('verified y0 reflected parent layout required')
+    bary,relative=duffy_rule(order)
+    port=np.einsum('qk,nkj->qnj',bary,t[:half]).reshape(-1,3)
+    points=np.r_[port,port*np.array([1,-1,1])]
+    owner=np.tile(np.arange(half),len(bary));owners=np.r_[owner,owner+half]
+    weights=np.tile(np.repeat(relative,half),2)
+    return points,owners,weights,error
+
+
 def owned_points(points,owners,triangles,tolerance):
     p=np.asarray(points);t=np.asarray(triangles)[owners]
     normal=np.cross(t[:,1]-t[:,0],t[:,2]-t[:,0]);twice=np.linalg.norm(normal,axis=1);normal/=twice[:,None]
@@ -44,10 +69,17 @@ def telescoping(coarse,fine,quadrature,scale,tolerance):
 
 
 def generate(args,c,r,a):
-    fixed=dict(format_version=1,source_level=2,finer_level=3,source_panels=864,
-        integration_refinements=[0,1,2,3],required_target_counts=[864,3456,13824,55296],evaluation_chunk_points=100,
+    fixed=dict(format_version=1,source_level=2,finer_level=3,source_panels=864,evaluation_chunk_points=100,
         density_kg_m3=1025.,gravity_m_s2=9.81,trace_scaled_tolerance=1e-10,ownership_absolute_m=1e-10,
-        reference_relative=.001,reference_absolute_normalized=1e-6,maximum_elapsed_seconds=180.,cpu_threads=1,full_reference_scope=False)
+        reference_relative=.001,reference_absolute_normalized=1e-6,cpu_threads=1,full_reference_scope=False)
+    rule=c.get('integration_rule','composite-centroid')
+    if rule=='composite-centroid':
+        fixed.update(integration_refinements=[0,1,2,3],required_target_counts=[864,3456,13824,55296],maximum_elapsed_seconds=180.)
+        parameters=c.get('integration_refinements')
+    elif rule=='duffy-gauss-mirrored':
+        fixed.update(gauss_orders=[0,8,12,16],required_target_counts=[864,55296,124416,221184],maximum_elapsed_seconds=600.)
+        parameters=c.get('gauss_orders')
+    else:raise ValueError('undeclared integration rule')
     if any(c.get(k)!=v for k,v in fixed.items()):raise ValueError('unsupported frozen-source quadrature controls')
     parent,data=read_owned(args.study,digest('validation/paired-body-controls.json'),'paired-body-study')
     current_sources(parent,tuple(parent['producer_sha256']))
@@ -70,7 +102,7 @@ def generate(args,c,r,a):
     r.update(parent_manifest_sha256=digest(args.study),parent_arrays_sha256=digest(args.study.with_suffix('.npz')),
         parent_bundle_sha256=digest(args.bundle),input_sha256=digest(archive/'inputs.json'),protocol_sha256=digest(c['protocol']),
         completed_levels=0,levels=[],new_bem_solves=0,full_reference_qualified=False,source_discretization_qualified=False,
-        scope=__doc__,trace_normalization=parent['trace_normalization'])
+        scope=__doc__,trace_normalization=parent['trace_normalization'],integration_rule=rule)
     save(args.output,r,a)
     def budget():
         if perf_counter()-STARTED>c['maximum_elapsed_seconds']:raise TimeoutError('frozen-source quadrature wall budget exhausted')
@@ -86,13 +118,19 @@ def generate(args,c,r,a):
         if green.exportable_settings!=parent['green_settings']:raise ValueError('frozen-source Green settings differ')
         r['green_settings']=green.exportable_settings;engine=cpt.BEMSolver(green_function=green).engine
         scale=np.sqrt(data['dry_mass'].diagonal()[:,None]*data['dry_mass'].diagonal()[None,:]);matrices=[]
-        for level,count in zip(c['integration_refinements'],c['required_target_counts'],strict=True):
-            budget();cells,owner=integration_cells(triangles,level)
-            points=body.mesh.faces_centers.copy() if level==0 else cells.mean(axis=1)
+        for level,(parameter,count) in enumerate(zip(parameters,c['required_target_counts'],strict=True)):
+            budget();geometry_error=0.
+            if level==0:
+                points=body.mesh.faces_centers.copy();owner=np.arange(len(triangles));relative=np.ones(len(triangles))
+            elif rule=='composite-centroid':
+                cells,owner=integration_cells(triangles,parameter);points=cells.mean(axis=1);relative=np.full(len(points),1/4**parameter)
+            else:points,owner,relative,geometry_error=mirrored_gauss_targets(triangles,parameter)
             if len(points)!=count:raise ValueError('missing required integration targets')
             proof=owned_points(points,owner,triangles,c['ownership_absolute_m'])
-            weights=body.mesh.faces_areas[owner]/4**level
+            weights=body.mesh.faces_areas[owner]*relative
             if abs(weights.sum()-body.mesh.faces_areas.sum())>1e-10:raise ValueError('quadrature area conservation failed')
+            face_error=float(np.max(abs(np.bincount(owner,weights,minlength=len(triangles))-body.mesh.faces_areas)))
+            if face_error>1e-10:raise ValueError('individual face quadrature weights differ')
             phi=np.zeros((len(points),6),complex);prefix=f'level{level}_'
             a.update({prefix+'points':points,prefix+'owners':owner,prefix+'weights':weights,prefix+'potential':phi})
             save(args.output,r,a);begin=perf_counter()
@@ -103,7 +141,9 @@ def generate(args,c,r,a):
             if not np.isfinite(phi).all():raise ValueError('nonfinite frozen-source trace')
             matrix=pressure_matrix(points,-body.mesh.faces_normals[owner],weights,phi,data['world_cg'],c['density_kg_m3'])
             imaginary=scaled_check(matrix.imag,np.zeros((6,6)),scale,c['trace_scaled_tolerance'])
-            record=dict(level=level,points=len(points),seconds=perf_counter()-begin,ownership=proof,imaginary_ratio=imaginary)
+            record=dict(level=level,rule_parameter=parameter,points=len(points),seconds=perf_counter()-begin,
+                ownership=proof,imaginary_ratio=imaginary,maximum_face_area_error_m2=face_error,
+                maximum_reflection_geometry_error_m=geometry_error)
             if level==0:
                 record['native_potential_ratio']=scaled_check(phi,data['capytaine_aux_2'],1.,c['trace_scaled_tolerance'])
                 record['native_load_ratio']=scaled_check(matrix,data['capytaine_Ainf'][2],scale,c['trace_scaled_tolerance'])

@@ -1,0 +1,21 @@
+{
+  "format_version": 1,
+  "protocol": "docs/frozen-source-gauss-protocol.md",
+  "parent_bundle_sha256": "052df7c50865340e7ef4ebaddfc48adfef191b24057646bd395a889515dc98f2",
+  "source_level": 2,
+  "finer_level": 3,
+  "source_panels": 864,
+  "integration_rule": "duffy-gauss-mirrored",
+  "gauss_orders": [0,8,12,16],
+  "required_target_counts": [864,55296,124416,221184],
+  "evaluation_chunk_points": 100,
+  "density_kg_m3": 1025.0,
+  "gravity_m_s2": 9.81,
+  "trace_scaled_tolerance": 1e-10,
+  "ownership_absolute_m": 1e-10,
+  "reference_relative": 0.001,
+  "reference_absolute_normalized": 0.000001,
+  "maximum_elapsed_seconds": 600.0,
+  "cpu_threads": 1,
+  "full_reference_scope": false
+}
