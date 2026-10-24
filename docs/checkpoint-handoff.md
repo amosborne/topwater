@@ -1,5 +1,45 @@
 # Checkpoint handoff
 
+## Latest checkpoint: complete finest-source preflight accepts a bounded screen
+
+Read docs/common-output-finest-preflight-001.md and prospective protocol first.
+Branch baseline/fluid-body; producer0b8dd9a. Goal ACTIVE/INCOMPLETE: full reference,
+own coupled motion and usable Topwater runtime remain unqualified.
+
+- Read-only complete3456-source model:691200 common targets,2,388,787,200 field
+  pairs+11,943,936 native calibration pairs,6948blocks. Zero native evaluations
+  and BEM solves. Exact command chunk6da3b5 terminalexit0;4.682s<60s budget.
+- Resource preflight accepted only: upper3282.320s<prospective3600s OFFLINE
+  ceiling, estimatedpeak1,325,831,756B<2GiB, disk1,847,910,862B<2GiB. Host1.25x
+  memory/2xdisk margins pass. Models include everyorder/calibration/preparation,
+  both S/K scratch, all loadedgraphs/verificationbuffers/newfields/loadbuffers,
+  immutable copies/checkpoint/audit/packaging and overhead. Not measured RSS.
+- All278tests pass, JUnit archived; exactsession9837 terminalexit0. Independent
+  audit rebuilt all counts/rates/resource/host gates and producer/input/dependency
+  hashes. Fresh completegraph/four-input restoration verified. No nativejoblive.
+  completeTrue/passedFalse, resource_preflight_acceptedTrue,
+  full_run_authorizedFalse, source/full qualificationFalse. Old failures stay.
+- Evidence common-output-finest-preflight-001.zip and summary, SHA
+  11ea95f6e3c3a7a0249521b82f734bde21cb85cb679898f9e97c6f5d80dbcb3f.
+  Requires tracked common-output-sources-001.zip, Gauss continuation001.zip and
+  Gauss001.zip (exact names/SHAs in resultdoc/summary). Restore helper takes
+  --common-bundle PATH --quadrature-bundle PATH --historical-bundle PATH.
+
+**Exact next bounded goal:** separately controlled3456-source native cost screen,
+60s TOTAL includingpreparation. Refresh availablehostresources and inspected
+dependency hashes. Repeat full native calibration at1e-10 scaled; sample actual
+full-source fields on100targetblocks at first/middle/last of EACH reflected half
+for EACH common12/16/20order. Verify physicalfacetcoverage; deterministically add
+blocks as needed, <=24blocks/order. Archive code/inputgraph before launch, one
+native thread, serial exactprocess discipline. Save points/owners/weights/fields,
+timings and actual process peak working-set/committed memory. Declare full sampling and
+projection/gate policy beforelaunch; require native/finite/ownership controls,
+60s wallcap, actualpeak/committed memory<=2GiB and complete-job projection<=3600s with
+refreshed resource margins. No BEMsolve/remeshing/optimization/full field run.
+Independent review, evidence/checkpoint/tracker/handoff, then stop; no full run
+automatically follows. Four-source convergence, finite-wave/phase and full
+reference remain required. Do not confuse OFFLINE costs with Topwater200x gate.
+
 ## Latest checkpoint: common-output source increments fail, integration controlled
 
 Read docs/common-output-sources-001.md and its prospective protocol first.
