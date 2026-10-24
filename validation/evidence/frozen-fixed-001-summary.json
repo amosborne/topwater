@@ -1,0 +1,94 @@
+{
+  "current_commit": "96925446db194ed4f46e45ae74a3a62cf2d27525",
+  "frozen_manifest_sha256": "6d4f75d173a76b16db7d369645ad0f187df746f140f0df15555dfc6604c8d5d3",
+  "canonical_contract_sha256": "1d0be3bc7fd20c08bffdd6b7241a58ada74fb74467ce0dd8921eb089d2621ad1",
+  "geometry_candidate_manifest_sha256": "3a6c2c1e4ac9150a9e5498b8e970e07a63eb49e9233ecd65e4f9b3004ac6c4a7",
+  "verifier_sha256": "92af65abc458643dd200221d0ee294e46fcea3ce7ab5cc561251ce5af7cfaada",
+  "physical_equality_checks": {
+    "wetted_triangles": true,
+    "world_cg": true,
+    "orientation": true,
+    "dry_mass": true,
+    "hydrostatic_stiffness": true,
+    "body_mass": true,
+    "hull_length": true,
+    "hull_beam": true,
+    "input_json_bytes": true
+  },
+  "unchanged_contract_sections": {
+    "format_version": true,
+    "implementation": true,
+    "physical_problem": true,
+    "cases": true,
+    "candidate_numerics": true,
+    "normalization": true,
+    "acceptance": true,
+    "time_domain_wave_controls": true,
+    "eventual_qualification": true,
+    "reference_numerics.maximum_estimated_workspace_bytes": true,
+    "reference_numerics.maximum_elapsed_seconds": true,
+    "reference_numerics.cpu_threads": true,
+    "reference_numerics.capytaine_version": true,
+    "reference_numerics.finite_green_settings": true,
+    "reference_numerics.infinite_green_settings": true,
+    "reference_numerics.richardson_extrapolation": true
+  },
+  "seed_bitwise_candidate_equal": true,
+  "levels": [
+    {
+      "level": 1,
+      "subdivisions": 2,
+      "panels": 1232,
+      "bitwise_candidate_equal": true,
+      "radius_error_m": 0.0,
+      "geometry": {
+        "facets": 7,
+        "panels": 1232,
+        "waterline_edges": 136,
+        "maximum_moment_difference": 2.1316282072803006e-14
+      }
+    },
+    {
+      "level": 2,
+      "subdivisions": 3,
+      "panels": 2772,
+      "bitwise_candidate_equal": true,
+      "radius_error_m": 0.0,
+      "geometry": {
+        "facets": 7,
+        "panels": 2772,
+        "waterline_edges": 204,
+        "maximum_moment_difference": 1.2789769243681803e-13
+      }
+    },
+    {
+      "level": 3,
+      "subdivisions": 4,
+      "panels": 4928,
+      "bitwise_candidate_equal": true,
+      "radius_error_m": 0.0,
+      "geometry": {
+        "facets": 7,
+        "panels": 4928,
+        "waterline_edges": 272,
+        "maximum_moment_difference": 4.263256414560601e-14
+      }
+    },
+    {
+      "level": 4,
+      "subdivisions": 5,
+      "panels": 7700,
+      "bitwise_candidate_equal": true,
+      "radius_error_m": 0.0,
+      "geometry": {
+        "facets": 7,
+        "panels": 7700,
+        "waterline_edges": 340,
+        "maximum_moment_difference": 3.730349362740526e-14
+      }
+    }
+  ],
+  "all_current_producers_match": true,
+  "qualification_status": "unqualified; geometry/control proof only; no hydrodynamic calls",
+  "bundle_sha256": "fcaf28963be08e4443410b8c19d680f1fb81cff3c44a291c34aa69c6e1a9847d"
+}

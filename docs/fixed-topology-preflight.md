@@ -143,3 +143,26 @@ checkpoint. The next bounded study then runs all 132 calls and unchanged
 entrywise convergence/trend/uncertainty gates using those exact frozen meshes,
 after a fresh resource-headroom check. No Richardson estimate or new reference
 qualification follows from this geometry decision.
+
+## Completed canonical adoption proof
+
+The fresh canonical freeze passed at source checkpoint
+96925446db194ed4f46e45ae74a3a62cf2d27525. Its seed and all four actual meshes
+are bit-for-bit equal to candidate 002. All recorded current producers match
+their archives. Original physical arrays/dtypes and input JSON remain exactly
+equal to reset, and every non-reference-numerical contract section is unchanged.
+Capytaine's actual radii equal maximum vertex-to-centroid distances on every
+panel (zero difference in this verification).
+
+[Complete canonical freeze/proof bundle](../validation/evidence/frozen-fixed-001.zip)
+includes the freeze, producers, input JSON, proof/verifier and the complete
+geometry candidate bundle. [Proof summary and SHA256](../validation/evidence/frozen-fixed-001-summary.json).
+The archive README explains extraction and proof reproduction. No hydrodynamic
+solve ran. Current reference qualification remains unproven; this completes
+only the declared geometry checkpoint and prepares study 003.
+
+Final independent adoption audit by fixed_topology_review verified actual
+dtype/shape/bytes for physical arrays and seed/mesh comparisons, current
+producer identities, physical identity and proof hashes. No blocking adoption
+finding remains. Study 003 still requires its fresh OS-memory check and every
+unchanged hydrodynamic convergence gate.
