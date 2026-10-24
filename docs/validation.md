@@ -55,6 +55,12 @@ uv run --locked python -m tests.validation freeze --output artifacts/validation/
 `freeze` records actual inputs, wetted panels, equilibrium pose, world CG, full
 dry mass matrix, restoring matrix, current producer identities and the complete
 study preflight. Its successful exit only validates the freeze operation.
+The inspected reset snapshot is retained in
+[`validation/frozen-physical-inputs.json`](../validation/frozen-physical-inputs.json).
+The actual calm-water wet surface has 17 panels; the declared reference levels
+have 68, 272, 1,088 and 4,352 panels. The finest conservative workspace estimate
+is approximately 3.85 GB, within the declared 8 GiB estimate cap. This is a
+preflight, not measured resource usage or a convergence result.
 
 **Next separate goal: Capytaine reference convergence.** Execute only:
 
