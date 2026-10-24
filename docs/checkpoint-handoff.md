@@ -1,6 +1,50 @@
 # Checkpoint handoff
 
-## Latest checkpoint: paired body-only uniform family rejected
+## Latest checkpoint: fixed-source centroid pressure quadrature rejected
+
+Read docs/frozen-source-quadrature-001.md and its prospective protocol first.
+Branch baseline/fluid-body; numerical sourcea2a8100. Goal ACTIVE/INCOMPLETE:
+qualified reference then own nonlinear TD6DOF canonical boat>=1s, <=1cm/.1degree
+including uncertainty, <=200wall s/s including normal Topwater preparation.
+No complete nonlinear RHS, TD motion or usable speed exists.
+
+- Frozen-source-quadrature-001 completed4levels/73440targets in60.216s external
+  reference work, zero newBEM solves. Exact session82940 terminalexit1 bydesign,
+  completeTrue/passedFalse. Source864 normalized Cpt indirect densities unchanged.
+  Native centroidφ/all36loads reproduced; all4 target/owner/weight/field sets saved.
+- Centroid4/16/64child integration fails stabilization:18previous/17latest entries,
+  maxratio596.21/282.18; trendpasses. Source/full-reference flags remainfalse.
+  Measured pitch outputchange-636.547kg m² versus native meshchange-429.542,
+  remainder+207.005. Several components oppose/cancel. This is measured accounting,
+  not a continuum bound or pure source-error estimate. Remainder also contains
+  finer-native output quadrature error. Old failed reference/body gates unchanged.
+- Derived frozen-quadrature-attribution-001 saves every signed/absolute entry and
+  opposing-component masks; exact producer program archived. Independent audit
+  rebuilt all73440ownedpoints, loads, telescopes and failuremasks/provenance.
+- Complete evidence validation/evidence/frozen-source-quadrature-001.zip, summary.
+  SHA c3e93235371cf72ef296dab1245afacb9a7e5e9ec47ca9621643717e0a053ada.
+  Run restore_shared_inputs.py after extraction (shared parent and data payloads).
+  Fresh restoration/owned graphs verified. All268tests passed, JUnit saved;
+  exact session45615 terminalexit0. No numerical jobs live.
+
+**Exact next bounded correction:** use a Duffy–Gauss integration rule with the SAME
+864 frozen Cpt normalized sources, before remeshing. Proposednative0 +orders8/12/16
+give864/55296/124416/221184points. Declare600s offline budget before launch; one
+native thread, <=100pointblocks, noBEM solves. Map leggauss to[0,1], barycentric
+lambda=((1-u)(1-v),u,(1-u)v), relative weights2(1-u)wu*wv. Verify constants/linear/
+polynomial moments and strict owner/area proofs. Avoid vertex-order odd artefacts:
+sample one verified half and reflect target GEOMETRY/owners, but evaluate S*sigma
+independently at BOTH halves using the entire frozen source array. Do not mirror
+potentials, average matrices or assume a convergence rate for edge-log traces.
+Reproduce nativeφ/loads first, retain all36 complex/signed/absolute matrices and
+unchanged stabilization criteria; fullref/source flags stayfalse even if stabilized.
+The original paired-study bundle remains the source input; Topwaterχaux is never
+an indirect density. Current midpoint source/input graph is archived and its
+failed outcome must survive any producer refactor. After review/checkpoint, use
+the result to choose controlled integration or further spatial work. Earlier
+reference/pressure/field context follows.
+
+## Prior checkpoint: paired body-only uniform family rejected
 
 Read docs/paired-body-study-001.md and docs/paired-body-protocol.md first. Branch
 baseline/fluid-body; numerical source223050d. Goal ACTIVE/INCOMPLETE. No qualified
