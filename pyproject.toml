@@ -12,8 +12,10 @@ license = "MIT"
 license-files = ["LICENSE"]
 authors = [{ name = "Alex Osborne" }]
 dependencies = [
+    "numba>=0.67",
     "numpy>=2.0",
     "scipy>=1.14",
+    "threadpoolctl>=3.7.0",
 ]
 
 [project.urls]
@@ -21,7 +23,12 @@ Repository = "https://github.com/amosborne/topwater"
 Issues = "https://github.com/amosborne/topwater/issues"
 
 [dependency-groups]
-dev = ["pytest>=8"]
+correlation = [
+    "capytaine==3.0.0",
+]
+dev = [
+    "pytest>=8",
+]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/topwater"]
