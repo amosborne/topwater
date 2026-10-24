@@ -15,6 +15,7 @@ from tests.laplace_reference import triangle_samples
 from tests.benchmark_rankine import peak_rss_bytes
 from .regularized_snapshot import owned
 from .operator import assemble_energy
+from .boat_spatial_work import subdivide
 
 
 def checkpoint(args, report, arrays):
@@ -46,6 +47,43 @@ def mirrored_mesh(triangles):
     return mesh, odd
 
 
+def refine_once(triangles):
+    """Existing midpoint owner and reviewed arithmetic geometry preflight.
+
+    The same plane/area/moment checks were reviewed for
+    boat_odd_body_refinement; skinny normalized-normal differences are not a
+    geometry acceptance condition. No vertex changes beyond midpoint arithmetic.
+    """
+    old=TrianglePanels(triangles,-1)
+    fine=subdivide(triangles)
+    panels=TrianglePanels(fine,-1)
+    parent=np.tile(np.arange(len(old)),4)
+    np.testing.assert_allclose(panels.areas,np.tile(old.areas/4,4),rtol=1e-12,atol=1e-14)
+    original_offset=triangles-triangles[:,:1]
+    original_defect=np.max(abs(np.einsum('tvi,ti->tv',original_offset,old.geometric_normals)),axis=1)
+    offset=fine-triangles[parent,:1]
+    defect=abs(np.einsum('tvi,ti->tv',offset,old.geometric_normals[parent]))
+    allowance=original_defect[parent,None]+64*np.finfo(float).eps*np.sum(
+        abs(fine)+abs(triangles[parent,:1]),axis=2)
+    if np.any(defect>allowance):
+        raise ValueError('midpoint children leave original parent planes beyond arithmetic allowance')
+    if np.any(np.sum(panels.normals*old.normals[parent],axis=1)<=0):
+        raise ValueError('midpoint subdivision reverses physical winding')
+    first=(panels.areas[:,None]*panels.centroids).reshape(4,len(old),3).sum(axis=0)
+    original_first=old.areas[:,None]*old.centroids
+    first_allowance=(abs(panels.areas.reshape(4,len(old))-old.areas[None,:]/4)[:,:,None]
+        *abs(panels.centroids.reshape(4,len(old),3))).sum(axis=0)
+    first_allowance+=64*np.finfo(float).eps*old.areas[:,None]*np.max(abs(triangles),axis=1)
+    if np.any(abs(first-original_first)>first_allowance):
+        raise ValueError('midpoint subdivision changes original first moments beyond arithmetic allowance')
+    return fine,dict(max_parent_plane_defect_m=float(defect.max()),
+        max_parent_plane_arithmetic_allowance_m=float(allowance.max()),
+        area_difference=float(panels.areas.sum()-old.areas.sum()),
+        first_moment_difference=(first-original_first).sum(axis=0).tolist(),
+        max_normal_difference_report_only=float(abs(panels.normals-old.normals[parent]).max()),
+        scope='Reviewed floating arithmetic plane/area/first-moment preflight, not a certified interval')
+
+
 def run(args, report):
     family, reference = owned(args.family), owned(args.reference)
     if family['parents']['reference'] != sha256(args.reference.read_bytes()).hexdigest():
@@ -63,13 +101,20 @@ def run(args, report):
         cached={name:z[name].copy() for name in ('ritz_added_mass','direct_added_mass','capytaine_added_mass','dry_mass')}
         np.testing.assert_array_equal(triangles,z['triangles'])
         np.testing.assert_array_equal(center,z['world_cg'])
+    parent_triangle_sha=sha256(triangles.tobytes()).hexdigest()
+    if parent_triangle_sha!=reference['panel_sha256']:
+        raise ValueError('original physical parent triangle SHA differs before numerical refinement')
+    refinement_geometry=None
+    if args.refinement:
+        triangles,refinement_geometry=refine_once(triangles)
+    orders=(4,8,16) if args.refinement==0 else (4,8)
     mesh, odd = mirrored_mesh(triangles)
     panels = TrianglePanels.from_mesh(mesh, normal_sign=-1)
     nf,nv,nb = len(panels),len(mesh.vertices),len(triangles)
     lower_load=body_load(mesh,panels,np.arange(nb),center)
     B=odd.T@lower_load
-    pair_bound=nf*nf*(4**2+8**2+16**2)
-    memory=8*(8*nf*nf+8*nf*nv+12*nv*nv+nf*16**2*4)+32*1024**2
+    pair_bound=nf*nf*sum(q*q for q in orders)
+    memory=8*(8*nf*nf+8*nf*nv+12*nv*nv+nf*max(orders)**2*4)+32*1024**2
     if pair_bound>args.maximum_pairs or memory>args.maximum_bytes:
         raise RuntimeError('mirrored energy source/workspace preflight exceeds budget')
     factor_dry=cholesky(cached['dry_mass'],lower=True)
@@ -87,6 +132,9 @@ def run(args, report):
     arrays=dict(vertices=mesh.vertices,faces=mesh.faces,odd_lift=odd,lower_load=lower_load,
         odd_lower_load=B,triangles=triangles,world_cg=center,**cached)
     report.update(complete=False,qualified=False,body_panels=nb,mirrored_panels=nf,
+        refinement_level=args.refinement,parent_triangle_sha256=parent_triangle_sha,
+        current_triangle_sha256=sha256(triangles.tobytes()).hexdigest(),
+        refinement_geometry=refinement_geometry,predeclared_orders=list(orders),
         closed_nodes=nv,odd_nodes=odd.shape[1],exact_seam_nodes=int((mesh.vertices[:,2]==0).sum()),
         source_pair_bound=pair_bound,array_workspace_bound_bytes=memory,density_kg_m3=WATER_DENSITY,
         memory_scope='Array/workspace preflight excludes Python/Numba/library baseline; not a process-RSS cap',
@@ -97,7 +145,7 @@ def run(args, report):
         body_orders=[],archived_refinement=reference['archived_body_refinement'])
     checkpoint(args,report,arrays)
     previous=None
-    for order in (4,8,16):
+    for order in orders:
         started=perf_counter();row=dict(order=order,accepted=False,source_pair_reservation=nf*nf*order*order)
         report['body_orders'].append(row)
         try:
@@ -138,6 +186,12 @@ def run(args, report):
                     zip(difference.diagonal(),cached[name].diagonal(),strict=True)],
                     dry_mass_whitened_difference=white.tolist(),
                     dry_mass_whitened_relative_operator_norm=ratio(np.linalg.norm(white,2),np.linalg.norm(whiten(cached[name]),2)))
+            row['archived_refinement_diagonal_comparisons']=[]
+            for item in reference['archived_body_refinement']:
+                row['archived_refinement_diagonal_comparisons'].append(dict(
+                    level=item['level'],panels=item['panels'],
+                    direct_relative_difference=[ratio(a-b,b) for a,b in zip(A.diagonal(),item['direct_diagonal'],strict=True)],
+                    source_relative_difference=[ratio(a-b,b) for a,b in zip(A.diagonal(),item['source_diagonal'],strict=True)]))
             if previous is not None:
                 row['previous_order_added_mass_difference_max']=float(abs(A-previous).max())
                 row['previous_order_diagonal_relative_change']=[ratio(a-b,b) for a,b in zip(A.diagonal(),previous.diagonal(),strict=True)]
@@ -156,6 +210,7 @@ def run(args, report):
         'Physical q4 port checks polynomial lower-P1 load reconstruction, not the half-energy factor or continuum added-mass accuracy',
         'The half-energy factor follows odd-reflection energy symmetry and is tested physically through external added-mass comparisons',
         'Independent references retain their own discretization and raw asymmetry',
+        'Refinement changes both P1 trace and P0 auxiliary flux spaces; strict monotonic added mass is not asserted',
         'Whole-plane zero-potential instantaneous/infinite-frequency limit only; no finite-frequency, moving, nonlinear6DOF or trajectory qualification'])
     checkpoint(args,report,arrays)
 
@@ -166,6 +221,7 @@ if __name__=='__main__':
         parser.add_argument('--'+name,type=Path,required=True)
     parser.add_argument('--maximum-pairs',type=int,default=10_000_000)
     parser.add_argument('--maximum-bytes',type=int,default=128*1024**2)
+    parser.add_argument('--refinement',type=int,choices=(0,1),default=0)
     args=parser.parse_args()
     if args.output.exists() or args.output.with_suffix('.source').exists() or min(args.maximum_pairs,args.maximum_bytes)<=0:
         parser.error('fresh source/output and positive bounds required')
