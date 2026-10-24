@@ -1,0 +1,97 @@
+{
+  "status": "Crossed Gamma quadrature control completed; raw errors remain visible",
+  "producer_commit": "5b82d26 (integrated7263904)",
+  "evidence": {
+    "artifacts\\odd-gamma-gram.json": "16aea5ff5711b072e766fb06c15fd145d68ddb0610819054f9a9603c6138b73a"
+  },
+  "stages": [
+    {
+      "component": "Kcontact",
+      "order": 4,
+      "seconds": 10.306963400013046,
+      "maximum_action_difference_from_saved_q4": 4.336808689942018e-18,
+      "HH_plane": {
+        "real": 0.001327754024752086,
+        "imag": -3.404818796012018e-05
+      },
+      "HH_plane_change": {
+        "real": -1.482999098697728e-20,
+        "imag": 4.787878765539925e-20
+      }
+    },
+    {
+      "component": "Kcontact",
+      "order": 8,
+      "seconds": 34.67240160002257,
+      "maximum_action_difference_from_saved_q4": 4.304827128696825e-06,
+      "HH_plane": {
+        "real": 0.0013273091218282396,
+        "imag": -3.4013982176903015e-05
+      },
+      "HH_plane_change": {
+        "real": -4.449029238464165e-07,
+        "imag": 3.420578321721328e-08
+      }
+    },
+    {
+      "component": "Fwork",
+      "order": 8,
+      "seconds": 5.517139999981737,
+      "HR_plane": {
+        "real": -3.017488624777887e-06,
+        "imag": 6.618950428259155e-06
+      }
+    },
+    {
+      "component": "Fwork",
+      "order": 16,
+      "seconds": 21.92569000000367,
+      "HR_plane": {
+        "real": -2.860170338699607e-06,
+        "imag": 6.637737114496222e-06
+      }
+    }
+  ],
+  "raw_blocks": {
+    "raw_HH": {
+      "real": 0.0018971015145279406,
+      "imag": -3.391155681916247e-07
+    },
+    "raw_RR": {
+      "real": 0.00036937650194621184,
+      "imag": -2.639331564803417e-08
+    },
+    "raw_HR": {
+      "real": -0.00029945670681999725,
+      "imag": 2.0288923734648898e-05
+    },
+    "raw_RH": {
+      "real": -0.0002993113802432423,
+      "imag": -2.0372541016570743e-05
+    },
+    "determinant": {
+      "real": 6.107005751504526e-07,
+      "imag": -2.0332039713337821e-10
+    },
+    "cross_conjugacy_defect": {
+      "real": -1.4532657675495704e-07,
+      "imag": -8.361728192184527e-08
+    },
+    "cross_conjugacy_relative": 0.00027937371082082714
+  },
+  "source_pairs": 463888960,
+  "limits": [
+    "Only Gamma contact q8 and source-work q16 change; cached body16 never reevaluated",
+    "All saved affected rows included, all positive pieces retained; other FFT rows unchanged",
+    "Collapsed q4/q8-work parity are numerical ownership controls, not independent continuum error bounds",
+    "Raw complex blocks are not averaged, repaired or used as a solver",
+    "No full operator/F matrix, extra body quadrature, spectrum, transient or physics qualification"
+  ],
+  "interpretation": [
+    "Cached body16 integrals never reevaluated. All affected Kcontact rows refined4-to8; Fscalarwork refined8-to16 on the same owned field pair",
+    "Collapsed Kq4 differs from archived contact rows by4.34e-18; Fq8 work parity passes",
+    "Cross-adjoint discrepancy falls.05322%-to.02794%; this measures quadrature sensitivity, not full passivity/accuracy",
+    "Next build one new quadrature-defined symmetric Green-energy owner and differentiate both terms. Do not symmetrize the old evolution operator or make raw diagnostic failures pass"
+  ],
+  "qualification": "No full operator, new spectrum, trajectory or throughput qualification"
+}

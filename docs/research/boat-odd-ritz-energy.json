@@ -1,0 +1,105 @@
+{
+  "status": "Full fixed-body quadrature-defined energy is positive; physical accuracy NOT qualified",
+  "producer_commits": "cdf301f+cc107c8+b3b6efe (integrated554e173+2f0718c+b3b6efe)",
+  "evidence": {
+    "artifacts\\odd-ritz-full.json": "ab0020ce3e3915d6186643a37c3dd1a844ea6c20e4608918f20f3621013372be"
+  },
+  "definition": "New scalar physical-boundary symmetric Green integrand. Differentiate BOTH terms for wave/source/body ports, then eliminate source density with area-scaled Cholesky. This is not a repair of the old evolution operator.",
+  "quadrature": {
+    "Kcontact": 8,
+    "F": 16,
+    "body": 16
+  },
+  "raw_diagnostics": {
+    "HH_adjoint_relative": 0.003670113026873344,
+    "cross_adjoint_relative": 0.008333630438353666,
+    "RR_adjoint_relative": 0.00040010534422118616
+  },
+  "raw_gram_reference_max": 2.734726454887724e-19,
+  "source_and_port_controls": [
+    {
+      "name": "source_stationarity",
+      "maximum_absolute": 1.6653348898680922e-16,
+      "arithmetic_allowance": 1.7089639059801216e-10
+    },
+    {
+      "name": "wave_flux_unreduced_gradient",
+      "maximum_absolute": 1.804112435377248e-16,
+      "arithmetic_allowance": 2.169563968277919e-10
+    },
+    {
+      "name": "body_port_unreduced_gradient",
+      "maximum_absolute": 5.329071947568658e-15,
+      "arithmetic_allowance": 4.0982361619366155e-09
+    }
+  ],
+  "raw_field_FD": [
+    {
+      "h": 0.0001,
+      "derivative": 0.0009089459748805534,
+      "absolute_error": 4.016969049058794e-16,
+      "absolute_directional_gradient_scale": 0.0017331062450566634,
+      "arithmetic_allowance": 1.6052865253891412e-09
+    },
+    {
+      "h": 5e-05,
+      "derivative": 0.000908945974878385,
+      "absolute_error": 1.7667074400651295e-15,
+      "absolute_directional_gradient_scale": 0.0017331062450566634,
+      "arithmetic_allowance": 3.2087476282512352e-09
+    }
+  ],
+  "potential_port_parity": 1.5085612560290513e-17,
+  "spectrum": {
+    "minimum_mu": 0.35807880643725143,
+    "maximum_mu": 46242.196086651646,
+    "negative_mu_count": 0,
+    "positive_reduced_energy": true,
+    "maximum_growth_per_s": 0.0,
+    "selected_relative_residuals": [
+      3.236260795058929e-12,
+      2.424100077001143e-12,
+      1.456132367320372e-12,
+      1.75272175745247e-12,
+      1.0522507841801931e-12,
+      1.4104909525249934e-12,
+      2.0326100028706116e-13,
+      1.4051303528869378e-12
+    ]
+  },
+  "physical_discrepancies": {
+    "raw_body_neumann_work": {
+      "real": 0.0003025694706169389,
+      "imag": 2.68907933453539e-05
+    },
+    "old_nystrom_body_neumann_work": {
+      "real": 0.0003432609779213721,
+      "imag": 2.6927118896645298e-05
+    },
+    "old_physical_flux_mass_norm": 0.1340430757343419,
+    "physical_variational_flux_difference_mass_norm": 0.1389249094336762,
+    "old_to_ritz_sigma_relative": 3.848868394560613
+  },
+  "resources": {
+    "diagnostic_seconds": 163.00254750001477,
+    "peak_process_rss_bytes": 553865216,
+    "array_workspace_preflight_bytes": 416467136,
+    "scope": "Static verification including setup/quadrature/spectrum, NOT simulation speed"
+  },
+  "interpretation": [
+    "All actual-field derivative, source-stationarity and six-port algebraic ownership controls pass; complete G/M spectrum has no negative eigenvalues",
+    "Maximum mu46242 implies a stiff water subspace; positive energy alone earns neither integration performance nor accurate physical ports",
+    "The old-mode raw physical-versus-variational flux dual-M norm is.1389 versus.1340 for the old physical flux; these norms are NOT spatial RMS velocities",
+    "Euclidean density coefficient change3.85 is not by itself a physical error norm; compare area-weighted density and actual fields",
+    "New energy model includes actual finite-quadrature derivatives rather than uncritically imposing a continuum-simplified Neumann stationarity"
+  ],
+  "limits": [
+    "Symmetric Green-integrand energy defines a new Ritz discretization; no posthoc operator symmetrization",
+    "Physical water mass only; covered coefficients remain algebraic extension",
+    "Raw body leakage/work and physical-versus-variational flux differences are retained",
+    "Zero exterior trace outside compact patch is not open-water propagation",
+    "No nonlinear, moving-domain, transient, 60s motion or runtime qualification"
+  ],
+  "baseline_promoted": false,
+  "next_gate": "Independent six-motion instantaneous added-mass comparison at whole-plane zero acceleration potential; no wave-patch far-boundary ambiguity"
+}
