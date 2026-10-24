@@ -1,5 +1,5 @@
 {
-  "status": "draft_source_only_pending_independent_review_no_execution",
+  "status": "ready_for_coordinator_execution_allocation",
   "case": "reference/capytaine/canonical-boat.json",
   "native_mat": "artifacts/reference/generated-bank-native-20261024/attempt1/native.mat",
   "radiation_mat": "artifacts/reference/generated-bank-native-20261024/attempt1/radiation.mat",

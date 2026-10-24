@@ -1,8 +1,8 @@
 # Native harmonic energy witness: exactly3 solves, source only
 
-Status: independent final source/math/API review PASS at the source/controls/archive
-identities below; no READY
-status, numerical fixtures or native solve executed. Latest physical requirements
+Status: independent source review, coordinator allocation and EXACT3 native solves
+completed; independent executed evidence/sign review PASS. Original proposal is
+retained below, followed by executed results. Latest physical requirements
 are rest/zero velocity/zero radiation memory, viscous off, full60s startup and
 physics-based pruning. Old unpruned stationary-history prototypes and stopped
 geometry audits retain their own policies; none becomes the final case.
@@ -132,3 +132,50 @@ dependency file hash, the actual reactive-A fixture, full six-force projection,
 immediate solve counter and exactly three definitions/same fixed68 field. No
 fixture or solve was run by reviewer or author for readiness. READY status and
 fresh proposal/HEAD freeze still require the coordinator's later allocation.
+
+## Executed witness and limits
+
+ONE allocated job used exactly the reviewed source60c618b7. READY controls changed
+status only, SHA6953c2a9bcb39144c8a34d69ac17db8076ba8755c081dbbac3da436f56ee2d54;
+frozen proposale14cd705e9a2fe09c58148c9441d64ebdf322be521e5a8600db5f0dbfdd7a6a3,
+source commit7a3df948a7dd9c8a67b936e0053a12053e4cbec0. Output:
+`artifacts/reference/native-energy-witness-20261024/attempt1`, manifest
+87b16e06772844fc1945c28925dda4f59ea309078587bcf7080930a304d266ab.
+Per-case work.json and details.mat retain p/Phi/sigma/BC, physical normals/areas/
+centers/displacement, six forces, metadata and both Kochin angular grids. Raw
+warnings and every frozen source/input/dependency identity are preserved.
+
+Claim94e343 exit0, SEPARATE Verify6c31e2 exit0, Run session25105; producer28852,
+guard2704, UTC launch21:06:30.348715. Exactly3 solves/56.113441s, one CPU thread,
+guard exact sole-child wait0 and tool terminal8aa27b exit0. Producer source spawns
+no subprocess and helper main functions are not invoked. Idle under leasebff577,
+separate idle prooffcc80c, final releasee24ff4, all exit0. No followup allocated.
+
+| Prescribed radiation |Panel outward work W/zeta2 |Force-projected work |Integral abs(Kochin)2,360/720 |
+| --- | ---: | ---: | --- |
+|17 fixed c,omega2.2 |-447.744474438 |-447.744474438 |0.152909753928/0.152909753928 |
+|17 pure Heave,omega1 |2655.993243519 |2655.993243519 |3.816989541456/3.816989541456 |
+|68 SAME fixed c,omega2.2 |1362.465316707 |1362.465316707 |0.120137052721/0.120137052721 |
+
+Unit zeta is normalization, not a simulated large motion. Source also reports
+physically small zeta1e-3 scaled work; no time-domain body was prescribed or run.
+The17-panel work agrees with exact stored-basis projection to roundoff. Positive
+diagonal entries at2.2 do not rescue the negative total coupled work. Pressure-work
+and generalized-work identities verify sign/work-conjugate interpretation of the
+same discrete solution; they are not independent physical convergence tests.
+
+Independent executed reviewer recomputed raw triangle geometry/BC/p=i*rho*omega*Phi,
+all force/moments and work; force discrepancy<=1.46e-11, stored17 basis<=7.73e-12.
+SAMEc17/68 exact. Manual Kochin agrees<=6.7e-16;360/720 norms agree. All frozen
+inputs/output hashes and terminal/idle/lease proof pass. Algebra positive-B and
+nonzero real-A-reactive-work fixtures pass, as do per-parent surface invariants.
+
+Physical consequence: the raw17 discrete radiation operator is not physically
+passive for this real prescribed field; the SAME field reverses work sign when
+only planar surface discretization changes to68. That is strong mesh sensitivity,
+not proof of a library implementation bug or a qualified68 operator. Source still
+warns68 radius1.839m>wavelength/8=1.592m at2.2. No full frequency band, IRF kernel,
+coupled motion accuracy, incident cutoff or replacement coefficients are qualified.
+Absolute Kochin power normalization remains unresolved and unclaimed; angular norm
+convergence alone does not certify energy magnitudes. No coefficients fitted,
+zeroed, symmetrized or adopted. Stop after this one job and report to coordinator.

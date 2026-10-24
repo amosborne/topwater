@@ -6,50 +6,29 @@
   "manifest": null,
   "active_numerical_job": null,
   "last_terminal_evidence": {
-    "job": "REF-002 ONE batchedseededactual3001geometryrecovery",
-    "owner": "/root/briefing_readiness",
-    "outcome": "INTENTIONAL_STEERING_STOP_UNPRUNED_BANK_SUPERSEDED",
-    "physical_acceptance": false,
-    "producer_pid": 34632,
-    "owner_launcher_pid": 37272,
-    "session_handle": 97782,
-    "tool_terminal_chunk": "782b89",
-    "tool_exit_code": -1,
-    "producer_exit_code_windows": 4294967295,
-    "launched_at": "2026-10-24T20:19:10.938830+00:00",
-    "stop_recorded_at": "2026-10-24T20:26:20.286729+00:00",
-    "identity_stop_evidence": {
-      "tool_chunk": "108e80",
-      "command_exit0": true,
-      "verified_pid": 34632,
-      "verified_parent": 37272,
-      "verified_creation_epoch_ms": 1792873150929,
-      "verified_exact_command": [
-        "C:\\Users\\alex\\topwater\\.venv\\Scripts\\python.exe",
-        "-u",
-        "reference/capytaine/actual_wave_geometry_batch.py",
-        "--config",
-        "reference/capytaine/actual_wave_geometry_batch_config.json",
-        "--output",
-        "artifacts/reference/actual-wave-geometry-seeded-20261024/batch-attempt1"
-      ],
-      "action": "Stop-Process ONLY verified producer34632; left guard to wait"
+    "job": "Official provided regularCIC RM3 200s golden regression",
+    "owner": "/root/wecsim_reference",
+    "producer_pid": 34992,
+    "owner_launcher_pid": 25872,
+    "session_handle": 70311,
+    "exit_code": 0,
+    "terminal_chunk": "e1c9a2",
+    "authoritative_terminal_chunk": "68b7b4",
+    "only_engine_child": "known nonnumerical mwdocsearch33628",
+    "frozen_inputs_match": true,
+    "output": "artifacts/reference/official-examples-20261024-ready2/cic/official/tests/RegressionTests/RegularWaves/regularCIC",
+    "output_sha256": {
+      "audit.json": "e8386d8b2eedf138c681f5aa7395b2f286b0b5f175f6a8eb61a99741cbe613b9",
+      "audit.mat": "57b4179a177117b11888c79e1273d13b346817648bd27c7a6bf47a6cfbe996fb"
     },
-    "terminal_evidence": "Guard exact sole child wait returned4294967295, tool session returned?1; intentionalsteering stop, not numericfailure/completion",
-    "last_compact_checkpoint_samples": 1641,
-    "parseable_preserved_JSONL_rows": 1645,
-    "invalid_JSONL_line_indices": [],
-    "last_checkpoint_compute_seconds": 361.8087217999855,
-    "triangle_evaluations_at_checkpoint": 6208163,
-    "all_frozen_inputs_match": true,
-    "partial_output_sha256": {
-      "manifest.json": "c300d066260fefdf1054c813ed8fd35ee244a559a7788c4ab2237dfc28edd811",
-      "geometry-results.jsonl": "49e352f6c71160973e3b899a73ee0c3b45c748e5520c8b2dbe539092a32be2b0"
-    },
-    "proposal_sha256": "c43f377049aaa8b5a7fe0a62fee459c6228145e4dbf8a5d5bee227c3d571214f",
-    "normal_finalization_not_run": true,
-    "prefix_overlap_not_executed": true,
-    "limits": "Pruning latestuserdirection supersedes this unpruned bank; no finalarray/fullcoverage/physicalclaim; all source/partial outputs retained"
+    "implementation_checks_pass": true,
+    "elapsed_s": 28.2803306,
+    "golden_errors_m": [
+      4.156675004196586e-13,
+      1.0658141036401503e-13,
+      3.126388037344441e-13
+    ],
+    "limits": "Provided official golden1e-5 passed; does not validate customboat BEM/energy/passivity"
   },
-  "note": "Intentionalsteering stop exactownedproducer only; guard/tool terminal observed. Idle written whileleaseheld; separate idle proof before finalrelease. No newjob orsourceedit."
+  "note": "Idle recorded UNDER lease; separate idle readback then final release required."
 }

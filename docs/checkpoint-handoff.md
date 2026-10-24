@@ -16,10 +16,12 @@ LATEST steering supersedes the unpruned stationary-history prototype:
   support accurately. Establish the theoretical basis first; no arbitrary cutoff
   or tuning to roll amplitude. Source remains collected-buoy data. Retained energy,
   directional spread and phases must not be rescaled/fitted. Report removed energy.
-- Startup is the intended rest/zero-prior-body-motion problem: zero velocity and
+- Startup is TRUE locally calm water with incoming waves initially upstream,
+  boat at rest, zero velocity and
   **zero radiation memory**. The prior stationary q/v/history seed is a different
   initial-value problem and is NOT the final requested startup. Specify the
-  incident field and initial pose consistently; do not quietly reintroduce a
+  incident field and initial pose consistently. Body rest in an established sea
+  does not satisfy this requirement. No hidden force ramp; do not reintroduce a
   steady-history seed to remove physical free-mode transients.
 - **Viscous damping stays off.** No added damping to suppress numerical problems.
   A later viscous model would need independent justification and matching physics
@@ -46,13 +48,29 @@ native pressure-work/radiated-energy witness before assigning cause. Mesh/
 irregular-frequency/formulation sensitivity is evidence of unreliable numerical
 results, not automatically a library bug. WEC-Sim importing/CIC/wrench checks pass.
 
-NEXT assignments are bounded read-only/source proposals for physics-based band
-policy, direct native energy/sign verification and correct zero-memory startup.
-Producer energy witness SOURCE independently PASS60c618b7, controlsc7a3605d,
-proposal8689cc83. Exactly3native solves planned:17coupled2.2,17Heave1positive,
-68SAMEfixedcoupled2.2. No absoluteKochinpower normalization claim, no fitted
-prefactor, no cutoff/bug conclusion from3points. Checkpoint then explicit grant.
-No new numerical job is allocated yet. Do NOT finish or encode the old unpruned
+Latest user request: test assumptions against WEC-Sim's own provided examples.
+COMPLETED two serial native runs on pinned fork, official physical inputs unchanged:
+standard RM3 regular400s and provided regularCIC200s regression. Both PASS;
+CIC full-history float/spar/relative-heave errors <=4.157e-13m versus official
+1e-5m tolerance. Initial velocities/radiation forces zero. CIC instantaneous
+resisting power can be negative while cumulative work stays nonnegative here.
+This supports the exercised implementation, not our boat BEM accuracy/passivity.
+Their native100s wave ramp/PTO/constraints are retained, not our final startup.
+[Executed receipts](experts/wecsim_expert/official-examples-readiness-2026-10-24.md).
+
+Producer direct pressure-work witness also executed:17-panel coupled2.2rad/s
+outgoing mean power -447.744W per squared motion scale; same physical coupled
+motion on68panels gives +1362.465W. Positive17-panel heave control passes.
+Mesh sensitivity is established; no Capytaine bug or qualified replacement/cutoff.
+Original10s coefficients contain the same offending matrix; actual10s cumulative
+CIC resisting work remains nonnegative (+1.2533J final). No absolute Kochin power
+normalization claim. [Witness](experts/capytaine_expert/native-energy-witness-proposal-2026-10-24.md).
+
+NEXT bounded SOURCE/READINESS ONLY: one mild physical incoming packet60s,
+true locally calm startup, all6free, zero velocity/memory and viscous off,
+using original packet machinery. Independent source review before any execution
+grant. This is a diagnostic with an unqualified operator, not the final buoy case.
+No new numerical job is allocated. Do NOT finish or encode the old unpruned
 seeded prototype as the canonical validation case.
 
 ## Preserved evidence and prototypes
@@ -121,15 +139,16 @@ new pruned input will need new binding/appropriate component-count handling.
 ## Execution and integration
 
 [Execution ledger](experts/execution-state.json) owns liveness. All jobs terminal;
-intentional stoppedbatch idleunderlease/separate7aed12/readback+finalrelease done.
+latest official CIC job terminal0, inputs verified, idle-under-lease recorded,
+separate readback and final lease release completed.
 No numerical owner/lease currently. SharedMATLAB9168/launcher37656 are historical
 identities, not proof of liveness; authoritative reconciliation before reuse.
 One serial numerical owner, frozenactualinputs/code/deps, claim?SEPARATEverify?run;
 terminal?idleUNDERlease?SEPARATEreadback?FINALrelease. UTF8-sig ledger readers.
 
-Active branch baseline/fluid-body, latest pushed4c90db7. Preserve otherworktrees,
-all failed/interrupted studies and old original policies. Issue30 updated through
-e5dc02a; latest pruning/zero-memory steering still needs checkpoint/issue refresh.
+Active branch baseline/fluid-body, prior pushed checkpoint7a3df94. Preserve otherworktrees,
+all failed/interrupted studies and old original policies. Official examples and
+true calm-arrival clarification are the current integration checkpoint.
 Do not pushmain/createbookkeepingPR/merge/upstreammessages. Coordinator owns
 scope/acceptance/integration; Cap nativeproducer; WEC dynamics/startup; Topwater
 existinggenerator only; researcher independentmethods. Renderer agent is stopped.

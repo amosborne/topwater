@@ -92,8 +92,12 @@ The existing wavelength>=2beam/.6Hz project support envelope remains; distinguis
 it from numerical mesh/time/IRF coverage. Pruning incident components does not
 repair an unreliable radiation-memory operator.
 
-Final startup: body initially at rest with no prior body motion, zero velocity
-and zero radiation memory. Declare the incident field and initial pose consistently.
+Final startup: body initially at rest in TRUE locally calm water, incoming waves
+initially upstream, no prior body motion, zero velocity and zero radiation memory.
+Body rest in an established stationary sea is insufficient. Declare and verify
+full-hull initial surface/fluid-velocity tails and all six initial excitation
+loads, using the original numerical-calm gates with the new packet's scales.
+No hidden temporal force ramp. Declare incident field and initial pose consistently.
 No stationary-history q/v/CIC seed in that final startup. Viscous damping remains
 off unless separately justified and authorized for matching physics in both models.
 No damping fit, force cancellation, restraints or prescribed post0 trajectory.
