@@ -1,0 +1,15 @@
+{
+  "format_version": 1,
+  "protocol": "docs/fixed-source-export-protocol.md",
+  "levels": [2,3,4],
+  "counts": [2772,4928,7700],
+  "new_source_calls": 18,
+  "maximum_elapsed_seconds": 600.0,
+  "maximum_peak_bytes": 8589934592,
+  "maximum_additional_disk_bytes": 2147483648,
+  "baseline_allowance_bytes": 2147483648,
+  "cpu_threads": 1,
+  "trace_scaled_tolerance": 1e-10,
+  "pilot_bundle_sha256": "e4d43719636db7ac67731b5f98d418b247371b585f2bd89069b3405eaaee2e79",
+  "full_reference_scope": false
+}

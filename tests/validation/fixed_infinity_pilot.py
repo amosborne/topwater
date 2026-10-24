@@ -2,7 +2,6 @@
 from time import perf_counter
 STARTED=perf_counter()
 import argparse,gc,json,shutil
-from hashlib import sha256
 from pathlib import Path
 from zipfile import ZipFile
 from importlib import import_module
@@ -19,13 +18,7 @@ from .finest_consumer import checkpoint_arrays,write_report,verify_arrays,packag
 from .frozen_source_quadrature import evaluate_trace,pressure_matrix,owned_points,mirrored_gauss_targets
 from .paired_body import scaled_check,capytaine_radius_check
 from .reference_mesh import verify_surface
-
-
-def validate_infinite_basis(phi,sigma,boundary,panels,completed,tolerance=1e-10):
-    if completed!=6:raise ValueError('all six freshly solved infinite modes required')
-    for array in (phi,sigma,boundary):
-        if array.shape!=(panels,6) or not np.isfinite(array).all():raise ValueError('missing/nonfinite six-mode infinite basis')
-        if np.any(abs(array.imag)>tolerance*(1+abs(array.real))):raise ValueError('unexpected complex infinite-frequency basis')
+from .ainf_sources import validate_infinite_basis,export_basis
 
 
 def generate(args,c,r,a):
@@ -74,41 +67,21 @@ def generate(args,c,r,a):
     import_module('capytaine.green_functions.Delhommeau_float64')
     with threadpool_limits(1):
         import capytaine as cpt
-        from tests.capytaine_reference import body_from_triangles,MODES
+        from tests.capytaine_reference import body_from_triangles
         if any(row['num_threads']!=1 for row in threadpool_info()):raise ValueError('one native thread required')
         r['native_thread_pools']=threadpool_info();r['surface_proof']=verify_surface(data['wetted_triangles'],triangles)
-        body=body_from_triangles(triangles,data['world_cg'],mean.body.mass);r['radius_error_m']=capytaine_radius_check(body,triangles)
         green=cpt.Delhommeau(tabulation_nr=0,tabulation_nz=0,tabulation_cache_dir=None);budget()
         if green.exportable_settings!=p['green_identity']['recorded']['infinite']:raise ValueError('infinite Green settings changed')
-        r['green_settings']=green.exportable_settings;solver=cpt.BEMSolver(green_function=green)
-        if solver.engine.exportable_settings['linear_solver']!='lu_decomposition':raise ValueError('declared LU solver required')
-        phi=np.zeros((1232,6),complex);sigma=phi.copy();q=phi.copy();A=np.zeros((6,6))
-        a.update(native_potential=phi,normalized_sources=sigma,native_boundary=q,native_Ainf=A,native_points=body.mesh.faces_centers)
-        begin=perf_counter()
-        for j,mode in enumerate(MODES):
-            budget();pb=cpt.RadiationProblem(body=body,radiating_dof=mode,omega=np.inf,rho=1025.,g=9.81,water_depth=np.inf,forward_speed=0.)
-            if j==0:
-                S,K=solver.engine.build_matrices(body.mesh,body.mesh,free_surface=pb.free_surface,water_depth=pb.water_depth,
-                    wavenumber=pb.wavenumber,adjoint_double_layer=True,diagonal_term_in_double_layer=True)
-                # Cache ownership may change during LU; independent pristine matrices.
-                S=S.copy();K=K.copy();budget()
-                r['pristine_operators']={name:dict(shape=list(value.shape),dtype=str(value.dtype),sha256=sha256(np.ascontiguousarray(value).tobytes()).hexdigest()) for name,value in [('S',S),('K',K)]}
-            budget();result=solver.solve(pb,method='indirect',keep_details=True);r['completed_capytaine_calls']+=1;budget()
-            factor=-1j*pb.encounter_omega
-            phi[:,j]=np.asarray(result.potential/factor);sigma[:,j]=np.asarray(result.sources/factor);q[:,j]=np.asarray(pb.boundary_condition/factor)
-            A[:,j]=[result.added_mass[m] for m in MODES]
-            if any(result.radiation_damping[m]!=0 for m in MODES):raise ValueError('nonzero infinite-frequency damping')
-            checkpoint_arrays(args.output,r,a);budget()
-        validate_infinite_basis(phi,sigma,q,1232,r['completed_capytaine_calls'])
-        points=body.mesh.faces_centers;normal=-body.mesh.faces_normals;N=np.c_[normal,np.cross(points-data['world_cg'],normal)]
+        r['green_settings']=green.exportable_settings
         scale=np.sqrt(data['dry_mass'].diagonal()[:,None]*data['dry_mass'].diagonal()[None,:])
-        produced_phi=S@sigma;produced_q=K@sigma;native_load=pressure_matrix(points,normal,body.mesh.faces_areas,phi,data['world_cg'],1025.)
-        r['source_checks']=dict(rigid_normal=scaled_check(q,-N,1.,1e-10),potential=scaled_check(produced_phi,phi,1.,1e-10),
-            normal=scaled_check(produced_q,q,1.,1e-10),native_load=scaled_check(native_load,A,scale,1e-10),
-            original_native_Ainf=scaled_check(A,rd['Ainf'][0],scale,1e-10))
-        a.update(operator_potential=produced_phi,operator_normal=produced_q,potential_residual=produced_phi-phi,normal_residual=produced_q-q,native_integrated_A_complex=native_load)
-        r.update(source_export_verified=True,source_export_seconds=perf_counter()-begin)
-        del S,K,result,pb,solver;gc.collect();stage('source_export_verified');checkpoint_arrays(args.output,r,a)
+        def native_progress(arrays,completed):
+            a.update(arrays);r['completed_capytaine_calls']=completed;checkpoint_arrays(args.output,r,a)
+        def on_solved(completed):r.update(completed_capytaine_calls=completed);write_report(args.output,r)
+        native_arrays,record=export_basis(cpt,green,triangles,data['world_cg'],mean.body.mass,rd['Ainf'][0],scale,budget,native_progress,on_solved)
+        a.update(native_arrays);r.update(record);r['source_export_verified']=True
+        sigma=native_arrays['normalized_sources'];A=native_arrays['native_Ainf']
+        gc.collect();stage('source_export_verified');checkpoint_arrays(args.output,r,a)
+        body=body_from_triangles(triangles,data['world_cg'],mean.body.mass)
         engine=cpt.BEMSolver(green_function=green).engine;seed=data['reference_seed_triangles'];panels=TrianglePanels(seed,-1)
         for order,count in zip(c['gauss_orders'],c['target_counts'],strict=True):
             key=f'target_{order}_';pts,owners,relative,error=mirrored_gauss_targets(seed,order)
