@@ -211,7 +211,8 @@ def run(args,report):
         'Orthogonality/Pythagoras apply to the declared quadrature projection, not the continuum problem',
         'Original source normals own reference Neumann checks; fine physical normals own load ports',
         'Known-flux consistency uses only the SAME loaded fine q8 energy and source field; it is not rigid accuracy and q4/q8 flux sampling remains approximate',
-        'No new body solve, energy quadrature, mesh refinement, placement, moving domain, nonlinear6DOF or trajectory qualification'])
+        'No new source/control BVP solve or body operator assembly; same saved factor is reused for known-field right-hand sides',
+        'No new energy quadrature, mesh refinement, placement, moving domain, nonlinear6DOF or trajectory qualification'])
     checkpoint(args,report,arrays)
 
 
