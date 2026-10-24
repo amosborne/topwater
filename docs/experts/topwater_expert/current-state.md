@@ -1,4 +1,17 @@
-﻿# Current state: Topwater expert (solver implementation HELD)
+# Current state: Topwater expert (solver implementation HELD)
+
+Latest user steering supersedes old queued follow-ups: finalcase60s, rest/zero
+velocity andzero radiation memory, viscousOFF, physics-based incident-band policy.
+Old unpruned/history-seeded case remains evidence, not the requested finalstartup.
+FullCap radiation+diffraction/FK+diffraction applies; projectlambda2beam filter is
+alreadyenforced. No Cap/WEC radiationbug or newlyqualifiedcutoff established.
+See currenthandoff; no source role implies numerical execution permission.
+Read-only data review finds42,575complete directional observations in the frozen
+marine-gyro source library beyond9packaged examples; maxobservedHm06.03052m/
+Tm0212.90863s is metadata, not selectedcase. Whole-band subset must preserve exact
+original component IDs/a/omega/theta/phi and use distinct retained-energy metadata.
+Legacy full-spectrum loader must not silently accept pruned provenance. No source
+edit, new realization/export/field/job performed by that review.
 
 Follow the [handoff](../../checkpoint-handoff.md) for scope. User authorized
 existing sea-state generator inputs for ONE new credible higher-energy canonical

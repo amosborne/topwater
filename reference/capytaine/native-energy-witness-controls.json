@@ -1,0 +1,61 @@
+{
+  "status": "draft_source_only_pending_independent_review_no_execution",
+  "case": "reference/capytaine/canonical-boat.json",
+  "native_mat": "artifacts/reference/generated-bank-native-20261024/attempt1/native.mat",
+  "radiation_mat": "artifacts/reference/generated-bank-native-20261024/attempt1/radiation.mat",
+  "native_npz": "artifacts/reference/minimum-20261024/native-gl2/native.npz",
+  "scout68_mat": "artifacts/reference/radiation-heading-scout-20261024/attempt1/radiation-68.mat",
+  "original_manifest": "artifacts/reference/minimum-20261024/native-gl2/source/original-native-manifest.json",
+  "stored_witness": "artifacts/reference/generated-bank-consumer-20261024/case-jan90-attempt1/stored-passivity-diagnosis.json",
+  "input_sha256": {
+    "reference/capytaine/canonical-boat.json": "ea18844904e03bbfd72abc3396240c97b1994b3584e36c8149f8ae5f60a99e4f",
+    "artifacts/reference/generated-bank-native-20261024/attempt1/native.mat": "b17dfb282ba90f8e4e08144cd5106c3d505763252bc6b1f716ef5e881e07e4b0",
+    "artifacts/reference/generated-bank-native-20261024/attempt1/radiation.mat": "83266e072df2ede41c2b14ad1e8f00c1e7779c215d9ef084ff83f14d06eaedbd",
+    "artifacts/reference/minimum-20261024/native-gl2/native.npz": "c90d2db931876082c9a17256943c353166b2dc7268fd5a7b03c632af0dccab00",
+    "artifacts/reference/radiation-heading-scout-20261024/attempt1/radiation-68.mat": "62fff64a00d0709ac831772dbe286fb668fff38885a7a2eba1f81a7c9b49b118",
+    "artifacts/reference/minimum-20261024/native-gl2/source/original-native-manifest.json": "e8273b54163d58f43b3dbadcb56b5d16cc05addd396af65591abaf94b1bb4f39",
+    "artifacts/reference/generated-bank-consumer-20261024/case-jan90-attempt1/stored-passivity-diagnosis.json": "399bbe5dc01cb30808c9b60347c407d7fb7bb1b39b92dd102187d55d7a923cba",
+    "reference/capytaine/export_case.py": "5ca23fb1d5ec2bb61fa1818a072fd0ddbe4db713c0991019626395cc1d28c981",
+    "reference/capytaine/export_radiation_heading_scout.py": "ff75f6bc210ce6aaf4b47825b2e2ba6d06e7d23826b1cd85c509328ebd86c7c9"
+  },
+  "fixed_physical_coefficients_m_rad": [
+    2.2379192986776766,
+    -0.2710067725448315,
+    -0.14130201465424522,
+    -0.1395146161773907,
+    -0.49395942403515825,
+    -0.2420474994948622
+  ],
+  "normalization": "q=c*zeta, zeta dimensionless; translations metre, rotations rad; samefixedc on17/68; no optimization",
+  "cases": [
+    {
+      "panels": 17,
+      "omega_rad_s": 2.2,
+      "mode": "WorkWitness"
+    },
+    {
+      "panels": 17,
+      "omega_rad_s": 1.0,
+      "mode": "Heave_positive_control"
+    },
+    {
+      "panels": 68,
+      "omega_rad_s": 2.2,
+      "mode": "SAME_WorkWitness"
+    }
+  ],
+  "new_radiation_solves": 3,
+  "cpu_threads": 1,
+  "maximum_elapsed_seconds": 180,
+  "expected_elapsed_seconds": [
+    55,
+    75
+  ],
+  "estimated_memory_limit_mb": 1024,
+  "kochin_angles": [
+    360,
+    720
+  ],
+  "absolute_Kochin_power_claim": false,
+  "physics": "Pure native radiation; samecentroid/nolid/free_surface0/depthinf/forward0/rho/g/CG/fullphysicalmetadata; no time trajectory/viscousdamping/cutoff/repair"
+}

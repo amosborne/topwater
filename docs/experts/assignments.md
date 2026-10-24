@@ -141,3 +141,25 @@ energy/replay/frame checks, and exact geometry static curves. Before dynamics,
 freeze new sea, heading coverage, initialization/duration, numerical controls
 and prospective operating-envelope interpretation. Do not silently inherit
 REF-001's artificial test packet or assume a generator realization is calm water.
+
+
+### REF-002 latest user steering (2026-10-24)
+
+The full validation duration is60s. Final startup is rest with zero velocity and
+zero radiation memory; viscous damping remains off. The nonzero stationary-history
+prototype and its unpruned-bank geometry/preview work are preserved under their
+original policies but superseded for the final requested case. No encoder or
+continuation of the stopped geometry audit is authorized.
+
+Prune unsupported incident bands only after checking the actual full radiation-
+diffraction physics and numerical coverage. The generator already enforces the
+project wavelength>=2beam envelope (~.53346Hz for9ft); current bands end.495Hz.
+No FK-only approximation or universal beam-based diffraction cutoff is assumed.
+Retained measured energy/MEM/phases must not be renormalized/fitted. Radiation-
+kernel integration coverage and response transients need separate qualification.
+
+Current bounded producer source: EXACT3 native energy witnesses (17 coupled2.2,
+17heave1,68samecoupled2.2), independent source review PASS60c618b7. No solve yet;
+coordinator allocation/claim/readback required. No Cap/WEC radiation implementation
+bug, valid cutoff or qualified replacement has been established. Topwater role
+scope remains existing-generator data/export only; all solver work held.

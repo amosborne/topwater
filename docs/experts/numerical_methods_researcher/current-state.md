@@ -1,5 +1,12 @@
 # Current state: independent numerical-methods review
 
+Latest user steering supersedes old queued follow-ups: finalcase60s, rest/zero
+velocity andzero radiation memory, viscousOFF, physics-based incident-band policy.
+Old unpruned/history-seeded case remains evidence, not the requested finalstartup.
+FullCap radiation+diffraction/FK+diffraction applies; projectlambda2beam filter is
+alreadyenforced. No Cap/WEC radiationbug or newlyqualifiedcutoff established.
+See currenthandoff; no source role implies numerical execution permission.
+
 Updated2026-10-24. Authorization/currentnumericalowner belong to the
 [handoff](../../checkpoint-handoff.md) and execution ledger. This role reviews;
 no implementation, physical correction or numerical simulation was authored.

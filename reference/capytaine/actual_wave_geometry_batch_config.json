@@ -1,5 +1,5 @@
 {
-  "status": "draft_batch_recovery_source_only_no_execution",
+  "status": "superseded_unpruned_stationary_history_prototype",
   "case": "reference/capytaine/canonical-boat.json",
   "heading_file": "artifacts/reference/generated-sea-candidates-20261024/ndbc-46086-20250105T1140Z/heading-offset-90deg.json",
   "global_bank": "artifacts/reference/generated-sea-candidates-20261024/ndbc-46086-20250105T1140Z/realization-global.json",

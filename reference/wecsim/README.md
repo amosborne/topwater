@@ -16,9 +16,14 @@ existing output directories/logs. The commands below reproduce the recorded
 pipeline with fresh artifact paths. A new run must use a separately assigned
 fresh output root or reviewed path adaptation, not overwrite these artifacts.
 
-## One buoy-derived strong-motion candidate
+## Seeded strong-motion prototype: superseded startup
 
-REF-002 uses observed record `ndbc-46086-20250105T1140Z`, generator seed42 and
+Latest user requirements for the final60s validation case are rest/zero velocity,
+zero radiation memory, viscous damping off and a physics/accuracy-justified
+incident band. The nonzero-history prototype below is historical evidence,
+not that final requested startup. No final new band has been selected.
+
+The preserved REF-002 prototype uses observed record `ndbc-46086-20250105T1140Z`, generator seed42 and
 all384 directional components without amplitude or phase fitting. Hm0 is2.270m
 and Tm02 is9.296s. The initial mean bow is253.218deg CCW from global east,
 90deg from the incoming-aligned default to excite roll. This is a physical
@@ -38,8 +43,8 @@ acceleration-feedback startup is unchanged; its nonzero initial residual is
 reported, rather than cancelled. Independent native fixture and complete
 actual-state/force/history/wrench reviews pass.
 
-This remains a **provisional17-panel model trajectory**. Full incident-water
-geometry assessment is in progress, and radiation passivity, mesh/time accuracy
+This remains a **provisional17-panel model trajectory**. Its incident-water geometry assessment was intentionally stopped under the new
+pruning/startup steering. Radiation passivity, mesh/time accuracy
 and nonlinear equivalence are unqualified. The rejected held-from-rest sea run
 and calm-water control are preserved as diagnostics, not additional canonical
 sea cases. Topwater solver implementation remains held.
@@ -50,7 +55,8 @@ records the frozen generator/native/BEMIO dependencies and fixture prerequisites
 Actual outputs are in
 `artifacts/reference/generated-bank-consumer-20261024/case-jan90-seeded-attempt1`.
 The generated renderer preserves the full bank and native motion in an equal-metre
-10m XY tracking view. Previews pass; encoding has not yet been allocated.
+10m XY tracking view. Previews pass; encoding was never allocated. Do not finalize this prototype as
+the newly requested zero-memory/pruned validation case.
 
 ## Dependencies and engine
 

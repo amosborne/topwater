@@ -84,37 +84,42 @@ loads and ODE tolerances do not establish motion accuracy.
 
 ## REF-002: buoy-derived strong-motion canonical case
 
-Use the same physical boat/mass/CG/inertia, density/gravity/depth and axis
-conventions. Generate a credible new sea from topwater.sea_states and the
-collected buoy catalog, with full observed spectrum, MEM directional spread,
-seed and component phases retained. Select a genuinely higher-energy record;
-do not multiply the old packet or fit phases to motion. Internal candidate
-selection is permitted; final deliverable is ONE frozen case, not a suite.
-Target approximately5-10deg roll plus appreciable motion in the other5DOF.
+Latest user steering,2026-10-24: final validation duration is60s, with all startup
+retained. Prune unsupported incident frequencies using the actual physical model
+and defensible accuracy evidence, not an arbitrary WEC-Sim cutoff. Capytaine's
+full radiation-diffraction excitation is FK+diffraction, not an FK-only model.
+The existing wavelength>=2beam/.6Hz project support envelope remains; distinguish
+it from numerical mesh/time/IRF coverage. Pruning incident components does not
+repair an unreliable radiation-memory operator.
 
-Default forward orientation faces the dominant arriving direction. Export both
-buoy FROM and world propagation conventions, measured/realized directional
-first moments/resultants, chosen body heading and explicit heading offsets.
-Do not conflate rotating the rendered box with rotating hydrodynamic modes.
-Preserve the generator bank in its global frame and document body-frame mapping.
+Final startup: body initially at rest with no prior body motion, zero velocity
+and zero radiation memory. Declare the incident field and initial pose consistently.
+No stationary-history q/v/CIC seed in that final startup. Viscous damping remains
+off unless separately justified and authorized for matching physics in both models.
+No damping fit, force cancellation, restraints or prescribed post0 trajectory.
+
+Use the same physical boat/mass/CG/inertia, density/gravity/depth and frames.
+Existing collected-buoy generator/catalog is the source. Numerical pruning may
+remove supported whole measured frequency bands; retain their original amplitudes,
+MEM directional spreading and phases without renormalization. Report original and
+retained variance/Hm0/period/direction, mask, rationale and source identities.
+Final case is ONE frozen state/seed/heading, not a suite. Target roll about5-10deg
+plus appreciable other5DOF. A peak target is not sustained-response statistics.
+
+Default bow faces dominant arriving energy; any chosen offset must be explicit.
+Keep global source bank, retained subset, nauticalFROM/globalpropagation/bodyframe
+conventions and R/t mappings distinct. Never rotate only the rendered box.
 
 Assume a linear operating range a priori from exact full-hull buoyancy/righting,
-restoring, waterplane and material-wet-set curves relative to WEC-Sim's fixed
-mean geometry. Report heave/trim coupling, contact/flooding and sign failures.
-These curves justify an engineering assumption; they do not prove nonlinear
-dynamic accuracy. No new nonlinear trajectory model/adapter is requested.
-Do not change the boat or add damping/restraints to force the target response.
+restoring/waterplane/wet-set curves against fixedmean geometry. Report combined
+heave/trim and contact/flooding. These justify an engineering assumption, not
+nonlinear dynamic proof; no nonlinear trajectory model/adapter is requested.
+Only six complete motion histories establish motion variation/accuracy; coefficient
+and energy diagnostics guide rejection/investigation, not arbitrary coefficient
+thresholds. No actual radiation implementation bug has been established.
 
-Before dynamic launch, declare the new sea, heading, duration/initial state and
-producer frequency/direction coverage. A stationary generator realization is
-not calm water or an initialized nonlinear fluid field. Choose and document
-canonical initialization consistently for the future comparison; do not silently
-reuse the old packet, impose hidden force ramps, drop directional energy or
-claim body/sea initialization not represented by the chosen model.
-
-The supported physical envelope remains incident wavelength at least twice beam
-and frequency at most0.6Hz; enforce the existing generator's whole-band policy.
-For9ft beam andg9.81 the wavelength condition is the tighter upper bound near
-0.53346Hz. This limit governs physical input, not the hydrodynamic integration
-band needed by the radiation/excitation model. Breaking/slamming/flooding/loss
-of contact remain outside supported physical scope.
+Old full-bank and nonzero stationary-history prototypes retain their original
+policies and evidence; they are superseded for the final requested input/startup.
+Topwater solver implementation/tests/simulation/optimization remain HELD. Existing
+generator reference-input work is allowed; externalreference loads/trajectories
+never replace independently computed Topwater physics.

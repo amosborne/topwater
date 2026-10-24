@@ -1,5 +1,12 @@
 # Current state: WEC-Sim / BEMIO expert
 
+Latest user steering supersedes old queued follow-ups: finalcase60s, rest/zero
+velocity andzero radiation memory, viscousOFF, physics-based incident-band policy.
+Old unpruned/history-seeded case remains evidence, not the requested finalstartup.
+FullCap radiation+diffraction/FK+diffraction applies; projectlambda2beam filter is
+alreadyenforced. No Cap/WEC radiationbug or newlyqualifiedcutoff established.
+See currenthandoff; no source role implies numerical execution permission.
+
 Updated2026-10-24. Authorization/phase: [handoff](../../checkpoint-handoff.md).
 Coordinator owns selection/acceptance/allocation. No automatic next numerical job.
 
