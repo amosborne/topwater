@@ -33,6 +33,13 @@ def require_qualified(report,arrays,contract,frozen):
             raise ValueError('reference panel count differs from declared nested physical mesh')
         np.testing.assert_array_equal(expected,arrays[f'triangles_{level}'])
     p=contract['physical_problem'];omega=2*np.pi*np.asarray(contract['cases']['frequencies_hz'])
+    np.testing.assert_array_equal(arrays['excitation'],arrays['diffraction']+arrays['FK'])
+    expected_rao=np.empty_like(arrays['RAO'])
+    for level in range(len(levels)):
+        for f,w in enumerate(omega):
+            impedance=-w*w*(frozen['dry_mass']+arrays['A'][level,f])-1j*w*arrays['B'][level,f]+frozen['hydrostatic_stiffness']
+            expected_rao[level,f]=np.linalg.solve(impedance,arrays['excitation'][level,f].T).T
+    np.testing.assert_array_equal(arrays['RAO'],expected_rao)
     values=normalized(arrays,frozen['dry_mass'],float(frozen['hull_length']),p['density_kg_m3'],p['gravity_m_s2'],omega)
     for name,value in values.items():
         uncertainty,gate=mesh_quality(value,contract['acceptance'])
@@ -81,7 +88,7 @@ def generate(args,contract,frozen,data,report,arrays):
             solver=cpt.BEMSolver(green_function=inf_green)
             for column,mode in enumerate(MODES):
                 budget();result=solver.solve(cpt.RadiationProblem(body=body,radiating_dof=mode,
-                    omega=np.inf,rho=rho,g=g,water_depth=np.inf))
+                    omega=np.inf,rho=rho,g=g,water_depth=np.inf,forward_speed=0.))
                 Ainf[:,column]=[result.added_mass[name] for name in MODES]
                 if any(result.radiation_damping[name]!=0 for name in MODES):
                     raise ValueError('infinite-frequency reference returned nonzero damping')
@@ -90,7 +97,7 @@ def generate(args,contract,frozen,data,report,arrays):
                 report['completed_physics_calls']+=1;save(args.output,report,arrays)
             solver=cpt.BEMSolver(green_function=finite_green)
             for f,w in enumerate(omega):
-                common=dict(body=body,omega=w,rho=rho,g=g,water_depth=np.inf)
+                common=dict(body=body,omega=w,rho=rho,g=g,water_depth=np.inf,forward_speed=0.)
                 for column,mode in enumerate(MODES):
                     budget();result=solver.solve(cpt.RadiationProblem(**common,radiating_dof=mode))
                     A[f,:,column]=[result.added_mass[name] for name in MODES]

@@ -4,12 +4,62 @@ from pathlib import Path
 from types import SimpleNamespace
 import numpy as np
 import pytest
-from .common import entrywise,mesh_quality,study_preflight,read_owned,digest
+from .common import (entrywise,mesh_quality,study_preflight,read_owned,digest,
+                     load_contract,case_envelope,hashes,CANDIDATE,VALIDATORS,REFERENCE)
 from .reference import require_qualified
 from . import __main__ as cli
 
 
 ACCEPTANCE=dict(reference_mesh_absolute_normalized=1e-6,reference_mesh_relative=.001)
+
+
+def contract_data():
+    return dict(format_version=1,
+        implementation=dict(entry_point='topwater.inertia.instantaneous_added_mass'),
+        physical_problem=dict(fixture='tests.reference_boat',body_function='reference_body',pose_function='equilibrium',
+            water_depth='infinite',forward_speed_m_s=0.,initial_body_velocity='zero',
+            time_convention='Re(amplitude*exp(-i*omega*t))',wave_direction='propagation, radians CCW from world+x',
+            incident_phase_origin_world_xy_m=[0.,0.],incident_elevation_amplitude_m=.01,
+            density_kg_m3=1025.,gravity_m_s2=9.81,mode_order=['Surge','Sway','Heave','Roll','Pitch','Yaw']),
+        reference_numerics=dict(body_subdivision_levels=[1,2,3],cpu_threads=1,richardson_extrapolation=False,
+            maximum_elapsed_seconds=1800,maximum_estimated_workspace_bytes=8*1024**3),
+        candidate_numerics=dict(body_subdivision_levels=[1,2],cpu_threads=1),
+        cases=dict(frequencies_hz=[.1,.5],propagation_headings_rad=[0.,1.]),
+        acceptance=dict(reference_required_finest_increments=2,
+            required_gates=['reference','all_six_added_mass','small_amplitude_time_domain_wave_responses'],
+            candidate_relative=.01,candidate_absolute_normalized=1e-5,**ACCEPTANCE))
+
+
+@pytest.mark.parametrize('key,value',[
+    ('time_convention','Re(amplitude*exp(+i*omega*t))'),('wave_direction','from north'),
+    ('incident_phase_origin_world_xy_m',[1.,0.]),('initial_body_velocity','moving'),
+    ('water_depth',4.),('forward_speed_m_s',1.),('incident_elevation_amplitude_m',0.),
+    ('incident_elevation_amplitude_m',float('nan'))])
+def test_changed_physical_conventions_are_rejected(tmp_path,key,value):
+    contract=contract_data();contract['physical_problem'][key]=value
+    path=tmp_path/'contract.json';path.write_text(json.dumps(contract))
+    with pytest.raises(ValueError):
+        load_contract(path)
+
+
+@pytest.mark.parametrize('section,key,value',[
+    ('reference_numerics','maximum_elapsed_seconds',float('nan')),
+    ('reference_numerics','maximum_estimated_workspace_bytes',float('inf')),
+    ('cases','frequencies_hz',[.1,.1]),('cases','propagation_headings_rad',[0.,0.]),
+    ('cases','frequencies_hz',[.7])])
+def test_nonfinite_limits_duplicate_cases_or_outofband_frequency_fail(tmp_path,section,key,value):
+    contract=contract_data();contract[section][key]=value
+    path=tmp_path/'contract.json';path.write_text(json.dumps(contract))
+    with pytest.raises(ValueError):
+        load_contract(path)
+
+
+def test_actual_beam_wavelength_bound_allows_equality():
+    contract=contract_data()
+    with pytest.raises(ValueError):
+        case_envelope(contract,10.)
+    minimum=9.81/(2*np.pi*.5**2)
+    case_envelope(contract,minimum/2)
 
 
 def test_each_physical_entry_has_its_own_allowance():
@@ -71,9 +121,26 @@ def test_qualify_cannot_accept_fabricated_passed_wave_artifact(monkeypatch):
     monkeypatch.setattr(cli,'digest',lambda path:str(path))
     monkeypatch.setattr(cli,'hashes',lambda paths:{'candidate':'owned'})
     monkeypatch.setattr(cli,'qualified_reference',lambda *a:({},{}))
+    monkeypatch.setattr(cli,'current_sources',lambda *a:None)
     monkeypatch.setattr(cli,'read_owned',lambda *a,**k:(dict(input_sha256='same',frozen_sha256='frozen',
         candidate_source_sha256={'candidate':'owned'},reference_sha256='reference'),{}))
     report={'contract_sha256':'contract'}
     cli.qualify(args,{},report,{})
     assert not report['passed']
     assert not report['gates']['small_amplitude_time_domain_wave_responses']['passed']
+
+
+def test_stale_validator_source_rejects_previously_passed_inertia(monkeypatch):
+    args=SimpleNamespace(frozen=Path('frozen'),reference=Path('reference'),inertia=Path('inertia'),waves=Path('waves'))
+    monkeypatch.setattr(cli,'frozen_input',lambda *a:({'input_sha256':'same'},{}))
+    monkeypatch.setattr(cli,'digest',lambda path:str(path))
+    monkeypatch.setattr(cli,'qualified_reference',lambda *a:({},{}))
+    producer=hashes(CANDIDATE+VALIDATORS)
+    producer['tests/validation/__main__.py']='stale'
+    monkeypatch.setattr(cli,'read_owned',lambda *a,**k:(dict(input_sha256='same',frozen_sha256='frozen',
+        candidate_source_sha256=hashes(CANDIDATE),reference_sha256='reference',producer_sha256=producer),{}))
+    report={'contract_sha256':'contract'}
+    cli.qualify(args,{},report,{})
+    assert not report['gates']['all_six_added_mass']['passed']
+    assert 'source' in report['gates']['all_six_added_mass']['reason']
+    assert 'tests/validation/__main__.py' in REFERENCE

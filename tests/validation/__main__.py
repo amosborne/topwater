@@ -11,7 +11,7 @@ from pathlib import Path
 from time import perf_counter
 import numpy as np
 from threadpoolctl import threadpool_limits
-from .common import (PHYSICAL,CANDIDATE,REFERENCE,digest,hashes,load_contract,prepare,
+from .common import (PHYSICAL,CANDIDATE,REFERENCE,VALIDATORS,case_envelope,digest,hashes,load_contract,prepare,
     save,read_owned,current_sources,study_preflight,triangles_at,entrywise)
 
 
@@ -32,9 +32,11 @@ def freeze(args,contract,report,arrays):
     R=rotation_matrix(pose.orientation)
     dry=np.zeros((6,6));dry[:3,:3]=body.mass*np.eye(3);dry[3:,3:]=R@body.inertia_cg@R.T
     length=float(np.ptp(body.mesh.vertices[np.unique(body.mesh.faces[body.mesh.physical_faces]),0]))
+    beam=float(np.ptp(body.mesh.vertices[np.unique(body.mesh.faces[body.mesh.physical_faces]),1]))
+    report['incident_case_envelope']=case_envelope(contract,beam)
     arrays.update(wetted_triangles=hydro.wetted_triangles,world_cg=pose.position,
         orientation=pose.orientation,dry_mass=dry,hydrostatic_stiffness=hydro.stiffness,
-        body_mass=np.array(body.mass),hull_length=np.array(length))
+        body_mass=np.array(body.mass),hull_length=np.array(length),hull_beam=np.array(beam))
     report.update(input_sha256=digest(input_path),physical_source_sha256=hashes(PHYSICAL),
         implementation=contract['implementation'],physical_problem=p,
         physical_freeze_only=True,qualification_scope='Not physical solver qualification',
@@ -47,9 +49,10 @@ def freeze(args,contract,report,arrays):
     report.update(complete=True,passed=True)
 
 
-def frozen_input(args,report):
+def frozen_input(args,contract,report):
     frozen,data=read_owned(args.frozen,report['contract_sha256'],'freeze',passed=True)
-    current_sources(frozen,PHYSICAL)
+    current_sources(frozen,PHYSICAL+VALIDATORS)
+    case_envelope(contract,float(data['hull_beam']))
     if digest(Path(args.frozen).with_suffix('.source')/'inputs.json')!=frozen['input_sha256']:
         raise ValueError('frozen physical input JSON changed')
     report.update(input_sha256=frozen['input_sha256'],frozen_sha256=digest(args.frozen))
@@ -72,7 +75,7 @@ def compare_inertia(args,contract,report,arrays):
     from topwater.inertia import instantaneous_added_mass
     from topwater.rankine import TrianglePanels
     from topwater.numerics import LaplaceControls
-    frozen,data=frozen_input(args,report)
+    frozen,data=frozen_input(args,contract,report)
     reference,ref=qualified_reference(args,contract,report,frozen,data)
     spec=contract['candidate_numerics'];resource=contract['reference_numerics']
     levels=spec['body_subdivision_levels']
@@ -98,6 +101,8 @@ def compare_inertia(args,contract,report,arrays):
             comparison=entrywise(values[-1],ref['normalized_Ainf'][-1],ref['uncertainty_Ainf'],
                 contract['acceptance']['candidate_absolute_normalized'],contract['acceptance']['candidate_relative'])))
         save(args.output,report,arrays)
+    if perf_counter()-started>resource['maximum_elapsed_seconds']:
+        raise TimeoutError('candidate elapsed ceiling exceeded after final solve; calls are not interruptible')
     acceptance=contract['acceptance']
     # The declared comparison tolerance is relative to the finest C, not Cprevious.
     allowance=acceptance['candidate_absolute_normalized']+acceptance['candidate_relative']*abs(values[-1])
@@ -118,7 +123,7 @@ def compare_waves(args,contract,report,arrays):
 
 
 def qualify(args,contract,report,arrays):
-    frozen,frozen_data=frozen_input(args,report)
+    frozen,frozen_data=frozen_input(args,contract,report)
     rows={}
     for name,kind,gate in (('reference','reference','reference'),('inertia','compare-inertia','all_six_added_mass'),
                            ('waves','compare-waves','small_amplitude_time_domain_wave_responses')):
@@ -132,6 +137,8 @@ def qualify(args,contract,report,arrays):
                 qualified_reference(args,contract,report,frozen,frozen_data)
             elif kind=='compare-inertia' and item.get('candidate_source_sha256')!=hashes(CANDIDATE):
                 raise ValueError('candidate implementation source changed after comparison')
+            if kind=='compare-inertia':
+                current_sources(item,CANDIDATE+VALIDATORS)
             if kind=='compare-inertia' and item.get('reference_sha256')!=digest(args.reference):
                 raise ValueError('candidate comparison uses a different reference artifact')
             rows[gate]=dict(passed=True,artifact_sha256=digest(getattr(args,name)))
@@ -160,7 +167,7 @@ def main(argv=None):
     try:
         if args.command=='reference':
             from .reference import generate
-            frozen,data=frozen_input(args,report)
+            frozen,data=frozen_input(args,contract,report)
             study_preflight(len(data['wetted_triangles']),contract['reference_numerics']['body_subdivision_levels'],
                 contract['reference_numerics']['maximum_estimated_workspace_bytes'])
             generate(args,contract,frozen,data,report,arrays)

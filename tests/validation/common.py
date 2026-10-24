@@ -12,8 +12,8 @@ PHYSICAL = tuple('src/topwater/'+name+'.py' for name in
     ('__init__','inputs','_validation','frames','hydrostatics','_clipping','constants'))+('tests/reference_boat.py',)
 CANDIDATE = PHYSICAL+tuple('src/topwater/'+name+'.py' for name in
     ('inertia','bem','boundary','rankine','_rankine_kernel','_rankine_extended','numerics'))
-REFERENCE = PHYSICAL+('tests/capytaine_reference.py','tests/validation/common.py',
-    'tests/validation/reference.py','pyproject.toml','uv.lock')
+VALIDATORS = tuple('tests/validation/'+name+'.py' for name in ('__init__','__main__','common','reference'))
+REFERENCE = PHYSICAL+('tests/capytaine_reference.py',)+VALIDATORS+('pyproject.toml','uv.lock')
 
 
 def digest(path):
@@ -30,6 +30,10 @@ def load_contract(path):
     if (value['format_version']!=1 or p['fixture']!='tests.reference_boat'
             or p['body_function']!='reference_body' or p['pose_function']!='equilibrium'
             or p['water_depth']!='infinite' or p['forward_speed_m_s']!=0
+            or p['initial_body_velocity']!='zero'
+            or p['time_convention']!='Re(amplitude*exp(-i*omega*t))'
+            or p['wave_direction']!='propagation, radians CCW from world+x'
+            or p['incident_phase_origin_world_xy_m']!=[0.,0.]
             or value['implementation']['entry_point']!='topwater.inertia.instantaneous_added_mass'
             or p['mode_order']!=['Surge','Sway','Heave','Roll','Pitch','Yaw']):
         raise ValueError('unsupported canonical physical/implementation contract')
@@ -39,9 +43,18 @@ def load_contract(path):
     if r['cpu_threads']!=1 or c['cpu_threads']!=1 or r['richardson_extrapolation'] is not False:
         raise ValueError('unsupported thread/extrapolation policy')
     cases=value['cases'];a=value['acceptance']
+    for name in ('density_kg_m3','gravity_m_s2','incident_elevation_amplitude_m'):
+        if not np.isfinite(p[name]) or p[name]<=0:
+            raise ValueError('finite positive physical constants and incident amplitude required')
+    for name in ('maximum_elapsed_seconds','maximum_estimated_workspace_bytes'):
+        if isinstance(r[name],bool) or not np.isfinite(r[name]) or r[name]<=0:
+            raise ValueError('finite positive reference resource ceilings required')
     if (not cases['frequencies_hz'] or not cases['propagation_headings_rad']
             or not np.isfinite(cases['frequencies_hz']).all() or min(cases['frequencies_hz'])<=0
+            or max(cases['frequencies_hz'])>.6
+            or len(set(cases['frequencies_hz']))!=len(cases['frequencies_hz'])
             or not np.isfinite(cases['propagation_headings_rad']).all()
+            or len(set(cases['propagation_headings_rad']))!=len(cases['propagation_headings_rad'])
             or a['reference_required_finest_increments']!=2
             or set(a['required_gates'])!={'reference','all_six_added_mass','small_amplitude_time_domain_wave_responses'}):
         raise ValueError('missing finite cases or required gate/uncertainty policy')
@@ -49,6 +62,16 @@ def load_contract(path):
         if not np.isfinite(a[name]) or a[name]<=0:
             raise ValueError('positive finite predeclared acceptance criteria required')
     return value
+
+
+def case_envelope(contract,beam):
+    if not np.isfinite(beam) or beam<=0:
+        raise ValueError('finite positive actual full physical hull beam required')
+    f=np.asarray(contract['cases']['frequencies_hz'])
+    wavelength=contract['physical_problem']['gravity_m_s2']/(2*np.pi*f*f)
+    if np.any(f>.6) or np.any(wavelength<2*beam):
+        raise ValueError('declared waves violate f<=0.6 Hz or deepwater wavelength>=2*actual boat beam')
+    return dict(beam_m=float(beam),wavelengths_m=wavelength.tolist(),minimum_wavelength_m=float(2*beam))
 
 
 def prepare(output,contract_path,kind):
