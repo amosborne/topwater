@@ -1,0 +1,188 @@
+{
+  "status": "Equal-DOF P2 gives a modest sampled representation gain; no P2 BEM operator or physical qualification",
+  "producer_commit": "fa13b46 (integrated 8c22e61)",
+  "evidence": {
+    "artifacts\\p2-trace-fit.json": "1ec38ebd1864d68a00477e216523d407e8a511421f18ef542a8ed1074b3ca089"
+  },
+  "parents": {
+    "projection": "0145739b0197d92052a90181399f0eb534aaaab35aa943dd935ff53e7b39515c",
+    "galerkin": "c43d52b12b527d4c098f57d530b5a66b6f11784b3e47adee7f2af98918bd4bdb",
+    "family": "e6dca4c8ae63273af48cd1f1400d4a4499cdac75d41741a40a81bc04ffac36db"
+  },
+  "dimensions": {
+    "original_facets": 68,
+    "target_facets": 272,
+    "shared_free_trace_dofs": 115,
+    "original_vertex_and_midpoint_nodes": 159,
+    "grounded_seam_nodes": 44
+  },
+  "scaled_mass_condition": 5.164306516895547,
+  "orders": [
+    {
+      "order": 4,
+      "seconds": 0.01833339998847805,
+      "relative_P2_L2_floor": [
+        0.20238429443688088,
+        0.0807533906922413,
+        0.051358155989545504,
+        0.12037433015722633,
+        0.13264491413193744,
+        0.1618256528400568
+      ],
+      "relative_P1_L2_floor": [
+        0.2331811332836588,
+        0.10395550488596458,
+        0.06004288133607061,
+        0.14932951926650245,
+        0.18252990036926484,
+        0.21820826375754054
+      ],
+      "P2_over_P1_floor": [
+        0.8679273987003299,
+        0.7768072578823492,
+        0.8553579516293504,
+        0.806098691996718,
+        0.7267023860945072,
+        0.7416110190027789
+      ],
+      "mass_q4_parity_max": 0.0,
+      "polynomial_load_q4_parity_max": 0.0,
+      "projection_orthogonality_max": 1.5638261085387795e-16,
+      "pythagorean_defect": [
+        -5.0523821237824507e-17,
+        -2.6454533008646308e-17,
+        1.1244477571281664e-14,
+        -2.463307335887066e-16,
+        2.6922908347160046e-15,
+        -1.5248219353836134e-15
+      ],
+      "polynomial_port_parity_max": 5.4569682106375694e-12,
+      "P2_minus_reference_diagonal_load": [
+        -3.4714913516403385,
+        -6.096144765970507,
+        -4.053293919660064,
+        4.239061030560492,
+        42.38715111529382,
+        -7.5846254798711925
+      ],
+      "P1_minus_reference_diagonal_load": [
+        -5.517491747773107,
+        -12.352798846934888,
+        -23.690853995234647,
+        -7.302367663336895,
+        -44.89451344405461,
+        -29.959768444252177
+      ],
+      "P2_minus_P1_diagonal_load": [
+        2.0460003961327686,
+        6.256654080964381,
+        19.637560075574584,
+        11.541428693897387,
+        87.28166455934843,
+        22.375142964380984
+      ]
+    },
+    {
+      "order": 8,
+      "seconds": 0.08514589999685995,
+      "relative_P2_L2_floor": [
+        0.20953100673740513,
+        0.08379452253841191,
+        0.05388226488778698,
+        0.12382680868125645,
+        0.1345272844891979,
+        0.16506529338505174
+      ],
+      "relative_P1_L2_floor": [
+        0.23973485560241445,
+        0.10647070046615932,
+        0.06237323531054552,
+        0.1522010814873715,
+        0.18426109814227182,
+        0.22105127633579907
+      ],
+      "P2_over_P1_floor": [
+        0.8740114415606692,
+        0.7870195478336801,
+        0.8638683662875035,
+        0.8135737766852247,
+        0.7300905391615901,
+        0.746728524355141
+      ],
+      "mass_q4_parity_max": 2.498001805406602e-16,
+      "polynomial_load_q4_parity_max": 5.551115123125783e-16,
+      "projection_orthogonality_max": 3.4293314715716505e-16,
+      "pythagorean_defect": [
+        7.274996577377735e-17,
+        1.3051625752380502e-15,
+        -2.327998904760875e-14,
+        -9.168013570537425e-16,
+        -3.300137940698278e-14,
+        -1.582067810090848e-15
+      ],
+      "polynomial_port_parity_max": 5.4569682106375694e-12,
+      "P2_minus_reference_diagonal_load": [
+        -3.42823508635216,
+        -6.021783728152968,
+        -3.87659826219533,
+        4.300626315236173,
+        42.89750672408627,
+        -7.334234176031941
+      ],
+      "P1_minus_reference_diagonal_load": [
+        -5.4766320586532515,
+        -12.287650353370964,
+        -23.594871101793615,
+        -7.276785618853637,
+        -44.568350719391674,
+        -29.73482838841619
+      ],
+      "P2_minus_P1_diagonal_load": [
+        2.0483969723010915,
+        6.2658666252179955,
+        19.718272839598285,
+        11.57741193408981,
+        87.46585744347794,
+        22.40059421238425
+      ],
+      "q4_q8_relative_floor_change": [
+        0.03531258352042304,
+        0.03765949417233321,
+        0.04914718703598485,
+        0.028681185760458083,
+        0.0141910481044764,
+        0.020019326281951782
+      ],
+      "q4_q8_port_diagonal_change": [
+        0.03332767216112131,
+        -0.25979906852319345,
+        -2.9329824750020634,
+        -0.7483244370323519,
+        -8.280384806781512,
+        -1.0157999681566707
+      ],
+      "q4_q8_fitted_field_relative_L2_change": [
+        0.0051823540150395765,
+        0.002484856011161672,
+        0.0016691462451256314,
+        0.003562282419578564,
+        0.0024041675808173634,
+        0.0037816629509474847
+      ]
+    }
+  ],
+  "diagnostic_cost": {
+    "total_seconds": 0.21070500000496395,
+    "process_peak_rss": 137752576,
+    "array_workspace_bound_bytes": 75040864
+  },
+  "decision": "Retain fitting result. Qualify only analytic polynomial pair moments next, before any global P2 assembly; original-panel count offers a potential work advantage but neither fitting nor equal DOFs proves it.",
+  "limitations": [
+    "Cached coarse P0 source field is not converged physical truth and may contain original-triangulation edge artifacts",
+    "P2 original-facet and P1 refined-facet spaces have equal free DOFs but are different spaces; no nesting or Galerkin accuracy implication",
+    "Zero seam values are exact vertex/midpoint constraints, no tolerance welding or new geometry",
+    "Fitting mass is not water mass, and no six-load fitting or BEM energy/kernel is used",
+    "Equal DOF does not mean equal operator/quadrature cost or stable auxiliary-flux pairing",
+    "A fitting improvement only motivates a bounded P2 kernel test; no moving-domain, nonlinear6DOF, motion or speed qualification"
+  ]
+}
