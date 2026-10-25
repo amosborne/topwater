@@ -1,4 +1,4 @@
-# Checkpoint handoff
+﻿# Checkpoint handoff
 
 Updated2026-10-25. Latest user steering controls scope. Read
 [AGENTS.md](../AGENTS.md), [coordination](experts/coordination.md),
@@ -6,15 +6,34 @@ Updated2026-10-25. Latest user steering controls scope. Read
 
 ## Current authorization and immediate priority
 
-IMPLEMENTATION CHECKPOINT IN PROGRESS: previous cleanup pushed7570f94.
-Latest package/interface suite188PASS/1optional libigl-absent skip4.36s,
-artifacts/workflow/checkpoint-tests-attempt1. MATLAB4file static stylecheckPASS.
-The subsequent guard-runtime probe stopped BEFORE any MATLAB operation because
-no shared engine was discoverable. Authoritative CIM5221c9 confirms ZERO actual
-MATLABprocesses (previous32780/9168 gone); root must bootstrap one HIDDEN session
-for the authorized guard/backend work, not infer a busy engine or reuse oldPIDs.
-No numerical lease remains (902608). Keep MATLAB invisible/minimized throughout.
+IMPLEMENTATION CHECKPOINT IN PROGRESS: package/interfaces pushed at 8a7e032.
+Latest local suite: 188 passed, one optional libigl skip in 4.36 s;
+artifacts/workflow/checkpoint-tests-attempt1. Four MATLAB resources passed the
+static checker. The lifecycle helper has since changed and needs fresh checks.
 
+MATLAB is running as the existing shared CAPYTAINE_REFERENCE engine (core29796,
+launcher40036, started2026-10-25T17:20:15Z). These are checkpoint identities;
+reconcile actual processes before reuse. Root verified the command window
+MINIMIZED using its system menu. Keep it minimized; never open models/figures.
+The corrected lifecycle check now PASSES: 13 backend tests, four MATLAB static
+checks, and two actual normal/forced-failure cycles from different temporary
+class directories. Exact path/directory and session settings restored; only the
+owned test model closed; engine never quit. Evidence: engine-guard-attempt4.
+
+Surface-response-attempt1 PASSES in226.234s using immutable existing60s
+motion/train, without body reintegration. Radiation frequency-spacing sensitivity
+is <=3.26 micrometres at seven diagnostic points; cutoff12->24 sensitivity is
+<=0.754mm. Exact exterior acceleration endpoint is zero. Near-trace offsets
+.025/.05m differ by <=3.05mm at two targets. These are selected-case diagnostics,
+not spatial accuracy or convergence proof. Independent review found a larger
+near-field full-complex phase discrepancy. A subsequent STORED-DATA signed-lag
+diagnostic passes (surface-projection-attempt1): raw full-complex versus causal
+cosine response differs by up to42.7mm, RMS12.5mm at seven points. This cannot be
+described as a micrometre-qualified surface. Independent bounded acceptance of
+the causal approximation is pending; no raw noncausal replacement is authorized.
+Both jobs are terminal, hashes/processes verified and leases released. Cap expert
+is now implementing production total-field export; no numerical run is allocated.
+Readiness stays closed until implementation/review, canonical run and publication.
 Canonical physical boat/stronger-sea NPZ inputs now exist. New directory CLI,
 numeric contracts, strict one-opening boat validation (including supported
 nonplanar closures), variable-topology standalone renderer and packaged WEC
@@ -403,3 +422,4 @@ Preserve otherworktrees, all failed/interrupted studies and old original policie
 Do not pushmain/createbookkeepingPR/merge/upstreammessages. Coordinator owns
 scope/acceptance/integration; Cap nativeproducer; WEC dynamics/startup; Topwater
 existinggenerator only; researcher independentmethods. Renderer agent is stopped.
+

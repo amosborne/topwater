@@ -12,6 +12,7 @@ classdef WorkflowEngineGuard < handle
             cfg = Simulink.fileGenControl('getConfig');
             % Copy values: getConfig returns a HANDLE which later setters mutate.
             obj.state = struct('directory',pwd,'path',originalPath, ...
+                'guardFolder',fileparts(mfilename('fullpath')), ...
                 'diary',get(0,'Diary'),'diaryFile',get(0,'DiaryFile'), ...
                 'warnings',warning('query','all'),'threads',maxNumCompThreads, ...
                 'cacheFolder',cfg.CacheFolder,'codeGenFolder',cfg.CodeGenFolder, ...
@@ -27,8 +28,10 @@ classdef WorkflowEngineGuard < handle
         end
 
         function report = restore(obj)
+            % Restore non-path settings. Python restores the exact original
+            % path only after this object has been deleted and its class cleared.
             if obj.restored
-                report = struct('restored',true,'failures',{{}});
+                report = struct('restored',true,'path_deferred',true,'failures',{{}});
                 return
             end
             s = obj.state;
@@ -39,11 +42,11 @@ classdef WorkflowEngineGuard < handle
                     'CodeGenFolder',s.codeGenFolder, ...
                     'CodeGenFolderStructure',s.codeGenFolderStructure, ...
                     'keepPreviousPath',false,'createDir',false), ...
-                @() path(s.path), @() maxNumCompThreads(s.threads), ...
+                @() addpath(s.guardFolder,'-begin'), @() maxNumCompThreads(s.threads), ...
                 @() set(groot,'DefaultFigureVisible',s.figureVisible), ...
                 @() warning(s.warnings), @() restore_diary(s)};
             labels = {'owned model','workflow diary','working directory', ...
-                'file generation folders','search path','thread limit', ...
+                'file generation folders','guard class path','thread limit', ...
                 'figure visibility default','warnings','original diary'};
             for k = 1:numel(actions)
                 try
@@ -53,11 +56,13 @@ classdef WorkflowEngineGuard < handle
                 end
             end
             obj.restored = isempty(failures);
-            report = struct('restored',obj.restored,'failures',{failures});
+            report = struct('restored',obj.restored,'path_deferred',true,'failures',{failures});
         end
 
         function delete(obj)
             % Fallback for errors/interrupts before Python's explicit finally.
+            % Keep the class reachable through destruction. The wrapper or an
+            % explicit recovery then restores the original search path.
             if ~obj.restored
                 report = obj.restore();
                 if ~report.restored

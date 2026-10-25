@@ -71,6 +71,11 @@ owned by this run. Restoration must finish before scratch deletion. If restorati
 cannot be verified, the solve fails and retains its system-temporary directory
 with a recovery location in stderr; the previous public result remains intact.
 
+This lifecycle passed repeated normal/forced-failure checks in the existing
+hidden shared engine, including removal of each temporary class directory before
+the next cycle. [Verification and limits](../experts/wecsim_expert/workflow-engine-lifecycle-2026-10-25.md).
+That pass does not qualify the body/surface physics pipeline.
+
 ## Assumptions and hard-coded policies
 
 - Open water, infinite depth, zero forward speed, density 1025 kg/m3 and gravity

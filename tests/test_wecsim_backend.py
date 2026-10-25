@@ -101,22 +101,33 @@ def test_warning_aggregation_does_not_repeat_every_sample():
 def test_shared_engine_restoration_runs_when_initialization_throws(monkeypatch, tmp_path):
     class Engine:
         restored = False
+        guard_deleted = False
 
         def pwd(self, **kwargs):
             return str(tmp_path)
 
-        def path(self, **kwargs):
+        def cd(self, directory, **kwargs):
+            assert self.guard_deleted
+            assert directory == str(tmp_path)
+
+        def path(self, *args, **kwargs):
+            if args:
+                assert self.guard_deleted, 'search path must remain intact until the guard is destroyed'
+                assert args[0] == 'original path'
             return 'original path'
 
         def eval(self, command, **kwargs):
             if 'WorkflowEngineGuard(' in command:
                 raise RuntimeError('initializeWecSim failed')
             if "exist('topwaterEngineGuard'" in command:
-                return True
+                return not self.guard_deleted
             if 'jsonencode(topwaterEngineGuard.restore())' in command:
                 self.restored = True
                 return '{"restored":true,"failures":[]}'
             if 'delete(topwaterEngineGuard)' in command:
+                self.guard_deleted = True
+                return None
+            if command in ('clear topwaterEngineGuard topwaterGuardInput', 'clear WorkflowEngineGuard'):
                 return None
             pytest.fail('unexpected engine evaluation: ' + command)
 
@@ -128,24 +139,128 @@ def test_shared_engine_restoration_runs_when_initialization_throws(monkeypatch, 
     with pytest.raises(RuntimeError, match='initializeWecSim failed'):
         backend._run_matlab(tmp_path, tmp_path)
     assert engine.restored
+    assert engine.guard_deleted
 
 
 def test_incomplete_engine_cleanup_retries_and_fails_explicitly():
     class Engine:
         restores = 0
+        guard_present = True
+        events = []
 
         def eval(self, command, **kwargs):
+            self.events.append(command)
             if command.startswith('exist('):
-                return True
+                return self.guard_present
             if command.startswith('jsonencode('):
                 self.restores += 1
                 return '{"restored":false,"failures":["file generation folders: unavailable"]}'
-            pytest.fail('must not destroy a guard with unverified restoration')
+            if command.startswith('delete('):
+                self.guard_present = False
+                return None
+            if command.startswith('clear '):
+                return None
+            pytest.fail('unexpected cleanup evaluation')
+
+        def cd(self, directory, **kwargs):
+            self.events.append('cd')
+
+        def pwd(self, **kwargs):
+            return 'old directory'
+
+        def path(self, *args, **kwargs):
+            self.events.append('path')
+            return 'old path'
 
     engine = Engine()
     with pytest.raises(backend.EngineCleanupError, match='file generation folders'):
         backend._restore_engine(engine, 'old directory', 'old path')
     assert engine.restores == 2
+    assert 'delete(topwaterEngineGuard)' in engine.events
+    assert 'clear topwaterEngineGuard topwaterGuardInput' in engine.events
+    assert engine.events[-1] == 'path'
+
+
+def test_final_path_failure_is_an_engine_cleanup_error_after_guard_deletion():
+    class Engine:
+        deleted = False
+
+        def eval(self, command, **kwargs):
+            if command.startswith('exist('):
+                return not self.deleted
+            if command.startswith('jsonencode('):
+                return '{"restored":true,"path_deferred":true,"failures":[]}'
+            if command.startswith('delete('):
+                self.deleted = True
+                return None
+            if command.startswith('clear '):
+                return None
+            pytest.fail('unexpected engine evaluation')
+
+        def cd(self, directory, **kwargs):
+            pass
+
+        def pwd(self, **kwargs):
+            return 'old directory'
+
+        def path(self, *args, **kwargs):
+            assert self.deleted
+            raise RuntimeError('path restoration unavailable')
+
+    engine = Engine()
+    with pytest.raises(backend.EngineCleanupError, match='search path after guard deletion'):
+        backend._restore_engine(engine, 'old directory', 'old path')
+    assert engine.deleted
+
+
+@pytest.mark.parametrize('failure_kind', ['json', 'settings-call', 'delete'])
+def test_cleanup_exceptions_still_attempt_release_and_final_path(failure_kind):
+    class Engine:
+        present = True
+        events = []
+
+        def eval(self, command, **kwargs):
+            self.events.append(command)
+            if command.startswith('exist('):
+                return self.present
+            if command.startswith('jsonencode('):
+                if failure_kind == 'json':
+                    return 'not JSON'
+                if failure_kind == 'settings-call':
+                    raise RuntimeError('settings transport failed')
+                return '{"restored":true,"failures":[]}'
+            if command.startswith('delete('):
+                if failure_kind == 'delete':
+                    raise RuntimeError('destructor failed')
+                self.present = False
+                return None
+            if command.startswith('clear topwaterEngineGuard'):
+                self.present = False
+                return None
+            if command == 'clear WorkflowEngineGuard':
+                return None
+            pytest.fail('unexpected cleanup evaluation: ' + command)
+
+        def cd(self, directory, **kwargs):
+            self.events.append('cd')
+
+        def pwd(self, **kwargs):
+            return 'old directory'
+
+        def path(self, *args, **kwargs):
+            self.events.append('path')
+            raise RuntimeError('final path failed')
+
+    engine = Engine()
+    with pytest.raises(backend.EngineCleanupError) as caught:
+        backend._restore_engine(engine, 'old directory', 'old path')
+    message = str(caught.value)
+    assert ('guard deletion: destructor failed' if failure_kind == 'delete' else 'settings attempt 1:') in message
+    assert 'final path failed' in message
+    assert 'delete(topwaterEngineGuard)' in engine.events
+    assert 'clear topwaterEngineGuard topwaterGuardInput' in engine.events
+    assert not engine.present
+    assert engine.events[-1] == 'path'
 
 
 @pytest.mark.parametrize('unreconciled', [False, True])

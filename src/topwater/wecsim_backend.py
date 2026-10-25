@@ -237,32 +237,91 @@ def _run_matlab(workspace, fork):
 
 
 def _restore_engine(engine, original_directory, original_path):
-    """Attempt every restoration, retry once, and require explicit success."""
+    """Restore settings, destroy the guard, then restore the original path.
+
+    Its class folder must remain reachable through deletion; changing the path
+    first invalidates MATLAB's handle-class destructor. Clearing only this class
+    also permits the next solve to use a different temporary resource directory.
+    """
+    failures = []
+    guard_exists = None
     try:
-        if engine.eval("exist('topwaterEngineGuard','var') == 1", nargout=1):
-            report = None
-            for _ in range(2):
-                report = json.loads(engine.eval(
-                    'jsonencode(topwaterEngineGuard.restore())', nargout=1))
-                if report['restored']:
-                    engine.eval('delete(topwaterEngineGuard); clear topwaterEngineGuard topwaterGuardInput', nargout=0)
-                    return
-            raise EngineCleanupError('WEC-Sim: shared-engine restoration failed: '
-                                     + '; '.join(report['failures']))
-        # No guard means its constructor did not finish. No workflow mutation
-        # occurs before it exists; only addpath needs reversal in this branch.
-        failures = []
-        for method, argument in ((engine.cd, original_directory), (engine.path, original_path)):
-            try:
-                method(argument, nargout=0)
-            except Exception as failure:
-                failures.append(str(failure))
-        if failures:
-            raise EngineCleanupError('WEC-Sim: pre-initialization restoration failed: ' + '; '.join(failures))
-    except EngineCleanupError:
-        raise
+        guard_exists = bool(engine.eval("exist('topwaterEngineGuard','var') == 1", nargout=1))
     except Exception as failure:
-        raise EngineCleanupError('WEC-Sim: could not verify shared-engine restoration') from failure
+        failures.append('guard presence: ' + str(failure))
+    try:
+        if guard_exists is not False:
+            setting_failures = []
+            settings_restored = False
+            for attempt in range(2):
+                try:
+                    report = json.loads(engine.eval(
+                        'jsonencode(topwaterEngineGuard.restore())', nargout=1))
+                    if report.get('restored') is True:
+                        settings_restored = True
+                        break
+                    details = report.get('failures', ['unverified non-path settings'])
+                    if not isinstance(details, list):
+                        details = [str(details)]
+                    setting_failures.append(f'settings attempt {attempt+1}: ' + '; '.join(map(str, details)))
+                except Exception as failure:
+                    setting_failures.append(f'settings attempt {attempt+1}: ' + str(failure))
+            if not settings_restored:
+                failures.extend(setting_failures)
+            # Keep these separate: a throwing destructor must not skip clear.
+            for command, label in (
+                    ('delete(topwaterEngineGuard)', 'guard deletion'),
+                    ('clear topwaterEngineGuard topwaterGuardInput', 'guard release')):
+                try:
+                    engine.eval(command, nargout=0)
+                except Exception as failure:
+                    failures.append(label + ': ' + str(failure))
+            try:
+                guard_exists = bool(engine.eval("exist('topwaterEngineGuard','var') == 1", nargout=1))
+                if guard_exists:
+                    # An interrupted clear gets an independent release attempt
+                    # while the class folder is still on the search path.
+                    engine.eval('topwaterEngineGuard=[]; clear topwaterEngineGuard topwaterGuardInput', nargout=0)
+                    guard_exists = bool(engine.eval("exist('topwaterEngineGuard','var') == 1", nargout=1))
+                    if guard_exists:
+                        failures.append('guard release: object remains in the shared workspace')
+            except Exception as failure:
+                guard_exists = None
+                failures.append('guard release verification: ' + str(failure))
+        if guard_exists is False:
+            try:
+                engine.eval('clear WorkflowEngineGuard', nargout=0)
+            except Exception as failure:
+                failures.append('guard class release: ' + str(failure))
+    finally:
+        # All cleanup paths attempt these last, including settings/JSON/delete
+        # failures. Scratch is retained if any part remains unverifiable.
+        try:
+            engine.cd(original_directory, nargout=0)
+            if engine.pwd(nargout=1) != original_directory:
+                failures.append('working directory: original value was not restored')
+        except Exception as failure:
+            failures.append('working directory: ' + str(failure))
+        try:
+            _restore_search_path(engine, original_path)
+        except Exception as failure:
+            failures.append('search path: ' + str(failure))
+    if failures:
+        raise EngineCleanupError('WEC-Sim: shared-engine restoration failed: ' + '; '.join(failures))
+
+
+def _restore_search_path(engine, original_path):
+    failures = []
+    for attempt in range(2):
+        try:
+            engine.path(original_path, nargout=0)
+            if engine.path(nargout=1) == original_path:
+                return
+            failures.append(f'attempt {attempt+1}: original value was not restored')
+        except Exception as failure:
+            failures.append(f'attempt {attempt+1}: {failure}')
+    raise EngineCleanupError('could not restore the original MATLAB search path after guard deletion: '
+                             + '; '.join(failures))
 
 
 @contextmanager

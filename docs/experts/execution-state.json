@@ -6,16 +6,16 @@
     "manifest":  null,
     "active_numerical_job":  null,
     "last_terminal_evidence":  {
-                                   "job":  "Full interface checkpoint plus headless MATLAB setting restoration on success/failure",
+                                   "job":  "Stored-data signed-lag fullcomplex versus causalcosine actual-motion diagnostic, no hydrodynamic/body solves",
                                    "owner":  "/root",
-                                   "producer_pid":  6120,
-                                   "owner_launcher_pid":  35776,
-                                   "started_at":  "2026-10-25T17:11:06.619964+00:00",
-                                   "exit_code":  1,
+                                   "producer_pid":  21288,
+                                   "owner_launcher_pid":  11864,
+                                   "started_at":  "2026-10-25T17:48:02.923111+00:00",
+                                   "exit_code":  0,
                                    "frozen_inputs_match":  true,
                                    "complete":  true,
-                                   "manifest":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\checkpoint-tests-attempt1\\manifest.json",
-                                   "output":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\checkpoint-tests-attempt1\\output.log"
+                                   "manifest":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\surface-projection-attempt1\\manifest.json",
+                                   "output":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\surface-projection-attempt1\\output.log"
                                },
-    "note":  "Exact producer/owner and FFmpeg absence verified by independent CIM; frozen input hashes verified; terminal exit 1. Final separate idle readback follows before lease release."
+    "note":  "Exact producer/owner and FFmpeg absence verified by independent CIM; frozen input hashes verified; terminal exit 0. Final separate idle readback follows before lease release."
 }

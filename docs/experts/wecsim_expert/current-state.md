@@ -4,7 +4,7 @@ Updated2026-10-25. Currentauthority: [handoff](../../checkpoint-handoff.md),
 [physicalcontract](../shared-contract.md), [serialprocedure](../coordination.md).
 No active WECnumerical allocation or automaticfollowup. ROOT owns integration.
 
-## Generic CLI source checkpoint (not executed)
+## Generic CLI integration checkpoint
 
 WEC-WORKFLOW-001 added `src/topwater/wecsim_backend.py`, shared
 `_wecsim_setup.py`, packaged MATLAB resources under `data/wecsim`, and
@@ -13,9 +13,13 @@ duration-independent incoming train and full-hull startup assessment, optional
 dependency/fork/shared-engine readiness, native model construction and bus
 audits, output-pose conversion, and calm-restoring warning aggregation. New
 test source covers equilibrium, fail-before-physics readiness, pose embedding,
-and warning aggregation. No new tests, MATLAB calls, Capytaine solves, or
-benchmarks have run for this source. MATLAB skill reviewed for shipped tooling;
-static checker and source/physical review remain pending root allocation.
+warning aggregation, and cleanup exception paths. Root's released lifecycle
+checkpoint passed 13 backend tests, all four MATLAB style checks, and two real
+normal/forced-failure cycles in the existing hidden shared engine. Exact
+cwd/path, diary, warning/thread/figure settings and cache/codegen folders were
+restored; only the unique owned model was closed. Distinct temporary class
+directories were removed between cycles. No generic body simulation or full
+total-surface solve has run. See [versioned lifecycle evidence](workflow-engine-lifecycle-2026-10-25.md).
 
 Mandatory total-surface output remains failclosed through the Capytaine field
 readiness gate. Endpoint/tail/causal-transfer and near-hull continuation/export
