@@ -24,7 +24,7 @@ overrides; do not routinely repeat their technical investigations.
 - capytaine_expert: geometry, solver meshes, native hydrodynamics and exports.
 - wecsim_expert: BEMIO, maintained WEC-Sim fork, dynamics, startup and producer
   visualization adapters.
-- visualization_expert: shared Matplotlib/PyVista visualization, standard scene inputs,
+- visualization_expert: shared Matplotlib visualization, standard scene inputs,
   cameras, lighting, animation and measured rendering performance.
 - topwater_expert: Topwater implementation, feasibility, tests and performance
   when that phase is authorized.

@@ -1,67 +1,53 @@
 # Visualization expert: current state
 
-User requested a dedicated PyVista/visualization expert and a shared Topwater
-render workflow accepting standard inputs from either WEC-Sim or Topwater.
-Different convex hulls are supplied through data; convexity is a validated mesh
-requirement. Standard PyVista/VTK handles graphics. Physics remains producer-owned.
+User-approved shared Matplotlib2D workflow, full60s video and read-only speed
+review are COMPLETE. Active3D renderer/helpers/PyVista dependencies removed;
+physical3D mesh/intersection/solver code and historical evidence remain.
+No further job, benchmark, physics change or full-render variant allocated.
 
-LATEST Matplotlib2D preview COMPLETE. Watch
-`artifacts/reference/stronger-buoy-20261024/matplotlib-clip-attempt1.mp4`,
-SHA954343c52b6bc5690fcf421bc0ac6804c2a4643b2571c26ffc34682f44e87eed.
-Peakstill `matplotlib-qa-attempt1/poster.png`, source51.44s. ROOTliteralPASS;
-17tests/full63decodePASS. Style: symmetriccontinuousBWR surfaceheight at0,
-lightgrayhullwire, blackboundaryrim, blueactualwaterline/whitehalo, fourvalueHUD.
-Fixed800square, source50.00-54.96s/63frames/12.5fps/5.04s. Cached geometry/time
-BITEXACT, exactproducerroll_deg/pitch_deg/heave_m added through neutraltelemetry.
-MatplotlibAggblit/directFFmpegstream/reusedartists, 8064/107648visiblewaterfaces.
-Render11.25s, wholejob17.797s; no waveprep/GPU. Session81549 terminal/release5ec2c5.
-Normal command now `uv run topwater render data/scene.npz videos/preview.mp4`:
-Matplotlib/encoder COREdeps, NO--extra for2D. User willreviewbeforeconditional3D
-removal; retain3D fornow. No newjob/full60s/physics authorized.
+Watch `artifacts/reference/stronger-buoy-20261024/matplotlib-full60-attempt1.mp4`,
+SHA15510982f6cef3a246f1129222e0525052215a06cfa2e0073af3c53bf803f23b.
+751decoded/H264800square/12.5fps/60.08s with endpoint framehold. Owner viewed
+0/30/51.44/60stills; ROOT viewed0+peak. Source0..60/fullnativecached trajectory.
+Original hull/time/central65waterXYZ BITEXACT, exactnativeq HUD. Same-field
+minimalborder only:75x77/1550newnodes/frame/~104MB, actualviewcoverage passed.
 
-Previous oblique workflow and preview: fixed square800x800, source50.00-54.96s,
-63frames/12.5fps/5.04s, continuousblue actualwater covering the fullviewport,
-litwarm/ivoryhull, perspective, unchangedphysicalmotion. ROOT viewed peakposter.
-Watch `artifacts/reference/stronger-buoy-20261024/pyvista-clip-attempt3.mp4`,
-SHAc80e14001a9e3818291e428cea71378b3e158b44831d084afcc34b67d1ec2b0f.
-Full63decodePASS. No full60s encode or follow-on work is allocated.
+CLI: `uv run topwater render data/scene.npz videos/preview.mp4`. Both paths
+required positional, relative or absolute; wholeinput/uniformcadence/fixed800,
+no --extra/input/output/start/end/size. Only requestedMP4 persists; temporary
+encoder scratch cleaned, diagnostics stdout. Optionalsettings onlyframing/timeout.
 
-Final CLI: `uv run topwater render INPUT_PATH.npz OUTPUT_PATH.mp4`.
-Both paths are required positional arguments, absolute or relative. Always render
-the whole input at its uniform timestamp cadence; no start/end/size/output flags.
-Only the exact requested MP4 survives normal rendering. Camera/light/material
-settings may be supplied as JSON; diagnostics return on stdout and scratch is
-cleaned. Examples prefer relative paths, e.g `data/scene.npz videos/preview.mp4`.
-Temporary reference QA is allowed while tuning.
+Style: fixedtopdown/coolwarm symmetricheight about0; offwhiteopaquehull blocks
+underlyingheightcolors, graymesh/blackrim/darkblueactualwaterline withwhitehalo.
+14.5ptmonospace/fixedsignedfield TIME/ROLL/PITCH/HEAVE spans almost800pixels.
+OneAggfigure/reusedartists, backgroundblit anddirectbufferFFmpegstream.
 
-Implementation: [shared module](../../../src/topwater/visualization.py),
-[CLI](../../../src/topwater/cli.py). `SceneSequence` stores time_s,
-hull_points[T,N,3]/hull_faces[F,3], water_points[T,M,3]/water_faces[K,3], metadata.
-Metres/right-handed-z-up, fixed triangular connectivity per sequence, uniform
-timestamps; producers normalize geometry. Prepared NPZ is a named-array archive.
-Default2D reuses oneFigure/artists with Aggblit and direct encoder streaming;
-previous optional3D reuses onePlotter/VTKactors.
-Convex validation uses bounded storage rather than a dense face-by-plane matrix.
-The previous3D standardVTK mask requires water cells to resolve hull contact;
-2D computes triangle/triangle contact directly, separately from drawing.
+API [visualization.py](../../../src/topwater/visualization.py),
+[drawing](../../../src/topwater/_visualization_2d.py),
+[intersection](../../../src/topwater/_visualization_geometry.py),
+[CLI](../../../src/topwater/cli.py). SceneSequence NPZ holds time_s,
+hull_points[T,N,3]/hull_faces[F,3], water_points[T,M,3]/water_faces[K,3], metadata,
+telemetry__roll_deg/pitch_deg/heave_m. Metres/right-handed-z-up, fixedconnectivity,
+convexhullrequirement validated withboundedstorage. Producer normalizes frames/
+units/cadence and supplies telemetry; renderer never guesses pose or fillszeros.
+Trianglecontact uses actualphysicalfaces; coplanararea contact is explicitly
+unsupported. No new flooding/wetting/fluid-accuracy qualification.
 
-Initial library/schema implementation is owned by `/root/visualization`
-(topwater_expert); WEC-Sim adapter by `/root/wecsim_reference`. Transfer ownership
-explicitly at a stable checkpoint; do not duplicate their source.
-This new role may first review the contract and rendering approach read-only.
+FullCLI148.792s (renderer145.75), one-timeborderprep40.657s, wholejob197.911s.
+Geometry/update64.066s, Agg68.732s, pipewait.530s, encoderflush1.703s,
+encoderstartup1.937s, hullvalidation5.359s, setup3.391s. Encoderwork overlaps
+drawing; pipewait is not encodingCPU. Initial63tests17PASS, newerHUD/footprint
+checks2PASS; finalfull751decode/provenance/coverage PASS. Lastjob session42135
+terminal/frozen/idle/separate58a912/FINALreleasebacd1e. Ledger idle/no lease.
 
-Isolated visualization environment installed under ignored workspace artifacts:
-`artifacts/dependencies/pyvista-venv/Scripts/python.exe`, PyVista 0.49.1,
-VTK9.7.1/SciPy1.18.1. Actualbackend IntelArcPro/OpenGL4.5 hardware. Finalcached
-render31.515s (validation.078s/context2.437s/frameavg.417s); wholeCLI+QA35.829s.
-Initialsame-field widerDISPLAYdataprep100.75s is cached separately and not repeated
-for styling. 13focusedcontract/package/CLItestsPASS and a secondconvexshape2frame
-CLI smoke PASS inattempt2. Failedtemp-fixtureattempt1 and visuallyrejected
-shadow/waterline/discretepaletteattempt2 remain preserved underoriginalpolicies.
-Defaultshadows/waterline nowoff, standardcontinuousBlues_r/ambientlighting.
-[Implementation evidence](../topwater_expert/visualization-workflow-2026-10-24.md).
-No numerical/render job allocated to this role. Role TOML schema validation
-passed; model/settings inherit the parent. Native spawn attempt for a bounded
-read-only contract review returned `unknown agent_type 'visualization_expert'`.
-This session does not expose the newly added role. No fallback agent or separate
-CLI coordinator was started; existing Topwater implementation owner continues.
+[Read-only speed review](render-speed-review-2026-10-25.md): exactcoveragefinder
+reuse and tightercontact broadphase first; preset/imagefastpath needquality or
+interpolation review. No performance changes or experiments duringfulljob.
+
+Initialimplementation owner `/root/visualization` is topwater_expert; WECdata
+adapter owner `/root/wecsim_reference`. Dedicated visualization_expert definition
+andKB/routing exist and inherit parentsettings; currentnativeclient rejected
+boundedspawn `unknown agent_type 'visualization_expert'`. Configured NOTloaded;
+recheck afterclientrefresh, transferexplicitly atstablecheckpoint. No fallback
+or separateCLIcoordinator. See [activation](../activation.md),
+[library evidence](../topwater_expert/visualization-workflow-2026-10-24.md).

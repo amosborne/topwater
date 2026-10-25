@@ -2,6 +2,53 @@
 
 ## Current standard: Matplotlib top-down
 
+### Completed full 60-second reference
+
+Watch `artifacts/reference/stronger-buoy-20261024/matplotlib-full60-attempt1.mp4`,
+SHA256 `15510982f6cef3a246f1129222e0525052215a06cfa2e0073af3c53bf803f23b`.
+All751 frames decode as H264800x800/12.5fps/60.08s, retaining the physical60s
+endpoint. Owner viewed decoded0/30/51.44/60s; ROOT reviewed0+peak.
+
+Full public CLI wall time was148.792s; renderer145.750s. Same-field border/input
+preparation took40.657s and producer+CLI+QA197.911s. Recorded renderer phases:
+input load/schema validation.157s, convex validation5.359s, imports/setup3.391s,
+geometry/artist updates64.066s, Agg draw68.732s, pipe send.530s,
+encoder startup1.937s, close/final flush1.703s. Pipe sends are transfer and
+backpressure, not isolated encoder CPU. Encoding overlaps drawing.
+
+The full input is104587856bytes (~104.6MB decimal), with751frames on75x77 water
+nodes. Original65x65 waterXYZ, hull poses and time are bit identical to the
+accepted reference cache. Only1550missing border nodes per frame were evaluated
+from the same immutable train, rather than generating a96m field for every time.
+The final fixed camera halfspan is6.100702m; water halfwidths6.9375/7.125m
+cover its corners at every frame. Native HUD rows are exactly0:4:3000.
+Rendering culls to10366visible of11248waterfaces.
+
+Prepared `scene-full60-attempt1.npz` SHA256
+`884667cb0a43f55ec86303c38fae303a76c58a8869c547b1d3290f70b4f330bc`.
+Reproduce without input preparation:
+
+```powershell
+uv run topwater render artifacts/reference/stronger-buoy-20261024/scene-full60-attempt1.npz videos/reference-full60.mp4
+```
+
+Evidence is under `matplotlib-full60-attempt1-source/proposal.json` SHA256
+`f03211a6f1fd83d7ce34b76f753cfc5f26a159e19c31ef0a9284e05b1072febe`
+and `matplotlib-full60-qa-attempt1/verification.json`. Exact process/children
+terminal6f2f47/CIM6c6e36, frozen inputs/dependencies verifiedb012d4, separate idle
+readback58a912, final lease releasebacd1e. No numerical work remains allocated.
+The read-only speed review did not edit or benchmark this frozen run.
+
+Final integration check after removing 3D API/dependencies ran exactly
+`tests/test_visualization.py` and `tests/test_package.py`: **19 passed in0.15s**
+on the current cleaned source, with no fixes or rendering repeats needed.
+Manifest `render-final-tests-attempt1-source/proposal.json` SHA256
+`1e32810f9952b5334b97ded502500e80368424254a79184fe466a57b2d8a429f`;
+terminal101701/CIM73aa68, frozen check531e70, separate idlec617a1,
+final lease release6a9c91. Its completion receipt is beside the proposal.
+
+### Accepted short preview and styling history
+
 Latest accepted styling is opaque off-white projected hull fill, gray mesh,
 black rim, dark-blue geometric waterline, muted standard `coolwarm` elevation
 palette about zero, and14.5pt DejaVu Sans Mono header with fixed-width signed
@@ -60,13 +107,18 @@ FFmpeg encoder are core dependencies; no extra flag, global FFmpeg installation,
 GPU or PyVista is needed for the standard view. Diagnostic information returns
 on stdout. The renderer creates no permanent sidecars.
 
-SceneSequence retains the neutral mesh contract documented below and adds an
-optional `telemetry` dictionary of finite arrays with one value per timestamp.
+SceneSequence uses world metres in right-handed z-up coordinates:
+`time_s[T]`, `hull_points[T,N,3]`, `hull_faces[F,3]`, `water_points[T,M,3]`,
+`water_faces[K,3]`, JSON metadata and an optional `telemetry` dictionary of finite arrays with one value per timestamp.
 The standard header requires `roll_deg`, `pitch_deg`, `heave_m`; time comes from
 `time_s`. NPZ serialization stores these as `telemetry__roll_deg`,
 `telemetry__pitch_deg`, `telemetry__heave_m`. Older geometry-only scenes load,
 but must receive producer-defined telemetry before the default header can render.
 No mesh-based pose inference or first-frame rezeroing occurs in the renderer.
+Connectivity is fixed within a sequence; the hull shape and resolution are data,
+not renderer constants. All physical hull faces must lie on a convex boundary;
+nonconvex/internal faces fail validation. Open gunwales are permitted. Unit/frame
+conversion and any time resampling belong to the producer adapter.
 
 The original top-down baseline used Gouraud-shaded standard Matplotlib TriMesh with continuous `bwr`
 colors; the latest style uses muted `coolwarm` with the same symmetric
@@ -110,103 +162,12 @@ CLI and QA took17.797s. Wider water preparation remains the earlier one-time
 `cc6ba729f6104f635f453cd58dd70a44fc9fc26ae9bc8f3fd1fa0ae890a2b589`,
 `matplotlib-qa-attempt1/verification.json` and `augmentation.json`.
 
-The earlier optional3D implementation and artifacts below remain preserved
-until the user reviews2D and explicitly elects removal. They are not the default.
 
-## Earlier optional 3D workflow and preserved evidence
+### Retired 3D renderer
 
-User-authorized library visualization only. Solver implementation and physical
-model qualification remain held. Initial standard workflow is executed and
-accepted; source and exact run evidence below distinguish tuning attempts.
-
-`topwater.visualization` accepts prepared `SceneSequence` world meshes in metres,
-right-handed z-up coordinates: increasing `time_s`, `hull_points[T,N,3]`,
-`hull_faces[F,3]`, `water_points[T,M,3]`, `water_faces[K,3]`, and JSON metadata.
-Each sequence has fixed triangular connectivity; hull geometry and resolution
-are data. Producer adapters convert their poses/surfaces into this contract.
-The library has no WEC-Sim references, wave model or current-boat dimensions.
-`save`/`load` use pickle-free NPZ so camera/material changes reuse prepared data.
-
-Hull convexity is an explicit requirement. All supplied physical faces must lie
-on the convex boundary. Open gunwales are supported; the derived closed envelope
-masks water for display only and does not model flooding or physical wetting.
-Unsupported internal/nonconvex faces fail explicitly. Unit/frame conversion and
-time resampling belong to the adapter, never silent renderer adjustments.
-Water mesh resolution must resolve the hull contact region: standard VTK
-point-distance clipping interpolates within cells and cannot discover a small
-hull wholly inside a coarse triangle. Prepared WEC data retains its fine local
-water grid. This is a display-resolution requirement, not a fluid-accuracy claim.
-
-`RenderSettings` controls camera/framing, materials and light/shadows. Resolution
-is fixed at 800 x 800 and cadence is inferred from uniform saved timestamps.
-`render_sequence` lazily imports optional PyVista,
-reuses one VTK context and actors, updates mesh data, uses standard VTK clipping,
-normals, boundary extraction, lighting/shadows and transparency. Standard VTK
-cell picking checks actual water coverage at all four camera corners per frame.
-Only the explicitly named MP4 persists. Backend capability text and separate
-setup/frame timings are returned to the caller/stdout; temporary encoding files
-are cleaned automatically. Diagnostic capture belongs to an explicit tuning job.
-No bespoke rasterizer, shader, fake background water or vertical amplification.
-
-Install graphics with `pip install 'topwater[visualization]'`. Ordinary package
-imports do not require or initialize graphics. Actual backend and timing were
-measured in the allocated job below; installed GPU names alone are not proof
-of the backend used.
-
-Code-first CLI after a producer prepares its scene:
-
-```powershell
-uv run --extra visualization topwater render data/scene.npz videos/preview.mp4
-```
-
-Both input and output paths are required positionals. `--settings` is optional
-and takes a JSON `RenderSettings` object for camera/material tuning. Both relative
-and absolute paths are supported. There are
-no input/output flags, time-range flags, size or retiming options. The entire
-prepared input file is rendered. `topwater render --help` opens no graphics
-context. At least two uniformly spaced timestamps are required; irregular
-cadence is rejected, with resampling a producer-adapter responsibility.
-
-## Executed preview and limits
-
-- 13 focused schema/package/CLI tests passed, including required positional paths,
-exact output filename, full input retention, convex boundary rejection and
-irregular-cadence rejection. A distinct convex box used the same public CLI.
-- Initial attempt1 stopped before rendering because the existing global pytest
-temporary directory was inaccessible. Runner-local `--basetemp` fixed it.
-- Attempt2 produced valid meshes/video but its shadows, boundary lines and
-three-bin listed colormap were visually rejected. Artifacts remain preserved.
-- Accepted attempt3 uses standard continuous `Blues_r`, readable ordinary VTK
-material lighting, default shadows/boundary lines off and perspective. No new
-custom graphics code or physical changes were introduced.
-
-Accepted movie:
-`artifacts/reference/stronger-buoy-20261024/pyvista-clip-attempt3.mp4`, SHA256
-`c80e14001a9e3818291e428cea71378b3e158b44831d084afcc34b67d1ec2b0f`.
-All 63 frames decode at 800 square / 12.5 fps / 5.04 seconds; source time 50.00–54.96 s.
-All four camera corners hit actual water geometry at every frame. ROOT and owner
-viewed the decoded peak frame. This is visual acceptance, not fluid accuracy.
-
-Actual backend is Intel Arc Pro OpenGL 4.5; the NVIDIA device was not used.
-Rendering took 31.515 s, including convex validation 0.078 s and context setup
-2.437 s; mean frame cost 0.417 s. Cached CLI plus full decode/poster QA took
-35.829 s. Separate wider-water display preparation took 100.75 s once; the
-central accepted water is bit identical.
-Prepared scene SHA256
-`1079ae90ec78ea3171204be2996a101caf86015e44771b509b9af82352a3ef4f`
-is reused without resampling waves for camera/material iteration.
-
-To reproduce this example's producer-heading camera, use the accepted settings:
-
-```powershell
-uv run --extra visualization topwater render artifacts/reference/stronger-buoy-20261024/pyvista-scene-attempt2/scene.npz videos/preview.mp4 --settings reference/wecsim/pyvista-cached-settings.json
-```
-
-The earlier prepared scene's `render-settings.json` belongs to the rejected
-shadow-enabled style and is preserved only as historical evidence.
-
-Evidence: `pyvista-clip-attempt3-source/proposal.json` SHA256
-`5b434785e9daf58e0213e7fbc86f8f4d0d6742bdb1d6587f380e2dc7975d7259`,
-`pyvista-qa-attempt3/verification.json` and the prepared scene's
-`pyvista-scene-attempt2/preparation.json` under the same stronger reference root.
-No real-time or future large-mesh cost is established by this five-second case.
+The user approved removal of active 3D rendering after reviewing the 2D result.
+The PyVista/VTK renderer, its settings and optional dependencies are removed.
+Git checkpoints8450c2c/662a148 preserve their historical source and evidence;
+previous artifacts remain unchanged. Three-dimensional mesh inputs, physical
+geometry and actual triangle-intersection math remain part of the 2D workflow.
+No physical solver or hull definition was removed.

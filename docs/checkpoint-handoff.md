@@ -1,95 +1,97 @@
 # Checkpoint handoff
 
-Updated2026-10-24. Latest user steering controls scope. Read
+Updated2026-10-25. Latest user steering controls scope. Read
 [AGENTS.md](../AGENTS.md), [coordination](experts/coordination.md),
 [physical contract](experts/shared-contract.md) and the relevant owner state.
 
 ## Current authorization and immediate priority
 
-LATEST USER: render FULL60s withaccepted2Dstyle, whileparallel READONLY search
-findslowhangingperformancewins. USERexplicitlyapprovesdeletingALL3Drendering
-code/deps ('2D is good'). No deletionofphysical3Dgeometry/solvers oroldartifacts.
-Owners holdcodebriefly forROOTcheckpointcurrentrefinement, then clean3Dpaths
-BEFOREfreezingnewfullproducer. Genericowner `/root/visualization` owns2Dlibrary/
-PyVista-backend/dependencycleanup andserialfullrender; WECowner ownsobsolete
-3Drender-onlyhelpers cleanup/shareddatautilities+newFULL751preparedinput.
-UseORIGINALfull12m751cache+exactnativeHUD, MINIMALsame-fieldborderonlyifneeded
-forfixedcamera/alltimecoverage; central65x65BITEXACT, no96mfullfield/wavephysics.
-Proposalfirst, max~600s/1CPU/noMATLAB, full751decode+peakPNG+phasewalltimings.
-No fulljobgrantedyet. `/root/startup_review` ownsparallelREADONLYcode/docsperf
-analysis, no numericaljobs/edits/benchmarks. DoNOTmutatefrozenproducerduringjob.
+IMPLEMENTATION AUTHORIZED: latest user request is to implement the canonical
+example/workflow plan developed in this conversation. One flat
+`examples/simple-boat/` contains `boat.npz`, `sea.npz`, `result.npz`, `video.mp4`.
+Public generate-sea/solve/render commands take an optional directory (default
+cwd), fixed filenames; solve additionally requires duration and defaults native.
+Native dynamics implementation remains excluded; native must fail clearly.
+WEC-Sim is the first working solve backend and must export a reconstructed total
+free surface, not an incident-only surrogate. Reconstruction reads computed
+motion without another body solve or feedback. Measure total-minus-incident
+surface RMS/resolved peaks (full patch and near hull), without tuning to smallness.
 
-Requested minimal top-down Matplotlib preview and standard library workflow are
-COMPLETE atcheckpoint662a148 (pushed/issue30updated). LATEST USER authorizes
-refinement: monospacefixed-widthHUD, opaqueoffwhitehullinterior, mutedwaterpalette,
-darkbluewaterline andFULLCLI/render/encoderphase timing withspeedrecommendations.
-ROOT GRANTED onecached90sjob to `/root/visualization`, exactmanifest
-`matplotlib-clip-attempt2-source/proposal.json` SHA49de450cdc57026323345a8f76e6b773c5e18e9a3406fd75d4d36d5cd94de421.
-Twofocusedheader/footprinttests, same2475telemetryNPZ, cleanPUBLICCLI63, peakPNG/
-full63decode. No augmentation/waves/deps/physics. Freeze/claim/separateverify/
-exactterminal/idleunderlease/separateverify/finalrelease asusual. Sendstilland
-timingspromptly; no extraencoderbenchmarks. No full60s encode allocated.
-Refinementattempt2 COMPLETE: externalCLI12.205s/render10.625s, geometry3.326,
-Aggdraw4.283, pipewait.110, encoderflush2.187. ROOTacceptedopaquehull/monofixed
-header/mutedwaterstyle. Tests2/full63decodePASS; terminal/frozen/release2abc98.
-LATEST USER askslargerheaderacrossmost800pxwidth. ROOT GRANTED FONT-ONLYattempt3,
-manifest`matplotlib-clip-attempt3-source/proposal.json`
-SHA9a77d47fe82c07b54763bd51b6958854c7187eb2290a5ca80075b1349f1b4e87,
-sameowner/same2475input/style/timers,14.5pt(~766pxheader). Onecached90sCLI63+
-peakPNG/full63decode; no tests/deps/waves/augmentation. Serialleaseprocedure.
-Topwater solver/physics implementation remains HELD. USER hasnowapproved2Dand
-3Drendercode/dependencyremoval; oldsource/evidence remainrecoverableinhistory.
+Boat input is an uncapped convex physical triangular hull with exactly one
+inferred opening. Result includes complete exported hull geometry (possibly
+remeshed), CG, absolute poses and independently sampled variable-topology total
+water geometry. Numeric NPZ only, no general metadata/solver marker/pickle.
+Shared code handles equilibrium/rest/zero-memory/upstream spatial train; requested
+duration does not alter startup. Fatal errors preserve old outputs; physical
+applicability departures warn (10% restoring/wetted-set engineering policy).
+Every public command needs its own Markdown page including hardcoded choices,
+fatal/warning detection and limitations. Final binaries use Git LFS.
 
-Watch `artifacts/reference/stronger-buoy-20261024/matplotlib-clip-attempt1.mp4`.
-SHA256 954343c52b6bc5690fcf421bc0ac6804c2a4643b2571c26ffc34682f44e87eed.
-Still: `matplotlib-qa-attempt1/poster.png` under the same artifact root.
-Source50.00-54.96s, H264800x800/63frames/12.5fps/5.04s. ROOT viewed peak51.44s
-poster and sent still/video links to USER. Full63-frame decode and17 focused
-tests passed. Same cached hull/water/time arrays BITEXACT; accepted native q
-supplies roll_deg/pitch_deg/heave_m, no inference or re-zeroing.
+Start with bounded mesh/FOSS probes, then contracts/CLI/docs, WEC reconstruction,
+canonical run/video. Use expert ownership and independent adversarial review;
+commit/push reviewed checkpoints only to baseline/fluid-body. Existing dirty
+changes below are the previously authorized completed renderer cleanup and must
+be preserved/checkpointed. Numerical work is serial under the central lease.
+On entry no lease existed; authoritative CIM inspection confirmed prior pytest
+PIDs40692/16928 absent, no Python/FFmpeg/Gmsh jobs; shared MATLAB32780/9168
+remains present and must be queried before reuse. No new numerical launch yet.
 
-Style: fixed top-down map, continuous symmetric blue-white-red surface elevation
-about mean0 (not seabed depth), no water grid, light-gray hull mesh lines, black
-mesh-boundary upper rim, actual blue hull-water intersection with white halo.
-Video header shows TIME/ROLL/PITCH/HEAVE. Convex meshes are an explicit validated
-requirement; supplied mesh/data determine shape and resolution.
+## Previous completed visualization checkpoint
 
-Public command: `uv run topwater render data/scene.npz videos/preview.mp4`.
-BOTH arguments are required positional paths; examples prefer relative paths,
-absolute paths also work. Always render the whole NPZ at its uniform timestamps.
-Fixed800x800; no input/output, start/end or size flags. Optional JSON settings
-control presentation. Matplotlib and encoder are CORE deps, so no --extra for2D.
-Only named MP4 persists from normal rendering; scratch is cleaned and timing/
-diagnostics return on stdout. Temporary reference QA is allowed while tuning.
+FULL60s requested2D video and parallel read-only speed review are COMPLETE.
+USER approved2D and deletion of3D rendering work. Active3D render backends,
+render-only reference helpers/configs, and PyVista/VTK project dependencies are
+removed. Physical3D meshes, intersection math, solvers, native WEC-Sim/fork code,
+old evidence and MP4s are preserved. No further job is allocated; Topwater
+solver/physics implementation remains HELD. Await next user steering.
 
-SceneSequence contains named arrays time_s, hull_points[T,N,3], hull_faces[F,3],
-water_points[T,M,3], water_faces[K,3], metadata, optional neutral telemetry arrays
-serialized as telemetry__roll_deg/pitch_deg/heave_m. Header requires supplied
-telemetry. Metres/right-handed-z-up; fixed triangular connectivity per sequence,
-uniform timestamps. Producers own adapters; renderer has no WEC-Sim/boat constants.
-Augmented input is `scene-telemetry-attempt1.npz` under the artifact root.
+Watch `artifacts/reference/stronger-buoy-20261024/matplotlib-full60-attempt1.mp4`.
+SHA25615510982f6cef3a246f1129222e0525052215a06cfa2e0073af3c53bf803f23b.
+H264800x800/751frames/12.5fps/60.08s, including native60s endpoint framehold.
+All751 decoded successfully. Owner viewed0/30/51.44/60stills; ROOT viewed0+51.44.
+QA is in `matplotlib-full60-qa-attempt1`; peak frame is frame-0643.png.
 
-One Agg figure/reused artists, real background blitting, direct canvas-buffer
-streaming to bundled FFmpeg. Culling draws8064 of107648 water faces. Actual
-render11.25s (setup.765/validation.094/frameavg.120s), wholetests+augmentation+
-CLI+QA17.797s. No wave preparation or GPU; triangle/triangle geometry computes
-the actual waterline separately from standard Matplotlib drawing. No custom
-rasterizer. Original prepared field required100.75s once; styles reuse it.
+Final style: top-down fixed view, continuous coolwarm surface elevation about0,
+opaque offwhite hull, gray mesh, black rim, darkblue actualwaterline/whitehalo.
+Monospace signed fixed-width14.5pt header spans nearly800px and shows TIME/ROLL/
+PITCH/HEAVE. Same original accepted751 hull/time and central65x65 XYZ data are
+BITEXACT; native q rows0:4:3000 provide exact HUD. No scaling/heading/physics/IC
+change. Calm startup remains as previously accepted.
 
-Initial implementation owner `/root/visualization` is topwater_expert; WEC owner
-`/root/wecsim_reference` supplies telemetry/data adapters. Dedicated
-visualization_expert role is defined with inherited settings, but this client's
-native spawn returned unknownagent_type. It is configured, NOT loaded here;
-recheck after client refresh and transfer at a stable checkpoint. No separate
-CLI coordinator was started. Execution ledger owns exact terminal/frozen/idle/
-release evidence: session81549, release5ec2c5. All numerical processes terminal.
+Full input uses75x77 waternodes: original12m cache plus ONLY1550 true-field border
+nodes per frame. Waterhalves6.9375/7.125m cover fixedview half6.100702m atalltimes.
+Prepared scene~104MB, SHA884667cb0a43f55ec86303c38fae303a76c58a8869c547b1d3290f70b4f330bc.
+No96m fullfield regeneration. Preparation40.657s; publicCLI148.792s, renderer
+145.75s, wholeproducer+QA197.911s. Geometry/update64.066s, Aggdraw68.732s,
+pipewait.530s, encoderstartup1.937s/finalflush1.703s, hullvalidation5.359s,
+setup3.391s, input.157s. Pipewait is not total encoder CPU; work overlaps.
 
-Previous shared-PyVista checkpoint8450c2c was pushed and issue30 updated. Its
-accepted oblique MP4 and failed/rejected attempts remain preserved. No further
-3D development is authorized while awaiting 2D review; no deletion yet.
-See [library evidence](experts/topwater_expert/visualization-workflow-2026-10-24.md),
-[adapter evidence](experts/wecsim_expert/telemetry-2d-readiness-2026-10-24.md),
-[visualization role](experts/visualization_expert/current-state.md).
+Public command remains `uv run topwater render data/scene.npz videos/preview.mp4`.
+Both required positional paths support relative and absolute paths. Wholeinput,
+uniform timestamp cadence, fixed800square, namedMP4 only; no --extra/input/output/
+start/end/size flags. Optional JSON settings now only framing/timeout. Core
+Matplotlib+bundledencoder, realAggblit/directbufferstream/reusedartists. Prepared
+SceneSequence uses worldmetres/right-handed-z-up/fixedtriangularconnectivity,
+named telemetry arrays and explicit convexmesh validation. No boat constants.
+
+Parallel `/root/startup_review` read code/primary sources only: no edits, tests,
+benchmarks or concurrent numericaljobs. Promising later exact changes are
+coveragefinder reuse (preserve holes/deformation fallback) and tighter contact
+broadphase. Faster encoder preset needs quality review atfixedbitrate; regular
+grid image fastpath changes interpolation and needs visualapproval. Not applied
+during fullrender. [Review](experts/visualization_expert/render-speed-review-2026-10-25.md).
+
+Exact fulljob originalsession42135/producer40788/guard28968 terminal6f2f47/CIM6c6e36;
+frozen identities PASS, idle/separate58a912/FINALreleasebacd1e. Ledger idle/no lease.
+Owner `/root/visualization` (topwater_expert) wrote/executed initial sharedlibrary;
+`/root/wecsim_reference` owns producer adapters. Dedicated visualization_expert
+definition/KB/routing exists and inherits parent settings, but native spawn in
+this client returned unknownagent_type; configured NOTloaded here. Recheckafter
+clientrefresh and transferatstablecheckpoint; no separateCLIcoordinator.
+
+Previous checkpoints8450c2c/662a148/b17f529 pushed baseline/fluid-body. Current
+full-render/cleanup checkpoint follows. See [library evidence](experts/topwater_expert/visualization-workflow-2026-10-24.md)
+and [WEC producer state](experts/wecsim_expert/current-state.md).
 
 
 PREVIOUS USER REQUEST COMPLETE: render the new video and provide where to watch it, using

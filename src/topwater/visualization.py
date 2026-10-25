@@ -1,14 +1,10 @@
-"""Producer-neutral mesh animation using optional PyVista/VTK rendering.
+"""Producer-neutral mesh animation using standard Matplotlib artists.
 
 Inputs are already prepared world geometry, never simulation parameters or loads.
 One sequence has fixed triangular connectivity; another hull is another input.
 """
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 import json
-from pathlib import Path
-import shutil
-import tempfile
-import time
 
 import numpy as np
 from scipy.spatial import ConvexHull, QhullError, cKDTree
@@ -20,7 +16,7 @@ class SceneSequence:
 
     ``*_points`` have shape (time, vertex, 3); ``*_faces`` are (triangle, 3)
     integer indices. Hull faces may leave a gunwale open, but must lie on the
-    convex envelope. The closed envelope is used only to mask displayed water.
+    convex envelope. Rendering projects these faces and their actual waterline.
     Water faces should be consistently oriented toward the air.
     """
     time_s: np.ndarray
@@ -113,190 +109,14 @@ def _outward(points, faces):
 
 @dataclass
 class RenderSettings:
-    """Scene styling; none of these settings belong to a particular producer."""
-    view: str = 'topdown'
-    azimuth_deg: float = -110.
-    elevation_deg: float = 24.
-    view_angle_deg: float = 25.
+    """Fixed top-down presentation settings, independent of the producer."""
     framing: float = 1.45
-    target_z: float = 0.
-    follow_xy: bool = True
-    perspective: bool = True
-    hull_color: str = '#dedbd1'
-    interior_color: str = '#ae8053'
-    hull_opacity: float = 1.
-    water_opacity: float = .9
-    water_colormap: str = 'Blues_r'
-    water_specular: float = .35
-    water_specular_power: float = 35.
-    shadows: bool = False
-    waterline: bool = False
-    timestamps: bool = True
     maximum_seconds: float = 240.
 
 
-def _render_3d(scene, output_path, settings=None):
-    """Render prepared meshes with one reused VTK context and actors.
-
-    Render the whole input at its saved uniform cadence to one 800-square MP4.
-    Diagnostics are returned, never written as persistent sidecars. VTK filters
-    perform clipping and normals; this is visualization, not wetting physics.
-    """
-    settings = RenderSettings() if settings is None else settings
-    if settings.framing <= 1 or not (0 < settings.view_angle_deg < 90) or not (0 < settings.elevation_deg < 90):
-        raise ValueError('Framing > 1 and acute camera angles required')
-    if len(scene.time_s) < 2 or not np.allclose(np.diff(scene.time_s), scene.time_s[1] - scene.time_s[0], atol=1e-9, rtol=1e-7):
-        raise ValueError('Movie input needs at least two uniformly spaced times; resampling belongs to the producer adapter')
-    fps = 1 / (scene.time_s[1] - scene.time_s[0])
-    output = Path(output_path)
-    if output.suffix.lower() != '.mp4':
-        raise ValueError('Output must name the complete MP4 file, including .mp4')
-    if output.exists():
-        raise FileExistsError(f'Output already exists: {output}')
-    started = time.monotonic()
-    closures = [convex_envelope(points, scene.hull_faces) for points in scene.hull_points]
-    validation_seconds = time.monotonic() - started
-    try:
-        import pyvista as pv
-        import imageio.v2 as imageio
-        from vtkmodules.vtkRenderingCore import vtkCellPicker
-    except ImportError as error:
-        raise ImportError('Install topwater[visualization] to render scenes') from error
-
-    def cells(faces):
-        return np.column_stack((np.full(len(faces), 3), faces)).ravel()
-
-    hull = pv.PolyData(scene.hull_points[0].copy(), cells(closures[0][1]))
-    water = pv.PolyData(scene.water_points[0].copy(), cells(scene.water_faces))
-    water['elevation'] = water.points[:, 2]
-    closed = pv.PolyData(scene.hull_points[0].copy(), cells(closures[0][0]))
-    clipped = water.clip_surface(closed, invert=False).extract_surface(algorithm='dataset_surface')
-    clipped = clipped.compute_normals(point_normals=True, cell_normals=False, consistent_normals=True)
-    size = (800, 800)
-    plotter = pv.Plotter(off_screen=True, window_size=size, lighting='none')
-    temporary = tempfile.TemporaryDirectory(prefix='topwater-render-')
-    encoded = Path(temporary.name) / 'movie.mp4'
-    writer = None
-    frame_seconds = []
-    coverage = []
-    try:
-        plotter.set_background('#4384a2')
-        plotter.enable_anti_aliasing('fxaa')
-        plotter.enable_depth_peeling(number_of_peels=8)
-        hull_actor = plotter.add_mesh(hull, color=settings.hull_color, opacity=settings.hull_opacity,
-            show_edges=False, smooth_shading=False, ambient=.35, diffuse=.65, specular=.12,
-            backface_params={'color': settings.interior_color, 'ambient': .4, 'diffuse': .6})
-        limits = (float(scene.water_points[:, :, 2].min()), float(scene.water_points[:, :, 2].max()))
-        if limits[1] - limits[0] < 1e-8:
-            limits = (limits[0] - .01, limits[1] + .01)
-        water_actor = plotter.add_mesh(clipped, scalars='elevation', cmap=settings.water_colormap,
-            clim=limits, opacity=settings.water_opacity, show_edges=False, show_scalar_bar=False,
-            smooth_shading=True, ambient=.35, diffuse=.65, specular=settings.water_specular,
-            specular_power=settings.water_specular_power)
-        line_actor = None
-        if settings.waterline:
-            edges = clipped.extract_feature_edges(boundary_edges=True, feature_edges=False,
-                manifold_edges=False, non_manifold_edges=False)
-            line_actor = plotter.add_mesh(edges, color='#163e50', line_width=2, lighting=False)
-        centers = (scene.hull_points.min(axis=1) + scene.hull_points.max(axis=1)) / 2
-        centers[:, 2] = settings.target_z
-        if not settings.follow_xy:
-            centers[:] = centers[0]
-        radius = float(np.linalg.norm(scene.hull_points - centers[:, None], axis=2).max())
-        span = 2 * radius * settings.framing
-        distance = span / (2 * np.tan(np.deg2rad(settings.view_angle_deg / 2)))
-        elevation, azimuth = np.deg2rad([settings.elevation_deg, settings.azimuth_deg])
-        toward = np.array([np.cos(elevation) * np.cos(azimuth), np.cos(elevation) * np.sin(azimuth), np.sin(elevation)])
-        center0 = centers[0].copy()
-        sunlight = pv.Light(position=center0 + span * np.array([-.6, -.5, 1.5]), focal_point=center0,
-                            color='white', intensity=.7, light_type='scene light')
-        plotter.add_light(sunlight)
-        plotter.add_light(pv.Light(light_type='headlight', intensity=.35))
-        if settings.shadows:
-            plotter.enable_shadows()
-        plotter.camera.view_angle = settings.view_angle_deg
-        plotter.camera.parallel_projection = not settings.perspective
-        plotter.camera.parallel_scale = span / 2
-        plotter.camera.up = (0, 0, 1)
-        picker = vtkCellPicker()
-        picker.PickFromListOn()
-        picker.AddPickList(water_actor)
-        picker.SetTolerance(1e-6)
-        plotter.camera_position = (center0 + toward * distance, center0, (0, 0, 1))
-        plotter.show(auto_close=False, interactive=False)
-        capabilities = plotter.render_window.ReportCapabilities()
-        writer = imageio.get_writer(encoded, fps=fps, codec='libx264',
-            quality=8, macro_block_size=None, ffmpeg_params=['-threads', '1'])
-        setup_seconds = time.monotonic() - started - validation_seconds
-        for index, stamp in enumerate(scene.time_s):
-            before = time.monotonic()
-            if before - started > settings.maximum_seconds:
-                raise TimeoutError('Render exceeded maximum_seconds')
-            hull.points = scene.hull_points[index]
-            hull.faces = cells(closures[index][1])
-            closed.points = scene.hull_points[index]
-            closed.faces = cells(closures[index][0])
-            water.points = scene.water_points[index]
-            water['elevation'] = water.points[:, 2]
-            clipped = water.clip_surface(closed, invert=False).extract_surface(algorithm='dataset_surface')
-            clipped = clipped.compute_normals(point_normals=True, cell_normals=False, consistent_normals=True)
-            water_actor.mapper.dataset = clipped
-            if line_actor is not None:
-                line_actor.mapper.dataset = clipped.extract_feature_edges(boundary_edges=True,
-                    feature_edges=False, manifold_edges=False, non_manifold_edges=False)
-            center = centers[index]
-            plotter.camera_position = (center + toward * distance, center, (0, 0, 1))
-            plotter.reset_camera_clipping_range()
-            sunlight.position = center + span * np.array([-.6, -.5, 1.5])
-            sunlight.focal_point = center
-            if settings.timestamps:
-                plotter.add_text(f't = {stamp:.2f} s', position='upper_left', font_size=12,
-                                 color='white', shadow=True, name='time')
-            plotter.render()
-            width, height = size
-            corners = [(1, 1), (width - 2, 1), (1, height - 2), (width - 2, height - 2)]
-            hits = [bool(picker.Pick(x, y, 0, plotter.renderer)) for x, y in corners]
-            if not all(hits):
-                raise ValueError('Water mesh does not cover the camera corners; extend the prepared water surface')
-            coverage.append(hits)
-            pixels = plotter.screenshot(return_img=True)
-            if writer is not None:
-                writer.append_data(pixels)
-            frame_seconds.append(time.monotonic() - before)
-        if writer is not None:
-            writer.close()
-            writer = None
-        output.parent.mkdir(parents=True, exist_ok=True)
-        shutil.move(str(encoded), str(output))
-        report = dict(complete=True, output=str(output), frames=len(scene.time_s), fps=float(fps), size=size,
-            source_start_s=float(scene.time_s[0]), source_end_s=float(scene.time_s[-1]),
-            video_duration_s=float(len(scene.time_s) / fps),
-            elapsed_s=time.monotonic() - started, validation_seconds=validation_seconds,
-            context_setup_seconds=setup_seconds, frame_seconds=frame_seconds,
-            all_camera_corners_hit_water=bool(np.all(coverage)), settings=asdict(settings),
-            metadata=scene.metadata, pyvista_version=pv.__version__, vtk_version=pv.vtk_version_info,
-            backend_capabilities=capabilities,
-            limitations='Convex display-volume water masking; not physical wetting/flooding. Fixed mesh connectivity per sequence.')
-        return report
-    finally:
-        try:
-            if writer is not None:
-                writer.close()
-        finally:
-            try:
-                plotter.close()
-            finally:
-                temporary.cleanup()
 def render_sequence(scene, output_path, settings=None):
-    """Render the whole prepared sequence to one MP4 using standard artists.
+    """Render the whole prepared sequence to one MP4 with standard Matplotlib."""
+    from ._visualization_2d import render_topdown
 
-    The default is the minimal Matplotlib top-down view. ``view='3d'`` retains
-    the optional PyVista renderer while the new standard visualization is reviewed.
-    """
     settings = RenderSettings() if settings is None else settings
-    if settings.view == 'topdown':
-        from ._visualization_2d import render_topdown
-        return render_topdown(scene, output_path, settings)
-    if settings.view == '3d':
-        return _render_3d(scene, output_path, settings)
-    raise ValueError("Unknown visualization view; choose 'topdown' or '3d'")
+    return render_topdown(scene, output_path, settings)

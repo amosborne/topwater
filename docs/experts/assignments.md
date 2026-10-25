@@ -5,6 +5,30 @@ current user request), `running`, or `completed`. Current project authorization
 is recorded only in [the handoff](../checkpoint-handoff.md); an execution lease
 schedules authorized work and never grants scope. Update status in place.
 
+## Canonical workflow implementation, 2026-10-25
+
+Current user authorization is the canonical NPZ/directory CLI plan in the handoff.
+Coordinator owns CLI, dependencies, documentation routing, numerical scheduling,
+acceptance and Git checkpoints. No native dynamics implementation is allocated.
+
+- TW-WORKFLOW-001, authorized/source implementation: topwater_expert owns new
+  boat_geometry.py/workflow_data.py, corresponding tests and mesh-tooling review.
+  Deliver convex one-opening physical hull validation, NPZ contracts, temporary
+  closure adapter and bounded geometry probes. Do not alter generic old inputs.
+- WEC-WORKFLOW-001, authorized/source implementation: wecsim_expert owns reusable
+  backend/setup, equilibrium/train construction, native WEC runtime and solve
+  documentation. Deliver generic input-driven pipeline without frozen artifact
+  paths or another motion solve during surface reconstruction.
+- CAP-SURFACE-001, authorized/source implementation: capytaine_expert owns reusable
+  hydrodynamic producer/retained fields and total transient surface reconstruction,
+  with producer tests. Joint interface agreement with WEC; independent review
+  before physical reliance. No mesh-refinement campaign.
+
+All experts preserve others' edits and stop before tests/numerical runs until the
+coordinator explicitly assigns the sole execution lease. Package/dependency and
+producer identities are frozen during every allocated run. Geometry/physics
+authors do not independently approve their consequential corrections.
+
 ## CAP-001: first canonical producer/interface
 
 Status: completed (minimum export and stored BEMIO interface, 2026-10-24).

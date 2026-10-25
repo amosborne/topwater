@@ -5,7 +5,7 @@ Read only the owner needed for the authorized task:
 
 - [Capytaine](capytaine_expert/README.md): native producer and solver meshes.
 - [WEC-Sim](wecsim_expert/README.md): BEMIO, dynamics, maintained fork and adapters.
-- [Visualization](visualization_expert/README.md): shared Matplotlib 2D and optional 3D scenes,
+- [Visualization](visualization_expert/README.md): shared Matplotlib 2D scenes,
   animation and rendering performance.
 - [Topwater](topwater_expert/README.md): later independent solver implementation.
 - [Research](numerical_methods_researcher/README.md): focused method proposals.

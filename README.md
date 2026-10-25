@@ -85,12 +85,13 @@ monospace time/roll/pitch/heave header. This is not bathymetry or flooding
 physics. See the [input contract and reproduction notes](docs/experts/topwater_expert/visualization-workflow-2026-10-24.md).
 
 Prepared geometry is cached separately from camera/material settings. The tested
-63-frame, 5.04-second square preview took 14.03 seconds for the complete CLI
-process, including startup, loading and encoder flush; renderer time was
-12.25 seconds using CPU Agg blitting and a direct FFmpeg stream. It draws only 8,064 of the 107,648
-water triangles that intersect the fixed view. Its wider incident-water
-preparation took 100.75 seconds once and is reused for subsequent styling.
-This is a measured preview cost, not a solver or real-time performance claim.
+Full 60-second, 751-frame rendering took 148.79 seconds for the complete CLI
+process, including startup, loading and encoder flush. Renderer time was 145.75 s;
+input preparation plus rendering and QA took 197.91 s. The compact 104.6 MB input
+reuses the accepted 65 x 65 water cache and adds only a narrow same-field border
+to cover the fixed view (75 x 77 nodes total). Preparation took 40.66 s once and
+the prepared input is reusable. These are measured visualization costs, not
+solver or real-time performance claims.
 
 ## Development
 

@@ -10,8 +10,15 @@ new routing entry awaiting native-client availability; no activation claim here.
 COMPLETE: `src/topwater/visualization.py`, the Matplotlib/geometry modules and
 `cli.py`. Clean command `uv run topwater render INPUT.npz OUTPUT.mp4`: both paths
 required; fixed 800 square, whole input, uniform native cadence, only MP4 persists,
-diagnostics stdout. Matplotlib and bundled FFmpeg are core dependencies; PyVista
-remains optional. `uv.lock` is current with existing package versions preserved.
+diagnostics stdout. Matplotlib and bundled FFmpeg are core dependencies.
+USER approved removal of the 3D renderer: generic PyVista code, dispatcher,
+3D-only settings and optional dependencies have been removed. `uv.lock` removes
+19 unused dependencies, preserving the remaining versions. Three-dimensional
+mesh inputs, convex validation and physical waterline intersection math remain.
+Final post-cleanup suite `tests/test_visualization.py tests/test_package.py`:
+19 passed in0.15s on the actual cleaned source; no source changes were needed.
+Exact testmanifest1e32810f9952b5334b97ded502500e80368424254a79184fe466a57b2d8a429f,
+terminal101701/CIM73aa68, frozenPASS531e70/separatec617a1/release6a9c91.
 
 LATEST ACCEPTED VIEW supersedes the earlier oblique presentation: Matplotlib
 top-down, continuous blue-white-red elevation fixed about zero, no water grid,
@@ -20,28 +27,33 @@ hull/water triangle intersection. Header time/roll/pitch/heave comes from named
 producer telemetry, never inferred from a reference hull. Clean command:
 `uv run topwater render data/scene.npz videos/preview.mp4` (no extra required).
 
-Latest accepted `matplotlib-clip-attempt3.mp4` SHA
-7134d6443cc8d66e3e53d2719f63618bf087cb432127f1edb54eb20711dec7b0,
+Latest accepted `matplotlib-full60-attempt1.mp4` SHA
+15510982f6cef3a246f1129222e0525052215a06cfa2e0073af3c53bf803f23b,
 under stronger-buoy-20261024. Large14.5pt DejaVuSansMono fixed-column header,
 opaque generic projected off-white hull footprint, muted continuous coolwarm,
 dark-blue contact. 17 baseline tests plus2new header/footprint checks passed;
-font-only finaliteration needed no repeated tests. All63 frames decode at800
-square/12.5fps/5.04s; ROOT and owner viewed the decoded peak still.
-Actual full public CLI14.027s including process startup/imports/load/flush;
-renderer12.25s, geometry/artist4.132s, Aggdraw4.773s, pipe-send.048s,
-encoderflush2.500s. Pipe-send is transfer/backpressure, not pure encodeCPU;
+font-only finaliteration needed no repeated tests. Full751 frames decode at800
+square/12.5fps/60.08s from physical0..60s; owner viewed0/30/51.44/60 decoded
+images andROOTviewed0+peak. Header/opaquehull/continuouswater style unchanged.
+Actual full public CLI148.792s including process startup/imports/load/flush;
+renderer145.75s, geometry/artist64.066s, Aggdraw68.732s, pipe-send.530s,
+encoderflush1.703s. Pipe-send is transfer/backpressure, not pure encodeCPU;
 encoding overlaps drawing. Figure/artists reused, blitted Agg buffer streams
 directly through public imageio-ffmpeg without a second full-figure draw.
-Visible-water culling draws8064/107648triangles. Geometry/time/connectivity are
-bit exact; telemetry rows match original nativeq exactly. No wave preparation
-or physical correction. Exactterminal75481c/CIMe51809, frozenPASS62d995,
-idle/separateca3566/FINALreleasefc086d. No jobs remain.
+Input is104587856bytes:75x77 nodes from original65x65cache plus1550borderpoints
+perframe evaluated from the same frozen incoming field only. Original waterXYZ,
+hull/time BITEXACT; HUD nativeqrows0:4:3000 exact. Preparation40.657s; whole
+producer+QA197.911s; no simulation/physics or sea-state changes. Visible water
+draws10366/11248triangles. Exactterminal6f2f47/CIM6c6e36, frozenPASSb012d4,
+idle/separate58a912/FINALreleasebacd1e. No jobs remain.
 
-3D code/artifacts are preserved pending USER review of 2D; do not delete based
-on that conditional alone. The earlier same-CLI synthetic convex box checked
-another topology. Its oblique timing/receipts are preserved in the
+Prior 3D sources are preserved in Git history and old artifacts remain intact.
+The earlier same-CLI synthetic convex box checked another topology. Its oblique
+timing/receipts are historical, referenced by the
 [visualization contract/source note](visualization-workflow-2026-10-24.md).
-No further rendering work is allocated. Solver and physics remain HELD.
+Latest full60s video and approved active3D renderer/dependency cleanup are
+complete. Separate read-only speed suggestions are proposals only; no follow-up
+render/optimization job is allocated. Solver and physics remain HELD.
 
 LATEST user, after mild60s video: use a MORE energetic actual sea and report
 diagnostics. Coordinator selects `ndbc-46086-20231223T0040Z`, source row29984,

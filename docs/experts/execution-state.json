@@ -6,28 +6,29 @@
   "manifest": null,
   "active_numerical_job": null,
   "last_terminal_evidence": {
-    "job": "ONE cached font-only63frame rerender, unchangedphaseprofiling/data/style exceptlargerheader; no tests/deps/waves/augmentation",
+    "job": "ONE final focused visualization/package suite after approved 3D renderer/dependency removal; no render/benchmark/physics",
     "owner": "/root/visualization",
-    "tool_session_id": 32745,
-    "producer_pid": 18992,
-    "owner_launcher_pid": 38668,
-    "runner_pid": 32568,
-    "main_cli_pid": 18396,
+    "producer_pid": 40692,
+    "owner_launcher_pid": 16928,
     "exit_code": 0,
-    "terminal_chunk": "75481c",
-    "authoritative_terminal_chunk": "e51809",
+    "terminal_chunk": "101701",
+    "authoritative_terminal_chunk": "73aa68",
     "frozen_inputs_match": true,
-    "full_main_frames_decoded": 63,
+    "tests_passed": 19,
+    "pytest_reported_seconds": 0.15,
     "complete": true,
-    "visual_review_pass": true,
-    "visual_review": "ROOT and owner accepted large fixed-width mono header with no clipping; opaque hull and muted water",
-    "manifest": "artifacts/reference/stronger-buoy-20261024/matplotlib-clip-attempt3-source/proposal.json",
-    "output": "artifacts/reference/stronger-buoy-20261024/matplotlib-clip-attempt3.mp4",
-    "output_sha256": "7134d6443cc8d66e3e53d2719f63618bf087cb432127f1edb54eb20711dec7b0",
-    "external_cli_wall_seconds": 14.02689450001344,
-    "main_render_seconds": 12.25,
-    "whole_runner_seconds": 14.769614899996668,
-    "prepared_scene_sha256": "2475d3befca4483a9ea4b0cacfc06e05586e7cea05e7b7be09ef5dd8dd9e9b23"
+    "source_changed": false,
+    "manifest": "artifacts/reference/stronger-buoy-20261024/render-final-tests-attempt1-source/proposal.json",
+    "command": [
+      "-m",
+      "pytest",
+      "-q",
+      "--basetemp",
+      "C:\\Users\\alex\\topwater\\artifacts\\reference\\stronger-buoy-20261024\\render-final-tests-attempt1\\pytest-temp",
+      "tests/test_visualization.py",
+      "tests/test_package.py"
+    ],
+    "scope": "Final current-source visualization/package tests only after 3D cleanup; no render, benchmark, solver or environment changes"
   },
-  "note": "Idle recorded UNDER lease after exact producer/CLI/encoder terminal, frozen identities matched and accepted header preview; separate idle verification and FINAL lease release pending."
+  "note": "Implementation startup reconciliation 2026-10-25: central lease absent; authoritative CIM tool chunk1cf58c confirms prior pytest PIDs40692/16928 absent, no Python/FFmpeg/Gmsh jobs. Shared MATLAB32780/9168 remains present; query before reuse. Latest task authorizes serial workflow implementation checks, no new numerical launch yet."
 }
