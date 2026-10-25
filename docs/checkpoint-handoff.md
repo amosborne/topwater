@@ -92,7 +92,9 @@ See docs/npz-format.md, cli/*.md and experts/shared-contract.md.
 
 ## Latest verified checkpoint
 
-Pushed Topwater **537cf08**, prior69bb63d/de67fc7. Runtime source SHA:
+Pushed Topwater **bda901d**: eight-file example, PNG integration, logs and strategy.
+LFS upload342MB verified; Git LFS fsck passes and the development branch matches
+origin. Prior source checkpoint537cf08; runtime source SHA:
 _capytaine_surface.py2858b847efea11a97c50bd9d12c744bf3069723e32e5fa401309c4e2ee0f352a.
 
 - Complete workflow checks:270PASS/1optional libigl skip,14.11s;
@@ -151,7 +153,8 @@ change numerical parsing or dynamics. Upstream remains untouched.
 
 Current clean pinned fork: amosborne/WEC-Sim, topwater/reference-v7.1.0,
 9952634f6f2e2746a1626484e27c3003d1e1d5a9; basea23d299(v7.1.0).
-Pin/source MUST stay frozen for the live run. Causal reconstruction is in
+Keep the runtime pin unchanged under the user HOLD; future fork work uses an
+isolated checkout. Causal reconstruction is in
 Topwater's adapter, not these fork changes.
 
 User now explicitly asks WEC-Sim expert to define a maintenance strategy and
@@ -183,9 +186,9 @@ no automatic main/dev movement. No upstream issue or PR without specific explici
 user permission. Current strategy: docs/wecsim-fork-strategy.md, independently
 reviewed; generic candidates are NOT automatically submission-ready.
 
-1. Finish committing/pushing the eight canonical files (result/video via LFS),
-   plot/publisher code, updated docs/triage/strategy/issue31 note and handoff.
-   No physical rerun is needed for the derived PNG. Update authorized issue30.
+1. Working workflow/artifacts/source/docs are committed and pushed as bda901d.
+   Eight files, LFS objects and final shared-axis PNG verified. Authorized issue30
+   now records completion, actual times and independent correctness/fork links.
 2. Keep issue31's next stored-data/analytic-control experiment queued, not
    automatically allocated; user prioritizes fork organization and working delivery.
 3. Continue fork rebuild only through bounded expert assignments and reviewed

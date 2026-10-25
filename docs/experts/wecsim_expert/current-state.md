@@ -39,8 +39,9 @@ Current outputs are [result.npz](../../../examples/simple-boat/result.npz),
 them. PNG was produced separately from completed Result data without resimulation.
 Full suite passed 286 tests/one optional skip in 11.23 s; latest shared-Y plot
 style checks passed 44 tests in 5.07 s, with actual PNG/native-q difference
-2.63e-14. Canonical sea generation remains array-bit-exact. Root's artifact
-commit/checkpoint is pending; this note does not authorize another run.
+2.63e-14. Canonical sea generation remains array-bit-exact. Artifact checkpoint
+bda901d is committed/pushed; the342MB LFS upload and object integrity are verified.
+This note does not authorize another run.
 
 The first full canonical CLI attempt ran and failed during surface export after
 1989.285 s; no result/video was published. A leaked BEMIO KH probe handle caused
