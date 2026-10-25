@@ -1,68 +1,57 @@
 # Current state: WEC-Sim / BEMIO expert
 
 Updated2026-10-24. Scope and authorization: [handoff](../../checkpoint-handoff.md).
-No active numerical allocation; source/readiness work only. Coordinator owns
+No active numerical allocation; latest reference/video pipeline is complete.
+No automatic follow-up is authorized. Coordinator owns
 requirements, acceptance, integration and serial execution allocation.
 
 ## Current priority
 
-LATEST regroup: deliver milder actual buoy-generator sea, physical incoming waves
-into numerical-local-calm water, bodyrest/v0/radiationmemory0/ramp0/viscousOFF,
-full60s and centeredvideo. STOP bugchasing/officialPTOsteps/meshstudies/parameterfit.
-PTOzero source proposal is UNRUN and cancelled, not a queued execution.
+The mild observed-buoy60s case and centered video are COMPLETE. Motion peak
+roll/pitch/yaw1.481/.663/.617deg; all3001 native checks independently PASS.
+Final MP4 SHA205400a829eef3ffb9b1fdf83a359299dc05e4edf15f1f051f3765fb5ca7e8f9,
+751frames/12.5fps/60.08s. Preserve all mild artifacts. Its actual radiation net
+work3271.532J, returned309.916J, minimum cumulative0; incident3492.514J.
+These signed trajectory diagnostics are not operator passivity/accuracy proof.
 
-[Calm buoy train source/readiness](calm-buoy-arrival-readiness-2026-10-24.md):
-actual2023-03-19T08:40Z observation Hm0.535m/Tm027.427s, seed42/full384carriers,
-bow201.308deg. FixedSPATIALflat-top W(s/cg+30), plateau15/support25/quintic;
-SIGNEDkappa propagated with exactdispersion, no temporal force/elevation ramp.
-Keep generatedcarriera/phases/directions; report actual finitePSD/MEM/support
-redistribution/prunedtails honestly, not unchangedstationaryHm0.
-Required fullheadingFK+diff H export passed on samefixed17; originalradiationH5/
-CIC10 staysUNCHANGED andaccuracyunqualified. Physicalpreflight SOURCE/FREEZE ready
-01e96e72, underindependentreview: cheap6F0 FIRST then efficient fullhull interval/
-rectanglecalmbounds, sharedfieldcoefficients forforcing/video. ONEready2physicalpreflight nowcompleteREJECT2.343s: initialheave194.544N/pitch
--15.6305Nm exceedfixed.1caps (fiveaxesfail), combinedarrival1.0862at30.88sPASS;
-fullhullcalmboundsSKIPPED/no body/encoder. All11frozen/processesterminal/leasefree.
-Preserve originalattempt. Current INPUT-only nextproposal: restore missinglowOmega
-via independentlyderived H0=K[:,Heave] +boundedbridge toH(.1), no radiationpatch,
-retiming/phasechange/renormalization. Storedeta0+1.424mm accounts~93%initialheave
-instaticcomparison, notpromisedcure (dynamicdifference13.77Nremains). No newfield/
-body/job grant yet. Attempt2minimalSOURCEready fcea8dd2: fullOmega0..cap rebuilt
-trapzweights, analyticconstantpressureH0 checkedKheave, quadraticOmega?bridge below.1;
-C0Jac0/noDCstep/nooverwrite. Window/carriers/seed/uppercap/gates unchanged; oldattempt1
-immutable. IndependentSOURCE/FREEZEPASS thenallocatedattempt2 completed3.062s
-REJECT: F0heave12.7276N/pitch-1.1467Nm stillfail.1caps (fiveaxesfail), arrival1.08197
-at30.7sPASS/H0-Kerror2.36e-11. Fullhullbounds againSKIPPED, no calmbodyclaim.
-All11unchanged/exactprocessesterminal/idle2789d0/separatefa2bde/FINALrelease88686b.
-PreserveallC/PSD/support/arrival. RootdeclaredNEWREF002engineeringcalmpolicy: normF0
-<=.001mg/normM0<=.001mg*7.3152m ANDperaxis<=.001S inoriginalnativebasis; old.1N
-rejects stayattached. Immutabletrain2/C/forces unchanged. NEWread-only combinedp6
-fullhullassessment b6dd95cc independentlyEXECUTEDPASS20.984s: eta<=21.034um,
-fluid speed<=2.290736mm/s versusunchanged2.489977mm/s; allcoveragecomplete24/72
-boxes/no unresolved, train2unchanged. Exactprocessesterminal/leasefree.
-BODY SOURCE/FREEZEPASS0849bcdd (146inputs): originalH5/CIC10/.02/M/K/Ainf,
-zeroq/v/memory/visc/ramp, full3001Fe+CIC/NE/Archecks, globalR/tmetadataONLY
-(nativeHforce/Mbasis unchanged). Exactready2bodymanifest5e7f4836 aftersafeattachedclientcleanup tinyreview, then
-allocatedactual60sBODY implementationPASS27.776s. Peakmotions[.238,.274,.240m,
-1.481,.663,.617deg], all3001Fehistories EXACT0error/qv0memory0/finite/CIC/NE/Ar
-readbacksPASS. GlobalR201.308/t isACTUALsummarymetadataonly, nativeposes/forces/M
-basisunchanged. MotionSHAf822fde3/raw6b8a9adc/summaryaab25bc9. Independentstored
-MILD60reviewFINALPASS all146lineage/forces/CIC/mass/frame/NE/Ar; videoownerready
-actualbindingunderrootcontrol, no numericalaccuracyproof. Exact29068/
-39568terminal/session67588, all146unchanged/idleec580f/separateaf7ffc/FINALdd4b47.
-No furthernumerics/diagnostics/encoder bythisowner; STOP atreceipt.
-[Assessment basis/readiness](calm-buoy-assessment-2026-10-24.md). Existingeta/u gates
-remain required; boundsadaptivecomputationalonly, actualviolationvsunresolvedproof
-distinguished. No nextbody/encoder/fieldchange grant.
+LATEST delivered case: stronger actual observation46086/2023-12-23
+00:40Z, Hm01.65747m/Tm027.23657s, same seed42/full generator bank, physical
+incoming train tc40/plateau15/support25. Restq/v/zeroCIC/no ramp/viscous0,
+full60s; desired5-10deg roll if bounded. No phase/amplitude fit, no RAO/mesh/
+energy-bug campaign. Existing fixed17 fullheading H plus H0 bridge/original
+H5/CIC10/.02 reused in native meanboat axes; new station heading metadata once.
+[Source readiness/commands](stronger-buoy-readiness-2026-10-24.md).
+Stronger train ACTUALPASS2.891s; fullhullcalm assessment PASS28.266s,
+eta<=.836mm/u<=3.686mm/s and allforce/arrival/coveragegates. Exactdatafrozen.
+Independentbodyfreeze bd4d249e then ONEallocatednative60s completedPASS31.349s:
+peakroll6.618565/pitch2.677850/yaw1.325248deg,translations.562/.837/.759m.
+All3001 finite/Feexact0/restIC/memory0/CIC/NE/Ar/mass/framechecksPASS. Signed
+radiation net32971.040J/mincum0/returned4074.896J; incident46582.193J.
+Nativeworldaligned/global182.067degR/tmetadataonce. This is provisional linear
+motion, not nonlinear/mesh/timeaccuracy qualification. Motion3eae21f9/rawd350bac3.
+Exact37600/39756 terminal/all147 unchanged/FINALrelease12dc57; independentstored
+implementation/energy FINALPASS. Root accepts trajectory for visualization.
+[Stronger video evidence](stronger-video-readiness-2026-10-24.md) generic
+diff independentlyPASS; genuine root motion receipt followed by
+actualpreview independentlyfrozen89286f67/rootallocated35.641s PASS:
+all751clips fit +/-2m, 0/30/60PNGs/sixplot/cache ready in stronger render-preview-attempt1.
+Exact38748/38028 terminal/all15 unchanged/FINALrelease4fc261. ROOT+independent
+literalreviewPASS, genuineROOTpreviewreceipt8386d482. Encoderfreeze78620f8f
+independentlyPASS thenallocatedONEencode completed220.375s. FinalMP4 SHA42c8ca1c
+h264/1280x900/751frames12.5fps/60.08s; exact41948terminal/ffmpeg0/all18unchanged/
+FINALrelease283833. ROOT full751-frame decode/frozenhash/metadata and decoded
+0/30/60literal review PASS, independently confirmed. FinalMP4
+42c8ca1c80e961784200d076faff7e9a34a67c782120019e606bbf553ec004e2 delivered.
+No morejob allocated. Preserve mildvideo. Cached relativewaterproxy maxheel3.10deg,
+trim2.88deg/relheave.09m; existing3degstatic curves have7.3%righting/15.3%tangent
+departures, so geometry applicability remains approximate, not certified.
 
-Preserved simpler diagnostics: new1.5cm singlepacket rejected initialheaveforce
-.1298/.1478N>.1cap despiteeta/u calm; no bodyrun. ExactacceptedREF0013packet
-extension to60s then passed: originalfield/prefixidentities, native3001finite
-states/6forces/zeroIC/CIC/NE/Ar checks, boundedmotions max[.00596,.00584,.01005m,
-.0223,.0402,.0269deg]. First10q/v matches oldcase nearroundoff. Native engineelapsed
-32.182s, exactprocess4532/24680terminal/session25741, all142frozenunchanged,
-idle7d9476/separate91e81f/FINALreleaseef5ae3. Noencoder or accuracy/passivity claim.
-[Extension evidence](reference-extension-readiness-2026-10-24.md).
+
+Historical mild construction/rejected tiny-cap attempts and explicit EPS.001
+assessment remain in [arrival evidence](calm-buoy-arrival-readiness-2026-10-24.md)
+and [assessment/body evidence](calm-buoy-assessment-2026-10-24.md). The old
+stationary-history prototype is superseded; current startup is locally calm
+water/body rest and zero memory, never a seeded hidden past.
 
 ## Latest executed official controls
 

@@ -112,7 +112,11 @@ a separate follow-up. A compatible export or successful setup alone is incomplet
 
 ## REF-002: one buoy-derived canonical strong-motion case
 
-Status: authorized by latest user steering, 2026-10-24. Preserve REF-001 unchanged.
+Status: completed for the minimum-mesh end-to-end workflow and requested stronger
+motion/video,2026-10-24. Actual source Hm01.657m,60s,6.62deg peakroll and
+appreciable other5DOF; all native/data/render checks pass independently.
+Physics/mesh/time/nonlinear applicability is provisional, not a precision truth
+qualification. See current handoff and stronger-case evidence. Preserve REF-001 unchanged.
 Target one WEC-Sim case with roll about5-10deg and appreciable other5DOF.
 Use the existing collected-buoy sea-state generator, genuinely higher-energy
 observations and complete seeded directional realizations; do not scale the
@@ -150,8 +154,8 @@ waves initially upstream, body rest, zero velocity and zero radiation memory;
 viscous damping remains off. Rest in an established sea is insufficient. No hidden
 force ramp. The nonzero stationary-history
 prototype and its unpruned-bank geometry/preview work are preserved under their
-original policies but superseded for the final requested case. No encoder or
-continuation of the stopped geometry audit is authorized.
+original policies but superseded for the final requested case. Do not encode that
+old prototype or resume its stopped geometry audit.
 
 Prune unsupported incident bands only after checking the actual full radiation-
 diffraction physics and numerical coverage. The generator already enforces the
@@ -183,9 +187,11 @@ mesh variation. No further producer execution allocated. No Cap/WEC radiation im
 bug, valid cutoff or qualified replacement has been established. Topwater role
 scope remains existing-generator data/export only; all solver work held.
 
-Latest user priority: progressively modify the passing official regularCIC
+Superseded user priority: progressively modify the passing official regularCIC
 example. WEC owns bounded plan/first-step SOURCE readiness: sole physical change
 PTO damping1.2e6->0, official H5/heave constraints/ramp100/CIC20/dt.1/200s retained,
 native raw save/work accounting/baseline comparison. Researcher independently
 reviews exact source/freeze before coordinator grants a single execution.
-No suite, new mesh/custom sea or assumption that a solver energy bug exists.
+This PTO-zero proposal was cancelled and remains UNRUN. Later user regroup
+delivered the mild and stronger incoming-buoy cases and videos. No suite,
+new mesh/Topwater implementation or solver-energy bug campaign is allocated.

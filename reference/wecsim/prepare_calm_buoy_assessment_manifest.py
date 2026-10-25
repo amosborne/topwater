@@ -1,4 +1,5 @@
 """Archive read-only train2 reassessment sources/inputs; no field computation or launch."""
+import argparse
 import hashlib
 import json
 import shutil
@@ -10,7 +11,13 @@ def sha(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
-base = Path('artifacts/reference/calm-buoy-20261024')
+parser = argparse.ArgumentParser()
+parser.add_argument('--base',type=Path,default=Path('artifacts/reference/calm-buoy-20261024'))
+parser.add_argument('--train-name',default='train-attempt2')
+parser.add_argument('--controls',type=Path)
+parser.add_argument('--entry',default='reference/wecsim/run_calm_buoy_case.m')
+args = parser.parse_args()
+base = args.base
 out = base/'assessment-attempt1'
 archive = base/'assessment-attempt1-source'
 assert not out.exists()
@@ -18,7 +25,10 @@ archive.mkdir(parents=True,exist_ok=False)
 paths = [Path('reference/wecsim')/p for p in ['assess_calm_buoy_train.py',
     'calm-buoy-assessment-controls.json','prepare_calm_buoy_assessment_manifest.py','calm_buoy_train.py']]
 paths += [Path('reference/capytaine/canonical-boat.json'),Path('reference/capytaine/geometry_execution_guard.py')]
-paths += [p for p in (base/'train-attempt2').iterdir() if p.is_file()]
+paths += [p for p in (base/args.train_name).iterdir() if p.is_file()]
+if args.controls:
+    paths.remove(Path('reference/wecsim/calm-buoy-assessment-controls.json'))
+    paths.append(args.controls)
 frozen = {}
 for path in paths:
     frozen[path.as_posix()] = sha(path)
@@ -33,7 +43,7 @@ for name in ['numpy','scipy','threadpoolctl']:
 proposal = dict(owner='/root/wecsim_reference',status='ready_for_coordinator_execution_allocation',
     assignment='ONE read-only reassessment immutablemildtrain2 with explicitREF002engineeringcalmpolicy +fullhullbounds',
     output=out.as_posix(),input_sha256=frozen,dependency_identity=deps,
-    producer_argv=['reference/wecsim/assess_calm_buoy_train.py','--output',out.as_posix()],
+    producer_argv=['reference/wecsim/assess_calm_buoy_train.py','--output',out.as_posix()]+(['--controls',args.controls.as_posix()] if args.controls else []),
     verification_receipt_name='verification.json',maximum_elapsed_seconds=600,
     expected_elapsed_seconds=[30,180],cpu_threads=1,matlab_engines=0,
     physics='NO train/parent/C/force/H regeneration/window/retime/historyseed; old.1Nrejects remain immutable',

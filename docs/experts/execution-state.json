@@ -6,30 +6,39 @@
   "manifest": null,
   "active_numerical_job": null,
   "last_terminal_evidence": {
-    "job": "Acceptedmildbuoy60s preview/cache/threeframes",
-    "owner": "/root/calm_video",
-    "producer_pid": 27940,
-    "owner_launcher_pid": 29344,
-    "session_handle": 29828,
+    "job": "ONE stronger accepted60s video encoder",
+    "owner": "/root/wecsim_reference",
+    "tool_session_id": 41948,
+    "producer_pid": 30412,
+    "owner_launcher_pid": 38024,
+    "renderer_pid": 11444,
+    "ffmpeg_pid": 35700,
     "exit_code": 0,
-    "terminal_chunk": "379ef0",
-    "authoritative_terminal_chunk": "ec98ba",
+    "ffmpeg_exit_code": 0,
+    "terminal_chunk": "a7248d",
+    "authoritative_terminal_chunk": "8aa409",
     "frozen_inputs_match": true,
-    "output": "artifacts/reference/calm-buoy-20261024/render-preview-attempt1",
+    "output": "artifacts/reference/stronger-buoy-20261024/render-encode-attempt1",
     "output_sha256": {
-      "frame-0000.png": "4f656df84c71177bc3cbb34bf079057ce8fc14972c78847dd0b634a81377f202",
-      "frame-0375.png": "929e5a7ba4e2d0f8a2b4a8aeea9bfd568d23d592a6483b3771bbf6cb01a260bc",
-      "frame-0750.png": "48aefd27a5e60f0528dfe8e62ad6b82967dc800e48f0435536ddb209589b0c77",
-      "render-preflight.json": "baf5301dc49effa6e63dbb304645c632edc642415eb9be25585cd0b0341495bf",
-      "six-motions.png": "5bc6d6a52a7fbdd88433d256fc3e7a1cf45fbf506f696b574173afe97ef00ecc",
-      "surface-cache.npz": "f6af6151c572f6ddf751b1e7c8eff3d66f4b4f167e7df6f6ccd7a93d0b8b57d9"
+      "frame-0000.png": "e5271efbeaa106472424461c2be84b953d5a791454b02fa4db2388c4f5fb10e7",
+      "frame-0375.png": "7e084977b2caed4435efd6e7bd2b1f2a6bfbe2930f66ae5a629545e997d642ba",
+      "frame-0750.png": "3e432f9d75110204c09614129018c91eb3b50f879cce9d7263583d47dbead3f5",
+      "output-sha256.json": "97d895f40ef5e00037a637ed681261f8f6c66f4bcf776880e374dacbbd63a886",
+      "reference-isometric.mp4": "42c8ca1c80e961784200d076faff7e9a34a67c782120019e606bbf553ec004e2",
+      "render-preflight.json": "64f70b5ab2baaedd16cb0b9e387aa72a0835547f9822a6a888acd5676e43a2df",
+      "six-motions.png": "63721e91934a6305c82a41eec923be12c46fc4332e3e095932c8346fa567336f"
     },
     "complete": true,
-    "elapsed_s": 28.60899999999674,
+    "elapsed_s": 220.375,
     "display_frames": 751,
-    "maximum_display_interpolation_error_bound_m": 5.6757256783645656e-05,
-    "direct_spectral_cache_error_m": 2.203347556170576e-06,
-    "limits": "Preview only; no encoder. Requires ROOT plus independent literal/provenance review before separate encoding allocation."
+    "fps": 12.5,
+    "encoded_duration_s": 60.08,
+    "codec": "h264",
+    "size": [
+      1280,
+      900
+    ],
+    "ffprobe_chunk": "aa8308"
   },
-  "note": "Exactproducer/guard absent authoritativeCIM; all15inputs/14archives/13deps/outputhashesmatch; idle recorded UNDER lease; separate idle readback before FINAL release."
+  "note": "Idle recorded UNDER lease; separate idle readback then FINALrelease required. ROOT decode/literal finalreview remains; no more rendering or physics jobs."
 }

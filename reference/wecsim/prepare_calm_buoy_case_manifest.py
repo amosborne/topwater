@@ -1,4 +1,5 @@
 """Freeze one future native mildbuoy case after accepted immutable field assessment."""
+import argparse
 import hashlib
 import json
 import shutil
@@ -10,14 +11,20 @@ def sha(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
-base = Path('artifacts/reference/calm-buoy-20261024')
-packet = base/'train-attempt2'
+parser = argparse.ArgumentParser()
+parser.add_argument('--base',type=Path,default=Path('artifacts/reference/calm-buoy-20261024'))
+parser.add_argument('--train-name',default='train-attempt2')
+parser.add_argument('--controls',type=Path)
+parser.add_argument('--entry',default='reference/wecsim/run_calm_buoy_case.m')
+args = parser.parse_args()
+base = args.base
+packet = base/args.train_name
 assessment = json.loads((base/'assessment-attempt1/diagnostic.json').read_text())
 assert assessment['complete'] and assessment['accepted'] and assessment['field_status'] == 'proved_calm'
 for path,digest in assessment['immutable_input_sha256'].items():
     assert sha(path) == digest,path
 out = base/'case-attempt1'
-archive = base/'case-attempt1-source-ready2'
+archive = base/'case-attempt1-source'
 assert not out.exists()
 archive.mkdir(parents=True,exist_ok=False)
 names = ['run_calm_buoy_case.m','wecSimInputFile_calm_buoy.m','prepare_calm_buoy_case_inputs.m',
@@ -32,7 +39,8 @@ paths += [old/'native-gl2/native.mat',old/'native-gl2/boat.stl',old/'consumer/ca
 paths += list(packet.iterdir())
 paths += list((base/'assessment-attempt1').iterdir())
 paths += [base/'export-attempt1/case.json',base/'export-attempt1/components.npz',
-          base/'excitation-attempt1/excitation.npz',base/'excitation-attempt1/manifest.json']
+          Path('artifacts/reference/calm-buoy-20261024')/'excitation-attempt1/excitation.npz',Path('artifacts/reference/calm-buoy-20261024')/'excitation-attempt1/manifest.json']
+paths.append(Path(args.entry))
 frozen = {}
 for path in dict.fromkeys(paths):
     if not path.is_file():
@@ -47,12 +55,12 @@ deps = {'matlabengine':dict(version=version('matlabengine'),file_sha256={str(p):
 proposal = dict(owner='/root/wecsim_reference',status='ready_for_coordinator_execution_allocation',
     assignment='ONE60s mildbuoy physicalincoming train2 nativecase afterexplicitREF002fieldassessmentPASS',
     output=out.as_posix(),input_sha256=frozen,dependency_identity=deps,
-    producer_argv=['reference/wecsim/run_matlab.py','reference/wecsim/run_calm_buoy_case.m',
+    producer_argv=['reference/wecsim/run_matlab.py',args.entry,
                    '--log',(base/'case-attempt1.log').as_posix()],
     verification_receipt_name='verification.json',maximum_elapsed_seconds=600,
     expected_elapsed_seconds=[30,180],cpu_threads=1,matlab_engines=1,
     operator='ORIGINALminimumH5/nativeGL2M/K/Ainf/STL/CIC10/dt.02/nativeAr unchanged',
-    frame='NativeWECmodelworld=meanboat; sourceHtheta/force/M unchanged. GlobalstationR201.308/t embedding metadata only, apply exactlyonce toCG/geometry/vectors/video.',
+    frame='NativeWECmodelworld=meanboat; sourceHtheta/force/M unchanged. DeclaredglobalstationR/t embedding metadata only, apply exactlyonce toCG/geometry/vectors/video.',
     initial_state='Knownneutralq0/allv0/CICmemory0; ramp0/viscosity0/all6free; no history adapter/prerun',
     excitation='Unchangedacceptedtrain2 spectralHforce onceviareviewedcase-onlyhook; scalarzeroelevation nativeimport compatibilityONLY',
     checks='3001rawfinite60channels/full6Fe/actualRT-PCHIP-CIC/NE/Ar/H5fullM-K-Ainf-CG/inertia/headinglineage',

@@ -6,14 +6,74 @@ Updated2026-10-24. Latest user steering controls scope. Read
 
 ## Current authorization and immediate priority
 
-LATEST USER REGROUP: stop unproven bug investigations. Deliver ONE genuinely
+LATEST user requested MORE energetic actual buoy sea after the mild clip,
+with radiation-energy diagnostics and a video. STRONGER CASE AND VIDEO NOW
+COMPLETE. No further case/bug/mesh/Topwater work is allocated. Preserve the
+provisional physics/geometry limits below; do not turn amplitude achievement or
+positive radiation work into an accuracy/linearity proof.
+
+Selected actual record46086/2023-12-23T00:40Z,row29984,
+Hm01.657467948/Tm027.236567149. Neutral exportPASS1.093s,
+variance.1717m2/384seed42carriers/defaultbow182.067194deg. Actual measured a/MEM
+change; frequencies/phases/IDs arrayexact to mild seed42, no uniform scaling.
+Artifact root `artifacts/reference/stronger-buoy-20261024`.
+
+Physical spatial tc40/plateau15/support25/quintic/signed-kappa train completed
+2.891s; same nativefixed17fullheading H/H0bridge/originalH5/CIC10/dt.02.
+Calm assessmentPASS28.266s, full24eta/72velocity boxes: eta<=.83572mm,
+u<=3.686mm/s, normF6.104N<24.525, normM12.016Nm<179.405 and relative axes/arrival.
+NativebodyPASS31.349s, all3001raw/state/IC/Fe/CIC/NE/Ar/mass/frame checks
+independently PASS; ALLprepared/applied6forces exact0error. No ramp/viscous/PTO/
+mooring/history seed/crop; q/v/memory0. Modelworld nativealigned; station-global
+R182.067194/t0 metadata applied once, no M/K/H double rotation.
+Peaks xyz[.562349,.836958,.758899]m and rpy[6.618565,2.677850,1.325248]deg.
+Workaudit independently reproduced: netCIC32971.03955J/mincumulative0,
+temporaryreturn4074.89555J, incident46582.19287J. Expected netbody-to-radiation
+transfer for this trajectory, not a complete fluid-energy balance/passivity proof.
+
+Strongermotion3eae21f9efa9987d77225b0ebe3f2cac4babec0a482ea01bbbf7801370e6b072;
+raw d350bac332d13ad94d3684395beec16ec95cc67c0d78f8423fcc6f6d7782f6da;
+summary709f3c034d14bb0b6fee0f2609a9fd4918d5be1cc245c92617839af02f29e0c4.
+ROOTmotion visualization receipt a9169af8 and preview receipt8386d482 genuine.
+PreviewPASS35.641s, full751pose/cache/frame/clip checks andROOT+independent
+literal0/30/60+all6plotPASS. EncoderPASS220.375s, exactsession41948, terminal a7248d/exit0,
+FFmpeg35700exit0; guard38024/producer30412/renderer11444/FFmpeg all absent
+CIM8aa409. All18inputs/deps unchanged; idle d12912->separatee948bf->release283833.
+No remaining numerical job/lease unless ledger says otherwise.
+
+FINALSTRONGER VIDEO `render-encode-attempt1/reference-isometric.mp4`,
+SHA42c8ca1c80e961784200d076faff7e9a34a67c782120019e606bbf553ec004e2.
+H2641280x900/12.5fps/751frames/60.08s (full native60 endpoint hold).
+ROOTfull751-frame decode/metadata/frozenhash check PASS; actualdecoded0/30/60
+literally PASSROOT+independent researcher. `render-encode-attempt1/final-review/verification.json`.
+Video linked to user; 12m equal-metre close view, sameexactprescribed incident
+field, no motion/wave amplification. Openwater physics is not limited to camera.
+
+LINEAR-USE ASSUMPTION IS APPROXIMATE: cached751-time local-waterplane proxy gives
+relativeheel3.10deg/trim2.88deg/relativeheave.090m, not6.62deg relativeflatheel.
+At near-globalrollpeak relativeheel2.70deg. Existing3deg static curves show7.3%
+righting-secant/15.3%tangent departures; combined curvature/wetting/rim/flooding
+and nonlinear/dynamic accuracy remain unqualified. See stronger-relative-water-
+proxy note. User asked an a-priori geometry-based assumption, not proof from an
+unavailable nonlinear model. Do NOT claim strict negligible geometry change.
+Minimum-mesh end-to-end workflow and requested motion/video are complete;
+mesh/time/stricter physical applicability qualification is a distinct future phase.
+
+Key stronger records: stronger-buoy-export-readiness (Topwater), stronger-buoy-
+readiness and stronger-video-readiness (WEC), stronger-relative-water-proxy.
+Commands/source identities in `reference/wecsim/stronger-buoy-pipeline.json`.
+Minimum-reference completion audit: [requirements and evidence](experts/minimum-reference-completion-2026-10-24.md).
+Final repository checkpoint/issue30 refresh follows the completed video audit.
+
+Earlier regroup remains standing:
+Deliver ONE genuinely
 less energetic collected-buoy sea, locally calm water/boat rest/zero memory,
 physical incoming waves with NO temporal ramp, full60s and centered VIDEO.
-The video is the immediate remaining deliverable. No PTO-zero/density/energy-bug
+No PTO-zero/density/energy-bug
 study is allocated. Those source-ready proposals remain STOPPED/UNRUN.
 Topwater solver implementation/tests/optimization remain HELD.
 
-## Current mild-buoy result: body complete, video pending
+## Preserved mild-buoy result: body AND video complete
 
 Actual observed record46086/2023-03-19T08:40Z, source Hm0.5351635m/Tm027.42693s,
 seed42/384unchanged generator carriers. Bow201.308143deg toward dominant arrival.
@@ -63,7 +123,7 @@ ROOT genuinely accepted visualization after independent body review:
 `case-attempt1/render-motion-acceptance.json`, SHA7c52776c9342d3ed69b9089d40d543f357c623586d446f4e396dd846852a6767,
 status provisional_model_trajectory. No mesh/time/nonlinear accuracy proof.
 
-## Immediate next: video
+## Preserved mild video evidence
 
 Video owner `/root/calm_video` owns only new renderer/control/binding helpers;
 WECbody owner `/root/wecsim_reference` stopped after body evidence.
@@ -79,9 +139,22 @@ surfacecache-direct error2.203um below56.757um displaybound. Stable preview
 `render-preview-attempt1`, preflightbaf5301d/cachef6af6151. Exact27940/29344
 terminal/released. GenuineROOT preview receipt `render-preview-review.json`,
 SHA86e43d7047f32f0c04a3cbd2b7577d066f4a0136c74c59a9659cee92c1381c09.
-NEXT pure encoder binding/freeze review, then SEPARATE encoder allocation(max900)
-reusing exact accepted cache. No encoder allocated yet. Never finish old seeded
-prototype video. Body/packet/assessment/renderer/cache must stay unchanged.
+Encoder COMPLETE206.563s from exact accepted cache. Output
+`render-encode-attempt1/reference-isometric.mp4`, SHA205400a829eef3ffb9b1fdf83a359299dc05e4edf15f1f051f3765fb5ca7e8f9.
+H2641280x900/12.5fps/751frames/60.08s; native60s endpoint held one frame.
+Owner hit usage limit after launch; ROOT recovered without rerun. Authoritative
+CIMab8428 exact17992/3976+children absent; renderer complete report follows
+FFmpegreturncode0 assertion. Original tool/producer exit status unavailable,
+recorded NULL rather than invented0. All18/dependency/output hashes verified,
+full751frames decoded, actualdecoded0/30/60PNG literally PASSROOT+researcher.
+`render-encode-attempt1/final-review/verification.json` and recovery.json record
+evidence. ROOTidle-underleasee53374->separate3c7174->finalrelease1663ac.
+Mild video delivered; body/packet/assessment/renderer/cache unchanged.
+
+Mild radiation-work audit independently reproduced from all3001saved samples:
+netCIC+3271.532294J,mincumulative0, temporarynegative-powerreturn309.915673J,
+incidentwork3492.513729J. No net radiation creation observed; not a complete
+fluid-energy balance. `case-attempt1/radiation-work-audit.json`.
 
 WEC-Sim uses open-water frequency-domain hydrodynamics/body-only integration,
 not a finite ocean patch. The physical incident field extends beyond camera;
@@ -171,16 +244,16 @@ new pruned input will need new binding/appropriate component-count handling.
 ## Execution and integration
 
 [Execution ledger](experts/execution-state.json) owns liveness. All jobs terminal;
-latest original60s body extension terminal/PASS, inputs verified,
+latest stronger encoder terminal/PASS, inputs verified,
 idle-under-lease recorded, separate readback and final lease release completed.
 No numerical owner/lease currently. SharedMATLAB9168/launcher37656 are historical
 identities, not proof of liveness; authoritative reconciliation before reuse.
-One serial numerical owner, frozenactualinputs/code/deps, claim?SEPARATEverify?run;
-terminal?idleUNDERlease?SEPARATEreadback?FINALrelease. UTF8-sig ledger readers.
+One serial numerical owner, frozenactualinputs/code/deps, claim -> SEPARATEverify -> run;
+terminal -> idleUNDERlease -> SEPARATEreadback -> FINALrelease. UTF8-sig ledger readers.
 
-Active branch baseline/fluid-body, latest pushed checkpoint75199f6. Preserve otherworktrees,
-all failed/interrupted studies and old original policies. Official examples and
-true calm-arrival clarification are the current integration checkpoint.
+Active branch baseline/fluid-body; latest published prior checkpoint69d2431.
+Final stronger-case/video checkpoint is recorded in git log and issue30.
+Preserve otherworktrees, all failed/interrupted studies and old original policies.
 Do not pushmain/createbookkeepingPR/merge/upstreammessages. Coordinator owns
 scope/acceptance/integration; Cap nativeproducer; WEC dynamics/startup; Topwater
 existinggenerator only; researcher independentmethods. Renderer agent is stopped.

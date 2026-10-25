@@ -1,0 +1,35 @@
+{
+  "observation_id": "ndbc-46086-20231223T0040Z",
+  "seed": 42,
+  "carrier_export": "artifacts/reference/stronger-buoy-20261024/export-attempt1",
+  "window": "W(tau)=1 for |tau|<=15;0 for |tau|>=25;1-10q^3+15q^4-6q^5 otherwise,q=(|tau|-15)/10",
+  "initial_spatial_window": "W(s/cg_j+40); physical upstream placement, no temporal ramp",
+  "center_group_time_s": 40.0,
+  "plateau_halfwidth_s": 15.0,
+  "support_halfwidth_s": 25.0,
+  "transition_gauss_nodes": 256,
+  "sideband_omega_min_rad_s": 0.0,
+  "sideband_omega_step_rad_s": 0.005,
+  "sideband_omega_max": "min(.6Hz,sqrt(g/(2*pi*2*beam))); exact last endpoint",
+  "signed_kappa": [
+    1,
+    -1
+  ],
+  "low_frequency_excitation": "H0 from constantpressurewetpanelintegration=K[:,Heave]; H=H0+(Omega/.1)^2*(H(.1,theta)-H0) below .1; declared excitation approximation only",
+  "pruning": "No lower-frequencycut; above lambda>=2beam physical envelope only; no coefficient renormalization",
+  "output_time_s": [
+    0.0,
+    60.0
+  ],
+  "dt_s": 0.02,
+  "bound_spacing_s_m": 0.05,
+  "bound_spacing_z_m": 0.05,
+  "calm_fraction": 0.001,
+  "maximum_initial_force_N_or_Nm": 0.1,
+  "minimum_combined_arrival_fraction": 0.25,
+  "maximum_elapsed_seconds": 480,
+  "scope": "Derived finite physical train from unscaled generatorcarriers; actual finitePSD/MEM differs from stationary target",
+  "excitation_table": "artifacts/reference/calm-buoy-20261024/excitation-attempt1/excitation.npz",
+  "excitation_provenance_export": "artifacts/reference/calm-buoy-20261024/export-attempt1",
+  "separate_assessment": true
+}

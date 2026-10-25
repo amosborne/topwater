@@ -195,3 +195,29 @@ preflight SHA above, and `surface_cache_npz` with its SHA. Both paths are absolu
 or project-relative. Encoding uses unchanged producer, bound controls, input
 identities and this exact cache. Pure encoder-manifest preparation and actual
 encoder execution require separate coordinator direction. Stop after preview.
+
+## Preview accepted; encoder bound but unrun
+
+ROOT and non-author reviewer personally inspected0/30/60s PNGs and all six-motion
+histories; independent all751pose/cache/provenance checks PASS. Genuine ROOT
+`render-preview-review.json` SHA
+`86e43d7047f32f0c04a3cbd2b7577d066f4a0136c74c59a9659cee92c1381c09`
+binds the exact preflight/cache and all four viewed images. Source/code checkpoint
+69d2431 was committed/pushed by the coordinator; no physical/source changes.
+
+Coordinator then authorized pure encoder binding only. The versioned helper
+completed3.051s, without renderer import/field evaluation/lease/process launch.
+Encoder proposal `render-encode-attempt1-source/proposal.json` SHA
+`5490d747ebd7638d7932356f1a8f0b21cee859139836b3e8051585317f60104e`
+freezes18files/13dependency packages, including unchanged accepted inputs plus
+the genuine preview receipt, exact preflight and reviewed surface cache.
+
+Prospective producer:
+
+```
+.venv/Scripts/python.exe reference/wecsim/render_calm_buoy_reference.py --config artifacts/reference/calm-buoy-20261024/render-ready-controls.json --output artifacts/reference/calm-buoy-20261024/render-encode-attempt1 --mode encode --preview-review artifacts/reference/calm-buoy-20261024/render-preview-review.json
+```
+
+Owner `/root/calm_video`, oneCPU/noMATLAB, maximum900s/expected120-600s. Intended
+MP4 `render-encode-attempt1/reference-isometric.mp4`. Final non-author freeze
+review and separate coordinator execution grant remain; encoder has not run.

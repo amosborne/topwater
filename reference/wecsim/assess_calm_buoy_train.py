@@ -132,9 +132,10 @@ def boxes_for(lo,hi,width):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--output',type=Path,required=True)
+    parser.add_argument('--controls',type=Path,default=Path('reference/wecsim/calm-buoy-assessment-controls.json'))
     args = parser.parse_args()
     started = time.monotonic()
-    control_path = Path('reference/wecsim/calm-buoy-assessment-controls.json')
+    control_path = args.controls
     controls = json.loads(control_path.read_text())
     source = Path(controls['immutable_train_directory'])
     old = json.loads((source/'diagnostic.json').read_text())
@@ -161,7 +162,7 @@ def main():
         norm_moment_Nm=float(moment_norm),norm_moment_limit_Nm=float(moment_limit),
         force_over_weight=float(force_norm/(mass*gravity)),moment_over_weight_length=float(moment_norm/(mass*gravity*Lchar)),
         policy_status='coordinator-declared engineering numericalcalm assumption, not physicalaccuracy guarantee',
-        old_REF001_absolute_cap_N_Nm=.1,old_policy_rejected=True)
+        old_REF001_absolute_cap_N_Nm=.1,old_policy_rejected=bool(not old['gates']['initial_force']))
     gates = dict(force_norm=bool(force_norm <= force_limit),moment_norm=bool(moment_norm <= moment_limit),
         peraxis_carrier_relative=bool(np.all(abs(F0) <= eps*S)),arrival=old['gates']['arrival'])
     args.output.mkdir(parents=True,exist_ok=False)
@@ -195,7 +196,8 @@ def main():
     field_status = 'proved_calm' if all(gates.values()) else ('actual_center_violation' if actual_violation else 'bound_unresolved_or_budget_limited')
     report = dict(complete=True,accepted=bool(all(gates.values())),gates=gates,field_status=field_status,
         force_policy=force_policy,bounds=bounds,immutable_train=str(source),immutable_input_sha256=before,
-        old_rejection_preserved=True,initial_eta_limit_m=old['initial_eta_limit_m'],
+        strict_policy_report_preserved=True,
+        old_rejection_preserved=bool(old.get('stage_status') != 'unassessed_artifacts' and not old['accepted']),initial_eta_limit_m=old['initial_eta_limit_m'],
         initial_speed_limit_m_s=old['initial_speed_limit_m_s'],arrival=old['arrival'],
         elapsed_s=time.monotonic()-started,body_simulated=False,
         source_sha256=sha(__file__),controls_sha256=sha(control_path),

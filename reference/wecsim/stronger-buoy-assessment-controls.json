@@ -1,0 +1,19 @@
+{
+  "immutable_train_directory": "artifacts/reference/stronger-buoy-20261024/train-attempt1",
+  "policy": "REF002 engineering numericalcalm assumption; old REF001 .1N cap rejections preserved",
+  "epsilon": 0.001,
+  "force_basis": "native fixed meanboat/modelworld; peraxis carrierS is not a rotatable vector",
+  "absolute_force_cap": "norm(Fxyz)<=epsilon*m*g",
+  "absolute_moment_cap": "norm(Mxyz)<=epsilon*m*g*Lchar; Lchar=max physical material hull L/B",
+  "field_gates": "unchanged eta<=.001sum(a), fluid speed<=.001sum(a*omega)",
+  "Taylor_order": 6,
+  "maximum_box_width_xyz_m": [
+    1.0,
+    1.0,
+    0.2
+  ],
+  "center_batch_size": 8,
+  "maximum_refinement_level": 3,
+  "maximum_elapsed_seconds": 480,
+  "scope": "Assessment only: no carrier/C/force/H/window regeneration, no retiming/ramp/historyseed"
+}

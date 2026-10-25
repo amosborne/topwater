@@ -24,9 +24,10 @@ def write(path,value):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--output',type=Path,required=True)
+    parser.add_argument('--controls',type=Path,default=Path('reference/wecsim/calm-buoy-train-controls.json'))
     args = parser.parse_args()
     started = time.monotonic()
-    controls_path = Path('reference/wecsim/calm-buoy-train-controls.json')
+    controls_path = args.controls
     controls = json.loads(controls_path.read_text())
     source = Path(controls['carrier_export'])
     case_path = source/'case.json'
@@ -48,13 +49,15 @@ def main():
     args.output.mkdir(parents=True,exist_ok=False)
     np.savez(args.output/'train.npz',**data)
     train = CalmBuoyTrain(args.output/'train.npz')
-    table_path = Path('artifacts/reference/calm-buoy-20261024/excitation-attempt1/excitation.npz')
+    table_path = Path(controls.get('excitation_table','artifacts/reference/calm-buoy-20261024/excitation-attempt1/excitation.npz'))
     with np.load(table_path) as archive:
         table = {key:archive[key].copy() for key in archive.files}
-    assert str(table['bank_case_sha256'].item()) == sha(case_path)
-    assert str(table['bank_components_sha256'].item()) == sha(carriers_path)
-    assert np.array_equal(table['global_from_native_R'],np.asarray(case['global_from_boat_rotation']))
-    assert np.array_equal(table['global_from_native_t'],np.asarray(case['global_from_boat_translation_m']))
+    # Native meanboat H is independent of observation/station embedding.
+    provenance = Path(controls.get('excitation_provenance_export',str(source)))
+    assert str(table['bank_case_sha256'].item()) == sha(provenance/'case.json')
+    assert str(table['bank_components_sha256'].item()) == sha(provenance/'components.npz')
+    np.testing.assert_allclose(np.asarray(table['cg']).reshape(3),physical['world_cg_m'],rtol=0,atol=1e-12)
+    assert float(np.asarray(table['g']).item()) == g
     times = np.arange(3001)*.02
     force,scale,spectral_force = train.force(table,times)
     H0,H0_error = train.static_excitation(table)
@@ -108,7 +111,7 @@ def main():
         elapsed_s=time.monotonic()-started,body_simulated=False))
     gates = dict(initial_force=force_pass,arrival=arrival_pass)
     bounds = None
-    if force_pass:
+    if force_pass and not controls.get('separate_assessment',False):
         hull = physical['minimum_hull']; q = hull['equilibrium_quaternion_wxyz']
         R = Rotation.from_quat([*q[1:],q[0]]).as_matrix()
         v = (np.asarray(hull['vertices_material_m'])-hull['cg_material_m'])@R.T+physical['world_cg_m']
@@ -117,7 +120,8 @@ def main():
         bounds = train.initial_bounds(radius,wet[:,2].min(),.05,.05,started+480)
         gates['eta'] = bool(bounds['eta_region_bound_m'] <= .001*carriers['amplitudes'].sum())
         gates['velocity'] = bool(bounds['velocity_region_bound_m_s'] <= .001*np.sum(carriers['amplitudes']*carriers['angular_frequencies']))
-    report = dict(complete=True,accepted=bool(all(gates.values())),gates=gates,initial=initial,
+    report = dict(complete=True,accepted=bool(all(gates.values()) and not controls.get('separate_assessment',False)),
+        stage_status='unassessed_artifacts' if controls.get('separate_assessment',False) else 'legacy_preflight',gates=gates,initial=initial,
         bounds=bounds,initial_eta_limit_m=float(.001*carriers['amplitudes'].sum()),
         initial_speed_limit_m_s=float(.001*np.sum(carriers['amplitudes']*carriers['angular_frequencies'])),
         support=support,spectral=spectral,arrival=arrival,body_simulated=False,elapsed_s=time.monotonic()-started,
@@ -126,7 +130,7 @@ def main():
     assert time.monotonic()-started <= controls['maximum_elapsed_seconds']
     write(args.output/'diagnostic.json',report)
     print(json.dumps(report),flush=True)
-    return 0 if report['accepted'] else 2
+    return 0 if controls.get('separate_assessment',False) or report['accepted'] else 2
 
 
 if __name__ == '__main__':

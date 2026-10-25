@@ -39,7 +39,8 @@ class CalmBuoyTrain:
     @staticmethod
     def construct(carriers, case, controls, g, beam):
         a = carriers['amplitudes']
-        assert controls['center_group_time_s'] == 30 and controls['plateau_halfwidth_s'] == 15
+        center_time = float(controls['center_group_time_s'])
+        assert center_time in [30.,40.] and controls['plateau_halfwidth_s'] == 15
         assert controls['support_halfwidth_s'] == 25 and controls['sideband_omega_min_rad_s'] == 0
         assert controls['sideband_omega_step_rad_s'] == .005 and controls['signed_kappa'] == [1,-1]
         w0 = carriers['angular_frequencies']
@@ -56,7 +57,7 @@ class CalmBuoyTrain:
         nu = cg[:,None,None]*(signs[None,:,None]*k[None,None,:]-k0[:,None,None])
         G = window_spectrum(nu,controls['transition_gauss_nodes'])
         jacobian = (2*cg[:,None]*omega[None,:]/g)*weights[None,:]
-        C = a[:,None,None]*G*np.exp(1j*(phi[:,None,None]+30*nu))*jacobian[:,None,:]
+        C = a[:,None,None]*G*np.exp(1j*(phi[:,None,None]+center_time*nu))*jacobian[:,None,:]
         # Componentwise spectral norm per crest length: a^2*cg*integral |G|^2 dnu.
         x,w = np.polynomial.legendre.leggauss(controls['transition_gauss_nodes'])
         full_G2_integral = (30+2*5*np.dot(w,window(20+5*x)**2))/(2*np.pi)
@@ -73,7 +74,7 @@ class CalmBuoyTrain:
             full_component_spectral_norm=full_norm,retained_component_spectral_norm=retained_norm,
             spectral_norm_weights=norm_weights,
             represented_reverse_component_norm=a*a*cg*np.sum(G[:,1]**2*jacobian,axis=1),
-            window_center_group_time_s=30.,gravity_m_s2=g)
+            window_center_group_time_s=center_time,gravity_m_s2=g)
 
     @staticmethod
     def static_excitation(table):

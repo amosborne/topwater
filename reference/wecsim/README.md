@@ -1,5 +1,54 @@
 # Native WEC-Sim references
 
+The stronger buoy-derived case is complete:60s/3001native samples, source record
+46086/2023-12-23T00:40Z, Hm01.657m/Tm027.237s, seed42 and bow182.067deg.
+It starts from rest in numerically locally calm water with zero radiation memory,
+no temporal ramp and no added viscous damping. Source amplitudes and directional
+spreading come from the observation, not a scaled mild realization.
+
+Local stronger video:
+`artifacts/reference/stronger-buoy-20261024/render-encode-attempt1/reference-isometric.mp4`.
+H2641280x900,751frames/12.5fps,60.08s including the native60s endpoint hold.
+MP4 SHA `42c8ca1c80e961784200d076faff7e9a34a67c782120019e606bbf553ec004e2`.
+Full decode,0/30/60decoded-frame review, input provenance and all751pose checks
+pass independently. The camera covers12m; the prescribed incoming field and
+open-water hydrodynamics extend independently of that display crop.
+
+Peaks surge/sway/heave[.562,.837,.759]m and roll/pitch/yaw[6.619,2.678,1.325]deg
+meet the requested stronger-motion target. Net radiation work32971.040J is
+positive throughout cumulatively; returned instantaneous work4074.896J and
+incident work46582.193J are recorded separately. No complete energy closure or
+general passivity proof follows. [Case evidence](../../docs/experts/wecsim_expert/stronger-buoy-readiness-2026-10-24.md).
+
+This is a provisional fixed-mean linear reference, not mesh/time/nonlinear
+accuracy qualification. A cached local-water-plane proxy gives~3.10deg maximum
+relative heel,~2.88deg trim and0.090m relative vertical offset. Existing3deg
+flatwater curves show~7.3% righting-secant and15.3% tangent-stiffness departures;
+combined curved-water wetting/flooding and small geometry error are unconfirmed.
+[Applicability context](../../docs/experts/wecsim_expert/stronger-relative-water-proxy-2026-10-24.md).
+
+The current mild buoy-derived case is complete:60s/3001native samples, locally
+calm incoming-wave startup, zero boat velocity/radiation memory, no temporal ramp
+or added viscous damping. Source observation46086/2023-03-19T08:40Z has
+Hm0.535m/Tm027.427s; its derived finite train and both physical-coordinate frames
+are retained separately. Mean bow201.308deg faces the dominant incoming energy.
+
+Local video: `artifacts/reference/calm-buoy-20261024/render-encode-attempt1/reference-isometric.mp4`.
+H2641280x900,751frames/12.5fps,60.08s including the native60s endpoint hold.
+The close12m view uses equal physical metres and the same prescribed incident
+train as the force input. Decoded0/30/60frames and all751frame metadata pass review.
+MP4 SHA `205400a829eef3ffb9b1fdf83a359299dc05e4edf15f1f051f3765fb5ca7e8f9`.
+
+Peak surge/sway/heave are[.238,.274,.240]m and roll/pitch/yaw[1.481,.663,.617]deg.
+All3001actual excitation samples match the prepared forces exactly. Radiation
+memory absorbs net3271.532J (temporary returned work309.916J, cumulative minimum0),
+against3492.514J incident work. This is not a complete fluid-energy budget or
+mesh/time/nonlinear accuracy qualification. [Case evidence](../../docs/experts/wecsim_expert/calm-buoy-arrival-readiness-2026-10-24.md).
+
+The user now requests a genuinely more energetic observed sea to increase roll;
+the mild case remains immutable. Current scope and actual execution state are
+in the handoff and shared ledger.
+
 The accepted minimum17-panel case has501 native six-DOF samples covering0..10s
 from rest at dt0.02s. The same frozen dispersive incoming field drives the
 excitation and visualization. The centered isometric video and literal encoded

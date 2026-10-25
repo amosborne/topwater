@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "purpose": "One stronger actual observed buoy spectrum for a 60s incoming-wave WEC-Sim reference",
+  "source_library": "C:/Users/alex/marine-gyro/artifacts/sea-direction-check/sea_states.json",
+  "source_library_sha256": "62162b862ed338e4e1dcac9e1476220b8d0550c0cbb42f981bc5c404129b1e56",
+  "region": "california",
+  "source_row": 29984,
+  "observation_id": "ndbc-46086-20231223T0040Z",
+  "time_utc": "2023-12-23T00:40:00Z",
+  "physical_input": "reference/capytaine/canonical-boat.json",
+  "catalog_provenance": "src/topwater/data/socal_sea_states.json",
+  "seed": 42,
+  "components_per_band": 8,
+  "rescale_generated_amplitudes": false,
+  "relative_heading_offset_deg": 0,
+  "expected_hm0_m": 1.6574679484080534,
+  "expected_tm02_s": 7.23656714864799,
+  "maximum_elapsed_seconds": 30,
+  "arrival_status": "Neutral stationary carriers only; reuse separately reviewed physical upstream finite-train construction with fresh calm-start assessment, no global ramp"
+}

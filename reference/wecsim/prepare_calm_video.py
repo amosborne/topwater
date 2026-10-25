@@ -36,10 +36,13 @@ def write(path, value):
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--stage', choices=['preview', 'encode'], required=True)
+parser.add_argument('--base',type=Path,default=BASE)
+parser.add_argument('--controls',type=Path,default=ROOT/'reference/wecsim/calm-video-controls.json')
 parser.add_argument('--receipt', type=Path)
 parser.add_argument('--preview-review', type=Path)
 parser.add_argument('--owner', default='/root/calm_video')
 args = parser.parse_args()
+BASE = args.base.resolve()
 controls_path = BASE/'render-ready-controls.json'
 output = BASE/('render-'+args.stage+'-attempt1')
 archive = BASE/('render-'+args.stage+'-attempt1-source')
@@ -50,9 +53,9 @@ if args.stage == 'preview':
     receipt_path = args.receipt.resolve()
     receipt = read(receipt_path)
     assert receipt['decision'] == 'accepted_for_visualization' and receipt['reviewed_by']
-    assert receipt['observation_id'] == 'ndbc-46086-20230319T0840Z'
     assert receipt['trajectory_status'] in ('provisional_model_trajectory', 'accepted_reference_case')
-    controls = read(ROOT/'reference/wecsim/calm-video-controls.json')
+    controls = read(args.controls.resolve())
+    assert receipt['observation_id'] == controls['observation_id']
     assert controls['status'] == 'source_only_pending_accepted_case'
     controls['motion_acceptance_receipt'] = key(receipt_path)
     required = ['physical_case', 'heading_file', 'packet_npz', 'incident_report',
@@ -124,12 +127,12 @@ for name, digest in frozen.items():
     shutil.copyfile(path, destination)
     assert sha(destination) == digest
 proposal = dict(owner=args.owner, status='ready_for_coordinator_execution_allocation',
-    assignment='ONE acceptedmildbuoy60s '+args.stage+' rendering; no physics/field changes',
+    assignment='ONE accepted observedbuoy60s '+args.stage+' rendering; no physics/field changes',
     output=key(output), producer_argv=command, input_sha256=frozen, dependency_identity=deps,
     verification_receipt_name='verification.json', cpu_threads=1, matlab_engines=0,
     maximum_elapsed_seconds=controls['preview_maximum_seconds' if args.stage == 'preview' else 'encode_maximum_seconds'],
     expected_elapsed_seconds=[30, 300] if args.stage == 'preview' else [120, 600],
     stopping_point='Preview requires independent literal/provenance review; encoder separately allocated; preserve partial outputs',
-    numerical_input='Exact accepted immutable train2/native60s motion; visual cache never used for forcing')
+    numerical_input='Exact accepted immutable physicaltrain/native60s motion; visual cache never used for forcing')
 write(archive/'proposal.json', proposal)
 print(key(archive/'proposal.json'))

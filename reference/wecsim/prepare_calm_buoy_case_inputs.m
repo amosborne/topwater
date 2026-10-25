@@ -1,12 +1,21 @@
 function prepare_calm_buoy_case_inputs(caseDir)
 root = 'C:/Users/alex/topwater';
-base = fullfile(root,'artifacts/reference/calm-buoy-20261024');
+base = getenv('TOPWATER_BUOY_ROOT');
+if isempty(base)
+    base = fullfile(root,'artifacts/reference/calm-buoy-20261024');
+end
 assessment = jsondecode(fileread(fullfile(base,'assessment-attempt1/diagnostic.json')));
 assert(assessment.complete && assessment.accepted && strcmp(assessment.field_status,'proved_calm'));
-assert(assessment.old_rejection_preserved,'Original .1N rejection must remain documented');
+assert(assessment.old_rejection_preserved || ...
+    (isfield(assessment,'strict_policy_report_preserved') && assessment.strict_policy_report_preserved), ...
+    'Original strict-policy source report must remain preserved');
 heading = jsondecode(fileread(fullfile(base,'export-attempt1/case.json')));
 n = load(fullfile(root,'artifacts/reference/minimum-20261024/native-gl2/native.mat'));
-forcing = load(fullfile(base,'train-attempt2/body-force.mat'));
+trainDir = getenv('TOPWATER_BUOY_TRAIN');
+if isempty(trainDir)
+    trainDir = 'train-attempt2';
+end
+forcing = load(fullfile(base,trainDir,'body-force.mat'));
 time = forcing.time(:);
 force = forcing.force;
 assert(isequal(size(force),[3001 6]) && all(isfinite(force),'all'));

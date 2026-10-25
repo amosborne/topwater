@@ -1,5 +1,21 @@
 # Current state: Topwater expert (solver implementation HELD)
 
+LATEST user, after mild60s video: use a MORE energetic actual sea and report
+diagnostics. Coordinator selects `ndbc-46086-20231223T0040Z`, source row29984,
+Hm01.6574679484m/Tm027.236567149s/observed direction resultant.457661. Complete48
+bands and source provenance; no response/RAO/phase fit or amplitude scaling.
+Existing seed42/8perband/default bow policy retained; actual yaw pending export.
+New stronger controls and fresh-path preparer reuse EXACT unchanged exporter22bcf2c0.
+Proposal43faa35a independently reviewed/coordinator allocated: EXPORT EXECUTED
+PASS1.093s,384carriers/48varianceclosure .1717m2/replay/support/frame checks.
+Actual bow182.067194deg, meanprop2.067194deg/R.471121; storedomega/globalphi/IDs
+exactly equal mildseed42, measuredamplitudes/MEMdirectionschange. Exact38880/32504
+terminal0, frozenverified/idle/separatereadback/finalrelease done. Output
+`artifacts/reference/stronger-buoy-20261024/export-attempt1`.
+No train/assessment/body/video job in this assignment.
+[Stronger executed receipt](stronger-buoy-export-readiness-2026-10-24.md).
+Original mild input/body/video remain preserved. Topwater solver remains HELD.
+
 LATEST user regroup2026-10-24: stop bug-chasing and official-example variants;
 deliver one LESS energetic buoy-generated incoming sea, true locally calm boatrest,
 zero history/no ramp, full60s and centered video with wider physical field.
