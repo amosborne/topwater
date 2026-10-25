@@ -6,13 +6,20 @@ It starts from rest in numerically locally calm water with zero radiation memory
 no temporal ramp and no added viscous damping. Source amplitudes and directional
 spreading come from the observation, not a scaled mild realization.
 
-Local stronger video:
-`artifacts/reference/stronger-buoy-20261024/render-encode-attempt1/reference-isometric.mp4`.
-H2641280x900,751frames/12.5fps,60.08s including the native60s endpoint hold.
-MP4 SHA `42c8ca1c80e961784200d076faff7e9a34a67c782120019e606bbf553ec004e2`.
-Full decode,0/30/60decoded-frame review, input provenance and all751pose checks
-pass independently. The camera covers12m; the prescribed incoming field and
-open-water hydrodynamics extend independently of that display crop.
+Latest clearer presentation movie:
+[reference-presentation.mp4](../../artifacts/reference/stronger-buoy-20261024/presentation-encode-attempt2/reference-presentation.mp4).
+H2641280x900,751frames/12.5fps,60.08s; MP4 SHA
+`7a9debb31a440b6967fd3340f2fcd6f89072699dd7ecc2e36136d3bca6079aa8`.
+Full751decode and actualencoded0/30/peak51.44/60frame review PASS. Selected24deg
+camera/10m span uses equalmetres, solidhull, actualcached-contact and noaxes/grid.
+Distantwater is a320x225 display pass; hull/contact/neighborhood remain1280.
+Visible finitepatch edges/coarsening are rendering limits, not altered physics.
+Actual fullmovie render1064s ononeCPU; [receipt and preserved iterations](../../docs/experts/wecsim_expert/presentation-readiness-2026-10-24.md).
+
+The previous12m isometric movie remains available unchanged:
+`artifacts/reference/stronger-buoy-20261024/render-encode-attempt1/reference-isometric.mp4`,
+SHA `42c8ca1c80e961784200d076faff7e9a34a67c782120019e606bbf553ec004e2`.
+Both use the same native motion and prescribed incoming field.
 
 Peaks surge/sway/heave[.562,.837,.759]m and roll/pitch/yaw[6.619,2.678,1.325]deg
 meet the requested stronger-motion target. Net radiation work32971.040J is
@@ -45,9 +52,8 @@ memory absorbs net3271.532J (temporary returned work309.916J, cumulative minimum
 against3492.514J incident work. This is not a complete fluid-energy budget or
 mesh/time/nonlinear accuracy qualification. [Case evidence](../../docs/experts/wecsim_expert/calm-buoy-arrival-readiness-2026-10-24.md).
 
-The user now requests a genuinely more energetic observed sea to increase roll;
-the mild case remains immutable. Current scope and actual execution state are
-in the handoff and shared ledger.
+The stronger case and clearer presentation are complete; the mild case remains
+immutable. Current scope and actual execution state are in the handoff/shared ledger.
 
 The accepted minimum17-panel case has501 native six-DOF samples covering0..10s
 from rest at dt0.02s. The same frozen dispersive incoming field drives the

@@ -7,51 +7,36 @@ requirements, acceptance, integration and serial execution allocation.
 
 ## Current priority
 
-The mild observed-buoy60s case and centered video are COMPLETE. Motion peak
-roll/pitch/yaw1.481/.663/.617deg; all3001 native checks independently PASS.
-Final MP4 SHA205400a829eef3ffb9b1fdf83a359299dc05e4edf15f1f051f3765fb5ca7e8f9,
-751frames/12.5fps/60.08s. Preserve all mild artifacts. Its actual radiation net
-work3271.532J, returned309.916J, minimum cumulative0; incident3492.514J.
-These signed trajectory diagnostics are not operator passivity/accuracy proof.
+USER requested clearer existing stronger60s motion; FINAL PRESENTATION COMPLETE.
+[Watch artifact](../../../artifacts/reference/stronger-buoy-20261024/presentation-encode-attempt2/reference-presentation.mp4).
+MP4SHA7a9debb31a440b6967fd3340f2fcd6f89072699dd7ecc2e36136d3bca6079aa8,
+H2641280x900/751frames12.5fps/60.08s. All751decode andROOTliteral0/30/51.44/60
+PASS; userlinked. No activejob; exact14472/renderer/ffmpegterminal, all24frozen
+inputs/depsmatch, FINALrelease8bbf9c. ROOT owns final checkpoint/integration.
 
-LATEST delivered case: stronger actual observation46086/2023-12-23
-00:40Z, Hm01.65747m/Tm027.23657s, same seed42/full generator bank, physical
-incoming train tc40/plateau15/support25. Restq/v/zeroCIC/no ramp/viscous0,
-full60s; desired5-10deg roll if bounded. No phase/amplitude fit, no RAO/mesh/
-energy-bug campaign. Existing fixed17 fullheading H plus H0 bridge/original
-H5/CIC10/.02 reused in native meanboat axes; new station heading metadata once.
-[Source readiness/commands](stronger-buoy-readiness-2026-10-24.md).
-Stronger train ACTUALPASS2.891s; fullhullcalm assessment PASS28.266s,
-eta<=.836mm/u<=3.686mm/s and allforce/arrival/coveragegates. Exactdatafrozen.
-Independentbodyfreeze bd4d249e then ONEallocatednative60s completedPASS31.349s:
-peakroll6.618565/pitch2.677850/yaw1.325248deg,translations.562/.837/.759m.
-All3001 finite/Feexact0/restIC/memory0/CIC/NE/Ar/mass/framechecksPASS. Signed
-radiation net32971.040J/mincum0/returned4074.896J; incident46582.193J.
-Nativeworldaligned/global182.067degR/tmetadataonce. This is provisional linear
-motion, not nonlinear/mesh/timeaccuracy qualification. Motion3eae21f9/rawd350bac3.
-Exact37600/39756 terminal/all147 unchanged/FINALrelease12dc57; independentstored
-implementation/energy FINALPASS. Root accepts trajectory for visualization.
-[Stronger video evidence](stronger-video-readiness-2026-10-24.md) generic
-diff independentlyPASS; genuine root motion receipt followed by
-actualpreview independentlyfrozen89286f67/rootallocated35.641s PASS:
-all751clips fit +/-2m, 0/30/60PNGs/sixplot/cache ready in stronger render-preview-attempt1.
-Exact38748/38028 terminal/all15 unchanged/FINALrelease4fc261. ROOT+independent
-literalreviewPASS, genuineROOTpreviewreceipt8386d482. Encoderfreeze78620f8f
-independentlyPASS thenallocatedONEencode completed220.375s. FinalMP4 SHA42c8ca1c
-h264/1280x900/751frames12.5fps/60.08s; exact41948terminal/ffmpeg0/all18unchanged/
-FINALrelease283833. ROOT full751-frame decode/frozenhash/metadata and decoded
-0/30/60literal review PASS, independently confirmed. FinalMP4
-42c8ca1c80e961784200d076faff7e9a34a67c782120019e606bbf553ec004e2 delivered.
-No morejob allocated. Preserve mildvideo. Cached relativewaterproxy maxheel3.10deg,
-trim2.88deg/relheave.09m; existing3degstatic curves have7.3%righting/15.3%tangent
-departures, so geometry applicability remains approximate, not certified.
+24deg obliquebroadside/10m/equalmetres, noaxes/grid/wiremesh; compactHUD,
+solidinside/outside andactualcached-contact waterline. Distantwater320x225 display
+pass, hull/contact/water-neighborhood1280. Finitepatch edges and coarsening remain
+visible limitations; no physicalfield/motion amplification or solver changes.
+Actualencode1064s after selectedpreview5.469s. All source/cache/input/QA evidence:
+[Presentation receipt](presentation-readiness-2026-10-24.md).
 
+The actual stronger record46086/2023-12-23T00:40Z Hm01.65747/Tm027.23657,
+seed42/384unscaledcarriers, bow182.067deg, spatialtrain tc40/plateau15/support25.
+Native original17H5/CIC10/dt.02/all6free/qv0/memory0/ramp0/visc0; actual60s
+implementation/energy independentlyPASS. Peaks[.562,.837,.759]m and
+[6.618565,2.677850,1.325248]deg; netradiation32971.040J, temporaryreturn4074.896J,
+cumulativemin0; incident46582.193J. These are trajectory diagnostics, not full
+fluid-energy closure/passivity or nonlinear/mesh/time accuracy qualification.
+[Case evidence](stronger-buoy-readiness-2026-10-24.md),
+[original stronger movie](stronger-video-readiness-2026-10-24.md).
 
-Historical mild construction/rejected tiny-cap attempts and explicit EPS.001
-assessment remain in [arrival evidence](calm-buoy-arrival-readiness-2026-10-24.md)
-and [assessment/body evidence](calm-buoy-assessment-2026-10-24.md). The old
-stationary-history prototype is superseded; current startup is locally calm
-water/body rest and zero memory, never a seeded hidden past.
+The cached localwaterplane proxy has maxrelativeheel3.10deg/trim2.88deg/
+relheave.09m; this does not certify combinedwavewetting/flooding/linearity.
+Geometry applicability remains approximate. No furthercases/physics/mesh/bug
+studies or Topwater solver work are authorized. Preserve originalstronger and
+mildvideos (mildpeakroll1.481deg), rejected tiny-cap inputs and superseded
+stationary-history prototype under their original interpretations.
 
 ## Latest executed official controls
 

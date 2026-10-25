@@ -6,6 +6,31 @@ Updated2026-10-24. Latest user steering controls scope. Read
 
 ## Current authorization and immediate priority
 
+LATEST USER REQUEST: render the new video and provide where to watch it, using
+the agreed readability changes. Remove axes and surface
+grid, dark-to-light blue filled water, lower camera, shaded flat hull faces,
+clear inside/outside and waterline, slight hull transparency if readable.
+Same frozen stronger-case motion/packet/cache and actual metres/time; no new
+sea/solver/physics/geometry correction or amplitude exaggeration. WEC owner
+`/root/wecsim_reference` owns new presentation renderer/controls/source-readiness.
+NEW VIDEO COMPLETE. Watch local
+`artifacts/reference/stronger-buoy-20261024/presentation-encode-attempt2/reference-presentation.mp4`.
+SHA2567a9debb31a440b6967fd3340f2fcd6f89072699dd7ecc2e36136d3bca6079aa8.
+H2641280x900/12.5fps/751frames/60.08s (full60s simulation plus endpoint frame).
+Selected24deg lower camera/10m equal-metre span, no axes/grid, fixed dark-to-light
+blue height palette, flat shaded ivory exterior/warm interior, actual cached
+waterline and slight underwater visibility. Camera followsXY only, fixedheading
+and verticalreference. Physical inputs and all751 cached poses/waves unchanged.
+Original movies and failed/slower rendering previews are preserved.
+
+Final render1064s/17m44s. Full751decode PASS; ROOT viewed encoded0/30/51.44/60s.
+Exact cached-water ray residual<=4.44e-16m/contact<=2.22e-16m. Distantwater uses
+320x225 display pass; hull/HUD/contact and water queries near hull retain1280x900.
+Finite waterpatch edges remain visible; shading/contact are presentation, not
+computed flooding/wetting or a new physical validation. No more rendering/style,
+sea-state, solver or Topwater work is allocated. Execution ledger owns terminal
+and release evidence for originalsession14472/manifestcbf276209e7af879a17177b89d0296f9b803cffb751ff8a3601f67f736498467.
+
 LATEST user requested MORE energetic actual buoy sea after the mild clip,
 with radiation-energy diagnostics and a video. STRONGER CASE AND VIDEO NOW
 COMPLETE. No further case/bug/mesh/Topwater work is allocated. Preserve the
