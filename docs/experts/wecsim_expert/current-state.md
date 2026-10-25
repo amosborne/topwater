@@ -6,6 +6,18 @@ No active WECnumerical allocation or automaticfollowup. ROOT owns integration.
 
 ## Generic CLI integration checkpoint
 
+The first full canonical CLI attempt ran and failed during surface export after
+1989.285 s; no result/video was published. A leaked BEMIO KH probe handle caused
+Windows scratch removal to mask the original export exception. Root confirmed
+and closed only the owned MATLAB file ID. Maintained-importer scoped closure and
+package primary-error preservation passed the allocated regression: old leak
+reproduced, two new imports preserved 32 numeric arrays each, malformed KH and
+Hydrostatics left no handles, and 15 Windows fixture files renamed/deleted
+(reported 1.672 s). Owned fork commit `f07a8dfe1d81d9430a22c299a83d91252afb3a33`
+is pushed and pinned. Recovery/interfaces passed 209 tests with one optional
+skip in 13.05 s. The second full canonical pipeline remains pending. See
+[failure/lifecycle correction](bemio-handle-lifecycle-2026-10-25.md).
+
 WEC-WORKFLOW-001 added `src/topwater/wecsim_backend.py`, shared
 `_wecsim_setup.py`, packaged MATLAB resources under `data/wecsim`, and
 `docs/cli/solve.md`. The source supplies generic full equilibrium, fixed
@@ -18,21 +30,22 @@ checkpoint passed 13 backend tests, all four MATLAB style checks, and two real
 normal/forced-failure cycles in the existing hidden shared engine. Exact
 cwd/path, diary, warning/thread/figure settings and cache/codegen folders were
 restored; only the unique owned model was closed. Distinct temporary class
-directories were removed between cycles. No generic body simulation or full
-total-surface solve has run. See [versioned lifecycle evidence](workflow-engine-lifecycle-2026-10-25.md).
+directories were removed between cycles. The later first canonical run completed
+native body integration but did not publish a complete surface result. See
+[versioned lifecycle evidence](workflow-engine-lifecycle-2026-10-25.md).
 
 The coordinator accepted the selected-case provisional total-surface policy:
 24 rad/s radiation cutoff, spacing <=0.025 rad/s, full native history, zero direct
 terms, exact packet sideband diffraction, and explicit exterior-trace continuation.
 The Capytaine production API matches the backend's four packed surface arrays.
 Source now includes the represented-total wet-set 10% warning and initial local
-total-elevation check. Full CLI/body/surface acceptance has not run; full complex
+total-elevation check. Full CLI/body/surface acceptance has not passed; full complex
 near-field recovery and total disturbed-fluid velocity bounds remain unqualified.
 The 42.7 mm maximum/12.5 mm RMS signed-lag comparison is a numerical diagnostic,
 not an error bound. See [method review](../numerical_methods_researcher/surface-reconstruction-review-2026-10-25.md)
-and [solve contract](../../cli/solve.md). A new source test checks actual example
-geometry/M/K/CG against the frozen selected-17-panel identity; it awaits root's
-allocated run. The old incident-only surface is never promoted to total surface.
+and [solve contract](../../cli/solve.md). The allocated test suite passed actual
+example geometry/M/K/CG identity against the frozen selected 17-panel case.
+The old incident-only surface is never promoted to total surface.
 Native Topwater dynamics remain outside this assignment.
 
 ## Current completed result

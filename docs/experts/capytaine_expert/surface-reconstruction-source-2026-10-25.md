@@ -1,10 +1,69 @@
 # CAP-SURFACE-001: retained-field source and bounded pilot
 
+## Current failure-recovery source checkpoint
+
+Root's actual canonical attempt1 reached frame201/751, then exited2 after
+1989.285s with no public result. A Windows KH.dat cleanup lock masked the
+original geometry/metric exception, so the exact primary failure is unknown.
+It is not evidence that flooding, topology or the wet-set gate was the cause.
+No contact or applicability gate is relaxed by this source correction.
+
+Independent review approved physical-output snapshot compaction and safe
+invalid-time diagnostics. Root executed the current recovery/interface suite:
+**209PASS,1optional skip,13.05s**, evidence under
+`artifacts/workflow/recovery-interface-tests-attempt1`. This includes injected
+primary-error/evidence preservation, geometry-only replay with physical field
+producers forbidden, physical output free of unused cap vertices, and
+missing/empty/nonnumeric cached-time causes preserved. Successful scratch removal
+and failure retention are also covered by the WEC owner's interface tests.
+No full new artifact is accepted; actual pipeline attempt2 remains pending.
+Source/tests are frozen for root's checkpoint/retry. These documents alone are
+updated at this docs-only checkpoint.
+
+Before any frame export, the producer now writes a private
+`surface-recovery/completed-field.npz` beneath its OS-temp workflow directory.
+It contains immutable completed total/incident fields, grid, actual full motion,
+sampled poses, body/rim/cap identities, reference plane data and input policy
+scalars. It is an internal disposable intermediate, never an example output.
+The ordinary WEC scratch context deletes it on success. On a
+`SurfaceExportError.recovery_directory`, that context retains its own workspace
+and preserves the same primary exception; secondary cleanup failures cannot
+replace the physical/geometry error.
+
+Per-frame errors immediately print their original traceback plus stage, frame
+index and physical time. They save a small `failure-frame.npz` containing the
+untrimmed graph, posed closed hull, physical faces, rim/caps, incident field,
+reference plane and clipped mesh when available. `failure.json` records the
+original error and exact cache location. Evidence-writing errors are secondary.
+If completed-cache validation fails before a frame/time is established, the
+diagnostic time is explicitly absent; error handling never re-reads the bad
+time axis and masks the original validation exception.
+
+`replay_surface_cache` runs only clipping, contact/startup checks and metrics on
+the completed data. It invokes no Capytaine, MATLAB, body integration or wave
+synthesis. A root-frozen replay may optionally write the standard Result NPZ
+without changing its motion arrays. The public physical hull snapshot is
+compacted/remapped to remove vertices used only by artificial caps; the cached
+full closed hull, rim/cap indices and CG frame remain unchanged. Example
+root-allocated replay command:
+
+```powershell
+uv run python -c "from topwater._capytaine_surface import replay_surface_cache; replay_surface_cache(r'C:\Users\alex\AppData\Local\Temp\topwater-wecsim-CASE\surface-recovery\completed-field.npz', diagnostic_directory=r'artifacts\workflow\surface-replay-attempt1', output_path=r'artifacts\workflow\surface-replay-result.npz')"
+```
+
+Both diagnostic/output destinations must be fresh. The original private cache
+is never overwritten or implicitly deleted by replay. Freeze and claim normal
+serial execution before replay; it is a numerical geometry job, not read-only
+activation. This author has executed no cache replay or test; root's suite above
+executed the focused analytical/geometry replay controls. An actual cached-field
+replay from a new pipeline failure has not yet been needed or accepted.
+
 ## Current production source checkpoint
 
 Source implementation is complete and coordinator-selected provisional policy
-is enabled. Focused current-source tests, actual generic WEC-Sim execution and
-the complete total-surface artifact still require root execution and acceptance.
+is enabled. Focused current-source tests passed as recorded above. Actual
+generic WEC-Sim execution and the complete total-surface artifact still require
+the next root execution and acceptance after the masked first attempt.
 No job was launched by this author. Earlier source-only/closed-gate paragraphs
 below are historical checkpoints superseded by this current section.
 

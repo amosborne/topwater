@@ -29,7 +29,7 @@ from .inputs import InitialState
 
 
 ENGINE_NAME = 'CAPYTAINE_REFERENCE'
-SUPPORTED_FORK_COMMIT = 'f962103a348d63101ce669c2611f7d7c109755c3'
+SUPPORTED_FORK_COMMIT = 'f07a8dfe1d81d9430a22c299a83d91252afb3a33'
 APPLICABILITY_WARNING_FRACTION = .10
 
 
@@ -39,6 +39,10 @@ class BackendUnavailableError(RuntimeError):
 
 class EngineCleanupError(RuntimeError):
     """Shared-engine state is unverified; scratch must remain for recovery."""
+
+
+class ScratchCleanupError(RuntimeError):
+    """A complete run cannot publish while its scratch cleanup has failed."""
 
 
 @dataclass(frozen=True)
@@ -326,18 +330,32 @@ def _restore_search_path(engine, original_path):
 
 @contextmanager
 def _scratch_directory():
-    """Never delete scratch still referenced by an unreconciled MATLAB engine."""
+    """Retain recovery scratch and never replace a primary stage exception."""
     directory = Path(tempfile.mkdtemp(prefix='topwater-wecsim-'))
     retain = False
+    primary = None
     try:
         yield directory
-    except EngineCleanupError:
-        retain = True
-        print(f'WEC-Sim: engine cleanup failed; temporary recovery directory retained: {directory}', file=sys.stderr)
+    except BaseException as failure:
+        primary = failure
+        recovery = getattr(failure, 'recovery_directory', None)
+        if isinstance(failure, EngineCleanupError) or recovery is not None:
+            retain = True
+            reason = 'engine cleanup failed' if isinstance(failure, EngineCleanupError) else 'surface export failed'
+            print(f'WEC-Sim: {reason}; temporary recovery directory retained: {directory}', file=sys.stderr)
+            if recovery is not None:
+                print(f'WEC-Sim: surface replay data: {recovery}', file=sys.stderr)
         raise
     finally:
         if not retain:
-            shutil.rmtree(directory)
+            try:
+                shutil.rmtree(directory)
+            except Exception as failure:
+                message = f'WEC-Sim: temporary cleanup failed; recovery directory retained: {directory}: {failure}'
+                print(message, file=sys.stderr)
+                if primary is None:
+                    raise ScratchCleanupError(message) from failure
+                primary.add_note(message)
 
 
 def _check_engine(engine):

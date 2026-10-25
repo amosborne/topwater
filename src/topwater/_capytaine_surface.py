@@ -8,11 +8,13 @@ the selected causal projection retains a documented near-field phase error.
 """
 from dataclasses import dataclass
 from functools import wraps
+import hashlib
 from importlib.metadata import version
 import json
 import logging
 from pathlib import Path
 import sys
+import traceback
 
 import numpy as np
 from scipy.integrate import trapezoid
@@ -21,6 +23,80 @@ from scipy.spatial import ConvexHull, QhullError
 
 
 MODES = ('Surge', 'Sway', 'Heave', 'Roll', 'Pitch', 'Yaw')
+
+
+class SurfaceExportError(RuntimeError):
+    """Primary geometry/metric failure with a private replayable field cache."""
+    def __init__(self, message, recovery_directory, *, stage, frame_index, time_s):
+        super().__init__(message)
+        self.recovery_directory = Path(recovery_directory)
+        self.stage = stage
+        self.frame_index = int(frame_index)
+        self.time_s = None if time_s is None else float(time_s)
+
+
+def _save_completed_cache(directory, data):
+    """Private disposable intermediate, never placed in the example folder."""
+    directory = Path(directory)
+    directory.mkdir(parents=True, exist_ok=False)
+    path = directory/'completed-field.npz'
+    with path.open('xb') as stream:
+        np.savez(stream, **data)
+    return path
+
+
+def _save_frame_failure(directory, evidence, error, stage, index, stamp, cache_path):
+    """Best-effort secondary diagnostics must never replace the primary error."""
+    directory = Path(directory)
+    report = dict(stage=stage, frame_index=int(index), time_s=(None if stamp is None else float(stamp)),
+                  error_type=type(error).__name__, error_message=str(error),
+                  traceback=traceback.format_exc(),
+                  completed_cache=str(cache_path))
+    try:
+        directory.mkdir(parents=True, exist_ok=True)
+        with (directory/'failure.json').open('x', encoding='utf-8') as stream:
+            json.dump(report, stream, indent=2)
+            stream.write('\n')
+        with (directory/'failure-frame.npz').open('xb') as stream:
+            np.savez(stream, **evidence)
+    except Exception as diagnostic_error:
+        print(f'Surface failure evidence could not be fully saved: {diagnostic_error}; '
+              'the original failure remains authoritative.', file=sys.stderr)
+
+
+def replay_surface_cache(cache_path, *, diagnostic_directory, output_path=None):
+    """Replay geometry/metrics only from frozen completed fields and motion.
+
+    No Capytaine, MATLAB, body integration or wave synthesis is invoked. The
+    optional output is the ordinary final Result format. The coordinator must
+    freeze this cache and current geometry sources before using the replay.
+    """
+    path = Path(cache_path)
+    with np.load(path, allow_pickle=False) as archive:
+        data = {name: archive[name].copy() for name in archive.files}
+    if int(data['cache_version'].item()) != 1:
+        raise ValueError('Unsupported private completed-surface cache')
+    directory = Path(diagnostic_directory)
+    directory.mkdir(parents=True, exist_ok=False)
+    print(f'Surface geometry replay: frozen field source={str(data["producer_source_sha256"].item())}; '
+          f'cache={path.resolve()}', file=sys.stderr)
+    packed = _export_completed_field(data, directory, path)
+    if output_path is not None:
+        from .workflow_data import Result
+        # The internal closed hull can contain cap-only vertices. Public Result
+        # stores physical panels only, so compact that snapshot without changing
+        # the closed geometry/rim/cap identities used above for contact checks.
+        physical = np.asarray(data['physical_faces'], dtype=np.int64)
+        used, remapped = np.unique(physical, return_inverse=True)
+        physical_vertices = data['body_vertices_m'][used]
+        physical_faces = remapped.reshape(physical.shape)
+        result = Result(time_s=data['motion_time_s'], position_m=data['motion_position_m'],
+            orientation_wxyz=data['motion_orientation_wxyz'], hull_vertices_m=physical_vertices,
+            hull_faces=physical_faces, cg_m=data['body_cg_m'], surface_time_s=data['surface_time_s'],
+            surface_vertices_m=packed[0], surface_faces=packed[1],
+            surface_vertex_offsets=packed[2], surface_face_offsets=packed[3])
+        result.save(output_path, overwrite=False)
+    return packed
 
 
 class _CapytaineWarningFilter(logging.Filter):
@@ -846,9 +922,77 @@ def reconstruct_total_surface(hydro, setup, motion, surface_time_s):
     difference = np.max(abs(direct_force-prepared_force), axis=0)
     print('Surface: exact-sideband field/prepared-body load maximum differences '
           f'[N,N,N,Nm,Nm,Nm]={difference.tolist()}; the accepted body loads are unchanged.', file=sys.stderr)
+    # Preserve the expensive completed field before the first contact/metric
+    # operation. The caller's private OS-temp context removes it on success and
+    # retains it on SurfaceExportError for a geometry-only replay.
+    completed = dict(cache_version=np.array(1, dtype=np.int64),
+        producer_source_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        surface_time_s=surface_time, surface_position_m=positions, surface_rotation=poses,
+        motion_time_s=stamp, motion_position_m=position,
+        motion_orientation_wxyz=np.asarray(motion.orientation_wxyz), motion_velocity_native=velocity,
+        body_vertices_m=body.mesh.vertices, body_cg_m=body.cg, body_faces=body.mesh.faces,
+        opening_rim=body.mesh.opening_rim, artificial_faces=body.mesh.artificial_faces,
+        physical_faces=setup.physical_faces, xy_native_m=xy, water_faces=faces,
+        axis_x_m=axes[0], axis_y_m=axes[1], total_elevation_m=total, incident_elevation_m=incident,
+        world_from_native=embedding, mean_rotation=Rotation.from_quat(
+            setup.equilibrium.orientation, scalar_first=True).as_matrix(),
+        mean_cg_m=setup.mean_cg_m, initial_wetted_area_m2=np.array(setup.hydrostatic.wetted_area),
+        beam_m=np.array(beam), calm_eta_limit_m=np.array(.001*float(np.sum(setup.train.carriers.amplitudes))))
+    if hasattr(motion, 'acceleration_native'):
+        completed['motion_acceleration_native'] = np.asarray(motion.acceleration_native)
+    if hasattr(motion, 'q'):
+        completed['motion_q_native'] = np.asarray(motion.q)
+    directory = Path(hydro.directory).parent/'surface-recovery'
+    cache = _save_completed_cache(directory, completed)
+    return _export_completed_field(completed, directory, cache)
 
+
+def _export_completed_field(completed, recovery_directory, cache_path):
+    try:
+        return _export_completed_field_impl(completed, recovery_directory, cache_path)
+    except SurfaceExportError:
+        raise
+    except (KeyboardInterrupt, SystemExit) as error:
+        error.recovery_directory = Path(recovery_directory)
+        print(f'Surface export interrupted; completed fields retained at {cache_path}', file=sys.stderr)
+        raise
+    except Exception as error:
+        stage = 'completed-field-validation-or-summary'
+        # No frame/time is established if completed-data validation itself
+        # failed. Reading the malformed axis here would mask that first error.
+        stamp = None
+        print(f'Surface {stage} failed: {type(error).__name__}: {error}', file=sys.stderr)
+        traceback.print_exc(file=sys.stderr)
+        _save_frame_failure(recovery_directory, {}, error, stage, -1, stamp, cache_path)
+        raise SurfaceExportError(f'Surface {stage} failed: {error}; completed fields retained at {cache_path}',
+            recovery_directory, stage=stage, frame_index=-1, time_s=stamp) from error
+
+
+def _export_completed_field_impl(completed, recovery_directory, cache_path):
+    """Geometry and metrics only; all physical field samples are immutable."""
+    from ._surface_export import export_surface
+
+    surface_time = _grid(completed['surface_time_s'], 'cached surface_time_s', zero=True)
+    positions = _finite(completed['surface_position_m'], (len(surface_time), 3), 'cached surface positions')
+    poses = _finite(completed['surface_rotation'], (len(surface_time), 3, 3), 'cached surface rotations')
+    full_vertices = _finite(completed['body_vertices_m'], (None, 3), 'cached body vertices')
+    local_hull = full_vertices-_finite(completed['body_cg_m'], (3,), 'cached body CG')
+    full_faces = np.asarray(completed['body_faces'], dtype=np.int64)
+    rim = np.asarray(completed['opening_rim'], dtype=np.int64)
+    caps = np.asarray(completed['artificial_faces'], dtype=np.int64)
+    physical_faces = np.asarray(completed['physical_faces'], dtype=np.int64)
+    xy = _finite(completed['xy_native_m'], (None, 2), 'cached XY')
+    faces = np.asarray(completed['water_faces'], dtype=np.int64)
+    axes = [np.asarray(completed['axis_x_m']), np.asarray(completed['axis_y_m'])]
+    total = _finite(completed['total_elevation_m'], (len(surface_time), len(xy)), 'cached total field')
+    incident = _finite(completed['incident_elevation_m'], total.shape, 'cached incident field')
+    embedding = _finite(completed['world_from_native'], (3, 3), 'cached embedding')
+    mean_rotation = _finite(completed['mean_rotation'], (3, 3), 'cached mean rotation')
+    mean_cg = _finite(completed['mean_cg_m'], (3,), 'cached mean CG')
+    initial_area = float(completed['initial_wetted_area_m2'])
+    beam = float(completed['beam_m'])
+    calm_limit = float(completed['calm_eta_limit_m'])
     graph = WaterGraphPartition(xy, faces)
-    mean_rotation = Rotation.from_quat(setup.equilibrium.orientation, scalar_first=True).as_matrix()
     packed_vertices, packed_faces = [], []
     vertex_offsets, face_offsets = [0], [0]
     moments = {name: [] for name in ('full', 'one_beam')}
@@ -862,44 +1006,62 @@ def reconstruct_total_surface(hydro, setup, motion, surface_time_s):
         native_hull = world_hull @ embedding
         native_points = np.c_[xy, total[i]]
         world_points = native_points @ embedding.T
-        vertices, connectivity = export_surface(world_points, faces, world_hull, body.mesh.faces,
-            opening_rim=body.mesh.opening_rim, artificial_faces=body.mesh.artificial_faces)
-        # Metrics use the same represented incident P1 graph, interpolated at
-        # any new cut vertices. They measure total-minus-incident, not a second
-        # direct incident evaluation inconsistent with the represented graph.
-        clipped_native = vertices @ embedding
-        incident_cut = _grid_p1_values(axes, incident[i], clipped_native[:, :2])
-        frame_moments = _delta_moments(clipped_native, connectivity, incident_cut, native_hull, beam,
-                                      [[axes[0][0], axes[1][0]], [axes[0][-1], axes[1][-1]]])
-        for name in moments:
-            moments[name].append(frame_moments[name])
         current_rotation = embedding.T @ poses[i]
         reference_normal = current_rotation @ mean_rotation.T @ np.array([0., 0., 1.])
         native_cg = positions[i] @ embedding
-        reference_offset = setup.mean_cg_m[2]-reference_normal @ native_cg
-        wet_fraction, _ = graph.wet_set_area(native_hull, setup.physical_faces, total[i],
-            reference_normal, reference_offset, setup.hydrostatic.wetted_area)
-        if wet_fraction > .10:
-            if wet_first is None:
-                wet_first = float(t)
-            wet_last = float(t)
-            if wet_fraction > wet_worst:
-                wet_worst, wet_worst_time = wet_fraction, float(t)
-        if i == 0:
-            # Exact extrema of the represented local P1 triangles, conservatively
-            # selecting every triangle touching the initial hull XY bounding box.
-            triangle = clipped_native[connectivity]
-            hmin, hmax = native_hull[:, :2].min(axis=0), native_hull[:, :2].max(axis=0)
-            region = np.all(triangle[:, :, :2].max(axis=1) >= hmin, axis=1) & np.all(triangle[:, :, :2].min(axis=1) <= hmax, axis=1)
-            if not np.any(region):
-                raise ValueError('Initial total surface lacks boat-region water coverage')
-            local_initial_peak = float(np.max(abs(triangle[region, :, 2])))
-            limit = .001*float(np.sum(setup.train.carriers.amplitudes))
-            if local_initial_peak > limit+1e-12:
-                raise ValueError(f'Initial represented total surface exceeds local calm eta limit: {local_initial_peak:g} > {limit:g} m')
-        packed_vertices.append(vertices); packed_faces.append(connectivity)
-        vertex_offsets.append(vertex_offsets[-1]+len(vertices))
-        face_offsets.append(face_offsets[-1]+len(connectivity))
+        reference_offset = mean_cg[2]-reference_normal @ native_cg
+        evidence = dict(frame_index=np.array(i), time_s=np.array(t),
+            water_vertices_world_m=world_points, water_vertices_native_m=native_points,
+            water_faces=faces, hull_vertices_world_m=world_hull, hull_vertices_native_m=native_hull,
+            hull_faces=full_faces, physical_faces=physical_faces, opening_rim=rim, artificial_faces=caps,
+            reference_normal_native=reference_normal, reference_offset_native=np.array(reference_offset),
+            incident_elevation_m=incident[i], axis_x_m=axes[0], axis_y_m=axes[1],
+            initial_wetted_area_m2=np.array(initial_area))
+        stage = 'clip-total-surface'
+        try:
+            vertices, connectivity = export_surface(world_points, faces, world_hull, full_faces,
+                                                    opening_rim=rim, artificial_faces=caps)
+            evidence['clipped_vertices_world_m'] = vertices
+            evidence['clipped_faces'] = connectivity
+            stage = 'waterline-delta-metrics'
+            # Metrics use the same represented incident P1 graph, interpolated
+            # at new cut vertices, not a second direct incident evaluation.
+            clipped_native = vertices @ embedding
+            incident_cut = _grid_p1_values(axes, incident[i], clipped_native[:, :2])
+            frame_moments = _delta_moments(clipped_native, connectivity, incident_cut, native_hull, beam,
+                                          [[axes[0][0], axes[1][0]], [axes[0][-1], axes[1][-1]]])
+            for name in moments:
+                moments[name].append(frame_moments[name])
+            stage = 'wet-set-area'
+            wet_fraction, _ = graph.wet_set_area(native_hull, physical_faces, total[i],
+                                                reference_normal, reference_offset, initial_area)
+            if wet_fraction > .10:
+                if wet_first is None:
+                    wet_first = float(t)
+                wet_last = float(t)
+                if wet_fraction > wet_worst:
+                    wet_worst, wet_worst_time = wet_fraction, float(t)
+            stage = 'startup-total-elevation'
+            if i == 0:
+                triangle = clipped_native[connectivity]
+                hmin, hmax = native_hull[:, :2].min(axis=0), native_hull[:, :2].max(axis=0)
+                region = np.all(triangle[:, :, :2].max(axis=1) >= hmin, axis=1) & np.all(triangle[:, :, :2].min(axis=1) <= hmax, axis=1)
+                if not np.any(region):
+                    raise ValueError('Initial total surface lacks boat-region water coverage')
+                local_initial_peak = float(np.max(abs(triangle[region, :, 2])))
+                if local_initial_peak > calm_limit+1e-12:
+                    raise ValueError(f'Initial represented total surface exceeds local calm eta limit: {local_initial_peak:g} > {calm_limit:g} m')
+            stage = 'pack-frame'
+            packed_vertices.append(vertices); packed_faces.append(connectivity)
+            vertex_offsets.append(vertex_offsets[-1]+len(vertices))
+            face_offsets.append(face_offsets[-1]+len(connectivity))
+        except Exception as error:
+            print(f'Surface {stage} failed at frame {i}, time {t:g}s: {type(error).__name__}: {error}', file=sys.stderr)
+            traceback.print_exc(file=sys.stderr)
+            _save_frame_failure(recovery_directory, evidence, error, stage, i, t, cache_path)
+            raise SurfaceExportError(f'Surface {stage} failed at frame {i}, time {t:g}s: {error}; '
+                f'completed fields and failure geometry retained at {recovery_directory}', recovery_directory,
+                stage=stage, frame_index=i, time_s=t) from error
     summary = {}
     for name, frames in moments.items():
         value = np.asarray(frames)

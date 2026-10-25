@@ -308,3 +308,66 @@ def test_scratch_is_removed_only_after_verified_engine_cleanup(unreconciled):
     finally:
         if directory is not None and directory.exists():
             backend.shutil.rmtree(directory)
+
+
+def test_scratch_cleanup_failure_preserves_primary_exception(monkeypatch, tmp_path, capsys):
+    directory = tmp_path/'scratch'
+    directory.mkdir()
+    real_rmtree = backend.shutil.rmtree
+    primary = ValueError('surface geometry failed at frame 217')
+    monkeypatch.setattr(backend.tempfile, 'mkdtemp', lambda **kwargs: str(directory))
+
+    def locked(path):
+        raise PermissionError('KH.dat is locked')
+
+    monkeypatch.setattr(backend.shutil, 'rmtree', locked)
+    try:
+        with pytest.raises(ValueError) as caught:
+            with backend._scratch_directory():
+                raise primary
+        assert caught.value is primary
+        assert 'KH.dat is locked' in capsys.readouterr().err
+        assert any('temporary cleanup failed' in note for note in primary.__notes__)
+        assert directory.exists()
+    finally:
+        real_rmtree(directory)
+
+
+def test_scratch_cleanup_failure_without_primary_is_fatal(monkeypatch, tmp_path):
+    directory = tmp_path/'scratch'
+    directory.mkdir()
+    real_rmtree = backend.shutil.rmtree
+    monkeypatch.setattr(backend.tempfile, 'mkdtemp', lambda **kwargs: str(directory))
+
+    def locked(path):
+        raise PermissionError('KH.dat is locked')
+
+    monkeypatch.setattr(backend.shutil, 'rmtree', locked)
+    try:
+        with pytest.raises(backend.ScratchCleanupError, match='KH.dat is locked'):
+            with backend._scratch_directory():
+                pass
+        assert directory.exists()
+    finally:
+        real_rmtree(directory)
+
+
+def test_surface_replay_exception_retains_own_scratch(monkeypatch, tmp_path):
+    directory = tmp_path/'scratch'
+    directory.mkdir()
+    real_rmtree = backend.shutil.rmtree
+
+    class SurfaceExportError(RuntimeError):
+        recovery_directory = directory/'surface-recovery'
+
+    primary = SurfaceExportError('invalid waterline')
+    monkeypatch.setattr(backend.tempfile, 'mkdtemp', lambda **kwargs: str(directory))
+    monkeypatch.setattr(backend.shutil, 'rmtree', lambda path: pytest.fail('replay directory must remain'))
+    try:
+        with pytest.raises(SurfaceExportError) as caught:
+            with backend._scratch_directory():
+                raise primary
+        assert caught.value is primary
+        assert directory.exists()
+    finally:
+        real_rmtree(directory)

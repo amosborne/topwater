@@ -1,5 +1,37 @@
 # Current state: Capytaine expert
 
+## Current reusable-workflow checkpoint — 2026-10-25
+
+Generic retained-source Capytaine producer and total-surface reconstruction are
+implemented. The selected provisional field policy is cutoff24rad/s,
+deltaomega<=.025rad/s, full-history causal projection, zero direct terms,
+explicit exterior disturbance traces and exact incident elevation at targets.
+Near-field full-complex recovery has not passed; the measured42.7mm maximum /
+12.5mm RMS signed-lag diagnostic difference remains an explicit approximation
+limitation, not an error bound. Native Topwater physics remains held.
+
+Root's first actual canonical workflow reached201/751 export frames and exited2
+after1989.285s. KH.dat cleanup failure masked the primary geometry/metric error;
+its actual cause is STILL UNKNOWN. No complete new total-surface result/video is
+accepted. Do not infer flooding, topology failure or wet-set rejection from this
+masked attempt.
+
+Recovery now caches completed fields/full motion privately in OS-temp before
+export and retains stage/frame/time evidence on failure. Geometry/metric replay
+needs no body integration or BEM. Physical/contact/startup gates are unchanged.
+Public replay compacts only the physical hull snapshot; closed geometry/rim/caps
+and CG remain intact. Malformed cached time cannot mask the original exception.
+Independent review approved both replay corrections. Root's recovery/interface
+suite PASS209 with1optional skip in13.05s, evidence under
+`artifacts/workflow/recovery-interface-tests-attempt1`. Source/tests are frozen
+for the coordinator's checkpoint and next actual pipeline attempt2; that retry
+is pending, not a delegated numerical allocation to this role.
+
+See [versioned source/evidence note](surface-reconstruction-source-2026-10-25.md).
+No numerical job was launched by this author. Root owns execution/integration.
+
+## Preserved minimum-reference evidence
+
 Minimum17-panel producer and first whole10s/501sample native WEC-Sim motion are
 independently reviewed and coordinator-accepted at dt0.02. Final render3 video
 and plots passed independent literal encoded-frame audit. Authorization and execution

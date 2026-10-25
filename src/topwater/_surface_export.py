@@ -309,9 +309,13 @@ def export_surface(vertices_m, faces, hull_vertices_m, hull_faces, *, opening_ri
     # also lie on an original edge shared with a broadphase-rejected triangle:
     # early plane cuts extend outside the hull. Conform both kinds of neighbor
     # without sending those exterior triangles through the clipping operation.
+    # Clipping is complete: no vertices are added during conformance or ears.
+    # Reuse this exact array rather than rebuilding the full registry for every
+    # polygon; keep the shared triangulator's indices and projection unchanged.
+    registry_points = np.asarray(registry.points)
     if registry.cuts:
         cut_ids = np.array(sorted(registry.cuts), dtype=np.int64)
-        cut_points = np.asarray(registry.points)[cut_ids]
+        cut_points = registry_points[cut_ids]
         cut_tree = cKDTree(cut_points)
     def conform(polygon):
         conforming = []
@@ -346,15 +350,15 @@ def export_surface(vertices_m, faces, hull_vertices_m, hull_faces, *, opening_ri
                 triangle = vp[face]
                 normal = np.cross(triangle[1]-triangle[0], triangle[2]-triangle[0])
                 normal /= np.linalg.norm(normal)
-                output.extend(_ears(polygon, np.asarray(registry.points), normal))
+                output.extend(_ears(polygon, registry_points, normal))
     else:
         output.extend(uncut_faces.tolist())
     for polygon, normal in fragments:
-        output.extend(_ears(conform(polygon), np.asarray(registry.points), normal))
+        output.extend(_ears(conform(polygon), registry_points, normal))
     if not output:
         raise ValueError('surface export has no water triangles outside the hull')
     used, inverse = np.unique(np.asarray(output, dtype=np.int64), return_inverse=True)
-    output_vertices = np.asarray(registry.points)[used]*scale+origin
+    output_vertices = registry_points[used]*scale+origin
     original = used < len(vertices)
     output_vertices[original] = vertices[used[original]]
     output_faces = inverse.reshape(-1, 3)

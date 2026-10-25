@@ -117,3 +117,23 @@ They are feasibility checks, not dynamic-meshing or physical-runtime benchmarks.
 Package adoption requires a separate coordinator decision using these results
 and the independent tooling review. No replacement or speed claim follows from
 this document alone.
+
+## Export allocation evidence (2026-10-25)
+
+The exporter now materializes the completed cut-vertex registry once and reuses
+it for triangulation. Shared ear clipping, predicates, tolerances and point
+indices are unchanged; local projection changes were deferred. Independent
+source review approved this bounded allocation change.
+
+The coordinator's serial check completed successfully: 16 tests passed in
+0.40 s, with frozen input identities verified. A separate whole-export comparison
+loaded the actual old module from `a29600b` and the revised module on one 76x76
+flat-grid/box fixture (5,776 nodes; 11,250 faces). Vertices and faces were bitwise
+identical in both calls per version. Old whole-export times were 1.861/1.627 s;
+registry-reuse times were 1.336/1.422 s. See the local
+[report](../artifacts/workflow/export-allocation-attempt2/report.json),
+[terminal evidence](../artifacts/workflow/export-allocation-attempt2/terminal.json)
+and [test log](../artifacts/workflow/export-allocation-attempt2/output.log).
+
+This is one geometry fixture, with two timings per version. It establishes no
+physical accuracy, wet-area cost, or complete canonical-workflow speed claim.

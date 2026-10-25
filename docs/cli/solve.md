@@ -45,6 +45,13 @@ Capytaine exports, BEMIO H5/MAT files, STL, Simulink models/caches, and native
 audit arrays live in operating-system temporary storage and are removed after
 execution. No public persistent cache is produced. Diagnostics go to the terminal.
 
+A failed surface export may retain private field/replay data in its system-temp
+directory so export can be diagnosed without repeating the body/field solve.
+The original stage error is preserved and the recovery location is printed.
+If temporary-file cleanup also fails, that secondary failure is reported without
+replacing the original error. A cleanup failure after otherwise successful work
+is fatal and prevents publication.
+
 ## WEC-Sim dependencies
 
 The reviewed path uses Capytaine 3.0.0, MATLAB R2025b with matlabengine 25.2.2,
@@ -52,7 +59,7 @@ and licensed Simulink, Simscape, and Simscape Multibody. These are optional
 dependencies of the WEC-Sim workflow, not requirements for rendering.
 
 The maintained fork is pinned to
-`f962103a348d63101ce669c2611f7d7c109755c3`. Set `TOPWATER_WECSIM_PATH` to its
+`f07a8dfe1d81d9430a22c299a83d91252afb3a33`. Set `TOPWATER_WECSIM_PATH` to its
 checkout directory, or use the repository-local fallback
 `artifacts/dependencies/topwater-wec-sim`. A different or unverifiable revision
 fails readiness rather than running unreviewed engine code.
@@ -148,8 +155,11 @@ observed violation. At least 25% combined incoming envelope must arrive.
 ## Warnings
 
 Warnings indicate reduced physical applicability while supported computation
-continues. They do not become extra NPZ fields. Print the first event per category
-and summarize its sample count, first/last time, and maximum departure.
+continues. They do not become extra NPZ fields. Restoring diagnostics print the
+first event per category and summarize its sample count, first/last time, and
+maximum departure. Wet-set departures are detected at each saved surface frame;
+their first/last exceedance and worst fraction/time are emitted when surface
+export completes.
 
 The implemented restoring diagnostic compares exact **calm-water** restoring at
 each computed pose with the linear fixed-mean `-K*q` wrench. Force and moment are

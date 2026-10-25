@@ -101,7 +101,9 @@ uv sync --locked
 uv run --locked pytest
 ```
 
-Capytaine is a validation dependency, not a runtime load model:
+Capytaine supplies coefficients and field reconstruction for the optional
+WEC-Sim workflow. It also supplies independent comparison data for native-core
+validation:
 
 ```powershell
 uv sync --locked --group correlation

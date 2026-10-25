@@ -77,6 +77,37 @@ def test_pose_and_scale_preserve_exclusion_geometry():
         np.testing.assert_allclose(area(water, triangles), 32.*scale**2, rtol=1e-9)
 
 
+@pytest.mark.parametrize('subdivisions,pose', [(1, False), (4, False), (7, True)])
+def test_registry_reuse_is_bitexact_to_per_polygon_materialization(monkeypatch, subdivisions, pose):
+    """Compare complete contact meshes against the former allocation path."""
+    import topwater.fluid_boundary as boundary
+
+    hull, hull_faces = closed_box()
+    source, faces = patch(subdivisions=subdivisions)
+    if pose:
+        rotation = Rotation.from_rotvec([.2, -.3, .7]).as_matrix()
+        hull = (hull @ rotation.T+[5., -2., 1.])*1e-3
+        source = (source @ rotation.T+[5., -2., 1.])*1e-3
+    optimized_vertices, optimized_faces = export_surface(source, faces, hull, hull_faces)
+    ears = boundary._ears
+    calls = []
+
+    def previous_materialization(indices, vertices, normal):
+        # Before the optimization, each call converted a list of the complete
+        # registry's row arrays to a fresh array. Recreate that same sequence.
+        rows = [row for row in vertices]
+        materialized = np.asarray(rows)
+        np.testing.assert_array_equal(materialized, vertices)
+        calls.append(len(indices))
+        return ears(indices, materialized, normal)
+
+    monkeypatch.setattr(boundary, '_ears', previous_materialization)
+    previous_vertices, previous_faces = export_surface(source, faces, hull, hull_faces)
+    assert len(calls) > 1  # Actual fragmented contact, not a no-clipping shortcut.
+    assert optimized_vertices.tobytes() == previous_vertices.tobytes()
+    assert optimized_faces.tobytes() == previous_faces.tobytes()
+
+
 def test_above_hull_and_nonarea_tangency_keep_surface():
     hull, hull_faces = closed_box()
     source, faces = patch(z=2.)

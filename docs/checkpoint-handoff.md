@@ -8,13 +8,47 @@ Updated2026-10-25. Latest user steering controls scope. Read
 
 IMPLEMENTATION CHECKPOINT IN PROGRESS: package/interfaces pushed at8a7e032;
 verified shared-MATLAB lifecycle pushed at5830fc5. Production total-surface
-source and actual-waterline metrics now pass199tests/1optional libigl skip in
-8.84s (artifacts/workflow/production-tests-attempt2). The public NPZ case
+source plus recovery/interfaces now pass209tests/1optional libigl skip in
+13.05s (artifacts/workflow/recovery-interface-tests-attempt1). The public NPZ case
 reproduces the accepted17 wet panels, full mass, CG and restoring identity.
-Independent source review approves the actual canonical CLI trial. No complete
-new result/video exists yet. Next: one actual60s public solve/render, complete
-geometry/video verification, LFS publication and updated documentation.
+Independent source review approved the canonical CLI trial; source is pushed at
+a29600b. Actual canonical-pipeline-attempt1 is TERMINAL FAILURE after1989.285s.
+No result.npz/video.mp4 was published. All exact wrapper/UV/solver processes are
+CIM-confirmed terminal; hashes match; lease released. Do NOT poll/restart79250.
 
+Coefficients, bounded startup, native body integration and complete field
+synthesis passed their implemented gates. Export reached201/751, then a cleanup
+WinError32 on OS-temp hydrodynamics/KH.dat masked the original exception. Its
+primary geometry cause is UNKNOWN, within frames200..299 (16..23.92s); do not
+infer physical flooding from the flat-reference warning. New motion/field were
+not retained before cleanup; the remaining scratch body directory is empty.
+
+Root confirmed existing MATLAB29796 had only descriptor3 open, exactly
+C:/Users/alex/AppData/Local/Temp/topwater-wecsim-lh3jvkgj/hydrodynamics/KH.dat.
+Root closed ONLY that owned descriptor; openedFiles now[]; no guard/owned model
+remains, only persistent WEC libraries. Helpers: inspect_owned_files.py and
+close_owned_kh.py under artifacts/workflow. Python engine file identifiers need
+float/double; fopen('all') is obsolete inR2025b, use openedFiles.
+
+Confirmed fixes are complete, independently reviewed and tested. Maintained fork
+f07a8dfe1d81d9430a22c299a83d91252afb3a33 is committed/pushed and pinned. Real
+importer regression PASS1.672s: original leak reproduced;2newimports preserve32
+numeric arrays exactly each; malformed KH/Hydrostatics fail with no leaked
+handles;15fixturefiles rename/delete on Windows. Evidence:bemio-handles-attempt3.
+Authored MATLAB helper style is clean;17pre-existing upstream style findings
+remain unchanged. No new body/field accuracy is inferred.
+
+Package cleanup preserves primary errors and retains only owned private replay
+state when needed. Completed fields/poses cache privately before export; failures
+report stage/frame/time and keep a compact geometry bundle. Replay invokes no
+body, BEM or wave producer. Public replay Results compact cap-only vertices;
+malformed cache time axes cannot mask their original validation error.
+
+Allocation-only exporter reuse passes16tests and bit-exact old/new76x76fixture
+outputs; old1.63..1.86s vsnew1.34..1.42s. This is not a full-workflow speed result.
+All current jobs are terminal/unleased. Source is frozen for checkpoint and
+actual CLI retry after documentation refresh. Do not relax rim/contact gates or
+change forcing/motion to force success. The original export error remains unknown.
 MATLAB uses the existing shared CAPYTAINE_REFERENCE engine (core29796,
 launcher40036, started2026-10-25T17:20:15Z). Reconcile these checkpoint identities
 against actual processes before reuse. Root verified the command window
@@ -35,9 +69,8 @@ by up to42.7mm, RMS12.5mm, and has a future-velocity contribution up to77.3mm.
 This material phase limitation is disclosed. No raw noncausal replacement,
 full-complex equivalence, spatial convergence or nonlinear accuracy is claimed.
 
-All checkpoint jobs are terminal, hashes/processes verified and leases released.
-Execution ledger owns current scheduling. Production source is frozen pending
-the next allocated actual CLI job. Output gates check represented initial total
+Earlier jobs are terminal and unleased. Source fixes are in progress with no
+numerical allocation. Output gates check represented initial total
 eta, valid contact/coverage and packed geometry; full-hull incident eta/velocity
 bounds remain separate. No total disturbed-fluid velocity bound is claimed.
 Surface reconstruction never changes or reruns computed motion. Native dynamics
@@ -408,5 +441,7 @@ Preserve otherworktrees, all failed/interrupted studies and old original policie
 Do not pushmain/createbookkeepingPR/merge/upstreammessages. Coordinator owns
 scope/acceptance/integration; Cap nativeproducer; WEC dynamics/startup; Topwater
 existinggenerator only; researcher independentmethods. Renderer agent is stopped.
+
+
 
 

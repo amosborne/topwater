@@ -213,10 +213,11 @@ def test_near_band_uses_actual_waterline_not_flared_hull_outline():
                          [[-3., -3.], [3., 3.]])
 
 
-def test_production_calm_geometry_packs_contact_and_covers_oblique_world_view(monkeypatch, capsys):
+@pytest.fixture
+def calm_surface_case(monkeypatch, tmp_path):
     """Geometry/integration control with analytical zero fields, no BEM job."""
     from scipy.spatial.transform import Rotation
-    from topwater.workflow_data import Boat, Result
+    from topwater.workflow_data import Boat
     import topwater._capytaine_surface as producer
 
     vertices = np.array([[-1., -1., 0.], [1., -1., 0.], [1., 1., 0.], [-1., 1., 0.],
@@ -238,7 +239,8 @@ def test_production_calm_geometry_packs_contact_and_covers_oblique_world_view(mo
     motion = SimpleNamespace(time_s=stamp, position_m=np.zeros((2, 3)), orientation_wxyz=orientation,
                              velocity_native=np.zeros((2, 6)))
     waterline = np.array([[-1., -1., 0.], [1., -1., 0.], [1., 1., 0.], [-1., 1., 0.], [0., 0., -.5]])
-    hydro = SimpleNamespace(body=SimpleNamespace(mesh=SimpleNamespace(vertices=waterline)), depth=np.inf,
+    hydro = SimpleNamespace(directory=tmp_path/'hydrodynamics',
+        body=SimpleNamespace(mesh=SimpleNamespace(vertices=waterline)), depth=np.inf,
         excitation_omega=np.array([.1, 1.]), excitation_headings=np.array([0., 2*np.pi]),
         excitation=np.zeros((2, 2, 6), dtype=complex), K=np.zeros((6, 6)))
     monkeypatch.setattr(producer, 'radiation_velocity_transfer',
@@ -246,6 +248,16 @@ def test_production_calm_geometry_packs_contact_and_covers_oblique_world_view(mo
     monkeypatch.setattr(producer, 'combined_diffraction',
         lambda h, tr, xy, **kw: (np.zeros((2, len(xy)), dtype=complex),
                                  np.zeros((2, len(xy)), dtype=complex), np.zeros((2, 6), dtype=complex)))
+    return SimpleNamespace(producer=producer, hydro=hydro, setup=setup, motion=motion, stamp=stamp,
+        vertices=vertices, physical=physical, boat=boat, embedding=embedding, orientation=orientation)
+
+
+def test_production_calm_geometry_packs_contact_and_covers_oblique_world_view(calm_surface_case, capsys):
+    from topwater.workflow_data import Result
+    case = calm_surface_case
+    producer, hydro, setup, motion, stamp = case.producer, case.hydro, case.setup, case.motion, case.stamp
+    vertices, physical, boat = case.vertices, case.physical, case.boat
+    embedding, orientation = case.embedding, case.orientation
     water, faces, vertex_offsets, face_offsets = producer.reconstruct_total_surface(hydro, setup, motion, stamp)
     result = Result(stamp, motion.position_m, orientation, vertices, physical, boat.cg_m, stamp,
                     water, faces, vertex_offsets, face_offsets)
@@ -261,3 +273,81 @@ def test_production_calm_geometry_packs_contact_and_covers_oblique_world_view(mo
     diagnostic = capsys.readouterr().err
     assert 'degenerate incident RMS' in diagnostic
     assert 'no total disturbed-fluid velocity bound' in diagnostic
+
+
+def test_failed_frame_preserves_primary_context_and_replays_without_physics(calm_surface_case, monkeypatch, tmp_path, capsys):
+    import json
+    from topwater.workflow_data import Result
+    case = calm_surface_case
+    producer = case.producer
+    original_metrics = producer._delta_moments
+    original_error = ValueError('sentinel contact diagnostic failure')
+
+    def failing_metrics(*args, **kwargs):
+        raise original_error
+
+    monkeypatch.setattr(producer, '_delta_moments', failing_metrics)
+    with pytest.raises(producer.SurfaceExportError, match='frame 0, time 0s') as caught:
+        producer.reconstruct_total_surface(case.hydro, case.setup, case.motion, case.stamp)
+    error = caught.value
+    assert error.__cause__ is original_error
+    assert error.stage == 'waterline-delta-metrics'
+    assert error.frame_index == 0 and error.time_s == 0
+    cache = error.recovery_directory/'completed-field.npz'
+    assert cache.is_file()
+    report = json.loads((error.recovery_directory/'failure.json').read_text())
+    assert report['stage'] == error.stage
+    assert 'sentinel contact diagnostic failure' in report['traceback']
+    assert 'sentinel contact diagnostic failure' in capsys.readouterr().err
+    with np.load(error.recovery_directory/'failure-frame.npz', allow_pickle=False) as saved:
+        assert saved['water_vertices_world_m'].shape[1] == 3
+        assert saved['hull_faces'].shape[1] == 3
+        assert saved['reference_normal_native'].shape == (3,)
+    monkeypatch.setattr(producer, '_delta_moments', original_metrics)
+
+    def no_physics(*args, **kwargs):
+        raise AssertionError('A geometry replay must not execute a field producer')
+
+    monkeypatch.setattr(producer, 'radiation_velocity_transfer', no_physics)
+    monkeypatch.setattr(producer, 'combined_diffraction', no_physics)
+    monkeypatch.setattr(producer, 'incident_spectrum', no_physics)
+    output = tmp_path/'replayed-result.npz'
+    producer.replay_surface_cache(cache, diagnostic_directory=tmp_path/'replay-diagnostics', output_path=output)
+    result = Result.load(output)
+    np.testing.assert_array_equal(result.position_m, case.motion.position_m)
+    np.testing.assert_array_equal(result.orientation_wxyz, case.motion.orientation_wxyz)
+    np.testing.assert_array_equal(result.surface_time_s, case.stamp)
+    np.testing.assert_array_equal(np.unique(result.hull_faces), np.arange(len(result.hull_vertices_m)))
+    np.testing.assert_array_equal(result.cg_m, case.setup.body.cg)
+    with np.load(cache, allow_pickle=False) as saved:
+        # Artificial planar closure introduces a center used only by its caps.
+        # Keep it in the recovery geometry, but not the public physical mesh.
+        assert len(saved['body_vertices_m']) > len(result.hull_vertices_m)
+        np.testing.assert_array_equal(saved['body_faces'], case.setup.body.mesh.faces)
+        np.testing.assert_array_equal(saved['opening_rim'], case.setup.body.mesh.opening_rim)
+        np.testing.assert_array_equal(saved['artificial_faces'], case.setup.body.mesh.artificial_faces)
+        np.testing.assert_allclose(result.hull_vertices_m[result.hull_faces],
+                                   saved['body_vertices_m'][saved['physical_faces']], atol=0, rtol=0)
+
+
+@pytest.mark.parametrize('bad_time', ['missing', 'empty', 'nonnumeric'])
+def test_malformed_completed_time_keeps_original_validation_cause(bad_time, tmp_path):
+    import json
+    from topwater._capytaine_surface import SurfaceExportError, replay_surface_cache
+    data = dict(cache_version=np.array(1), producer_source_sha256=np.array('diagnostic-fixture'))
+    if bad_time == 'empty':
+        data['surface_time_s'] = np.empty(0)
+    elif bad_time == 'nonnumeric':
+        data['surface_time_s'] = np.array(['invalid-time'])
+    cache = tmp_path/'malformed-field.npz'
+    np.savez(cache, **data)
+    directory = tmp_path/'malformed-diagnostics'
+    with pytest.raises(SurfaceExportError, match='completed-field-validation-or-summary') as caught:
+        replay_surface_cache(cache, diagnostic_directory=directory)
+    cause = caught.value.__cause__
+    assert isinstance(cause, KeyError if bad_time == 'missing' else ValueError)
+    assert caught.value.time_s is None
+    report = json.loads((directory/'failure.json').read_text())
+    assert report['time_s'] is None
+    assert report['error_type'] == type(cause).__name__
+    assert report['error_message'] == str(cause)

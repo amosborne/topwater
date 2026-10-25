@@ -1,4 +1,18 @@
-# Native WEC-Sim references and shared2D rendering
+# Historical WEC-Sim reference workflows
+
+These scripts, commands and receipts describe the workflow at commit
+[`7570f94`](https://github.com/amosborne/topwater/tree/7570f94/reference/wecsim).
+The scene-cache/two-path render interface below is retired. In particular,
+`run_full_reference.py` expects that former CLI and its JSON stdout; it is
+incompatible with the current directory-based CLI. The scripts and evidence
+remain preserved for their original checkpoints.
+
+For the current workflow, use `examples/simple-boat` and the
+[generate-sea](../../docs/cli/generate-sea.md), [solve](../../docs/cli/solve.md)
+and [render](../../docs/cli/render.md) commands. Current rendering reads the
+self-contained `result.npz`; this historical scene cache is not that format.
+
+## Recorded 2D result at the historical checkpoint
 
 [Watch the full60s topdown video](../../artifacts/reference/stronger-buoy-20261024/matplotlib-full60-attempt1.mp4).
 SHA `15510982f6cef3a246f1129222e0525052215a06cfa2e0073af3c53bf803f23b`.
