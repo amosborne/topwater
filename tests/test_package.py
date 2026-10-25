@@ -18,5 +18,8 @@ def test_package_metadata():
     assert installed["Version"] == project["version"]
     assert installed["Requires-Python"] == project["requires-python"]
     assert installed["License-Expression"] == project["license"]
-    assert set(installed.get_all("Requires-Dist", [])) == set(project["dependencies"])
+    declared = installed.get_all("Requires-Dist", [])
+    core = {item for item in declared if 'extra ==' not in item}
+    assert core == set(project["dependencies"])
+    assert set(installed.get_all("Provides-Extra", [])) == set(project.get("optional-dependencies", {}))
     assert topwater.__file__ is not None

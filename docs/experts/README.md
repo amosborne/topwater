@@ -4,7 +4,9 @@ Start with [AGENTS.md](../../AGENTS.md) and [the current handoff](../checkpoint-
 Read only the owner needed for the authorized task:
 
 - [Capytaine](capytaine_expert/README.md): native producer and solver meshes.
-- [WEC-Sim](wecsim_expert/README.md): BEMIO, dynamics, maintained fork and video.
+- [WEC-Sim](wecsim_expert/README.md): BEMIO, dynamics, maintained fork and adapters.
+- [Visualization](visualization_expert/README.md): shared PyVista/VTK scenes,
+  animation and rendering performance.
 - [Topwater](topwater_expert/README.md): later independent solver implementation.
 - [Research](numerical_methods_researcher/README.md): focused method proposals.
 

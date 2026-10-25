@@ -6,7 +6,67 @@ Updated2026-10-24. Latest user steering controls scope. Read
 
 ## Current authorization and immediate priority
 
-LATEST USER REQUEST: render the new video and provide where to watch it, using
+The shared PyVista rendering workflow and requested five-second square preview
+are complete. LATEST USER now authorizes one alternative five-second minimal
+TOP-DOWN iteration: continuous blue-white-red surface elevation centered at0,
+light-gray hull mesh lines, black upper rim, blue interior waterline. Video
+header retains time/roll/pitch/heave supplied by producer telemetry. Same cached
+geometry, fixed800/fullNPZ/two positional paths/MP4only. No physics or full60s
+encode; solver remains HELD. Owners are planning the small telemetry contract
+read-only while ROOT checkpoints stable library/accepted oblique clip. Source
+edits resume only on ROOT followup; no new numerical job allocated yet.
+
+Watch `artifacts/reference/stronger-buoy-20261024/pyvista-clip-attempt3.mp4`.
+SHA256 c80e14001a9e3818291e428cea71378b3e158b44831d084afcc34b67d1ec2b0f.
+Source times50.00-54.96s, 63frames/12.5fps/5.04s, H264800x800. ROOT accepted
+the decoded peak-roll poster; full63-frame decode and actualwater coverage at
+all four camera corners passed. Same physical motion and incoming train.
+
+Public command: `uv run --extra visualization topwater render data/scene.npz
+videos/preview.mp4`. BOTH arguments are required positional paths; examples
+prefer relative paths, while absolute paths are supported. Always render the
+entire input at its uniform timestamp cadence. Fixed800x800; no input/output,
+start/end or size flags. Optional JSON settings control camera/lights/materials.
+Only the named MP4 persists from normal rendering; scratch is cleaned and
+diagnostics return on stdout. Temporary reference QA is retained while tuning.
+
+The producer-neutral library is `src/topwater/visualization.py`; CLI in cli.py.
+SceneSequence NPZ stores named arrays: time_s, hull_points[T,N,3], hull_faces[F,3],
+water_points[T,M,3], water_faces[K,3], metadata. Units are metres and coordinates
+right-handed-z-up; topology is fixed within a sequence. Convex hull meshes are
+an explicit USER-approved requirement, validated with bounded memory. Closed
+convex display masking is not physical wetting/flooding. Water cells must resolve
+the hull intersection for standardVTK clipping. Producers own their adapters;
+the renderer has no WEC-Sim, boat-dimension, heading or topology constants.
+
+One persistent PyVista/VTK context and actors animate prepared geometry. Actual
+backend IntelArcPro/OpenGL4.5 hardware; PyVista0.49.1/VTK9.7.1 in isolated ignored
+`artifacts/dependencies/pyvista-venv`. Cached final render31.515s, including
+validation.078s/context2.437s; wholeCLI+QA35.829s. One-time widerDISPLAYdata prep
+100.75s is cached in `pyvista-scene-attempt2/scene.npz` and is not repeated for
+camera/style iteration. Preparedscene SHA1079ae90ec78ea3171204be2996a101caf86015e44771b509b9af82352a3ef4f.
+
+13 focused contract/package/CLI tests passed; a secondconvex hull topology also
+rendered through the same CLI. Attempt1 temp-fixture failure and attempt2's
+rejected shadow/waterline/discrete-palette style remain preserved. Accepted
+defaults use standard continuous Blues_r and ambient lighting; shadows/waterline
+overlay are off. No custom rasterizer. Execution ledger owns exact terminal,
+frozen-input and lease-release evidence for attempt3/session59751/manifest5b434785.
+
+Initial implementation/execution owner `/root/visualization` is topwater_expert;
+`/root/wecsim_reference` owns the WEC-Sim adapter. User requested the dedicated
+visualization_expert role: definition, knowledge base and routing are added,
+TOML validates and parent settings are inherited. This client's bounded native
+spawn rejected `unknown agent_type 'visualization_expert'`; it is configured but
+not loaded here. Recheck after client refresh and transfer at a stable checkpoint;
+do not start a separate CLI coordinator or claim activation.
+
+See [library evidence](experts/topwater_expert/visualization-workflow-2026-10-24.md),
+[adapter evidence](experts/wecsim_expert/pyvista-readiness-2026-10-24.md),
+[visualization role](experts/visualization_expert/current-state.md).
+
+
+PREVIOUS USER REQUEST COMPLETE: render the new video and provide where to watch it, using
 the agreed readability changes. Remove axes and surface
 grid, dark-to-light blue filled water, lower camera, shaded flat hull faces,
 clear inside/outside and waterline, slight hull transparency if readable.
@@ -27,8 +87,8 @@ Final render1064s/17m44s. Full751decode PASS; ROOT viewed encoded0/30/51.44/60s.
 Exact cached-water ray residual<=4.44e-16m/contact<=2.22e-16m. Distantwater uses
 320x225 display pass; hull/HUD/contact and water queries near hull retain1280x900.
 Finite waterpatch edges remain visible; shading/contact are presentation, not
-computed flooding/wetting or a new physical validation. No more rendering/style,
-sea-state, solver or Topwater work is allocated. Execution ledger owns terminal
+computed flooding/wetting or a new physical validation. No sea-state, solver or
+Topwater physics work is allocated. Execution ledger owns terminal
 and release evidence for originalsession14472/manifestcbf276209e7af879a17177b89d0296f9b803cffb751ff8a3601f67f736498467.
 
 LATEST user requested MORE energetic actual buoy sea after the mild clip,

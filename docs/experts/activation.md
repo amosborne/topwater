@@ -24,3 +24,16 @@ hashes and activations do not certify the edited files' hashes or activation.
 Do not rewrite historical receipts to imply otherwise.
 
 Official guidance: [custom agents and delegation](https://learn.chatgpt.com/docs/agent-configuration/subagents).
+
+## Visualization role added 2026-10-24
+
+User requested a dedicated PyVista/visualization expert. Project role file
+`.codex/agents/visualization_expert.toml` and its knowledge base now exist;
+TOML required fields validate and no model/settings override is configured.
+The current session's native spawn call returned
+`unknown agent_type 'visualization_expert'` for an actual bounded read-only
+contract review. Definition is present; current-session availability is not.
+Do not claim activation or start a separate CLI coordinator to bypass this.
+Recheck exposed agent types when a refreshed client/session loads the project.
+Existing `/root/visualization` (topwater_expert) owns the initial library work
+until an explicit stable-checkpoint transfer to the new role.

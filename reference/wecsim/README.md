@@ -1,5 +1,30 @@
 # Native WEC-Sim references
 
+Latest shared-library preview:
+[5s square PyVista clip](../../artifacts/reference/stronger-buoy-20261024/pyvista-clip-attempt3.mp4).
+H264800square/63frames12.5fps/5.04s; physicaltimes50.00..54.96, same accepted
+stronger motion/train. SHA `c80e14001a9e3818291e428cea71378b3e158b44831d084afcc34b67d1ec2b0f`.
+Full63decode and ROOTposter review PASS. ActualIntelArcPro cachedrender31.515s;
+initial reusable widerDISPLAYdata preparation100.75s.
+
+WEC adapter prepares producer-neutral worldmeshes/time metadata; all drawing is
+shared `topwater.visualization`, with no currentboat dimensions/heading embedded.
+The reusable command takes two required paths and renders the wholeinput:
+
+```powershell
+uv run topwater render examples/scene.npz videos/preview.mp4
+```
+
+Only the namedMP4 is the publicdefaultoutput, fixed800square and cadencefromNPZ;
+no start/end/size/fps flags. Optional `--settings camera.json` controls style.
+The WEC adapter selects the desiredinterval beforewriting its reusablecache.
+Prepared actualdata: `artifacts/reference/stronger-buoy-20261024/pyvista-scene-attempt2/scene.npz`.
+Use fresh outputpaths and the ordinary serial jobprocedure. [Recorded isolatedenv,
+relativepath example and limits](../../docs/experts/wecsim_expert/pyvista-readiness-2026-10-24.md).
+Convexhulls are an explicit validatedinput requirement; visualwatermask is not
+flooding physics. Finalstandardlighting has optionalshadow/waterlinepasses off
+afterliteral artifacts; no customrenderer or changedwaves/bodytrajectory.
+
 The stronger buoy-derived case is complete:60s/3001native samples, source record
 46086/2023-12-23T00:40Z, Hm01.657m/Tm027.237s, seed42 and bow182.067deg.
 It starts from rest in numerically locally calm water with zero radiation memory,

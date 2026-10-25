@@ -22,7 +22,10 @@ Use the project roles in .codex/agents, inheriting parent model/settings without
 overrides; do not routinely repeat their technical investigations.
 
 - capytaine_expert: geometry, solver meshes, native hydrodynamics and exports.
-- wecsim_expert: BEMIO, maintained WEC-Sim fork, dynamics, startup and video.
+- wecsim_expert: BEMIO, maintained WEC-Sim fork, dynamics, startup and producer
+  visualization adapters.
+- visualization_expert: shared PyVista/VTK visualization, standard scene inputs,
+  cameras, lighting, animation and measured rendering performance.
 - topwater_expert: Topwater implementation, feasibility, tests and performance
   when that phase is authorized.
 - numerical_methods_researcher: focused primary-source method proposals,

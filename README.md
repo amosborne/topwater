@@ -61,6 +61,31 @@ shell mass nor water pressure.
 `topwater.inertia.instantaneous_added_mass` computes six instantaneous responses
 for a flat zero-potential surface. This is not a finite-frequency wave solver.
 
+## Visualization
+
+Render a prepared scene using the shared PyVista/VTK workflow:
+
+```powershell
+uv run --extra visualization topwater render data/scene.npz videos/preview.mp4
+```
+
+Both arguments are paths, relative or absolute. The entire input is rendered at
+its saved uniform time cadence to one 800 x 800 MP4. The requested file is the
+only persistent renderer output; timing/backend information goes to stdout.
+Optional `--settings camera.json` adjusts camera and materials.
+
+The producer-neutral `SceneSequence` contains timestamped hull and water meshes
+in world metres, right-handed z-up coordinates. WEC-Sim and Topwater adapters own
+conversion into those inputs; the renderer knows neither producer. Hull meshes
+must be convex, validated on load. The closed convex display mask is not wetting
+or flooding physics. See the [input contract and reproduction notes](docs/experts/topwater_expert/visualization-workflow-2026-10-24.md).
+
+Prepared geometry is cached separately from camera/material settings. The tested
+63-frame, 5.04-second square preview rendered in 31.5 seconds on Intel Arc Pro
+OpenGL; its wider incident-water preparation took 100.75 seconds once and is
+reused for subsequent styling. This is a measured preview cost, not a solver or
+real-time performance claim.
+
 ## Development
 
 ```powershell

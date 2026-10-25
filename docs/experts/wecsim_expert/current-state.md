@@ -7,6 +7,26 @@ requirements, acceptance, integration and serial execution allocation.
 
 ## Current priority
 
+Reusable off-the-shelf PyVista/VTK preview is COMPLETE and ROOTposteraccepted.
+[Watch5s square clip](../../../artifacts/reference/stronger-buoy-20261024/pyvista-clip-attempt3.mp4).
+SHAc80e14001a9e3818291e428cea71378b3e158b44831d084afcc34b67d1ec2b0f;
+800square/H264/63frames12.5fps/5.04s, physicaltimes50.00..54.96. Full63decodePASS.
+ActualIntelArcPro/cachedrender31.515s; initialreusabledata preparation100.75s.
+Executionowner visualization finalizes exactterminal/lease via sharedledger.
+No further WEC code/jobs; ROOT handles checkpoint/integration.
+
+ProducerWECadapter selectsacceptedposes+sameincidentfield into neutralSceneSequence;
+genericTopwater library owns standardPyVista/VTK drawing and publicCLI:
+`uv run topwater render INPUT.npz OUTPUT.mp4`, BOTHrequiredpositionals, WHOLE NPZ,
+fixed800square/cadencefrominput, onlynamedMP4defaultoutput. No WECknowledge/hull
+constants in library; convexmeshrequirement validated, differentbox smoke usedsameCLI.
+PreparedsceneSHA1079ae90 reused forcachedlighting; no wave/physics/mesh changes.
+[Workflow/evidence](pyvista-readiness-2026-10-24.md). OptionalVTKshadow/waterline
+artifacts were rejected/preserved; finalflagsFalse/standardcontinuouspalette.
+Visualconvexclosure/prescribedwater is not flooding or nonlinearaccuracy proof.
+
+## Previous completed stronger presentation
+
 USER requested clearer existing stronger60s motion; FINAL PRESENTATION COMPLETE.
 [Watch artifact](../../../artifacts/reference/stronger-buoy-20261024/presentation-encode-attempt2/reference-presentation.mp4).
 MP4SHA7a9debb31a440b6967fd3340f2fcd6f89072699dd7ecc2e36136d3bca6079aa8,

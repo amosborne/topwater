@@ -1,5 +1,30 @@
 # Current state: Topwater expert (solver implementation HELD)
 
+LATEST USER authorizes a standard reusable PyVista visualization workflow in the
+Topwater library, with producer-neutral prepared meshes, different convex hulls,
+code-first CLI, square water-filled fast previews and no custom graphics engine.
+Initial package integration/source is owned by `/root/visualization`; WEC owner
+owns only reference-data preparation/adapter. Dedicated visualization role is a
+new routing entry awaiting native-client availability; no activation claim here.
+
+COMPLETE: `src/topwater/visualization.py`, `cli.py`, optional visualization
+extra and `topwater render INPUT.npz OUTPUT.mp4`. Both paths required; fixed800
+square/fullinputfile/uniformnativecadence, onlyMP4 persists, diagnosticsstdout.
+13focusedcontract/package/CLI tests passed. Secondconvexbox used the SAME public
+CLI successfully. Convex boundary validation uses bounded linear storage.
+
+Accepted cached-only finalclip `pyvista-clip-attempt3.mp4` SHA
+c80e14001a9e3818291e428cea71378b3e158b44831d084afcc34b67d1ec2b0f,
+under stronger-buoy-20261024. Full63decode/800/h264/12.5fps/5.04s and ROOTdecoded
+peakposter PASS. Same preparedscene SHA1079ae90ec78ea3171204be2996a101caf86015e44771b509b9af82352a3ef4f.
+ActualIntelArcPro OpenGL4.5 backend. Render31.515s including2.437s context/.078s
+validation; frameaverage.417s. CachedCLI+QA35.829s. One-time same-field widerwater
+preparation100.75s, centralacceptedwatercachebitexact, no newsea/trajectory.
+StandardcontinuousBlues_r palette/materiallighting; shadows and explicitboundary
+line disabled after observedVTK artifacts, supersededstyle preserved. No new
+physics or nonlinear/mesh qualification. No more jobs/features allocated.
+[Visualization contract/source note](visualization-workflow-2026-10-24.md).
+
 LATEST user, after mild60s video: use a MORE energetic actual sea and report
 diagnostics. Coordinator selects `ndbc-46086-20231223T0040Z`, source row29984,
 Hm01.6574679484m/Tm027.236567149s/observed direction resultant.457661. Complete48
