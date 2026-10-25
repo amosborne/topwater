@@ -108,6 +108,67 @@ def test_registry_reuse_is_bitexact_to_per_polygon_materialization(monkeypatch, 
     assert optimized_faces.tobytes() == previous_faces.tobytes()
 
 
+@pytest.mark.parametrize('transformed', [None, (.2, 1e-3), (-.3, 1e3)])
+def test_contact_edge_vertex_retained_when_projected_ear_leaves_degenerate_sliver(transformed):
+    """Reduced actual frame-277 polygon: repair its diagonal, never its rim."""
+    from topwater._surface_export import _export_ears
+    from topwater.fluid_boundary import _ears
+
+    # Indices retain the original order relation B2406 < A5940 < C5941 < D6248.
+    # D is a shared cut vertex on the constrained C-to-A contact segment.
+    points = np.array([
+        [.42790402925610144, .17039693147594254, -.03260405850092889],
+        [.42797449851073016, .16844460462755206, -.03263331227243573],
+        [.42600476914629437, .16835542952517174, -.03262962592722955],
+        [.42699834260851194, .16840041134694653, -.032631485398299825],
+    ])
+    world = np.array([
+        [2.760099464395641, 1.3193845747326938, -.36807457150284756],
+        [2.760618817341613, 1.304996077145282, -.36829016953198696],
+        [2.746102064559463, 1.304338863550891, -.36826300145347124],
+        [2.7534246239842948, 1.3046703760917433, -.36827670561116926],
+    ])
+    normal = np.array([.00254541746973167, -.014890467616889126, .9998858909015844])
+    polygon = [1, 0, 2, 3]
+    if transformed is None:
+        previous = np.asarray(_ears(polygon, points, normal))
+        with pytest.raises(ValueError, match='degenerate triangles'):
+            validate_surface_topology(world, previous)
+    else:
+        angle, scale = transformed
+        rotation = Rotation.from_rotvec([angle, -.1, .7]).as_matrix()
+        points = points @ rotation.T
+        world = (world @ rotation.T+[5., -2., 1.])*scale
+        normal = rotation @ normal
+    faces = np.asarray(_export_ears(polygon, points, normal, world))
+    validate_surface_topology(world, faces)
+    assert set(faces.ravel()) == set(polygon)
+    expected_boundary = {tuple(sorted((a, b))) for a, b in zip(polygon, np.roll(polygon, -1))}
+    assert {tuple(edge) for edge in boundary_edges(faces)} == expected_boundary
+    # Every constrained edge, including C-D and D-A, remains. The formerly
+    # unconstrained A-C diagonal is replaced when that triangle is degenerate.
+    triangle = world[faces]
+    cross = np.cross(triangle[:, 1]-triangle[:, 0], triangle[:, 2]-triangle[:, 0])
+    assert np.all(cross @ normal > 0)
+    q = world[polygon]-world[polygon[0]]
+    polygon_vector = np.cross(q, np.roll(q, -1, axis=0)).sum(axis=0)
+    assert np.linalg.norm(cross.sum(axis=0)-polygon_vector) <= 256*np.finfo(float).eps*np.linalg.norm(cross, axis=1).sum()
+
+
+def test_projected_exception_does_not_accept_reversed_concave_quad_fan(monkeypatch):
+    from topwater._surface_export import _export_ears
+    import topwater.fluid_boundary as boundary
+
+    # Both fan triangles have nonzero area, but the first reverses orientation
+    # and their unsigned area exceeds the concave parent's area.
+    points = np.array([[0., 0., 0.], [.5, .5, 0.], [2., 0., 0.], [0., 2., 0.]])
+    def projected_failure(*args):
+        raise ValueError('degenerate final wet-facet triangle')
+    monkeypatch.setattr(boundary, '_ears', projected_failure)
+    with pytest.raises(ValueError, match='oriented parent coverage'):
+        _export_ears([0, 1, 2, 3], points, np.array([0., 0., 1.]), points)
+
+
 def test_above_hull_and_nonarea_tangency_keep_surface():
     hull, hull_faces = closed_box()
     source, faces = patch(z=2.)

@@ -45,6 +45,10 @@ is never interpolated or recomputed. NPZ loading disables pickle.
 
 ## Output and replacement
 
+`video.log` records the latest invocation, rendering/verification stages,
+timings, errors and publication status using [the common format](logging.md).
+It is replaced when rendering starts, including failed attempts.
+
 `video.mp4` is H.264, 800 by 800 pixels, with one frame per saved surface sample.
 Frame rate is the inverse surface time spacing. The last saved state is shown
 for one frame interval, so encoded duration is `frame_count * spacing`, one
@@ -54,7 +58,7 @@ Encoding occurs in the system temporary area. The finished video is fully
 decoded and checked for dimensions, cadence, and frame count before atomic
 replacement. A failed or interrupted render preserves an existing video.
 Cross-volume publication uses a temporary staging directory outside the example
-directory. No scene cache, images, reports, or sidecar files are retained.
+directory. The named video and execution log are the retained outputs.
 
 The command prints its output path. The Python rendering function additionally
 returns preparation, setup, geometry, drawing, pipe, encoder and verification

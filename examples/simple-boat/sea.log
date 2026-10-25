@@ -1,0 +1,5 @@
+2026-10-25T20:14:12.684Z INFO generate-sea BEGIN directory=C:\Users\alex\topwater\examples\simple-boat record=ndbc-46086-20231223T0040Z seed=42
+2026-10-25T20:14:12.691Z INFO generate-sea STAGE generate observed sea realization
+2026-10-25T20:14:12.708Z INFO generate-sea PUBLISHED C:\Users\alex\topwater\examples\simple-boat\sea.npz
+2026-10-25T20:14:12.708Z INFO generate-sea Wrote C:\Users\alex\topwater\examples\simple-boat\sea.npz: 384 components; record=ndbc-46086-20231223T0040Z; seed=42
+2026-10-25T20:14:12.708Z INFO generate-sea END status=success elapsed_s=0.016000 output_published=true warnings=0

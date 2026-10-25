@@ -118,6 +118,107 @@ def _area_vector(polygon, points):
     return np.cross(q, np.roll(q, -1, axis=0)).sum(axis=0)/2
 
 
+def _valid_triangle(points):
+    a, b = points[None, 1]-points[None, 0], points[None, 2]-points[None, 0]
+    cross = np.cross(a, b)
+    threshold = 64*np.finfo(float).eps*np.linalg.norm(a, axis=1)*np.linalg.norm(b, axis=1)
+    return bool(np.linalg.norm(cross, axis=1)[0] > threshold[0])
+
+
+def _validate_reconstructed_partition(polygon, triangles, world_points, normal):
+    """Reject a guessed quad fan unless it covers its oriented parent once."""
+    parent = world_points[np.asarray(polygon)]
+    relative = parent-parent[0]
+    parent_vector = np.cross(relative, np.roll(relative, -1, axis=0)).sum(axis=0)
+    child = world_points[np.asarray(triangles)]
+    cross = np.cross(child[:, 1]-child[:, 0], child[:, 2]-child[:, 0])
+    parent_area = float(np.linalg.norm(parent_vector))
+    child_area = float(np.linalg.norm(cross, axis=1).sum())
+    roundoff = 256*np.finfo(float).eps*max(parent_area, child_area)
+    if (parent_vector @ normal <= 0 or np.any(cross @ normal <= 0)
+            or abs(parent_area-child_area) > roundoff
+            or np.linalg.norm(parent_vector-cross.sum(axis=0)) > roundoff):
+        raise ValueError('reconstructed export triangulation does not preserve oriented parent coverage')
+
+
+def _export_ears(polygon, points, normal, world_points):
+    """Retain constrained vertices if projected ear roundoff leaves a sliver.
+
+    The shared triangulator is unchanged. Its usual output is retained exactly.
+    A triangle failing the ordinary FINAL-WORLD degeneracy predicate can only
+    be repaired by flipping an internal diagonal with its neighbor: all polygon
+    vertices and directed boundary edges stay fixed, both new triangles must
+    pass that same predicate, and oriented geometry/area must be preserved.
+    No triangles or contact constraints are dropped and no vertices are moved.
+    """
+    from .fluid_boundary import _ears
+
+    reconstructed = False
+    try:
+        triangles = [list(face) for face in _ears(polygon, points, normal)]
+    except ValueError as error:
+        # Under rigid transforms the same four-vertex contact degeneracy can
+        # fall just below the shared routine's projected final-turn tolerance.
+        # Reconstruct its two-diagonal quad partition for the same WORLD tests
+        # below. Larger/other triangulation failures remain fatal.
+        if len(polygon) != 4 or str(error) != 'degenerate final wet-facet triangle':
+            raise
+        triangles = [[polygon[0], polygon[1], polygon[2]],
+                     [polygon[2], polygon[3], polygon[0]]]
+        reconstructed = True
+    boundary = {tuple(sorted((int(a), int(b))))
+                for a, b in zip(polygon, np.roll(polygon, -1))}
+    while True:
+        bad = [i for i, face in enumerate(triangles) if not _valid_triangle(world_points[face])]
+        if not bad:
+            if reconstructed:
+                _validate_reconstructed_partition(polygon, triangles, world_points, normal)
+            return triangles
+        repaired = False
+        for index in bad:
+            face = triangles[index]
+            for start, end in zip(face, np.roll(face, -1)):
+                edge = tuple(sorted((int(start), int(end))))
+                if edge in boundary:
+                    continue
+                neighbors = [j for j, other in enumerate(triangles)
+                             if j != index and start in other and end in other]
+                if len(neighbors) != 1:
+                    continue
+                neighbor = neighbors[0]
+                other = triangles[neighbor]
+                if (end, start) not in list(zip(other, np.roll(other, -1))):
+                    continue
+                opposite = next(v for v in face if v not in edge)
+                opposite_other = next(v for v in other if v not in edge)
+                if opposite == opposite_other:
+                    continue
+                replacements = [[opposite, start, opposite_other], [opposite, opposite_other, end]]
+                if not all(_valid_triangle(world_points[t]) for t in replacements):
+                    continue
+                old_points = world_points[np.asarray([face, other])]
+                new_points = world_points[np.asarray(replacements)]
+                old_cross = np.cross(old_points[:, 1]-old_points[:, 0], old_points[:, 2]-old_points[:, 0])
+                new_cross = np.cross(new_points[:, 1]-new_points[:, 0], new_points[:, 2]-new_points[:, 0])
+                if np.any(new_cross @ normal <= 0):
+                    continue
+                old_area = float(np.linalg.norm(old_cross, axis=1).sum())
+                new_area = float(np.linalg.norm(new_cross, axis=1).sum())
+                roundoff = 256*np.finfo(float).eps*max(old_area, new_area)
+                if (abs(old_area-new_area) > roundoff
+                        or np.linalg.norm(old_cross.sum(axis=0)-new_cross.sum(axis=0)) > roundoff):
+                    continue
+                # Replacing a bad pair by two valid faces strictly reduces the
+                # count of bad triangles, so this bounded fallback terminates.
+                triangles[index], triangles[neighbor] = replacements
+                repaired = True
+                break
+            if repaired:
+                break
+        if not repaired:
+            raise ValueError('export polygon cannot retain all contact constraints with nondegenerate triangles')
+
+
 class _Vertices:
     def __init__(self, points, eps):
         self.points = list(points.copy())
@@ -246,8 +347,6 @@ def export_surface(vertices_m, faces, hull_vertices_m, hull_faces, *, opening_ri
     to 1e-10 of hull span; ambiguous tolerance collisions fail without repairing
     physical geometry. No hull or fluid-state arrays are mutated.
     """
-    from .fluid_boundary import _ears
-
     vertices, faces = _mesh_arrays(vertices_m, faces)
     validate_surface_topology(vertices, faces)
     hull = HullMesh(hull_vertices_m, hull_faces)
@@ -313,6 +412,8 @@ def export_surface(vertices_m, faces, hull_vertices_m, hull_faces, *, opening_ri
     # Reuse this exact array rather than rebuilding the full registry for every
     # polygon; keep the shared triangulator's indices and projection unchanged.
     registry_points = np.asarray(registry.points)
+    registry_world = registry_points*scale+origin
+    registry_world[:len(vertices)] = vertices
     if registry.cuts:
         cut_ids = np.array(sorted(registry.cuts), dtype=np.int64)
         cut_points = registry_points[cut_ids]
@@ -350,17 +451,15 @@ def export_surface(vertices_m, faces, hull_vertices_m, hull_faces, *, opening_ri
                 triangle = vp[face]
                 normal = np.cross(triangle[1]-triangle[0], triangle[2]-triangle[0])
                 normal /= np.linalg.norm(normal)
-                output.extend(_ears(polygon, registry_points, normal))
+                output.extend(_export_ears(polygon, registry_points, normal, registry_world))
     else:
         output.extend(uncut_faces.tolist())
     for polygon, normal in fragments:
-        output.extend(_ears(conform(polygon), registry_points, normal))
+        output.extend(_export_ears(conform(polygon), registry_points, normal, registry_world))
     if not output:
         raise ValueError('surface export has no water triangles outside the hull')
     used, inverse = np.unique(np.asarray(output, dtype=np.int64), return_inverse=True)
-    output_vertices = registry_points[used]*scale+origin
-    original = used < len(vertices)
-    output_vertices[original] = vertices[used[original]]
+    output_vertices = registry_world[used]
     output_faces = inverse.reshape(-1, 3)
     validate_surface_topology(output_vertices, output_faces)
     return output_vertices, output_faces

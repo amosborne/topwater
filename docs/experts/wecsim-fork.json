@@ -6,12 +6,12 @@
   "project_branch": "topwater/reference-v7.1.0",
   "upstream_release": "v7.1.0",
   "base_commit": "a23d2993807410fe78cc63546c1ba9d81912024f",
-  "current_commit": "f07a8dfe1d81d9430a22c299a83d91252afb3a33",
+  "current_commit": "9952634f6f2e2746a1626484e27c3003d1e1d5a9",
   "published_project_branch": true,
   "clean_checkout": true,
-  "engine_corrections": 5,
+  "engine_corrections": 6,
   "numerically_tested": true,
-  "validation_scope": "Selected linear imported-packet path: excitation history/component sum/dispatch once, File Solid inertia order, independent stock/fixed regressions and semantic review, then actual native10s/501sample freelyfloating body runtime and independent physical consistency review. No temporal/mesh motion accuracy claim; all variants not validated. Importer resource-only correction at f07a8df independently reproduces original KH leak, preserves all32 imported numeric arrays exactly across two valid imports, and closes owned sidecar handles on valid/malformed paths;15 Windows fixture files rename/delete. No dynamics/numeric parsing change.",
+  "validation_scope": "Selected linear imported-packet path: excitation history/component sum/dispatch once, File Solid inertia order, independent stock/fixed regressions and semantic review, then actual native10s/501sample freelyfloating body runtime and independent physical consistency review. No temporal/mesh motion accuracy claim; all variants not validated. Importer resource-only correction at f07a8df independently reproduces original KH leak, preserves all32 imported numeric arrays exactly across two valid imports, and closes owned sidecar handles on valid/malformed paths;15 Windows fixture files rename/delete. No dynamics/numeric parsing change. Display-only literal-path fix at9952634 verified on Windows, percent and UNC strings with zero warnings; no wave/body setup or numeric behavior change.",
   "validation_evidence": "artifacts/reference-imported-excitation-fixed-attempt2/result.json",
   "library_save": "Proper Simulink API save migrated body library R2020b to R2025b. Independent semantic review: 146 system connectivities and 39 embedded MATLAB scripts unchanged, all 531 migrated port counts match; three intended inertia expressions, variant empty-choice migration equivalent; inactive Flex sensor default serialized. All variants not compiled/physically validated.",
   "inertia_evidence": "artifacts/reference-inertia-fixed/result.json; artifacts/reference-inertia-fixed/library-semantic-diff.json",
@@ -19,5 +19,6 @@
   "dispatch_evidence": "artifacts/reference-imported-dispatch-fixed-attempt2/result.json; independent source/executed/semantic review passed. Actual case501x6 applied forcing agrees with accepted total to1.61e-12.",
   "native_body_evidence": "artifacts/reference/minimum-20261024/case-attempt1; independent native Solid Newton-Euler and TransportDelay output review passed. Minimum dt0.02 only; no temporal/mesh convergence claim.",
   "bemio_handle_evidence": "artifacts/workflow/bemio-handles-attempt3/report.json; docs/experts/wecsim_expert/bemio-handle-lifecycle-2026-10-25.md",
+  "wave_path_display_evidence": "artifacts/workflow/wave-display-check-attempt3/report.json",
   "publication": "Reviewed corrections pushed only to user-owned fork project branch; no upstream PR/message or main push"
 }

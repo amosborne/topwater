@@ -6,6 +6,15 @@ No active WECnumerical allocation or automaticfollowup. ROOT owns integration.
 
 ## Generic CLI integration checkpoint
 
+The cosmetic `waveClass/listInfo` path fix passed a real three-path display
+probe: verbatim Windows/percent/UNC paths, zero warnings, no wave setup/body run
+or new engine. Helper style is clean; 113 upstream findings are unchanged.
+Fork `9952634f6f2e2746a1626484e27c3003d1e1d5a9` is pushed and pinned. No wave
+physics changes. See [verified evidence](wave-path-display-2026-10-25.md).
+The latest integration suite passed 228 tests/one optional skip in 14.98 s;
+canonical public sea generation produced its log and bit-exact sea arrays.
+Full-case acceptance remains pending geometry sweep and public solve/render.
+
 The first full canonical CLI attempt ran and failed during surface export after
 1989.285 s; no result/video was published. A leaked BEMIO KH probe handle caused
 Windows scratch removal to mask the original export exception. Root confirmed
@@ -13,9 +22,13 @@ and closed only the owned MATLAB file ID. Maintained-importer scoped closure and
 package primary-error preservation passed the allocated regression: old leak
 reproduced, two new imports preserved 32 numeric arrays each, malformed KH and
 Hydrostatics left no handles, and 15 Windows fixture files renamed/deleted
-(reported 1.672 s). Owned fork commit `f07a8dfe1d81d9430a22c299a83d91252afb3a33`
-is pushed and pinned. Recovery/interfaces passed 209 tests with one optional
-skip in 13.05 s. The second full canonical pipeline remains pending. See
+(reported 1.672 s). Importer correction commit
+`f07a8dfe1d81d9430a22c299a83d91252afb3a33` is included in the current fork pin.
+Recovery/interfaces passed 209 tests with one optional skip in 13.05 s.
+The second full canonical attempt terminated after 1397.677 s without a public
+result: frame 277 at 22.16 s generated a near-collinear clipped triangle, not
+demonstrated flooding. Its completed field/failure geometry are retained for
+bounded replay; no additional body solve is needed for geometry diagnosis. See
 [failure/lifecycle correction](bemio-handle-lifecycle-2026-10-25.md).
 
 WEC-WORKFLOW-001 added `src/topwater/wecsim_backend.py`, shared

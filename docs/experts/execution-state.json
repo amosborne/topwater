@@ -6,16 +6,16 @@
     "manifest":  null,
     "active_numerical_job":  null,
     "last_terminal_evidence":  {
-                                   "job":  "Importer exactarray/handle regression with authoredhelperstyleclean and unchangedupstreamstylebaseline",
+                                   "job":  "Exactcanonicalgeneratorreplay and newsea.logpublication with unchangednumericinput",
                                    "owner":  "/root",
-                                   "producer_pid":  25088,
-                                   "owner_launcher_pid":  17896,
-                                   "started_at":  "2026-10-25T19:03:50.757826+00:00",
+                                   "producer_pid":  37932,
+                                   "owner_launcher_pid":  32064,
+                                   "started_at":  "2026-10-25T20:14:10.095160+00:00",
                                    "exit_code":  0,
                                    "frozen_inputs_match":  true,
                                    "complete":  true,
-                                   "manifest":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\bemio-handles-attempt3\\manifest.json",
-                                   "output":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\bemio-handles-attempt3\\output.log"
+                                   "manifest":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\canonical-sea-log-attempt1\\manifest.json",
+                                   "output":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\canonical-sea-log-attempt1\\output.log"
                                },
     "note":  "Exact producer/owner and FFmpeg absence verified by independent CIM; frozen input hashes verified; terminal exit 0. Final separate idle readback follows before lease release."
 }

@@ -31,38 +31,52 @@ def parser():
 def main(argv=None):
     args = parser().parse_args(argv)
     try:
-        if args.command == 'generate-sea':
-            from . import sea_states
-            from .workflow_data import Sea
-            waves = sea_states.realize(args.record, seed=args.seed)
-            sea = Sea(waves.amplitudes, waves.angular_frequencies, waves.directions, waves.phases)
-            args.directory.mkdir(parents=True, exist_ok=True)
-            destination = args.directory / 'sea.npz'
-            sea.save(destination, overwrite=True)
-            print(f'Wrote {destination}: {len(waves.amplitudes)} components; '
-                  f'record={args.record}; seed={waves.seed}')
-        elif args.command == 'solve':
-            import math
-            if not math.isfinite(args.duration) or args.duration <= 0:
-                raise ValueError('duration must be positive and finite')
-            if args.solver == 'native':
-                raise RuntimeError('native coupled dynamics are not implemented; '
-                                   'use --solver=wecsim with its documented dependencies')
-            from .workflow_data import Boat, Sea
-            from .wecsim_backend import solve
-            boat = Boat.load(args.directory / 'boat.npz')
-            sea = Sea.load(args.directory / 'sea.npz')
-            result = solve(boat, sea, args.duration)
-            destination = args.directory / 'result.npz'
-            result.save(destination, overwrite=True)
-            print(f'Wrote {destination}; existing video.mp4 was left unchanged')
-        else:
-            from .workflow_data import Result
-            from .result_render import render_result
-            result = Result.load(args.directory / 'result.npz')
-            destination = args.directory / 'video.mp4'
-            render_result(result, destination)
-            print(f'Wrote {destination}')
+        from .command_log import CommandLog
+        names = {'generate-sea': 'sea.log', 'solve': 'result.log', 'render': 'video.log'}
+        details = ' '.join(f'{name}={value}' for name, value in vars(args).items()
+                           if name != 'command')
+        with CommandLog(args.directory / names[args.command], args.command, details) as log:
+            if args.command == 'generate-sea':
+                from . import sea_states
+                from .workflow_data import Sea
+                log.event('INFO', 'STAGE generate observed sea realization')
+                waves = sea_states.realize(args.record, seed=args.seed)
+                sea = Sea(waves.amplitudes, waves.angular_frequencies, waves.directions, waves.phases)
+                destination = args.directory / 'sea.npz'
+                sea.save(destination, overwrite=True)
+                log.published(destination)
+                print(f'Wrote {destination}: {len(waves.amplitudes)} components; '
+                      f'record={args.record}; seed={waves.seed}')
+            elif args.command == 'solve':
+                import math
+                log.event('INFO', 'STAGE validate solve inputs and backend')
+                if not math.isfinite(args.duration) or args.duration <= 0:
+                    raise ValueError('duration must be positive and finite')
+                if args.solver == 'native':
+                    raise RuntimeError('native coupled dynamics are not implemented; '
+                                       'use --solver=wecsim with its documented dependencies')
+                from .workflow_data import Boat, Sea
+                from .wecsim_backend import solve
+                boat = Boat.load(args.directory / 'boat.npz')
+                sea = Sea.load(args.directory / 'sea.npz')
+                log.event('INFO', 'STAGE solve motion and total surface')
+                result = solve(boat, sea, args.duration)
+                destination = args.directory / 'result.npz'
+                log.event('INFO', 'STAGE publish validated result')
+                result.save(destination, overwrite=True)
+                log.published(destination)
+                print(f'Wrote {destination}; existing video.mp4 was left unchanged')
+            else:
+                from .workflow_data import Result
+                from .result_render import render_result
+                log.event('INFO', 'STAGE load self-contained result')
+                result = Result.load(args.directory / 'result.npz')
+                destination = args.directory / 'video.mp4'
+                log.event('INFO', 'STAGE render and verify complete video')
+                timings = render_result(result, destination)
+                log.published(destination)
+                log.event('INFO', f'RENDER timings={timings}')
+                print(f'Wrote {destination}')
     except KeyboardInterrupt:
         print(f'topwater {args.command}: interrupted; previous outputs preserved', file=sys.stderr)
         return 130

@@ -1,5 +1,26 @@
 # Current state: Topwater expert (solver implementation HELD)
 
+## Current workflow geometry checkpoint (2026-10-25)
+
+Bounded reusable workflow/data and surface-export implementation is authorized;
+independent native coupled physics remains unavailable. Boat/Sea/Result NPZ
+contracts, convex single-opening hull ingestion/internal caps, and conforming
+exported contact geometry are implemented. Nonplanar partial-facet cap closure
+still has an explicit backend limitation; no generic CAD repair is claimed.
+
+Latest export correction is independently source-reviewed: a saved frame-277
+near-collinear triangulation sliver is repaired only by a constrained-boundary-
+preserving internal diagonal flip with unchanged world degeneracy checks and
+signed/unsigned area/orientation guards. No hull/water contact vertices move.
+Coordinator reports 228 tests passed, one optional skip (14.98 s), and actual
+saved 277 plus cached 276/278 geometry verification passed (8.423 s), with
+frame-277 input/vertices/directed boundaries bitwise preserved and two triangles
+changed. All-frame cached geometry sweep is source-ready but not yet run.
+No complete-case/native-physics/video acceptance follows. Evidence and limits:
+[mesh tooling](../../mesh-tooling.md#constrained-contact-triangulation-correction-2026-10-25).
+
+## Earlier visualization checkpoint
+
 LATEST USER authorizes a standard reusable visualization workflow in the
 Topwater library, with producer-neutral prepared meshes, different convex hulls,
 code-first CLI, square water-filled fast previews and no custom graphics engine.

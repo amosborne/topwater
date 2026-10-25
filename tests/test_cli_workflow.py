@@ -30,7 +30,8 @@ def test_generate_sea_defaults_to_cwd_and_preserves_exact_band_energy(tmp_path,m
     second=Sea.load(tmp_path/'sea.npz')
     for name in Sea.members:
         np.testing.assert_array_equal(getattr(first,name),getattr(second,name))
-    assert set(p.name for p in tmp_path.iterdir())=={'sea.npz'}
+    assert set(p.name for p in tmp_path.iterdir())=={'sea.npz','sea.log'}
+    assert 'status=success' in (tmp_path/'sea.log').read_text()
 
 
 def test_generation_failure_preserves_existing_sea(tmp_path,capsys):
@@ -39,6 +40,8 @@ def test_generation_failure_preserves_existing_sea(tmp_path,capsys):
     assert main(['generate-sea',str(tmp_path),'--record','unknown'])==2
     assert destination.read_bytes()==b'previous sea'
     assert 'unknown observed' in capsys.readouterr().err
+    assert 'unknown observed' in (tmp_path/'sea.log').read_text()
+    assert 'status=failed' in (tmp_path/'sea.log').read_text()
 
 
 @pytest.mark.parametrize('duration',['60','nan','-1'])
@@ -49,6 +52,8 @@ def test_unavailable_native_or_bad_duration_never_replaces_result(tmp_path,durat
     assert (tmp_path/'result.npz').read_bytes()==b'previous result'
     assert (tmp_path/'video.mp4').read_bytes()==b'previous video'
     assert capsys.readouterr().err.startswith('topwater solve:')
+    assert 'status=failed' in (tmp_path/'result.log').read_text()
+    assert 'output_published=false' in (tmp_path/'result.log').read_text()
 
 
 def test_stronger_observation_is_packaged_without_changing_legacy_catalog():
@@ -70,3 +75,14 @@ def test_corrupt_result_is_clear_fatal_and_preserves_video(tmp_path,capsys):
     assert main(['render',str(tmp_path)])==2
     assert 'invalid or truncated Result NPZ' in capsys.readouterr().err
     assert (tmp_path/'video.mp4').read_bytes()==b'previous video'
+
+
+def test_real_render_cli_records_validated_publication_in_video_log(tmp_path):
+    from .test_result_render import saved_result
+    saved_result().save(tmp_path/'result.npz')
+    assert main(['render',str(tmp_path)])==0
+    assert (tmp_path/'video.mp4').stat().st_size>0
+    report=(tmp_path/'video.log').read_text()
+    assert 'STAGE load self-contained result' in report
+    assert 'status=success' in report and 'output_published=true' in report
+    assert 'RENDER timings=' in report

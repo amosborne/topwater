@@ -38,6 +38,11 @@ It is a visualization/comparison result, not a restart file. The caller publishe
 the complete validated file atomically. A failure preserves an existing result.
 The adapter itself never writes a partial public result.
 
+`result.log` records the latest invocation, stages, backend output, warnings,
+fatal errors, timings and publication status. It is replaced when solving starts,
+including failed attempts. See [the common log format](logging.md) and
+[the current warning triage](warning-triage.md).
+
 The solve does not render or remove `video.mp4`. An existing video may therefore
 belong to an earlier result; tracking that association is the user's responsibility.
 
@@ -59,7 +64,7 @@ and licensed Simulink, Simscape, and Simscape Multibody. These are optional
 dependencies of the WEC-Sim workflow, not requirements for rendering.
 
 The maintained fork is pinned to
-`f07a8dfe1d81d9430a22c299a83d91252afb3a33`. Set `TOPWATER_WECSIM_PATH` to its
+`9952634f6f2e2746a1626484e27c3003d1e1d5a9`. Set `TOPWATER_WECSIM_PATH` to its
 checkout directory, or use the repository-local fallback
 `artifacts/dependencies/topwater-wec-sim`. A different or unverifiable revision
 fails readiness rather than running unreviewed engine code.

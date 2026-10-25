@@ -11,6 +11,14 @@ Current user authorization is the canonical NPZ/directory CLI plan in the handof
 Coordinator owns CLI, dependencies, documentation routing, numerical scheduling,
 acceptance and Git checkpoints. No native dynamics implementation is allocated.
 
+LOG-WORKFLOW-001, authorized/source implemented: coordinator owns CLI wiring,
+documentation and integration; Topwater expert authored command_log.py and its
+tests; independent researcher triages actual warnings. Deliver sea.log,
+result.log and video.log with consistent timestamps/levels, failure/publication
+status and latest-attempt replacement. Preserve numeric NPZ contracts. Current
+228-test suite passes; actual complete case/log/video acceptance remains pending.
+User declined streaming solve/render; commands remain independent.
+
 - TW-WORKFLOW-001, authorized/source implementation: topwater_expert owns new
   boat_geometry.py/workflow_data.py, corresponding tests and mesh-tooling review.
   Deliver convex one-opening physical hull validation, NPZ contracts, temporary

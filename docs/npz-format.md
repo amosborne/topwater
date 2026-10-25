@@ -1,6 +1,6 @@
 # Canonical NPZ data contract
 
-Files contain only named numeric arrays. Load with `allow_pickle=False`.
+NPZ files contain only named numeric arrays. Load with `allow_pickle=False`.
 Required members are exact: missing, extra, duplicate, object-valued or malformed
 members are fatal. Units and conventions are fixed here; no metadata object,
 solver marker, duration, version field or provenance report is embedded.

@@ -137,3 +137,35 @@ and [test log](../artifacts/workflow/export-allocation-attempt2/output.log).
 
 This is one geometry fixture, with two timings per version. It establishes no
 physical accuracy, wet-area cost, or complete canonical-workflow speed claim.
+
+## Constrained-contact triangulation correction (2026-10-25)
+
+The second canonical attempt stopped at saved frame 277 (22.16 s). One
+four-vertex export polygon contained an intermediate cut vertex on a constrained
+contact edge. Projected ear clipping accepted a roundoff-scale final sliver
+whose world-coordinate triangle failed the unchanged degeneracy validator. The
+saved diagnostic found one bad triangle with area 3.04944854e-20 m2; no body,
+wave, or hydrodynamic failure was inferred. See the
+[one-frame diagnosis](../artifacts/workflow/surface-frame-diagnostic-attempt1/frame/report.json).
+
+The export-only correction flips an unconstrained internal diagonal when both
+replacement triangles pass the existing world-coordinate predicate, preserve
+orientation and signed/unsigned area, and retain every vertex and directed
+boundary edge. Otherwise it fails explicitly. A reconstructed four-vertex
+exception path additionally verifies oriented parent coverage. Shared generic
+ear clipping is unchanged. No threshold was relaxed, no positive-area triangle
+was blindly dropped, and no hull/contact point was moved. The Capytaine owner
+independently approved the source correction.
+
+The coordinator's current interface suite passed 228 tests with one optional
+skip in 14.98 s. A geometry-only verification of actual saved frame 277 and
+cached neighbors 276/278 passed in 8.423 s. Reconstructed frame-277 inputs were
+bitwise identical to the saved failure geometry; corrected output vertices and
+directed boundary chains were unchanged, with exactly two triangles over four
+vertices changing their internal diagonal. Area/contact constraints were
+preserved and all three frames passed topology checks. See the
+[three-frame report](../artifacts/workflow/surface-frame-verification-attempt1/frames/report.json).
+
+The all-frame cached geometry sweep helper is frozen and awaiting execution.
+Three accepted frames do not establish complete-case export, video completion,
+physical accuracy, or native-solver readiness.

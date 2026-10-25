@@ -78,7 +78,11 @@ Generation writes sea.npz. Solve reads boat.npz/sea.npz and writes the complete
 result.npz; an existing video is left untouched. Render reads only result.npz,
 including its exported hull snapshot, and writes video.mp4 without recomputing
 waves. Results permit independently sampled motion and changing surface topology.
-Successful commands replace their named output atomically; failures preserve it.
+Validated data/video outputs are replaced atomically; failures preserve the
+previous data. Commands also write consistently formatted `sea.log`, `result.log`
+and `video.log`, each describing its latest attempt. Logs are replaced at command
+start, including failed attempts. See [logging](docs/cli/logging.md) and
+[warning triage](docs/cli/warning-triage.md).
 Final result/video binaries use Git LFS. No intermediate solver files belong in
 the example directory.
 

@@ -17,11 +17,15 @@ DIRECTORY defaults to the current directory and is created when needed.
 32-bit integer; omission draws a seed, printed with the source ID on success.
 No boat file or network retrieval is required.
 
-The only file written is DIRECTORY/sea.npz. It contains explicit amplitudes,
+The files written are DIRECTORY/sea.npz and DIRECTORY/sea.log. The NPZ contains explicit amplitudes,
 angular frequencies, propagation directions and phases; see
 [the NPZ contract](../npz-format.md). Successful generation atomically replaces
 an old sea.npz. Failures preserve it. Existing result/video files are untouched;
 the user manages their relationship to changed inputs.
+
+`sea.log` records the latest invocation, selected record/seed, stages, errors and
+publication status. It is replaced even when generation fails; existing data
+remain protected. See [the common log format](logging.md).
 
 ## Assumptions and hard-coded choices
 
