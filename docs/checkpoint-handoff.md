@@ -167,14 +167,37 @@ R2020b->R2025b SLX migration noise/compatibility and precomputed-force assumptio
 NO fetch/checkout/rebase/cherry-pick/fork edits, numerical work or upstream writes.
 Do not infer permission to submit PRs or rework the frozen fork. Plan/review first.
 
+## Current bounded fork rebuild assignment
+
+The first two fixes are published as separate internal PRs in OUR fork:
+https://github.com/amosborne/WEC-Sim/pull/6 (handles, issue4,
+0d364b1f6154c5b8bee99d95f4fbf7e62b024159) and
+https://github.com/amosborne/WEC-Sim/pull/7 (literal paths, issue5,
+206bac360222b86ebe33a903225f0dae118c7093). Both target topwater/reference and
+are independently based on exact clean releasea23d299. No merge is authorized.
+Isolated checkout: artifacts/dependencies/wecsim-rebuild-v7.1.0. Old checkout
+and Topwater runtime pin9952634 remain unchanged; combined reference is stilla23.
+
+Root serial stock/fixed checks passed on Windows/MATLABR2025b: all9 fixed pass;
+stock7 expected fail/2 controls pass. All32 numeric fields EACH sphere/RM3 have
+exactly equal values (not byte identity). Independent source/harness review
+completed. Attempt1 wrapper and attempt2 helper-discovery failures are preserved;
+attempt3 is terminalSUCCESS, exact processes/hashes verified, idle read back and
+lease released. Only README/messages changed after successful tested blobs.
+Evidence/limits: experts/wecsim_expert/fork-rebuild-regressions-2026-10-25.md.
+No full WEC suite, other MATLAB/OS or dynamics simulation was run for these PRs.
+No source work on history, inertia or coupled aggregation yet. Upstream stays
+read-only; pin promotion and legacy branch retirement remain on hold.
+
 ## Current fork process and next actions
 
 User requested unwind/rebuild through own-fork issues, focused branches and
 internal PRs. Issues-first is COMPLETE: amosborne/WEC-Sim issues1-5 cover history,
 aggregation/dispatch, inertia/SLX, handles and literal display. Expert enabled
-ONLY that fork's issues and verified every body. No topic branches, PRs, source
-edits or upstream writes. Root CREATED clean topwater/reference at official
-latest releasev7.1.0/a23d299. This new branch contains NO local fixes yet.
+ONLY that fork's issues and verified every body. Subsequent isolated fixes and
+internal PRs are recorded above; no upstream writes occurred. Root CREATED
+clean topwater/reference at official latest releasev7.1.0/a23d299. This combined
+branch still contains NO local fixes yet.
 Future internal PR base repo MUST be amosborne/WEC-Sim, branch topwater/reference.
 
 The user explicitly says DO NOT UPDATE TOPWATER YET. Keep9952634/current local

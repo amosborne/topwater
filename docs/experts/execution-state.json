@@ -6,16 +6,16 @@
     "manifest":  null,
     "active_numerical_job":  null,
     "last_terminal_evidence":  {
-                                   "job":  "Final plot/solve-publication CLI checks after shared translation/rotation Ylimits",
+                                   "job":  "Standalone ownfork4/5 stock-vs-fixed regressions in two fresh hidden MATLABprocesses; numericimportidentity; no body/BEM",
                                    "owner":  "/root",
-                                   "producer_pid":  25676,
-                                   "owner_launcher_pid":  31652,
-                                   "started_at":  "2026-10-25T22:51:52.661359+00:00",
+                                   "producer_pid":  40060,
+                                   "owner_launcher_pid":  4304,
+                                   "started_at":  "2026-10-25T23:27:50.183208+00:00",
                                    "exit_code":  0,
                                    "frozen_inputs_match":  true,
                                    "complete":  true,
-                                   "manifest":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\motion-plot-style-tests-attempt1\\manifest.json",
-                                   "output":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\motion-plot-style-tests-attempt1\\output.log"
+                                   "manifest":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\fork-regressions-attempt3\\manifest.json",
+                                   "output":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\fork-regressions-attempt3\\output.log"
                                },
     "note":  "Exact producer/owner and FFmpeg absence verified by independent CIM; frozen input hashes verified; terminal exit 0. Final separate idle readback follows before lease release."
 }

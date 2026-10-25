@@ -18,6 +18,28 @@ deleted only after its reviewed/tested replacement, exact repin and immutable
 archive tag. [Strategy and scope](../../wecsim-fork-strategy.md). No new fork
 code/topic branch/PR or upstream write is authorized by this KB update.
 
+Bounded resource/display rebuild is locally tested in isolated
+`artifacts/dependencies/wecsim-rebuild-v7.1.0`, origin explicitly our fork.
+Issue #4 branch `fix/capytaine-sidecar-handles` is local commit
+`0d364b1f6154c5b8bee99d95f4fbf7e62b024159`; issue #5 branch
+`fix/literal-wave-path-display` is `206bac360222b86ebe33a903225f0dae118c7093`.
+Each is independently based on exact `a23d299`; combined `topwater/reference`
+and old clean runtime `9952634` are unchanged. Windows/R2025b attempt 3 passed
+all nine fixed tests; stock failed seven and passed two controls. All 32 numeric
+fields for EACH sphere/RM3 fixture have exactly equal stock/fixed values by
+`assert_array_equal`, not byte identity or a dtype check. Fresh processes used
+repository fixtures/direct display, without Topwater cases or body simulation.
+Exact MATLAB processes were terminal/CIM/frozen-identity verified; lease released.
+[Evidence](../../../artifacts/workflow/fork-regressions-attempt3/report.json).
+Only candidate README validation and commit messages were then amended; all four
+production/test Git blobs match the executed `54bca31`/`e8491f4` candidates.
+Broader OS/MATLAB compatibility remains untested. Root published both branches
+and verified internal [PR #6](https://github.com/amosborne/WEC-Sim/pull/6) and
+[PR #7](https://github.com/amosborne/WEC-Sim/pull/7) OPEN with these exact heads,
+base `topwater/reference`, and no cross-repository target. No merge occurred;
+source is frozen and the Topwater pin remains on user hold. CI does not target
+this reference branch; local checks above are the validation evidence.
+
 ## Generic CLI integration checkpoint
 
 The cosmetic `waveClass/listInfo` path fix passed a real three-path display
