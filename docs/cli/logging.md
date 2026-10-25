@@ -5,11 +5,11 @@ Each command writes a log beside its data output:
 | Command | Data output | Log |
 |---|---|---|
 | `generate-sea` | `sea.npz` | `sea.log` |
-| `solve` | `result.npz` | `result.log` |
+| `solve` | `result.npz`, `result.png` | `result.log` |
 | `render` | `video.mp4` | `video.log` |
 
 A future `generate-boat` command will use `boat.log`. The current example has
-three NPZ files, one MP4 and these three text logs. No log is embedded in an NPZ.
+three NPZ files, one PNG, one MP4 and these three text logs. No log is embedded in an NPZ.
 
 Logs describe the latest invocation and are replaced when that command starts.
 A failed attempt therefore replaces its log while preserving the previous data

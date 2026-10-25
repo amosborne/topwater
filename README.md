@@ -75,7 +75,8 @@ uv run topwater render examples/simple-boat
 ```
 
 Generation writes sea.npz. Solve reads boat.npz/sea.npz and writes the complete
-result.npz; an existing video is left untouched. Render reads only result.npz,
+result.npz and six-DOF motion plot result.png; an existing video is left untouched.
+Render reads only result.npz,
 including its exported hull snapshot, and writes video.mp4 without recomputing
 waves. Results permit independently sampled motion and changing surface topology.
 Validated data/video outputs are replaced atomically; failures preserve the

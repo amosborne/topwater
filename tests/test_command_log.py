@@ -59,6 +59,7 @@ def test_tee_preserves_console_once_and_formats_every_file_line(tmp_path, consol
     'WEC-Sim applicability: wet-set exceeds 10%',
     'Surface numerical approximation: provisional field',
     '\x1b[33mWarning: native model approximation\x1b[0m',
+    'C:\\case\\result_plot.py:46: UserWarning: Six-motion Euler labels are ambiguous',
 ])
 def test_warning_markers_have_consistent_severity(tmp_path, consoles, message):
     consoles = consoles()

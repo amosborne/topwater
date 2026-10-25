@@ -1,5 +1,58 @@
 # Canonical workflow warning triage
 
+## Completed canonical run
+
+Public solve and render succeeded in `canonical-pipeline-attempt4`, with
+3,001 motion samples and 751 decoded video frames over the complete 0-60 s
+history. Evidence: [result.log](../../examples/simple-boat/result.log),
+[video.log](../../examples/simple-boat/video.log) and the private
+`artifacts/workflow/canonical-pipeline-attempt4/report.json`. `sea.log` records
+successful generation with zero warnings. The solve reports 56 WARNING records;
+this counts rendered rows/summaries, not distinct physical events.
+
+| Current item | Actual result / disposition |
+|---|---|
+| Mesh resolution and irregular frequencies | Warnings remain, including the affected-solve summaries. Expected for this minimal reference; accuracy consequences still need qualification in [#32](https://github.com/amosborne/topwater/issues/32). |
+| Causal radiation projection | Retain the 42.7 mm maximum / 12.5 mm RMS diagnostic sensitivity warning. It is not a true-error bound. Investigation is [#31](https://github.com/amosborne/topwater/issues/31). |
+| Field/load consistency | Maximum force-component differences [20.7354, 18.0728, 47.5506] N and moment-component differences [21.6547, 90.0598, 16.2102] Nm. The accepted body loads are unchanged. Evaluate in [#33](https://github.com/amosborne/topwater/issues/33). |
+| Calm-reference restoring | Moment departure: 2,013 samples, first 9.68 s, peak 183%; force departure: 1,170 samples, first 16.66 s, peak 132%. These are reference/model departures, not dynamic-error percentages. |
+| Calm-reference diagnostic unavailable | 338 samples, first 23.08 s. Flat-reference rim intersection does not establish flooding in the actual sea. |
+| Represented wet-set departure | Above the 10% reporting threshold from first 25.84 s through last 51.6 s; worst 29.14% at 44.64 s. Evaluate with restoring/applicability in [#34](https://github.com/amosborne/topwater/issues/34). |
+| Initialization and scratch messages | Green-function tabulation and visualization-only 200 m depth are expected initialization information. The existing-directory warning concerns a fresh owned scratch directory. Neither establishes physical accuracy or an unexpected cross-case overwrite. |
+| Path display and importer handles | Their specific fixes are in the pinned fork; no escaped-path warning or cleanup failure blocked this run. Fork changes are separately tracked in our WEC-Sim issues 1-5. |
+| Encoder duplicate `-r` warning | Appears in the private wrapper output because native encoder stderr is outside the documented Python tee. Both rates select 12.5 fps; full decode verified 751 frames, 800-square, 60.08 s. This is presentation/configuration noise, not an observed cadence failure. Do not retrospectively edit the generated video log. |
+
+### Measured surface disturbance
+
+These describe the produced **total-minus-incident elevation**, not its numerical
+or physical error. Exterior support excludes the posed hull. Spatial P1 moments
+are projected-area weighted; time integration includes every saved surface frame
+and startup. The near band selects original source-triangle centroids within one
+beam horizontally of the independent actual waterline, then integrates their
+exterior portions; it is a discrete band approximation.
+
+| Region | RMS delta | RMS delta / incident RMS | Resolved maximum absolute delta |
+|---|---:|---:|---:|
+| Full exterior patch | 5.987 mm | 2.242% | 65.087 mm |
+| One-beam band | 7.993 mm | 2.960% | 65.087 mm |
+
+The resolved maximum is at 44.56 s, world location approximately
+(2.02543,1.10729,0.329677) m. A small RMS disturbance does not resolve the phase,
+reference-resolution, load-consistency or linear-applicability questions above.
+The full run passed its actual opening/contact and startup guards. Initial
+represented total local elevation was bounded by 0.000645411 m on the stated
+conservative exterior support; no total disturbed-fluid velocity bound is claimed.
+
+The user prioritizes working delivery, then correctness, then speed. These
+warnings remain visible qualifications on the working example; they are not
+silently accepted as harmless and no new accuracy campaign is implied here.
+
+## Archived attempt-2 assessment
+
+The following is the earlier failed-run assessment, retained with its original
+evidence and policy. Its failure is historical; the current successful uncut
+workflow status is recorded above.
+
 Reviewed 2026-10-25 against the actual
 [attempt 2 log](../../artifacts/workflow/canonical-pipeline-attempt2/output.log)
 and its [terminal record](../../artifacts/workflow/canonical-pipeline-attempt2/terminal.json).
@@ -20,7 +73,7 @@ That presentation fix does not change the physical/numerical qualifications.
 
 The historical frame-277 sliver has a guarded triangulation correction.
 [Saved-frame verification](../../artifacts/workflow/surface-frame-verification-attempt1/frames/report.json)
-passes frames 276â€“278, with unchanged vertices/contact boundaries and only two
+passes frames 276-278, with unchanged vertices/contact boundaries and only two
 triangles replaced at frame 277. The subsequent
 [cached sweep](../../artifacts/workflow/cached-geometry-sweep-attempt1/geometry/report.json)
 passed all 751 frames in 1711.761 seconds with unchanged fields and motion.

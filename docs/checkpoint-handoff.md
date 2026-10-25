@@ -1,40 +1,55 @@
 # Checkpoint handoff
 
-Updated 2026-10-25. The latest user message controls scope. Read
-[AGENTS.md](../AGENTS.md), [coordination](experts/coordination.md) and the
-[shared physical contract](experts/shared-contract.md); consult relevant expert
-states rather than repeating historical setup.
+Updated 2026-10-25. Latest user steering controls scope. Read AGENTS.md and
+experts/coordination.md; consult shared-contract.md and the relevant expert state.
+Historical queued work is not authorization to restart it.
 
-## Current authorization
+## Current priority and completed workflow
 
-LATEST user priority: get the system working END TO END FIRST, then assess
-correctness, then speed. Further optimization is stopped; the temporary JIT
-experiment was fully reverted to the exact verified pre-JIT source. Do not
-restart performance or expanded physical-correctness campaigns now.
+The user's order is working end to end, then correctness, then speed. The full
+public workflow now WORKS. No further performance changes are authorized now.
+Native coupled dynamics remain unimplemented. No solver/render streaming.
 
-Root has launched canonical-pipeline-attempt4: actual public60s --solver=wecsim,
-then independent public render, fullvideo decode and retainedstills. Tool
-session61734. Sources/inputs/dependencies are FROZEN until terminal. Read current
-execution ledger for exact PIDs/start/manifest; re-poll SAMEhandle, never restart
-on timeout or slowoutput. MATLABengine29796/launcher40036 was verifiedlive
-before launch; maintainedforkclean at9952634. Keep windowminimized/headless.
+Canonical attempt4 is TERMINAL SUCCESS: public60s WEC-Sim solve2393.743s,
+public render226.932s,3001 motion samples,751 surface frames,751 decoded H264
+frames at800x800/12.5fps/60.08s. Evidence:
+artifacts/workflow/canonical-pipeline-attempt4/{report.json,terminal.json,output.log}.
+Frozen source/input hashes and the exact recorded process tree were verified
+terminal by independent CIM; idle was read back and the lease released.
+Do NOT re-poll session61734 or restart this expensive run.
 
-Final source regression PASS270/1optional skip14.11s,
-uncut-workflow-tests-attempt2. Paired3frame diagnostics before3.902s/after2.509s,
-1.55x with BITEXACT packed/originalgrid output, zero wetvalue difference and
-metricswithin1e-12: uncut-diagnostics-compare-attempt1. Both jobs independently
-terminal/frozen/processverified andleasesreleased before actualpublicrun.
-Those3frames are sparse samples, NOT proof of faster-than-realtime throughput.
-Useraskedunder10min: root candidestimate15-20min from measuredpostprocessrate
-plusfield/render, pendingactualfullrun. No new speedwork before it completes.
+Root viewed decoded0/30/51.44/60s frames: full hull/water coverage and readable
+HUD. Basic implementation/visual delivery passes; physics accuracy does not.
+Actual total-minus-incident RMS:5.987mm full exterior/2.242% incident RMS;
+7.993mm one-beam/2.960%; resolved peak65.087mm at44.56s. Full warning triage
+is docs/cli/warning-triage.md. Its remaining correctness questions own issues.
 
-Implement the approved canonical example/workflow plan. Native coupled dynamics
-remain excluded and must fail clearly. The first working backend is WEC-Sim.
-One flat `examples/simple-boat/` holds `boat.npz`, `sea.npz`, `result.npz`,
-`video.mp4` and the newly requested `sea.log`, `result.log`, `video.log`.
-A future generate-boat command will use boat.log; it is not implemented now.
+User added automatic solve output result.png, then shared Y scales: translations
+share one symmetric metre range, rotations a separate symmetric degree range.
+New result_plot.py +solve_outputs.py publish NPZ/PNG after private preparation,
+with rollback on handled failures. Code/CLI tests286PASS1optional skip11.23s;
+latest shared-axis source checks44PASS5.07s. All jobs terminal/frozen/process
+verified and leases released. The PNG was generated FROM the completed Result,
+without rerunning physics: result-plot-backfill-attempt2/report.json,2160x1170,
+all3001 samples, native-q agreement2.63e-14. Original seven data/video/log files
+are BITEXACT. Root viewed final shared-axis PNG. Original result.log truthfully
+records the earlier solve; it was not retroactively edited to fake PNG creation.
 
-Public commands accept an optional directory, defaulting to the current directory:
+Public generator replay matches every sea array; unavailable-native check in a
+PRIVATE copy preserved all completed canonical files/logs. Public-replay-attempt1
+is terminal/released. Runtime is much slower than root's15-20minute estimate;
+report measured times, not real-time claims. JIT experiment fully reverted.
+
+No numerical job is currently live; verify ledger/lease before another claim.
+Existing shared MATLAB CAPYTAINE_REFERENCE engine29796/launcher40036 was not
+quit or restored onscreen. Keep its window minimized/headless. TEMP/TMP must
+be normal AppData/Local/Temp before engine discovery/connect.
+
+## Public contract
+
+One flat examples/simple-boat/ contains exactly eight final files:
+boat.npz, sea.npz, result.npz, result.png, video.mp4, sea.log, result.log, video.log.
+Future generate-boat/boat.log is not implemented now. Commands:
 
 ```powershell
 uv run topwater generate-sea [DIRECTORY] --record RECORD_ID [--seed N]
@@ -42,240 +57,158 @@ uv run topwater solve [DIRECTORY] DURATION_SECONDS [--solver=native|wecsim]
 uv run topwater render [DIRECTORY]
 ```
 
-Keep the commands independent. The user explicitly declined streaming/pipelining
-solve into render; validation orchestration may run them sequentially through
-completed result.npz. Current WEC integration is fixed at0.02s; surface output
-uses uniform timestamps targeting0.08s (751 frames for the selected60s case).
-Future native integration may be adaptive; output cadence is a separate choice.
+Directory defaults to cwd; filenames are fixed. Native default fails clearly;
+independent native coupled dynamics remain excluded. No solve/render streaming
+or pipelining feature is authorized. Current WEC integration dt=.02s; surface
+output targets .08s (3001 motion samples/751 frames for60s, endpoints included).
+Future integration may be adaptive independently of saved output cadence.
 
-The current case preserves the accepted24ft/9ft/2500kg open V-hull and stronger
-measured46086/2023-12-23T00:40Z realization, seed42. Public generate-sea has now
-reproduced EVERY stored sea array bit-exactly and created canonical sea.log.
-No complete result.npz/video.mp4 has yet been accepted or published.
+Preserve the accepted24ft/9ft/2500kg physical boat and measured stronger sea
+ndbc-46086-20231223T0040Z, seed42. Actual generate-sea replay reproduced EVERY
+stored sea array bit-exactly and generated canonical sea.log.
 
-## Current implementation and evidence
+Public NPZ files have numeric arrays only, exact keys, allow_pickle=False, no
+metadata/version/solver marker or incident-elevation cache. Boat is an uncapped
+convex physical triangular hull with exactly one inferred opening. Internal caps
+carry no mass/pressure and never define a waterline. Result includes its physical
+hull snapshot/CG, absolute poses and mandatory packed total-water geometry with
+independent surface times and frame-local connectivity/offsets.
 
-Latest pushed Topwater checkpoint:69bb63d (shared waterline, readable logs and approved uncut contract).
-Prior de67fc7 fixes the renderer projection predicate;
-e74a94b adds logs, warning triage and guarded
-triangulation repair. Those checkpoints are reviewed and verified as recorded below.
-Maintained WEC-Sim fork9952634f6f2e2746a1626484e27c3003d1e1d5a9 is pushed and
-pinned; its two newest fixes close sidecar handles and print paths literally.
+LATEST APPROVED GEOMETRY: preserve the producer water mesh; DO NOT cut/remesh
+triangles on export. Hull-interior portions are invalid fluid and implicitly
+excluded. A separate shared surface_geometry routine computes the physical
+hull/total-surface intersection. WEC output remains incident+diffraction+radiation
+from its already-computed motion; physics/forcing/motion are unchanged. The
+format also permits the native solver's own evolving mesh without a linear
+field decomposition. Current top-down render has its own documented limits.
 
-- Current full workflow/logging/geometry suite:228 passed, one optional libigl
-  skip,14.98s; artifacts/workflow/logging-geometry-tests-attempt1.
-- Real BEMIO lifecycle probe passes: original KH leak reproduced; two imports
-  retain32 numeric arrays exactly each; malformed sidecars leak no handles;
-  15 Windows fixture files rename/delete. bemio-handles-attempt3.
-- Display-only MATLAB probe passes three Windows/percent/UNC paths with zero
-  warnings; no wave/body setup or new engine. wave-display-check-attempt3.
-- Public canonical sea generation/log replay passes with unchanged numeric
-  input. canonical-sea-log-attempt1.
+Delta metrics integrate exact represented-P1 moments over exterior support using
+temporary integration polygons, not an exported contact mesh. One-beam selection
+uses ORIGINAL source-triangle centroid distance to the independent waterline;
+this is an explicitly discrete band approximation. Exact3D wet-set diagnostics,
+startup gates and physical opening/cap checks remain. Native nonlinear output
+must not inherit fixed-mean linear applicability criteria indiscriminately.
+See docs/npz-format.md, cli/*.md and experts/shared-contract.md.
 
-These earlier jobs are terminal, hashes/processes verified and leases released.
-The all751-frame cached geometry sweep now PASSES in1711.761s, with unchanged
-fields/body/source identities and maximum contact residual2.665e-15m.
-Evidence: artifacts/workflow/cached-geometry-sweep-attempt1/geometry/report.json.
-This is geometry/contact regression evidence, not a complete public solve.
+## Latest verified checkpoint
 
-The renderer's whole-patch area cutoff was replaced by a local signedXYarea
-predicate64eps times local projected edge lengths, with explicit nonfinite
-rejection. All overlap/topology/boundary/coverage guards remain. Independent
-researcher APPROVES source/math. The full renderer/visualization regressions
-now PASS31tests in1.79s, including tiny valid cut faces, invalid controls and
-real two-frame encoding. Evidence: renderer-projection-tests-attempt1.
-Both jobs are terminal; frozen hashes and exact process absence verified,
-separate idle readbacks completed and central leases released.
+Pushed Topwater **537cf08**, prior69bb63d/de67fc7. Runtime source SHA:
+_capytaine_surface.py2858b847efea11a97c50bd9d12c744bf3069723e32e5fa401309c4e2ee0f352a.
 
-## Remaining numerical work
+- Complete workflow checks:270PASS/1optional libigl skip,14.11s;
+  artifacts/workflow/uncut-workflow-tests-attempt2.
+- Shared contact+geometry:34PASS; logical log/CLI/render integration59PASS,
+  including actual two-frame encode/decode. Rich Windows flush fragmentation is
+  fixed, console bytes/handler configuration preserved. Video summary timings
+  are rounded; source and encoded durations remain distinct.
+- Three-frame replay0/277/600: original world-grid vertices/connectivity BITEXACT,
+  retained arrays unchanged, physics/remesh calls forbidden. Full diagnostics
+  took4.2946s; opening+waterline alone.1436s. These are sparse smoke metrics,
+  NOT canonical60s disturbance statistics or proof of real-time throughput.
+- Paired diagnostic shortcuts:3.902s before/2.509s after (1.55x), packed output
+  BITEXACT, wet-value differenceZERO, metrics within1e-12;
+  artifacts/workflow/uncut-diagnostics-compare-attempt1. Independent source review
+  approved gates/ownership/area rules. All those jobs terminal/frozen/process
+  verified, leases released before current public run.
 
-Actual canonical attempt2 terminated exit2 after1397.677s. Native integration,
-startup checks and complete radiation/diffraction synthesis finished. Export
-failed at frame277/time22.16s with one roundoff-degenerate triangle, area
-3.04945e-20m2. This is a geometry construction defect, not demonstrated flooding.
-Attempt1 had masked its primary error with a leaked KH.dat cleanup failure;
-that independent importer/cleanup bug is fixed and verified.
+No author is currently editing runtime. Root owns integration/execution. Experts
+may research/write non-runtime docs only. Native physics, forcing changes and
+new numerical campaigns remain excluded while the public run completes.
 
-The completed field and failing frame are retained privately at:
+## Correctness issues and parallel research
 
-`C:/Users/alex/AppData/Local/Temp/topwater-wecsim-mt5icmiq/surface-recovery/`
+User explicitly requested independent issues and WEC-Sim-only first-line scope:
+#31 causal radiation-surface phase; #32 reference mesh/irregular frequencies;
+#33 reconstructed field/prepared-body loads; #34 fixed-mean linear applicability.
+All four created/updated and first-line readback verified. #30 now links to them
+rather than owning their investigation checklists. Issue writes were explicitly
+authorized; no upstream messages/PRs/merges were authorized.
 
-completed-field.npz SHA256:
-`66039a8f78cfb8f9dcdec5d565e2197e9a06b01361521b19e0d5d46279613549`.
-The original numerical data and motion must remain immutable.
+Numerical researcher completed READ-ONLY #31 investigation:
+experts/numerical_methods_researcher/causal-phase-issue31-investigation-2026-10-25.md.
+No sign/normalization fault was proved. With the same band/quadrature, cosine
+inversion folds the raw negative-lag part into positive lags. Sharp bandlimits
+can produce negative ringing even for causal data; the77mm future contribution
+is not proof of noncausal BEM physics. Proposed later discriminator: ONE Heave
+near/far saved-transfer check plus known-causal analytic control, separating band
+from lag-window effects. No calculation, import, runtime edit or job was run.
+This proposal is NOT a new numerical allocation during the current lease.
 
-An export-only internal-diagonal flip repairs the near-collinear polygon while
-preserving all vertices, contact edges, orientation, area and existing validation
-tolerances. Shared triangulation/physical gates are unchanged. Independent
-Capytaine review approves it. Saved frames276/277/278 pass in8.423s; frame277
-inputs/vertices/boundary chains are bit-identical, with only two faces changed.
-Evidence: surface-frame-verification-attempt1/frames/report.json.
+Keep provisional qualifications: complex near-field recovery not passed;
+42.7mm max/12.5mm RMS signed-lag-versus-causal sensitivity is NOT a true-error
+bound. Mesh/irregular-frequency risk, field/load interpolation discrepancy and
+restoring/wet-set warnings remain unresolved. Successful files/tests do not
+certify physical accuracy. Final actual logs still need triage after delivery.
 
-Next, under a fresh root-owned serial lease:
+## WEC-Sim fork strategy request
 
-1. Cached geometry and renderer regression checks are complete (above).
-2. Complete the public solve/render workflow with the new logs; verify full
-   geometry, total-minus-incident metrics, warning triage and all decoded video
-   frames/stills. Include logs in the canonical case; no solver intermediates.
-3. Track result/video with Git LFS, commit/push baseline/fluid-body, update own
-   issue30 and refresh this handoff after acceptance. Goal remains active.
+User was not aware how fork changes had progressed. Root disclosed five commits
+(six corrections) beyond official v7.1.0: forcing history/directional sum/once-only
+dispatch, File Solid inertia mapping, BEMIO handles, literal path display.
+The forcing/inertia categories are consequential model changes with SELECTED
+path evidence, not universal WEC-Sim validation. Resource/display fixes do not
+change numerical parsing or dynamics. Upstream remains untouched.
 
-## Recent geometry performance work (historical priority)
+Current clean pinned fork: amosborne/WEC-Sim, topwater/reference-v7.1.0,
+9952634f6f2e2746a1626484e27c3003d1e1d5a9; basea23d299(v7.1.0).
+Pin/source MUST stay frozen for the live run. Causal reconstruction is in
+Topwater's adapter, not these fork changes.
 
-At that checkpoint the user explicitly chose STOP AND FIX THE BOTTLENECK after learning the
-cached751-frame geometry sweep took28.5min (~2.3s/frame). This changes immediate
-priority, not the full workflow acceptance goal. Do not resume a long public
-solve/render until the geometry bottleneck is measured and addressed.
+User now explicitly asks WEC-Sim expert to define a maintenance strategy and
+assess possible rework. /root/wecsim_surface_examples completed a bounded
+read-only assignment; owns docs/wecsim-fork-strategy.md (and concise KB state).
+Classify every logical patch as generic upstream candidate/Topwater integration/
+uncertain; check CURRENT upstream branch/release/issues/PRs; propose independent
+repros, minimal submission patches and tracking/rebase policy. Pay attention to
+R2020b->R2025b SLX migration noise/compatibility and precomputed-force assumptions.
+NO fetch/checkout/rebase/cherry-pick/fork edits, numerical work or upstream writes.
+Do not infer permission to submit PRs or rework the frozen fork. Plan/review first.
 
-Root intentionally stopped canonical-pipeline-attempt3 after320.329s during
-surface field work. It had completed native body integration and radiation
-transfers, not full total geometry. Exact Python producer24608 was verified and
-stopped; full owned tree18776/16288/39956/23564/29220/22540/24608 independently
-proved absent. Wrapper/runner terminal4294967295, frozen hashes match. Engine
-29796/launcher40036 remain live. Lease released after independent terminal/idle
-checks. Session1410 is TERMINAL; do not re-poll or restart it.
-No result/video was published. The incomplete result.log has no END, as expected
-for forced process termination. Retain failed job/temp evidence; never invent
-successful finalization or accept that log as a successful run.
+## Current fork process and next actions
 
-Latest user APPROVED SIMPLER EXPORT: preserve the same total incident +
-diffraction + radiation field, DO NOT cut/remesh its water triangles. Interior
-portions are invalid fluid, implicitly excluded by the posed hull. Compute the
-waterline with a separate shared intersection routine. Public keys unchanged;
-native solver may supply its own evolvingmesh without linear decomposition.
-This supersedes the earlier conforming contact-hole export requirement.
+User requested unwind/rebuild through own-fork issues, focused branches and
+internal PRs. Issues-first is COMPLETE: amosborne/WEC-Sim issues1-5 cover history,
+aggregation/dispatch, inertia/SLX, handles and literal display. Expert enabled
+ONLY that fork's issues and verified every body. No topic branches, PRs, source
+edits or upstream writes. Root CREATED clean topwater/reference at official
+latest releasev7.1.0/a23d299. This new branch contains NO local fixes yet.
+Future internal PR base repo MUST be amosborne/WEC-Sim, branch topwater/reference.
 
-First3-frame cProfile PASS, geometry-profile-before-attempt1/profile/report.json;
-terminal/frozen checks complete, lease released. Export dominated separate
-contact checks (.04-.09s/frame instrumented). Hotspots: topology validation,
-_area_vector/cross/roll and triangulation. Profile overhead included.
-A source-reviewed optimization of _surface_export topology/area helpers exists
-but is untested; its paired benchmark was NOT run because the user removed the
-export clipping requirement. Do not run an obsolete full clipping sweep.
+The user explicitly says DO NOT UPDATE TOPWATER YET. Keep9952634/current local
+checkout. Ultimately delete old topwater/reference-v7.1.0, but only after the
+new reference is reviewed/tested, Topwater repinned and old exact SHA retained
+under an immutable archive tag. Do not leave the old branch as a second active
+baseline. Release upgrades require a good reason and separately tested candidate;
+no automatic main/dev movement. No upstream issue or PR without specific explicit
+user permission. Current strategy: docs/wecsim-fork-strategy.md, independently
+reviewed; generic candidates are NOT automatically submission-ready.
 
-Active source owners (no agent numerical work):
-- /root/workflow_contract: shared surface_geometry.py, extracting existing
-  physical waterline routine and independent rim/capchecks; legacy visualization
-  helper may reexport. No remeshing. Own correspondinggeometrytests.
-- /root/surface_reconstruction: _capytaine_surface.py and its tests, uncutgrid
-  export, exterior-only delta metrics and unchanged wetset/startupdiagnostics.
-  Logging edits are handed off and must be preserved. Independent researcher
-  approves temporary polygon P1integration (no exportedmesh), with common-plane
-  exterior classification, disjoint exteriorfragments and sourceP1 incident
-  interpolation. Onebeam uses explicitly SOURCEtrianglecentroid distance to
-  actual independenttotalwaterline; this is a changed discreteband convention.
-- Root: Result/NPZ/sharedcontract/CLI/renderdocs and integration, eventual tests.
-  Coordination correction: after the Cap proposal completed, send_message did
-  not resume the agent. Root discovered this idle state and explicitly restarted
-  /root/surface_reconstruction with followup_task; list_agents confirms RUNNING.
-  Do not repeat that wait mistake: followup_task triggers idle/completed tasks,
-  send_message only queues context. No numericaljob is live at this checkpoint.
-  Short3frame fullpostprocess timing+bitexact originalgrid identities before any
-  long public run. Keep all field/motion/forcing arrays unchanged.
+1. Finish committing/pushing the eight canonical files (result/video via LFS),
+   plot/publisher code, updated docs/triage/strategy/issue31 note and handoff.
+   No physical rerun is needed for the derived PNG. Update authorized issue30.
+2. Keep issue31's next stored-data/analytic-control experiment queued, not
+   automatically allocated; user prioritizes fork organization and working delivery.
+3. Continue fork rebuild only through bounded expert assignments and reviewed
+   own-fork issues/PRs. User's immediate steps were issues-first and clean reference
+   branch; those are done. Never silently replay coupled conditional changes,
+   switch the held Topwater pin, merge without authorization/checks, or contact
+   upstream. The required future branch retirement remains outstanding.
+4. The complete initial workflow has implementation evidence; the broader active
+   goal includes the newly requested fork reorganization. Do not declare that
+   future reorganization complete just because the example now runs.
 
-Independent user-requested logreview: docs/cli/log-review-2026-10-25.md.
-Logging capture correction (command_log.py/tests/logging.md) is source-reviewed
-and PASS17tests in0.89s, actualRichHandler plus fragmentedflush/CRLF controls;
-logging-line-buffer-tests-attempt1 terminal/frozen/process verified and released.
-It buffers until realnewline, drains finaltail at exit, preserves consolebytes
-and handlerconfiguration. Rendered Rich continuationseverity uses documented
-columnheuristic; no interceptionhooks or broadrewrite.
-WEC logging-only author froze stage/progress/fieldloadwarning changes in
-wecsim_backend.py and _capytaine_surface.py; no tests yet. Cap owns latter now.
-Root's concise video/timing summary and CLI/render integration now PASS59tests
-in2.59s, logging-render-integration-attempt2 (real2frame video included).
-Attempt1 exposed an outdated renderer testdouble returning only complete=True;
-it now returns the actual reportshape, retaining all argument/result assertions.
-No productionfallback or weakened log checks. Both attempts terminal/frozen
-processverified/leasesreleased. Sharedcontact+historicalgeometry tests PASS34
-in.50s, uncut-contact-tests-attempt1, likewise terminal/released.
+Use artifacts/workflow/claim_check.ps1, run_check.py and finish_check.ps1 for
+serial jobs. Claim, separate readback, run, verify terminal/frozen/process state,
+record idle under lease, separate readback, then release lease as FINAL action.
+PowerShell scriptblock invocation avoids local script execution-policy issues.
+Native DLL/FFmpeg/MATLAB jobs and authoritative CIM need unsandboxed execution.
 
-Own issue30 records the stop/performance priority. Refresh for this new approved
-uncut contract and next validated checkpoint. Full canonical solve/render/log
-triage/LFS publication remain pending. No streaming/pipelining or native dynamics.
-Keep MATLAB minimized/headless. Ledger is idle/no lease after last logtests;
-reconcile actualstate before next numericalclaim.
-
-## Latest uncut producer verification and next work
-
-Uncut producer source/method independently approved after one coplanar-support
-partition bug was corrected by its author. Complete workflow suite PASS255,
-one optional libigl skip,13.48s: uncut-workflow-tests-attempt1. All source/inputs
-frozen, exact terminal processes verified, lease released.
-
-Three retained frames0/277/600 full new postprocess PASS4.2946s; BOTH original
-worldgrid vertices and connectivity BITEXACT everyframe; retained input/motion/
-field arrays unchanged, with physics/reconstruction/remeshing calls forbidden.
-Evidence: uncut-surface-replay-attempt1/replay/report.json. Its3frame delta/wet
-summaries are SMOKE evidence, not canonical60s statistics. Geometry opening+
-waterline .1436s TOTAL. Diagnostic costs dominate: delta1.259s, wetset2.443s.
-This is not yet the desired complete throughput improvement.
-
-Followup cProfile PASS (instrumented) inuncut-diagnostics-profile-attempt1,
-all identities/terminal/release verified. Hotspots:42367 _clip_area_polygon calls
-1.722s;20548 _polygon_area calls1.564s; waterline-distance .774s; graphinit .661s.
-Root explicitly RESUMED /root/surface_reconstruction with followup_task to
-optimize diagnostics in _capytaine_surface.py/tests only, preserving exactP1
-moments, exact3Dwetset, ownership/coverage gates and10%warningpolicy. No newdeps,
-JIT, cadence reduction or relaxed quadrature. Preserve modulebaseline before
-editing. Root owns next paired3frame/harness +serialtests; no agent numerics.
-That focused optimization passed paired replay; further optimization stopped at the latest user request. Actual public attempt4 above is now running.
-
-## Physical and file requirements
-
-Public NPZ files contain numeric arrays only, no pickle, generic metadata or
-solver marker. Boat is an uncapped convex physical hull with one inferred
-opening. Internal caps carry no mass/pressure. Result contains a complete physical
-hull snapshot, CG, absolute poses and mandatory packed variable-topology total
-water geometry with independent surface times. Render reads only result.npz.
-See [the contract](npz-format.md), [mesh review](mesh-tooling.md) and each
-[command page](cli/solve.md).
-
-WEC total surface is incident+diffraction+radiation from its mean-hull model and
-already computed native modal velocities. Reconstruction/replay never reintegrates
-or changes motion. Selected provisional policy is cutoff24rad/s, spacing at most
-.025rad/s, full-history causal projection and zero direct terms. Exact exterior
-trace continuation handles vacated mean-interior targets; no interior Green
-function evaluation or nonlinear contact accuracy is claimed.
-
-Independent [method review](experts/numerical_methods_researcher/surface-reconstruction-review-2026-10-25.md)
-accepts that selected numerical approximation. Its material signed-lag-versus-
-causal sensitivity is42.7mm maximum/12.5mm RMS at tested points, not a true error
-bound. Tiny frequency-grid sensitivity does not establish physical accuracy.
-No mesh/time convergence or full-complex near-field equivalence is claimed.
-
-Fatal errors prevent complete supported output and preserve previous data;
-latest-attempt logs are replaced even on failure. WEC fixed-mean restoring and
-represented wet-set departures warn at the agreed10% engineering threshold.
-The initial represented total-elevation gate is separate from full-hull incident
-eta/velocity bounds; no total disturbed-fluid velocity bound is established.
-See [logging](cli/logging.md) and [actual warning triage](cli/warning-triage.md).
-Expected warnings are not automatically harmless or accuracy-qualified.
-
-## Execution and integration
-
-Use one numerical owner, frozen actual source/input/dependency identities and the
-central artifacts/numerical.lease plus docs/experts/execution-state.json. Claim,
-separately verify, run, verify exact terminal identity, record idle under lease,
-separately read back and release the lease as the final action. UTF8-sig readers
-handle the ledger BOM. Source writers never run numerical work independently.
-
-Existing shared MATLAB CAPYTAINE_REFERENCE uses engine29796/launcher40036,
-started2026-10-25T17:20:15Z. These are checkpoint identities, not liveness proof.
-The command window9245660 was rechecked MINIMIZED during attempt2. Keep it
-minimized/headless; never open model/figure windows or quit the shared engine.
-Owned KH descriptor recovery completed; importer probes left no open handles.
-
-Active project branch is baseline/fluid-body. Preserve other worktrees. The
-maintained fork branch is topwater/reference-v7.1.0. Never push main, merge or
-contact upstream without separate authorization. Own issue30 updates and these
-development checkpoints are authorized by the user/project instructions.
-
-## Historical evidence
-
-Earlier renderer/reference checkpoints, failed studies and their original
-policies remain preserved in their files and the immutable
-[5ef862a handoff](https://github.com/amosborne/topwater/blob/5ef862a/docs/checkpoint-handoff.md).
-[Historical WEC workflows](../reference/wecsim/README.md) explicitly identify the
-retired scene-cache/two-path render CLI. Historical queued work never authorizes
-new work or overrides the current scope above.
+Historical failures and original policies remain in their evidence and Git.
+Attempt3 was intentionally stopped by user after320.329s; incomplete result.log
+has no END. Attempt2 retained the complete immutable field cache at
+C:/Users/alex/AppData/Local/Temp/topwater-wecsim-mt5icmiq/surface-recovery/completed-field.npz,
+SHA66039a8f78cfb8f9dcdec5d565e2197e9a06b01361521b19e0d5d46279613549.
+Do not alter/delete it. Earlier clipped export passed751 frames in28.5min but is
+superseded by the uncut contract; do not rerun it. Prior handoff chronology is
+preserved at commit537cf08 and older immutable checkpoints; no study/policy was
+deleted by condensing this handoff.

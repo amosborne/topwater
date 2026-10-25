@@ -192,6 +192,7 @@ class CommandLog:
               and len(line) > column and not line[column].isspace()):
             level = tee.continuation_level
         elif (_WARNING.search(line) or re.search(r'\b(?:WARNING|WARN)\b', line)
+              or re.search(r':\d+:\s+(?:[A-Za-z]+Warning|Warning):', line)
               or (line.lstrip().startswith('Capytaine:') and re.search(r'\bwarning\b', line, re.IGNORECASE))):
             level = 'WARNING'
             tee.continuation_level = tee.continuation_column = None

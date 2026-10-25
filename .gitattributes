@@ -1,2 +1,4 @@
 examples/**/result.npz filter=lfs diff=lfs merge=lfs -text
 examples/**/video.mp4 filter=lfs diff=lfs merge=lfs -text
+# Generated command logs preserve the producer's console padding verbatim.
+examples/**/*.log -whitespace

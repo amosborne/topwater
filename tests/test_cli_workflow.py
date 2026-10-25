@@ -48,9 +48,11 @@ def test_generation_failure_preserves_existing_sea(tmp_path,capsys):
 def test_unavailable_native_or_bad_duration_never_replaces_result(tmp_path,duration,capsys):
     (tmp_path/'result.npz').write_bytes(b'previous result')
     (tmp_path/'video.mp4').write_bytes(b'previous video')
+    (tmp_path/'result.png').write_bytes(b'previous plot')
     assert main(['solve',str(tmp_path),duration])==2
     assert (tmp_path/'result.npz').read_bytes()==b'previous result'
     assert (tmp_path/'video.mp4').read_bytes()==b'previous video'
+    assert (tmp_path/'result.png').read_bytes()==b'previous plot'
     assert capsys.readouterr().err.startswith('topwater solve:')
     assert 'status=failed' in (tmp_path/'result.log').read_text()
     assert 'output_published=false' in (tmp_path/'result.log').read_text()
@@ -75,6 +77,28 @@ def test_corrupt_result_is_clear_fatal_and_preserves_video(tmp_path,capsys):
     assert main(['render',str(tmp_path)])==2
     assert 'invalid or truncated Result NPZ' in capsys.readouterr().err
     assert (tmp_path/'video.mp4').read_bytes()==b'previous video'
+
+
+def test_wecsim_cli_publishes_result_and_motion_plot(tmp_path, monkeypatch):
+    from topwater import wecsim_backend
+    from .test_workflow_data import boat, result
+    from topwater.workflow_data import Result
+    solved = result()
+    boat().save(tmp_path/'boat.npz')
+    Sea(np.array([]), np.array([]), np.array([]), np.array([])).save(tmp_path/'sea.npz')
+    calls = []
+    def ready_motion(body, waves, duration):
+        calls.append(duration)
+        return solved
+    monkeypatch.setattr(wecsim_backend, 'solve', ready_motion)
+    assert main(['solve', str(tmp_path), '1', '--solver=wecsim']) == 0
+    assert calls == [1.]
+    np.testing.assert_array_equal(Result.load(tmp_path/'result.npz').position_m, solved.position_m)
+    assert (tmp_path/'result.png').read_bytes().startswith(b'\x89PNG\r\n\x1a\n')
+    log = (tmp_path/'result.log').read_text()
+    assert 'PUBLISHED ' + str(tmp_path/'result.npz') in log
+    assert 'PUBLISHED ' + str(tmp_path/'result.png') in log
+    assert 'END status=success' in log
 
 
 def test_real_render_cli_records_validated_publication_in_video_log(tmp_path):

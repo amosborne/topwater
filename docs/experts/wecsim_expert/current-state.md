@@ -4,6 +4,20 @@ Updated2026-10-25. Currentauthority: [handoff](../../checkpoint-handoff.md),
 [physicalcontract](../shared-contract.md), [serialprocedure](../coordination.md).
 No active WECnumerical allocation or automaticfollowup. ROOT owns integration.
 
+Issues-first work is EXECUTED: enabled issues only in `amosborne/WEC-Sim`,
+checked duplicates, and created/read-back verified fork issues
+[#1](https://github.com/amosborne/WEC-Sim/issues/1),
+[#2](https://github.com/amosborne/WEC-Sim/issues/2),
+[#3](https://github.com/amosborne/WEC-Sim/issues/3),
+[#4](https://github.com/amosborne/WEC-Sim/issues/4), and
+[#5](https://github.com/amosborne/WEC-Sim/issues/5).
+New combined branch `topwater/reference` is clean at release base
+`a23d2993807410fe78cc63546c1ba9d81912024f`; old branch/runtime pin `9952634`
+remains unchanged. Topwater main's pin is on USER HOLD. The old branch is to be
+deleted only after its reviewed/tested replacement, exact repin and immutable
+archive tag. [Strategy and scope](../../wecsim-fork-strategy.md). No new fork
+code/topic branch/PR or upstream write is authorized by this KB update.
+
 ## Generic CLI integration checkpoint
 
 The cosmetic `waveClass/listInfo` path fix passed a real three-path display
@@ -11,9 +25,22 @@ probe: verbatim Windows/percent/UNC paths, zero warnings, no wave setup/body run
 or new engine. Helper style is clean; 113 upstream findings are unchanged.
 Fork `9952634f6f2e2746a1626484e27c3003d1e1d5a9` is pushed and pinned. No wave
 physics changes. See [verified evidence](wave-path-display-2026-10-25.md).
-The latest integration suite passed 228 tests/one optional skip in 14.98 s;
-canonical public sea generation produced its log and bit-exact sea arrays.
-Full-case acceptance remains pending geometry sweep and public solve/render.
+Canonical public attempt 4 solve AND independent render succeeded: 3001 motion
+samples and all 751 video frames decoded. Solve wall time 2393.743 s; render
+226.932 s. Frozen identities and exact process terminal status were verified by
+CIM; lease released. See
+[run evidence](../../../artifacts/workflow/canonical-pipeline-attempt4/).
+The working end-to-end result remains a provisional linear reference, not a
+physics/mesh/time-accuracy qualification.
+
+Current outputs are [result.npz](../../../examples/simple-boat/result.npz),
+[video.mp4](../../../examples/simple-boat/video.mp4) and
+[result.png](../../../examples/simple-boat/result.png), with command logs beside
+them. PNG was produced separately from completed Result data without resimulation.
+Full suite passed 286 tests/one optional skip in 11.23 s; latest shared-Y plot
+style checks passed 44 tests in 5.07 s, with actual PNG/native-q difference
+2.63e-14. Canonical sea generation remains array-bit-exact. Root's artifact
+commit/checkpoint is pending; this note does not authorize another run.
 
 The first full canonical CLI attempt ran and failed during surface export after
 1989.285 s; no result/video was published. A leaked BEMIO KH probe handle caused
@@ -51,9 +78,12 @@ The coordinator accepted the selected-case provisional total-surface policy:
 24 rad/s radiation cutoff, spacing <=0.025 rad/s, full native history, zero direct
 terms, exact packet sideband diffraction, and explicit exterior-trace continuation.
 The Capytaine production API matches the backend's four packed surface arrays.
-Source now includes the represented-total wet-set 10% warning and initial local
-total-elevation check. Full CLI/body/surface acceptance has not passed; full complex
-near-field recovery and total disturbed-fluid velocity bounds remain unqualified.
+Source includes the represented-total wet-set 10% warning and initial local
+total-elevation check. Current output preserves the unremeshed full field grid;
+hull-interior fluid is implicitly invalid, with a separate physical-waterline
+routine and temporary exterior P1 integration polygons for diagnostics.
+Public workflow completion passed; full-complex near-field recovery and total
+disturbed-fluid velocity bounds remain unqualified.
 The 42.7 mm maximum/12.5 mm RMS signed-lag comparison is a numerical diagnostic,
 not an error bound. See [method review](../numerical_methods_researcher/surface-reconstruction-review-2026-10-25.md)
 and [solve contract](../../cli/solve.md). The allocated test suite passed actual
@@ -61,7 +91,7 @@ example geometry/M/K/CG identity against the frozen selected 17-panel case.
 The old incident-only surface is never promoted to total surface.
 Native Topwater dynamics remain outside this assignment.
 
-## Current completed result
+## Historical completed incident-field video
 
 [Full60s topdown video](../../../artifacts/reference/stronger-buoy-20261024/matplotlib-full60-attempt1.mp4)
 SHA15510982f6cef3a246f1129222e0525052215a06cfa2e0073af3c53bf803f23b,
@@ -75,7 +105,7 @@ no96m expansion or sea/physics changes. Reusablefullscene884667cb (~104MBwater).
 Prep40.657s/CLIwall148.792s/libraryrender145.75s/wholejob197.911s. Generic2Dstyle
 and renderer unchanged duringfulljob; no bespokeWECdrawing.
 
-Publicworkflow `uv run topwater render INPUT.npz OUTPUT.mp4`: two requiredpaths,
+Historical workflow `uv run topwater render INPUT.npz OUTPUT.mp4`: two requiredpaths,
 wholeNPZ/fixed800/savedcadence/MP4only. GenericMatplotliblibrary/CLI owned by
 visualization; WECownsdataadapter/nativeinterface. Active3Drender-only code was
 USERapproveddeleted afterimportaudit; physical3Dgeometry/hydro/WECfork untouched.

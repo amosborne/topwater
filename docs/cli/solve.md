@@ -1,7 +1,7 @@
 # `topwater solve`
 
-Solve a boat/sea example and replace its complete `result.npz` only after the
-motion and total free-surface output have passed validation.
+Solve a boat/sea example and write its complete `result.npz` and six-DOF
+motion plot `result.png` after motion and total free-surface validation.
 
 ```powershell
 uv run topwater solve [DIRECTORY] DURATION_SECONDS [--solver=native|wecsim]
@@ -10,8 +10,9 @@ uv run topwater solve examples/simple-boat 60 --solver=wecsim
 
 DIRECTORY defaults to the current directory. The input/output filenames are
 fixed. Production surface reconstruction is integrated under the provisional
-linear-reference policy below. The complete CLI/body/surface acceptance run
-has not yet passed; this page does not claim otherwise.
+linear-reference policy below. The selected 60-second case has completed the
+public solve/render workflow; that establishes implementation, not physical
+accuracy or general qualification.
 
 The native backend is the intended default. Native coupled dynamics are not yet
 available; omitting `--solver=wecsim` must report that limitation without silently
@@ -34,9 +35,18 @@ the input files.
 ## Outputs and replacement
 
 `result.npz` contains computed boat motion and total water-air surface geometry.
-It is a visualization/comparison result, not a restart file. The caller publishes
-the complete validated file atomically. A failure preserves an existing result.
-The adapter itself never writes a partial public result.
+It is a visualization/comparison result, not a restart file.
+
+`result.png` contains the complete six motion histories: surge, sway and heave
+in metres, with roll, pitch and yaw perturbations in degrees. It is derived from
+all saved motion samples, including startup; plotting never recomputes physics.
+The axes and angle conventions are described below.
+
+Both files are prepared privately before publication. Individual replacements
+are atomic; handled failures restore the previous pair. If the operating system
+also blocks rollback, the error identifies retained recovery copies. Abrupt
+process termination between replacements cannot guarantee pair consistency;
+an invocation without a successful log END is incomplete.
 
 `result.log` records the latest invocation, stages, backend output, warnings,
 fatal errors, timings and publication status. It is replaced when solving starts,
@@ -56,6 +66,20 @@ The original stage error is preserved and the recovery location is printed.
 If temporary-file cleanup also fails, that secondary failure is reported without
 replacing the original error. A cleanup failure after otherwise successful work
 is fatal and prevents publication.
+
+The motion plot uses a fixed inertial frame: the initial bow projected
+horizontally, port, and world up. Translations are CG displacement from the
+initial position in those axes. Rotations are initial-attitude departures,
+expressed in that same frame as unwrapped extrinsic XYZ Euler angles; initial
+trim is removed. All native motion timestamps are used, with no smoothing.
+The PNG is 2160 by 1170 pixels (12 by 6.5 inches at 180 dpi).
+Translations share one symmetric Y range in metres; rotations share a separate
+symmetric Y range in degrees. Each range includes all three histories in its row.
+
+An initial bow with no resolved horizontal projection is a fatal plot limitation
+before either new output is published. Euler gimbal lock emits a presentation
+warning; the saved quaternions remain authoritative. Plot encoding/filesystem
+failures are fatal, with the previous output pair preserved when rollback works.
 
 ## WEC-Sim dependencies
 

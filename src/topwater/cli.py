@@ -57,15 +57,16 @@ def main(argv=None):
                                        'use --solver=wecsim with its documented dependencies')
                 from .workflow_data import Boat, Sea
                 from .wecsim_backend import solve
+                from .solve_outputs import save_solve_outputs
                 boat = Boat.load(args.directory / 'boat.npz')
                 sea = Sea.load(args.directory / 'sea.npz')
                 log.event('INFO', 'STAGE solve motion and total surface')
                 result = solve(boat, sea, args.duration)
-                destination = args.directory / 'result.npz'
-                log.event('INFO', 'STAGE publish validated result')
-                result.save(destination, overwrite=True)
+                log.event('INFO', 'STAGE prepare and publish result archive and six-DOF plot')
+                destination, plot = save_solve_outputs(result, args.directory)
                 log.published(destination)
-                print(f'Wrote {destination}; existing video.mp4 was left unchanged')
+                log.published(plot)
+                print(f'Wrote {destination} and {plot}; existing video.mp4 was left unchanged')
             else:
                 from .workflow_data import Result
                 from .result_render import render_result

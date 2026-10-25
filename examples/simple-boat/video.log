@@ -1,0 +1,8 @@
+2026-10-25T22:24:14.972Z INFO render BEGIN directory=examples\simple-boat
+2026-10-25T22:24:15.502Z INFO render STAGE load self-contained result
+2026-10-25T22:24:42.172Z INFO render STAGE render and verify complete video
+2026-10-25T22:27:59.131Z INFO render PUBLISHED examples\simple-boat\video.mp4
+2026-10-25T22:27:59.131Z INFO render VIDEO frames=751 fps=12.5 size=800x800 source_end_s=60.000 encoded_duration_s=60.080 verified=true
+2026-10-25T22:27:59.131Z INFO render TIMING render preparation_s=0.110 setup_s=1.500 geometry_s=100.081 draw_s=88.867 encoder_start_s=0.109 encoder_send_s=0.833 encoder_close_s=2.375 verification_s=3.079 elapsed_s=196.954
+2026-10-25T22:27:59.131Z INFO render Wrote examples\simple-boat\video.mp4
+2026-10-25T22:27:59.141Z INFO render END status=success elapsed_s=224.172000 output_published=true warnings=0

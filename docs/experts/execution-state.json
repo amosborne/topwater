@@ -1,31 +1,21 @@
-{
-  "state": "running",
-  "execution_owner": "/root",
-  "assignment": "Actualpublic60s WEC-Sim solve+independent render with uncut TOTALfield, logical logs, completedelta/wetset metrics and fullvideodecode",
-  "claimed_at": "2026-10-25T21:44:06.4190721Z",
-  "manifest": "C:\\Users\\alex\\topwater\\artifacts\\workflow\\canonical-pipeline-attempt4\\manifest.json",
-  "active_numerical_job": {
-    "producer_pid": 26560,
-    "owner_pid": 14648,
-    "started_at": "2026-10-25T21:44:18.981322+00:00",
-    "host": "OsborneEE",
-    "command": [
-      "C:\\Users\\alex\\topwater\\.venv\\Scripts\\python.exe",
-      "artifacts/workflow/run_canonical_pipeline.py"
-    ],
-    "output": "C:\\Users\\alex\\topwater\\artifacts\\workflow\\canonical-pipeline-attempt4\\output.log"
-  },
-  "last_terminal_evidence": {
-    "job": "Final publicworkflow regression after reviewed exactdiagnostic speedshortcuts; no furtheroptimization",
-    "owner": "/root",
-    "producer_pid": 15960,
-    "owner_launcher_pid": 34524,
-    "started_at": "2026-10-25T21:42:42.427351+00:00",
-    "exit_code": 0,
-    "frozen_inputs_match": true,
-    "complete": true,
-    "manifest": "C:\\Users\\alex\\topwater\\artifacts\\workflow\\uncut-workflow-tests-attempt2\\manifest.json",
-    "output": "C:\\Users\\alex\\topwater\\artifacts\\workflow\\uncut-workflow-tests-attempt2\\output.log"
-  },
-  "note": "Claimed by coordinator; independent readback required before execution."
+﻿{
+    "state":  "idle",
+    "execution_owner":  null,
+    "assignment":  null,
+    "claimed_at":  null,
+    "manifest":  null,
+    "active_numerical_job":  null,
+    "last_terminal_evidence":  {
+                                   "job":  "Final plot/solve-publication CLI checks after shared translation/rotation Ylimits",
+                                   "owner":  "/root",
+                                   "producer_pid":  25676,
+                                   "owner_launcher_pid":  31652,
+                                   "started_at":  "2026-10-25T22:51:52.661359+00:00",
+                                   "exit_code":  0,
+                                   "frozen_inputs_match":  true,
+                                   "complete":  true,
+                                   "manifest":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\motion-plot-style-tests-attempt1\\manifest.json",
+                                   "output":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\motion-plot-style-tests-attempt1\\output.log"
+                               },
+    "note":  "Exact producer/owner and FFmpeg absence verified by independent CIM; frozen input hashes verified; terminal exit 0. Final separate idle readback follows before lease release."
 }
