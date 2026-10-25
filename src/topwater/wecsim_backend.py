@@ -16,6 +16,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from time import perf_counter
 import uuid
 
 import numpy as np
@@ -125,8 +126,9 @@ def solve(boat, sea, duration_s):
     fork, producer = preflight()
     body = boat.to_body()
     waves = _waves(sea)
+    started = _stage_started('equilibrium and incoming-train preparation')
     setup = prepare_case(body, waves, duration_s)
-    print('WEC-Sim: equilibrium and fixed incoming-train construction prepared', file=sys.stderr)
+    _stage_complete('equilibrium and incoming-train preparation', started)
     with _scratch_directory() as workspace:
         h = setup.hydrostatic
         hydro = producer.build_hydrodynamics(
@@ -134,12 +136,16 @@ def solve(boat, sea, duration_s):
             density=WATER_DENSITY, gravity=GRAVITY, depth=np.inf,
             hydrostatic_stiffness=h.stiffness,
             cb=h.center_of_buoyancy, volume=h.displaced_volume)
+        started = _stage_started('prepared excitation and startup assessment')
         force, carrier_scale = setup.train.excitation(
             hydro.excitation_omega, hydro.excitation_headings, hydro.excitation,
             hydro.K, setup.time_s)
         setup.train.certify_startup(setup, force, carrier_scale)
+        _stage_complete('prepared excitation and startup assessment', started)
         motion = integrate_motion(setup, hydro, force, workspace / 'body', fork)
+        started = _stage_started('calm-restoring diagnostics')
         warn_restoring_departures(setup, motion)
+        _stage_complete('calm-restoring diagnostics', started)
         surface_time = np.linspace(0., motion.time_s[-1],
                                    max(2, int(round(motion.time_s[-1] / .08)) + 1))
         vertices, faces, vertex_offsets, face_offsets = producer.reconstruct_total_surface(
@@ -151,6 +157,16 @@ def solve(boat, sea, duration_s):
             cg_m=np.asarray(boat.cg_m), surface_time_s=surface_time,
             surface_vertices_m=vertices, surface_faces=faces,
             surface_vertex_offsets=vertex_offsets, surface_face_offsets=face_offsets)
+
+
+def _stage_started(name):
+    started = perf_counter()
+    print(f'STAGE {name} started', file=sys.stderr)
+    return started
+
+
+def _stage_complete(name, started):
+    print(f'STAGE {name} complete elapsed_s={perf_counter()-started:.1f}', file=sys.stderr)
 
 
 def _waves(sea):
@@ -166,6 +182,7 @@ def integrate_motion(setup, hydro, force, workspace, fork):
     orientation is already in the geometry and full mass tensor; it is applied
     once again only when converting native perturbations back to body pose.
     """
+    started = _stage_started('native MATLAB preparation, integration and audits')
     workspace = Path(workspace)
     workspace.mkdir(parents=True, exist_ok=False)
     library = resources.files('topwater').joinpath('data/wecsim')
@@ -203,6 +220,7 @@ def integrate_motion(setup, hydro, force, workspace, fork):
     equilibrium = Rotation.from_quat(setup.equilibrium.orientation, scalar_first=True).as_matrix()
     orientation = Rotation.from_matrix(setup.world_from_native @ perturbation @ equilibrium).as_quat(scalar_first=True)
     position = q[:, :3] @ setup.world_from_native.T + setup.mean_cg_m
+    _stage_complete('native MATLAB preparation, integration and audits', started)
     return NativeMotion(stamp, q, velocity, acceleration, position, orientation)
 
 

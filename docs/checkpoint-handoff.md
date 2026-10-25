@@ -7,6 +7,27 @@ states rather than repeating historical setup.
 
 ## Current authorization
 
+LATEST user priority: get the system working END TO END FIRST, then assess
+correctness, then speed. Further optimization is stopped; the temporary JIT
+experiment was fully reverted to the exact verified pre-JIT source. Do not
+restart performance or expanded physical-correctness campaigns now.
+
+Root has launched canonical-pipeline-attempt4: actual public60s --solver=wecsim,
+then independent public render, fullvideo decode and retainedstills. Tool
+session61734. Sources/inputs/dependencies are FROZEN until terminal. Read current
+execution ledger for exact PIDs/start/manifest; re-poll SAMEhandle, never restart
+on timeout or slowoutput. MATLABengine29796/launcher40036 was verifiedlive
+before launch; maintainedforkclean at9952634. Keep windowminimized/headless.
+
+Final source regression PASS270/1optional skip14.11s,
+uncut-workflow-tests-attempt2. Paired3frame diagnostics before3.902s/after2.509s,
+1.55x with BITEXACT packed/originalgrid output, zero wetvalue difference and
+metricswithin1e-12: uncut-diagnostics-compare-attempt1. Both jobs independently
+terminal/frozen/processverified andleasesreleased before actualpublicrun.
+Those3frames are sparse samples, NOT proof of faster-than-realtime throughput.
+Useraskedunder10min: root candidestimate15-20min from measuredpostprocessrate
+plusfield/render, pendingactualfullrun. No new speedwork before it completes.
+
 Implement the approved canonical example/workflow plan. Native coupled dynamics
 remain excluded and must fail clearly. The first working backend is WEC-Sim.
 One flat `examples/simple-boat/` holds `boat.npz`, `sea.npz`, `result.npz`,
@@ -34,9 +55,10 @@ No complete result.npz/video.mp4 has yet been accepted or published.
 
 ## Current implementation and evidence
 
-Latest pushed Topwater checkpoint:de67fc7 (renderer projection predicate; prior
+Latest pushed Topwater checkpoint:69bb63d (shared waterline, readable logs and approved uncut contract).
+Prior de67fc7 fixes the renderer projection predicate;
 e74a94b adds logs, warning triage and guarded
-triangulation repair). Its source and tests are reviewed and verified.
+triangulation repair. Those checkpoints are reviewed and verified as recorded below.
 Maintained WEC-Sim fork9952634f6f2e2746a1626484e27c3003d1e1d5a9 is pushed and
 pinned; its two newest fixes close sidecar handles and print paths literally.
 
@@ -98,9 +120,9 @@ Next, under a fresh root-owned serial lease:
 3. Track result/video with Git LFS, commit/push baseline/fluid-body, update own
    issue30 and refresh this handoff after acceptance. Goal remains active.
 
-## Current priority: geometry performance
+## Recent geometry performance work (historical priority)
 
-Latest user explicitly chose STOP AND FIX THE BOTTLENECK after learning the
+At that checkpoint the user explicitly chose STOP AND FIX THE BOTTLENECK after learning the
 cached751-frame geometry sweep took28.5min (~2.3s/frame). This changes immediate
 priority, not the full workflow acceptance goal. Do not resume a long public
 solve/render until the geometry bottleneck is measured and addressed.
@@ -143,6 +165,11 @@ Active source owners (no agent numerical work):
   interpolation. Onebeam uses explicitly SOURCEtrianglecentroid distance to
   actual independenttotalwaterline; this is a changed discreteband convention.
 - Root: Result/NPZ/sharedcontract/CLI/renderdocs and integration, eventual tests.
+  Coordination correction: after the Cap proposal completed, send_message did
+  not resume the agent. Root discovered this idle state and explicitly restarted
+  /root/surface_reconstruction with followup_task; list_agents confirms RUNNING.
+  Do not repeat that wait mistake: followup_task triggers idle/completed tasks,
+  send_message only queues context. No numericaljob is live at this checkpoint.
   Short3frame fullpostprocess timing+bitexact originalgrid identities before any
   long public run. Keep all field/motion/forcing arrays unchanged.
 
@@ -168,6 +195,31 @@ uncut contract and next validated checkpoint. Full canonical solve/render/log
 triage/LFS publication remain pending. No streaming/pipelining or native dynamics.
 Keep MATLAB minimized/headless. Ledger is idle/no lease after last logtests;
 reconcile actualstate before next numericalclaim.
+
+## Latest uncut producer verification and next work
+
+Uncut producer source/method independently approved after one coplanar-support
+partition bug was corrected by its author. Complete workflow suite PASS255,
+one optional libigl skip,13.48s: uncut-workflow-tests-attempt1. All source/inputs
+frozen, exact terminal processes verified, lease released.
+
+Three retained frames0/277/600 full new postprocess PASS4.2946s; BOTH original
+worldgrid vertices and connectivity BITEXACT everyframe; retained input/motion/
+field arrays unchanged, with physics/reconstruction/remeshing calls forbidden.
+Evidence: uncut-surface-replay-attempt1/replay/report.json. Its3frame delta/wet
+summaries are SMOKE evidence, not canonical60s statistics. Geometry opening+
+waterline .1436s TOTAL. Diagnostic costs dominate: delta1.259s, wetset2.443s.
+This is not yet the desired complete throughput improvement.
+
+Followup cProfile PASS (instrumented) inuncut-diagnostics-profile-attempt1,
+all identities/terminal/release verified. Hotspots:42367 _clip_area_polygon calls
+1.722s;20548 _polygon_area calls1.564s; waterline-distance .774s; graphinit .661s.
+Root explicitly RESUMED /root/surface_reconstruction with followup_task to
+optimize diagnostics in _capytaine_surface.py/tests only, preserving exactP1
+moments, exact3Dwetset, ownership/coverage gates and10%warningpolicy. No newdeps,
+JIT, cadence reduction or relaxed quadrature. Preserve modulebaseline before
+editing. Root owns next paired3frame/harness +serialtests; no agent numerics.
+That focused optimization passed paired replay; further optimization stopped at the latest user request. Actual public attempt4 above is now running.
 
 ## Physical and file requirements
 

@@ -192,6 +192,15 @@ field-versus-prepared-body load differences, without modifying the accepted
 body loads. Total-minus-incident surface metrics describe the produced geometry;
 they are not an accuracy certificate.
 
+Delta moments exclude hull interiors. They integrate the represented piecewise-
+linear field over valid exterior support using temporary polygons for numerical
+integration, without changing the exported mesh. The one-beam summary selects
+source triangles by their centroid's horizontal distance to the separately
+computed total-surface waterline, then integrates their exterior portions. This
+is an explicit discrete approximation to the band, not an exact geometric
+distance contour. Full-patch and band summaries report area/time weighting,
+RMS, incident-relative RMS when defined, and the resolved peak/time/location.
+
 Capytaine mesh-resolution and irregular-frequency warnings remain visible. Their
 first occurrence is retained and repeated families are summarized; they are not
 silently suppressed or converted into numerical-accuracy claims.

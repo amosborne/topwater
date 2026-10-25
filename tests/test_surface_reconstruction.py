@@ -11,8 +11,10 @@ from topwater._capytaine_surface import (
     require_surface_readiness, cosine_kernel, exterior_field_points,
     exterior_trace_points, incident_spectrum,
     WaterGraphPartition, _regular_grid, _grid_p1_values, _delta_moments,
-    _total_waterline, _waterline_distance_xy,
+    _waterline_distance_xy, _waterline_band_xy, _split_metric_polygon,
+    _clip_area_polygon, _polygon_area,
 )
+from topwater.surface_geometry import waterline_segments
 
 
 def exponential_kernel(*, accepted=True):
@@ -172,25 +174,159 @@ def test_wet_set_area_fails_on_incomplete_water_graph_coverage():
         graph.wet_set_area(hull, [[0, 1, 2], [0, 2, 3]], np.zeros(len(xy)), [0., 0., 1.], 0., 2.)
 
 
+def test_area_clip_preserves_whole_rejected_and_crossing_polygons():
+    polygon = np.array([[-1., -1., .3], [1., -1., .3], [1., 1., .3], [-1., 1., .3]])
+    original = polygon.tobytes()
+    kept = _clip_area_polygon(polygon, np.array([0., 0., 1.]), -.4, 1e-10)
+    assert kept.tobytes() == original
+    assert _clip_area_polygon(polygon, np.array([0., 0., 1.]), -.2, 1e-10).shape == (0, 3)
+    clipped = _clip_area_polygon(polygon, np.array([1., 0., 0.]), 0., 1e-10)
+    expected = np.array([[-1., -1., .3], [0., -1., .3], [0., 1., .3], [-1., 1., .3]])
+    assert clipped.tobytes() == expected.tobytes()
+    assert polygon.tobytes() == original
+
+
+def test_whole_polygon_clip_retains_norm_based_small_edge_cleanup():
+    eps = 1e-6
+    # This edge is longer than eps in Euclidean length although EVERY
+    # component is smaller. The conservative fast path must defer to the
+    # unchanged norm predicate rather than changing the cleanup threshold.
+    retained = np.array([[0., 0., 0.], [.75*eps, .75*eps, 0.],
+                         [1., 0., 0.], [1., 1., 0.], [0., 1., 0.]])
+    actual = _clip_area_polygon(retained, np.array([0., 0., 1.]), -1., eps)
+    assert actual.tobytes() == retained.tobytes()
+    removed = np.array([[0., 0., 0.], [.5*eps, .5*eps, 0.], [1., 0., 0.],
+                        [1., 1., 0.], [0., 1., 0.], [.4*eps, .4*eps, 0.]])
+    actual = _clip_area_polygon(removed, np.array([0., 0., 1.]), -1., eps)
+    assert actual.tobytes() == removed[[0, 2, 3, 4]].tobytes()
+
+
+@pytest.mark.parametrize('scale', [1e-3, 1., 1e3])
+@pytest.mark.parametrize('count', [3, 4, 5])
+def test_polygon_3d_area_preserves_original_cross_reduction_bits(scale, count):
+    points = scale*np.array([[.42790402925610144, .17039693147594254, -.03260405850092889],
+                             [.42797449851073016, .16844460462755206, -.03263331227243573],
+                             [.42600476914629437, .16835542952517174, -.03262962592722955],
+                             [.42699834260851194, .16840041134694653, -.032631485398299825],
+                             [-.21, 1.43, -.4]])[:count]
+    relative = points-points[0]
+    reference = float(np.linalg.norm(np.cross(relative, np.roll(relative, -1, axis=0)).sum(axis=0))/2)
+    assert _polygon_area(points).hex() == reference.hex()
+
+
+def test_water_prism_shared_edge_ownership_is_minimum_current_face_index():
+    xy, faces, _ = _regular_grid([[-1., -1.], [1., 1.]], 1.)
+    # Change face order so ownership cannot accidentally depend on grid order.
+    faces = faces[[5, 1, 7, 3, 0, 4, 2, 6]]
+    graph = WaterGraphPartition(xy, faces)
+    for i, face in enumerate(faces):
+        for j, (a, b) in enumerate(zip(face, np.roll(face, -1))):
+            expected = min(k for k, other in enumerate(faces) if a in other and b in other)
+            assert graph.owner[i, j] == expected
+
+
+@pytest.mark.parametrize('angle,shift', [(0., (0., 0.)), (.73, (1e6, -2e6)), (-1.2, (2., -3.))])
+def test_waterline_band_broadphase_preserves_exact_threshold_mask(angle, shift):
+    segments = np.array([[[-1., 0., 0.], [1., 0., 0.]],
+                         [[10., 2., -1.], [10., 2., 1.]]])
+    x, y = np.meshgrid(np.linspace(-4., 14., 19), np.linspace(-3., 5., 17))
+    points = np.c_[x.ravel(), y.ravel()]
+    radius = .5
+    points = np.vstack((points, [[0., radius], [0., np.nextafter(radius, np.inf)],
+                                [0., np.nextafter(radius, -np.inf)], [10.+radius, 2.]]))
+    rotation = np.array([[np.cos(angle), -np.sin(angle)], [np.sin(angle), np.cos(angle)]])
+    segments[:, :, :2] = segments[:, :, :2] @ rotation.T+shift
+    points = points @ rotation.T+shift
+    expected = _waterline_distance_xy(points, segments) <= radius
+    np.testing.assert_array_equal(_waterline_band_xy(points, segments, radius), expected)
+    far = np.array([[1e4, -1e4]]) @ rotation.T+shift
+    assert not _waterline_band_xy(far, segments, radius)[0]
+
+
 def test_p1_cut_interpolation_and_projected_delta_moments():
     xy, faces, axes = _regular_grid([[0., 0.], [1., 1.]], 1.)
     value = xy[:, 0]+2*xy[:, 1]
     query = np.array([[.2, .1], [.1, .9]])
     np.testing.assert_allclose(_grid_p1_values(axes, value, query), query[:, 0]+2*query[:, 1])
-    # Unit patch with a quarter-square physical hole, preserving an actual
-    # total-waterline inner boundary rather than using the hull projection.
-    xy = np.array([[0., 0.], [1., 0.], [1., 1.], [0., 1.],
-                   [.25, .25], [.75, .25], [.75, .75], [.25, .75]])
-    faces = np.array([[0, 1, 5], [0, 5, 4], [1, 2, 6], [1, 6, 5],
-                      [2, 3, 7], [2, 7, 6], [3, 0, 4], [3, 4, 7]])
+    # The ORIGINAL unit patch remains whole. Only its exterior-support
+    # integral excludes the quarter-square physical hull section.
     hull = np.array([[x, y, z] for z in (1., 6.) for x, y in
                      ((.25, .25), (.75, .25), (.75, .75), (.25, .75))])
     value = xy[:, 0]+2*xy[:, 1]
     vertices = np.c_[xy, value+2]
-    moments = _delta_moments(vertices, faces, value, hull, 10., [[0., 0.], [1., 1.]])
+    from scipy.spatial import ConvexHull
+    segments = waterline_segments(hull, ConvexHull(hull).simplices, vertices, faces)
+    original = vertices.tobytes(), faces.tobytes()
+    moments, _ = _delta_moments(vertices, faces, value, hull, 10., segments)
     for result in moments.values():
         np.testing.assert_allclose(result[:5], [.75, 1.5, 3., 2., 133/64], atol=1e-14)
         assert result[7] >= 2
+    assert original == (vertices.tobytes(), faces.tobytes())
+
+
+def test_exterior_p1_moments_partition_triangle_with_all_vertices_outside_hull():
+    from scipy.spatial import ConvexHull
+    vertices = np.array([[-2., -2., 0.], [2., -2., 0.], [0., 2., 0.]])
+    faces = np.array([[0, 1, 2]])
+    hull = np.array([[x, y, z] for x in (-.5, .5) for y in (-.5, .5) for z in (-1., 1.)])
+    segments = waterline_segments(hull, ConvexHull(hull).simplices, vertices, faces)
+    incident = vertices[:, 0]+2*vertices[:, 1]
+    # All vertices are outside, but NO common separating hull plane exists:
+    # the full unit square section lies inside this area-8 source triangle.
+    moments, peak = _delta_moments(vertices, faces, incident, hull, 10., segments,
+                                  startup_bounds=[[-.5, -.5], [.5, .5]])
+    for result in moments.values():
+        # Integral (x+2y)^2: triangle48 minus central unit-square5/12.
+        np.testing.assert_allclose(result[:5], [7., 32/3, 571/12, 6., 571/12], atol=1e-12)
+        np.testing.assert_allclose(result[5:8], vertices[0])
+    assert peak == 0
+    # The original source centroid is 1/6m below the actual lower waterline.
+    # Selecting this face deliberately selects ALL of its valid exterior
+    # portion; the reported band is not an exact clipped distance region.
+    selected, _ = _delta_moments(vertices, faces, incident, hull, .2, segments)
+    excluded, _ = _delta_moments(vertices, faces, incident, hull, .1, segments)
+    assert selected['one_beam'][0] == pytest.approx(7.)
+    assert excluded['one_beam'][0] == 0
+
+
+def test_coplanar_support_extension_is_carried_once_to_later_planes():
+    # This temporary polygon lies in a support plane's extension. Treating
+    # all-zero distances as exterior would count it once here and again when
+    # the subsequent plane resolves its genuinely exterior portion.
+    polygon = np.array([[-2., 0., 0., -2.], [2., 0., 0., 2.], [0., 2., 0., 0.]])
+    assert np.cross(polygon[1, :3]-polygon[0, :3], polygon[2, :3]-polygon[0, :3])[2] > 0
+    inside, outside = _split_metric_polygon(polygon, np.array([0., 0., 1.]), 0.)
+    np.testing.assert_array_equal(inside, polygon)
+    assert outside.shape == (0, 4)
+    remaining, exterior = _split_metric_polygon(inside, np.array([1., 0., 0.]), -.5)
+    assert len(remaining) >= 3 and len(exterior) >= 3
+    # Incident P1 is carried along each cut, using the same affine x value.
+    np.testing.assert_allclose(exterior[:, 3], exterior[:, 0], atol=0, rtol=0)
+
+
+def test_startup_and_delta_peaks_exclude_large_hull_interior_extension():
+    from scipy.spatial import ConvexHull
+    xy, faces, _ = _regular_grid([[-2., -2.], [2., 2.]], 1.)
+    height = np.where(np.all(xy == 0, axis=1), 10., 0.)
+    vertices = np.c_[xy, height]
+    hull = np.array([[x, y, z] for x in (-1., 1.) for y in (-1., 1.) for z in (-20., 20.)])
+    segments = waterline_segments(hull, ConvexHull(hull).simplices, vertices, faces)
+    moments, peak = _delta_moments(vertices, faces, np.zeros(len(vertices)), hull, 10., segments,
+                                  startup_bounds=[[-1., -1.], [1., 1.]])
+    assert peak == 0
+    for result in moments.values():
+        assert result[0] == pytest.approx(12.)
+        np.testing.assert_allclose(result[1:5], 0., atol=1e-13)
+
+
+def test_startup_requires_positive_exterior_regional_support():
+    vertices = np.array([[-.2, -.2, 0.], [.2, -.2, 0.], [0., .2, 0.]])
+    hull = np.array([[x, y, z] for x in (-1., 1.) for y in (-1., 1.) for z in (-1., 1.)])
+    # A nonempty contour is supplied to isolate the regional-support gate.
+    segments = np.array([[[-1., -1., 0.], [1., -1., 0.]]])
+    with pytest.raises(ValueError, match='positive exterior boat-region support'):
+        _delta_moments(vertices, np.array([[0, 1, 2]]), np.zeros(3), hull, 1., segments,
+                       startup_bounds=[[-1., -1.], [1., 1.]])
 
 
 def test_near_band_uses_actual_waterline_not_flared_hull_outline():
@@ -201,16 +337,16 @@ def test_near_band_uses_actual_waterline_not_flared_hull_outline():
     vertices = np.c_[xy, np.zeros(len(xy))]
     hull = np.array([[s*x, s*y, z] for s, z in ((.5, -1.), (1.5, 1.))
                      for x, y in ((-1., -1.), (1., -1.), (1., 1.), (-1., 1.))])
-    line = _total_waterline(vertices, faces, hull, [[-3., -3.], [3., 3.]])
-    assert len(line) == 4
+    from scipy.spatial import ConvexHull
+    line = waterline_segments(hull, ConvexHull(hull).simplices, vertices, faces)
+    assert len(line) >= 4
     # This point is inside the flared hull's horizontal outline, but is .4m
     # from its actual total-waterline contact and outside a .2m waterline band.
     distance = _waterline_distance_xy(np.array([[1.4, 0.]]), line)
     np.testing.assert_allclose(distance, [.4], atol=1e-14)
     assert distance[0] > .2
-    with pytest.raises(ValueError, match='no resolved hull-contact waterline'):
-        _total_waterline(vertices[:4], np.array([[0, 1, 2], [0, 2, 3]]), hull,
-                         [[-3., -3.], [3., 3.]])
+    with pytest.raises(ValueError, match='no resolved physical waterline'):
+        _waterline_distance_xy(np.array([[1.4, 0.]]), np.empty((0, 2, 3)))
 
 
 @pytest.fixture
@@ -252,17 +388,33 @@ def calm_surface_case(monkeypatch, tmp_path):
         vertices=vertices, physical=physical, boat=boat, embedding=embedding, orientation=orientation)
 
 
-def test_production_calm_geometry_packs_contact_and_covers_oblique_world_view(calm_surface_case, capsys):
+def test_production_calm_geometry_preserves_original_grid_and_oblique_world_view(calm_surface_case, capsys, monkeypatch):
     from topwater.workflow_data import Result
+    import topwater._surface_export as retired_export
     case = calm_surface_case
     producer, hydro, setup, motion, stamp = case.producer, case.hydro, case.setup, case.motion, case.stamp
     vertices, physical, boat = case.vertices, case.physical, case.boat
     embedding, orientation = case.embedding, case.orientation
+
+    def no_remeshing(*args, **kwargs):
+        raise AssertionError('The producer must never trim/remesh its exported total surface')
+
+    monkeypatch.setattr(retired_export, 'export_surface', no_remeshing)
     water, faces, vertex_offsets, face_offsets = producer.reconstruct_total_surface(hydro, setup, motion, stamp)
     result = Result(stamp, motion.position_m, orientation, vertices, physical, boat.cg_m, stamp,
                     water, faces, vertex_offsets, face_offsets)
+    with np.load(hydro.directory.parent/'surface-recovery'/'completed-field.npz', allow_pickle=False) as saved:
+        original_xy = saved['xy_native_m']
+        original_total = saved['total_elevation_m']
+        original_faces = saved['water_faces']
     for i in range(2):
         frame, connectivity = result.surface_frame(i)
+        expected = np.c_[original_xy, original_total[i]] @ embedding.T
+        assert frame.tobytes() == expected.tobytes()
+        assert connectivity.tobytes() == original_faces.tobytes()
+        # Interior samples persist in the numeric graph and are implicitly
+        # invalid as water. No contact constraints are inserted into it.
+        assert np.any(np.all(abs((frame @ embedding)[:, :2]) < .9, axis=1))
         np.testing.assert_allclose(frame[:, 2], 0., atol=1e-14)
         posed = (vertices-boat.cg_m) @ embedding.T
         center = (posed[:, :2].min(axis=0)+posed[:, :2].max(axis=0))/2
@@ -273,6 +425,7 @@ def test_production_calm_geometry_packs_contact_and_covers_oblique_world_view(ca
     diagnostic = capsys.readouterr().err
     assert 'degenerate incident RMS' in diagnostic
     assert 'no total disturbed-fluid velocity bound' in diagnostic
+    assert 'ORIGINAL source-triangle-centroid' in diagnostic
 
 
 def test_failed_frame_preserves_primary_context_and_replays_without_physics(calm_surface_case, monkeypatch, tmp_path, capsys):
