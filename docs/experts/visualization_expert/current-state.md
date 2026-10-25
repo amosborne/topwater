@@ -1,32 +1,60 @@
 # Visualization expert: current state
 
-## Canonical result renderer source checkpoint, 2026-10-25
+## Current canonical renderer, 2026-10-25
 
-Latest user authorizes implementation of the canonical NPZ/directory workflow.
-Dedicated visualization_expert is loaded for `/root/result_renderer`; source
-ownership transferred for new `result_render.py`, its tests and CLI render page.
-Previous SceneSequence rendering remains available internally and unchanged.
+Latest user authorizes the canonical NPZ/directory workflow. The dedicated
+visualization_expert is loaded as `/root/result_renderer`. Current public command
+is `uv run topwater render [DIRECTORY]`: read `result.npz`, atomically replace
+`video.mp4` after full decode/frame/dimension checks, and write `video.log`.
+No boat/sea input or hydrodynamic computation belongs to rendering.
 
-New source streams packed Result surface frames directly, interpolating only
-body poses (linear position/SLERP). No boat/sea files, hydrodynamics, frame-wise
-full-sequence hull copies, or wave reconstruction. Physical hull stored once in
-result transforms with CG exactly once. Accepted800square/topdown/coolwarm/HUD/
-offwhitehull/contact styling retained. Persistent Agg figure/blit; water artist
-reused for unchanged topology and rebuilt on connectivity changes. Projection
-guards include connected manifold sheet/loops, upward nondegenerate triangles,
-crossing boundaries, outer-edge intrusion and uncovered holes outside hull.
-Some folded native output is intentionally unsupported by this 2D presentation.
+`result_render.py` streams packed surface frames directly, supports changing
+connectivity, and interpolates only rigid poses (linear position/SLERP). The
+saved hull is transformed with CG exactly once. Accepted 800-square top-down
+coolwarm/off-white-hull/contact/HUD styling remains. One Agg figure and reused
+artists use background blitting; the water artist is rebuilt only on topology
+changes. Folded/overlapping projected sheets are explicitly unsupported by this
+presentation, without narrowing the result format or native solver physics.
 
-Atomic video replacement occurs only after complete decode/frame/dimension
-checks. Temp encoding stays outside example; old video survives failures.
-`docs/cli/render.md` documents inputs, timing, defaults, fatal detection, warning
-and display limits. `tests/test_result_render.py` adds source tests for pose
-mapping, variable topology, interior holes, folds, cadence and old-video
-preservation. NO tests/imports/renders/probes have run under this assignment;
-root must allocate sole numerical lease before validation. Source acceptance
-and performance remain pending. No native/sea/physical-result change claimed.
+### Reviewed correction and focused renderer suite PASS
 
-## Previous completed workflow
+The renderer's old normalized XY determinant cutoff `1e-11` imposed a whole-patch
+minimum triangle area, rejecting small well-conditioned exported cut faces.
+The corrected predicate forms local XY edges before patch normalization and
+requires signed determinant greater than `64*eps*|edge1|*|edge2|`. Computed span,
+determinant and threshold must be finite. Boundary/view tolerances remain
+separate; all winding, topology, crossing, overlap, hole and coverage checks are
+unchanged. Independent researcher `/root/startup_domain_policy` approves the
+source and mathematics, including nonfinite guards.
+
+Owned correction files are `result_render.py`, `tests/test_result_render.py`, and
+the predicate paragraph of `docs/cli/render.md`. New controls cover a conforming
+10 m patch containing a 10 micrometre right triangle, clockwise/collinear/
+near-vertical/folded projection, and finite-input arithmetic overflow. Root ran
+`tests/test_result_render.py tests/test_visualization.py`: **31 passed in1.79s**,
+including those controls and one real two-frame variable-topology encode.
+Evidence: `artifacts/workflow/renderer-projection-tests-attempt1/output.log` and
+`terminal.json`; producer29496/launcher27040, exit0, frozen identities match.
+Root independently verified exact process/FFmpeg terminal status and released
+the lease. The earlier 228-pass/one-skip suite predates this predicate correction.
+
+Root's cached geometry sweep (session87492) also terminated PASS: all751 saved
+total-water frames passed exporter/contact checks in1711.7607s, frozen identities
+matched, exact processes were terminal and the lease was released. Evidence:
+`artifacts/workflow/cached-geometry-sweep-attempt1/`. This is full cached geometry
+acceptance, not a full render or a new body/field computation. The execution
+ledger and handoff own subsequent liveness.
+
+Full canonical public workflow/rendering, decode and visual review remain
+outstanding. No complete canonical `result.npz`/`video.mp4` is accepted or
+published yet. Root schedules the next numerical job under a fresh sole lease;
+no additional render or test is allocated to this visualization owner.
+
+## Historical incident-only rendering evidence
+
+The following records the prior completed SceneSequence workflow. Its command,
+timings and process/lease statements are historical and do not describe current
+public CLI or liveness. Detailed evidence is retained in the linked records.
 
 User-approved shared Matplotlib2D workflow, full60s video and read-only speed
 review are COMPLETE. Active3D renderer/helpers/PyVista dependencies removed;

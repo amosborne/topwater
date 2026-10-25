@@ -95,10 +95,15 @@ timings; these do not become fields in the result archive.
 | At contact calculation | Degenerate contact triangles or coplanar hull/water area contact without a unique waterline. |
 | During encoding/verification | Time budget exceeded, missing encoder/dependency, filesystem/pipe failure, unreadable video, wrong dimensions/cadence or incomplete frame count. |
 
-All failures occur before replacing the named video. Projection checks use
-span-normalized geometric tolerance `1e-11`; contact annotations use the shared
-intersection helper's tolerance `1e-9` times hull span. These are numerical
-geometry tolerances, not physical-accuracy acceptance thresholds.
+All failures occur before replacing the named video. Triangle projection checks
+require positive signed XY doubled area exceeding
+`64 * machine_epsilon * projected_edge_length_1 * projected_edge_length_2`.
+Edges are formed before whole-patch normalization, so a small, well-conditioned
+cut triangle is not rejected merely for being small relative to the patch.
+Nonfinite computed spans, determinants or area thresholds are rejected explicitly.
+Boundary-distance/crossing checks retain the span-normalized `1e-11` tolerance;
+contact annotations use the shared intersection helper's `1e-9` times hull span.
+These are numerical geometry tolerances, not physical-accuracy thresholds.
 
 ## Warnings
 

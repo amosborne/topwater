@@ -152,15 +152,16 @@ Calm-start engineering limits are `max|eta| <= .001*sum(a)` and
 `max|u| <= .001*sum(a*omega)` throughout the initial full-hull bounding region.
 Initial force/moment norms must not exceed `.001*m*g` and `.001*m*g*L`, with
 `L` the maximum hull dimension, and every native component must also be within
-`.001` of its carrier-load scale. The current combined-field bound uses order-six
+`.001` of its carrier-load scale. The current combined incoming-field bound uses order-six
 Taylor boxes, initial widths 1 m/1 m/0.2 m, at most three refinement levels, and a
 480 s assessment budget. An inconclusive bound is reported distinctly from an
 observed violation. At least 25% combined incoming envelope must arrive.
 
 ## Warnings
 
-Warnings indicate reduced physical applicability while supported computation
-continues. They do not become extra NPZ fields. Restoring diagnostics print the
+Warnings report physical applicability, numerical limitations or operational
+conditions while supported computation continues. They do not become extra NPZ
+fields. Restoring diagnostics print the
 first event per category and summarize its sample count, first/last time, and
 maximum departure. Wet-set departures are detected at each saved surface frame;
 their first/last exceedance and worst fraction/time are emitted when surface

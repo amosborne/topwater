@@ -176,14 +176,24 @@ def _boundary_enters_view(xy, loop, lower, upper, tolerance):
 def _projected_frame(points, faces, hull, lower, upper, loops, tri_module):
     """Check a single-valued upward water sheet, including interior view holes."""
     xy = points[:, :2]
-    span = max(float(np.ptp(xy, axis=0).max()), 1e-12)
+    with np.errstate(over='ignore', invalid='ignore'):
+        span = max(float(np.ptp(xy, axis=0).max()), 1e-12)
+    if not np.isfinite(span):
+        raise ValueError('top-down water projection has a nonfinite computed span')
     normalized = (xy-xy[0])/span
     eps = 1e-11
     if len(np.unique(xy, axis=0)) != len(xy):
         raise ValueError('top-down water projection has coincident vertices or folded layers')
-    t = normalized[faces]
-    u, v = t[:, 1]-t[:, 0], t[:, 2]-t[:, 0]
-    if np.any(u[:, 0]*v[:, 1]-u[:, 1]*v[:, 0] <= eps):
+    # Projection degeneracy is local shape, not area relative to the full patch.
+    # Form edges before global normalization so small valid cut faces survive.
+    t = xy[faces]
+    with np.errstate(over='ignore', invalid='ignore'):
+        u, v = t[:, 1]-t[:, 0], t[:, 2]-t[:, 0]
+        determinant = u[:, 0]*v[:, 1]-u[:, 1]*v[:, 0]
+        threshold = 64*np.finfo(float).eps*np.linalg.norm(u, axis=1)*np.linalg.norm(v, axis=1)
+    if not np.isfinite(determinant).all() or not np.isfinite(threshold).all():
+        raise ValueError('top-down water projection has nonfinite area computations')
+    if np.any(determinant <= threshold):
         raise ValueError('top-down water projection must have nondegenerate upward triangles')
     _check_boundary_crossings(normalized, loops, eps)
     signed = np.asarray([np.sum(normalized[loop, 0]*normalized[np.roll(loop, -1), 1]

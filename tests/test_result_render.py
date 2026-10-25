@@ -97,6 +97,58 @@ def test_projection_rejects_folded_layer_and_inconsistent_winding():
                          np.array([-1.45, -1.45]), np.array([1.45, 1.45]), loops, tri)
 
 
+def tiny_corner_patch():
+    # One 10 m triangular patch, with its corner cut into a 10 micrometre face.
+    # The tiny face is a well-conditioned right triangle, not a thin sliver.
+    points = np.array([[0., 0., 0.], [10., 0., 0.], [0., 10., 0.],
+                       [1e-5, 0., 0.], [0., 1e-5, 0.]])
+    faces = np.array([[0, 3, 4], [3, 1, 2], [3, 2, 4]])
+    return points, faces
+
+
+def test_projection_retains_tiny_well_conditioned_cut_triangle():
+    from matplotlib import tri
+    points, faces = tiny_corner_patch()
+    loops = _topology(faces, len(points))
+    hull = saved_result().hull_vertices_m*.25 + [2., 2., 0.]
+    projected = _projected_frame(points, faces, hull,
+                                 np.array([1.5, 1.5]), np.array([2.5, 2.5]), loops, tri)
+    np.testing.assert_array_equal(projected.triangles, faces)
+    assert projected.get_trifinder()(2., 2.) >= 0
+
+
+@pytest.mark.parametrize('change', ['collinear', 'negative', 'nearvertical', 'folded'])
+def test_small_face_projection_still_rejects_unsupported_geometry(change):
+    from matplotlib import tri
+    points, faces = tiny_corner_patch()
+    loops = _topology(faces, len(points))
+    if change == 'collinear':
+        points[4] = [2e-5, 0., 1.]
+    elif change == 'negative':
+        faces[0] = faces[0, ::-1]
+    elif change == 'nearvertical':
+        # A nondegenerate 3D face with numerically collinear projected edges.
+        points[4] = [1e-5, 1e-22, 1.]
+    else:
+        points[4] = [1e-5, 0., 1.]
+    hull = saved_result().hull_vertices_m*.25 + [2., 2., 0.]
+    with pytest.raises(ValueError, match='nondegenerate upward|coincident|folded'):
+        _projected_frame(points, faces, hull,
+                         np.array([1.5, 1.5]), np.array([2.5, 2.5]), loops, tri)
+
+
+def test_projection_rejects_nonfinite_computation_from_finite_points():
+    from matplotlib import tri
+    points, faces = tiny_corner_patch()
+    # All supplied coordinates remain finite; large-face area arithmetic cannot.
+    points *= 1e154
+    loops = _topology(faces, len(points))
+    hull = (saved_result().hull_vertices_m*.25 + [2., 2., 0.])*1e154
+    with pytest.raises(ValueError, match='nonfinite area computations'):
+        _projected_frame(points, faces, hull,
+                         np.array([1.5, 1.5])*1e154, np.array([2.5, 2.5])*1e154, loops, tri)
+
+
 def test_outer_boundary_indent_is_not_hidden_by_corner_coverage():
     xy = np.array([[-5., -5.], [5., -5.], [5., 5.], [0., 0.], [-5., 5.]])
     assert _boundary_enters_view(xy, np.arange(len(xy)), np.array([-1., -1.]),

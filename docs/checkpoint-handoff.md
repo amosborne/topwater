@@ -34,8 +34,8 @@ No complete result.npz/video.mp4 has yet been accepted or published.
 
 ## Current implementation and evidence
 
-Latest pushed Topwater checkpoint:5ef862a (recovery). New logging/triangulation
-changes are reviewed and tested but awaiting the next source checkpoint.
+Latest pushed Topwater checkpoint:e74a94b (logs, warning triage and guarded
+triangulation repair). Its source and tests are reviewed and verified.
 Maintained WEC-Sim fork9952634f6f2e2746a1626484e27c3003d1e1d5a9 is pushed and
 pinned; its two newest fixes close sidecar handles and print paths literally.
 
@@ -49,9 +49,20 @@ pinned; its two newest fixes close sidecar handles and print paths literally.
 - Public canonical sea generation/log replay passes with unchanged numeric
   input. canonical-sea-log-attempt1.
 
-All these jobs are terminal, hashes/processes verified and leases released.
-No numerical job is currently allocated. Execution ledger, not this snapshot,
-owns current liveness. Do not re-poll terminated sessions79250/28263.
+These earlier jobs are terminal, hashes/processes verified and leases released.
+The all751-frame cached geometry sweep now PASSES in1711.761s, with unchanged
+fields/body/source identities and maximum contact residual2.665e-15m.
+Evidence: artifacts/workflow/cached-geometry-sweep-attempt1/geometry/report.json.
+This is geometry/contact regression evidence, not a complete public solve.
+
+The renderer's whole-patch area cutoff was replaced by a local signedXYarea
+predicate64eps times local projected edge lengths, with explicit nonfinite
+rejection. All overlap/topology/boundary/coverage guards remain. Independent
+researcher APPROVES source/math. The full renderer/visualization regressions
+now PASS31tests in1.79s, including tiny valid cut faces, invalid controls and
+real two-frame encoding. Evidence: renderer-projection-tests-attempt1.
+Both jobs are terminal; frozen hashes and exact process absence verified,
+separate idle readbacks completed and central leases released.
 
 ## Remaining numerical work
 
@@ -79,10 +90,7 @@ Evidence: surface-frame-verification-attempt1/frames/report.json.
 
 Next, under a fresh root-owned serial lease:
 
-1. Run the frozen helper artifacts/workflow/check_cached_surface_geometry.py
-   over all751 cached frames, with a fresh output subdirectory. This uses geometry
-   only, no body/BEM/wave solve and no wet-area diagnostic. Retain any failing
-   frame and original error; do not weaken validation or change motion/forcing.
+1. Cached geometry and renderer regression checks are complete (above).
 2. Complete the public solve/render workflow with the new logs; verify full
    geometry, total-minus-incident metrics, warning triage and all decoded video
    frames/stills. Include logs in the canonical case; no solver intermediates.
