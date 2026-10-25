@@ -19,6 +19,12 @@ based on v7.1.0 and targeting our `topwater/reference`. All nine focused tests
 passed on Windows/MATLAB R2025b; stock defects were reproduced. See
 [evidence and limits](experts/wecsim_expert/fork-rebuild-regressions-2026-10-25.md).
 Neither is merged; the combined branch and held Topwater pin remain unchanged.
+Issue #1 subsequently became [internal PR #8](https://github.com/amosborne/WEC-Sim/pull/8),
+also independently release-based and unmerged. Independent physical/source review
+and eleven Windows/R2025b synthetic tests passed, with stock defects reproduced.
+Its generic finite-record policy warns and zero-extends instead of imposing the
+old Topwater-specific short-record fatal gate or negative-time clamp. See
+[history rebuild evidence](experts/wecsim_expert/imported-history-rebuild-2026-10-25.md).
 **Do not create any upstream issue or PR, or make any outside contact, without
 the user's specific, explicit permission.** Preparing or reviewing local fork
 patches does not authorize submission or contact.
@@ -132,7 +138,7 @@ The required working sequence is:
    submission time; reuse an appropriate existing upstream issue rather than duplicate it.
    Upstream publication is a distinct action from an internal fork issue/PR.
 
-The issue-creation step is complete; implementation/PR work for #4 and #5 is
+The issue-creation step is complete; implementation/PR work for #1, #4 and #5 is
 recorded above. No step changes the frozen live baseline. Keep every internal PR narrowly
 scoped so its logical fix can later be replayed onto a clean upstream proposal
 branch without the combined branch's unrelated changes or local adapter layer.

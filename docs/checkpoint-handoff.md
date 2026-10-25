@@ -40,7 +40,8 @@ PRIVATE copy preserved all completed canonical files/logs. Public-replay-attempt
 is terminal/released. Runtime is much slower than root's15-20minute estimate;
 report measured times, not real-time claims. JIT experiment fully reverted.
 
-No numerical job is currently live; verify ledger/lease before another claim.
+No numerical job is live; last history regression is terminal/released below.
+Verify ledger/lease and exact processes before any additional numerical claim.
 Existing shared MATLAB CAPYTAINE_REFERENCE engine29796/launcher40036 was not
 quit or restored onscreen. Keep its window minimized/headless. TEMP/TMP must
 be normal AppData/Local/Temp before engine discovery/connect.
@@ -186,8 +187,25 @@ attempt3 is terminalSUCCESS, exact processes/hashes verified, idle read back and
 lease released. Only README/messages changed after successful tested blobs.
 Evidence/limits: experts/wecsim_expert/fork-rebuild-regressions-2026-10-25.md.
 No full WEC suite, other MATLAB/OS or dynamics simulation was run for these PRs.
-No source work on history, inertia or coupled aggregation yet. Upstream stays
-read-only; pin promotion and legacy branch retirement remain on hold.
+Issue1 history/lag correction is now internal PR8:
+https://github.com/amosborne/WEC-Sim/pull/8, branch fix/imported-excitation-history,
+805bb29b1aa5479988b61d5187f52809656cc82c independently atop a23d299. Source and
+independent scalar oracle were reviewed before root's serial execution. Windows/
+R2025b history-regressions-attempt1 passed all11 candidate tests; stock10fail/
+1regularCIC control pass, no incomplete tests. Selected stock witnesses are real
+preprocessing numerical crop/lag failures. All exact processes/hashes were verified
+terminal, idle read back and lease released; session78983 is CLOSED. Only README/
+message changed after tested source15a38c68. New test/helper/wrapper static clean.
+
+Its generic policy retains complete FILE history, zero-extends beyond it with a
+named warning, rejects invalid internal data, preserves the original lag grid and
+applies the legacy absolute-time SOURCE ramp once. Existing already-ramped direct
+calls stay valid. No new negative-time clamp or mandatory calm-start/padding gate.
+Evidence/limits: experts/wecsim_expert/imported-history-rebuild-2026-10-25.md.
+No dynamics, multi-import, full-suite, MATLAB/OS matrix or performance qualification.
+Inertia and coupled aggregation remain outstanding. No merge or upstream write;
+combined branch remainsa23, Topwater/oldcheckout995 and public artifacts unchanged.
+Pin promotion and legacy branch retirement remain on hold.
 
 ## Current fork process and next actions
 

@@ -42,6 +42,26 @@ this reference branch; local checks above are the validation evidence.
 
 ## Generic CLI integration checkpoint
 
+Issue #1 history/lag-only candidate is locally verified and frozen at
+`fix/imported-excitation-history`, commit
+`805bb29b1aa5479988b61d5187f52809656cc82c`, directly based on `a23d299`.
+It retains the full first imported record, original lag sample grid and literal
+legacy source-time ramp; uses zero extension outside FILE bounds with one named
+support warning; preserves already-ramped legacy calls. No calm-history clamp,
+mandatory padding, aggregation or dispatch changes. Independent review approved
+the executed source; new test/helper/wrapper static checks were clean.
+Windows/R2025b [attempt 1](../../../artifacts/workflow/history-regressions-attempt1/report.json)
+passed all eleven fixed tests; stock failed ten and passed the regular-wave
+control, with no incomplete tests. Real-preprocessing crop/lag numerical
+witnesses failed cleanly on stock. Exact processes/CIM/frozen identities were
+verified and the lease released. Only README validation and commit message were
+amended; production/test/helper blobs match executed `15a38c68` exactly.
+Scope is excitation-only: no dynamics, multi-import, full-suite, MATLAB/OS
+matrix or performance qualification. Other topics, combined base, held runtime
+pin and public artifacts are unchanged. Root published the topic as internal
+[PR #8](https://github.com/amosborne/WEC-Sim/pull/8), targeting our
+`topwater/reference`. No merge or upstream write occurred.
+
 The cosmetic `waveClass/listInfo` path fix passed a real three-path display
 probe: verbatim Windows/percent/UNC paths, zero warnings, no wave setup/body run
 or new engine. Helper style is clean; 113 upstream findings are unchanged.

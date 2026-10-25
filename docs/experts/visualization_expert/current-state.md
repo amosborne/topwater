@@ -8,6 +8,16 @@ is `uv run topwater render [DIRECTORY]`: read `result.npz`, atomically replace
 `video.mp4` after full decode/frame/dimension checks, and write `video.log`.
 No boat/sea input or hydrodynamic computation belongs to rendering.
 
+The complete canonical public workflow is delivered at checkpoint `bda901d`.
+`canonical-pipeline-attempt4` completed the 60 s WEC-Sim solve in 2393.743 s and
+independent public render in 226.932 s: 3001 motion samples, 751 surface frames,
+and 751 fully decoded H.264 frames at 800x800, 12.5 fps, encoded duration 60.08 s
+(endpoint frame hold). Root viewed decoded 0/30/51.44/60 s frames and accepted
+coverage and readable HUD. Evidence: `artifacts/workflow/canonical-pipeline-attempt4/`
+`report.json`, `terminal.json`, and `output.log`. Exit 0 and frozen identities
+were verified; root verified the exact process tree terminal and released the
+lease. The handoff and execution ledger own subsequent scheduling/liveness.
+
 `result_render.py` streams packed surface frames directly, supports changing
 connectivity, and interpolates only rigid poses (linear position/SLERP). The
 saved hull is transformed with CG exactly once. Accepted 800-square top-down
@@ -16,7 +26,38 @@ artists use background blitting; the water artist is rebuilt only on topology
 changes. Folded/overlapping projected sheets are explicitly unsupported by this
 presentation, without narrowing the result format or native solver physics.
 
-### Reviewed correction and focused renderer suite PASS
+`solve` now also publishes `result.png` through `result_plot.py` and the paired
+NPZ/PNG publisher. The final canonical PNG was generated from the completed
+Result without rerunning physics: `artifacts/workflow/result-plot-backfill-attempt2/`
+`report.json` and `terminal.json`. It includes all 3001 saved motion samples and
+startup, uses the prior white/light-grid/teal 2x3 style at 2160x1170, and agrees
+with archived native motion curves within 2.63e-14 m or deg. Translations share
+one symmetric metre range; rotations share a separate symmetric degree range,
+each with 5% headroom. Fixed initial heading axes and initial-attitude removal
+preserve the motion convention; relative XYZ Euler labels are unwrapped and
+warn at gimbal lock. Root and visualization owner viewed the final shared-axis
+PNG. The original seven data/video/log files remained bit-exact; original
+`result.log` was not retroactively changed to claim PNG production. Latest
+shared-axis/solve-publication checks: 44 passed in 5.07 s, evidence
+`artifacts/workflow/motion-plot-style-tests-attempt1/output.log`. Root verified
+terminal/frozen state and released both execution leases.
+
+Artifact and visual delivery pass; physical accuracy remains provisional.
+The producer preserves the total-water mesh, with hull-interior portions
+implicitly excluded, and computes geometric waterline contact separately.
+The top-down display requires one upward single-valued projected sheet with
+supported boundaries/holes; folded or overlapping layers fail clearly. Opaque
+masking/contact annotations do not establish wetting, flooding or nonlinear
+fluid physics. Radiation-phase sensitivity, reference mesh/irregular-frequency
+risk, reconstructed-field/load discrepancies and linear applicability remain
+qualified in [warning triage](../../cli/warning-triage.md) and issues #31-34.
+No further plot, render, test or physics job is allocated to this owner.
+
+## Historical pre-delivery projection correction and clipped-export evidence
+
+The following preserves earlier tests and the superseded clipped-export study;
+current production preserves the producer's uncut total-water mesh. These
+records are not current execution allocations or the final public-run evidence.
 
 The renderer's old normalized XY determinant cutoff `1e-11` imposed a whole-patch
 minimum triangle area, rejecting small well-conditioned exported cut faces.
@@ -45,10 +86,8 @@ matched, exact processes were terminal and the lease was released. Evidence:
 acceptance, not a full render or a new body/field computation. The execution
 ledger and handoff own subsequent liveness.
 
-Full canonical public workflow/rendering, decode and visual review remain
-outstanding. No complete canonical `result.npz`/`video.mp4` is accepted or
-published yet. Root schedules the next numerical job under a fresh sole lease;
-no additional render or test is allocated to this visualization owner.
+At this historical checkpoint the complete public workflow was still pending;
+the subsequent successful uncut workflow and final PNG are recorded above.
 
 ## Historical incident-only rendering evidence
 
