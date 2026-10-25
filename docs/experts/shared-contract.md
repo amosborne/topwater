@@ -14,6 +14,12 @@ inferred opening. Caps are internal only. Result exports a complete hull snapsho
 geometry. Native nonlinear output is not constrained to a linear decomposition.
 The WEC adapter reconstructs its linear incident/diffracted/radiated field from
 the existing model and computed motion without feedback or another body solve.
+Latest user steering: preserve that total field and its producer mesh on export.
+Do not cut or remesh water triangles to fit the hull. Portions inside the posed
+hull are invalid fluid and are implicitly excluded. Compute the physical-hull
+waterline intersection in a separate shared geometry routine. The format still
+accepts a native solver's own evolving surface mesh; it imposes no linear field
+decomposition or fixed-grid requirement on that solver.
 Geometric moving-contact continuation is an explicit approximation, not nonlinear
 waterline physics. Quantify total-minus-incident surface delta and force-field
 consistency; do not tune to a small delta or alter accepted body forcing.

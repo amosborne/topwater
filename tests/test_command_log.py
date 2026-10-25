@@ -1,6 +1,7 @@
 """Real-file command logging controls; no solver or encoder execution."""
 
 from io import StringIO
+import logging
 import re
 import sys
 
@@ -126,15 +127,125 @@ def test_latest_attempt_truncates_previous_log(tmp_path, consoles):
     assert text.count('BEGIN') == 1 and text.count('END status=') == 1
 
 
-def test_explicit_flush_emits_partial_line_and_ansi_is_removed(tmp_path, consoles):
+def test_explicit_flush_preserves_partial_line_until_exit_and_strips_ansi(tmp_path, consoles):
     consoles = consoles()
     path = tmp_path/'result.log'
     with CommandLog(path, 'solve'):
         sys.stdout.write('\x1b[32mprogress\x1b[0m')
         sys.stdout.flush()
-        assert ' INFO solve progress' in path.read_text(encoding='utf-8')
+        assert ' INFO solve progress' not in path.read_text(encoding='utf-8')
+        assert consoles[0].getvalue() == '\x1b[32mprogress\x1b[0m'
+    assert ' INFO solve progress' in path.read_text(encoding='utf-8')
     assert consoles[0].getvalue() == '\x1b[32mprogress\x1b[0m'
     assert '\x1b' not in path.read_text(encoding='utf-8')
+
+
+def test_write_flush_segments_form_one_real_warning_line(tmp_path, consoles):
+    consoles = consoles()
+    path = tmp_path/'result.log'
+    fragments = ['[1:54:49 PM]', ' ', '\x1b[33mWARNING', '\x1b[0m ',
+                 'Mesh resolution for ', 'RadiationProblem', '(', 'body', '=', 'boat', ')']
+    with CommandLog(path, 'solve') as log:
+        for fragment in fragments:
+            sys.stdout.write(fragment)
+            sys.stdout.flush()
+        assert len(records(path)) == 1  # BEGIN only; flush is not a newline.
+        sys.stdout.write('\r')
+        sys.stdout.flush()
+        sys.stdout.write('\n')  # Split Windows newline must not create a blank row.
+        sys.stdout.flush()
+    assert consoles[0].getvalue() == ''.join(fragments)+'\r\n'
+    lines = records(path)
+    assert len(lines) == 3
+    assert lines[1].endswith('WARNING solve [1:54:49 PM] WARNING Mesh resolution for RadiationProblem(body=boat)')
+    assert log.warning_count == 1
+
+
+def test_rich_continuation_levels_reset_and_do_not_cross_streams(tmp_path, consoles):
+    consoles = consoles()
+    path = tmp_path/'result.log'
+    prefix = '[13:54:49] WARNING  '
+    padding = ' '*len(prefix)
+    with CommandLog(path, 'solve'):
+        print(prefix+'first warning row')
+        print(padding+'wrapped warning row')
+        print(padding+'other stream progress', file=sys.stderr)
+        print('progress resumed')
+        print(padding+'indented progress after reset')
+        print(prefix+'another warning')
+        print()
+        print(padding+'indented progress after blank')
+        print(prefix+'third warning')
+        print('[13:54:50] INFO     explicit progress')
+        print(padding+'wrapped ordinary progress')
+    lines = records(path)
+    assert any(' WARNING solve '+padding+'wrapped warning row' in line for line in lines)
+    for message in ('other stream progress', 'indented progress after reset',
+                    'indented progress after blank', 'wrapped ordinary progress'):
+        assert any(' INFO solve '+padding+message in line for line in lines)
+
+
+def test_actual_rich_handler_remains_unchanged_with_segment_flushes(tmp_path, consoles):
+    rich_console = pytest.importorskip('rich.console')
+    rich_logging = pytest.importorskip('rich.logging')
+    consoles = consoles()
+    path = tmp_path/'result.log'
+
+    class SegmentFlushingStream:
+        # Exercise the per-styled-segment flush pattern of Rich's Windows
+        # renderer while retaining the actual RichHandler layout on every OS.
+        def __init__(self, target):
+            self.target = target
+
+        def write(self, text):
+            for part in re.findall(r'\s+|\S+', text):
+                self.target.write(part)
+                self.target.flush()
+            return len(text)
+
+        def flush(self):
+            self.target.flush()
+
+    def make_handler(stream):
+        console = rich_console.Console(file=stream, width=58, force_terminal=False,
+                                       legacy_windows=False, color_system=None)
+        handler = rich_logging.RichHandler(console=console, show_path=False,
+                                           log_time_format='[%X]')
+        handler.setFormatter(logging.Formatter('%(message)s'))
+        handler.addFilter(logging.Filter())
+        return handler
+
+    warning = logging.LogRecord('capytaine.test', logging.WARNING, __file__, 1,
+        'Mesh resolution may be insufficient near the hull; check the largest '
+        'panel radius before accepting this field.\nSecond warning paragraph '
+        'continues the same diagnostic without repeating its level.', (), None)
+    progress = logging.LogRecord('capytaine.test', logging.INFO, __file__, 2,
+                                 'Coefficient generation continues', (), None)
+    reference = StringIO()
+    reference_handler = make_handler(reference)
+    reference_handler.handle(warning)
+    warning_rows = [line for line in reference.getvalue().splitlines() if line.strip()]
+    reference_handler.handle(progress)
+
+    with CommandLog(path, 'solve') as log:
+        handler = make_handler(SegmentFlushingStream(sys.stdout))
+        logger = logging.Logger('capytaine.test', logging.DEBUG)
+        logger.addHandler(handler)
+        original = (tuple(logger.handlers), tuple(handler.filters), handler.formatter,
+                    handler.level, logger.level, logger.propagate)
+        logger.handle(warning)
+        logger.handle(progress)
+        assert original == (tuple(logger.handlers), tuple(handler.filters), handler.formatter,
+                            handler.level, logger.level, logger.propagate)
+    assert consoles[0].getvalue() == reference.getvalue()
+    assert consoles[1].getvalue() == ''
+    lines = records(path)
+    assert [line.split(' solve ', 1)[1] for line in lines[1:-1]] == [
+        line for line in reference.getvalue().splitlines() if line.strip()]
+    assert len(warning_rows) > 2  # Actual wrapped/multiline Rich output.
+    assert all(' WARNING solve ' in line for line in lines[1:1+len(warning_rows)])
+    assert all(' INFO solve ' in line for line in lines[1+len(warning_rows):-1])
+    assert log.warning_count == len(warning_rows)
 
 
 def test_open_failure_leaves_streams_and_output_untouched(tmp_path, consoles):

@@ -75,7 +75,18 @@ def main(argv=None):
                 log.event('INFO', 'STAGE render and verify complete video')
                 timings = render_result(result, destination)
                 log.published(destination)
-                log.event('INFO', f'RENDER timings={timings}')
+                log.event('INFO',
+                    f'VIDEO frames={timings["frames"]} fps={timings["fps"]:g} '
+                    f'size={timings["size"][0]}x{timings["size"][1]} '
+                    f'source_end_s={timings["source_end_s"]:.3f} '
+                    f'encoded_duration_s={timings["video_duration_s"]:.3f} verified=true')
+                timing_keys = ('preparation_seconds', 'setup_seconds', 'geometry_seconds',
+                               'draw_seconds', 'encoder_start_seconds', 'encoder_send_seconds',
+                               'encoder_close_seconds', 'verification_seconds', 'elapsed_s')
+                log.event('INFO', 'TIMING render ' + ' '.join(
+                    f'{key.removesuffix("_seconds")}_s={timings[key]:.3f}'
+                    if key != 'elapsed_s' else f'elapsed_s={timings[key]:.3f}'
+                    for key in timing_keys))
                 print(f'Wrote {destination}')
     except KeyboardInterrupt:
         print(f'topwater {args.command}: interrupted; previous outputs preserved', file=sys.stderr)

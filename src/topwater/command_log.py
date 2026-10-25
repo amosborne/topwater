@@ -4,7 +4,9 @@ Use one context per serial CLI invocation. The context captures writes through
 the current Python stdout/stderr, including backend text printed by Python.
 Native file-descriptor writes, subprocess output not relayed through Python,
 binary stream writes, and logging handlers bound to other streams are outside
-this capture. This is an execution log, not a physical-accuracy assessment.
+this capture. Rich-style continuation levels are inferred from rendered text;
+the original LogRecord is not intercepted. This is an execution log, not a
+physical-accuracy assessment.
 """
 
 from datetime import datetime, timezone
@@ -21,6 +23,12 @@ _WARNING = re.compile(
     r'^\s*(?:warning(?:\s+summary)?\s*(?:\[|:)|'
     r'WEC-Sim applicability:|Surface numerical approximation:)', re.IGNORECASE)
 _ERROR = re.compile(r'^\s*(?:ERROR|CRITICAL|FATAL)\b', re.IGNORECASE)
+# Capytaine's Rich handler renders a time column (or spaces when repeated),
+# a level column, and then the message. Match that header before inferring the
+# severity of immediately following rows at the identical message column.
+_RICH_HEADER = re.compile(
+    r'^(?:\[[^\]\r\n]*\d:\d[^\]\r\n]*\]| {2,})[ \t]+'
+    r'(?P<level>DEBUG|INFO|WARNING|ERROR|CRITICAL)[ \t]+(?=\S)')
 
 
 class _UTCFormatter(logging.Formatter):
@@ -44,6 +52,9 @@ class _ConsoleTee:
         self.owner = owner
         self.console = console
         self.pending = ''
+        self.previous_cr = False
+        self.continuation_level = None
+        self.continuation_column = None
 
     def write(self, text):
         if not isinstance(text, str):
@@ -57,15 +68,24 @@ class _ConsoleTee:
                     break
                 line = self.pending[:match.start()]
                 self.pending = self.pending[match.end():]
-                self.owner._console_line(line)
+                if match.group() == '\n' and self.previous_cr and not line:
+                    self.previous_cr = False
+                    continue
+                self.previous_cr = match.group() == '\r'
+                self.owner._console_line(line, self)
         return len(text)
 
     def flush(self):
         with self.owner._lock:
             self.console.flush()
+            self.owner._handler.flush()
+
+    def drain(self):
+        """Publish an unterminated tail only when the command ends."""
+        with self.owner._lock:
             if self.pending:
                 line, self.pending = self.pending, ''
-                self.owner._console_line(line)
+                self.owner._console_line(line, self)
 
     def __getattr__(self, name):
         return getattr(self.console, name)
@@ -81,6 +101,9 @@ class CommandLog:
     including repeated-warning summaries, rather than distinct physical events.
     Exceptions are logged and propagate. An ERROR record also marks a handled
     failure when a command catches its exception inside this context.
+    Console flushes do not delimit log lines; unterminated tails are recorded
+    on exit. Rich warning/error continuation levels use a conservative rendered
+    column heuristic, not interception or changes to the caller's log handlers.
     """
 
     def __init__(self, path, command, details=''):
@@ -148,17 +171,33 @@ class CommandLog:
         self._outputs.append(str(Path(path)))
         self.event('INFO', f'PUBLISHED {self._outputs[-1]}')
 
-    def _console_line(self, line):
+    def _console_line(self, line, tee):
         line = _ANSI.sub('', line)
         if not line.strip():
+            tee.continuation_level = tee.continuation_column = None
             return
-        if _ERROR.search(line) or line.lstrip().startswith(f'topwater {self.command}:'):
+        header = _RICH_HEADER.match(line)
+        column = tee.continuation_column
+        if header is not None:
+            level = header.group('level')
+            if level in ('WARNING', 'ERROR', 'CRITICAL'):
+                tee.continuation_level = level
+                tee.continuation_column = header.end()
+            else:
+                tee.continuation_level = tee.continuation_column = None
+        elif _ERROR.search(line) or line.lstrip().startswith(f'topwater {self.command}:'):
             level = 'ERROR'
+            tee.continuation_level = tee.continuation_column = None
+        elif (column is not None and line.startswith(' '*column)
+              and len(line) > column and not line[column].isspace()):
+            level = tee.continuation_level
         elif (_WARNING.search(line) or re.search(r'\b(?:WARNING|WARN)\b', line)
               or (line.lstrip().startswith('Capytaine:') and re.search(r'\bwarning\b', line, re.IGNORECASE))):
             level = 'WARNING'
+            tee.continuation_level = tee.continuation_column = None
         else:
             level = 'INFO'
+            tee.continuation_level = tee.continuation_column = None
         self.event(level, line)
 
     def __exit__(self, kind, error, traceback):
@@ -166,6 +205,7 @@ class CommandLog:
         try:
             for tee in self._tees:
                 tee.flush()
+                tee.drain()
             if error is not None:
                 self.event('ERROR', f'{type(error).__name__}: {error}'.rstrip(': '))
             status = ('interrupted' if isinstance(error, KeyboardInterrupt)

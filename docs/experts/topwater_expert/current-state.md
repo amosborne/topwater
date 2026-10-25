@@ -2,22 +2,36 @@
 
 ## Current workflow geometry checkpoint (2026-10-25)
 
-Bounded reusable workflow/data and surface-export implementation is authorized;
-independent native coupled physics remains unavailable. Boat/Sea/Result NPZ
-contracts, convex single-opening hull ingestion/internal caps, and conforming
-exported contact geometry are implemented. Nonplanar partial-facet cap closure
-still has an explicit backend limitation; no generic CAD repair is claimed.
+Latest user explicitly approved the simpler uncut-surface contract. Preserve the
+same total incident+diffraction+radiation field and its original rectangular
+water vertices/face indices. Finite stored values inside the posed hull are
+physically invalid/implicitly excluded by the hull; no extra NPZ keys or forced
+mesh hole are introduced. Compute the waterline separately. A future native
+solver supplies its own surface and may evolve it internally.
 
-Latest export correction is independently source-reviewed: a saved frame-277
-near-collinear triangulation sliver is repaired only by a constrained-boundary-
-preserving internal diagonal flip with unchanged world degeneracy checks and
-signed/unsigned area/orientation guards. No hull/water contact vertices move.
-Coordinator reports 228 tests passed, one optional skip (14.98 s), and actual
-saved 277 plus cached 276/278 geometry verification passed (8.423 s), with
-frame-277 input/vertices/directed boundaries bitwise preserved and two triangles
-changed. All-frame cached geometry sweep is source-ready but not yet run.
-No complete-case/native-physics/video acceptance follows. Evidence and limits:
-[mesh tooling](../../mesh-tooling.md#constrained-contact-triangulation-correction-2026-10-25).
+Implemented/frozen shared interface: `surface_geometry.waterline_segments`
+reuses the existing visualization intersection kernel, with physical hull faces
+only (or explicit artificial-cap exclusion). Visualization reexports the same
+function. `validate_opening_clearance` exposes the unchanged complete-rim-edge
+and internal-cap compatibility checks without clipping/remeshing. Rim/cap
+contact remains fatal; physical coplanar contact remains fatal in the waterline
+kernel. No wave values, hull geometry, tolerances or physical gates changed.
+
+ROOT reports `tests/test_surface_geometry.py tests/test_surface_export.py`:
+34 passed in 0.50 s, frozen identities/process absence verified, exact producer
+terminal and lease released. Evidence:
+[uncut contact test log](../../../artifacts/workflow/uncut-contact-tests-attempt1/output.log).
+The old real-three-frame clipping A/B benchmark was NOT run because that export
+workflow is superseded. Shared helper stays frozen for the producer consumer.
+Producer adaptation, cached uncut replay and complete example/video acceptance
+remain pending; no complete-case or independent native-physics claim follows.
+
+Boat/Sea/Result NPZ contracts and convex single-opening hull ingestion/internal
+caps remain implemented. Nonplanar partial-facet cap closure has an explicit
+backend limitation; no general CAD repair is claimed. Earlier clipping studies,
+including the guarded frame-277 diagonal correction and 751-frame geometry
+pass, remain historical evidence under their original policies:
+[mesh tooling](../../mesh-tooling.md).
 
 ## Earlier visualization checkpoint
 

@@ -6,16 +6,16 @@
     "manifest":  null,
     "active_numerical_job":  null,
     "last_terminal_evidence":  {
-                                   "job":  "Full result renderer regression including tiny valid projected triangles, malformed controls and real two-frame encode",
+                                   "job":  "Integrate logical loglines, compact video summary and sharedwaterline with real twoframe rendering; no solver",
                                    "owner":  "/root",
-                                   "producer_pid":  29496,
-                                   "owner_launcher_pid":  27040,
-                                   "started_at":  "2026-10-25T20:52:14.079244+00:00",
+                                   "producer_pid":  34416,
+                                   "owner_launcher_pid":  39052,
+                                   "started_at":  "2026-10-25T21:18:37.063758+00:00",
                                    "exit_code":  0,
                                    "frozen_inputs_match":  true,
                                    "complete":  true,
-                                   "manifest":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\renderer-projection-tests-attempt1\\manifest.json",
-                                   "output":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\renderer-projection-tests-attempt1\\output.log"
+                                   "manifest":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\logging-render-integration-attempt2\\manifest.json",
+                                   "output":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\logging-render-integration-attempt2\\output.log"
                                },
     "note":  "Exact producer/owner and FFmpeg absence verified by independent CIM; frozen input hashes verified; terminal exit 0. Final separate idle readback follows before lease release."
 }

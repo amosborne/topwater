@@ -18,10 +18,15 @@ The Windows path-display defect below is now fixed in maintained-fork commit
 prints Windows, percent-containing and UNC paths verbatim with zero warnings.
 That presentation fix does not change the physical/numerical qualifications.
 
-The specific frame-277 sliver now has a guarded triangulation correction.
+The historical frame-277 sliver has a guarded triangulation correction.
 [Saved-frame verification](../../artifacts/workflow/surface-frame-verification-attempt1/frames/report.json)
-passes frames 276–278, with unchanged vertices/contact boundaries and only two
-triangles replaced at frame 277. Full-sequence verification remains pending.
+passes frames 276â€“278, with unchanged vertices/contact boundaries and only two
+triangles replaced at frame 277. The subsequent
+[cached sweep](../../artifacts/workflow/cached-geometry-sweep-attempt1/geometry/report.json)
+passed all 751 frames in 1711.761 seconds with unchanged fields and motion.
+The user has since removed the requirement to cut/remesh canonical water output:
+the approved path preserves the grid and computes waterline intersections
+separately. Its complete producer replay and public-run acceptance remain pending.
 
 | Message / category | Why it occurs | Evidence and physical implication | Disposition |
 |---|---|---|---|
@@ -35,15 +40,16 @@ triangles replaced at frame 277. Full-sequence verification remains pending.
 | Capytaine `Exporting problem in already existing directory` | The producer creates its own fresh scratch hydrodynamics directory, writes the netCDF and then calls the legacy hydrostatics exporter. That exporter warns whenever its target directory already exists. | The logged path is the unique per-run OS-temp directory. The generic warning does not establish a collision with another case or an unexpected overwrite. | **Noisy lifecycle warning for this path.** Keep freshness/ownership checks; improve local presentation if needed. This warning is distinct from the previous attempt's cleanup/locked-file error. |
 | Capytaine `Precomputing tabulation` | The Green-function implementation constructs its numerical lookup table; its source emits this progress message at WARNING level. | Actual work and startup cost are occurring. The message itself reports no failed tabulation or physical invalidity. | **Progress/info presentation.** It can be presented as initialization progress without hiding subsequent physical warnings. |
 | WEC-Sim `Set water depth to 200m for visualization` | For infinite BEM depth, `waveClass.setWaterDepth` sets `deepWater=1` and a finite display depth. | The current workflow separately verifies infinite-depth BEM input and uses the external directional force table with nonlinear hydro/drag off. This message does not change that hydrodynamic model to a 200 m seabed. | **Expected informational message.** Label it visualization-only. Reassess its use if future physics paths consume the display parameter. |
-| `surface has degenerate triangles`, frame 277 / 22.16 s | Required surface clipping/export produced geometry rejected by its triangle-validity gate. The specific construction defect is under geometry-owner investigation. | The traceback is `export_surface -> validate_surface_topology -> _mesh_arrays`. Attempt 2 preserves completed fields and failure geometry in the printed OS-temp recovery directory. This failure is distinct from the flat-reference diagnostic starting at 23.08 s; no causal link is established. | **Current fatal blocker: fix export geometry.** Preserve the validation gate, replay the frozen failure geometry, and validate the complete export from retained fields. Do not publish partial output, discard the failing check, or rerun body/field physics merely to diagnose this cached frame. |
+| `surface has degenerate triangles`, frame 277 / 22.16 s | Required surface clipping/export produced geometry rejected by its triangle-validity gate. The specific construction defect is under geometry-owner investigation. | The traceback is `export_surface -> validate_surface_topology -> _mesh_arrays`. Attempt 2 preserves completed fields and failure geometry in the printed OS-temp recovery directory. This failure is distinct from the flat-reference diagnostic starting at 23.08 s; no causal link is established. | **Historical fatal in the superseded clipped export.** The guarded repair passed all 751 cached frames. Canonical output now preserves the uncut producer grid; validate its independent contact checks and diagnostics before acceptance. Retain this failed evidence and its original gates. |
 
 The attempt stopped before all 751 surface frames and final surface summaries.
 Missing final wet-set/contact or total-minus-incident summaries are incomplete
 evidence, not a pass. A surface mesh that validates does not itself establish
 nonlinear contact, flooding, breaking, slamming, convergence or accuracy.
 
-For the unchanged-physics workflow, the immediate blocker is the degenerate
-export geometry. The physical/numerical warnings remain qualifications on how
+The earlier degenerate clipped-export geometry is historical failure evidence.
+The immediate task is validating the approved uncut export and its performance.
+The physical/numerical warnings remain qualifications on how
 the completed result may be interpreted; they are not suppressed and are not
 new automatic rejection thresholds. Native dynamics remain held. Logging is
 separate from physics: the CLI now reserves `sea.log`, `result.log` and

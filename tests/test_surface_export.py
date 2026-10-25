@@ -240,6 +240,38 @@ def test_topology_allows_disconnected_components_and_vertical_surface():
     validate_surface_topology(np.vstack((first, vertical)), np.array([[0, 1, 2], [3, 4, 5]]))
 
 
+def test_topology_rejects_two_closed_fans_sharing_only_one_vertex():
+    points, faces = closed_box()
+    other = points+[2., 2., 2.]
+    # The second box's lower corner is the first box's upper corner. Share the
+    # actual index: all edges are manifold, but this vertex has two closed fans.
+    common = int(np.flatnonzero(np.all(points == [1., 1., 1.], axis=1))[0])
+    mapping = np.r_[common, np.arange(len(points), 2*len(points)-1)]
+    vertices = np.vstack((points, other[1:]))
+    with pytest.raises(ValueError, match='pinched vertex'):
+        validate_surface_topology(vertices, np.vstack((faces, mapping[faces])))
+
+
+def test_topology_allows_multiple_disjoint_closed_components():
+    points, faces = closed_box()
+    validate_surface_topology(np.vstack((points, points+[3., 3., 3.])),
+                              np.vstack((faces, faces+len(points))))
+
+
+@pytest.mark.parametrize('polygon', [[0, 1, 2], [2, 0, 3, 4], [4, 2, 1, 0, 3]])
+def test_clipping_area_vector_preserves_cross_reduction_bits(polygon):
+    from topwater._surface_export import _area_vector
+
+    points = np.array([[.42790402925610144, .17039693147594254, -.03260405850092889],
+                       [.42797449851073016, .16844460462755206, -.03263331227243573],
+                       [.42600476914629437, .16835542952517174, -.03262962592722955],
+                       [.42699834260851194, .16840041134694653, -.032631485398299825],
+                       [-.21, 1.43, -.4]])
+    q = points[polygon]-points[polygon[0]]
+    original = np.cross(q, np.roll(q, -1, axis=0)).sum(axis=0)/2
+    assert _area_vector(polygon, points).tobytes() == original.tobytes()
+
+
 def test_vertex_pinches_and_shared_edge_winding_rejected():
     points = np.array([[0., 0., 0.], [1., 0., 0.], [0., 1., 0.],
                        [-1., 0., 0.], [0., -1., 0.]])

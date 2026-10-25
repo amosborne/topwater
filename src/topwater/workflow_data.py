@@ -174,6 +174,9 @@ class Result(_Archive):
     surface_faces. Its faces use LOCAL indices, not offsets into the packed
     vertices. Both offset vectors start at zero and have S+1 entries. Variable
     counts and connectivity are supported; no time interpolation is implicit.
+    Export need not cut the surface at the hull: portions inside the posed hull
+    are invalid fluid. Waterline intersections are computed separately. A native
+    producer may supply its own evolving mesh without an export remeshing step.
     The archive is neither a restart nor a physics-accuracy certificate.
     """
 

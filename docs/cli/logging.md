@@ -36,7 +36,22 @@ A missing `END` record indicates an incomplete log, not successful completion.
 Python stdout/stderr are copied to the terminal unchanged and recorded with
 levels; ANSI escapes are removed from the file. Ordinary stderr progress remains
 INFO. Existing warning prefixes are classified as WARNING, and exceptions as
-ERROR. MATLAB output relayed by the backend is included. Native descriptor
+ERROR. Console flushes do not end log records: Rich may flush after each styled
+word or punctuation mark. Only newline/carriage-return boundaries end records;
+an unterminated final line is recorded when the command exits, including on an
+exception. A partially written progress line can therefore be visible in the
+terminal before it appears in the file.
+
+Rich time/level columns are recognized. Immediately following rows starting at
+the same message column inherit a warning/error level on that stream. A blank
+row, different indentation or a new level header resets that continuation.
+This is a rendered-text heuristic, not interception of the original LogRecord:
+other layouts can lose continuation severity, and unrelated text at exactly
+the same indentation can inherit it. Existing logging handlers and their
+formatting are unchanged. The warning count counts rendered WARNING rows,
+including wrapped continuation rows, rather than unique warning events.
+
+MATLAB output relayed by the backend is included. Native descriptor
 writes, binary streams and unrelated logging handlers bound to other streams
 are outside this capture. Failure to open the log stops the command before its
 physical work starts.

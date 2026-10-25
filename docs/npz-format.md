@@ -56,5 +56,14 @@ The hull can be copied or remeshed but must preserve the simulated physical
 shape. Pose mapping is `position + R @ (vertex - cg)`. The result's hull is the
 authoritative geometry for rendering that result; editing boat.npz afterward
 does not reinterpret it. Surface geometry is mandatory and describes the total
-interface represented by the solver, not an incident-only cache. Format
+interface represented by the solver, not an incident-only cache. Export preserves
+the producer's surface mesh; it does not cut or remesh triangles at the hull.
+Surface portions inside the posed hull are invalid fluid and are implicitly
+excluded by that hull. Finite stored values there are not physical predictions.
+Consumers compute the physical-hull/surface intersection separately when they
+need a waterline; no waterline array or validity metadata is stored.
+
+This permits an uncut WEC-Sim sampling grid as well as a native solver's evolving
+surface mesh. A native solver need not produce an incident/diffraction/radiation
+decomposition, a height graph, or values inside the hull. Format
 validation is not a physical-accuracy certificate or a restart capability.

@@ -129,10 +129,13 @@ That pass does not qualify the body/surface physics pipeline.
   near-field transfer recovery.
 - Disturbance fields near/inside the mean hull footprint use an explicit exterior
   trace at offset `min(0.025 m, 0.01*beam)`. The incident contribution is evaluated
-  at the actual target locations. This continuation and geometric hull trimming
+  at the actual target locations. This continuation and geometric intersection
   do not solve nonlinear moving-contact physics.
 - The water output uses a piecewise-linear triangular graph sampled at 0.1875 m
-  grid spacing, clipped against the posed hull. Its finite patch covers the
+  grid spacing. Export retains the sampled vertices and original connectivity;
+  it does not cut triangles or remesh at the posed hull. Surface portions inside
+  that hull are invalid fluid. A separate shared intersection routine computes
+  the waterline from the total surface and physical hull faces. Its finite patch covers the
   trajectory/default render view; its edge is an export boundary, not a wall.
   Surface timestamps target 0.08 s spacing, uniformly adjusted to include both
   endpoints. CG interpolation is linear and orientation interpolation is Slerp.
@@ -211,7 +214,7 @@ full-hull total disturbed-fluid velocity bound has been established.
 
 Linear WEC-Sim hydrodynamics act about a fixed mean wetted hull. Reconstructing
 additional surface output does not add feedback or alter its governing dynamics.
-Geometric trimming against a moving hull does not establish nonlinear moving
+Geometric intersection with a moving hull does not establish nonlinear moving
 contact, flooding, slamming, breaking, or viscosity. Those events require explicit
 supported models/detectors before the command can claim to assess them.
 

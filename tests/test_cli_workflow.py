@@ -85,4 +85,8 @@ def test_real_render_cli_records_validated_publication_in_video_log(tmp_path):
     report=(tmp_path/'video.log').read_text()
     assert 'STAGE load self-contained result' in report
     assert 'status=success' in report and 'output_published=true' in report
-    assert 'RENDER timings=' in report
+    assert 'VIDEO frames=2 fps=12.5 size=800x800' in report
+    assert 'source_end_s=0.080 encoded_duration_s=0.160 verified=true' in report
+    assert 'TIMING render preparation_s=' in report
+    assert 'verification_s=' in report
+    assert 'timings={' not in report

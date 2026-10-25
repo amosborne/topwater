@@ -43,6 +43,11 @@ have a different cadence: translation is interpolated linearly and orientation
 uses shortest-path quaternion SLERP at the saved surface times. Water geometry
 is never interpolated or recomputed. NPZ loading disables pickle.
 
+The water mesh need not end at the hull. Portions inside the posed hull are
+invalid fluid; the opaque hull hides them in this top-down presentation. The
+waterline is computed separately by the shared physical-hull/surface intersection
+routine. Rendering never cuts or remeshes the saved water triangles.
+
 ## Output and replacement
 
 `video.log` records the latest invocation, rendering/verification stages,
@@ -63,6 +68,8 @@ directory. The named video and execution log are the retained outputs.
 The command prints its output path. The Python rendering function additionally
 returns preparation, setup, geometry, drawing, pipe, encoder and verification
 timings; these do not become fields in the result archive.
+The log gives a compact video summary (including distinct source and encoded
+durations) and stage timings rounded to milliseconds.
 
 ## Assumptions and hard-coded presentation
 

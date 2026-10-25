@@ -106,7 +106,13 @@ def test_cli_passes_saved_result_and_fixed_output_file(tmp_path, monkeypatch):
 
     def capture(loaded, output):
         captured.update(result=loaded, output=output)
-        return {'complete': True}
+        report = dict.fromkeys(('preparation_seconds', 'setup_seconds', 'geometry_seconds',
+                                'draw_seconds', 'encoder_start_seconds', 'encoder_send_seconds',
+                                'encoder_close_seconds', 'verification_seconds', 'elapsed_s'), 0.)
+        report.update(complete=True, frames=len(loaded.surface_time_s), fps=12.5,
+                      size=(800, 800), source_end_s=float(loaded.surface_time_s[-1]),
+                      video_duration_s=len(loaded.surface_time_s)/12.5)
+        return report
 
     monkeypatch.setattr(result_render, 'render_result', capture)
     assert main(['render', str(tmp_path)]) == 0

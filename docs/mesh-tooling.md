@@ -6,6 +6,14 @@ creates a nonphysical internal cap for the existing `HullMesh` API. Saved boats
 and results contain physical faces only. No implicit repair or welding occurs.
 General `HullMesh` and its existing mathematical coverage are unchanged.
 
+The approved canonical export preserves the producer's water mesh. It does not
+cut or remesh triangles at the hull. The posed physical hull implicitly excludes
+interior fluid, and a separate shared intersection routine supplies the waterline
+for diagnostics and rendering. A native solver may provide its own evolving mesh;
+this export contract imposes no extra mesh generation step. Historical clipping
+experiments and their original checks below remain evidence for those helpers,
+not a requirement to clip canonical output.
+
 ## Current implementation
 
 NumPy arrays remain the exchange representation. SciPy supplies convex hulls,
@@ -22,7 +30,7 @@ orientation and area were preserved. The probe is part of the passing interface
 suite (188passed/1optional skip). libigl is not installed and its gated probe
 was explicitly skipped; no capability or adoption claim follows from that skip.
 
-The current export helper uses bounded convex-halfspace triangle clipping,
+The earlier export helper uses bounded convex-halfspace triangle clipping,
 preserves physical planes, and propagates cut vertices through neighboring
 exterior faces before triangulation. Its flat/sloped/wavy contact, scale and
 opening tests passed. This does not establish a general mesh Boolean kernel,

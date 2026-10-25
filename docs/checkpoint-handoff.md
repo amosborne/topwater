@@ -34,7 +34,8 @@ No complete result.npz/video.mp4 has yet been accepted or published.
 
 ## Current implementation and evidence
 
-Latest pushed Topwater checkpoint:e74a94b (logs, warning triage and guarded
+Latest pushed Topwater checkpoint:de67fc7 (renderer projection predicate; prior
+e74a94b adds logs, warning triage and guarded
 triangulation repair). Its source and tests are reviewed and verified.
 Maintained WEC-Sim fork9952634f6f2e2746a1626484e27c3003d1e1d5a9 is pushed and
 pinned; its two newest fixes close sidecar handles and print paths literally.
@@ -96,6 +97,77 @@ Next, under a fresh root-owned serial lease:
    frames/stills. Include logs in the canonical case; no solver intermediates.
 3. Track result/video with Git LFS, commit/push baseline/fluid-body, update own
    issue30 and refresh this handoff after acceptance. Goal remains active.
+
+## Current priority: geometry performance
+
+Latest user explicitly chose STOP AND FIX THE BOTTLENECK after learning the
+cached751-frame geometry sweep took28.5min (~2.3s/frame). This changes immediate
+priority, not the full workflow acceptance goal. Do not resume a long public
+solve/render until the geometry bottleneck is measured and addressed.
+
+Root intentionally stopped canonical-pipeline-attempt3 after320.329s during
+surface field work. It had completed native body integration and radiation
+transfers, not full total geometry. Exact Python producer24608 was verified and
+stopped; full owned tree18776/16288/39956/23564/29220/22540/24608 independently
+proved absent. Wrapper/runner terminal4294967295, frozen hashes match. Engine
+29796/launcher40036 remain live. Lease released after independent terminal/idle
+checks. Session1410 is TERMINAL; do not re-poll or restart it.
+No result/video was published. The incomplete result.log has no END, as expected
+for forced process termination. Retain failed job/temp evidence; never invent
+successful finalization or accept that log as a successful run.
+
+Latest user APPROVED SIMPLER EXPORT: preserve the same total incident +
+diffraction + radiation field, DO NOT cut/remesh its water triangles. Interior
+portions are invalid fluid, implicitly excluded by the posed hull. Compute the
+waterline with a separate shared intersection routine. Public keys unchanged;
+native solver may supply its own evolvingmesh without linear decomposition.
+This supersedes the earlier conforming contact-hole export requirement.
+
+First3-frame cProfile PASS, geometry-profile-before-attempt1/profile/report.json;
+terminal/frozen checks complete, lease released. Export dominated separate
+contact checks (.04-.09s/frame instrumented). Hotspots: topology validation,
+_area_vector/cross/roll and triangulation. Profile overhead included.
+A source-reviewed optimization of _surface_export topology/area helpers exists
+but is untested; its paired benchmark was NOT run because the user removed the
+export clipping requirement. Do not run an obsolete full clipping sweep.
+
+Active source owners (no agent numerical work):
+- /root/workflow_contract: shared surface_geometry.py, extracting existing
+  physical waterline routine and independent rim/capchecks; legacy visualization
+  helper may reexport. No remeshing. Own correspondinggeometrytests.
+- /root/surface_reconstruction: _capytaine_surface.py and its tests, uncutgrid
+  export, exterior-only delta metrics and unchanged wetset/startupdiagnostics.
+  Logging edits are handed off and must be preserved. Independent researcher
+  approves temporary polygon P1integration (no exportedmesh), with common-plane
+  exterior classification, disjoint exteriorfragments and sourceP1 incident
+  interpolation. Onebeam uses explicitly SOURCEtrianglecentroid distance to
+  actual independenttotalwaterline; this is a changed discreteband convention.
+- Root: Result/NPZ/sharedcontract/CLI/renderdocs and integration, eventual tests.
+  Short3frame fullpostprocess timing+bitexact originalgrid identities before any
+  long public run. Keep all field/motion/forcing arrays unchanged.
+
+Independent user-requested logreview: docs/cli/log-review-2026-10-25.md.
+Logging capture correction (command_log.py/tests/logging.md) is source-reviewed
+and PASS17tests in0.89s, actualRichHandler plus fragmentedflush/CRLF controls;
+logging-line-buffer-tests-attempt1 terminal/frozen/process verified and released.
+It buffers until realnewline, drains finaltail at exit, preserves consolebytes
+and handlerconfiguration. Rendered Rich continuationseverity uses documented
+columnheuristic; no interceptionhooks or broadrewrite.
+WEC logging-only author froze stage/progress/fieldloadwarning changes in
+wecsim_backend.py and _capytaine_surface.py; no tests yet. Cap owns latter now.
+Root's concise video/timing summary and CLI/render integration now PASS59tests
+in2.59s, logging-render-integration-attempt2 (real2frame video included).
+Attempt1 exposed an outdated renderer testdouble returning only complete=True;
+it now returns the actual reportshape, retaining all argument/result assertions.
+No productionfallback or weakened log checks. Both attempts terminal/frozen
+processverified/leasesreleased. Sharedcontact+historicalgeometry tests PASS34
+in.50s, uncut-contact-tests-attempt1, likewise terminal/released.
+
+Own issue30 records the stop/performance priority. Refresh for this new approved
+uncut contract and next validated checkpoint. Full canonical solve/render/log
+triage/LFS publication remain pending. No streaming/pipelining or native dynamics.
+Keep MATLAB minimized/headless. Ledger is idle/no lease after last logtests;
+reconcile actualstate before next numericalclaim.
 
 ## Physical and file requirements
 
