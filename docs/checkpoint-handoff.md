@@ -6,57 +6,43 @@ Updated2026-10-25. Latest user steering controls scope. Read
 
 ## Current authorization and immediate priority
 
-IMPLEMENTATION CHECKPOINT IN PROGRESS: package/interfaces pushed at 8a7e032.
-Latest local suite: 188 passed, one optional libigl skip in 4.36 s;
-artifacts/workflow/checkpoint-tests-attempt1. Four MATLAB resources passed the
-static checker. The lifecycle helper has since changed and needs fresh checks.
+IMPLEMENTATION CHECKPOINT IN PROGRESS: package/interfaces pushed at8a7e032;
+verified shared-MATLAB lifecycle pushed at5830fc5. Production total-surface
+source and actual-waterline metrics now pass199tests/1optional libigl skip in
+8.84s (artifacts/workflow/production-tests-attempt2). The public NPZ case
+reproduces the accepted17 wet panels, full mass, CG and restoring identity.
+Independent source review approves the actual canonical CLI trial. No complete
+new result/video exists yet. Next: one actual60s public solve/render, complete
+geometry/video verification, LFS publication and updated documentation.
 
-MATLAB is running as the existing shared CAPYTAINE_REFERENCE engine (core29796,
-launcher40036, started2026-10-25T17:20:15Z). These are checkpoint identities;
-reconcile actual processes before reuse. Root verified the command window
+MATLAB uses the existing shared CAPYTAINE_REFERENCE engine (core29796,
+launcher40036, started2026-10-25T17:20:15Z). Reconcile these checkpoint identities
+against actual processes before reuse. Root verified the command window
 MINIMIZED using its system menu. Keep it minimized; never open models/figures.
-The corrected lifecycle check now PASSES: 13 backend tests, four MATLAB static
-checks, and two actual normal/forced-failure cycles from different temporary
-class directories. Exact path/directory and session settings restored; only the
-owned test model closed; engine never quit. Evidence: engine-guard-attempt4.
+The lifecycle check PASSES:13backend tests, four MATLAB static checks and two
+actual normal/forced-failure cycles from different temporary class directories.
+Exact path/directory and settings restored; only the owned model closed; engine
+never quit. Evidence: artifacts/workflow/engine-guard-attempt4.
 
-Surface-response-attempt1 PASSES in226.234s using immutable existing60s
-motion/train, without body reintegration. Radiation frequency-spacing sensitivity
-is <=3.26 micrometres at seven diagnostic points; cutoff12->24 sensitivity is
-<=0.754mm. Exact exterior acceleration endpoint is zero. Near-trace offsets
-.025/.05m differ by <=3.05mm at two targets. These are selected-case diagnostics,
-not spatial accuracy or convergence proof. Independent review found a larger
-near-field full-complex phase discrepancy. A subsequent STORED-DATA signed-lag
-diagnostic passes (surface-projection-attempt1): raw full-complex versus causal
-cosine response differs by up to42.7mm, RMS12.5mm at seven points. This cannot be
-described as a micrometre-qualified surface. Independent bounded acceptance of
-the causal approximation is pending; no raw noncausal replacement is authorized.
-Both jobs are terminal, hashes/processes verified and leases released. Cap expert
-is now implementing production total-field export; no numerical run is allocated.
-Readiness stays closed until implementation/review, canonical run and publication.
-Canonical physical boat/stronger-sea NPZ inputs now exist. New directory CLI,
-numeric contracts, strict one-opening boat validation (including supported
-nonplanar closures), variable-topology standalone renderer and packaged WEC
-adapter source are implemented. Combined suite168PASS/1explicit libigl-absent
-skip in5.13s, `artifacts/workflow/interface-tests-attempt4`; included Gmsh
-constrained-hole/collinear-edge/rigid-scale probes and a realMP4 encode/decode.
-Independent source review caught malformed-ZIP reporting (fixed) and requires
-fork cleanliness verification plus producer contact gates before publication.
+Independent method acceptance is provisional: cutoff24rad/s, spacing at most
+.025rad/s, full-history causal projection and zero direct terms. See
+[review](experts/numerical_methods_researcher/surface-reconstruction-review-2026-10-25.md).
+Actual-motion pilot PASS226.234s: spacing sensitivity<=3.26um, cutoff12->24
+sensitivity<=.754mm at seven points; exterior-trace offsets differ<=3.05mm at
+two targets. These small within-method sensitivities do NOT establish accuracy.
+The stored-data full-complex signed-lag diagnostic differs from causal output
+by up to42.7mm, RMS12.5mm, and has a future-velocity contribution up to77.3mm.
+This material phase limitation is disclosed. No raw noncausal replacement,
+full-complex equivalence, spatial convergence or nonlinear accuracy is claimed.
 
-Surface analytic controls7PASS; sparse137-solve Cap field pilotPASS66.125s,
-combined-vs-separate eta3.524e-19m/force4.547e-13. Endpoints/causal/contact
-qualification remains open; WECpreflight correctly refuses total-surface success.
-Next: dense3point transfer refinement, actualpacket force-field discrepancy and
-initialtotalcalm, explicit exterior-trace export approximation and contact mesh.
-Surface reconstruction never reruns or changes computed motion. No canonical
-result/video has been replaced by an incident-only surrogate.
-Dense3point transfer-refinement PASS83.188s and corrected export/fork/temp tests
-68PASS1.80s, refinement-checkpoint-attempt1. Atcutoff24/step.05 heldout fullcomplex
-recovery max per-mode relative discrepancy3.35%; step.1 is underresolved over60s.
-This is NOT3.35% totalsurfaceerror or physicalaccuracy proof. Nextpilot uses
-immutable actualvelocities, .05/.025 spacing,12/24cutoffs, neartraces/loadclosure.
-Infinityaccelerationterm remains a DIAGNOSTIC; exact exteriorz0 expectation0.
-
+All checkpoint jobs are terminal, hashes/processes verified and leases released.
+Execution ledger owns current scheduling. Production source is frozen pending
+the next allocated actual CLI job. Output gates check represented initial total
+eta, valid contact/coverage and packed geometry; full-hull incident eta/velocity
+bounds remain separate. No total disturbed-fluid velocity bound is claimed.
+Surface reconstruction never changes or reruns computed motion. Native dynamics
+remain unavailable. Historical sparse/refinement reports remain diagnostic,
+including their original closed-readiness markers; they are not final outputs.
 IMPLEMENTATION AUTHORIZED: latest user request is to implement the canonical
 example/workflow plan developed in this conversation. One flat
 `examples/simple-boat/` contains `boat.npz`, `sea.npz`, `result.npz`, `video.mp4`.
@@ -422,4 +408,5 @@ Preserve otherworktrees, all failed/interrupted studies and old original policie
 Do not pushmain/createbookkeepingPR/merge/upstreammessages. Coordinator owns
 scope/acceptance/integration; Cap nativeproducer; WEC dynamics/startup; Topwater
 existinggenerator only; researcher independentmethods. Renderer agent is stopped.
+
 

@@ -2,21 +2,59 @@
 
 Capytaine is imported only when a producer is explicitly called.  All harmonic
 quantities use Re(A exp(-i omega t)), fixed mean-world axes and the mean CG.
-Coefficient production does not qualify transient field reconstruction.  A
-surface kernel is deliberately unusable until its endpoint treatment and full
-complex transfer recovery have been accepted by the caller's validation gate.
+Coefficient production does not qualify transient field reconstruction. A
+surface kernel requires explicit acceptance of its numerical approximation;
+the selected causal projection retains a documented near-field phase error.
 """
 from dataclasses import dataclass
+from functools import wraps
 from importlib.metadata import version
+import json
+import logging
 from pathlib import Path
+import sys
 
 import numpy as np
 from scipy.integrate import trapezoid
-from scipy.signal import fftconvolve
+from scipy.fft import rfft, irfft, next_fast_len
 from scipy.spatial import ConvexHull, QhullError
 
 
 MODES = ('Surge', 'Sway', 'Heave', 'Roll', 'Pitch', 'Yaw')
+
+
+class _CapytaineWarningFilter(logging.Filter):
+    """Keep the first physical warning of each known family, then summarize."""
+    def __init__(self):
+        super().__init__()
+        self.counts = {}
+
+    def filter(self, record):
+        text = record.getMessage()
+        family = next((prefix for prefix in ('Mesh resolution', 'Irregular frequencies', 'Water depth')
+                       if text.startswith(prefix)), None)
+        if family is None:
+            return True
+        self.counts[family] = self.counts.get(family, 0)+1
+        return self.counts[family] == 1
+
+
+def _summarize_capytaine_warnings(function):
+    @wraps(function)
+    def call(*args, **kwargs):
+        logger = logging.getLogger('capytaine.bem.problems_checks')
+        summary = _CapytaineWarningFilter()
+        logger.addFilter(summary)
+        try:
+            return function(*args, **kwargs)
+        finally:
+            logger.removeFilter(summary)
+            for family, count in summary.counts.items():
+                if count > 1:
+                    print(f'Capytaine: {family} warning applies to {count} solves in '
+                          f'{function.__name__}; first warning retained. These limitations remain unqualified.',
+                          file=sys.stderr)
+    return call
 
 
 def _finite(value, shape, name, *, complex_value=False):
@@ -148,6 +186,7 @@ class Hydrodynamics:
         return self.excitation_headings
 
 
+@_summarize_capytaine_warnings
 def build_hydrodynamics(wet_triangles, cg, mass_matrix, workspace, *,
                         hydrostatic_stiffness, cb, volume,
                         density=1025., gravity=9.81, depth=np.inf,
@@ -267,7 +306,8 @@ def build_hydrodynamics(wet_triangles, cg, mass_matrix, workspace, *,
                          solver, radiation, diffraction, float(density), float(gravity), depth)
 
 
-def combined_diffraction(hydro, train, xy, *, return_forces=False, checkpoint=None):
+@_summarize_capytaine_warnings
+def combined_diffraction(hydro, train, xy, *, return_forces=False, checkpoint=None, return_incident=True):
     """Exact sideband combined incident/scattered spectra on the frozen hull.
 
     ``train.C`` already includes spectral quadrature weights.  Its two sign
@@ -293,6 +333,8 @@ def combined_diffraction(hydro, train, xy, *, return_forces=False, checkpoint=No
     common = dict(body=hydro.body, rho=hydro.density, g=hydro.gravity, water_depth=hydro.depth)
     for iw in range(1, len(omega)):
         checkpoint()
+        if len(omega) > 100 and (iw % 100 == 0 or iw == len(omega)-1):
+            print(f'Surface diffraction: {iw}/{len(omega)-1} positive sidebands', file=sys.stderr)
         w = float(omega[iw])
         rhs = np.zeros(hydro.body.mesh_including_lid.nb_faces, dtype=complex)
         fk = np.zeros(6, dtype=complex)
@@ -304,7 +346,8 @@ def combined_diffraction(hydro, train, xy, *, return_forces=False, checkpoint=No
                 problem = cpt.DiffractionProblem(**common, omega=w,
                     wave_direction=float((theta[j]+branch*np.pi) % (2*np.pi)))
                 rhs += coefficient * problem.boundary_condition
-                incident[iw] += coefficient * airy_waves_free_surface_elevation(xy, problem)
+                if return_incident:
+                    incident[iw] += coefficient * airy_waves_free_surface_elevation(xy, problem)
                 if return_forces:
                     values = froude_krylov_force(problem)
                     fk += coefficient*np.array([values[m] for m in MODES])
@@ -326,6 +369,7 @@ def synthesize_spectrum(omega, coefficients, time_s):
     return (np.exp(-1j*times[:, None]*omega) @ values).real
 
 
+@_summarize_capytaine_warnings
 def radiation_velocity_transfer(hydro, xy, omega=None, *, checkpoint=None, shared_green=False):
     """Return H_eta,v=i H_eta,q/omega, shape (omega, point, six modes)."""
     import capytaine as cpt
@@ -334,6 +378,8 @@ def radiation_velocity_transfer(hydro, xy, omega=None, *, checkpoint=None, share
     frequencies = hydro.radiation_omega if omega is None else _grid(omega, 'omega')
     values = np.empty((len(frequencies), len(xy), 6), dtype=complex)
     for iw, w in enumerate(frequencies):
+        if len(frequencies) > 100 and (iw % 100 == 0 or iw == len(frequencies)-1):
+            print(f'Surface radiation: {iw+1}/{len(frequencies)} frequencies', file=sys.stderr)
         results = []
         for j, mode in enumerate(MODES):
             checkpoint()
@@ -387,14 +433,18 @@ class SurfaceKernel:
     direct_acceleration: np.ndarray | None = None
 
 
-def require_surface_readiness():
-    """Fail before body execution until the field pilot has qualified tails.
+_SURFACE_POLICY_ACCEPTED = True
 
-    Having Capytaine field-evaluation functions is not evidence that the finite
-    band, causal surface reconstruction is physically ready.  Replace this
-    gate only after the independent endpoint/transfer pilot has been accepted.
+
+def require_surface_readiness():
+    """Check availability of the coordinator-accepted provisional field policy.
+
+    Acceptance is selected-case engineering qualification, not full-complex
+    recovery or nonlinear wave/body accuracy. Runtime geometry/startup gates
+    still apply independently to every produced result.
     """
-    raise ValueError('WEC-Sim total-surface reconstruction awaits the retained-field endpoint/causal-transfer pilot')
+    if not _SURFACE_POLICY_ACCEPTED:
+        raise ValueError('WEC-Sim total-surface reconstruction awaits selected-case causal-projection pilot acceptance')
 
 
 def cosine_kernel(omega, velocity_transfer, lag_s, *, direct_velocity, direct_acceleration=None):
@@ -461,11 +511,422 @@ def convolve_radiation(kernel, time_s, velocity, acceleration=None):
             raise ValueError('Actual modal accelerations are required for the identified instantaneous acceleration term')
         a = _finite(acceleration, v.shape, 'acceleration')
         result += a @ kernel.direct_acceleration.T
-    for j in range(6):
-        for p in range(kernel.values.shape[1]):
-            h = kernel.values[:len(times), p, j]
-            # Endpoint half weights implement integral_0^t at each t.  Both
-            # endpoints coincide at t=0, where the integral is exactly zero.
-            full = fftconvolve(v[:, j], h)[:len(times)]
-            result[:, p] += dt*(full-.5*h[0]*v[:, j]-.5*h*v[0, j])
+    h = kernel.values[:len(times)]
+    n = next_fast_len(2*len(times)-1)
+    product = np.sum(rfft(h, n=n, axis=0)*rfft(v, n=n, axis=0)[:, None, :], axis=2)
+    full = irfft(product, n=n, axis=0)[:len(times)]
+    # Endpoint half weights implement integral_0^t at each t. Both endpoints
+    # coincide at t=0, where the integral is exactly zero.
+    result += dt*(full-.5*(v @ h[0].T)-.5*np.sum(h*v[0][None, None, :], axis=2))
     return result
+
+
+def _clip_area_polygon(points, normal, offset, tolerance):
+    """Convex planar polygon intersection with normal.point+offset<=0."""
+    if len(points) < 3:
+        return np.empty((0, 3))
+    result = []
+    previous = points[-1]
+    dp = float(previous @ normal+offset)
+    for point in points:
+        dc = float(point @ normal+offset)
+        before, after = dp <= tolerance, dc <= tolerance
+        if before != after:
+            denominator = dp-dc
+            if abs(denominator) > np.finfo(float).tiny:
+                result.append(previous+(dp/denominator)*(point-previous))
+        if after:
+            result.append(point)
+        previous, dp = point, dc
+    if len(result) < 3:
+        return np.empty((0, 3))
+    clean = [result[0]]
+    for point in result[1:]:
+        if np.linalg.norm(point-clean[-1]) > tolerance:
+            clean.append(point)
+    if len(clean) > 1 and np.linalg.norm(clean[0]-clean[-1]) <= tolerance:
+        clean.pop()
+    return np.asarray(clean) if len(clean) >= 3 else np.empty((0, 3))
+
+
+def _polygon_area(points):
+    if len(points) < 3:
+        return 0.
+    relative = points-points[0]
+    return float(np.linalg.norm(np.cross(relative, np.roll(relative, -1, axis=0)).sum(axis=0))/2)
+
+
+class WaterGraphPartition:
+    """Fixed XY triangle prisms for exact represented-P1 hull wet-set area.
+
+    The triangulation is a single-valued upward graph. Shared prism edges use
+    deterministic ownership when a vertical hull facet lies exactly on one,
+    preventing double area counting without moving the physical hull.
+    """
+    def __init__(self, xy, faces):
+        self.xy = _finite(xy, (None, 2), 'water xy')
+        raw = np.asarray(faces)
+        if raw.ndim != 2 or raw.shape[1] != 3 or raw.dtype.kind not in 'iu':
+            raise ValueError('Water graph connectivity must be integer triangles')
+        if not len(raw) or raw.min() < 0 or raw.max() >= len(xy):
+            raise ValueError('Water graph connectivity is empty or invalid')
+        self.faces = raw.astype(np.int64, copy=False)
+        triangle = self.xy[self.faces]
+        edge = np.roll(triangle, -1, axis=1)-triangle
+        cross = edge[:, 0, 0]*edge[:, 1, 1]-edge[:, 0, 1]*edge[:, 1, 0]
+        if np.any(cross <= 0):
+            raise ValueError('Water graph triangles must have positive XY area and upward winding')
+        normals = np.stack([edge[:, :, 1], -edge[:, :, 0]], axis=-1)
+        normals /= np.linalg.norm(normals, axis=-1)[:, :, None]
+        self.normals = normals
+        self.offsets = -np.sum(normals*triangle, axis=-1)
+        self.lower, self.upper = triangle.min(axis=1), triangle.max(axis=1)
+        owners = {}
+        for i, face in enumerate(self.faces):
+            for a, b in zip(face, np.roll(face, -1)):
+                key = tuple(sorted((int(a), int(b))))
+                owners[key] = min(i, owners.get(key, i))
+        self.owner = np.array([[owners[tuple(sorted((int(a), int(b))))]
+                               for a, b in zip(face, np.roll(face, -1))] for face in self.faces])
+        self.tolerance = 1e-10*max(1., float(np.ptp(self.xy, axis=0).max()))
+
+    def wet_set_area(self, current_hull, physical_faces, height_m, reference_normal,
+                     reference_offset, initial_wetted_area):
+        """Material-associated wet-set symmetric difference / initial wet area.
+
+        ``reference_normal.point+reference_offset<=0`` marks the material that
+        was wet at the initial mean pose, expressed in the current posed axes.
+        All areas are actual 3D physical-hull area, not projected area or point
+        classification. The only surface approximation is the supplied P1 graph.
+        """
+        hull = _finite(current_hull, (None, 3), 'current_hull')
+        height = _finite(height_m, (len(self.xy),), 'height_m')
+        normal = _finite(reference_normal, (3,), 'reference_normal')
+        reference_offset = float(reference_offset)
+        initial_area = float(initial_wetted_area)
+        if not np.isfinite(initial_area) or initial_area <= 0:
+            raise ValueError('Initial physical wetted area must be positive')
+        water = np.c_[self.xy, height][self.faces]
+        water_normal = np.cross(water[:, 1]-water[:, 0], water[:, 2]-water[:, 0])
+        water_normal /= np.linalg.norm(water_normal, axis=1)[:, None]
+        water_offset = -np.sum(water_normal*water[:, 0], axis=1)
+        current_area = mean_area = common_area = 0.
+        eps = self.tolerance
+        for triangle in hull[np.asarray(physical_faces, dtype=np.int64)]:
+            lo, hi = triangle[:, :2].min(axis=0), triangle[:, :2].max(axis=0)
+            candidate = np.flatnonzero(np.all(self.upper >= lo-eps, axis=1)
+                                       & np.all(self.lower <= hi+eps, axis=1))
+            for i in candidate:
+                polygon = triangle.copy()
+                for j in range(3):
+                    n = np.r_[self.normals[i, j], 0.]
+                    d = self.offsets[i, j]
+                    if len(polygon) and np.all(abs(polygon @ n+d) <= eps) and self.owner[i, j] != i:
+                        polygon = np.empty((0, 3)); break
+                    polygon = _clip_area_polygon(polygon, n, d, eps)
+                    if len(polygon) < 3:
+                        break
+                if len(polygon) < 3 or _polygon_area(polygon) <= eps**2:
+                    continue
+                wet = _clip_area_polygon(polygon, water_normal[i], water_offset[i], eps)
+                mean = _clip_area_polygon(polygon, normal, reference_offset, eps)
+                common = _clip_area_polygon(wet, normal, reference_offset, eps)
+                current_area += _polygon_area(wet)
+                mean_area += _polygon_area(mean)
+                common_area += _polygon_area(common)
+        if abs(mean_area-initial_area) > 1e-7*initial_area:
+            raise ValueError('Wet-set area partition does not reproduce initial wetted area; graph coverage or prism ownership is unresolved')
+        difference = max(0., current_area+mean_area-2*common_area)
+        return difference/initial_area, current_area
+
+
+def _regular_grid(bounds, spacing):
+    lower, upper = np.asarray(bounds[0]), np.asarray(bounds[1])
+    axes = [np.linspace(a, b, int(np.ceil((b-a)/spacing))+1) for a, b in zip(lower, upper)]
+    x, y = np.meshgrid(*axes, indexing='xy')
+    xy = np.c_[x.ravel(), y.ravel()]
+    ids = np.arange(x.size).reshape(x.shape)
+    a, b, c, d = ids[:-1, :-1], ids[:-1, 1:], ids[1:, :-1], ids[1:, 1:]
+    faces = np.concatenate([np.stack([a, b, d], axis=-1).reshape(-1, 3),
+                            np.stack([a, d, c], axis=-1).reshape(-1, 3)])
+    return xy, faces, axes
+
+
+def _grid_p1_values(axes, values, points):
+    """Values on the exact fixed-diagonal P1 graph, including new cut vertices."""
+    x, y = axes
+    query = _finite(points, (None, 2), 'P1 points')
+    ix = np.clip(np.searchsorted(x, query[:, 0], side='right')-1, 0, len(x)-2)
+    iy = np.clip(np.searchsorted(y, query[:, 1], side='right')-1, 0, len(y)-2)
+    u = (query[:, 0]-x[ix])/(x[ix+1]-x[ix])
+    v = (query[:, 1]-y[iy])/(y[iy+1]-y[iy])
+    if np.any(u < -1e-9) or np.any(u > 1+1e-9) or np.any(v < -1e-9) or np.any(v > 1+1e-9):
+        raise ValueError('P1 query outside exported water domain')
+    z = np.asarray(values).reshape(len(y), len(x))
+    lower = v <= u
+    answer = np.empty(len(query))
+    answer[lower] = ((1-u[lower])*z[iy[lower], ix[lower]]
+                     +(u[lower]-v[lower])*z[iy[lower], ix[lower]+1]
+                     +v[lower]*z[iy[lower]+1, ix[lower]+1])
+    upper = ~lower
+    answer[upper] = ((1-v[upper])*z[iy[upper], ix[upper]]
+                     +u[upper]*z[iy[upper]+1, ix[upper]+1]
+                     +(v[upper]-u[upper])*z[iy[upper]+1, ix[upper]])
+    return answer
+
+
+def _total_waterline(vertices, faces, hull, domain_bounds):
+    """Actual clipped total-surface contact segments, excluding outer patch.
+
+    Incidence-one edges on the known rectangular patch boundary are external.
+    Every remaining boundary edge must lie on a support plane of the posed
+    hull, with both endpoints inside all its halfspaces. No horizontal hull
+    outline is substituted for a missing or invalid physical contact line.
+    """
+    edges = np.sort(np.concatenate([faces[:, [0, 1]], faces[:, [1, 2]], faces[:, [2, 0]]]), axis=1)
+    unique, count = np.unique(edges, axis=0, return_counts=True)
+    boundary = vertices[unique[count == 1]]
+    if not len(boundary):
+        raise ValueError('Total surface has no resolved waterline boundary')
+    scale = max(1., float(np.ptp(hull, axis=0).max()))
+    tolerance = 1e-8*scale
+    bounds = np.asarray(domain_bounds, dtype=float)
+    if bounds.shape != (2, 2):
+        raise ValueError('Waterline classification requires the known rectangular patch bounds')
+    outer = np.zeros(len(boundary), dtype=bool)
+    for axis in range(2):
+        for value in bounds[:, axis]:
+            outer |= np.all(abs(boundary[:, :, axis]-value) <= tolerance, axis=1)
+    segments = boundary[~outer]
+    if not len(segments):
+        raise ValueError('Total surface has no resolved hull-contact waterline; near-band metric is undefined')
+    planes = ConvexHull(hull).equations
+    distances = np.einsum('evi,fi->evf', segments, planes[:, :3])+planes[:, 3]
+    on_support = np.any(np.all(abs(distances) <= tolerance, axis=1), axis=1)
+    inside = np.all(distances <= tolerance, axis=(1, 2))
+    if not np.all(on_support & inside):
+        raise ValueError('Surface inner boundary does not lie on the actual posed hull waterline')
+    return segments
+
+
+def _waterline_distance_xy(points, segments):
+    a, b = segments[:, 0, :2], segments[:, 1, :2]
+    edge = b-a
+    length_squared = np.sum(edge*edge, axis=1)
+    # Vertical waterline segments have a point projection; their horizontal
+    # distance is still defined, without division by zero or discarding them.
+    relative = points[:, None]-a[None]
+    fraction = np.clip(np.sum(relative*edge[None], axis=2)/np.where(length_squared > 0, length_squared, 1.), 0, 1)
+    distance = np.linalg.norm(points[:, None]-(a[None]+fraction[:, :, None]*edge[None]), axis=2).min(axis=1)
+    return distance
+
+
+def _delta_moments(vertices, faces, incident_at_vertices, hull, beam, domain_bounds):
+    """Exact P1 delta moments; centroid classification for the one-beam band."""
+    triangle = vertices[faces]
+    edge1, edge2 = triangle[:, 1]-triangle[:, 0], triangle[:, 2]-triangle[:, 0]
+    area = abs(edge1[:, 0]*edge2[:, 1]-edge1[:, 1]*edge2[:, 0])/2
+    delta = vertices[:, 2]-incident_at_vertices
+    q = delta[faces]
+    first = area*q.mean(axis=1)
+    square = area/6*(np.sum(q*q, axis=1)+q[:, 0]*q[:, 1]+q[:, 1]*q[:, 2]+q[:, 2]*q[:, 0])
+    segments = _total_waterline(vertices, faces, hull, domain_bounds)
+    near = _waterline_distance_xy(triangle[:, :, :2].mean(axis=1), segments) <= beam
+    output = {}
+    for name, mask in [('full', np.ones(len(faces), dtype=bool)), ('one_beam', near)]:
+        if np.any(mask):
+            subset = q[mask]
+            it, iv = np.unravel_index(np.argmax(abs(subset)), subset.shape)
+            peak = vertices[faces[mask][it, iv]]
+            maximum = float(abs(subset[it, iv]))
+        else:
+            peak, maximum = np.zeros(3), 0.
+        inc = incident_at_vertices[faces]
+        incident_square = area/6*(np.sum(inc*inc, axis=1)+inc[:, 0]*inc[:, 1]
+                                   +inc[:, 1]*inc[:, 2]+inc[:, 2]*inc[:, 0])
+        output[name] = np.r_[area[mask].sum(), first[mask].sum(), square[mask].sum(),
+                             maximum, incident_square[mask].sum(), peak]
+    return output
+
+
+def reconstruct_total_surface(hydro, setup, motion, surface_time_s):
+    """Return packed total water-air meshes, clipped to each actual posed hull.
+
+    Numerical policy: fixed mean-hull linear diffraction/radiation, positive
+    sideband frequencies, finite-band causal field operator over the complete
+    trajectory, exact incident at targets, explicit exterior-trace continuation
+    of disturbances near/inside the mean footprint. This is an export of a
+    selected linear reference approximation, not nonlinear contact dynamics.
+    No body pose, velocity, load or hydrodynamic coefficient is modified.
+    """
+    require_surface_readiness()
+    from scipy.spatial.transform import Rotation, Slerp
+    from threadpoolctl import threadpool_limits
+    from ._surface_export import export_surface
+    from .visualization import RenderSettings
+
+    stamp = _grid(motion.time_s, 'motion.time_s', zero=True)
+    surface_time = _grid(surface_time_s, 'surface_time_s', zero=True)
+    if stamp[0] != 0 or surface_time[0] != 0 or stamp[-1] != surface_time[-1]:
+        raise ValueError('Body and surface histories must share exact zero/start/end times')
+    if not np.allclose(np.diff(stamp), stamp[1], rtol=0, atol=1e-12):
+        raise ValueError('Radiation integration requires the uniform native time grid')
+    if hydro.depth != np.inf:
+        raise ValueError('The current incoming-train total-surface policy requires infinite depth')
+    velocity = _finite(motion.velocity_native, (len(stamp), 6), 'native radiation-input velocity')
+    position = _finite(motion.position_m, (len(stamp), 3), 'world position')
+    rotation = Rotation.from_quat(motion.orientation_wxyz, scalar_first=True)
+    matrices = rotation.as_matrix()
+    poses = Slerp(stamp, rotation)(surface_time).as_matrix()
+    positions = np.column_stack([np.interp(surface_time, stamp, position[:, j]) for j in range(3)])
+    body = setup.body
+    local_hull = body.mesh.vertices-body.cg
+    hull_world = np.einsum('tij,vj->tvi', matrices, local_hull)+position[:, None, :]
+    embedding = _finite(setup.world_from_native, (3, 3), 'world_from_native')
+    hull_native = hull_world @ embedding
+    beam = float(np.ptp(body.mesh.vertices[:, 1]))
+    if beam <= 0:
+        raise ValueError('A resolved boat beam is required for surface export')
+    lo, hi = hull_native[:, :, :2].min(axis=(0, 1))-beam, hull_native[:, :, :2].max(axis=(0, 1))+beam
+    # Reproduce the renderer's fixed WORLD square at its actual sampled poses,
+    # then transform its corners. A native-axis square alone is insufficient
+    # at an oblique global heading or a Slerp orientation extremum.
+    physical_ids = np.unique(setup.physical_faces)
+    sampled = np.einsum('tij,vj->tvi', poses, local_hull[physical_ids])+positions[:, None, :]
+    view_lo, view_hi = sampled[:, :, :2].min(axis=(0, 1)), sampled[:, :, :2].max(axis=(0, 1))
+    view_center = (view_lo+view_hi)/2
+    view_half = float(np.max(view_hi-view_lo)/2*RenderSettings().framing)
+    corners = np.array([[view_center[0]+sx*view_half, view_center[1]+sy*view_half, 0.]
+                        for sx in (-1, 1) for sy in (-1, 1)]) @ embedding
+    lo = np.minimum(lo, corners[:, :2].min(axis=0))-.1875
+    hi = np.maximum(hi, corners[:, :2].max(axis=0))+.1875
+    center = (lo+hi)/2
+    half = float(np.max(hi-lo)/2)
+    xy, faces, axes = _regular_grid([center-half, center+half], .1875)
+    trace_offset = min(.025, .01*beam)
+    mapped, continued = exterior_trace_points(hydro, xy, trace_offset)
+    field_xy, inverse = np.unique(mapped, axis=0, return_inverse=True)
+    print(f'Surface: evaluating total linear field at {len(field_xy)} exterior points; '
+          f'{int(continued.sum())} target points use an explicit {trace_offset:g} m disturbance trace.', file=sys.stderr)
+    print('Surface numerical approximation: the selected causal finite-band projection showed '
+          '42.7 mm maximum / 12.5 mm RMS difference from a signed-lag diagnostic at tested near/far points. '
+          'That noncausal diagnostic is not a reference solution or an accuracy bound; '
+          'full-complex near-field transfer recovery has not passed.', file=sys.stderr)
+    # Delta omega < pi/T keeps the transform's periodic images outside the
+    # requested +/-T window. It does not by itself certify causal projection.
+    maximum = 24.
+    step = min(.025, .98*np.pi/stamp[-1])
+    count = int(np.ceil(maximum/step))
+    omega = np.linspace(0., maximum, count+1)
+    with threadpool_limits(1):
+        transfer = radiation_velocity_transfer(hydro, field_xy, omega[1:], shared_green=True)
+        radiation = np.empty((len(surface_time), len(field_xy)))
+        for start in range(0, len(field_xy), 128):
+            end = min(start+128, len(field_xy))
+            values = np.concatenate([np.zeros_like(transfer[:1, start:end]), transfer[:, start:end]])
+            candidate = cosine_kernel(omega, values, stamp,
+                                      direct_velocity=np.zeros((end-start, 6)))
+            # This is the fixed selected finite-band numerical policy. Its
+            # actual-response sensitivity and causal-projection bias are stated
+            # in the producer evidence; no full-complex-recovery pass is implied.
+            candidate.accepted = True
+            response = convolve_radiation(candidate, stamp, velocity)
+            for j in range(end-start):
+                radiation[:, start+j] = np.interp(surface_time, stamp, response[:, j])
+        del transfer
+        _, scattered_spectrum, force_spectrum = combined_diffraction(
+            hydro, setup.train, field_xy, return_forces=True, return_incident=False)
+        scattered = synthesize_spectrum(setup.train.omega, scattered_spectrum, surface_time)
+        del scattered_spectrum
+        incident = synthesize_spectrum(setup.train.omega, incident_spectrum(setup.train, xy), surface_time)
+        total = incident+scattered[:, inverse]+radiation[:, inverse]
+        direct_force = synthesize_spectrum(setup.train.omega, force_spectrum, stamp)
+        prepared_force, _ = setup.train.excitation(hydro.excitation_omega, hydro.excitation_headings,
+                                                 hydro.excitation, hydro.K, stamp)
+    difference = np.max(abs(direct_force-prepared_force), axis=0)
+    print('Surface: exact-sideband field/prepared-body load maximum differences '
+          f'[N,N,N,Nm,Nm,Nm]={difference.tolist()}; the accepted body loads are unchanged.', file=sys.stderr)
+
+    graph = WaterGraphPartition(xy, faces)
+    mean_rotation = Rotation.from_quat(setup.equilibrium.orientation, scalar_first=True).as_matrix()
+    packed_vertices, packed_faces = [], []
+    vertex_offsets, face_offsets = [0], [0]
+    moments = {name: [] for name in ('full', 'one_beam')}
+    wet_first = wet_last = wet_worst_time = None
+    wet_worst = 0.
+    local_initial_peak = None
+    for i, t in enumerate(surface_time):
+        if len(surface_time) > 100 and (i % 100 == 0 or i == len(surface_time)-1):
+            print(f'Surface export: {i+1}/{len(surface_time)} frames', file=sys.stderr)
+        world_hull = local_hull @ poses[i].T+positions[i]
+        native_hull = world_hull @ embedding
+        native_points = np.c_[xy, total[i]]
+        world_points = native_points @ embedding.T
+        vertices, connectivity = export_surface(world_points, faces, world_hull, body.mesh.faces,
+            opening_rim=body.mesh.opening_rim, artificial_faces=body.mesh.artificial_faces)
+        # Metrics use the same represented incident P1 graph, interpolated at
+        # any new cut vertices. They measure total-minus-incident, not a second
+        # direct incident evaluation inconsistent with the represented graph.
+        clipped_native = vertices @ embedding
+        incident_cut = _grid_p1_values(axes, incident[i], clipped_native[:, :2])
+        frame_moments = _delta_moments(clipped_native, connectivity, incident_cut, native_hull, beam,
+                                      [[axes[0][0], axes[1][0]], [axes[0][-1], axes[1][-1]]])
+        for name in moments:
+            moments[name].append(frame_moments[name])
+        current_rotation = embedding.T @ poses[i]
+        reference_normal = current_rotation @ mean_rotation.T @ np.array([0., 0., 1.])
+        native_cg = positions[i] @ embedding
+        reference_offset = setup.mean_cg_m[2]-reference_normal @ native_cg
+        wet_fraction, _ = graph.wet_set_area(native_hull, setup.physical_faces, total[i],
+            reference_normal, reference_offset, setup.hydrostatic.wetted_area)
+        if wet_fraction > .10:
+            if wet_first is None:
+                wet_first = float(t)
+            wet_last = float(t)
+            if wet_fraction > wet_worst:
+                wet_worst, wet_worst_time = wet_fraction, float(t)
+        if i == 0:
+            # Exact extrema of the represented local P1 triangles, conservatively
+            # selecting every triangle touching the initial hull XY bounding box.
+            triangle = clipped_native[connectivity]
+            hmin, hmax = native_hull[:, :2].min(axis=0), native_hull[:, :2].max(axis=0)
+            region = np.all(triangle[:, :, :2].max(axis=1) >= hmin, axis=1) & np.all(triangle[:, :, :2].min(axis=1) <= hmax, axis=1)
+            if not np.any(region):
+                raise ValueError('Initial total surface lacks boat-region water coverage')
+            local_initial_peak = float(np.max(abs(triangle[region, :, 2])))
+            limit = .001*float(np.sum(setup.train.carriers.amplitudes))
+            if local_initial_peak > limit+1e-12:
+                raise ValueError(f'Initial represented total surface exceeds local calm eta limit: {local_initial_peak:g} > {limit:g} m')
+        packed_vertices.append(vertices); packed_faces.append(connectivity)
+        vertex_offsets.append(vertex_offsets[-1]+len(vertices))
+        face_offsets.append(face_offsets[-1]+len(connectivity))
+    summary = {}
+    for name, frames in moments.items():
+        value = np.asarray(frames)
+        area_time = float(trapezoid(value[:, 0], x=surface_time))
+        if area_time <= 0:
+            raise ValueError(f'Surface delta metric has no positive {name} area-time support')
+        incident_rms = float(np.sqrt(max(0., trapezoid(value[:, 4], x=surface_time)/area_time)))
+        rms = float(np.sqrt(max(0., trapezoid(value[:, 2], x=surface_time)/area_time)))
+        resolved_peak = int(np.argmax(value[:, 3]))
+        denominator_floor = 64*np.finfo(float).eps*max(1., float(np.max(abs(incident))))
+        summary[name] = dict(area_time_m2_s=area_time,
+            mean_delta_m=float(trapezoid(value[:, 1], x=surface_time)/area_time),
+            rms_delta_m=rms, incident_rms_m=incident_rms,
+            relative_rms=(rms/incident_rms if incident_rms > denominator_floor else None),
+            relative_rms_status=('defined' if incident_rms > denominator_floor else 'degenerate incident RMS'),
+            maximum_abs_delta_m=float(value[resolved_peak, 3]),
+            resolved_peak_time_s=float(surface_time[resolved_peak]),
+            resolved_peak_world_xyz_m=(value[resolved_peak, 5:8] @ embedding.T).tolist())
+    print('Surface total-minus-incident metrics (projected area/time; one-beam band uses '
+          'triangle-centroid horizontal distance to actual total-surface/hull waterline): '+json.dumps(summary), file=sys.stderr)
+    if wet_first is not None:
+        print(f'WEC-Sim applicability: represented wet-set symmetric-difference area exceeds 10% of '
+              f'initial wetted area; first={wet_first:g}s, worst={100*wet_worst:.4g}% at '
+              f'{wet_worst_time:g}s, last={wet_last:g}s. This is a fixed-mean linear-model limitation, '
+              'not a nonlinear motion-error estimate.', file=sys.stderr)
+    print(f'Surface startup: represented total local |eta|<={local_initial_peak:g}m. '
+          'The separate full-hull incident eta/velocity bounds remain in force; '
+          'no total disturbed-fluid velocity bound has been established.', file=sys.stderr)
+    return (np.concatenate(packed_vertices), np.concatenate(packed_faces),
+            np.asarray(vertex_offsets, dtype=np.int64), np.asarray(face_offsets, dtype=np.int64))

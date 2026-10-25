@@ -1,5 +1,91 @@
 # CAP-SURFACE-001: retained-field source and bounded pilot
 
+## Current production source checkpoint
+
+Source implementation is complete and coordinator-selected provisional policy
+is enabled. Focused current-source tests, actual generic WEC-Sim execution and
+the complete total-surface artifact still require root execution and acceptance.
+No job was launched by this author. Earlier source-only/closed-gate paragraphs
+below are historical checkpoints superseded by this current section.
+
+`reconstruct_total_surface(hydro,setup,motion,surface_time_s)` returns packed
+vertices/faces and their per-frame offset arrays. It uses the actual native
+six radiation-input velocities, with the body trajectory and applied loads
+unchanged. Selected numerical policy is cutoff24rad/s,
+`delta_omega=min(.025,.98*pi/T)`, full requested lag horizon, zero instantaneous
+velocity/acceleration terms, and explicit causal cosine projection. The exact
+symbolic infinity candidate evaluated to zero in root's actual-response pilot,
+as expected from Rankine/reflected-Rankine cancellation at regular exterior
+points on z=0.
+
+Root's selected frozen-motion near/far checkpoint PASS226.234s: frequency-step
+.05-to-.025 response difference at most3.26012um, cutoff12-to24 difference at
+most.753227mm, trace-offset .025-to-.05 differences1.88311/3.04654mm at two
+exposed-strip targets. Shared/public field evaluator and direct-source
+linearity checks passed. These are selected-case sensitivities, not physical
+accuracy bounds or universal mesh qualification.
+
+Full complex transfer recovery has **not passed** near the hull. The independent
+stored-data signed-lag-versus-causal-cosine diagnostic differed by at most42.7mm
+and12.5mm RMS at tested points; its noncausal alternative is not a reference
+solution or error bound. Independent researcher/coordinator accepted the causal
+projection as an explicit provisional linear export approximation. Production
+prints this limitation once; it must not claim that fine frequency spacing
+removed this phase approximation. No coefficients/tails were fitted to motion.
+
+Disturbance evaluation batches six retained source columns through one standard
+Capytaine S matrix per frequency. The public-equivalence check is in root's
+pilot evidence. Kernel inversion/convolution is point-batched to bound memory.
+Repeated Capytaine mesh/irregular-frequency warnings retain the first warning
+and print a count/limitation summary instead of flooding each sideband.
+
+The total field is sampled on an upward .1875m P1 grid. Its native patch includes
+the hull trajectory plus one-beam margin and the exact default fixed WORLD-view
+corners, transformed to native axes, at the renderer's Slerp surface poses; one
+grid cell pads the union. Native-axis extent alone is not used as a substitute
+for world-camera coverage. Custom larger framing can fail explicit coverage.
+Disturbance targets inside/near the mean footprint use a nearest exterior trace
+at `min(.025m,.01*beam)`. Incident waves remain exact at the original targets.
+At every saved frame the total graph is trimmed against the actual posed full
+convex hull by the independently tested exporter. Physical opening-rim/cap
+contact fails as unsupported flooding. Counts/connectivity may vary by frame.
+
+The initial total-P1 gate bounds local represented elevation on all exported
+triangles touching the initial hull XY box, including diffraction and radiation.
+It uses the existing epsilon*.sum(amplitudes) elevation criterion. Shared
+full-hull **incident** eta/velocity bounds still run separately. No total
+disturbed-fluid velocity bound has been established, and output says so.
+
+Reported total-minus-incident metrics use the same represented P1 incident
+surface interpolated at new cut vertices. They include projected-area/time mean,
+RMS, resolved peak/world-location/time, incident RMS and relative RMS where the
+denominator is nondegenerate, for the full patch and a one-beam band. The band
+is classified by triangle-centroid horizontal distance to the actual clipped
+total-surface/hull **waterline**, not the full hull's horizontal outline.
+Incidence-one outer-patch edges are excluded using the known native rectangular
+domain bounds. Remaining contact segments must lie on support planes of the
+actual posed hull. Missing/invalid contact fails rather than substituting an
+outline. This centroid spatial classification is stated explicitly.
+
+Wet-set warning uses exact geometric areas of the represented P1 graph, not
+sampled point proxies: intersect each physical hull triangle with water-cell
+vertical prisms, clip by current water and transported flat-mean wet planes,
+then sum `A_current+A_mean-2*A_common`. The denominator is the initial **flat
+mean-equilibrium hydrostatic** wetted area, not the tiny-tail total-P1 t=0 wet
+area. Shared prism-edge ownership handles vertical facets without double count.
+The partition must reproduce the known initial area; missing coverage fails.
+Above10% symmetric-difference area, report first/worst/last time. This is a
+fixed-mean-operator applicability warning, not nonlinear motion accuracy.
+
+Root evidence: `artifacts/workflow/surface-response-attempt1/field/report.json`,
+`artifacts/workflow/surface-projection-attempt1/report.json`, prior sparse/dense
+pilot records. New analytical/geometry integration test source covers actual
+area symmetric difference, transported material wet set, vertical partition
+ownership, missing coverage, P1 moments, and packed calm geometry at an oblique
+global heading. Those additions have not yet run at this checkpoint.
+
+## Earlier source and diagnostic checkpoints
+
 Status: source plus root-executed diagnostic evidence. Root reports the seven
 analytical tests PASS in3.30s and the sparse field pilot PASS in66.125s;137solves,
 three exterior points. Combined-source/individual-source errors were3.523657e-19m

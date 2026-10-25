@@ -9,8 +9,9 @@ uv run topwater solve examples/simple-boat 60 --solver=wecsim
 ```
 
 DIRECTORY defaults to the current directory. The input/output filenames are
-fixed. This checkpoint implements the interfaces but keeps total-surface
-publication closed pending the documented motion-driven/contact pilot.
+fixed. Production surface reconstruction is integrated under the provisional
+linear-reference policy below. The complete CLI/body/surface acceptance run
+has not yet passed; this page does not claim otherwise.
 
 The native backend is the intended default. Native coupled dynamics are not yet
 available; omitting `--solver=wecsim` must report that limitation without silently
@@ -104,17 +105,36 @@ That pass does not qualify the body/surface physics pipeline.
   Viscous/linear damping, PTO, mooring, and prescribed motion remain off.
 - Equilibrium orientation is included once in the mean geometry and inertia.
   Global heading is an embedding applied once to output geometry and body pose.
+- Surface reconstruction adds no feedback to body dynamics. It combines the
+  represented incoming packet, direct sideband diffraction, and radiation driven
+  by the saved native CG velocities and world angular velocities. Angular
+  velocities are not replaced by Euler-angle rates.
+- The provisional surface-radiation operator uses cutoff 24 rad/s and frequency
+  spacing no larger than `min(0.025 rad/s, 0.98*pi/duration)`, with causal lags
+  through the entire body history. Both direct velocity and direct acceleration
+  terms are zero. Surface memory is not truncated to the body's 10 s force-memory
+  cutoff. This selected numerical approximation has not passed full complex
+  near-field transfer recovery.
+- Disturbance fields near/inside the mean hull footprint use an explicit exterior
+  trace at offset `min(0.025 m, 0.01*beam)`. The incident contribution is evaluated
+  at the actual target locations. This continuation and geometric hull trimming
+  do not solve nonlinear moving-contact physics.
+- The water output uses a piecewise-linear triangular graph sampled at 0.1875 m
+  grid spacing, clipped against the posed hull. Its finite patch covers the
+  trajectory/default render view; its edge is an export boundary, not a wall.
+  Surface timestamps target 0.08 s spacing, uniformly adjusted to include both
+  endpoints. CG interpolation is linear and orientation interpolation is Slerp.
 
 ## Fatal errors and detection stage
 
 | Stage | Detected fatal conditions |
 |---|---|
-| Readiness, before physical preparation | Missing/wrong dependency versions, missing maintained fork, unreviewed fork revision, unavailable total-surface capability. |
+| Readiness, before physical preparation | Missing/wrong dependency versions, missing maintained fork, unreviewed revision or modified fork source, unavailable total-surface capability. |
 | Physical setup | Invalid inputs, unsupported incident support, unresolved default heading, missing force/moment balance, unstable supported equilibrium, initial rim immersion or lack of buoyant contact. |
 | Incoming-field assessment, before body integration | Full-hull initial elevation/fluid-speed bound fails or remains inconclusive; initial force/moment bounds fail; incoming-wave envelope does not arrive during the requested interval. |
 | Native preprocessing | H5/physical CG, CB, volume, stiffness or infinity added mass differ; phase-convention mapping or compiled full inertia fails; imported force does not bind to exactly one positive total-force branch. |
 | Native integration/output audit | Solver failure, nonfinite/incomplete output, wrong grid/endpoints/initial state, nonzero initial radiation memory, applied excitation differs from prepared input, inconsistent force-component sum, Newton-Euler/CIC/added-mass-delay audit failure. |
-| Required surface/export | Missing or invalid total surface, unsupported contact/export geometry, incomplete coverage, or invalid common result arrays. Surface publication is unavailable until the physical reconstruction pilot has passed. |
+| Required surface/export | Missing or invalid total surface, unsupported contact/export geometry, initial represented total elevation exceeds the local calm limit, incomplete coverage, or invalid common result arrays. |
 
 Calm-start engineering limits are `max|eta| <= .001*sum(a)` and
 `max|u| <= .001*sum(a*omega)` throughout the initial full-hull bounding region.
@@ -139,17 +159,39 @@ percentages of numerical zero. This is an engineering reporting convention,
 not a nonlinear dynamic error bound. If flat-reference geometry reaches the rim
 or loses contact, the restoring diagnostic reports that it is unavailable there.
 
-The proposed 10% actual-versus-assumed wetted-set warning requires the accepted
-total-surface/contact reconstruction. It is **not currently implemented**. The
-workflow must not call an incident-only or flat-water proxy the actual wetted set.
+The surface producer warns when the symmetric-difference area between the
+represented total-water wetted set and the fixed mean wetted set exceeds 10% of
+the initial hydrostatic wetted area. It reports first/last exceedance and the
+worst fraction/time. This uses the reconstructed piecewise-linear total graph;
+it is not a nonlinear-physics truth estimate.
+
+Every reconstructed surface reports the selected radiation projection's observed
+near/far-point difference from a signed-lag diagnostic: up to 42.7 mm maximum and
+12.5 mm RMS on the tested motion. That diagnostic is noncausal and is not a
+reference solution or error bound. The producer also reports direct sideband
+field-versus-prepared-body load differences, without modifying the accepted
+body loads. Total-minus-incident surface metrics describe the produced geometry;
+they are not an accuracy certificate.
+
+Capytaine mesh-resolution and irregular-frequency warnings remain visible. Their
+first occurrence is retained and repeated families are summarized; they are not
+silently suppressed or converted into numerical-accuracy claims.
 
 ## Current support and detection limits
 
-The generic source is being integrated. The total-surface readiness gate is
-intentionally closed until endpoint/tail treatment, causal radiation transfer,
-and near-hull export have passed independent verification. Presence of field
-evaluation functions alone does not open that gate. No successful motion-only
-result is substituted for the mandatory total-surface output.
+The coordinator accepted a provisional linear surface policy for the selected
+stronger-buoy 60 s trajectory on the unchanged 17-panel mean wetted hull.
+[Independent method review](../experts/numerical_methods_researcher/surface-reconstruction-review-2026-10-25.md).
+This opens the source capability gate; it is not evidence that the complete
+generic CLI has passed, that other boats/seas/durations are qualified, or that
+the field reproduces the full complex near-field response. Runtime input,
+initial-state, topology, finite-data, and output gates remain mandatory. A
+motion-only result is never substituted for the required total-surface output.
+
+The full-hull initial incident elevation/velocity bounds remain in force. The
+producer additionally checks initial **represented total elevation** on local
+water triangles touching the boat's initial horizontal bounding region. No
+full-hull total disturbed-fluid velocity bound has been established.
 
 Linear WEC-Sim hydrodynamics act about a fixed mean wetted hull. Reconstructing
 additional surface output does not add feedback or alter its governing dynamics.

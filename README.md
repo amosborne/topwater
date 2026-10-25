@@ -19,8 +19,9 @@ The accepted stronger buoy-derived reference now has a complete60s trajectory
 and incident-water video. The active work packages that physical case into a
 reusable NPZ workflow and extends the WEC-Sim output with reconstructed total
 water geometry. Surface reconstruction reads the computed motion without
-feeding back into dynamics. Its transient/contact verification is in progress;
-the new solve command fails clearly until that required output is ready.
+feeding back into dynamics. The total-surface method is a provisional linear
+approximation with a disclosed near-hull phase limitation; the complete new
+canonical solve/render is being verified.
 Native solver implementation remains held. See [the current handoff](docs/checkpoint-handoff.md)
 for authorization and [AGENTS.md](AGENTS.md) for startup and expert routing.
 The broader [Topwater comparison/runtime goal](docs/time-domain-baseline-goal.md)

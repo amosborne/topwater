@@ -1,6 +1,8 @@
 """WEC adapter boundaries without a MATLAB or Capytaine simulation."""
 from types import SimpleNamespace
 import io
+import json
+from pathlib import Path
 import subprocess
 import shutil
 
@@ -8,10 +10,14 @@ import numpy as np
 from numpy.testing import assert_allclose
 import pytest
 from scipy.io import savemat
+from scipy.optimize import linear_sum_assignment
 from scipy.spatial.transform import Rotation
 
-from topwater._wecsim_setup import floating_equilibrium
+from topwater._wecsim_setup import floating_equilibrium, prepare_case
 from topwater import wecsim_backend as backend
+from topwater.hydrostatics import hydrostatics
+from topwater.inputs import InitialState
+from topwater.workflow_data import Boat, Sea
 from .reference_boat import reference_body
 
 
@@ -23,6 +29,33 @@ def test_full_equilibrium_balances_force_and_moment_on_physical_boat():
     assert_allclose(state.linear_velocity, 0.)
     assert_allclose(state.angular_velocity, 0.)
     assert h.rim_clearance > 0
+
+
+def test_public_example_preserves_accepted_mean_hull_mass_and_restoring_identity():
+    project = Path(__file__).resolve().parents[1]
+    physical = json.loads((project/'reference/capytaine/canonical-boat.json').read_text())
+    boat = Boat.load(project/'examples/simple-boat/boat.npz')
+    sea = Sea.load(project/'examples/simple-boat/sea.npz')
+    body = boat.to_body()
+    setup = prepare_case(body, backend._waves(sea), 60.)
+    expected = np.asarray(physical['minimum_wetted_triangles_world_m'])
+    actual = setup.wet_triangles_m
+    assert len(actual) == len(expected) == 17, 'selected-case field evidence requires the same 17 panels'
+    distances = np.linalg.norm(actual.mean(axis=1)[:, None]-expected.mean(axis=1)[None], axis=2)
+    rows, columns = linear_sum_assignment(distances)
+    for i, j in zip(rows, columns):
+        vertex_distance = np.linalg.norm(actual[i, :, None]-expected[j, None, :], axis=2)
+        a, b = linear_sum_assignment(vertex_distance)
+        assert_allclose(actual[i, a], expected[j, b], rtol=0, atol=1e-9)
+        normal = np.cross(actual[i, 1]-actual[i, 0], actual[i, 2]-actual[i, 0])
+        reference_normal = np.cross(expected[j, 1]-expected[j, 0], expected[j, 2]-expected[j, 0])
+        assert normal @ reference_normal > 0, 'wet panel outward winding changed'
+    assert_allclose(setup.mean_cg_m, physical['world_cg_m'], rtol=0, atol=1e-10)
+    assert_allclose(setup.mass_matrix, physical['dry_mass_matrix_world'], rtol=0, atol=1e-8)
+    frozen_state = InitialState(physical['world_cg_m'],
+                                physical['minimum_hull']['equilibrium_quaternion_wxyz'])
+    expected_hydrostatic = hydrostatics(body, frozen_state, density=1025., gravity=9.81)
+    assert_allclose(setup.hydrostatic.stiffness, expected_hydrostatic.stiffness, rtol=0, atol=1e-6)
 
 
 def test_unqualified_surface_stops_before_any_physical_preparation(monkeypatch, tmp_path):

@@ -1,5 +1,23 @@
 # Current state: independent numerical-methods review
 
+Updated 2026-10-25: coordinator accepted a provisional computed linear total
+surface for the selected stronger-buoy 60 s motion on the unchanged 17-panel
+mean hull: radiation cutoff 24 rad/s, spacing 0.025 rad/s, full-history causal
+kernel, saved modal velocities, zero prehistory/direct acceleration term, exact
+sideband diffraction, and explicit exterior-trace continuation. Body motion and
+forcing remain unchanged. [Independent review](surface-reconstruction-review-2026-10-25.md).
+[Response evidence](../../../artifacts/workflow/surface-response-attempt1/field/report.json)
+has spacing sensitivity <=3.26012e-6 m and cutoff sensitivity <=0.000753226 m;
+[phase/projection evidence](../../../artifacts/workflow/surface-projection-attempt1/report.json)
+has raw-versus-causal differences up to 0.0426650 m (RMS up to 0.0125110 m),
+with a noncausal raw contribution up to 0.0772652 m. These are material numerical
+sensitivities, not physical-error bounds or convergence/accuracy certification.
+Mean-hull continuation, exact-field versus prepared-load discrepancy and sampled
+startup limits remain explicit. Complete artifact/initial-state gates are still
+required; no broader campaign or native dynamics is authorized by this review.
+Reviewer inspected source/reports only and authored no physical correction or
+numerical job. The older notes below retain their original historical scope.
+
 Latest user steering supersedes old queued follow-ups: finalcase60s, rest/zero
 velocity andzero radiation memory, viscousOFF, physics-based incident-band policy.
 Old unpruned/history-seeded case remains evidence, not the requested finalstartup.

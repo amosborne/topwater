@@ -21,11 +21,19 @@ restored; only the unique owned model was closed. Distinct temporary class
 directories were removed between cycles. No generic body simulation or full
 total-surface solve has run. See [versioned lifecycle evidence](workflow-engine-lifecycle-2026-10-25.md).
 
-Mandatory total-surface output remains failclosed through the Capytaine field
-readiness gate. Endpoint/tail/causal-transfer and near-hull continuation/export
-need independent verification; actual wetted-set warnings are not implemented.
-The old incident-only surface is never promoted to total surface. Native
-Topwater dynamics remain outside this assignment.
+The coordinator accepted the selected-case provisional total-surface policy:
+24 rad/s radiation cutoff, spacing <=0.025 rad/s, full native history, zero direct
+terms, exact packet sideband diffraction, and explicit exterior-trace continuation.
+The Capytaine production API matches the backend's four packed surface arrays.
+Source now includes the represented-total wet-set 10% warning and initial local
+total-elevation check. Full CLI/body/surface acceptance has not run; full complex
+near-field recovery and total disturbed-fluid velocity bounds remain unqualified.
+The 42.7 mm maximum/12.5 mm RMS signed-lag comparison is a numerical diagnostic,
+not an error bound. See [method review](../numerical_methods_researcher/surface-reconstruction-review-2026-10-25.md)
+and [solve contract](../../cli/solve.md). A new source test checks actual example
+geometry/M/K/CG against the frozen selected-17-panel identity; it awaits root's
+allocated run. The old incident-only surface is never promoted to total surface.
+Native Topwater dynamics remain outside this assignment.
 
 ## Current completed result
 
