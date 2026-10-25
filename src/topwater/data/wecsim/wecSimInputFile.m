@@ -1,0 +1,41 @@
+% Generic case inputs; all physical arrays and paths come from prepared-case.mat.
+prepared = load(fullfile(pwd,'prepared-case.mat'));
+n = prepared.n;
+simu = simulationClass();
+simu.simMechanicsFile = [prepared.model_name '.slx'];
+simu.mode = 'normal';
+simu.explorer = 'off';
+simu.startTime = 0;
+simu.endTime = prepared.time(end);
+simu.rampTime = 0;
+simu.solver = 'ode4';
+simu.dt = .02;
+simu.cicDt = .02;
+simu.cicEndTime = 10;
+simu.rho = n.rho;
+simu.gravity = n.g;
+simu.saveWorkspace = 0;
+simu.paraview.option = 0;
+% Scalar elevation is an unused importer compatibility input. The exact
+% directional packet supplies the six-component force table after preprocessing.
+waves = waveClass('elevationImport');
+waves.elevationFile = fullfile(pwd,'compatibility-elevation.txt');
+waves.direction = 0;
+body(1) = bodyClass(fullfile(pwd,'canonical.h5'));
+body(1).geometryFile = fullfile(pwd,'boat_cg.stl');
+body(1).mass = n.M(1,1);
+body(1).inertia = diag(n.M(4:6,4:6))';
+body(1).inertiaProducts = [n.M(4,5) n.M(4,6) n.M(5,6)];
+% Mean attitude is already in mesh/M/K; the native perturbation starts at zero.
+body(1).initial.displacement = [0 0 0];
+body(1).initial.axis = [0 1 0];
+body(1).initial.angle = 0;
+body(1).nonlinearHydro = 0;
+body(1).yaw.option = 0;
+body(1).linearDamping = zeros(6);
+body(1).quadDrag.drag = zeros(6);
+body(1).quadDrag.cd = zeros(1,6);
+body(1).quadDrag.area = zeros(1,6);
+body(1).morisonElement.option = 0;
+constraint(1) = constraintClass('Free6DOF');
+constraint(1).location = [0 0 0];

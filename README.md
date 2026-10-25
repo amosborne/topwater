@@ -15,12 +15,13 @@ packet and a centered isometric video. The17-panel,0.02s fixed-step result has
 independent input/interface/physics/video reviews; temporal and mesh accuracy
 remain unestablished. [Reproduction and artifacts](reference/wecsim/README.md).
 
-The active follow-up is ONE canonical case from the collected-buoy sea-state
-generator, targeting about5-10deg roll and appreciable motion in the other5DOF.
-Its linear operating range will be assumed a priori from wetted-surface and
-buoyancy/righting curves against WEC-Sim's fixed-mean assumptions. This work
-does not require a new nonlinear trajectory model. Topwater solver implementation
-and performance work remain held. See [the current handoff](docs/checkpoint-handoff.md)
+The accepted stronger buoy-derived reference now has a complete60s trajectory
+and incident-water video. The active work packages that physical case into a
+reusable NPZ workflow and extends the WEC-Sim output with reconstructed total
+water geometry. Surface reconstruction reads the computed motion without
+feeding back into dynamics. Its transient/contact verification is in progress;
+the new solve command fails clearly until that required output is ready.
+Native solver implementation remains held. See [the current handoff](docs/checkpoint-handoff.md)
 for authorization and [AGENTS.md](AGENTS.md) for startup and expert routing.
 The broader [Topwater comparison/runtime goal](docs/time-domain-baseline-goal.md)
 remains a later objective. [Issue #30](https://github.com/amosborne/topwater/issues/30)
@@ -35,11 +36,11 @@ The single application fixture is a simple **24 ft by 9 ft** open V-hull with
 point load and a 300 kg stern motor point load. Integration determines its
 centre of mass and full inertia tensor. See [the boat definition](docs/reference-boat.md).
 
-[The shared case](tests/reference_case.py) combines this boat at calm-water
-equilibrium with the [observed Southern California sea](docs/sea-states.md),
-using phase seed 42. These are physical inputs, not an initialized or validated
-nonlinear fluid simulation. Linear reference cases use the same boat with
-explicitly declared small waves and physical constants.
+The current canonical inputs are [boat.npz](examples/simple-boat/boat.npz) and
+[sea.npz](examples/simple-boat/sea.npz): the same physical boat and the actual
+46086/2023-12-23T00:40Z spectrum with seed42. One example is one boat/sea pair.
+Both are plain numeric archives; [the NPZ contract](docs/npz-format.md) defines
+their units, frames and arrays. They do not initialize or qualify native physics.
 
 The intended range is convex 18-30 ft boats, 7-11 ft beam, in ordinary ocean
 conditions. Incident wavelengths must be at least twice beam and frequencies
@@ -61,37 +62,36 @@ shell mass nor water pressure.
 `topwater.inertia.instantaneous_added_mass` computes six instantaneous responses
 for a flat zero-potential surface. This is not a finite-frequency wave solver.
 
-## Visualization
+## Canonical workflows
 
-Render a prepared scene using the shared Matplotlib workflow:
+All commands take an optional example directory, defaulting to the current
+directory. Filenames are fixed:
 
 ```powershell
-uv run topwater render data/scene.npz videos/preview.mp4
+uv run topwater generate-sea examples/simple-boat --record ndbc-46086-20231223T0040Z --seed 42
+uv run topwater solve examples/simple-boat 60 --solver=wecsim
+uv run topwater render examples/simple-boat
 ```
 
-Both arguments are paths, relative or absolute. The entire input is rendered at
-its saved uniform time cadence to one 800 x 800 MP4. The requested file is the
-only persistent renderer output; timing/backend information goes to stdout.
-Optional `--settings render.json` adjusts rendering settings.
+Generation writes sea.npz. Solve reads boat.npz/sea.npz and writes the complete
+result.npz; an existing video is left untouched. Render reads only result.npz,
+including its exported hull snapshot, and writes video.mp4 without recomputing
+waves. Results permit independently sampled motion and changing surface topology.
+Successful commands replace their named output atomically; failures preserve it.
+Final result/video binaries use Git LFS. No intermediate solver files belong in
+the example directory.
 
-The producer-neutral `SceneSequence` contains timestamped hull and water meshes
-in world metres, right-handed z-up coordinates, and producer-supplied
-`roll_deg`, `pitch_deg`, `heave_m` telemetry. WEC-Sim and Topwater adapters own
-conversion into those inputs; the renderer knows neither producer. Hull meshes
-must be convex, validated on load. The top-down view shows muted blue-white-red
-surface elevation about zero, an opaque off-white hull with light-gray mesh,
-black open rim, dark-blue actual geometric waterline, and a large fixed-width
-monospace time/roll/pitch/heave header. This is not bathymetry or flooding
-physics. See the [input contract and reproduction notes](docs/experts/topwater_expert/visualization-workflow-2026-10-24.md).
+Read each command's inputs, hard-coded choices, errors and warnings:
+[generate-sea](docs/cli/generate-sea.md), [solve](docs/cli/solve.md),
+[render](docs/cli/render.md). The renderer retains the accepted800square
+Matplotlib top-down style. Historical incident-only movies and measurements
+remain documented under [the reference workflow](reference/wecsim/README.md).
 
-Prepared geometry is cached separately from camera/material settings. The tested
-Full 60-second, 751-frame rendering took 148.79 seconds for the complete CLI
-process, including startup, loading and encoder flush. Renderer time was 145.75 s;
-input preparation plus rendering and QA took 197.91 s. The compact 104.6 MB input
-reuses the accepted 65 x 65 water cache and adds only a narrow same-field border
-to cover the fixed view (75 x 77 nodes total). Preparation took 40.66 s once and
-the prepared input is reusable. These are measured visualization costs, not
-solver or real-time performance claims.
+Native remains the default and reports unavailable. To prepare this machine for
+the first WEC-Sim backend, use `uv sync --locked --group wecsim`; MATLABR2025b,
+licensed toolboxes and the maintained fork are additional requirements. Current
+surface qualification limits are stated on the solve page rather than silently
+substituting incident waves.
 
 ## Development
 

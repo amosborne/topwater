@@ -6,6 +6,38 @@ Updated2026-10-25. Latest user steering controls scope. Read
 
 ## Current authorization and immediate priority
 
+IMPLEMENTATION CHECKPOINT IN PROGRESS: previous cleanup pushed7570f94.
+Latest package/interface suite188PASS/1optional libigl-absent skip4.36s,
+artifacts/workflow/checkpoint-tests-attempt1. MATLAB4file static stylecheckPASS.
+The subsequent guard-runtime probe stopped BEFORE any MATLAB operation because
+no shared engine was discoverable. Authoritative CIM5221c9 confirms ZERO actual
+MATLABprocesses (previous32780/9168 gone); root must bootstrap one HIDDEN session
+for the authorized guard/backend work, not infer a busy engine or reuse oldPIDs.
+No numerical lease remains (902608). Keep MATLAB invisible/minimized throughout.
+
+Canonical physical boat/stronger-sea NPZ inputs now exist. New directory CLI,
+numeric contracts, strict one-opening boat validation (including supported
+nonplanar closures), variable-topology standalone renderer and packaged WEC
+adapter source are implemented. Combined suite168PASS/1explicit libigl-absent
+skip in5.13s, `artifacts/workflow/interface-tests-attempt4`; included Gmsh
+constrained-hole/collinear-edge/rigid-scale probes and a realMP4 encode/decode.
+Independent source review caught malformed-ZIP reporting (fixed) and requires
+fork cleanliness verification plus producer contact gates before publication.
+
+Surface analytic controls7PASS; sparse137-solve Cap field pilotPASS66.125s,
+combined-vs-separate eta3.524e-19m/force4.547e-13. Endpoints/causal/contact
+qualification remains open; WECpreflight correctly refuses total-surface success.
+Next: dense3point transfer refinement, actualpacket force-field discrepancy and
+initialtotalcalm, explicit exterior-trace export approximation and contact mesh.
+Surface reconstruction never reruns or changes computed motion. No canonical
+result/video has been replaced by an incident-only surrogate.
+Dense3point transfer-refinement PASS83.188s and corrected export/fork/temp tests
+68PASS1.80s, refinement-checkpoint-attempt1. Atcutoff24/step.05 heldout fullcomplex
+recovery max per-mode relative discrepancy3.35%; step.1 is underresolved over60s.
+This is NOT3.35% totalsurfaceerror or physicalaccuracy proof. Nextpilot uses
+immutable actualvelocities, .05/.025 spacing,12/24cutoffs, neartraces/loadclosure.
+Infinityaccelerationterm remains a DIAGNOSTIC; exact exteriorz0 expectation0.
+
 IMPLEMENTATION AUTHORIZED: latest user request is to implement the canonical
 example/workflow plan developed in this conversation. One flat
 `examples/simple-boat/` contains `boat.npz`, `sea.npz`, `result.npz`, `video.mp4`.
@@ -34,7 +66,8 @@ changes below are the previously authorized completed renderer cleanup and must
 be preserved/checkpointed. Numerical work is serial under the central lease.
 On entry no lease existed; authoritative CIM inspection confirmed prior pytest
 PIDs40692/16928 absent, no Python/FFmpeg/Gmsh jobs; shared MATLAB32780/9168
-remains present and must be queried before reuse. No new numerical launch yet.
+remains present and must be queried before reuse. See current checkpoint above
+for subsequent serialized test/pilot evidence.
 
 ## Previous completed visualization checkpoint
 

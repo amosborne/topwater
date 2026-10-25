@@ -1,5 +1,33 @@
 # Visualization expert: current state
 
+## Canonical result renderer source checkpoint, 2026-10-25
+
+Latest user authorizes implementation of the canonical NPZ/directory workflow.
+Dedicated visualization_expert is loaded for `/root/result_renderer`; source
+ownership transferred for new `result_render.py`, its tests and CLI render page.
+Previous SceneSequence rendering remains available internally and unchanged.
+
+New source streams packed Result surface frames directly, interpolating only
+body poses (linear position/SLERP). No boat/sea files, hydrodynamics, frame-wise
+full-sequence hull copies, or wave reconstruction. Physical hull stored once in
+result transforms with CG exactly once. Accepted800square/topdown/coolwarm/HUD/
+offwhitehull/contact styling retained. Persistent Agg figure/blit; water artist
+reused for unchanged topology and rebuilt on connectivity changes. Projection
+guards include connected manifold sheet/loops, upward nondegenerate triangles,
+crossing boundaries, outer-edge intrusion and uncovered holes outside hull.
+Some folded native output is intentionally unsupported by this 2D presentation.
+
+Atomic video replacement occurs only after complete decode/frame/dimension
+checks. Temp encoding stays outside example; old video survives failures.
+`docs/cli/render.md` documents inputs, timing, defaults, fatal detection, warning
+and display limits. `tests/test_result_render.py` adds source tests for pose
+mapping, variable topology, interior holes, folds, cadence and old-video
+preservation. NO tests/imports/renders/probes have run under this assignment;
+root must allocate sole numerical lease before validation. Source acceptance
+and performance remain pending. No native/sea/physical-result change claimed.
+
+## Previous completed workflow
+
 User-approved shared Matplotlib2D workflow, full60s video and read-only speed
 review are COMPLETE. Active3D renderer/helpers/PyVista dependencies removed;
 physical3D mesh/intersection/solver code and historical evidence remain.

@@ -85,34 +85,33 @@ def test_cli_help_does_not_need_a_graphics_context(capsys):
         main(['render', '--help'])
     assert stopped.value.code == 0
     help_text = capsys.readouterr().out
-    assert 'scene' in help_text and 'output' in help_text and '--settings' in help_text
+    assert 'directory' in help_text and 'docs/cli/render.md' in help_text
     for unsupported in ('--start', '--end', '--size', '--output'):
         assert unsupported not in help_text
 
 
-@pytest.mark.parametrize('arguments', [[], ['render'], ['render', 'input.npz']])
-def test_cli_requires_both_input_and_output(arguments):
+@pytest.mark.parametrize('arguments', [[], ['render', 'directory', 'extra-output.mp4']])
+def test_cli_rejects_missing_command_or_extra_render_path(arguments):
     with pytest.raises(SystemExit) as stopped:
         main(arguments)
     assert stopped.value.code == 2
 
 
-def test_cli_passes_whole_scene_and_exact_output_file(tmp_path, monkeypatch):
-    from topwater import cli
-    scene = sequence()
-    source = tmp_path / 'prepared.npz'
-    destination = tmp_path / 'chosen-name.mp4'
-    scene.save(source)
+def test_cli_passes_saved_result_and_fixed_output_file(tmp_path, monkeypatch):
+    from topwater import result_render
+    from tests.test_workflow_data import result
+    saved = result()
+    saved.save(tmp_path/'result.npz')
     captured = {}
 
-    def capture(loaded, output, settings):
-        captured.update(scene=loaded, output=output)
+    def capture(loaded, output):
+        captured.update(result=loaded, output=output)
         return {'complete': True}
 
-    monkeypatch.setattr(cli, 'render_sequence', capture)
-    assert main(['render', str(source), str(destination)]) == 0
-    assert captured['output'] == destination
-    np.testing.assert_array_equal(captured['scene'].time_s, scene.time_s)
+    monkeypatch.setattr(result_render, 'render_result', capture)
+    assert main(['render', str(tmp_path)]) == 0
+    assert captured['output'] == tmp_path/'video.mp4'
+    np.testing.assert_array_equal(captured['result'].time_s, saved.time_s)
 
 
 def test_output_is_an_mp4_filename_not_a_directory(tmp_path):

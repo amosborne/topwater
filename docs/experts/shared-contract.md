@@ -1,5 +1,28 @@
 # Shared physical and producer/consumer contract
 
+## Canonical NPZ workflow extension, 2026-10-25
+
+Latest user authorization is workflow implementation, not native dynamics.
+Current physical inputs are examples/simple-boat/boat.npz and sea.npz, preserving
+the accepted boat and stronger measured spectrum. Public data are numeric NPZ;
+the current array/frame contract is docs/npz-format.md. Historical references
+below retain their original physical inputs and policies.
+
+All application boats are convex physical triangular hulls with exactly one
+inferred opening. Caps are internal only. Result exports a complete hull snapshot
+(possibly remeshed), CG/absolute pose history and mandatory total water-air
+geometry. Native nonlinear output is not constrained to a linear decomposition.
+The WEC adapter reconstructs its linear incident/diffracted/radiated field from
+the existing model and computed motion without feedback or another body solve.
+Geometric moving-contact continuation is an explicit approximation, not nonlinear
+waterline physics. Quantify total-minus-incident surface delta and force-field
+consistency; do not tune to a small delta or alter accepted body forcing.
+
+Physical applicability departures warn at the agreed10% restoring/wetted-set
+engineering reporting thresholds where the backend makes those assumptions.
+Fatal errors prevent a defined complete result and preserve previous outputs.
+No output metadata/solver marker or physical-accuracy certification is implied.
+
 ## Scope
 
 The incoming-packet/startup contract below belongs to the completed REF-001

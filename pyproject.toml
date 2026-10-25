@@ -28,6 +28,10 @@ Repository = "https://github.com/amosborne/topwater"
 Issues = "https://github.com/amosborne/topwater/issues"
 
 [dependency-groups]
+wecsim = [
+    "capytaine==3.0.0",
+    "matlabengine==25.2.2",
+]
 correlation = [
     "capytaine==3.0.0",
     "gmsh==4.15.2",

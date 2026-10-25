@@ -108,6 +108,15 @@ def observed(case_id=None):
     """Return an observed record; default is the jointly selected SoCal median."""
     data = _catalog_data()
     case_id = data['baseline_id'] if case_id is None else case_id
+    if case_id == 'ndbc-46086-20231223T0040Z':
+        resource = files('topwater').joinpath('data/stronger-sea-observation.npz')
+        with resource.open('rb') as stream, np.load(stream, allow_pickle=False) as stored:
+            record = dict(id=case_id, time_utc='2023-12-23T00:40:00Z',
+                band_amplitudes_m=stored['band_amplitudes_m'].tolist(),
+                direction_moments_int16=stored['direction_moments_int16'].tolist(),
+                source_files=[item['file'] for item in data['sources'] if '2023.' in item['file']])
+            source = dict(data, frequency_edges_hz=stored['frequency_edges_hz'].tolist())
+        return _observation(source, record)
     for record in data['records']:
         if record['id'] == case_id:
             return _observation(data, record)
@@ -176,14 +185,16 @@ def _directional_weights(moment):
     return weights/weights.sum(), scale
 
 
-def realize(case=None, *, beam_m, seed=None, components_per_band=8, gravity=9.81):
+def realize(case=None, *, beam_m=None, seed=None, components_per_band=8, gravity=9.81):
     """Generate a DEEP-WATER realization of one WHOLE observed spectrum.
 
     Omitted seed obtains and records a fresh uint32 seed. All frequency, direction
     and phase draws use PCG64 from that seed. Band energies are unchanged for every
     seed. Within-band frequencies are stratified uniform; directional quantiles
     are stratified from a positive MEM reconstruction. A finite realization only
-    approximates that directional PDF. Reject incompatible support before drawing.
+    approximates that directional PDF. When beam_m is supplied, reject incompatible
+    support before drawing. With no boat, generate the full observed spectrum;
+    hull-dependent eligibility is checked by the solve workflow.
     Finite-run elevation RMS fluctuates through interference; never normalize it.
     Breaking/slamming are separate physical validity checks, not certified here.
     """
@@ -197,7 +208,8 @@ def realize(case=None, *, beam_m, seed=None, components_per_band=8, gravity=9.81
         raise ValueError('components_per_band must be a positive integer')
     active = state.band_amplitudes_m > 0
     maximum = float(state.frequency_edges_hz[1:][active].max())
-    _envelope(maximum, beam_m, gravity)
+    if beam_m is not None:
+        _envelope(maximum, beam_m, gravity)
     rng = np.random.Generator(np.random.PCG64(int(seed)))
     count = int(components_per_band)
     frequency, direction, phase, amplitude = [], [], [], []
@@ -221,8 +233,10 @@ def realize(case=None, *, beam_m, seed=None, components_per_band=8, gravity=9.81
         direction_model='positive MEM, 0.5-degree FROM grid; finite stratified quantiles',
         regularization_min_scale=repr(float(min(scales))),
         regularization_band_scales=json.dumps(scales, separators=(',', ':')), components_per_band=str(count),
-        measured_variance_m2=repr(state.variance_m2), beam_m=repr(float(beam_m)),
+        measured_variance_m2=repr(state.variance_m2),
         gravity_m_s2=repr(float(gravity)), depth='infinite', observed_active_frequency_max_hz=repr(maximum))
+    if beam_m is not None:
+        provenance['beam_m'] = repr(float(beam_m))
     return WaveComponents(amplitude, 2*np.pi*np.asarray(frequency), direction, phase,
                           seed=int(seed), provenance=provenance)
 

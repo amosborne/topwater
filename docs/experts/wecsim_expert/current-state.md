@@ -4,6 +4,25 @@ Updated2026-10-25. Currentauthority: [handoff](../../checkpoint-handoff.md),
 [physicalcontract](../shared-contract.md), [serialprocedure](../coordination.md).
 No active WECnumerical allocation or automaticfollowup. ROOT owns integration.
 
+## Generic CLI source checkpoint (not executed)
+
+WEC-WORKFLOW-001 added `src/topwater/wecsim_backend.py`, shared
+`_wecsim_setup.py`, packaged MATLAB resources under `data/wecsim`, and
+`docs/cli/solve.md`. The source supplies generic full equilibrium, fixed
+duration-independent incoming train and full-hull startup assessment, optional
+dependency/fork/shared-engine readiness, native model construction and bus
+audits, output-pose conversion, and calm-restoring warning aggregation. New
+test source covers equilibrium, fail-before-physics readiness, pose embedding,
+and warning aggregation. No new tests, MATLAB calls, Capytaine solves, or
+benchmarks have run for this source. MATLAB skill reviewed for shipped tooling;
+static checker and source/physical review remain pending root allocation.
+
+Mandatory total-surface output remains failclosed through the Capytaine field
+readiness gate. Endpoint/tail/causal-transfer and near-hull continuation/export
+need independent verification; actual wetted-set warnings are not implemented.
+The old incident-only surface is never promoted to total surface. Native
+Topwater dynamics remain outside this assignment.
+
 ## Current completed result
 
 [Full60s topdown video](../../../artifacts/reference/stronger-buoy-20261024/matplotlib-full60-attempt1.mp4)

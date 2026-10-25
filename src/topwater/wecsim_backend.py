@@ -1,0 +1,371 @@
+"""WEC-Sim adapter: native body integration and total-surface output.
+
+Imports are lazy so the core package and renderer do not require MATLAB or
+Capytaine. This adapter only attaches to the existing CAPYTAINE_REFERENCE
+shared engine. Temporary BEMIO, Simulink and source-field products never become
+public outputs. The caller owns atomic publication of the returned Result.
+"""
+from dataclasses import dataclass
+from contextlib import contextmanager
+from importlib import import_module, metadata, resources, util
+import io
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import sys
+import tempfile
+import uuid
+
+import numpy as np
+from scipy.io import loadmat, savemat
+from scipy.spatial.transform import Rotation
+
+from ._wecsim_setup import prepare_case
+from .constants import GRAVITY, WATER_DENSITY
+from .hydrostatics import FloodingError, LossOfContactError, hydrostatics
+from .inputs import InitialState
+
+
+ENGINE_NAME = 'CAPYTAINE_REFERENCE'
+SUPPORTED_FORK_COMMIT = 'f962103a348d63101ce669c2611f7d7c109755c3'
+APPLICABILITY_WARNING_FRACTION = .10
+
+
+class BackendUnavailableError(RuntimeError):
+    """A required dependency or reviewed physical capability is unavailable."""
+
+
+class EngineCleanupError(RuntimeError):
+    """Shared-engine state is unverified; scratch must remain for recovery."""
+
+
+@dataclass(frozen=True)
+class NativeMotion:
+    time_s: np.ndarray
+    q: np.ndarray
+    velocity_native: np.ndarray
+    acceleration_native: np.ndarray
+    position_m: np.ndarray
+    orientation_wxyz: np.ndarray
+
+
+def _find_fork():
+    git = shutil.which('git')
+    if git is None:
+        raise BackendUnavailableError('WEC-Sim: Git is required to verify the maintained fork')
+    explicit = os.environ.get('TOPWATER_WECSIM_PATH')
+    checkout = (Path(explicit).expanduser() if explicit else
+                Path(__file__).resolve().parents[2] / 'artifacts/dependencies/topwater-wec-sim')
+    if not (checkout / 'source/objects/bodyClass.m').is_file():
+        raise BackendUnavailableError('WEC-Sim: maintained fork not found; set TOPWATER_WECSIM_PATH to its checkout')
+    try:
+        head = subprocess.run([git, '-C', str(checkout), 'rev-parse', 'HEAD'],
+                              check=True, capture_output=True, text=True).stdout.strip()
+        changed = subprocess.run([git, '-C', str(checkout), 'status', '--porcelain',
+                                  '--untracked-files=all', '--', 'source'],
+                                 check=True, capture_output=True, text=True).stdout.strip()
+    except (OSError, subprocess.CalledProcessError) as error:
+        raise BackendUnavailableError('WEC-Sim: cannot establish the maintained fork revision') from error
+    if head != SUPPORTED_FORK_COMMIT:
+        raise BackendUnavailableError('WEC-Sim: fork revision differs from the supported reviewed version')
+    if changed:
+        raise BackendUnavailableError('WEC-Sim: maintained fork source differs from its reviewed revision')
+    return checkout.resolve()
+
+
+def preflight():
+    """Check static capabilities before equilibrium or expensive producers.
+
+    Discovering the shared engine and verifying licenses happens when executing
+    the already scheduled solve, not as an import-time side effect.
+    """
+    for distribution, expected in (('capytaine', '3.0.0'), ('matlabengine', '25.2.2')):
+        try:
+            installed = metadata.version(distribution)
+        except metadata.PackageNotFoundError as error:
+            raise BackendUnavailableError(
+                f'WEC-Sim: {distribution} is not installed; install the wecsim dependency group') from error
+        if installed != expected:
+            raise BackendUnavailableError(f'WEC-Sim: expected {distribution} {expected}, found {installed}')
+    fork = _find_fork()
+    if util.find_spec('topwater._capytaine_surface') is None:
+        raise BackendUnavailableError('WEC-Sim: required total-surface reconstruction is not available')
+    producer = import_module('topwater._capytaine_surface')
+    if not all(callable(getattr(producer, name, None)) for name in
+               ('build_hydrodynamics', 'require_surface_readiness')):
+        raise BackendUnavailableError('WEC-Sim: required total-surface reconstruction is not implemented')
+    producer.require_surface_readiness()
+    if not callable(getattr(producer, 'reconstruct_total_surface', None)):
+        raise BackendUnavailableError('WEC-Sim: total-surface export is not implemented')
+    engine_module = import_module('matlab.engine')
+    if ENGINE_NAME not in engine_module.find_matlab():
+        raise BackendUnavailableError(
+            'WEC-Sim: existing CAPYTAINE_REFERENCE shared MATLAB engine is not visible; no new engine was started')
+    engine = engine_module.connect_matlab(ENGINE_NAME)
+    try:
+        _check_engine(engine)
+    finally:
+        del engine
+    return fork, producer
+
+
+def solve(boat, sea, duration_s):
+    """Return complete standard motion AND total water-air geometry.
+
+    No incident-only substitute is permitted. No public file is written here.
+    """
+    from .workflow_data import Result
+
+    fork, producer = preflight()
+    body = boat.to_body()
+    waves = _waves(sea)
+    setup = prepare_case(body, waves, duration_s)
+    print('WEC-Sim: equilibrium and fixed incoming-train construction prepared', file=sys.stderr)
+    with _scratch_directory() as workspace:
+        h = setup.hydrostatic
+        hydro = producer.build_hydrodynamics(
+            setup.wet_triangles_m, setup.mean_cg_m, setup.mass_matrix, workspace / 'hydrodynamics',
+            density=WATER_DENSITY, gravity=GRAVITY, depth=np.inf,
+            hydrostatic_stiffness=h.stiffness,
+            cb=h.center_of_buoyancy, volume=h.displaced_volume)
+        force, carrier_scale = setup.train.excitation(
+            hydro.excitation_omega, hydro.excitation_headings, hydro.excitation,
+            hydro.K, setup.time_s)
+        setup.train.certify_startup(setup, force, carrier_scale)
+        motion = integrate_motion(setup, hydro, force, workspace / 'body', fork)
+        warn_restoring_departures(setup, motion)
+        surface_time = np.linspace(0., motion.time_s[-1],
+                                   max(2, int(round(motion.time_s[-1] / .08)) + 1))
+        vertices, faces, vertex_offsets, face_offsets = producer.reconstruct_total_surface(
+            hydro, setup, motion, surface_time)
+        return Result(
+            time_s=motion.time_s, position_m=motion.position_m,
+            orientation_wxyz=motion.orientation_wxyz,
+            hull_vertices_m=np.asarray(boat.vertices_m), hull_faces=np.asarray(boat.faces),
+            cg_m=np.asarray(boat.cg_m), surface_time_s=surface_time,
+            surface_vertices_m=vertices, surface_faces=faces,
+            surface_vertex_offsets=vertex_offsets, surface_face_offsets=face_offsets)
+
+
+def _waves(sea):
+    from .inputs import WaveComponents
+    return WaveComponents(sea.amplitudes_m, sea.angular_frequencies_rad_s,
+                          sea.directions_rad, sea.phases_rad)
+
+
+def integrate_motion(setup, hydro, force, workspace, fork):
+    """Execute the unmodified maintained native WEC-Sim dynamics.
+
+    Only disposable model data bindings/loggers are configured. Mean equilibrium
+    orientation is already in the geometry and full mass tensor; it is applied
+    once again only when converting native perturbations back to body pose.
+    """
+    workspace = Path(workspace)
+    workspace.mkdir(parents=True, exist_ok=False)
+    library = resources.files('topwater').joinpath('data/wecsim')
+    for name in ('wecSimInputFile.m', 'run_workflow_case.m', 'build_workflow_model.m',
+                 'WorkflowEngineGuard.m'):
+        workspace.joinpath(name).write_text(library.joinpath(name).read_text(encoding='utf-8'), encoding='utf-8')
+    force = np.asarray(force, dtype=float)
+    if force.shape != (len(setup.time_s), 6) or not np.isfinite(force).all():
+        raise ValueError('WEC-Sim: prepared force must be finite and cover the exact native output grid')
+    mean_vertices_cg = setup.mean_hull_vertices_m - setup.mean_cg_m
+    _write_stl(workspace / 'boat_cg.stl', mean_vertices_cg, setup.physical_faces)
+    compatibility_time = np.arange(-1000, len(setup.time_s)+1001) * .02
+    np.savetxt(workspace / 'compatibility-elevation.txt',
+               np.c_[compatibility_time, np.zeros(len(compatibility_time))], delimiter='\t')
+    native = dict(M=setup.mass_matrix, K=hydro.K, Ainf=hydro.Ainf,
+                  cg=setup.mean_cg_m, cb=hydro.cb, volume=hydro.volume,
+                  rho=WATER_DENSITY, g=GRAVITY)
+    savemat(workspace / 'prepared-case.mat',
+            dict(n=native, time=setup.time_s[:, None], force=force,
+                 netcdf_path=str(Path(hydro.netcdf_path).resolve()),
+                 model_name='topwater_' + uuid.uuid4().hex[:12]))
+    _run_matlab(workspace, Path(fork))
+    path = workspace / 'motion.mat'
+    if not path.is_file():
+        raise RuntimeError('WEC-Sim: native integration did not produce the required complete motion')
+    raw = loadmat(path)
+    stamp = np.asarray(raw['time']).reshape(-1)
+    q = np.asarray(raw['q'])
+    velocity, acceleration = np.asarray(raw['velocity']), np.asarray(raw['acceleration'])
+    if (stamp.shape != setup.time_s.shape or not np.allclose(stamp, setup.time_s, rtol=0, atol=1e-9)
+            or any(value.shape != (len(stamp), 6) or not np.isfinite(value).all()
+                   for value in (q, velocity, acceleration))):
+        raise RuntimeError('WEC-Sim: native output is incomplete or nonfinite')
+    perturbation = Rotation.from_euler('xyz', q[:, 3:]).as_matrix()
+    equilibrium = Rotation.from_quat(setup.equilibrium.orientation, scalar_first=True).as_matrix()
+    orientation = Rotation.from_matrix(setup.world_from_native @ perturbation @ equilibrium).as_quat(scalar_first=True)
+    position = q[:, :3] @ setup.world_from_native.T + setup.mean_cg_m
+    return NativeMotion(stamp, q, velocity, acceleration, position, orientation)
+
+
+def _run_matlab(workspace, fork):
+    engine_module = import_module('matlab.engine')
+    if ENGINE_NAME not in engine_module.find_matlab():
+        raise BackendUnavailableError(
+            'WEC-Sim: existing CAPYTAINE_REFERENCE shared MATLAB engine is not visible; no new engine was started')
+    engine = engine_module.connect_matlab(ENGINE_NAME)
+    out, error = io.StringIO(), io.StringIO()
+    original_directory = engine.pwd(nargout=1)
+    original_path = engine.path(nargout=1)
+    try:
+        _check_engine(engine)
+        # Register the unique owned model and snapshot session settings BEFORE
+        # initializeWecSim or either template/model construction can fail.
+        engine.eval(f"topwaterCaseDir={_quote(workspace)}; topwaterFork={_quote(fork)}; "
+                    "addpath(topwaterCaseDir); "
+                    "topwaterGuardInput=load(fullfile(topwaterCaseDir,'prepared-case.mat'),'model_name'); "
+                    f"topwaterEngineGuard=WorkflowEngineGuard(topwaterGuardInput.model_name,{_quote(original_path)}); "
+                    "topwaterEngineGuard.prepare(); "
+                    f"run({_quote(workspace / 'run_workflow_case.m')});",
+                    nargout=0, stdout=out, stderr=error)
+    except Exception as failure:
+        detail = (out.getvalue() + '\n' + error.getvalue()).strip()
+        raise RuntimeError(f'WEC-Sim native integration failed: {failure}\n{detail}') from failure
+    finally:
+        try:
+            _restore_engine(engine, original_directory, original_path)
+        finally:
+            # Never quit an engine shared with another client.
+            del engine
+    detail = (out.getvalue() + '\n' + error.getvalue()).strip()
+    if detail:
+        print(detail, file=sys.stderr)
+
+
+def _restore_engine(engine, original_directory, original_path):
+    """Attempt every restoration, retry once, and require explicit success."""
+    try:
+        if engine.eval("exist('topwaterEngineGuard','var') == 1", nargout=1):
+            report = None
+            for _ in range(2):
+                report = json.loads(engine.eval(
+                    'jsonencode(topwaterEngineGuard.restore())', nargout=1))
+                if report['restored']:
+                    engine.eval('delete(topwaterEngineGuard); clear topwaterEngineGuard topwaterGuardInput', nargout=0)
+                    return
+            raise EngineCleanupError('WEC-Sim: shared-engine restoration failed: '
+                                     + '; '.join(report['failures']))
+        # No guard means its constructor did not finish. No workflow mutation
+        # occurs before it exists; only addpath needs reversal in this branch.
+        failures = []
+        for method, argument in ((engine.cd, original_directory), (engine.path, original_path)):
+            try:
+                method(argument, nargout=0)
+            except Exception as failure:
+                failures.append(str(failure))
+        if failures:
+            raise EngineCleanupError('WEC-Sim: pre-initialization restoration failed: ' + '; '.join(failures))
+    except EngineCleanupError:
+        raise
+    except Exception as failure:
+        raise EngineCleanupError('WEC-Sim: could not verify shared-engine restoration') from failure
+
+
+@contextmanager
+def _scratch_directory():
+    """Never delete scratch still referenced by an unreconciled MATLAB engine."""
+    directory = Path(tempfile.mkdtemp(prefix='topwater-wecsim-'))
+    retain = False
+    try:
+        yield directory
+    except EngineCleanupError:
+        retain = True
+        print(f'WEC-Sim: engine cleanup failed; temporary recovery directory retained: {directory}', file=sys.stderr)
+        raise
+    finally:
+        if not retain:
+            shutil.rmtree(directory)
+
+
+def _check_engine(engine):
+    for name in ('Simulink', 'Simscape', 'SimMechanics'):
+        if not engine.license('test', name, nargout=1):
+            raise BackendUnavailableError(f'WEC-Sim: required MATLAB license {name} is unavailable')
+    busy = engine.eval("any(cellfun(@(name) ~strcmp(get_param(name,'SimulationStatus'),'stopped'), "
+                       "find_system('type','block_diagram','BlockDiagramType','model')))", nargout=1)
+    if busy:
+        raise BackendUnavailableError('WEC-Sim: shared MATLAB engine has a model that is not stopped')
+
+
+def _quote(path):
+    return "'" + str(path).replace('\\', '/').replace("'", "''") + "'"
+
+
+class WarningSummary:
+    """Print first events and compact final summaries; retain no public report."""
+    def __init__(self, stream=None):
+        self.stream = sys.stderr if stream is None else stream
+        self.events = {}
+
+    def observe(self, category, stamp, message, *, severity=None):
+        stamp = float(stamp)
+        if category not in self.events:
+            self.events[category] = dict(first=stamp, last=stamp, count=0, peak=None)
+            print(f'warning [{category}] at {stamp:g} s: {message}', file=self.stream)
+        event = self.events[category]
+        event['last'] = stamp
+        event['count'] += 1
+        if severity is not None:
+            value = float(severity)
+            if event['peak'] is None or value > event['peak']:
+                event['peak'] = value
+
+    def finish(self):
+        for category, event in self.events.items():
+            peak = '' if event['peak'] is None else f", peak departure {100*event['peak']:.3g}%"
+            print(f"warning summary [{category}]: {event['count']} samples, "
+                  f"first {event['first']:g} s, last {event['last']:g} s{peak}", file=self.stream)
+
+
+def warn_restoring_departures(setup, motion, *, stream=None):
+    """Compare exact CALM-WATER restoring with the fixed-mean linear wrench.
+
+    This diagnostic is deliberately named for its flat-water reference. It is
+    not an actual curved-water wetted-set or nonlinear dynamic accuracy check.
+    The 10% threshold is an engineering reporting policy. A 0.1%-weight (or
+    weight*length) denominator floor avoids percentages of numerical zero.
+    """
+    warning = WarningSummary(stream)
+    weight = setup.body.mass * GRAVITY
+    length = float(np.ptp(setup.body.mesh.vertices, axis=0).max())
+    equilibrium = Rotation.from_quat(setup.equilibrium.orientation, scalar_first=True)
+    for stamp, q in zip(motion.time_s, motion.q):
+        perturbation = Rotation.from_euler('xyz', q[3:])
+        state = InitialState(setup.mean_cg_m + q[:3],
+                             (perturbation * equilibrium).as_quat(scalar_first=True))
+        try:
+            h = hydrostatics(setup.body, state, density=WATER_DENSITY, gravity=GRAVITY)
+        except (FloodingError, LossOfContactError) as error:
+            warning.observe('calm-restoring-unavailable', stamp,
+                            f'{error}; flat-reference geometry cannot assess restoring here')
+            continue
+        exact = np.r_[h.force + [0., 0., -weight], h.moment]
+        linear = -setup.hydrostatic.stiffness @ q
+        for name, indices, floor in (('force', slice(0, 3), .001*weight),
+                                     ('moment', slice(3, 6), .001*weight*length)):
+            difference = np.linalg.norm(exact[indices] - linear[indices])
+            denominator = max(np.linalg.norm(exact[indices]), np.linalg.norm(linear[indices]), floor)
+            fraction = float(difference / denominator)
+            if fraction > APPLICABILITY_WARNING_FRACTION:
+                warning.observe('calm-restoring-' + name, stamp,
+                                f'exact calm-water {name} differs from linear restoring by {100*fraction:.3g}% '
+                                '(10% reporting threshold; not a dynamic error estimate)', severity=fraction)
+    warning.finish()
+
+
+def _write_stl(path, vertices, faces):
+    with Path(path).open('w', encoding='ascii') as stream:
+        stream.write('solid topwater\n')
+        for face in np.asarray(faces):
+            triangle = vertices[face]
+            normal = np.cross(triangle[1]-triangle[0], triangle[2]-triangle[0])
+            normal /= np.linalg.norm(normal)
+            stream.write('facet normal ' + ' '.join(map(str, normal)) + '\nouter loop\n')
+            for point in triangle:
+                stream.write('vertex ' + ' '.join(map(str, point)) + '\n')
+            stream.write('endloop\nendfacet\n')
+        stream.write('endsolid topwater\n')
