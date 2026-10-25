@@ -6,10 +6,39 @@ Updated2026-10-24. Latest user steering controls scope. Read
 
 ## Current authorization and immediate priority
 
+LATEST USER: render FULL60s withaccepted2Dstyle, whileparallel READONLY search
+findslowhangingperformancewins. USERexplicitlyapprovesdeletingALL3Drendering
+code/deps ('2D is good'). No deletionofphysical3Dgeometry/solvers oroldartifacts.
+Owners holdcodebriefly forROOTcheckpointcurrentrefinement, then clean3Dpaths
+BEFOREfreezingnewfullproducer. Genericowner `/root/visualization` owns2Dlibrary/
+PyVista-backend/dependencycleanup andserialfullrender; WECowner ownsobsolete
+3Drender-onlyhelpers cleanup/shareddatautilities+newFULL751preparedinput.
+UseORIGINALfull12m751cache+exactnativeHUD, MINIMALsame-fieldborderonlyifneeded
+forfixedcamera/alltimecoverage; central65x65BITEXACT, no96mfullfield/wavephysics.
+Proposalfirst, max~600s/1CPU/noMATLAB, full751decode+peakPNG+phasewalltimings.
+No fulljobgrantedyet. `/root/startup_review` ownsparallelREADONLYcode/docsperf
+analysis, no numericaljobs/edits/benchmarks. DoNOTmutatefrozenproducerduringjob.
+
 Requested minimal top-down Matplotlib preview and standard library workflow are
-COMPLETE. No further numerical/render job or full60s encode is allocated.
-Topwater solver/physics implementation remains HELD. User intends to discard 3D
-work IF the 2D view looks good; keep 3D until USER has reviewed and approved it.
+COMPLETE atcheckpoint662a148 (pushed/issue30updated). LATEST USER authorizes
+refinement: monospacefixed-widthHUD, opaqueoffwhitehullinterior, mutedwaterpalette,
+darkbluewaterline andFULLCLI/render/encoderphase timing withspeedrecommendations.
+ROOT GRANTED onecached90sjob to `/root/visualization`, exactmanifest
+`matplotlib-clip-attempt2-source/proposal.json` SHA49de450cdc57026323345a8f76e6b773c5e18e9a3406fd75d4d36d5cd94de421.
+Twofocusedheader/footprinttests, same2475telemetryNPZ, cleanPUBLICCLI63, peakPNG/
+full63decode. No augmentation/waves/deps/physics. Freeze/claim/separateverify/
+exactterminal/idleunderlease/separateverify/finalrelease asusual. Sendstilland
+timingspromptly; no extraencoderbenchmarks. No full60s encode allocated.
+Refinementattempt2 COMPLETE: externalCLI12.205s/render10.625s, geometry3.326,
+Aggdraw4.283, pipewait.110, encoderflush2.187. ROOTacceptedopaquehull/monofixed
+header/mutedwaterstyle. Tests2/full63decodePASS; terminal/frozen/release2abc98.
+LATEST USER askslargerheaderacrossmost800pxwidth. ROOT GRANTED FONT-ONLYattempt3,
+manifest`matplotlib-clip-attempt3-source/proposal.json`
+SHA9a77d47fe82c07b54763bd51b6958854c7187eb2290a5ca80075b1349f1b4e87,
+sameowner/same2475input/style/timers,14.5pt(~766pxheader). Onecached90sCLI63+
+peakPNG/full63decode; no tests/deps/waves/augmentation. Serialleaseprocedure.
+Topwater solver/physics implementation remains HELD. USER hasnowapproved2Dand
+3Drendercode/dependencyremoval; oldsource/evidence remainrecoverableinhistory.
 
 Watch `artifacts/reference/stronger-buoy-20261024/matplotlib-clip-attempt1.mp4`.
 SHA256 954343c52b6bc5690fcf421bc0ac6804c2a4643b2571c26ffc34682f44e87eed.

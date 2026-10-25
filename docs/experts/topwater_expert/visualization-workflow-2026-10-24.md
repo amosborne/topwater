@@ -2,6 +2,54 @@
 
 ## Current standard: Matplotlib top-down
 
+Latest accepted styling is opaque off-white projected hull fill, gray mesh,
+black rim, dark-blue geometric waterline, muted standard `coolwarm` elevation
+palette about zero, and14.5pt DejaVu Sans Mono header with fixed-width signed
+fields. The font is constant throughout the file; values do not shift columns.
+The fill comes from the input hull's convex XY footprint, never a boat fixture.
+
+Latest movie under the stronger reference root: `matplotlib-clip-attempt3.mp4`,
+SHA256 `7134d6443cc8d66e3e53d2719f63618bf087cb432127f1edb54eb20711dec7b0`.
+ROOT and owner reviewed the decoded peak image; full63-frame decode passed.
+The earlier17 contract/geometry/CLI tests and2new footprint/header tests passed;
+the final font-only rerender did not repeat unrelated checks.
+
+### Complete-process timing
+
+Actual clean public CLI wall time, measured externally from launch to exit, was
+**14.027s**. Renderer wall time was12.250s; CLI `main` time was12.375s, excluding
+interpreter/package imports before main. The wrapper including QA took14.770s.
+
+| Recorded stage | Seconds |
+| --- | ---: |
+| Input load and schema validation |0.110 |
+| Convex mesh validation |0.079 |
+| Renderer imports/setup/initial canvas |0.671 |
+| Geometry and artist updates |4.132 |
+| Agg drawing/blitting |4.773 |
+| Encoder pipe sends |0.048 |
+| Encoder startup |0.047 |
+| Encoder close/final flush |2.500 |
+
+Encoding runs concurrently with plotting. Pipe-send time measures transfer and
+backpressure, not independent encoder CPU usage; these stages do not constitute
+a serial encoder profile. Process overhead outside CLI main is also included
+in the external total. No whole60-second rendering cost is established here.
+
+Practical next candidates, not implemented or benchmarked: cache contact/coverage
+geometry for repeated style iterations (the4.132s includes other updates too),
+use a faster standard encoder preset to reduce the flush tail with a quality
+tradeoff, or introduce a coarser display mesh/structured-grid drawing path to
+reduce Agg cost while retaining fixed800 output. The0.048s pipe wait does not
+justify another Python encoder thread. No optimization campaign is allocated.
+
+Exact final manifest `matplotlib-clip-attempt3-source/proposal.json` SHA
+`9a77d47fe82c07b54763bd51b6958854c7187eb2290a5ca80075b1349f1b4e87`;
+`matplotlib-qa-attempt3/verification.json` contains external and stage timings.
+Same prepared telemetry scene and all geometry/time values remain unchanged.
+
+### Original top-down baseline and input contract
+
 ```powershell
 uv run topwater render data/scene.npz videos/preview.mp4
 ```
@@ -20,8 +68,9 @@ The standard header requires `roll_deg`, `pitch_deg`, `heave_m`; time comes from
 but must receive producer-defined telemetry before the default header can render.
 No mesh-based pose inference or first-frame rezeroing occurs in the renderer.
 
-Water uses Gouraud-shaded standard Matplotlib TriMesh with continuous `bwr`
-colors and one symmetric normalization about zero for the full input. Values
+The original top-down baseline used Gouraud-shaded standard Matplotlib TriMesh with continuous `bwr`
+colors; the latest style uses muted `coolwarm` with the same symmetric
+normalization about zero for the full input. Values
 are surface elevation in metres, not bathymetric depth in this infinite-depth
 reference. Hull edges project in light gray, open boundary edges form the black
 rim, and blue contact lines intersect actual physical hull and water triangles.

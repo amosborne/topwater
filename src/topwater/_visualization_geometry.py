@@ -1,5 +1,12 @@
 """Bounded geometric intersections for projected mesh annotations, not physics."""
 import numpy as np
+from scipy.spatial import ConvexHull
+
+
+def projected_footprint(points):
+    """Convex XY footprint for an opaque schematic hull interior."""
+    xy = np.asarray(points)[:, :2]
+    return xy[ConvexHull(xy).vertices]
 
 
 def mesh_edges(faces):

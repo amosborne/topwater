@@ -60,3 +60,19 @@ Ownerfinalizes exactprocess/child/inputs/idle/separate/readback/release inshared
 ledger; WECowner doesnotwrite anotherrole's executionstate. No morejobs.
 All accepted3Dmovies/source/cache and rejectedattempts remain in place.
 Any conditional3Dcleanup requires laterUSERreview/authorization; none performed.
+
+## Subsequent cached style/profile and font-only readiness
+
+Cachedstyle/profile attempt2 ROOTliteralPASS: opaqueoffwhitehull/mutedpalette/
+fixedmonospacecolumns. ExternalCLIwall12.205s vs libraryrender10.625s; geometry
+3.326s/Aggdraw4.283s/pipewait.110s/encoderflush2.187s. Pipewait is blockingwall,
+not encoderCPUtime. No encoderbenchmark/tuning is authorized by these metrics.
+Originalscene2475d3be/cadence/physics unchanged.
+
+USERnextrequests largerheader only. Explicitownerrelease2abc98 before any WEC
+sourcechange. Genericfontfontsize14.5pt is the onlyvisual change; phasecounters
+unchanged. Newcontroller skips focusedtestrepeat forcosmetic-only, uses fresh
+attempt3.mp4/QA3. Proposal9a77d47fe82c07b54763bd51b6958854c7187eb2290a5ca80075b1349f1b4e87
+matplotlib-clip-attempt3-source/proposal.json,90s owner/root/visualization.
+Sourcecompile/freezePASS, no dependencies/augmentation/waves/test repeat; no job
+byWECowner. Actualgrant/process/ROOTliteralacceptance belongs tosharedhandoff.

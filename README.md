@@ -78,14 +78,16 @@ The producer-neutral `SceneSequence` contains timestamped hull and water meshes
 in world metres, right-handed z-up coordinates, and producer-supplied
 `roll_deg`, `pitch_deg`, `heave_m` telemetry. WEC-Sim and Topwater adapters own
 conversion into those inputs; the renderer knows neither producer. Hull meshes
-must be convex, validated on load. The top-down view shows blue-white-red surface
-elevation about zero, light-gray hull mesh, black open rim, blue actual geometric
-waterline, and a time/roll/pitch/heave header. This is not bathymetry or flooding
+must be convex, validated on load. The top-down view shows muted blue-white-red
+surface elevation about zero, an opaque off-white hull with light-gray mesh,
+black open rim, dark-blue actual geometric waterline, and a large fixed-width
+monospace time/roll/pitch/heave header. This is not bathymetry or flooding
 physics. See the [input contract and reproduction notes](docs/experts/topwater_expert/visualization-workflow-2026-10-24.md).
 
 Prepared geometry is cached separately from camera/material settings. The tested
-63-frame, 5.04-second square preview rendered in 11.25 seconds using CPU Agg
-blitting and a direct FFmpeg frame stream. It draws only 8,064 of the 107,648
+63-frame, 5.04-second square preview took 14.03 seconds for the complete CLI
+process, including startup, loading and encoder flush; renderer time was
+12.25 seconds using CPU Agg blitting and a direct FFmpeg stream. It draws only 8,064 of the 107,648
 water triangles that intersect the fixed view. Its wider incident-water
 preparation took 100.75 seconds once and is reused for subsequent styling.
 This is a measured preview cost, not a solver or real-time performance claim.

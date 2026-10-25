@@ -20,17 +20,22 @@ hull/water triangle intersection. Header time/roll/pitch/heave comes from named
 producer telemetry, never inferred from a reference hull. Clean command:
 `uv run topwater render data/scene.npz videos/preview.mp4` (no extra required).
 
-Accepted `matplotlib-clip-attempt1.mp4` SHA
-954343c52b6bc5690fcf421bc0ac6804c2a4643b2571c26ffc34682f44e87eed,
-under stronger-buoy-20261024. 17 tests pass; all63 frames decode at800square/
-12.5fps/5.04s; ROOT and owner viewed the decoded peak still. Matplotlib Agg CPU
-render11.25s (setup.765s,validation.094s,frameaverage.120s); whole tests/telemetry
-augmentation/CLI/QA17.797s. Figure/artists reused, blitted Agg buffer streams
+Latest accepted `matplotlib-clip-attempt3.mp4` SHA
+7134d6443cc8d66e3e53d2719f63618bf087cb432127f1edb54eb20711dec7b0,
+under stronger-buoy-20261024. Large14.5pt DejaVuSansMono fixed-column header,
+opaque generic projected off-white hull footprint, muted continuous coolwarm,
+dark-blue contact. 17 baseline tests plus2new header/footprint checks passed;
+font-only finaliteration needed no repeated tests. All63 frames decode at800
+square/12.5fps/5.04s; ROOT and owner viewed the decoded peak still.
+Actual full public CLI14.027s including process startup/imports/load/flush;
+renderer12.25s, geometry/artist4.132s, Aggdraw4.773s, pipe-send.048s,
+encoderflush2.500s. Pipe-send is transfer/backpressure, not pure encodeCPU;
+encoding overlaps drawing. Figure/artists reused, blitted Agg buffer streams
 directly through public imageio-ffmpeg without a second full-figure draw.
 Visible-water culling draws8064/107648triangles. Geometry/time/connectivity are
 bit exact; telemetry rows match original nativeq exactly. No wave preparation
-or physical correction. Exactterminalec1967/CIM88f6a7, frozenPASSf702c2,
-idle/separate23ff72/FINALrelease5ec2c5. No jobs remain.
+or physical correction. Exactterminal75481c/CIMe51809, frozenPASS62d995,
+idle/separateca3566/FINALreleasefc086d. No jobs remain.
 
 3D code/artifacts are preserved pending USER review of 2D; do not delete based
 on that conditional alone. The earlier same-CLI synthetic convex box checked

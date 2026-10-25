@@ -5,6 +5,8 @@ import pytest
 from topwater.cli import main
 from topwater.visualization import SceneSequence, RenderSettings, convex_envelope, render_sequence
 from topwater._visualization_geometry import waterline_segments, mesh_edges
+from topwater._visualization_geometry import projected_footprint
+from topwater._visualization_2d import header_text
 
 
 def pyramid():
@@ -153,3 +155,21 @@ def test_mesh_rim_is_derived_from_open_boundary():
     all_edges, rim = mesh_edges(faces)
     assert len(all_edges) == 8 and len(rim) == 4
     assert set(rim.ravel()) == {0, 1, 2, 3}
+
+
+def test_header_columns_stay_fixed_across_signs_and_digit_changes():
+    first = header_text(9.92, -9.99, 0., -.1)
+    second = header_text(50.00, 10.00, -1., 1.2)
+    assert len(first) == len(second)
+    for label in ('TIME', 'ROLL', 'PITCH', 'HEAVE'):
+        assert first.index(label) == second.index(label)
+
+
+def test_opaque_footprint_uses_projected_input_geometry():
+    points, _ = pyramid()
+    for scale in (1., 2.):
+        outline = projected_footprint(points * scale + [100., -50., 3.])
+        area = abs(np.dot(outline[:, 0], np.roll(outline[:, 1], -1)) -
+                   np.dot(outline[:, 1], np.roll(outline[:, 0], -1))) / 2
+        assert len(outline) == 4
+        np.testing.assert_allclose(area, 8. * scale**2)
