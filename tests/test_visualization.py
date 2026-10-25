@@ -4,6 +4,7 @@ import pytest
 
 from topwater.cli import main
 from topwater.visualization import SceneSequence, RenderSettings, convex_envelope, render_sequence
+from topwater._visualization_geometry import waterline_segments, mesh_edges
 
 
 def pyramid():
@@ -115,3 +116,40 @@ def test_cli_passes_whole_scene_and_exact_output_file(tmp_path, monkeypatch):
 def test_output_is_an_mp4_filename_not_a_directory(tmp_path):
     with pytest.raises(ValueError, match='complete MP4 file'):
         render_sequence(sequence(), tmp_path / 'directory')
+
+
+def test_telemetry_roundtrip_and_validation(tmp_path):
+    scene = sequence()
+    scene.telemetry = {'roll_deg': np.array([1., 2.]), 'pitch_deg': np.array([.1, .2]), 'heave_m': np.array([.2, .3])}
+    scene.save(tmp_path / 'telemetry.npz')
+    loaded = SceneSequence.load(tmp_path / 'telemetry.npz')
+    for key, values in scene.telemetry.items():
+        np.testing.assert_array_equal(loaded.telemetry[key], values)
+    fields = {key: getattr(scene, key) for key in ('time_s', 'hull_points', 'hull_faces', 'water_points', 'water_faces')}
+    with pytest.raises(ValueError, match='one value per time'):
+        SceneSequence(**fields, telemetry={'roll_deg': np.array([1.])})
+
+
+def test_topdown_header_never_invents_motion_values(tmp_path):
+    with pytest.raises(ValueError, match='requires producer telemetry'):
+        render_sequence(sequence(), tmp_path / 'header.mp4')
+
+
+def test_waterline_triangle_intersections_with_coarse_flat_water():
+    from scipy.spatial import ConvexHull
+    points = np.array([[x, y, z] for x in (-1., 1.) for y in (-1., 1.) for z in (-1., 1.)])
+    faces = ConvexHull(points).simplices
+    water = np.array([[-2., -2., 0.], [2., -2., 0.], [2., 2., 0.], [-2., 2., 0.]])
+    water_faces = np.array([[0, 1, 2], [0, 2, 3]])
+    segments = waterline_segments(points, faces, water, water_faces)
+    np.testing.assert_allclose(segments[:, :, 2], 0., atol=1e-12)
+    np.testing.assert_allclose(abs(segments[:, :, :2]).max(axis=2), 1., atol=1e-12)
+    np.testing.assert_allclose(np.linalg.norm(segments[:, 1] - segments[:, 0], axis=1).sum(), 8., atol=1e-12)
+    assert len(waterline_segments(points, faces, water + [0., 0., 3.], water_faces)) == 0
+
+
+def test_mesh_rim_is_derived_from_open_boundary():
+    _, faces = pyramid()
+    all_edges, rim = mesh_edges(faces)
+    assert len(all_edges) == 8 and len(rim) == 4
+    assert set(rim.ravel()) == {0, 1, 2, 3}

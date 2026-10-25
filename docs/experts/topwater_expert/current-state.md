@@ -1,29 +1,42 @@
 # Current state: Topwater expert (solver implementation HELD)
 
-LATEST USER authorizes a standard reusable PyVista visualization workflow in the
+LATEST USER authorizes a standard reusable visualization workflow in the
 Topwater library, with producer-neutral prepared meshes, different convex hulls,
 code-first CLI, square water-filled fast previews and no custom graphics engine.
 Initial package integration/source is owned by `/root/visualization`; WEC owner
 owns only reference-data preparation/adapter. Dedicated visualization role is a
 new routing entry awaiting native-client availability; no activation claim here.
 
-COMPLETE: `src/topwater/visualization.py`, `cli.py`, optional visualization
-extra and `topwater render INPUT.npz OUTPUT.mp4`. Both paths required; fixed800
-square/fullinputfile/uniformnativecadence, onlyMP4 persists, diagnosticsstdout.
-13focusedcontract/package/CLI tests passed. Secondconvexbox used the SAME public
-CLI successfully. Convex boundary validation uses bounded linear storage.
+COMPLETE: `src/topwater/visualization.py`, the Matplotlib/geometry modules and
+`cli.py`. Clean command `uv run topwater render INPUT.npz OUTPUT.mp4`: both paths
+required; fixed 800 square, whole input, uniform native cadence, only MP4 persists,
+diagnostics stdout. Matplotlib and bundled FFmpeg are core dependencies; PyVista
+remains optional. `uv.lock` is current with existing package versions preserved.
 
-Accepted cached-only finalclip `pyvista-clip-attempt3.mp4` SHA
-c80e14001a9e3818291e428cea71378b3e158b44831d084afcc34b67d1ec2b0f,
-under stronger-buoy-20261024. Full63decode/800/h264/12.5fps/5.04s and ROOTdecoded
-peakposter PASS. Same preparedscene SHA1079ae90ec78ea3171204be2996a101caf86015e44771b509b9af82352a3ef4f.
-ActualIntelArcPro OpenGL4.5 backend. Render31.515s including2.437s context/.078s
-validation; frameaverage.417s. CachedCLI+QA35.829s. One-time same-field widerwater
-preparation100.75s, centralacceptedwatercachebitexact, no newsea/trajectory.
-StandardcontinuousBlues_r palette/materiallighting; shadows and explicitboundary
-line disabled after observedVTK artifacts, supersededstyle preserved. No new
-physics or nonlinear/mesh qualification. No more jobs/features allocated.
-[Visualization contract/source note](visualization-workflow-2026-10-24.md).
+LATEST ACCEPTED VIEW supersedes the earlier oblique presentation: Matplotlib
+top-down, continuous blue-white-red elevation fixed about zero, no water grid,
+light-gray projected hull edges, black mesh-boundary rim and blue actual physical
+hull/water triangle intersection. Header time/roll/pitch/heave comes from named
+producer telemetry, never inferred from a reference hull. Clean command:
+`uv run topwater render data/scene.npz videos/preview.mp4` (no extra required).
+
+Accepted `matplotlib-clip-attempt1.mp4` SHA
+954343c52b6bc5690fcf421bc0ac6804c2a4643b2571c26ffc34682f44e87eed,
+under stronger-buoy-20261024. 17 tests pass; all63 frames decode at800square/
+12.5fps/5.04s; ROOT and owner viewed the decoded peak still. Matplotlib Agg CPU
+render11.25s (setup.765s,validation.094s,frameaverage.120s); whole tests/telemetry
+augmentation/CLI/QA17.797s. Figure/artists reused, blitted Agg buffer streams
+directly through public imageio-ffmpeg without a second full-figure draw.
+Visible-water culling draws8064/107648triangles. Geometry/time/connectivity are
+bit exact; telemetry rows match original nativeq exactly. No wave preparation
+or physical correction. Exactterminalec1967/CIM88f6a7, frozenPASSf702c2,
+idle/separate23ff72/FINALrelease5ec2c5. No jobs remain.
+
+3D code/artifacts are preserved pending USER review of 2D; do not delete based
+on that conditional alone. The earlier same-CLI synthetic convex box checked
+another topology. Its oblique timing/receipts are preserved in the
+[visualization contract/source note](visualization-workflow-2026-10-24.md).
+No further rendering work is allocated. Solver and physics remain HELD.
 
 LATEST user, after mild60s video: use a MORE energetic actual sea and report
 diagnostics. Coordinator selects `ndbc-46086-20231223T0040Z`, source row29984,

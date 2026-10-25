@@ -1,5 +1,71 @@
 # Standard visualization workflow
 
+## Current standard: Matplotlib top-down
+
+```powershell
+uv run topwater render data/scene.npz videos/preview.mp4
+```
+
+Both paths are required, relative or absolute. The whole prepared file renders
+at its uniform saved cadence to a single800x800 MP4. Matplotlib and the bundled
+FFmpeg encoder are core dependencies; no extra flag, global FFmpeg installation,
+GPU or PyVista is needed for the standard view. Diagnostic information returns
+on stdout. The renderer creates no permanent sidecars.
+
+SceneSequence retains the neutral mesh contract documented below and adds an
+optional `telemetry` dictionary of finite arrays with one value per timestamp.
+The standard header requires `roll_deg`, `pitch_deg`, `heave_m`; time comes from
+`time_s`. NPZ serialization stores these as `telemetry__roll_deg`,
+`telemetry__pitch_deg`, `telemetry__heave_m`. Older geometry-only scenes load,
+but must receive producer-defined telemetry before the default header can render.
+No mesh-based pose inference or first-frame rezeroing occurs in the renderer.
+
+Water uses Gouraud-shaded standard Matplotlib TriMesh with continuous `bwr`
+colors and one symmetric normalization about zero for the full input. Values
+are surface elevation in metres, not bathymetric depth in this infinite-depth
+reference. Hull edges project in light gray, open boundary edges form the black
+rim, and blue contact lines intersect actual physical hull and water triangles.
+No convex closing-cap waterline is invented. Hull wireframes are annotations
+projected over the water field, not a simulated interior flood surface.
+
+Contact geometry cuts each candidate triangle pair by the other's normalized
+plane, then intersects their collinear one-dimensional intervals. Bounding-box
+culling bounds candidate storage per physical face. Point contacts have zero
+line length; coplanar area contact has no unique waterline and fails explicitly.
+This also handles a hull crossing a large water triangle without the earlier
+point-distance mask limitation.
+
+The camera has fixed world XY orientation and fixed scale/center over the input;
+translation remains visible. All-time triangle bounds cull water outside that
+view before plotting. A single figure, TriMesh, LineCollections and header are
+reused. A cached Agg background is restored, animated artists are drawn, and the
+RGBA buffer streams directly to the public `imageio_ffmpeg.write_frames` encoder.
+There is no second full-figure redraw after blitting and no per-frame image files.
+
+Accepted movie `matplotlib-clip-attempt1.mp4` under the stronger reference root,
+SHA256 `954343c52b6bc5690fcf421bc0ac6804c2a4643b2571c26ffc34682f44e87eed`:
+63 frames,800square,12.5fps,5.04seconds from50.00–54.96s. All17 focused schema/
+CLI/geometry/package tests pass; full decode and ROOT/owner peak-still review pass.
+Geometry/time/connectivity are bit identical to the accepted scene; producer
+telemetry matches native WEC-Sim q rows exactly.
+
+Actual CPU render11.25s includes validation.094s/setup.765s; frameaverage.120s.
+The frame loop totals 7.563 s: geometry/artist updates 3.499 s (0.0555 s/frame)
+and combined Agg drawing/encoder streaming 4.064 s (0.0645 s/frame). Encoder
+startup/flush and initial canvas work are included in the total, not separately
+profiled. These are recorded timings, not a new profiling experiment.
+Only8064/107648watertriangles are drawn. Combined tests, telemetry augmentation,
+CLI and QA took17.797s. Wider water preparation remains the earlier one-time
+100.75s cache operation and was not repeated. Evidence:
+`matplotlib-clip-attempt1-source/proposal.json` SHA
+`cc6ba729f6104f635f453cd58dd70a44fc9fc26ae9bc8f3fd1fa0ae890a2b589`,
+`matplotlib-qa-attempt1/verification.json` and `augmentation.json`.
+
+The earlier optional3D implementation and artifacts below remain preserved
+until the user reviews2D and explicitly elects removal. They are not the default.
+
+## Earlier optional 3D workflow and preserved evidence
+
 User-authorized library visualization only. Solver implementation and physical
 model qualification remain held. Initial standard workflow is executed and
 accepted; source and exact run evidence below distinguish tuning attempts.

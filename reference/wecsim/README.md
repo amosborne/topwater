@@ -1,6 +1,24 @@
 # Native WEC-Sim references
 
-Latest shared-library preview:
+Latest minimal2D topdown proof:
+[5s Matplotlib clip](../../artifacts/reference/stronger-buoy-20261024/matplotlib-clip-attempt1.mp4).
+SHA `954343c52b6bc5690fcf421bc0ac6804c2a4643b2571c26ffc34682f44e87eed`;
+800square/H264/63frames12.5fps/5.04s. ROOTpeakposter andfull63decodePASS,17testsPASS.
+Render11.25s/wholejob17.797s usingstandardMatplotlibAgg blit/directFFmpegstream.
+The newNPZ adds exactnativeRoll/Pitch/Heave telemetry; originalgeometry/time/water
+are byte-identical. No waveprep, physicalrescale, headingchange or simulation.
+[Telemetry/data/timing evidence](../../docs/experts/wecsim_expert/telemetry-2d-readiness-2026-10-24.md).
+
+```powershell
+uv run topwater render examples/scene.npz videos/topdown.mp4
+```
+
+Two REQUIREDPOSITIONAL paths, WHOLE NPZ, fixed800square, savedinputcadence,
+onlynamedMP4defaultoutput. No --extra/start/end/size/fps/output flags.
+The adapter choosesinterval before serialization. Matplotlib/encoder are core;
+PyVista3D is optional. All3Doutputs remain until separateUSERcleanup authorization.
+
+Previous accepted3D shared-library preview (retained):
 [5s square PyVista clip](../../artifacts/reference/stronger-buoy-20261024/pyvista-clip-attempt3.mp4).
 H264800square/63frames12.5fps/5.04s; physicaltimes50.00..54.96, same accepted
 stronger motion/train. SHA `c80e14001a9e3818291e428cea71378b3e158b44831d084afcc34b67d1ec2b0f`.

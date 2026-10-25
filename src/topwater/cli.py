@@ -10,7 +10,7 @@ from .visualization import RenderSettings, SceneSequence, render_sequence
 def parser():
     root = argparse.ArgumentParser(prog='topwater', description='Topwater workflows')
     commands = root.add_subparsers(dest='command', required=True)
-    render = commands.add_parser('render', help='Render prepared hull/water meshes using PyVista')
+    render = commands.add_parser('render', help='Render a prepared top-down hull/water animation')
     render.add_argument('scene', type=Path, help='Producer-neutral prepared SceneSequence .npz')
     render.add_argument('output', type=Path, help='Complete destination MP4 file path; fixed 800 x 800 pixels')
     render.add_argument('--settings', type=Path, help='JSON object of RenderSettings fields')

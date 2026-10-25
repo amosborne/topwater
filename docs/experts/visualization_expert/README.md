@@ -6,7 +6,8 @@ Work only within a bounded coordinator assignment.
 
 [Role definition](../../../.codex/agents/visualization_expert.toml).
 
-Own the shared producer-independent PyVista/VTK visualization workflow and its
+Own the shared producer-independent visualization workflow: Matplotlib for 2D,
+optional PyVista/VTK for 3D, and measured
 rendering performance. Producer experts own physics and source-specific adapters;
 Topwater expert reviews package integration. Use standard rendering capabilities,
 cached prepared inputs and a persistent scene, rather than a custom renderer.

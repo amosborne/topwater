@@ -5,14 +5,28 @@ render workflow accepting standard inputs from either WEC-Sim or Topwater.
 Different convex hulls are supplied through data; convexity is a validated mesh
 requirement. Standard PyVista/VTK handles graphics. Physics remains producer-owned.
 
-Initial workflow and preview COMPLETE: fixed square800x800, source50.00-54.96s,
+LATEST Matplotlib2D preview COMPLETE. Watch
+`artifacts/reference/stronger-buoy-20261024/matplotlib-clip-attempt1.mp4`,
+SHA954343c52b6bc5690fcf421bc0ac6804c2a4643b2571c26ffc34682f44e87eed.
+Peakstill `matplotlib-qa-attempt1/poster.png`, source51.44s. ROOTliteralPASS;
+17tests/full63decodePASS. Style: symmetriccontinuousBWR surfaceheight at0,
+lightgrayhullwire, blackboundaryrim, blueactualwaterline/whitehalo, fourvalueHUD.
+Fixed800square, source50.00-54.96s/63frames/12.5fps/5.04s. Cached geometry/time
+BITEXACT, exactproducerroll_deg/pitch_deg/heave_m added through neutraltelemetry.
+MatplotlibAggblit/directFFmpegstream/reusedartists, 8064/107648visiblewaterfaces.
+Render11.25s, wholejob17.797s; no waveprep/GPU. Session81549 terminal/release5ec2c5.
+Normal command now `uv run topwater render data/scene.npz videos/preview.mp4`:
+Matplotlib/encoder COREdeps, NO--extra for2D. User willreviewbeforeconditional3D
+removal; retain3D fornow. No newjob/full60s/physics authorized.
+
+Previous oblique workflow and preview: fixed square800x800, source50.00-54.96s,
 63frames/12.5fps/5.04s, continuousblue actualwater covering the fullviewport,
 litwarm/ivoryhull, perspective, unchangedphysicalmotion. ROOT viewed peakposter.
 Watch `artifacts/reference/stronger-buoy-20261024/pyvista-clip-attempt3.mp4`,
 SHAc80e14001a9e3818291e428cea71378b3e158b44831d084afcc34b67d1ec2b0f.
 Full63decodePASS. No full60s encode or follow-on work is allocated.
 
-Final CLI: `uv run --extra visualization topwater render INPUT_PATH.npz OUTPUT_PATH.mp4`.
+Final CLI: `uv run topwater render INPUT_PATH.npz OUTPUT_PATH.mp4`.
 Both paths are required positional arguments, absolute or relative. Always render
 the whole input at its uniform timestamp cadence; no start/end/size/output flags.
 Only the exact requested MP4 survives normal rendering. Camera/light/material
@@ -25,9 +39,11 @@ Implementation: [shared module](../../../src/topwater/visualization.py),
 hull_points[T,N,3]/hull_faces[F,3], water_points[T,M,3]/water_faces[K,3], metadata.
 Metres/right-handed-z-up, fixed triangular connectivity per sequence, uniform
 timestamps; producers normalize geometry. Prepared NPZ is a named-array archive.
-OnePlotter/reusedactors; standardVTKfilters/materials, optional/lazygraphicsdeps.
+Default2D reuses oneFigure/artists with Aggblit and direct encoder streaming;
+previous optional3D reuses onePlotter/VTKactors.
 Convex validation uses bounded storage rather than a dense face-by-plane matrix.
-Water cells must resolve hull intersection for standardVTK clipping to mask it.
+The previous3D standardVTK mask requires water cells to resolve hull contact;
+2D computes triangle/triangle contact directly, separately from drawing.
 
 Initial library/schema implementation is owned by `/root/visualization`
 (topwater_expert); WEC-Sim adapter by `/root/wecsim_reference`. Transfer ownership

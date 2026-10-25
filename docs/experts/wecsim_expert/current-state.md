@@ -7,6 +7,26 @@ requirements, acceptance, integration and serial execution allocation.
 
 ## Current priority
 
+Shared Matplotlib2Dtopdown proof is COMPLETE: ROOTpeakposterPASS/USERlinked.
+[Watch5s topdown](../../../artifacts/reference/stronger-buoy-20261024/matplotlib-clip-attempt1.mp4).
+SHA954343c52b6bc5690fcf421bc0ac6804c2a4643b2571c26ffc34682f44e87eed;
+800square/H264/63frames12.5fps/5.04s, savedtimes50.00..54.96. All17tests/full63decode
+PASS. Render11.25s, wholejob17.797s; MatplotlibAgg blit/directstream, no GPUneeded.
+[Final2Devidence](telemetry-2d-readiness-2026-10-24.md).
+
+Geometry/time/connectivity+dtypeBYTEIDENTICAL tooriginalscene1079ae90. NewNPZ
+2475d3be addsprovidedroll_deg/pitch_deg/heave_m fromEXACTacceptednativeqrows,
+no interpolation/rezero/waveprep/headings/physics. GenericTopwaterCLI is
+`uv run topwater render INPUT.npz OUTPUT.mp4`: two positionals, wholeNPZ/fixed800,
+MP4only/defaultMatplotlibcore/no--extra. Renderer never infers WECpose.
+ReferenceQAposters/proofs areexplicit, separate frompublicdefaultoutput.
+
+No furtherWEC code/jobs. Executionowner visualization finalizesledger/release+
+uvlock; ROOT handleshandoff/integration/checkpoint. Retain all3Dmovies/source/
+caches pending laterUSERreview/conditionalcleanup authorization; no cleanupnow.
+
+## Previous accepted PyVista preview
+
 Reusable off-the-shelf PyVista/VTK preview is COMPLETE and ROOTposteraccepted.
 [Watch5s square clip](../../../artifacts/reference/stronger-buoy-20261024/pyvista-clip-attempt3.mp4).
 SHAc80e14001a9e3818291e428cea71378b3e158b44831d084afcc34b67d1ec2b0f;

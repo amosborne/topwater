@@ -29,6 +29,7 @@ class SceneSequence:
     water_points: np.ndarray
     water_faces: np.ndarray
     metadata: dict = field(default_factory=dict)
+    telemetry: dict = field(default_factory=dict)
 
     def __post_init__(self):
         self.time_s = np.asarray(self.time_s, dtype=float)
@@ -49,18 +50,25 @@ class SceneSequence:
             setattr(self, name + '_faces', raw_faces.astype(np.int64, copy=False))
         if self.metadata.get('units', 'm') != 'm' or self.metadata.get('coordinate_system', 'right-handed-z-up') != 'right-handed-z-up':
             raise ValueError('Normalize geometry to metres and right-handed-z-up before rendering')
+        for name, values in self.telemetry.items():
+            values = np.asarray(values, dtype=float)
+            if values.shape != self.time_s.shape or not np.isfinite(values).all():
+                raise ValueError(f'telemetry {name} must be finite with one value per time')
+            self.telemetry[name] = values
 
     def save(self, path):
         """Save prepared geometry once; style changes can reuse it without physics."""
         np.savez(path, time_s=self.time_s, hull_points=self.hull_points,
                  hull_faces=self.hull_faces, water_points=self.water_points,
-                 water_faces=self.water_faces, metadata=json.dumps(self.metadata))
+                 water_faces=self.water_faces, metadata=json.dumps(self.metadata),
+                 **{'telemetry__' + name: values for name, values in self.telemetry.items()})
 
     @classmethod
     def load(cls, path):
         with np.load(path, allow_pickle=False) as data:
             return cls(**{key: data[key] for key in ('time_s', 'hull_points', 'hull_faces', 'water_points', 'water_faces')},
-                       metadata=json.loads(str(data['metadata'])))
+                       metadata=json.loads(str(data['metadata'])),
+                       telemetry={key.removeprefix('telemetry__'): data[key] for key in data.files if key.startswith('telemetry__')})
 
 
 def convex_envelope(points, faces):
@@ -106,6 +114,7 @@ def _outward(points, faces):
 @dataclass
 class RenderSettings:
     """Scene styling; none of these settings belong to a particular producer."""
+    view: str = 'topdown'
     azimuth_deg: float = -110.
     elevation_deg: float = 24.
     view_angle_deg: float = 25.
@@ -126,7 +135,7 @@ class RenderSettings:
     maximum_seconds: float = 240.
 
 
-def render_sequence(scene, output_path, settings=None):
+def _render_3d(scene, output_path, settings=None):
     """Render prepared meshes with one reused VTK context and actors.
 
     Render the whole input at its saved uniform cadence to one 800-square MP4.
@@ -278,3 +287,16 @@ def render_sequence(scene, output_path, settings=None):
                 plotter.close()
             finally:
                 temporary.cleanup()
+def render_sequence(scene, output_path, settings=None):
+    """Render the whole prepared sequence to one MP4 using standard artists.
+
+    The default is the minimal Matplotlib top-down view. ``view='3d'`` retains
+    the optional PyVista renderer while the new standard visualization is reviewed.
+    """
+    settings = RenderSettings() if settings is None else settings
+    if settings.view == 'topdown':
+        from ._visualization_2d import render_topdown
+        return render_topdown(scene, output_path, settings)
+    if settings.view == '3d':
+        return _render_3d(scene, output_path, settings)
+    raise ValueError("Unknown visualization view; choose 'topdown' or '3d'")
