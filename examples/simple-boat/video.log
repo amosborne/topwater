@@ -1,8 +1,25 @@
-2026-10-25T22:24:14.972Z INFO render BEGIN directory=examples\simple-boat
-2026-10-25T22:24:15.502Z INFO render STAGE load self-contained result
-2026-10-25T22:24:42.172Z INFO render STAGE render and verify complete video
-2026-10-25T22:27:59.131Z INFO render PUBLISHED examples\simple-boat\video.mp4
-2026-10-25T22:27:59.131Z INFO render VIDEO frames=751 fps=12.5 size=800x800 source_end_s=60.000 encoded_duration_s=60.080 verified=true
-2026-10-25T22:27:59.131Z INFO render TIMING render preparation_s=0.110 setup_s=1.500 geometry_s=100.081 draw_s=88.867 encoder_start_s=0.109 encoder_send_s=0.833 encoder_close_s=2.375 verification_s=3.079 elapsed_s=196.954
-2026-10-25T22:27:59.131Z INFO render Wrote examples\simple-boat\video.mp4
-2026-10-25T22:27:59.141Z INFO render END status=success elapsed_s=224.172000 output_published=true warnings=0
+2026-10-26T04:31:50.442Z INFO render BEGIN directory=examples\simple-boat
+2026-10-26T04:31:50.557Z INFO render STAGE load self-contained result
+2026-10-26T04:32:04.833Z INFO render STAGE render and verify complete video
+2026-10-26T04:32:05.858Z INFO render render progress: 1/751 frames; elapsed=1.031s validation=0.172s mask=0.000s path=0.000s edges=0.016s contact=0.031s draw=0.047s send=0.000s
+2026-10-26T04:32:13.747Z INFO render render progress: 50/751 frames; elapsed=8.922s validation=3.781s mask=0.266s path=0.016s edges=0.190s contact=1.047s draw=2.857s send=0.000s
+2026-10-26T04:32:23.540Z INFO render render progress: 100/751 frames; elapsed=18.703s validation=7.793s mask=1.345s path=0.032s edges=0.394s contact=2.047s draw=6.280s send=0.047s
+2026-10-26T04:32:34.008Z INFO render render progress: 150/751 frames; elapsed=29.172s validation=12.093s mask=3.392s path=0.063s edges=0.568s contact=2.982s draw=9.247s send=0.062s
+2026-10-26T04:32:42.348Z INFO render render progress: 200/751 frames; elapsed=37.515s validation=16.169s mask=3.639s path=0.063s edges=0.726s contact=4.043s draw=11.985s send=0.078s
+2026-10-26T04:32:52.299Z INFO render render progress: 250/751 frames; elapsed=47.468s validation=20.204s mask=5.478s path=0.079s edges=0.884s contact=5.072s draw=14.798s send=0.125s
+2026-10-26T04:33:00.330Z INFO render render progress: 300/751 frames; elapsed=55.500s validation=23.424s mask=7.197s path=0.094s edges=0.947s contact=5.865s draw=16.989s send=0.141s
+2026-10-26T04:33:07.991Z INFO render render progress: 350/751 frames; elapsed=63.156s validation=26.497s mask=8.978s path=0.094s edges=1.057s contact=6.571s draw=18.959s send=0.157s
+2026-10-26T04:33:14.215Z INFO render render progress: 400/751 frames; elapsed=69.390s validation=29.621s mask=9.214s path=0.110s edges=1.232s contact=7.175s draw=21.038s send=0.157s
+2026-10-26T04:33:23.054Z INFO render render progress: 450/751 frames; elapsed=78.218s validation=33.203s mask=11.323s path=0.110s edges=1.388s contact=7.891s draw=23.241s send=0.219s
+2026-10-26T04:33:32.553Z INFO render render progress: 500/751 frames; elapsed=87.718s validation=36.973s mask=13.524s path=0.110s edges=1.545s contact=8.813s draw=25.582s send=0.328s
+2026-10-26T04:33:40.060Z INFO render render progress: 550/751 frames; elapsed=95.234s validation=40.875s mask=13.837s path=0.125s edges=1.593s contact=9.687s draw=27.837s send=0.406s
+2026-10-26T04:33:50.465Z INFO render render progress: 600/751 frames; elapsed=105.640s validation=44.752s mask=16.885s path=0.140s edges=1.719s contact=10.526s draw=30.212s send=0.516s
+2026-10-26T04:33:58.048Z INFO render render progress: 650/751 frames; elapsed=113.218s validation=48.687s mask=17.149s path=0.140s edges=1.815s contact=11.447s draw=32.512s send=0.562s
+2026-10-26T04:34:08.787Z INFO render render progress: 700/751 frames; elapsed=123.953s validation=52.293s mask=20.901s path=0.140s edges=1.893s contact=12.326s draw=34.757s send=0.737s
+2026-10-26T04:34:16.011Z INFO render render progress: 750/751 frames; elapsed=131.187s validation=56.091s mask=21.089s path=0.140s edges=2.002s contact=13.155s draw=36.958s send=0.814s
+2026-10-26T04:34:16.157Z INFO render render progress: 751/751 frames; elapsed=131.328s validation=56.154s mask=21.105s path=0.140s edges=2.002s contact=13.170s draw=37.005s send=0.814s
+2026-10-26T04:34:20.253Z INFO render PUBLISHED examples\simple-boat\video.mp4
+2026-10-26T04:34:20.253Z INFO render VIDEO frames=751 fps=12.5 size=800x800 source_end_s=60.000 encoded_duration_s=60.080 verified=true
+2026-10-26T04:34:20.253Z INFO render TIMING render preparation_s=0.047 setup_s=0.671 geometry_s=92.681 draw_s=37.005 encoder_start_s=0.047 encoder_send_s=0.814 encoder_close_s=1.750 verification_s=2.328 elapsed_s=135.422
+2026-10-26T04:34:20.253Z INFO render Wrote examples\simple-boat\video.mp4
+2026-10-26T04:34:20.253Z INFO render END status=success elapsed_s=149.813000 output_published=true warnings=0

@@ -10,9 +10,23 @@ Latest added user request: visualization expert should render water to the actua
 moving waterline and make the hull above it transparent, keeping wetted hull
 visible. `/root/result_renderer` implemented the bounded change in isolated
 worktree artifacts/worktrees/waterline-visualization. Cap independently approved
-the frozen renderer/tests/docs; root tests and private preview precede full video
-regeneration. No producer, surface data or physics changes. The user explicitly
-requests regenerated chart/video from existing saved data.
+the first renderer/tests/docs. Its 37 tests and four-frame preview passed, but
+full regeneration timed out at the unchanged240s budget; old video preserved,
+failed video.log retained. Job terminal/frozen/CIM/FFmpeg verified and released.
+User rejected extra per-frame polygons and increased runtime. A four-frame profile
+found772-857 mask polygons/frame and3291 Python clip calls across four frames.
+Visualization owner replaced this with one standard contact-contour PathPatch,
+one shared waterline calculation, and contact/coverage-split submerged edges.
+An overtopped-opening fixture exposed genuinely open physical contact; a narrow
+display-only closure fallback fixed it without changing physical contact or
+weakening tests. Final sourcea31179fa/tests ad373144 independently approved.
+Root's contour tests PASS48/48, same four-frame preview PASS with renderer1.344s
+versus1.765s, and full public video regeneration SUCCESS:751frames,800x800,
+12.5fps,60.08s, fully decoded. Renderer135.422s, totalCLI149.813s, unchanged240s
+budget. New canonical videoSHA74ed47aa..., root viewed peak51.44s and preview
+stills; extra full decode/keyframe job passed. All jobs terminal/frozen/CIM and
+FFmpeg verified, leases released. No producer, saved motion/surface or physics
+change. Versioned evidence: visualization_expert/waterline-transparency-2026-10-25.md.
 
 The seven-tick chart change is already integrated into the main baseline working
 tree: 23 plot/CLI tests pass. Root regenerated and viewed the complete PNG, then
@@ -106,8 +120,45 @@ Relative RMS differences are 1.052/2.703/0.252/2.446/1.301/4.353 percent for the
 six channels. Origin elevation phase error is 2.33e-15m. This run includes the
 held fork's full imported-history correction; excitation kernel is still +/-20s,
 dt.02, domega.005, while radiation memory is unchanged10s. No limits were relaxed.
-WEC owns a minimal stored-kernel/record replay discriminator for root's next
-serial diagnostic, separating actual convolution from finite-kernel effects.
+Stored selected-time replay native-force-discriminator-attempt1 SUCCESS: all10
+samples reproduce native forces within1.10e-10N. Initial heave endpoint-weight
+correction1.079N cannot explain31.295N gap. Terminal/frozen/CIM verified, released.
+Current discrepancy is our finite-kernel representation/settings, not a newly
+demonstrated WEC-Sim convolution bug; imported-history fix was included.
+
+Pure unit-frequency native-kernel-unit-attempt1 SUCCESS, no sea/history/motion:
+T20/40/80 atdw.005 andT80dw.0025, dt.02, genuine five heading columns. ConstantH
+at3.3rad/s yields1.01227/1.06008/1.00122, with refineddw1.00133; at3.4hardcutoff
+all approach.5 (Fourier jump limit), so longer lag alone cannot repair endpoint.
+Frequency quadrature changes are small versus hard-cutoff/window ringing.
+Terminal/frozen/CIM verified, released. The next unit-only cutoff experiment used
+already genuine full-frequency netCDF0/45/90 columns, with low-band identity
+checks and no new BEM or interpolated missing headings. Dense high-frequency
+production coverage would require1806 genuine additional solves, independent
+producer review and the actual-force gate.
+The cutoff3.4/6/12 experiment completed successfully with genuine existing raw
+columns. The3.4control reproduces earlierT20 exactly; worst heave unit error
+31779.6→341.9→184.7N/m, though other modes are not monotonic. All terminal/frozen/
+CIM checks passed and lease released. Topwater issue35 independently tracks this
+preprocessing/settings problem; it is distinct from radiation-surface issue31
+and generic WEC-Sim imported-history/summation fixes.
+
+Completed numerical job: native-kernel-wide-window-attempt1, reviewed driver
+d05b5489. Genuine12band only, T40/T80 atdw.005 plusT80dw.0025, dt.02, unit
+complex responses over.1:.005:3.4+knots, no sea/history/motion/BEM. Predeclared
+numerical admission per mode: maxcomplexerror/Sj<=1e-3; window/refinement change
+<=5e-4Sj. BothT80 grids must pass; zero modes have explicit exact-zero/N/A handling.
+Budget is finite-probe operator admission, not physical/startup/force assurance.
+Execution succeeded, but overall numerical admission FAILED. Both80s grids pass
+the0.1% reference-error budget in all six modes; frequency refinement passes.
+The40-to80s window-change gate fails five modes. Preserve this failure; do not
+retune the declared thresholds or promote80s. All exact processes terminal,
+frozen identities verified and lease released. WEC owns source preparation of
+ONE160s/dw.0025 unit control against saved80s refined data, requiring independent
+review before root allocation. Longer naive WEC time-by-lag query matrices need
+a bounded resource/method assessment before any actual736-record run.
+No numerical job is currently live. No production kernel setting or physical
+requirement has been changed yet.
 
 PrivateAPI audit diagnosis identifies an R2020b-to-R2025b full-save migration.
 WEC owns source-only preparation of separate untouched and one-header direct

@@ -44,15 +44,23 @@ uses shortest-path quaternion SLERP at the saved surface times. Water geometry
 is never interpolated or recomputed. NPZ loading disables pickle.
 
 The water mesh need not end at the hull. Portions inside the posed hull are
-invalid fluid; the opaque hull hides them in this top-down presentation. The
-waterline is computed separately by the shared physical-hull/surface intersection
-routine. Rendering never cuts or remeshes the saved water triangles.
+invalid fluid. A display-only mask hides the surface where its actual elevation
+intersects the convex hull volume, so visible water reaches the moving waterline
+instead of stopping at the dry gunwale silhouette. The shared physical-hull/
+surface intersection routine still checks contact. Rendering never changes or
+remeshes the saved water triangles or hull.
 
 ## Output and replacement
 
 `video.log` records the latest invocation, rendering/verification stages,
 timings, errors and publication status using [the common format](logging.md).
 It is replaced when rendering starts, including failed attempts.
+Frame progress is printed after the first frame, every 50 frames and the last
+frame, including cumulative validation, wet-mask geometry/path, submerged-edge,
+shared-contact, drawing and encoder-send times. A rendering failure prints its
+phase, completed frame count, elapsed/active-phase time and accumulated stage
+timings, including encoder finalization and full video verification. Failed
+phase time is also visible when that phase could not complete its accumulator.
 
 `video.mp4` is H.264, 800 by 800 pixels, with one frame per saved surface sample.
 Frame rate is the inverse surface time spacing. The last saved state is shown
@@ -82,8 +90,13 @@ durations) and stage timings rounded to milliseconds.
   30 seconds (or the smaller configured Python rendering budget).
 - Continuous coolwarm water elevation colors, fixed symmetrically about zero
   using the entire saved surface range. No wave or motion amplification.
-- Opaque off-white hull footprint, gray physical mesh, black opening rim, and
-  dark-blue geometric hull/water intersection with a white halo.
+- Off-white mask only where the saved water lies inside the posed hull volume.
+  Hull above the local water surface is transparent, including dry mesh/rim
+  lines. Gray physical edges and black rim portions remain visible only below
+  the saved piecewise-planar surface. The former dark-blue contact marker and
+  opaque whole-hull footprint are removed; the mask boundary meets actual water.
+  Submerged edges can remain visible through water outside that mask; this is
+  a top-down schematic, without optical refraction or depth shading.
 - TIME/ROLL/PITCH/HEAVE header. Roll/pitch are XYZ Euler departures from the
   initial attitude expressed in its initial horizontal heading frame. Heave is
   change in world CG height. Initial equilibrium trim is not wave-driven pitch.
@@ -99,6 +112,8 @@ durations) and stage timings rounded to milliseconds.
 | Before drawing | Nonuniform surface cadence, undefined initial horizontal heading, invalid output path or unsupported framing/budget. |
 | At each saved frame | Folded/degenerate XY projection, inconsistent face winding, non-manifold/disconnected sheet, crossing boundaries, overlapping/invalid triangulation, or an outer boundary entering the view. |
 | At each saved frame | Uncovered interior water hole outside the opaque hull footprint, or water missing a fixed view corner. A boat-shaped hole is supported. |
+| During display masking | A saved water hole extends outside the hull volume at its boundary elevation and would be exposed by transparent dry hull. Missing water is not invented. |
+| During display masking | The display boundary remains open/branched after any opening-closure completion; contours cross/touch or have inconsistent nested winding. The renderer fails instead of convexifying the waterline. |
 | At contact calculation | Degenerate contact triangles or coplanar hull/water area contact without a unique waterline. |
 | During encoding/verification | Time budget exceeded, missing encoder/dependency, filesystem/pipe failure, unreadable video, wrong dimensions/cadence or incomplete frame count. |
 
@@ -130,3 +145,23 @@ That is a visualization limit, not a restriction on a future native solver.
 Waterline segments and opaque hull masking are presentation geometry. They do
 not establish correct flooding, wetting, wave scattering, nonlinear contact or
 physical accuracy. Full video decode verifies the artifact, not the physics.
+
+The shared physical waterline is computed once. Its oriented endpoints are
+matched within `1e-9 * hull_diagonal` using SciPy, then assembled into closed
+contours. One standard Matplotlib compound PathPatch draws those contours,
+preserving concavity, disconnected components and nested holes. No additional
+water-triangle/hull clipping or per-water-triangle mask polygons are generated.
+The same existing 3D contact endpoints split physical mesh edges; batched interval
+midpoints reuse the validated water triangulation's finder and P1 elevation to
+select submerged portions, including multiple crossings. Hull closure planes
+reject exposed legacy water holes. When actual physical contact ends at an
+overtopped opening, the existing internal closure supplies a separate trace to
+close the display-volume mask. This fallback intersects only closure faces; it
+never changes returned physical contact, draws a physical cap, or claims flooding
+physics. Closed physical contact takes no extra closure/intersection call.
+The rendering budget remains 240 seconds.
+For a saved interior-water hole fully hidden inside the hull, the hole remains
+masked. Submerged edge portions without saved local water coverage are omitted:
+the renderer cannot infer their water elevation. The canonical full-grid result
+does not have these holes. Transparent hull requires actual saved water in any
+newly exposed region.

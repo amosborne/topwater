@@ -1,6 +1,52 @@
 # Visualization expert: current state
 
-## Current canonical renderer, 2026-10-25
+## Current waterline display and chart, 2026-10-25
+
+The canonical video now shows water up to the moving physical hull intersection,
+transparent dry hull and visible submerged mesh portions. The physical waterline
+is computed once per frame; its oriented segments form one standard compound
+Matplotlib PathPatch with one subpath per actual contour. No extra water-triangle
+mask polygons or water/hull clipping pass remain. Edge intervals reuse contact
+endpoints, existing water-coverage boundary crossings and the validated P1
+TriFinder. Camera, HUD convention, saved motion/surface and physics are unchanged.
+An overtopped opening can need a separate **display-only** internal-closure trace;
+it never changes physical contact or supplies a physical cap/waterline/load.
+
+Root's `wet-hull-contour-tests-attempt2` passed **48/48 in 1.89 s**. The private
+four-frame preview passed complete decode: renderer 1.344 s versus 1.765 s for
+the prior tile-mask preview; geometry 0.500 s versus 0.814 s. Full public CLI
+`wet-hull-contour-full-render-attempt1` then succeeded: **135.422 s renderer,
+149.813 s command**, unchanged 240 s budget, all 751 frames decoded at
+800x800/H.264/12.5 fps/60.08 s. Root verified frozen identities, exact processes
+and FFmpeg terminal status and released each lease. The separate
+`wet-hull-keyframes-attempt1` again decoded all 751 frames; root viewed the actual
+51.44 s peak-roll frame (6.61 degrees) and preview stills. Current video SHA256:
+`74ed47aa4157313e05896cce52d7dbd87501fef6905059a81f3359039eed16e5`.
+Canonical NPZ/PNG and protected sea/result logs remained unchanged; rendering
+replaced only video.mp4 and its invocation log. See [versioned evidence](waterline-transparency-2026-10-25.md)
+and [public video log](../../../examples/simple-boat/video.log).
+
+Chart checkpoint `c361c6f` is pushed: exactly seven nice, symmetric Y ticks,
+zero in the middle and limits at the first/last ticks. The canonical shared
+translation range is +/-1.5 m; the separate rotation range is +/-7.5 degrees.
+Every saved motion sample/startup and existing frame convention are retained.
+Chart tests passed 23/23; the private PNG was viewed before publication.
+
+The initial tile-mask full render exceeded 240 s and published no video; its
+failed attempt remains preserved. Actual profiling motivated removal of those
+extra mask polygons. Progress now logs first/every 50th/last frame and stage
+timings; failures report completed frames, phase and accumulated/active timing.
+No budget increase or physics rerun was used. Physical accuracy remains
+provisional, with the qualifications in [warning triage](../../cli/warning-triage.md).
+Top-down single-sheet/contact-contour limits and missing-water checks remain
+explicit; display closure does not establish flooding/wetting physics. Root
+owns integration/checkpoint scheduling; no further job is allocated to this owner.
+
+## Historical first canonical delivery and shared-axis chart
+
+The following records the earlier delivery before waterline transparency and
+seven-tick chart styling. Its artifact hash/timings and test counts remain
+historical evidence; current outputs/status are recorded above.
 
 Latest user authorizes the canonical NPZ/directory workflow. The dedicated
 visualization_expert is loaded as `/root/result_renderer`. Current public command
