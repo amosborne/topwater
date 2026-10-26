@@ -6,16 +6,16 @@
     "manifest":  null,
     "active_numerical_job":  null,
     "last_terminal_evidence":  {
-                                   "job":  "Reviewed WEC-Sim official BEMIO/H5 richer coefficient handoff: 6 exchange plus 13 finite-data controls; no BEM/motion",
+                                   "job":  "Frozen native excitation coefficient exchange and unchanged surface reconstruction Python fixtures; no BEM or MATLAB",
                                    "owner":  "/root",
-                                   "producer_pid":  22400,
-                                   "owner_launcher_pid":  36520,
-                                   "started_at":  "2026-10-26T01:53:11.822089+00:00",
+                                   "producer_pid":  20816,
+                                   "owner_launcher_pid":  22952,
+                                   "started_at":  "2026-10-26T02:15:47.872392+00:00",
                                    "exit_code":  0,
                                    "frozen_inputs_match":  true,
                                    "complete":  true,
-                                   "manifest":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\native-handoff-tests-attempt1\\manifest.json",
-                                   "output":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\native-handoff-tests-attempt1\\output.log"
+                                   "manifest":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\native-producer-tests-attempt1\\manifest.json",
+                                   "output":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\native-producer-tests-attempt1\\output.log"
                                },
     "note":  "Exact producer/owner and FFmpeg absence verified by independent CIM; frozen input hashes verified; terminal exit 0. Final separate idle readback follows before lease release."
 }

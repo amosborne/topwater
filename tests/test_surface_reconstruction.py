@@ -365,10 +365,14 @@ def calm_surface_case(monkeypatch, tmp_path):
     embedding = Rotation.from_euler('z', .7).as_matrix()
     stamp = np.array([0., .02])
     orientation = np.tile(Rotation.from_matrix(embedding).as_quat(scalar_first=True), (2, 1))
+
+    def offline_force_only(*args, **kwargs):
+        raise AssertionError('Production surface reconstruction must not synthesize wave forces')
+
     train = SimpleNamespace(omega=np.array([0., 1.]), k=np.array([0., 1/9.81]),
         theta=np.empty(0), C=np.zeros((0, 2, 2), dtype=complex),
         carriers=SimpleNamespace(amplitudes=np.empty(0)),
-        excitation=lambda *args: (np.zeros((2, 6)), np.zeros(6)))
+        excitation=offline_force_only)
     setup = SimpleNamespace(body=body, physical_faces=body.mesh.faces[body.mesh.physical_faces],
         world_from_native=embedding, equilibrium=SimpleNamespace(orientation=np.array([1., 0., 0., 0.])),
         mean_cg_m=np.zeros(3), hydrostatic=SimpleNamespace(wetted_area=8.), train=train)
@@ -381,9 +385,13 @@ def calm_surface_case(monkeypatch, tmp_path):
         excitation=np.zeros((2, 2, 6), dtype=complex), K=np.zeros((6, 6)))
     monkeypatch.setattr(producer, 'radiation_velocity_transfer',
         lambda h, xy, omega, **kw: np.zeros((len(omega), len(xy), 6), dtype=complex))
-    monkeypatch.setattr(producer, 'combined_diffraction',
-        lambda h, tr, xy, **kw: (np.zeros((2, len(xy)), dtype=complex),
-                                 np.zeros((2, len(xy)), dtype=complex), np.zeros((2, 6), dtype=complex)))
+
+    def diffraction_fields(h, tr, xy, *, return_forces=False, **kwargs):
+        assert not return_forces, 'Production surface path must request fields without a force oracle'
+        return (np.zeros((2, len(xy)), dtype=complex),
+                np.zeros((2, len(xy)), dtype=complex))
+
+    monkeypatch.setattr(producer, 'combined_diffraction', diffraction_fields)
     return SimpleNamespace(producer=producer, hydro=hydro, setup=setup, motion=motion, stamp=stamp,
         vertices=vertices, physical=physical, boat=boat, embedding=embedding, orientation=orientation)
 
@@ -426,6 +434,7 @@ def test_production_calm_geometry_preserves_original_grid_and_oblique_world_view
     assert 'degenerate incident RMS' in diagnostic
     assert 'no total disturbed-fluid velocity bound' in diagnostic
     assert 'ORIGINAL source-triangle-centroid' in diagnostic
+    assert 'field-load-consistency' not in diagnostic
 
 
 def test_failed_frame_preserves_primary_context_and_replays_without_physics(calm_surface_case, monkeypatch, tmp_path, capsys):

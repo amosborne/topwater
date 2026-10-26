@@ -48,6 +48,13 @@ coverage, retained-operator identity, comparison missing-output failure, and
 stale-clone internal connectivity. Authors own source fixes; root runs no job on
 that unfrozen integration until rereview. No numerical job is currently live.
 
+Reviewed Cap coefficient exchange and existing surface Python controls now PASS
+45/45 in native-producer-tests-attempt1 (2.80s). Exact frozen identities and
+terminal producer/launcher absence verified; lease released. This proves the
+synthetic exchange/geometry fixtures, not a new BEM solve or WEC force/motion
+equivalence. Producer and its two test files are a separate component checkpoint;
+the main WEC handoff remains unpromoted and under author correction/rereview.
+
 LATEST SCOPE: user requests rigorous correctness reviews of Capytaine, BEMIO and
 WEC-Sim by their respective experts, LIMITED TO OUR CODEPATH. Supported inputs
 that reach a boundary count even if this boat's zeros/symmetry hide the defect;
