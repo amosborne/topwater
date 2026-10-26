@@ -77,6 +77,7 @@ sc = named_array(prepared.netcdf_path,'diffraction_force',{'influenced_dof','wav
 components = erase(string(ncread(prepared.netcdf_path,'complex')'),char(0));
 re = fk(index,:,:,components == "re")+sc(index,:,:,components == "re");
 im = fk(index,:,:,components == "im")+sc(index,:,:,components == "im");
+validate_workflow_hydrodynamics(h,'imported',re,im);
 assert(max(abs(h.ex_re*n.rho*n.g-re),[],'all') <= 1e-10*max(1,max(abs(re),[],'all')));
 assert(max(abs(h.ex_im*n.rho*n.g+im),[],'all') <= 1e-10*max(1,max(abs(im),[],'all')));
 h.cg = n.cg(:); h.cb = n.cb(:); h.Vo = n.volume;
@@ -84,6 +85,7 @@ h.Khs = n.K/(n.rho*n.g);
 h = radiationIRF(h,10,501,2401,[],[]);
 h = excitationIRF(h,20,2001,2401,[],[]);
 h.Ainf = n.Ainf/n.rho;
+validate_workflow_hydrodynamics(h,'prepared');
 h.file = fullfile(pwd,'canonical');
 writeBEMIOH5(h);
 end

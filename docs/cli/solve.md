@@ -102,16 +102,23 @@ MATLAB stays minimized/headless: the adapter never opens the desktop, model
 editor, or Mechanics Explorer and temporarily disables new figure visibility.
 Before any model construction or initialization, a guard snapshots the original
 working directory, search path, diary filename/on-off state, warning settings,
-thread limit, figure default, and Simulink cache/code-generation settings. It
+thread limit, figure default, the newer-model load policy (`ErrorIfLoadNewModel`),
+and Simulink cache/code-generation settings. It
 restores those settings on success or failure and closes only the unique model
 owned by this run. Restoration must finish before scratch deletion. If restoration
 cannot be verified, the solve fails and retains its system-temporary directory
 with a recovery location in stderr; the previous public result remains intact.
+If native work and engine restoration both fail, the error retains
+`EngineCleanupError` classification and recovery scratch, while its displayed
+message includes the primary MATLAB failure/transcript and cleanup failure.
 
 This lifecycle passed repeated normal/forced-failure checks in the existing
 hidden shared engine, including removal of each temporary class directory before
 the next cycle. [Verification and limits](../experts/wecsim_expert/workflow-engine-lifecycle-2026-10-25.md).
 That pass does not qualify the body/surface physics pipeline.
+The two additional current-path lifecycle regression sources are documented in
+[source checkpoint](../experts/wecsim_expert/current-path-lifecycle-corrections-2026-10-25.md);
+their new tests await coordinator execution.
 
 ## Assumptions and hard-coded policies
 

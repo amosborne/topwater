@@ -1,34 +1,74 @@
 # Current state: Capytaine expert
 
-## Current reusable-workflow checkpoint — 2026-10-25
+## Current reusable workflow and path audit — 2026-10-25
 
-Generic retained-source Capytaine producer and total-surface reconstruction are
-implemented. The selected provisional field policy is cutoff24rad/s,
-deltaomega<=.025rad/s, full-history causal projection, zero direct terms,
-explicit exterior disturbance traces and exact incident elevation at targets.
-Near-field full-complex recovery has not passed; the measured42.7mm maximum /
-12.5mm RMS signed-lag diagnostic difference remains an explicit approximation
-limitation, not an error bound. Native Topwater physics remains held.
+The public canonical workflow is delivered at checkpoint `bda901d`.
+`artifacts/workflow/canonical-pipeline-attempt4/` records terminal success:
+60 s WEC-Sim solve in2393.743s and render in226.932s,3001 motion samples,
+751 surface frames and751 decoded video frames. Root verified the exact process
+tree, frozen identities and final artifacts, then released the execution lease.
+The final shared-axis `result.png` was backfilled from the same completed motion
+without rerunning physics. Current scheduling belongs to the handoff/ledger.
 
-Root's first actual canonical workflow reached201/751 export frames and exited2
-after1989.285s. KH.dat cleanup failure masked the primary geometry/metric error;
-its actual cause is STILL UNKNOWN. No complete new total-surface result/video is
-accepted. Do not infer flooding, topology failure or wet-set rejection from this
-masked attempt.
+Production preserves the producer's total-water grid and original connectivity;
+it does not cut or remesh the water at the boat. Hull-interior fluid is invalid
+implicitly, and the physical waterline is computed separately. The result
+includes incident, diffracted and radiated elevation from the saved motion;
+reconstruction does not change body forcing or trajectory.
 
-Recovery now caches completed fields/full motion privately in OS-temp before
-export and retains stage/frame/time evidence on failure. Geometry/metric replay
-needs no body integration or BEM. Physical/contact/startup gates are unchanged.
-Public replay compacts only the physical hull snapshot; closed geometry/rim/caps
-and CG remain intact. Malformed cached time cannot mask the original exception.
-Independent review approved both replay corrections. Root's recovery/interface
-suite PASS209 with1optional skip in13.05s, evidence under
-`artifacts/workflow/recovery-interface-tests-attempt1`. Source/tests are frozen
-for the coordinator's checkpoint and next actual pipeline attempt2; that retry
-is pending, not a delegated numerical allocation to this role.
+This is a provisional linear reference, not physical accuracy qualification.
+The selected field policy remains cutoff24rad/s, deltaomega<=.025rad/s,
+full-history causal projection, zero direct terms and explicit exterior
+disturbance traces. Near-field full-complex recovery has not passed:42.7mm
+maximum/12.5mm RMS signed-lag sensitivity is not an error bound. Canonical
+field/prepared-load differences reach47.5506N and90.0598Nm by component;
+minimal-mesh/irregular-frequency and restoring/wet-set applicability concerns
+remain open in issues31-34. See [actual warning triage](../../cli/warning-triage.md)
+and [phase investigation](../numerical_methods_researcher/causal-phase-issue31-investigation-2026-10-25.md).
+Native Topwater dynamics remain held; no speed work is allocated.
 
+Latest user scope is rigorous correctness review of the actual/intended
+Capytaine/BEMIO/WEC-Sim workflow, including supported inputs whose symmetry can
+hide a defect. Never-reached library branches are outside scope. Read-only
+Capytaine audit verified installed3.0.0 and current producer SHA256
+`2858b847efea11a97c50bd9d12c744bf3069723e32e5fa401309c4e2ee0f352a`.
+Native displacement/velocity/pressure/free-surface signs and one-time FK addition
+are consistent; no new native Capytaine sign/factor defect was established.
+Exact facet K/CB/volume and full inertia are the interface authority; legacy
+native hydrostatic sidecars are overwritten deliberately before H5 use.
+
+The audit identified a finite-data boundary hole: producer checks cover A/B/Ainf
+and dense excitation H through3.4rad/s, while the imported three-heading
+diffraction extends through12rad/s. BEMIO's existing maximum-residual assertions
+are not explicit finite gates. BEMIO ownership is preparing a narrow guard and
+single-NaN pre/post witness; this note claims no correction or executed test.
+Global surface-policy acceptance is permission for provisional method use,
+not universal certification; misleading full-complex gate wording and broader
+coverage require reconciliation without arbitrary boat/case whitelists.
+
+Bounded next controls are explicit finite/roundtrip checks with a single-NaN
+injection and finite control; the existing stored-data phase discriminator;
+and knot/between-knot/low-frequency field-load comparisons. These are proposals,
+not new numerical allocations or convergence claims. Every fix PR requires a
+minimal incorrect-before/corrected-after example. Root owns scheduling and
+integration. This reviewer authored no physical correction and ran no jobs.
+
+## Historical failure-recovery checkpoint
+
+The first canonical workflow reached201/751 export frames and exited2 after
+1989.285s. A KH.dat cleanup failure masked its primary geometry/metric error;
+that masked attempt alone does not establish flooding or topology failure.
+Completed success is recorded above; the failed evidence remains preserved.
+
+Recovery caches completed fields/full motion privately in OS-temp before export
+and retains frame/context evidence on failure. Geometry-only replay requires
+no body integration or BEM. Physical/contact/startup gates were unchanged.
+Independent review approved physical-hull snapshot compaction and safe invalid-
+time diagnostics. Root's recovery/interface suite passed209tests/1optional skip
+in13.05s under `artifacts/workflow/recovery-interface-tests-attempt1`.
+At that checkpoint pipeline attempt2 was still pending; it is historical status,
+not an instruction to retry or restore clipped water export.
 See [versioned source/evidence note](surface-reconstruction-source-2026-10-25.md).
-No numerical job was launched by this author. Root owns execution/integration.
 
 ## Preserved minimum-reference evidence
 

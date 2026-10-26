@@ -175,6 +175,72 @@ def test_shared_engine_restoration_runs_when_initialization_throws(monkeypatch, 
     assert engine.guard_deleted
 
 
+@pytest.mark.parametrize('native_fails', [False, True])
+@pytest.mark.parametrize('caller_handling_error', [False, True])
+def test_matlab_cleanup_failure_keeps_primary_transcript_and_recovery(
+        monkeypatch, tmp_path, native_fails, caller_handling_error):
+    from topwater.command_log import CommandLog
+
+    native_error = RuntimeError('MATLAB_PRIMARY_MARKER')
+    cleanup_error = backend.EngineCleanupError('ENGINE_CLEANUP_MARKER')
+    directory = tmp_path/'scratch'
+    directory.mkdir()
+    real_rmtree = backend.shutil.rmtree
+    monkeypatch.setattr(backend.tempfile, 'mkdtemp', lambda **kwargs: str(directory))
+
+    class Engine:
+        def pwd(self, **kwargs):
+            return str(tmp_path)
+
+        def path(self, **kwargs):
+            return 'original MATLAB path'
+
+        def eval(self, command, **kwargs):
+            kwargs['stdout'].write('MATLAB_STDOUT_MARKER\n')
+            kwargs['stderr'].write('MATLAB_STDERR_MARKER\n')
+            if native_fails:
+                raise native_error
+
+    engine = Engine()
+    module = SimpleNamespace(find_matlab=lambda: [backend.ENGINE_NAME],
+                             connect_matlab=lambda name: engine)
+    monkeypatch.setattr(backend, 'import_module', lambda name: module)
+    monkeypatch.setattr(backend, '_check_engine', lambda value: None)
+
+    def fail_cleanup(*args):
+        raise cleanup_error
+
+    monkeypatch.setattr(backend, '_restore_engine', fail_cleanup)
+    log_path = tmp_path/'result.log'
+    try:
+        with pytest.raises(backend.EngineCleanupError) as caught:
+            with CommandLog(log_path, 'solve'):
+                with backend._scratch_directory():
+                    if caller_handling_error:
+                        try:
+                            raise ValueError('UNRELATED_CALLER_MARKER')
+                        except ValueError:
+                            backend._run_matlab(directory, tmp_path)
+                    else:
+                        backend._run_matlab(directory, tmp_path)
+        assert directory.is_dir(), 'Unverified engine cleanup must retain recovery scratch'
+        text = str(caught.value)
+        log = log_path.read_text(encoding='utf-8')
+        assert 'UNRELATED_CALLER_MARKER' not in text and 'UNRELATED_CALLER_MARKER' not in log
+        assert 'ENGINE_CLEANUP_MARKER' in text and 'ENGINE_CLEANUP_MARKER' in log
+        assert 'END status=failed' in log and 'output_published=false' in log
+        if native_fails:
+            for marker in ('MATLAB_PRIMARY_MARKER', 'MATLAB_STDOUT_MARKER', 'MATLAB_STDERR_MARKER'):
+                assert marker in text and marker in log
+            assert caught.value.cleanup_error is cleanup_error
+            assert caught.value.primary_error.__cause__ is native_error
+            assert caught.value.__cause__ is caught.value.primary_error
+        else:
+            assert caught.value is cleanup_error
+    finally:
+        real_rmtree(directory)
+
+
 def test_incomplete_engine_cleanup_retries_and_fails_explicitly():
     class Engine:
         restores = 0

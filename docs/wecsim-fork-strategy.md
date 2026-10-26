@@ -18,7 +18,8 @@ The first subsequent bounded rebuild is complete for issues #4 and #5:
 based on v7.1.0 and targeting our `topwater/reference`. All nine focused tests
 passed on Windows/MATLAB R2025b; stock defects were reproduced. See
 [evidence and limits](experts/wecsim_expert/fork-rebuild-regressions-2026-10-25.md).
-Neither is merged; the combined branch and held Topwater pin remain unchanged.
+The user squash-merged PR #6 as `76adb29201291ffdec3e805aba01151d762328b9`;
+PR #7 remains open. The held Topwater pin is unchanged.
 Issue #1 subsequently became [internal PR #8](https://github.com/amosborne/WEC-Sim/pull/8),
 also independently release-based and unmerged. Independent physical/source review
 and eleven Windows/R2025b synthetic tests passed, with stock defects reproduced.
@@ -34,7 +35,7 @@ patches does not authorize submission or contact.
 | Item | Inspected identity/status |
 |---|---|
 | Working fork | `amosborne/WEC-Sim`, `topwater/reference-v7.1.0`, clean at `9952634f6f2e2746a1626484e27c3003d1e1d5a9` |
-| New combined branch | [`amosborne/WEC-Sim:topwater/reference`](https://github.com/amosborne/WEC-Sim/tree/topwater/reference), clean release base `a23d2993807410fe78cc63546c1ba9d81912024f`; no replayed fixes or promoted pin yet |
+| New combined branch | [`amosborne/WEC-Sim:topwater/reference`](https://github.com/amosborne/WEC-Sim/tree/topwater/reference), `76adb29201291ffdec3e805aba01151d762328b9` over release `a23d299`; handle fix PR #6 merged by user, no promoted Topwater pin |
 | Base / latest upstream release | `v7.1.0`, `a23d2993807410fe78cc63546c1ba9d81912024f`; release published 2026-06-30 |
 | Upstream default branch | `main`, `0753b2e47f2457c078751dcfe5d251d1767b80ab`, 2026-09-30 |
 | Upstream development branch | `dev`, `c6b02e397903dbc9651bd7c6a3d4cf75c85486dc`, 2026-10-12 |

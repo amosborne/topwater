@@ -10,6 +10,46 @@ The user's order is working end to end, then correctness, then speed. The full
 public workflow now WORKS. No further performance changes are authorized now.
 Native coupled dynamics remain unimplemented. No solver/render streaming.
 
+LATEST SCOPE: user requests rigorous correctness reviews of Capytaine, BEMIO and
+WEC-Sim by their respective experts, LIMITED TO OUR CODEPATH. Supported inputs
+that reach a boundary count even if this boat's zeros/symmetry hide the defect;
+the active Rigid Hydro inertia correction is in scope regardless of this case's
+numeric impact. Never-entered Drag/Flex/multi-import-only branches are excluded.
+Three read-only audits are COMPLETE: capytaine_path_audit, bemio_path_audit and
+wecsim_surface_examples (WEC dynamics/lifecycle). No numerical work ran for them.
+Both source corrections are FROZEN and independently reviewed: lifecycle by
+the separate BEMIO/WEC expert; finite-boundary guard by the Capytaine expert.
+Root's current-path-checks-attempt2/session61218 is TERMINAL SUCCESS. Immutable
+old/fixed snapshots reproduce two primary-error failures and two setting failures;
+corrected backend suite21PASS and MATLAB suite13PASS (2setting +11finite guards).
+Exact process trees/frozen hashes verified, idle read back and lease released.
+No BEM/boat dynamics or shared-engine call.
+Attempt1 stopped at pytest default-temp permissions; it is terminal/released,
+preserved, and attempt2 uses owned basetemp with cache disabled. Do not edit
+snapshot/drivers until terminal/released. Authors ran no tests. Capytaine
+owner reconciled stale current-state documentation, without physics edits.
+Distinguish discarded intermediate calculations
+from functions not executed; prepared forces are the current applied authority.
+Stop broad generic fork/export/all-variant fixture expansion; preserve unfinished
+sources and failed evidence. No pin change/merge. Optional PRs stay separate.
+
+Every fix PR requires a minimal executable PRE/POST example and actual results.
+Examples are now published/read-back verified in PRs6/7/8 with tested heads
+unchanged. User found issue4/PR6 unreadable; both have been rewritten in plain
+language, leading with Windows cleanup failure and measured1openfile ->0 example.
+Use that human-first standard for future issues/PRs; see coordination.md.
+Latest issue-writing preference: give an upstream-candidate assessment with a
+reason instead of a submission disclaimer. Issue4 and PR6 now say candidateYES:
+generic importer cleanup with no Topwater-specific behavior. Both read back
+verified. This assessment does not authorize upstream contact or publication.
+User then refined the format: issues own problem/reproducer; PRs reference the
+issue and state change, affected area, test command/coverage and deficiencies.
+Issue5/PR7 have now been rewritten and read-back verified in that format; PR7
+code head206bac3 is unchanged. Preserve user edits to issue4 and PR6.
+User squash-merged PR6 on2026-10-26T00:27:39Z as76adb29201291ffdec3e805aba01151d762328b9
+into topwater/reference. Root only advised after exact-head/test review; did not
+merge. Topwater checkout/pin9952634 stays held; PRs7/8 remain unmerged.
+
 Canonical attempt4 is TERMINAL SUCCESS: public60s WEC-Sim solve2393.743s,
 public render226.932s,3001 motion samples,751 surface frames,751 decoded H264
 frames at800x800/12.5fps/60.08s. Evidence:
@@ -40,7 +80,7 @@ PRIVATE copy preserved all completed canonical files/logs. Public-replay-attempt
 is terminal/released. Runtime is much slower than root's15-20minute estimate;
 report measured times, not real-time claims. JIT experiment fully reverted.
 
-No numerical job is live; last history regression is terminal/released below.
+No numerical job is live. Checks61218 and inertia export30729 are CLOSED/released.
 Verify ledger/lease and exact processes before any additional numerical claim.
 Existing shared MATLAB CAPYTAINE_REFERENCE engine29796/launcher40036 was not
 quit or restored onscreen. Keep its window minimized/headless. TEMP/TMP must
@@ -175,9 +215,10 @@ https://github.com/amosborne/WEC-Sim/pull/6 (handles, issue4,
 0d364b1f6154c5b8bee99d95f4fbf7e62b024159) and
 https://github.com/amosborne/WEC-Sim/pull/7 (literal paths, issue5,
 206bac360222b86ebe33a903225f0dae118c7093). Both target topwater/reference and
-are independently based on exact clean releasea23d299. No merge is authorized.
+were independently based on exact clean releasea23d299. User merged PR6 only;
+no further root merge is authorized.
 Isolated checkout: artifacts/dependencies/wecsim-rebuild-v7.1.0. Old checkout
-and Topwater runtime pin9952634 remain unchanged; combined reference is stilla23.
+and Topwater runtime pin9952634 remain unchanged; combined reference is now76adb292.
 
 Root serial stock/fixed checks passed on Windows/MATLABR2025b: all9 fixed pass;
 stock7 expected fail/2 controls pass. All32 numeric fields EACH sphere/RM3 have
@@ -203,10 +244,27 @@ applies the legacy absolute-time SOURCE ramp once. Existing already-ramped direc
 calls stay valid. No new negative-time clamp or mandatory calm-start/padding gate.
 Evidence/limits: experts/wecsim_expert/imported-history-rebuild-2026-10-25.md.
 No dynamics, multi-import, full-suite, MATLAB/OS matrix or performance qualification.
-Inertia and coupled aggregation remain outstanding. No merge or upstream write;
-combined branch remainsa23, Topwater/oldcheckout995 and public artifacts unchanged.
+Inertia remains outstanding on the active rigid path; multi-import work is out
+of current scope. No upstream write; user merged PR6, combined branch76adb292,
+Topwater/oldcheckout995 and public artifacts unchanged.
 Pin promotion and legacy branch retirement remain on hold.
 
+The broader issue3 source assignment is STOPPED by latest scope steering above.
+Preserve uncommitted tests/fileSolidInertiaOrderTest.m and tests/helpers/ in the
+isolated fix/file-solid-inertia-order branch. No generated SLX was promoted.
+Root's inertia-export-attempt1 supported API/save/export/reopen succeeded as
+R2020b, but strict audit FAILED with53 unexplained entries. Candidate SHA:
+82ca792005f4969ce578a48a0517b7633ff509d901e35db7928435115e1059f6, private
+under that job's private-library/exported/. Exact processes and frozen identities
+were verified terminal; idle read back and lease released. No native tensor
+probes ran. Do not relax the audit or resume export/native development now.
+
+Completed read-only issue2 proposal is retained as OPTIONAL generic work:
+experts/wecsim_expert/multiimport-rebuild-proposal-2026-10-25.md and own-fork
+issue2 comment6405172942. No implementation or numerical job is allocated.
+Its needed future gate is simulated downstream native sum/bus evidence; old
+receipt was graph-only. Current priority is the actual-codepath/minimum-patch
+read-only audit, not completing all five generic fork issues.
 ## Current fork process and next actions
 
 User requested unwind/rebuild through own-fork issues, focused branches and
@@ -214,8 +272,8 @@ internal PRs. Issues-first is COMPLETE: amosborne/WEC-Sim issues1-5 cover histor
 aggregation/dispatch, inertia/SLX, handles and literal display. Expert enabled
 ONLY that fork's issues and verified every body. Subsequent isolated fixes and
 internal PRs are recorded above; no upstream writes occurred. Root CREATED
-clean topwater/reference at official latest releasev7.1.0/a23d299. This combined
-branch still contains NO local fixes yet.
+clean topwater/reference at official latest releasev7.1.0/a23d299. The user has
+since merged handle fix PR6 as76adb292; it is not yet Topwater's runtime pin.
 Future internal PR base repo MUST be amosborne/WEC-Sim, branch topwater/reference.
 
 The user explicitly says DO NOT UPDATE TOPWATER YET. Keep9952634/current local

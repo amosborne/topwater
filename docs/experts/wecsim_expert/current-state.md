@@ -11,9 +11,9 @@ checked duplicates, and created/read-back verified fork issues
 [#3](https://github.com/amosborne/WEC-Sim/issues/3),
 [#4](https://github.com/amosborne/WEC-Sim/issues/4), and
 [#5](https://github.com/amosborne/WEC-Sim/issues/5).
-New combined branch `topwater/reference` is clean at release base
-`a23d2993807410fe78cc63546c1ba9d81912024f`; old branch/runtime pin `9952634`
-remains unchanged. Topwater main's pin is on USER HOLD. The old branch is to be
+The user squash-merged handle fix PR #6 into `topwater/reference` as
+`76adb29201291ffdec3e805aba01151d762328b9`, based on release `a23d299`.
+The old branch/runtime pin `9952634` remains unchanged and on USER HOLD. The old branch is to be
 deleted only after its reviewed/tested replacement, exact repin and immutable
 archive tag. [Strategy and scope](../../wecsim-fork-strategy.md). No new fork
 code/topic branch/PR or upstream write is authorized by this KB update.
@@ -23,8 +23,8 @@ Bounded resource/display rebuild is locally tested in isolated
 Issue #4 branch `fix/capytaine-sidecar-handles` is local commit
 `0d364b1f6154c5b8bee99d95f4fbf7e62b024159`; issue #5 branch
 `fix/literal-wave-path-display` is `206bac360222b86ebe33a903225f0dae118c7093`.
-Each is independently based on exact `a23d299`; combined `topwater/reference`
-and old clean runtime `9952634` are unchanged. Windows/R2025b attempt 3 passed
+Each topic was independently based on exact `a23d299`; old clean runtime
+`9952634` is unchanged. Windows/R2025b attempt 3 passed
 all nine fixed tests; stock failed seven and passed two controls. All 32 numeric
 fields for EACH sphere/RM3 fixture have exactly equal stock/fixed values by
 `assert_array_equal`, not byte identity or a dtype check. Fresh processes used
@@ -35,12 +35,24 @@ Only candidate README validation and commit messages were then amended; all four
 production/test Git blobs match the executed `54bca31`/`e8491f4` candidates.
 Broader OS/MATLAB compatibility remains untested. Root published both branches
 and verified internal [PR #6](https://github.com/amosborne/WEC-Sim/pull/6) and
-[PR #7](https://github.com/amosborne/WEC-Sim/pull/7) OPEN with these exact heads,
-base `topwater/reference`, and no cross-repository target. No merge occurred;
-source is frozen and the Topwater pin remains on user hold. CI does not target
+[PR #7](https://github.com/amosborne/WEC-Sim/pull/7) with these exact heads,
+base `topwater/reference`, and no cross-repository target. The user subsequently
+merged PR #6; PR #7 is still open. Topwater's pin remains on user hold. CI does not target
 this reference branch; local checks above are the validation evidence.
 
 ## Generic CLI integration checkpoint
+
+Current-path lifecycle corrections passed independent source review and root's
+serial Windows/R2025b checks (current-path-checks-attempt2):
+combined native/cleanup errors retain the primary transcript plus
+`EngineCleanupError`/recovery semantics; the guard snapshots/restores and checks
+root `ErrorIfLoadNewModel`. Focused Python log/recovery and MATLAB setting
+success/failure witnesses reproduce the old failures. Corrected Python backend
+suite21PASS; MATLAB13PASS (2setting +11finite hydrodynamics). Exact processes and
+frozen inputs were independently verified terminal; lease released. The finite-
+hydrodynamics helper is included in backend resource copying. No physics,
+fork pin, model or public artifacts changed.
+[Scope and executable pre/post examples](current-path-lifecycle-corrections-2026-10-25.md).
 
 Issue #1 history/lag-only candidate is locally verified and frozen at
 `fix/imported-excitation-history`, commit

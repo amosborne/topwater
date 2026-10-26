@@ -26,6 +26,22 @@ with raw logs. A separate reviewer checks consequential physical corrections.
 Generic WEC-Sim fixes belong in its maintained fork; case configuration stays here.
 Capytaine and WEC-Sim experts jointly approve the interface; WEC-Sim owns BEMIO.
 
+Correctness reviews follow the actual Topwater workflow and the supported inputs
+that can reach it. A case's zeros or symmetry do not exempt an executed physical
+boundary from review. Distinguish consumed results, deliberately discarded
+intermediates and branches the adapter never enters; do not expand into unused
+library features merely because they share a file.
+
+Every fix needs a minimal executable example with the same inputs before and
+after the fix, actual incorrect/corrected results, and an automated regression.
+Put the problem and reproducer in the issue, using plain language. The PR should
+reference that issue rather than duplicate it, then concisely state the change,
+affected area/files, test command, coverage and remaining deficiencies. The issue's
+before/after example may be linked from the PR. Preserve user-edited wording.
+Internal tracking details must not obscure what a human reviewer needs.
+For fork fixes, state whether the change is an upstream PR candidate and why.
+Keep that technical assessment separate from permission to submit upstream.
+
 ## Numerical execution and recovery
 
 A lease schedules already-authorized work. Before any numerical launch:

@@ -187,7 +187,7 @@ def integrate_motion(setup, hydro, force, workspace, fork):
     workspace.mkdir(parents=True, exist_ok=False)
     library = resources.files('topwater').joinpath('data/wecsim')
     for name in ('wecSimInputFile.m', 'run_workflow_case.m', 'build_workflow_model.m',
-                 'WorkflowEngineGuard.m'):
+                 'WorkflowEngineGuard.m', 'validate_workflow_hydrodynamics.m'):
         workspace.joinpath(name).write_text(library.joinpath(name).read_text(encoding='utf-8'), encoding='utf-8')
     force = np.asarray(force, dtype=float)
     if force.shape != (len(setup.time_s), 6) or not np.isfinite(force).all():
@@ -233,6 +233,7 @@ def _run_matlab(workspace, fork):
     out, error = io.StringIO(), io.StringIO()
     original_directory = engine.pwd(nargout=1)
     original_path = engine.path(nargout=1)
+    primary = None
     try:
         _check_engine(engine)
         # Register the unique owned model and snapshot session settings BEFORE
@@ -246,10 +247,29 @@ def _run_matlab(workspace, fork):
                     nargout=0, stdout=out, stderr=error)
     except Exception as failure:
         detail = (out.getvalue() + '\n' + error.getvalue()).strip()
-        raise RuntimeError(f'WEC-Sim native integration failed: {failure}\n{detail}') from failure
+        primary = RuntimeError(f'WEC-Sim native integration failed: {failure}\n{detail}')
+        raise primary from failure
+    except BaseException as failure:
+        primary = failure
+        raise
     finally:
         try:
             _restore_engine(engine, original_directory, original_path)
+        except Exception as cleanup_failure:
+            if primary is None:
+                raise
+            # CLI/logging display str(error), not its implicit exception context.
+            # Keep the primary cause and buffered MATLAB output visible there,
+            # while retaining the cleanup-error type that preserves scratch.
+            message = f'{type(primary).__name__}: {primary}'
+            transcript = (out.getvalue() + '\n' + error.getvalue()).strip()
+            if transcript and transcript not in message:
+                message += '\n' + transcript
+            combined = EngineCleanupError(
+                message + f'\nWEC-Sim shared-engine cleanup also failed: {cleanup_failure}')
+            combined.primary_error = primary
+            combined.cleanup_error = cleanup_failure
+            raise combined from primary
         finally:
             # Never quit an engine shared with another client.
             del engine
