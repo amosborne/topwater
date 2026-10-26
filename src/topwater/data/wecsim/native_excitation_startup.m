@@ -1,5 +1,5 @@
 function report = native_excitation_startup(prepared,excitation)
-% Diagnostic scale only; WEC-Sim's own imported excitation is the applied load.
+% Diagnostic scale only; WEC-Sim's own spectral excitation is the applied load.
 n = prepared.n;
 data = load(prepared.native_mat_path);
 w = data.excitation_omega_rad_s(:);

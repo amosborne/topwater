@@ -4,14 +4,30 @@ Updated2026-10-26 UTC. Currentauthority: [handoff](../../checkpoint-handoff.md),
 [physicalcontract](../shared-contract.md), [serialprocedure](../coordination.md).
 No author execution allocation or automatic follow-up. Root owns integration.
 
-Current native spectral step is ONE own-fork issue12/proposed PR, with combined
+Native spectral integration passed the independently reviewed component allocation
+at exact fork head e24c1a73372baf37aebe37a8b6bf0cd0d2368b0c:38 Python controls,
+14 native MATLAB controls and9 official H5 handoff controls (Windows/R2025b).
+Evidence: `artifacts/workflow/spectral-handoff-check-attempt1/`; exit0, frozen
+inputs/process termination verified and lease released. The optional normalized
+excitation-only node view, supplied-phase RNG isolation and optional excitation
+IRF writer support are covered; raw hydro/radiation preservation is checked.
+[Implementation and measured limits](spectral-handoff-implementation-2026-10-26.md).
+Full simple-boat forces, startup, actual applied bus and motion remain pending.
+The held995 pin lacks this capability and remains held; use the explicit candidate
+for private qualification. No pin promotion, merge or author numerical job.
+
+Current native spectral step is ONE own-fork issue12/draft PR14, with combined
 topic `wecsim-spectral-spectrum` based on25b58b. The initial separate-head
 function-only example reproduced both baseline defects;4 phase and3 weight
 controls passed. Supplied phases became exact, field error1.11e-16m, and weight-
 only discrepancy1.11e-15. This is not combined-head/bus/mean-drift qualification.
-The combined source-only suite adds one nonzero-MD control and deduplicates the
-actual native-bus invocation while requiring physical component agreement.
-Review/execution remain pending. [Evidence and limits](full-directional-spectrum-checkpoint-2026-10-26.md).
+The combined9-control suite and portable native-bus example now pass at exact
+scientific-source8ee8dcb199f21a08cf81e61bfab141d0b0624364 (Windows/R2025b,
+172.475s). Phase error0, field1.11e-16m, bus/native-function0 and bus/physical
+sum1.33e-15; nonzero-MD proof uses its asserted1e-10 tolerance, not a new raw max.
+Generic coarse-direction and200m-visualization messages are retained/triaged;
+no off-grid, full packet, low-frequency, startup or motion qualification.
+[Evidence and limits](full-directional-spectrum-checkpoint-2026-10-26.md).
 Old topics/evidence remain preserved; root owns issue13 folding. No pin change.
 
 Latest user steering halts the FFT path and requests the existing native spectral

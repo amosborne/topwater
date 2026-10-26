@@ -1,8 +1,15 @@
-function h = prepare_workflow_hydrodynamics(prepared)
+function [h,nativeHydro] = prepare_workflow_hydrodynamics(prepared)
 % Build native WEC excitation inputs without computing an applied force history.
 n = prepared.n;
 native = load(prepared.native_mat_path);
 verify_native_identity(native,n);
+if isfield(prepared,'component_view')
+    view = prepared.component_view;
+    validate_workflow_hydrodynamics(view,'component_view');
+    zero = repmat(n.K(:,3)/(n.rho*n.g),1,numel(view.headings_deg));
+    assert(isequal(view.re(:,:,1),zero) && all(view.im(:,:,1) == 0,'all'), ...
+        'Derived component view zero limit differs from physical heave stiffness');
+end
 h = readCAPYTAINE(struct(),prepared.netcdf_path);
 assert(h.Nb == 1 && all(h.dof == 6),'The workflow requires one six-mode body');
 assert(h.rho == n.rho && h.g == n.g && isinf(h.h),'BEMIO physical parameters differ');
@@ -48,6 +55,20 @@ h = set_excitation_coefficients(h,'sc',sc);
 h = set_excitation_coefficients(h,'ex',total);
 validate_workflow_hydrodynamics(h,'imported', ...
     permute(real(total),[3 2 1]),permute(imag(total),[3 2 1]));
+if isfield(prepared,'component_view')
+    % Native harmonic workflow: preserve every raw coefficient/radiation
+    % object; the derived node view is a separate public struct input.
+    validate_workflow_hydrodynamics(h,'spectral');
+    h.file = fullfile(pwd,'canonical');
+    % The official writer omits an excitation IRF when all its fields are
+    % absent. Do not build or fabricate an unused impulse-response kernel.
+    writeBEMIOH5(h);
+    nativeHydro = verify_h5_roundtrip(h,fullRadiation,true);
+    nativeHydro.hydro_coeffs.excitation.component_view = view;
+    fprintf('WEC-Sim spectral handoff: %i derived frequency nodes, %i headings; no excitation IRF.\n', ...
+        numel(view.omega_rad_s),numel(view.headings_deg));
+    return
+end
 halfWidth = positive_scalar(prepared.excitation_irf_half_width_s,'excitation IRF half width');
 dt = positive_scalar(prepared.excitation_irf_dt_s,'excitation IRF time step');
 dw = positive_scalar(prepared.excitation_irf_frequency_step_rad_s,'excitation IRF frequency step');
@@ -81,7 +102,7 @@ assert(isequal(h.ra_K,fullRadiation.ra_K) && isequal(h.ra_t,fullRadiation.ra_t) 
 validate_workflow_hydrodynamics(h,'prepared');
 h.file = fullfile(pwd,'canonical');
 writeBEMIOH5(h);
-verify_h5_roundtrip(h,fullRadiation);
+nativeHydro = verify_h5_roundtrip(h,fullRadiation,false);
 fprintf('WEC-Sim excitation IRF: +/-%.8g s, dt %.8g s, omega 0..%.8g rad/s, domega %.8g rad/s; %i headings.\n', ...
     halfWidth,dt,omega(end),kernelOmega(2)-kernelOmega(1),h.Nh);
 fprintf('WEC-Sim radiation IRF retained: omega %.8g..%.8g rad/s, time %.8g..%.8g s.\n', ...
@@ -160,7 +181,7 @@ assert(all(shape(numel(order)+1:end) == 1));
 value = reshape(value,shape(1:numel(order)));
 end
 
-function verify_h5_roundtrip(h,fullRadiation)
+function readback = verify_h5_roundtrip(h,fullRadiation,spectral)
 file = [h.file '.h5'];
 readback = readBEMIOH5(file,1,0);
 assert(isequal(readback.hydro_coeffs.radiation_damping.impulse_response_fun.K,fullRadiation.ra_K) ...
@@ -168,14 +189,19 @@ assert(isequal(readback.hydro_coeffs.radiation_damping.impulse_response_fun.K,fu
     && isequal(readback.hydro_coeffs.added_mass.inf_freq,fullRadiation.Ainf), ...
     'H5 roundtrip changed the full-band radiation kernel or direct infinity added mass');
 radiationOmega = h5read(file,'/body1/hydro_coeffs/radiation_damping/impulse_response_fun/w');
-excitationOmega = h5read(file,'/body1/hydro_coeffs/excitation/impulse_response_fun/w');
 assert(isequal(radiationOmega(:),fullRadiation.ra_w(:)), ...
     'H5 roundtrip changed radiation quadrature frequency metadata');
-assert(isequal(readback.hydro_coeffs.excitation.impulse_response_fun.f,h.ex_K) ...
-    && isequal(readback.hydro_coeffs.excitation.impulse_response_fun.t(:),h.ex_t(:)), ...
-    'H5 roundtrip changed the native excitation kernel');
-assert(isequal(excitationOmega(:),h.ex_w(:)), ...
-    'H5 roundtrip changed excitation quadrature frequency metadata');
+if ~spectral
+    excitationOmega = h5read(file,'/body1/hydro_coeffs/excitation/impulse_response_fun/w');
+    assert(isequal(readback.hydro_coeffs.excitation.impulse_response_fun.f,h.ex_K) ...
+        && isequal(readback.hydro_coeffs.excitation.impulse_response_fun.t(:),h.ex_t(:)), ...
+        'H5 roundtrip changed the native excitation kernel');
+    assert(isequal(excitationOmega(:),h.ex_w(:)), ...
+        'H5 roundtrip changed excitation quadrature frequency metadata');
+else
+    assert(~isfield(readback.hydro_coeffs.excitation,'impulse_response_fun'), ...
+        'Spectral coefficient-only H5 unexpectedly contains an excitation IRF');
+end
 assert(isequal(readback.simulation_parameters.w(:),h.w(:)) ...
     && isequal(readback.simulation_parameters.direction(:),h.theta(:)), ...
     'H5 roundtrip changed raw coefficient reference grids');
@@ -184,6 +210,14 @@ assert(isequal(readback.hydro_coeffs.excitation.re,h.ex_re) ...
     && isequal(readback.hydro_coeffs.added_mass.all,h.A) ...
     && isequal(readback.hydro_coeffs.radiation_damping.all,h.B), ...
     'H5 roundtrip changed raw coefficient values or axes');
+for prefix = {'froude-krylov','scattering'}
+    if strcmp(prefix{1},'froude-krylov'), field = 'fk'; else, field = 'sc'; end
+    for part = {'re','im'}
+        value = reverseDimensionOrder(h5read(file, ...
+            ['/body1/hydro_coeffs/excitation/' prefix{1} '/' part{1}]));
+        assert(isequal(value,h.([field '_' part{1}])),'H5 roundtrip changed raw FK/scattering coefficients');
+    end
+end
 end
 
 function require_array(value,name,realOnly)

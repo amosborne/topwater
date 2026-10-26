@@ -8,17 +8,24 @@ maxNumCompThreads(1);
 addpath(genpath(fullfile(topwaterFork,'source')));
 prepared = load('prepared-case.mat');
 n = prepared.n;
-h = prepare_workflow_hydrodynamics(prepared);
+[h,nativeHydro] = prepare_workflow_hydrodynamics(prepared);
 wecSimInputFile;
 build_workflow_model(topwaterCaseDir,prepared.model_name,true);
 initializeWecSim;
 prepared = load('prepared-case.mat');
 n = prepared.n;
-native_excitation = body(1).hydroForce.hf1.userDefinedFe;
-assert(isequal(size(native_excitation),[numel(prepared.time) 6]) && ...
-    all(isfinite(native_excitation),'all'),'Native directional excitation is incomplete');
 native_excitation_time = waves(1).waveAmpTime(:,1);
 assert(max(abs(native_excitation_time-prepared.time(:))) < 1e-9);
+native_origin_elevation = waves.waveAmpTime(:,2);
+expected_origin_elevation = prepared.incident_origin_elevation_m(:);
+phase_max_abs_difference_m = max(abs(native_origin_elevation-expected_origin_elevation));
+save('native-phase.mat','native_excitation_time','native_origin_elevation', ...
+    'expected_origin_elevation','phase_max_abs_difference_m','-v7');
+assert(phase_max_abs_difference_m <= 1e-12, ...
+    'Native spectral incident elevation differs from the unchanged physical packet');
+native_excitation = native_spectral_excitation(body(1),waves,prepared.time);
+assert(isequal(size(native_excitation),[numel(prepared.time) 6]) && ...
+    all(isfinite(native_excitation),'all'),'Native spectral excitation is incomplete');
 save('native-excitation.mat','native_excitation_time','native_excitation','-v7');
 startup = native_excitation_startup(prepared,native_excitation);
 save('native-excitation.mat','startup','-append');
@@ -58,9 +65,9 @@ q = x(:,1:6); q(:,1:3) = q(:,1:3)-n.cg(:)';
 assert(max(abs(q(1,:))) < 1e-8 && max(abs(x(1,7:12))) < 1e-9, ...
     'Actual native initial state is not the prepared equilibrium at rest');
 assert(max(abs(x(1,31:36))) < 1e-9,'Initial radiation memory is not zero');
-tolerance = 1e-9+1e-10*max(abs(native_excitation),[],1);
+tolerance = 1e-10*max(abs(native_excitation),[],1);
 assert(all(max(abs(x(:,25:30)-native_excitation),[],1) <= tolerance), ...
-    'Actual applied excitation differs from WEC-Sim directional preparation');
+    'Actual applied excitation differs from WEC-Sim native spectral preparation');
 assert(max(abs(x(:,19:24)-(x(:,25:30)-x(:,31:36)-x(:,37:42)-x(:,43:48)-x(:,49:54)-x(:,55:60))),[],'all') < 1e-9);
 assert(all(x(:,49:60) == 0,'all'),'Unexpected viscous or linear damping');
 verify_balance(x,q,solid,hf.fAddedMass,simu.dt);
@@ -74,28 +81,34 @@ save('motion.mat','time','q','velocity','acceleration','excitation','radiation',
 close_owned_model(prepared.model_name);
 
 function inspect_native_excitation(model)
-% Read-only audit of the native once-only imported total, without rebinding.
+% Read-only audit of one native FullDir harmonic branch, without rebinding.
 set_param(model,'SimulationCommand','update');
 parent = [model '/Boat/Hydrodynamic Body/Wave Diffraction and Excitation Force Calculation'];
-branches = find_system(parent,'SearchDepth',1,'LookUnderMasks','all','FollowLinks','on', ...
-    'regexp','on','Name','^Linear Wave Excitation Force Variant Subsystem[0-9]*$');
-assert(numel(branches) == 1,'Expected one total imported excitation branch');
+children = find_system(parent,'SearchDepth',1,'LookUnderMasks','all','FollowLinks','on', ...
+    'MatchFilter',@Simulink.match.allVariants,'Type','block');
+branches = {};
+for k = 1:numel(children)
+    if ~isempty(regexp(get_param(children{k},'Name'), ...
+            '^Linear Wave Excitation Force Variant Subsystem[0-9]*$','once'))
+        branches{end+1} = children{k};
+    end
+end
+assert(numel(branches) == 1,'Expected one native FullDir excitation branch');
 ports = get_param(branches{1},'PortHandles');
 destination = get_param(get_param(ports.Outport(1),'Line'),'DstPortHandle');
 assert(numel(destination) == 1 && strcmp(get_param(destination,'Parent'),[parent '/Add']));
 signs = get_param([parent '/Add'],'Inputs');
 assert(signs(get_param(destination,'PortNumber')) == '+');
 active = find_system(parent,'LookUnderMasks','all','FollowLinks','on', ...
+    'MatchFilter',@Simulink.match.activeVariants,'Type','block');
+assert(any(endsWith(active,'/Irregular Wave Full Direction')), ...
+    'Native FullDir excitation variant is not active');
+sources = find_system(parent,'LookUnderMasks','all','FollowLinks','on', ...
     'MatchFilter',@Simulink.match.activeVariants,'BlockType','FromWorkspace');
-selected = {};
-for j = 1:numel(active)
-    if contains(get_param(active{j},'VariableName'),'userDefinedFe')
-        selected{end+1} = active{j};
-    end
+for k = 1:numel(sources)
+    assert(~contains(get_param(sources{k},'VariableName'),'userDefinedFe'), ...
+        'An imported applied-force source is unexpectedly active');
 end
-assert(numel(selected) == 1,'Expected one active positive imported-force source');
-assert(strcmp(get_param(selected{1},'VariableName'),'[Nwave.waveAmpTime(:,1),body.hydroForce.hf1.userDefinedFe]'), ...
-    'Native imported excitation data binding changed');
 end
 
 function configure_cic_logging(model)

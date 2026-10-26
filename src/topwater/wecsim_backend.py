@@ -96,6 +96,10 @@ def preflight():
         if installed != expected:
             raise BackendUnavailableError(f'WEC-Sim: expected {distribution} {expected}, found {installed}')
     fork = _find_fork()
+    if not (fork / 'source/functions/getExcitationData.m').is_file():
+        raise BackendUnavailableError(
+            'WEC-Sim: the held fork lacks native spectral component-view support; '
+            'a separately validated fork revision is required')
     if util.find_spec('topwater._capytaine_surface') is None:
         raise BackendUnavailableError('WEC-Sim: required total-surface reconstruction is not available')
     producer = import_module('topwater._capytaine_surface')
@@ -193,53 +197,45 @@ def _validate_excitation_support(setup, hydro):
         raise ValueError('excitation: coefficient grid or periodic heading seam is invalid')
 
 
-def _prepare_native_inputs(setup, hydro, workspace, *, force_only=False,
-                           excitation_irf_half_width_s=20.,
-                           excitation_irf_frequency_step_rad_s=.005):
-    """Write physical directional elevations and coefficient paths, no forces."""
+def _prepare_native_inputs(setup, hydro, workspace, *, force_only=False):
+    """Write physical spectral components and an excitation-only coefficient view."""
+    from ._wecsim_spectral import prepare_spectral_inputs
+
     _validate_excitation_support(setup, hydro)
-    half_width = float(excitation_irf_half_width_s)
-    frequency_step = float(excitation_irf_frequency_step_rad_s)
-    if not np.isfinite([half_width, frequency_step]).all() or min(half_width, frequency_step) <= 0:
-        raise ValueError('WEC-Sim: excitation kernel controls must be positive and finite')
+    spectral = prepare_spectral_inputs(setup, hydro)
     workspace = Path(workspace)
     workspace.mkdir(parents=True, exist_ok=False)
     library = resources.files('topwater').joinpath('data/wecsim')
     for name in ('wecSimInputFile.m', 'run_workflow_case.m', 'build_workflow_model.m',
                  'WorkflowEngineGuard.m', 'validate_workflow_hydrodynamics.m',
-                 'prepare_workflow_hydrodynamics.m', 'native_excitation_startup.m'):
+                 'prepare_workflow_hydrodynamics.m', 'native_excitation_startup.m',
+                 'native_spectral_excitation.m'):
         workspace.joinpath(name).write_text(library.joinpath(name).read_text(encoding='utf-8'), encoding='utf-8')
     mean_vertices_cg = setup.mean_hull_vertices_m - setup.mean_cg_m
     _write_stl(workspace / 'boat_cg.stl', mean_vertices_cg, setup.physical_faces)
-    # Full file support is independent of cropping to the simulation interval.
-    # One additional sample prevents endpoint roundoff from invoking extension.
-    first = int(np.floor((setup.time_s[0]-half_width)/.02))-1
-    last = int(np.ceil((setup.time_s[-1]+half_width)/.02))+1
-    history_time = np.arange(first, last+1)*.02
-    directions, elevation = setup.train.directional_elevation_records(history_time)
-    if elevation.shape != (len(history_time), len(directions)) or not np.isfinite(elevation).all():
-        raise ValueError('WEC-Sim: directional elevation records are incomplete or nonfinite')
-    files = []
-    for j in range(len(directions)):
-        path = workspace / f'wave-{j+1:04d}.txt'
-        np.savetxt(path, np.c_[history_time, elevation[:, j]], delimiter='\t')
-        files.append(str(path.resolve()))
+    spectral_file = workspace / 'spectral-wave.mat'
+    savemat(spectral_file, spectral.wave, oned_as='column')
+    # Physical component diagnostics only, never an applied force history.
+    savemat(workspace / 'spectral-diagnostics.mat',
+            dict(coefficients=spectral.coefficients,
+                 original_omega_rad_s=spectral.original_omega_rad_s,
+                 native_omega_rad_s=spectral.native_omega_rad_s,
+                 omega_roundtrip_error_rad_s=spectral.omega_roundtrip_error_rad_s,
+                 domega_rad_s=spectral.domega_rad_s, dtheta_rad=spectral.dtheta_rad))
     native = dict(M=setup.mass_matrix, K=hydro.K, Ainf=hydro.Ainf,
                   cg=setup.mean_cg_m, cb=hydro.cb, volume=hydro.volume,
                   rho=WATER_DENSITY, g=GRAVITY)
     carriers = setup.train.carriers
     savemat(workspace / 'prepared-case.mat',
-            dict(n=native, time=setup.time_s[:, None], wave_files=np.asarray(files, dtype=object),
-                 wave_directions_deg=np.rad2deg(directions),
+            dict(n=native, time=setup.time_s[:, None],
+                 spectral_file=str(spectral_file.resolve()), component_view=spectral.component_view,
+                 incident_origin_elevation_m=setup.train.elevation([[0., 0.]], setup.time_s)[:, 0],
                  carrier_omega_rad_s=carriers.angular_frequencies,
                  carrier_amplitudes_m=carriers.amplitudes,
                  carrier_directions_rad=setup.train.theta,
                  boat_length_m=float(np.ptp(setup.body.mesh.vertices, axis=0).max()),
                  native_mat_path=str(Path(hydro.native_mat_path).resolve()),
-                 netcdf_path=str(Path(hydro.netcdf_path).resolve()),
-                 excitation_irf_half_width_s=half_width, excitation_irf_dt_s=.02,
-                 excitation_irf_frequency_step_rad_s=frequency_step,
-                 force_only=bool(force_only),
+                 netcdf_path=str(Path(hydro.netcdf_path).resolve()), force_only=bool(force_only),
                  model_name='topwater_' + uuid.uuid4().hex[:12]))
     return workspace
 
@@ -247,7 +243,7 @@ def _prepare_native_inputs(setup, hydro, workspace, *, force_only=False,
 def integrate_motion(setup, hydro, workspace, fork):
     """Execute the unmodified maintained native WEC-Sim dynamics.
 
-    WEC-Sim computes excitation from the directional elevation records. Only
+    WEC-Sim computes excitation from the exact physical spectral components. Only
     disposable model loggers are configured. Mean equilibrium
     orientation is already in the geometry and full mass tensor; it is applied
     once again only when converting native perturbations back to body pose.

@@ -1,12 +1,19 @@
 function validate_workflow_hydrodynamics(h,stage,rawReal,rawImaginary)
 % Check only arrays consumed by this single-body BEMIO workflow, never water depth.
+if strcmp(stage,'component_view')
+    assert(nargin == 2,'Component-view validation takes no raw excitation arrays');
+    validate_component_view(h);
+    return
+end
 fields = {'rho','g','w','T','theta','Nf','Nh','A','B', ...
     'fk_re','fk_im','fk_ma','fk_ph','sc_re','sc_im','sc_ma','sc_ph', ...
     'ex_re','ex_im','ex_ma','ex_ph'};
-if strcmp(stage,'prepared')
-    assert(nargin == 2,'Prepared validation takes no raw excitation arrays');
-    fields = [fields {'cg','cb','Vo','Khs','Ainf','ra_K','ra_t','ra_w', ...
-        'ex_K','ex_t','ex_w'}];
+if strcmp(stage,'prepared') || strcmp(stage,'spectral')
+    assert(nargin == 2,[stage ' validation takes no raw excitation arrays']);
+    fields = [fields {'cg','cb','Vo','Khs','Ainf','ra_K','ra_t','ra_w'}];
+    if strcmp(stage,'prepared')
+        fields = [fields {'ex_K','ex_t','ex_w'}];
+    end
 elseif strcmp(stage,'imported')
     assert(nargin == 4,'Imported validation requires raw real and imaginary excitation');
 else
@@ -42,20 +49,51 @@ if strcmp(stage,'imported')
     require_shape(rawReal,excitationShape,'netCDF real excitation',false);
     require_shape(rawImaginary,excitationShape,'netCDF imaginary excitation',false);
 else
-    require_shape(h.cg,[1 3],'prepared.cg',true);
-    require_shape(h.cb,[1 3],'prepared.cb',true);
-    require_shape(h.Vo,[1 1],'prepared.Vo',false);
-    require_shape(h.Khs,[6 6],'prepared.Khs',false);
-    require_shape(h.Ainf,[6 6],'prepared.Ainf',false);
-    require_grid(h.ra_t,'prepared.ra_t',2,false);
-    require_grid(h.ra_w,'prepared.ra_w',2,true);
-    require_grid(h.ex_t,'prepared.ex_t',2,false);
-    require_grid(h.ex_w,'prepared.ex_w',2,false);
-    if any(h.ex_w < 0)
-        error('Topwater:InvalidHydrodynamics','prepared.ex_w must be nonnegative');
+    require_shape(h.cg,[1 3],[stage '.cg'],true);
+    require_shape(h.cb,[1 3],[stage '.cb'],true);
+    require_shape(h.Vo,[1 1],[stage '.Vo'],false);
+    require_shape(h.Khs,[6 6],[stage '.Khs'],false);
+    require_shape(h.Ainf,[6 6],[stage '.Ainf'],false);
+    require_grid(h.ra_t,[stage '.ra_t'],2,false);
+    require_grid(h.ra_w,[stage '.ra_w'],2,true);
+    require_shape(h.ra_K,[6 6 numel(h.ra_t)],[stage '.ra_K'],false);
+    if strcmp(stage,'prepared')
+        require_grid(h.ex_t,'prepared.ex_t',2,false);
+        require_grid(h.ex_w,'prepared.ex_w',2,false);
+        if any(h.ex_w < 0)
+            error('Topwater:InvalidHydrodynamics','prepared.ex_w must be nonnegative');
+        end
+        require_shape(h.ex_K,[6 numel(h.theta) numel(h.ex_t)],'prepared.ex_K',false);
     end
-    require_shape(h.ra_K,[6 6 numel(h.ra_t)],'prepared.ra_K',false);
-    require_shape(h.ex_K,[6 numel(h.theta) numel(h.ex_t)],'prepared.ex_K',false);
+end
+end
+
+function validate_component_view(view)
+if ~isstruct(view) || ~isscalar(view)
+    error('Topwater:InvalidHydrodynamics','component_view must be one coefficient struct');
+end
+for field = {'omega_rad_s','headings_deg','re','im','md'}
+    name = field{1};
+    if ~isfield(view,name)
+        error('Topwater:InvalidHydrodynamics','component_view is missing %s',name);
+    end
+    require_finite(view.(name),['component_view.' name]);
+end
+require_grid(view.omega_rad_s,'component_view.omega_rad_s',3,false);
+require_grid(view.headings_deg,'component_view.headings_deg',2,false);
+if view.omega_rad_s(1) ~= 0 || view.headings_deg(1) ~= -180 || view.headings_deg(end) ~= 180
+    error('Topwater:InvalidHydrodynamics','component_view needs zero-frequency and exact -180/180 boundary nodes');
+end
+shape = [6 numel(view.headings_deg) numel(view.omega_rad_s)];
+for field = {'re','im','md'}
+    name = field{1};
+    require_shape(view.(name),shape,['component_view.' name],false);
+    if ~isequal(view.(name)(:,1,:),view.(name)(:,end,:))
+        error('Topwater:InvalidHydrodynamics','component_view.%s periodic boundary values differ',name);
+    end
+end
+if any(view.md ~= 0,'all')
+    error('Topwater:InvalidHydrodynamics','component_view mean drift must be explicitly disabled/zero');
 end
 end
 

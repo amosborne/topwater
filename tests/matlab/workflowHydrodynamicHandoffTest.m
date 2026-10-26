@@ -112,6 +112,85 @@ verify_rejection(testCase,@() prepare_workflow_hydrodynamics(p),'Native/prepared
 testCase.verifyFalse(isfile('canonical.h5'));
 end
 
+function testSpectralViewOmitsUnusedIRFAndPreservesEveryRawRadiationField(testCase)
+p = testCase.TestData.prepared;
+legacy = prepare_workflow_hydrodynamics(p);
+expected = readBEMIOH5([legacy.file '.h5'],1,0);
+expected.hydro_coeffs.excitation = rmfield(expected.hydro_coeffs.excitation,'impulse_response_fun');
+p.component_view = spectral_view_fixture(p.n);
+p = rmfield(p,{'excitation_irf_half_width_s','excitation_irf_dt_s', ...
+    'excitation_irf_frequency_step_rad_s'});
+[h,nativeHydro] = prepare_workflow_hydrodynamics(p);
+testCase.verifyFalse(isfield(h,'ex_K'));
+testCase.verifyFalse(isfield(h,'ex_t'));
+testCase.verifyFalse(isfield(h,'ex_w'));
+testCase.verifyFalse(isfield(nativeHydro.hydro_coeffs.excitation,'impulse_response_fun'));
+testCase.verifyEqual(nativeHydro.hydro_coeffs.excitation.component_view,p.component_view);
+actual = nativeHydro;
+actual.hydro_coeffs.excitation = rmfield(actual.hydro_coeffs.excitation,'component_view');
+testCase.verifyEqual(actual,expected);
+testCase.verifyEqual(h.ra_K,legacy.ra_K);
+testCase.verifyEqual(h.ra_t,legacy.ra_t);
+testCase.verifyEqual(h.ra_w,legacy.ra_w);
+testCase.verifyEqual(h.Ainf,legacy.Ainf);
+info = h5info([h.file '.h5'],'/body1/hydro_coeffs/excitation');
+testCase.verifyFalse(any(endsWith({info.Groups.Name},'/impulse_response_fun')));
+end
+
+function testPartialWriterIRFIsFatalBeforeExistingOutputChanges(testCase)
+h = prepare_workflow_hydrodynamics(testCase.TestData.prepared);
+before = read_file_bytes([h.file '.h5']);
+partial = rmfield(h,'ex_t');
+testCase.verifyError(@() writeBEMIOH5(partial),'WECsim:IncompleteExcitationIRF');
+testCase.verifyEqual(read_file_bytes([h.file '.h5']),before);
+end
+
+function testInvalidSpectralViewFailsBeforeH5(testCase)
+p = testCase.TestData.prepared;
+view = spectral_view_fixture(p.n);
+p.component_view = view;
+p.component_view.re(1,2,2) = NaN;
+testCase.verifyError(@() prepare_workflow_hydrodynamics(p),'Topwater:NonfiniteHydrodynamics');
+testCase.verifyFalse(isfile('canonical.h5'));
+p.component_view = view;
+p.component_view.md(1,2,2) = .01;
+verify_rejection(testCase,@() prepare_workflow_hydrodynamics(p),'mean drift');
+testCase.verifyFalse(isfile('canonical.h5'));
+p.component_view = view;
+p.component_view.re(1,2,1) = p.component_view.re(1,2,1)+.01;
+verify_rejection(testCase,@() prepare_workflow_hydrodynamics(p),'zero limit');
+testCase.verifyFalse(isfile('canonical.h5'));
+end
+
+function view = spectral_view_fixture(n)
+omega = [0 .05 .1 .15 .2];
+headings = [-180 0 45 180];
+view = struct('omega_rad_s',omega(:),'headings_deg',headings(:), ...
+    're',zeros(6,numel(headings),numel(omega)), ...
+    'im',zeros(6,numel(headings),numel(omega)), ...
+    'md',zeros(6,numel(headings),numel(omega)));
+for mode = 1:6
+    for direction = 1:numel(headings)
+        theta = mod(headings(direction)*pi/180,2*pi);
+        for iw = 1:numel(omega)
+            value = analytic_transfer(max(omega(iw),.1),theta,mode);
+            if omega(iw) < .1
+                value = n.K(mode,3)+(omega(iw)/.1)^2*(value-n.K(mode,3));
+            end
+            view.re(mode,direction,iw) = real(value)/(n.rho*n.g);
+            view.im(mode,direction,iw) = -imag(value)/(n.rho*n.g);
+        end
+    end
+end
+end
+
+function value = read_file_bytes(file)
+fid = fopen(file,'rb');
+assert(fid ~= -1,'Cannot read owned test output');
+cleanup = onCleanup(@() fclose(fid));
+value = fread(fid,Inf,'*uint8');
+end
+
 function [p,native] = coefficient_fixture(folder)
 radOmega = [.1 .2 .3];
 importHeadings = [0 pi/4 pi/2];

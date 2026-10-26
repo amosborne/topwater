@@ -78,3 +78,25 @@ Native WEC force-only comparison and downstream applied-sum checks remain
 mandatory before replacing the baseline.
 Finite excitation lag, quadrature and record padding can change numerical
 forces; source exchange tests do not prove that those differences are small.
+
+## Spectral component view (source-only additions)
+
+The preceding 19-test result binds its original frozen helper/test identities.
+It does not qualify these new spectral additions. Three additional handoff
+tests are authored in `workflowHydrodynamicHandoffTest.m`, bringing that file to
+nine cases; the coefficient-guard file retains its existing thirteen controls.
+Authors have not executed the new tests.
+
+Use the coordinator-frozen fork containing the reviewed optional-excitation-IRF
+writer support via `TOPWATER_WECSIM_PATH`; held995's writer does not support the
+new no-IRF case. Do not silently change the runtime pin. The existing legacy
+tests cover all-three-IRF-fields-present. New tests check spectral omission with
+every other official raw/radiation/physical readback field exactly preserved,
+partial IRF rejection before an existing output is truncated, and invalid
+derived-view finite/zero-drift/H0 failures before H5 creation.
+
+The selected spectral handoff accepts `prepared.component_view` and returns
+`[h,nativeHydro]`. It builds no excitation IRF or dummy kernel; the official
+writer/reader exchange raw coefficients and full radiation, and the view is
+attached only to the returned public body struct. This is a coefficient/IO gate,
+not native harmonic force, startup, applied-bus or motion acceptance.

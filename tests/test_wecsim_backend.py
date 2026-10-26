@@ -59,6 +59,9 @@ def test_public_example_preserves_accepted_mean_hull_mass_and_restoring_identity
 
 
 def test_unqualified_surface_stops_before_any_physical_preparation(monkeypatch, tmp_path):
+    capability = tmp_path/'source/functions/getExcitationData.m'
+    capability.parent.mkdir(parents=True)
+    capability.write_text('% spectral capability fixture\n')
     monkeypatch.setattr(backend.metadata, 'version',
                         lambda name: {'capytaine': '3.0.0', 'matlabengine': '25.2.2'}[name])
     monkeypatch.setattr(backend, '_find_fork', lambda: tmp_path)
@@ -71,6 +74,15 @@ def test_unqualified_surface_stops_before_any_physical_preparation(monkeypatch, 
     monkeypatch.setattr(backend, 'import_module', lambda name: producer)
     monkeypatch.setattr(backend, 'prepare_case', lambda *args: pytest.fail('must not prepare physics'))
     with pytest.raises(ValueError, match='awaits physical pilot'):
+        backend.preflight()
+
+
+def test_held_fork_without_spectral_capability_fails_before_physics(monkeypatch, tmp_path):
+    monkeypatch.setattr(backend.metadata, 'version',
+                        lambda name: {'capytaine': '3.0.0', 'matlabengine': '25.2.2'}[name])
+    monkeypatch.setattr(backend, '_find_fork', lambda: tmp_path)
+    monkeypatch.setattr(backend, 'prepare_case', lambda *args: pytest.fail('must not prepare physics'))
+    with pytest.raises(backend.BackendUnavailableError, match='lacks native spectral'):
         backend.preflight()
 
 
@@ -108,6 +120,7 @@ def test_native_mean_pose_and_global_embedding_are_applied_once(monkeypatch, tmp
                                                       np.c_[np.cos(times), .3*np.sin(times)]),
         carriers=SimpleNamespace(angular_frequencies=np.array([1.]), amplitudes=np.array([.2])),
         theta=np.array([.2]), omega=np.array([0., 1.4]))
+    setup.train.elevation = lambda xy, times: np.zeros((len(times), len(xy)))
     hydro = SimpleNamespace(K=np.eye(6), Ainf=np.eye(6), cb=np.zeros(3), volume=1.,
                             netcdf_path=tmp_path/'not-executed.nc', native_mat_path=tmp_path/'native.mat')
     hydro.excitation_omega = np.array([.1, 3.4])
@@ -120,11 +133,23 @@ def test_native_mean_pose_and_global_embedding_are_applied_once(monkeypatch, tmp
                 velocity=np.zeros((2, 6)), acceleration=np.zeros((2, 6)), excitation=np.ones((2, 6))))
 
     monkeypatch.setattr(backend, '_run_matlab', fake_native)
+    spectral = SimpleNamespace(
+        wave=dict(frequencies=np.array([1., 2.]), directions=np.array([-90., 90.]),
+                  spectrum=np.zeros(2), spread=np.zeros((2, 2)), phase=np.zeros((2, 2))),
+        component_view=dict(omega_rad_s=np.array([0., 1., 2.]),
+                            headings_deg=np.array([-180., 180.]),
+                            re=np.zeros((6, 2, 3)), im=np.zeros((6, 2, 3)), md=np.zeros((6, 2, 3))),
+        coefficients=np.zeros((2, 2)), original_omega_rad_s=np.array([1., 2.]),
+        native_omega_rad_s=np.array([1., 2.]), omega_roundtrip_error_rad_s=np.zeros(2),
+        domega_rad_s=np.ones(2), dtheta_rad=np.ones(2))
+    monkeypatch.setattr('topwater._wecsim_spectral.prepare_spectral_inputs', lambda *_: spectral)
     motion = backend.integrate_motion(setup, hydro, tmp_path/'case', tmp_path)
     prepared = backend.loadmat(tmp_path/'case/prepared-case.mat')
     assert 'force' not in prepared
     assert not (tmp_path/'case/compatibility-elevation.txt').exists()
-    assert len(list((tmp_path/'case').glob('wave-*.txt'))) == 2
+    assert not list((tmp_path/'case').glob('wave-*.txt'))
+    assert (tmp_path/'case/spectral-wave.mat').is_file()
+    assert 'component_view' in prepared
     assert_allclose(motion.excitation_native, 1.)
     assert_allclose(motion.position_m, q[:, :3] @ embedding.T + center)
     expected = embedding @ Rotation.from_euler('xyz', q[:, 3:]).as_matrix() @ equilibrium.as_matrix()
