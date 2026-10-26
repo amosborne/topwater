@@ -50,7 +50,10 @@ else
     require_grid(h.ra_t,'prepared.ra_t',2,false);
     require_grid(h.ra_w,'prepared.ra_w',2,true);
     require_grid(h.ex_t,'prepared.ex_t',2,false);
-    require_grid(h.ex_w,'prepared.ex_w',2,true);
+    require_grid(h.ex_w,'prepared.ex_w',2,false);
+    if any(h.ex_w < 0)
+        error('Topwater:InvalidHydrodynamics','prepared.ex_w must be nonnegative');
+    end
     require_shape(h.ra_K,[6 6 numel(h.ra_t)],'prepared.ra_K',false);
     require_shape(h.ex_K,[6 numel(h.theta) numel(h.ex_t)],'prepared.ex_K',false);
 end

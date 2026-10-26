@@ -2,6 +2,39 @@
 
 ## Canonical NPZ workflow extension, 2026-10-25
 
+### Authorized WEC-Sim force-ownership transition
+
+The user now requires WEC-Sim to calculate wave excitation as well as boat
+motion. Topwater prepares boat/sea inputs and coefficient data, runs the tools,
+and reconstructs the surface after motion. It must not synthesize the applied
+wave-force histories in the production WEC path. The previous spectral force
+calculation may remain only as an offline comparison oracle. This concerns the
+WEC-Sim integration; Topwater-native remains a nonworking prototype.
+
+Preserve the complete sea realization, amplitudes, headings, phases, spatial
+reference and time zero. Directional elevation records, including opposite
+propagation branches, must reconstruct the unchanged incident elevation at the
+native origin over output and padded times. Group only identical headings. Do
+not replace direction-specific records with one scalar sum. Preserve true local
+calm/rest/zero radiation memory and zero artificial ramp at startup.
+
+The agreed standard-H5 handoff first computes radiationIRF from the unchanged
+0.1..12 rad/s data, retaining its kernel/time/frequency arrays and direct Ainf.
+Standard raw tables then use the genuine common 0.1..3.4 rad/s grid, all 25
+periodic headings and exact A/B subsets plus genuine dense FK/diffraction data.
+The excitation kernel uses the existing dense operator and explicit low-frequency
+bridge on its own grid; no unsolved coefficients or new reader schema are invented.
+Readback must prove full-band radiation memory and added mass are retained.
+
+First compare WEC-computed forces with the offline old spectral reference on
+identical coefficients and wave records, including startup and endpoints, and
+verify actual downstream force application exactly once. Quantify each force and
+moment channel's initial/peak/RMS/maximum differences and numerical-window effects.
+Then compare all six motion histories with the unchanged public baseline. Do not
+assume finite-kernel convolution is identical to direct spectral synthesis, silently
+relax the requirement, overwrite canonical results, or promote the held pin before
+the differences are reviewed. The eight-file public example contract is unchanged.
+
 Latest user authorization is workflow implementation, not native dynamics.
 Current physical inputs are examples/simple-boat/boat.npz and sea.npz, preserving
 the accepted boat and stronger measured spectrum. Public data are numeric NPZ;

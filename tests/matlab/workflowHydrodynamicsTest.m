@@ -105,6 +105,22 @@ verify_failure(testCase,@() validate_workflow_hydrodynamics(h,'prepared'), ...
     'Topwater:InvalidHydrodynamics','prepared.ra_K');
 end
 
+function testOnlyExcitationKernelAllowsZeroFrequency(testCase)
+h = fixture_hydro();
+h.ex_w = [0 .5 1];
+testCase.verifyWarningFree(@() validate_workflow_hydrodynamics(h,'prepared'));
+h.ra_w = [0 1];
+verify_failure(testCase,@() validate_workflow_hydrodynamics(h,'prepared'), ...
+    'Topwater:InvalidHydrodynamics','prepared.ra_w');
+end
+
+function testExcitationKernelRejectsNegativeFrequency(testCase)
+h = fixture_hydro();
+h.ex_w = [-.1 .5 1];
+verify_failure(testCase,@() validate_workflow_hydrodynamics(h,'prepared'), ...
+    'Topwater:InvalidHydrodynamics','prepared.ex_w');
+end
+
 function [h,re,im] = fixture_hydro()
 h = struct('rho',1025,'g',9.81,'h',Inf,'w',[.1 1], ...
     'theta',[0 45 90],'Nf',2,'Nh',3,'cg',zeros(3,1),'cb',zeros(3,1), ...

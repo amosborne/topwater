@@ -10,6 +10,44 @@ The user's order is working end to end, then correctness, then speed. The full
 public workflow now WORKS. No further performance changes are authorized now.
 Native coupled dynamics remain unimplemented. No solver/render streaming.
 
+LATEST USER DECISION: switch the WEC backend so WEC-Sim computes wave excitation
+AND motion. Topwater must stop producing the applied wave forces between Capytaine
+and WEC-Sim. Preserve all phases/directions/startup conditions and verify forces,
+then motion, against the baseline before promotion. This is WEC integration, not
+Topwater-native implementation. Read shared-contract.md's force-ownership section.
+Three expert owners are SOURCE-IMPLEMENTING the agreed richer coefficient/H5 and
+directional-record handoff; no jobs by authors. Cap owns _capytaine_surface.py;
+BEMIO owns new prepare_workflow_hydrodynamics.m/validator; WEC owns backend/setup/
+main MATLAB files and selected-rigid history/sum/dispatch fork changes. Coordinate
+shared-file ownership. Production Python force synthesis is removed; old oracle
+is diagnostic only. Raw H5 common band retains genuine data while full radiation
+IRF/Ainf are computed first and preserved; no extra BEM/schema change is assumed.
+
+User briefly requested archive of issue1/PR8, then corrected: keep/update if needed.
+Root restored exact branch fix/imported-excitation-history at805bb29, reopened
+issue1/PR8, and removed obsolete archive tag. They are active, unmerged, and now
+describe the intended WEC-owned calculation. Local isolated candidate worktree
+wecsim-native-excitation is based on25b58b with explicit history cherry-pick0335022;
+further selected-rigid issue2 fixes remain separate. Do not merge/push/pin silently.
+New intended multiple-direction WEC input makes #1/#2 relevant; previous out-of-path
+classification is superseded for this transition. Drag/Flex stay excluded.
+
+Simscape inertia proof is now PASSED and terminal/released: minimal trial3 has
+8layout controls and same unit-torque before/after; full matrix attempt1 has12
+measurements, dry/adjusted native matrices plus unchanged algebraic residual
+matching M+A to roundoff. Independent Cap measured-evidence review accepted.
+See experts/wecsim_expert/inertia-adjustment-proof-2026-10-25.md for values and
+limits (not actual CIC loading/dynamic residual/full boat). Failed earlier
+expectation/link trials stay preserved. No library or pin was promoted.
+
+New BEMIO handoff component also PASSED19/19 on frozen25b58b source, with full
+radiationIRF/Ainf surviving official H5 readback; job native-handoff-tests-attempt1
+is terminal/frozen/CIM verified, lease released. No force/motion equivalence claim.
+Main WEC integration review has blockers pending correction: whole-packet band
+coverage, retained-operator identity, comparison missing-output failure, and
+stale-clone internal connectivity. Authors own source fixes; root runs no job on
+that unfrozen integration until rereview. No numerical job is currently live.
+
 LATEST SCOPE: user requests rigorous correctness reviews of Capytaine, BEMIO and
 WEC-Sim by their respective experts, LIMITED TO OUR CODEPATH. Supported inputs
 that reach a boundary count even if this boat's zeros/symmetry hide the defect;
@@ -85,7 +123,7 @@ PRIVATE copy preserved all completed canonical files/logs. Public-replay-attempt
 is terminal/released. Runtime is much slower than root's15-20minute estimate;
 report measured times, not real-time claims. JIT experiment fully reverted.
 
-No numerical job is live. Checks61218 and inertia export30729 are CLOSED/released.
+No numerical job is live. All recorded component/inertia checks are terminal/released.
 Verify ledger/lease and exact processes before any additional numerical claim.
 Existing shared MATLAB CAPYTAINE_REFERENCE engine29796/launcher40036 was not
 quit or restored onscreen. Keep its window minimized/headless. TEMP/TMP must
