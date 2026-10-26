@@ -1,16 +1,25 @@
 # Current state: WEC-Sim / BEMIO expert
 
-Updated2026-10-25. Currentauthority: [handoff](../../checkpoint-handoff.md),
+Updated2026-10-26 UTC. Currentauthority: [handoff](../../checkpoint-handoff.md),
 [physicalcontract](../shared-contract.md), [serialprocedure](../coordination.md).
 No author execution allocation or automatic follow-up. Root owns integration.
 
-Active-rigid inertia draft is locally packaged on isolated branch
-`fix/rigid-hydro-inertia-order`, commit `ad3ba0cfb212fb5fedbed84ef3891513cff5336e`,
-directly based on combined25b58b. Nine focused source/example/test/audit files
-are reviewable; no corrected SLX is included or promoted. The production-boundary
-assertion deliberately fails until that binary is independently qualified.
-Measured standalone evidence is linked; the portable packaged head is unexecuted.
-Root owns publication and next checks; no author push/PR/merge/pin change occurred.
+Active-rigid inertia [PR9](https://github.com/amosborne/WEC-Sim/pull/9) is ready
+for review at pushed head `67e7c93f7039881a4af9b6f44a4f6232c029429c`, branch
+`fix/rigid-hydro-inertia-order`, based on combined25b58b. The corrected R2020b
+library and portable reproduction helper are included. Strict extraction audits
+passed control0/candidate1 with no other changes; generic helper reproduced the
+same candidate bytes; fresh absolute-path API reopen passed without a save.
+Exact-head Windows/R2025b checks passed8layout and3native tests (12simulations),
+plus the public two-simulation minimal example. Cap independently accepted the
+measured evidence; processes/frozen identities were verified terminal and leases
+released. New full-matrix claim is the tested1e-7 tolerance, not historical
+roundoff values: that run's detailed matrix report was temporary. Retained
+minimal-example raw data and all acceptance paths are in
+[PR9 qualification](inertia-pr9-qualification-2026-10-26.md).
+The tested README predates validation; the PR body carries the newer status.
+Do not amend this tested head merely to update prose. No merge, dependency repin
+or upstream write occurred; held995 and public physics artifacts are unchanged.
 
 Root's native-excitation component checks passed: backend plus offline comparison
 36/36, and MATLAB startup diagnostic/gate2/2. After the reviewed test-only cwd
@@ -34,7 +43,7 @@ dispatch patch and supported API preparation sources await review/execution.
 Held runtime995, public artifacts and published topic branches are unchanged.
 See `artifacts/workflow/native-excitation-comparison-v1/README.md` for gates.
 
-Active rigid Hydro Simscape inertia evidence now PASSES the measured single-
+Earlier standalone active rigid Hydro Simscape inertia evidence PASSES the measured single-
 torque witness and twelve six-basis before/after runs. Corrected native dry
 matrix error is5.33e-15; native adjusted matrix plus unchanged algebraic residual
 matches M+A to3.55e-15. Eight layout controls pass. Independent review accepted
@@ -43,7 +52,8 @@ leases released. This does not test dynamic residual/CIC forces or boat accuracy
 See [measured proof](inertia-adjustment-proof-2026-10-25.md). Failed earlier
 expectation/link trials remain preserved; no further inertia job is authorized.
 The broader interrupted Drag/Flex/export sources stay preserved and stopped.
-No library or public artifact was promoted by the inertia witness.
+That historical witness did not promote a library or public artifact; the later
+focused PR9 binary qualification is recorded above.
 
 Issues-first work is EXECUTED: enabled issues only in `amosborne/WEC-Sim`,
 checked duplicates, and created/read-back verified fork issues

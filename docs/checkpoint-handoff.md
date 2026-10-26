@@ -14,10 +14,22 @@ stability. No production settings or admission limits changed. Independent
 next-method review is read-only. Inertia API direct export failed both control
 and candidate strict audits with the same 53 unrelated changes. A reviewed
 single-property extraction stopped before output on XML lexical representation;
-independently reviewed V2 then passed strict control0/candidate1 audits with no
-other content or metadata change. Private candidate SHA7b0c063c awaits fresh
-MATLAB reopen and portable native tests. No binary or runtime pin promoted.
+independently reviewed V2 then passed strict control/candidate audits with zero
+versus one intended change and no other content or metadata change. The generic
+portable helper reproduced the exact 7b0c063c candidate; fresh MATLAB reopening
+passed. Fork PR #9 includes that binary at 67e7c93 and is ready for review:
+eight layout controls and three native tests (12 simulations), plus the public
+example (two simulations), passed on that exact head. Independent review accepted
+the evidence. Matrix claims use the tests' 1e-7 tolerance,
+not new roundoff maxima. No merge, runtime pin or upstream action.
 All these jobs are terminal, frozen-input/process checked and leases released.
+The commuted-kernel diagnostic then passed four scalar witnesses and the stored
+axes read, but failed its conservative 1e-12 axis-bound guard at T40 before full
+array replay; no
+interpretation or threshold adjustment. Independent review proposed a fixed
+centered lattice, tighter interpolation Taylor bound and explicit cached-kernel
+phase correction; WEC/BEMIO owns a new source-only V2 proposal. No numerical
+allocation or longer-window control follows automatically.
 
 Latest added user request: visualization expert should render water to the actual
 moving waterline and make the hull above it transparent, keeping wetted hull
@@ -47,11 +59,12 @@ atomically published examples/simple-boat/result.png (SHA25697e01aa4...). Seven
 nice ticks are symmetric with zero in the middle, outer ticks at limits, shared
 translation range +/-1.5m and rotation range +/-7.5deg. Saved Result unchanged.
 
-User requested visible fork progress. Issues2/3 rewritten with plain-language
-current evidence; issue1 and PR8 updated. Inertia DRAFT PR9 now OPEN in our fork:
-fix/rigid-hydro-inertia-order at ad3ba0c, base topwater/reference25b58b. Nine focused
-portable example/test/recipe files, no SLX correction yet; new-head tests unrun
-and boundary assertion intentionally fails until audited patch. Not merge-ready.
+User requested visible fork progress. Issues2/3 use plain-language evidence;
+issue1 and PR8 are updated. Inertia PR9 is now ready for review in our fork:
+fix/rigid-hydro-inertia-order at67e7c93, base topwater/reference25b58b. It includes
+the single-expression SLX correction and portable example/tests/packaging recipe.
+The old ad3ba0c draft checkpoint is superseded by the evidence above. Only the
+user may authorize merging; held runtime995 remains unchanged.
 
 The user's order is working end to end, then correctness, then speed. The full
 public workflow now WORKS. No further performance changes are authorized now.

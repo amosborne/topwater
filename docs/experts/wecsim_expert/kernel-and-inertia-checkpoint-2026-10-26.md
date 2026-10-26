@@ -36,6 +36,24 @@ Both jobs terminated and retained their frozen-input and process checks. The
 next method requires independent review; neither result qualifies new actual-case
 forces, motion or a runtime-pin change. Tracking: Topwater issue #35.
 
+The independently reviewed finite-sum replay subsequently passed four small
+scalar witnesses and read the exact stored H5 time axes. Its first real-data
+attempt rejected the affine-grid shortcut: the conservative axis/interpolation
+bound exceeded its prospectively fixed `1e-12` mode-scale guard on the first
+40 s case. It stopped before full-array replay or target interpretation. This
+does not measure an actual replay discrepancy or establish the surge-error cause.
+No threshold was relaxed. The method reviewer is assessing whether a tighter
+bound or explicit correction is justified. Evidence:
+`artifacts/workflow/native-kernel-commuted-attempt1/replay/report.json`.
+
+The independent reviewer proposed one revised source-only diagnostic: a fixed
+centered reference lattice, a Taylor bound retaining interpolation's signed
+barycentre cancellation, and an explicit output-phase correction using the
+already cached kernel. Both numerical gates remain unchanged. The WEC/BEMIO
+expert owns a new V2 source proposal; it requires independent review before any
+allocation. This cached correction does not yet establish a cheap evaluator for
+a new longer window without a cached kernel. No such control is authorized.
+
 ## Inertia library packaging remains incomplete
 
 The supported MATLAB API authored and reopened the intended active rigid-body
@@ -60,7 +78,22 @@ Evidence: `artifacts/workflow/inertia-parameter-delta-attempt1/output.log`.
 Successful extraction and strict audits:
 `artifacts/workflow/inertia-parameter-delta-attempt2/report.json`.
 
-Acceptance still requires the unchanged strict control/candidate audits, a fresh
-MATLAB load and property check, and the portable native before/after and full
-matrix tests on the proposed PR head. Existing standalone physical evidence does
-not substitute for those new-head checks. Fork PR #9 remains a draft.
+The portable, generic extraction helper then reproduced the identical candidate
+and passed the same strict audits. A fresh hidden MATLAB process loaded both
+absolute library paths, verified old/new expressions, R2020b metadata, lock and
+clean state, and unchanged bytes after closing without saving.
+
+The exact committed fork head `67e7c93f7039881a4af9b6f44a4f6232c029429c`
+passed eight layout controls, three native tests (twelve tiny simulations), and
+the public minimal before/after example (two further simulations). The matrix
+tests support their `1e-7` tolerance; no new roundoff-level maxima are claimed
+because the full-matrix fixture's raw report was temporary. The minimal example's
+raw report is retained. Independent measured review accepted this scope.
+
+Fork PR #9 now contains the correction and is ready for review at that tested
+head. No merge, production pin or upstream submission occurred. R2020b execution,
+Drag/Flex, actual CIC/dynamic residual forces and whole-boat accuracy remain
+outside this component proof. Evidence:
+`artifacts/workflow/inertia-portable-delta-attempt1/`,
+`artifacts/workflow/inertia-reopen-attempt1/`, and
+`artifacts/workflow/inertia-pr-head-attempt1/`.
