@@ -4,6 +4,16 @@ Updated2026-10-26 UTC. Currentauthority: [handoff](../../checkpoint-handoff.md),
 [physicalcontract](../shared-contract.md), [serialprocedure](../coordination.md).
 No author execution allocation or automatic follow-up. Root owns integration.
 
+Current native spectral step is ONE own-fork issue12/proposed PR, with combined
+topic `wecsim-spectral-spectrum` based on25b58b. The initial separate-head
+function-only example reproduced both baseline defects;4 phase and3 weight
+controls passed. Supplied phases became exact, field error1.11e-16m, and weight-
+only discrepancy1.11e-15. This is not combined-head/bus/mean-drift qualification.
+The combined source-only suite adds one nonzero-MD control and deduplicates the
+actual native-bus invocation while requiring physical component agreement.
+Review/execution remain pending. [Evidence and limits](full-directional-spectrum-checkpoint-2026-10-26.md).
+Old topics/evidence remain preserved; root owns issue13 folding. No pin change.
+
 Latest user steering halts the FFT path and requests the existing native spectral
 route first. Read-only [spectral route review](spectral-force-route-review-2026-10-26.md)
 confirms that pinned `spectrumImport` keeps imported frequencies and explicit

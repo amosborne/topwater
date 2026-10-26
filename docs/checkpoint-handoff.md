@@ -6,14 +6,57 @@ Historical queued work is not authorization to restart it.
 
 ## Current priority and completed workflow
 
-LATEST USER SCOPE: read-only first-principles investigation of whether WEC-Sim's
-existing spectral-wave path can compute the original force sum from the exact
-wave components, phases and headings. Establish this before further convolution
-development. WEC expert owns native API/source feasibility; numerical researcher
-owns the independent mathematical requirements and proposed cheap falsifier.
-No implementation, simulation, FFT repair/rerun, pin promotion or fork publication
-is allocated. WEC force ownership is a requirement; imported-elevation convolution
-is a prior design choice whose necessity is now under review.
+LATEST USER DECISION: pursue WEC-Sim's native spectral route instead of excitation
+convolution. Rework the force-calculation issue/PR scope substantially. Preserve
+earlier convolution evidence and stop its further development. WEC-Sim must
+calculate the original harmonic force sum from the exact physical components;
+Topwater supplies wave/coefficient inputs, not applied forces.
+
+The first `native-spectral-small-attempt1` is terminal PASS, frozen identities
+and exact processes verified, lease released and ledger idle. Baseline exposes
+both defects; phase-only fixes phases/field; weight-only fixes first-order
+weights. All4 phase/3 weight tests passed, with ActualNativeBus excluded.
+Independent measured review accepted this limited proof. Mean-drift, bus,
+full packet and dynamics are not accepted by this allocation. Tested
+phase head150a66df26914308f1a284b187f5f4e2480e647c; weight head
+f72c5ccd01846e9cb0258258e1419b4be6a03fa9; original27-file source manifest
+aa257b59. Independent source review approved this limited allocation. Add one
+nonzero mean-drift witness before accepting changed C0 weighting. A preclaim
+CIM reconciliation found zero MATLAB processes; the former shared engine is
+now absent externally. This task did not terminate it or attach to it.
+
+First bounded step: WEC expert authors small phase/directional-weight reproducers
+for the existing single FullDir path. Latest user correction requires ONE issue
+and ONE PR. Active combined issue12 and draft PR14 target our fork's
+`topwater/reference`. Issue13 is folded into12 and closed; final deletion versus
+retention cleanup is deferred per user. The active worktree is
+`wecsim-spectral-spectrum`, branch `fix/full-directional-spectrum`, head
+748032696b3234bfefa58ce4609283da418df2bb (tested source fixes replayed onto25b).
+Earlier independent phase/weight worktrees and baseline remain preserved.
+WEC expert owns combined source/tests/docs, plus shared private repro in
+`native-spectral-repro-v1`; authors run no numerical jobs.
+
+Combined sourceV2 is frozen under `source-manifest-v2.json`, SHA85472f70.
+It adds nonzero mean-drift coverage and deduplicates the bus check:9 controls.
+NMR independently approved the math/test source, conditional on BEMIO's separate
+actual-library bus-harness review. Both numerical acceptance and a new serial
+allocation are still pending. Do not resume any earlier job. The original v1
+manifest and all measured reports remain unchanged.
+Numerical researcher independently reviews the mathematics/tests; BEMIO owner
+proposes the exact low-frequency/interpolation handoff without invented raw A/B.
+Authors run no numerical jobs. Root will allocate reviewed small checks serially,
+then complete-packet forces/native bus/startup before motion. No automatic full
+run, held pin promotion, reference-branch merge or upstream submission follows.
+
+The old own-fork issues1/2/11 and PRs8/10 are CLOSED as superseded for Topwater.
+Original bodies, user edits, branches/commits and studies remain preserved;
+PR bodies carry a prominent superseded status instead of claiming their old
+convolution diffs implement spectral input. Own Topwater issue35 is also closed
+as not planned for this route. Generic defect evidence is not disproven by this
+choice. Inertia issue3/PR9 remains independently open. The ONE spectral PR14
+references combined issue12 and states partial evidence and remaining checks;
+it remains draft until combined/native-block checks pass. No upstream write or
+merge occurred.
 
 Source investigation now confirms that native `irregExcF` already implements
 the original harmonic force sum. Three-column `spectrumImport` preserves exact
@@ -26,7 +69,8 @@ low-frequency support differences from the old oracle. These are source findings
 not measured new-route results. Recommendation: investigate one vectorized native
 spectral input using existing harmonic evaluation, qualify a tiny analytic
 direction/phase/low-frequency example before any full packet. No extension is
-implemented or allocated. Detailed source evidence and alternatives:
+implemented yet. The phase/weight step above is now authorized; low-frequency/
+interpolation implementation awaits its bounded design. Detailed source evidence:
 [spectral route review](experts/wecsim_expert/spectral-force-route-review-2026-10-26.md).
 
 Current checkpoint, 2026-10-26 UTC: the actual-component candidate replay is

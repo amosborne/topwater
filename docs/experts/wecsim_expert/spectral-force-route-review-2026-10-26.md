@@ -50,12 +50,19 @@ The25 BEM headings are interpolation nodes, not replacement physical directions.
   Rigid mask creates one variant branch and Add port per group: G groups means
   G branches, potentially736 for the existing records. This is a source count,
   not a compile/runtime measurement. Imported once-dispatch does not fix it.
+  Pinned `docs/user/advanced_features.rst:333-356` explicitly promises unique
+  group directions and gives a0/90-degree example: this is an apparent defect
+  against the documented contract, requiring a minimal native-force reproducer.
 - **Single FullDir needs focused repairs or a small alternative input.** Its
   pinned phase reader ignores a supplied phase matrix. Its elevation amplitude
   includes `sqrt(dTheta)`, while its native force amplitude omits that factor;
   active Rigid wiring passes `Nwave.amplitude` directly. This source-level
   inconsistency needs a tiny numerical witness. FullDir also prepares H with
   spline interpolation, unlike the old piecewise-linear real/imaginary operator.
+  Pinned `docs/user/code_structure.rst:353-355` already promises an optional
+  frequency-by-direction phase matrix; the mismatch is not merely newer docs.
+  Ignored phase and direction-width inconsistency are apparent defects pending
+  minimal execution, while choosing spline interpolation is a method choice.
 - **Low positive frequencies must survive.** Raw H5 begins at0.1rad/s; imported
   setup filters outside its range. Our packet has positive sidebands below0.1.
   Preserve their existing `H0+(omega/.1)^2*(H(.1,theta)-H0)`, `H0=K(:,Heave)`.
@@ -96,4 +103,4 @@ elevation only. Sources below are pinned to held995:
 - [irregExcF](https://github.com/amosborne/WEC-Sim/blob/9952634f6f2e2746a1626484e27c3003d1e1d5a9/source/functions/simulink/model/irregExcF.m#L5):5-19 harmonic sum; [irregExcFullDirF](https://github.com/amosborne/WEC-Sim/blob/9952634f6f2e2746a1626484e27c3003d1e1d5a9/source/functions/simulink/model/irregExcFullDirF.m#L87):87-98 amplitude/sum.
 - Library `source/lib/WEC-Sim/WECSim_Lib_Body_Elements.slx`: archive `system_8_4071.xml` mask replication; `system_8_4071_7114.xml` FullDir amplitude wiring. Read as XML only, no model load.
 - `initializeWecSim.m:250-262` frequency range;404-415 radiation variants. Local `src/topwater/_wecsim_setup.py:131-194` packet/offline operator; `data/wecsim/prepare_workflow_hydrodynamics.m:118-125` H5 sign normalization.
-- Current [official documentation](https://wec-sim.github.io/WEC-Sim/main/user/code_structure.html) supports the ordinary three-column route; its FullDir optional-phase description does not override the pinned implementation above.
+- [Pinned FullDir documentation](https://github.com/amosborne/WEC-Sim/blob/25b58bda96ab0272cbfb4b0755539d5bb8ca227e/docs/user/code_structure.rst#L353) already promises optional phases, and [pinned multiple-wave documentation](https://github.com/amosborne/WEC-Sim/blob/25b58bda96ab0272cbfb4b0755539d5bb8ca227e/docs/user/advanced_features.rst#L333) promises unique directions. These contracts strengthen the apparent-defect findings; they are not numerical reproductions.

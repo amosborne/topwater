@@ -4,6 +4,44 @@
 
 ### Authorized WEC-Sim force-ownership transition
 
+Latest user decision, 2026-10-26: pursue native spectral excitation instead of
+imported-elevation convolution. WEC-Sim receives the complete physical wave
+components and computes their harmonic force sum. Topwater may construct and
+encode physical components and coefficient inputs, but must not supply applied
+force histories. Preserve the original weighted complex component coefficients,
+frequencies, exact propagation headings, origin, absolute time and phases.
+The coefficients already include packet quadrature and dispersion Jacobian;
+do not add those weights again or replace coherent components with energy averages.
+Equivalent spectrum-density/phase encoding is acceptable only if it reconstructs
+those same components, without random phases, renormalization or a temporal ramp.
+
+The first bounded native test uses three nonuniform frequencies and two headings,
+explicit phases and nonunit directional-bin widths. Independent expected elevation
+and force sums use the prescribed integrated amplitudes/phases directly, not the
+production density/spread calculation. Include heading-dependent and purely
+imaginary transfer values. This test excludes low-frequency and radiation changes
+so failures isolate phase/sign/weight handling. Verify the actual native force path.
+
+For the later unchanged3001x6 canonical spectral force replay, maximum error must
+be <=1e-10 times each reference channel's absolute peak and time-weighted RMS
+error <=1e-10 times its reference RMS. Use trapezoidal integration over0..60 s,
+all endpoints and the original basis, with no fitting, mean removal or denominator
+floor. Exactly zero reference channels require exact zero by default; any separate
+dimensional roundoff allowance must be independently frozen before execution.
+Report component-sum/peak and component-sum/RMS conditioning diagnostics without
+using them to waive a failed gate. These prospective numerical replay limits were
+independently reviewed before the new spectral route results.
+
+Preserve the old complex bilinear coefficient interpolation and quadratic
+low-positive-frequency bridge. Native spectral excitation removes the need for
+an excitation IRF; the existing radiation CIC, Ainf, dry mass/inertia, restoring
+operator, initial rest/zero memory and physical startup limits remain unchanged.
+Actual force application must still be checked exactly once before motion.
+The subsequent motion compatibility limits below remain applicable. The older
+convolution handoff and coarse/refined kernel gates below describe retained
+studies, not requirements to carry excitation convolution into the spectral route.
+Dependency promotion and merges remain subject to the user's existing holds.
+
 The user now requires WEC-Sim to calculate wave excitation as well as boat
 motion. Topwater prepares boat/sea inputs and coefficient data, runs the tools,
 and reconstructs the surface after motion. It must not synthesize the applied
