@@ -1,10 +1,23 @@
 # Checkpoint handoff
 
-Updated 2026-10-25. Latest user steering controls scope. Read AGENTS.md and
+Updated 2026-10-26. Latest user steering controls scope. Read AGENTS.md and
 experts/coordination.md; consult shared-contract.md and the relevant expert state.
 Historical queued work is not authorization to restart it.
 
 ## Current priority and completed workflow
+
+Latest qualification results are in
+experts/wecsim_expert/kernel-and-inertia-checkpoint-2026-10-26.md. The single
+160 s kernel control still failed pitch window stability; the fixed Tukey .25
+cached-kernel candidate failed surge reference error and surge/pitch window
+stability. No production settings or admission limits changed. Independent
+next-method review is read-only. Inertia API direct export failed both control
+and candidate strict audits with the same 53 unrelated changes. A reviewed
+single-property extraction stopped before output on XML lexical representation;
+independently reviewed V2 then passed strict control0/candidate1 audits with no
+other content or metadata change. Private candidate SHA7b0c063c awaits fresh
+MATLAB reopen and portable native tests. No binary or runtime pin promoted.
+All these jobs are terminal, frozen-input/process checked and leases released.
 
 Latest added user request: visualization expert should render water to the actual
 moving waterline and make the hull above it transparent, keeping wetted hull

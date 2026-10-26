@@ -1,0 +1,66 @@
+# Force-kernel and inertia packaging checkpoint
+
+These are qualification results, not changes to production physics, the held
+WEC-Sim revision, or canonical motion and surface data.
+
+## Excitation-kernel qualification remains incomplete
+
+The original actual WEC-Sim force comparison failed its initial-calm gate.
+An independent replay matched WEC-Sim's convolution to about 1.1e-10 N,
+isolating the finite supplied kernel rather than demonstrating a convolution bug.
+The full-history fix was included in that run.
+
+The genuine coefficient study uses three available headings, a 12 rad/s upper
+band, a 0.02 s lag step, and unchanged reference complex excitation coefficients.
+The numerical admission limits are 0.001 for maximum complex response error
+divided by each mode's reference scale, and 0.0005 for successive-window and
+frequency-refinement changes. These finite-probe limits do not certify the
+complete directional sea or physical accuracy.
+
+The single 160 s half-window control passed the reference-error limit in all six
+modes. Its change from the refined 80 s control exceeded the stability limit in
+pitch: 0.000795018. Other modes passed that comparison. No additional 160 s
+frequency-refinement check was performed, and overall qualification did not pass.
+Evidence: `artifacts/workflow/native-kernel-t160-attempt1/units/report.json`.
+
+One prospectively fixed symmetric Tukey lag window, alpha 0.25, was then evaluated
+on cached kernels. At the refined 80 s half-window, surge reference error was
+0.00106943, exceeding 0.001. The 40-to-80 s change exceeded 0.0005 for surge
+(0.00141962) and pitch (0.00055174). Frequency refinement passed. The candidate
+therefore failed admission. This is a window on the kernel's lag coordinate;
+it is not a wave or force startup ramp. No taper search, gain correction or
+threshold adjustment followed.
+Evidence: `artifacts/workflow/native-kernel-tukey-attempt1/units/report.json`.
+
+Both jobs terminated and retained their frozen-input and process checks. The
+next method requires independent review; neither result qualifies new actual-case
+forces, motion or a runtime-pin change. Tracking: Topwater issue #35.
+
+## Inertia library packaging remains incomplete
+
+The supported MATLAB API authored and reopened the intended active rigid-body
+products-of-inertia order correction. Direct R2020b export nevertheless changed
+53 unrelated archive entries in both the untouched control and corrected
+candidate. The unchanged strict auditor rejected both. Neither export was
+promoted. Evidence: `artifacts/workflow/inertia-direct-export-attempt1/report.json`.
+
+A separately reviewed private generator attempts to extract only that API-authored
+property into the original archive, preserving every other uncompressed payload
+and archive metadata. Its first execution stopped before output because the XML
+text did not match the assumed lexical representation. The failed attempt and
+source remain preserved. Independently reviewed V2 preserves the original XML
+entity encoding and appends only the API-verified suffix. Its second private
+execution passed: byte-identical control, exactly one intended candidate change,
+zero unexplained changes, original R2020b metadata and all other uncompressed
+entry bytes and archive metadata unchanged. Candidate SHA256:
+`7b0c063c8c4db2dced7e42257002989d69cdbb7a789a21f0a044ca26c793d828`.
+Only the target entry's compressed size changed, from 2854 to 2863 bytes.
+The single-property audit has not been relaxed.
+Evidence: `artifacts/workflow/inertia-parameter-delta-attempt1/output.log`.
+Successful extraction and strict audits:
+`artifacts/workflow/inertia-parameter-delta-attempt2/report.json`.
+
+Acceptance still requires the unchanged strict control/candidate audits, a fresh
+MATLAB load and property check, and the portable native before/after and full
+matrix tests on the proposed PR head. Existing standalone physical evidence does
+not substitute for those new-head checks. Fork PR #9 remains a draft.

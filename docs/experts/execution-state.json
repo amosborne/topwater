@@ -6,16 +6,16 @@
     "manifest":  null,
     "active_numerical_job":  null,
     "last_terminal_evidence":  {
-                                   "job":  "Reviewed full-band unit kernel window/refinement admission test with predeclared numerical thresholds; no sea/history/motion",
+                                   "job":  "Independently reviewed private single API-authored inertia parameter extraction and unchanged strict control0/candidate1 audits; no promotion",
                                    "owner":  "/root",
-                                   "producer_pid":  22308,
-                                   "owner_launcher_pid":  20912,
-                                   "started_at":  "2026-10-26T04:38:34.046669+00:00",
+                                   "producer_pid":  23296,
+                                   "owner_launcher_pid":  5804,
+                                   "started_at":  "2026-10-26T05:21:54.677328+00:00",
                                    "exit_code":  0,
                                    "frozen_inputs_match":  true,
                                    "complete":  true,
-                                   "manifest":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\native-kernel-wide-window-attempt1\\manifest.json",
-                                   "output":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\native-kernel-wide-window-attempt1\\output.log"
+                                   "manifest":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\inertia-parameter-delta-attempt2\\manifest.json",
+                                   "output":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\inertia-parameter-delta-attempt2\\output.log"
                                },
     "note":  "Exact producer/owner and FFmpeg absence verified by independent CIM; frozen input hashes verified; terminal exit 0. Final separate idle readback follows before lease release."
 }
