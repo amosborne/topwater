@@ -76,6 +76,65 @@ def test_render_consumes_variable_topology_and_preserves_hull_hole(tmp_path, cap
     assert list(tmp_path.iterdir()) == [destination]
 
 
+def test_full_dry_wireframe_black_outline_and_solid_blue_waterline_layers(tmp_path, monkeypatch):
+    from pathlib import Path
+    from matplotlib.axes import Axes
+    from matplotlib.collections import LineCollection
+    from matplotlib.patches import PathPatch
+    from topwater._visualization_geometry import mesh_edges
+    from topwater.surface_geometry import waterline_segments
+    import imageio_ffmpeg
+    import topwater.result_render as module
+    original = saved_result()
+    hull, hull_faces, _, _ = flared_display_case()
+    result = replace(original, hull_vertices_m=hull)
+    drawn = []
+    draw_artist = Axes.draw_artist
+
+    def capture(axes, artist):
+        snapshot = dict(label=artist.get_label(), zorder=artist.get_zorder())
+        if isinstance(artist, LineCollection):
+            snapshot.update(segments=np.asarray(artist.get_segments()).copy(),
+                colors=artist.get_colors().copy(), linestyle=artist.get_linestyle(),
+                effects=artist.get_path_effects())
+        if isinstance(artist, PathPatch):
+            snapshot['mask_vertices'] = artist.get_path().vertices.copy()
+        drawn.append(snapshot)
+        return draw_artist(axes, artist)
+
+    def fake_writer(path, *args, **kwargs):
+        Path(path).write_bytes(b'private layer-test stub')
+        while True:
+            yield
+
+    def unexpected_submerged_clipping(*args, **kwargs):
+        pytest.fail('full wireframe rendering must not clip dry edges away')
+
+    monkeypatch.setattr(Axes, 'draw_artist', capture)
+    monkeypatch.setattr(imageio_ffmpeg, 'write_frames', fake_writer)
+    monkeypatch.setattr(module, '_verify_video', lambda *args: None)
+    monkeypatch.setattr(module, '_submerged_edges_from_contact', unexpected_submerged_clipping)
+    render_result(result, tmp_path/'layers.mp4')
+    assert len(drawn) == 10  # Water, water-domain mask, then all three line layers per frame.
+    first = drawn[:5]
+    assert [item['zorder'] for item in first] == [0, 1, 2, 3, 4]
+    assert [item['label'] for item in first[2:]] == ['boat mesh', 'boat outline', 'physical waterline']
+    edges, rim = mesh_edges(hull_faces)
+    np.testing.assert_array_equal(first[2]['segments'], hull[edges, :2])
+    np.testing.assert_array_equal(first[3]['segments'], hull[rim, :2])
+    # Dry rim is at half-width2, while the mask and waterline remain at1.25.
+    assert np.max(abs(first[3]['segments'])) == pytest.approx(2.)
+    assert np.max(abs(first[1]['mask_vertices'])) == pytest.approx(1.25)
+    water, faces = result.surface_frame(0)
+    contact = waterline_segments(hull, hull_faces, water, faces)
+    np.testing.assert_allclose(first[4]['segments'], contact[:, :, :2], atol=1e-12)
+    np.testing.assert_allclose(first[2]['colors'], [[176/255, 176/255, 176/255, 1.]])
+    np.testing.assert_array_equal(first[3]['colors'], [[0., 0., 0., 1.]])
+    np.testing.assert_array_equal(first[4]['colors'], [[0., 0., 1., 1.]])
+    assert all(dashes is None for offset, dashes in first[4]['linestyle'])
+    assert not first[4]['effects']  # Solid blue, without a white halo.
+
+
 def test_projection_rejects_uncovered_interior_hole_outside_hull():
     from matplotlib import tri
     result = saved_result()

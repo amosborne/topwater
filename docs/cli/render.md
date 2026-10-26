@@ -91,12 +91,13 @@ durations) and stage timings rounded to milliseconds.
 - Continuous coolwarm water elevation colors, fixed symmetrically about zero
   using the entire saved surface range. No wave or motion amplification.
 - Off-white mask only where the saved water lies inside the posed hull volume.
-  Hull above the local water surface is transparent, including dry mesh/rim
-  lines. Gray physical edges and black rim portions remain visible only below
-  the saved piecewise-planar surface. The former dark-blue contact marker and
-  opaque whole-hull footprint are removed; the mask boundary meets actual water.
-  Submerged edges can remain visible through water outside that mask; this is
-  a top-down schematic, without optical refraction or depth shading.
+  Dry hull faces are transparent; their mesh and rim lines remain visible.
+  Bottom-to-top drawing order is water surface (with its interior-water mask),
+  the full gray physical boat mesh, the black opening outline, then the solid
+  blue physical waterline. All dry and wetted edges are shown. The blue line
+  has no halo and uses physical contact only, never an artificial closure trace.
+  Water still reaches the actual moving hull intersection. This is a top-down
+  schematic, without optical refraction or depth shading.
 - TIME/ROLL/PITCH/HEAVE header. Roll/pitch are XYZ Euler departures from the
   initial attitude expressed in its initial horizontal heading frame. Heave is
   change in world CG height. Initial equilibrium trim is not wave-driven pitch.
@@ -151,17 +152,15 @@ matched within `1e-9 * hull_diagonal` using SciPy, then assembled into closed
 contours. One standard Matplotlib compound PathPatch draws those contours,
 preserving concavity, disconnected components and nested holes. No additional
 water-triangle/hull clipping or per-water-triangle mask polygons are generated.
-The same existing 3D contact endpoints split physical mesh edges; batched interval
-midpoints reuse the validated water triangulation's finder and P1 elevation to
-select submerged portions, including multiple crossings. Hull closure planes
-reject exposed legacy water holes. When actual physical contact ends at an
+The full physical mesh and opening outline are drawn without wet/dry edge
+clipping; restoring dry wireframe visibility adds no edge/water intersection
+work. Hull closure planes reject exposed legacy water holes. When actual physical contact ends at an
 overtopped opening, the existing internal closure supplies a separate trace to
 close the display-volume mask. This fallback intersects only closure faces; it
 never changes returned physical contact, draws a physical cap, or claims flooding
 physics. Closed physical contact takes no extra closure/intersection call.
 The rendering budget remains 240 seconds.
 For a saved interior-water hole fully hidden inside the hull, the hole remains
-masked. Submerged edge portions without saved local water coverage are omitted:
-the renderer cannot infer their water elevation. The canonical full-grid result
-does not have these holes. Transparent hull requires actual saved water in any
-newly exposed region.
+masked. Drawing the full physical wireframe does not invent water elevations in
+that hole. The canonical full-grid result does not have these holes. Transparent
+hull faces require actual saved water in any newly exposed region.

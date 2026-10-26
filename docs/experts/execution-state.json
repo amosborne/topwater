@@ -6,16 +6,16 @@
     "manifest":  null,
     "active_numerical_job":  null,
     "last_terminal_evidence":  {
-                                   "job":  "Reviewed FullDir baseline/phases/weights: actual waveClass and native force function, 4phase+3weight controls, no bus/mean-drift/packet/dynamics acceptance",
+                                   "job":  "User-approved dry hull full gray mesh/black outline/solid blue waterline: full public render from unchanged saved Result, no previews or solver",
                                    "owner":  "/root",
-                                   "producer_pid":  13256,
-                                   "owner_launcher_pid":  29364,
-                                   "started_at":  "2026-10-26T12:41:50.332029+00:00",
+                                   "producer_pid":  15940,
+                                   "owner_launcher_pid":  27080,
+                                   "started_at":  "2026-10-26T16:17:33.849688+00:00",
                                    "exit_code":  0,
                                    "frozen_inputs_match":  true,
                                    "complete":  true,
-                                   "manifest":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\native-spectral-small-attempt1\\manifest.json",
-                                   "output":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\native-spectral-small-attempt1\\output.log"
+                                   "manifest":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\dry-hull-full-render-attempt1\\manifest.json",
+                                   "output":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\dry-hull-full-render-attempt1\\output.log"
                                },
     "note":  "Exact producer/owner and FFmpeg absence verified by independent CIM; frozen input hashes verified; terminal exit 0. Final separate idle readback follows before lease release."
 }

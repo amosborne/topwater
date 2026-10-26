@@ -1,5 +1,40 @@
 # Visualization expert: current state
 
+## Completed full wireframe layering correction, 2026-10-26
+
+Latest user explicitly wants transparent dry **faces**, with dry edges retained.
+The isolated patch in `artifacts/worktrees/dry-hull-wireframe` is integrated into
+the baseline working tree. Its 49 targeted renderer tests passed. Root produced
+a separate four-frame preview and the user approved it. User instruction:
+previews are for the user's review, not agent visual review; keep them separate
+from actual full rendering. No preview was produced during the full render.
+
+The public full render completed and verified all751 frames,800x800,12.5fps,
+60.08s. Renderer elapsed134.704s; command149.281s, unchanged240s budget.
+`examples/simple-boat/video.mp4` SHA256:
+39523c0c617450c3fd5477b82317e692c9fd603f82abb466804bfe3f4dfc3c32.
+`video.log` ends success with zero application warnings. The external encoder's
+duplicate frame-rate-option notice is benign; actual frame rate/count/duration
+were decoded and verified. Original NPZ/PNG/sea/result logs are unchanged.
+Both jobs are terminal, frozen identities/processes checked and leases released.
+
+The drawing order is saved water plus existing interior-water contour mask,
+then the full gray physical boat mesh, black opening outline, and solid blue
+physical waterline on top. No blue halo or dry face fill. The physical contact
+kernel/mask, saved field/motion, camera/HUD, budget and publication guards are
+unchanged. All physical edges/rim are reused directly; renderer calls skip the
+now unnecessary submerged-only edge-classification work. The existing private
+diagnostic edge path and its generic geometry tests remain available.
+
+A focused source regression spies on actual Agg draw calls in two saved frames
+with an encoder stub: it checks artist order/zorder, complete dry+wetted edge
+arrays, gray/black/solid-blue colors, physical-only blue contact, no halo, and a
+wet mask narrower than the dry flared rim. It fails if rendering invokes the
+submerged-only edge classifier. Evidence: `dry-hull-check-attempt1` and
+`dry-hull-full-render-attempt1` under `artifacts/workflow`. Integrated runtime and
+test bytes match the tested isolated producer. Numerical physics qualification
+remains separate; no solver was rerun for this display correction.
+
 ## Current waterline display and chart, 2026-10-25
 
 The canonical video now shows water up to the moving physical hull intersection,

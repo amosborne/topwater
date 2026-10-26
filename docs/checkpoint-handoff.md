@@ -12,6 +12,31 @@ earlier convolution evidence and stop its further development. WEC-Sim must
 calculate the original harmonic force sum from the exact physical components;
 Topwater supplies wave/coefficient inputs, not applied forces.
 
+ACTIVE USER GOAL: finish the visualization fix and simple-boat validation of the
+corrected spectral path. Visualization is now complete:49 tests passed, user
+approved a separate preview, full public video751 frames verified in149.281s,
+source integrated and bytes matched. User explicitly wants previews for their
+review only, separate from full rendering. No further preview/agent image review.
+
+No numerical job is live. `dry-hull-full-render-attempt1` is terminal success;
+exact processes/FFmpeg/frozen inputs checked and lease released. The nine-test
+combined native-block job also passed and was independently accepted. The actual
+simple-boat spectral force/motion comparison has NOT run yet.
+
+New packet/coefficient integration sources are frozen and source-approved for
+cheap tests: WEC manifest `native-spectral-integration-source-v1/manifest-v2.json`
+SHAaa154432; BEMIO helper/prep/validator hashes in the source-review receipts.
+Next numerical allocation is Python spectral/backend tests and MATLAB14 fork
+controls plus9 handoff tests, then the hash-bound full3001x6 force/startup/bus
+comparison and motion. No further architecture work is queued. Production pin
+995/reference merges remain held. For motion, use the already-qualified PR9
+inertia library in a private combined candidate; do not silently omit it.
+
+The original BEMIO agent's comparison-harness task hit a compaction/connection
+error. New bounded `/root/spectral_comparison_recovery` recovered the saved files
+without running jobs. Its completed source harness is in
+`native-spectral-force-comparison-v1`; independent review is required before use.
+
 The first `native-spectral-small-attempt1` is terminal PASS, frozen identities
 and exact processes verified, lease released and ledger idle. Baseline exposes
 both defects; phase-only fixes phases/field; weight-only fixes first-order
@@ -38,10 +63,9 @@ WEC expert owns combined source/tests/docs, plus shared private repro in
 
 Combined sourceV2 is frozen under `source-manifest-v2.json`, SHA85472f70.
 It adds nonzero mean-drift coverage and deduplicates the bus check:9 controls.
-NMR independently approved the math/test source, conditional on BEMIO's separate
-actual-library bus-harness review. Both numerical acceptance and a new serial
-allocation are still pending. Do not resume any earlier job. The original v1
-manifest and all measured reports remain unchanged.
+Both independent source reviews passed and the exact-head allocation above is
+now live; numerical acceptance remains pending. Do not resume any earlier job.
+The original v1 manifest and all measured reports remain unchanged.
 Numerical researcher independently reviews the mathematics/tests; BEMIO owner
 proposes the exact low-frequency/interpolation handoff without invented raw A/B.
 Authors run no numerical jobs. Root will allocate reviewed small checks serially,

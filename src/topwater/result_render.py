@@ -339,8 +339,12 @@ def _submerged_edges_from_contact(hull, edges, contact, projected, points, faces
     return segments[wet], owners[wet]
 
 
-def _wetted_display(hull, hull_faces, points, faces, loops, timings=None, projected=None):
-    """Reuse physical contact for one display path and submerged mesh intervals."""
+def _wetted_display(hull, hull_faces, points, faces, loops, timings=None, projected=None,
+                    compute_submerged_edges=True):
+    """Reuse contact for the mask and optional submerged-only diagnostic edges.
+
+    Rendering shows the full wireframe, so it skips submerged edge computation.
+    """
     scale = max(float(np.linalg.norm(np.ptp(hull, axis=0))), 1e-12)
     tolerance = scale*1e-9
     started = time.monotonic()
@@ -377,6 +381,9 @@ def _wetted_display(hull, hull_faces, points, faces, loops, timings=None, projec
         contours = _contact_contours(np.concatenate((contact, closure_trace)), scale)
     if timings is not None:
         timings['mask_seconds'] += time.monotonic()-started
+    if not compute_submerged_edges:
+        empty = np.empty((0, 2, 3))
+        return contours, empty, empty, contact
     started = time.monotonic()
     if projected is None:
         from matplotlib.tri import Triangulation
@@ -464,6 +471,7 @@ def render_result(result, output_path, settings=None):
         raise ValueError('projected hull has no finite view extent')
     lower, upper = center-half, center+half
     magnitude = max(float(abs(result.surface_vertices_m[:, 2]).max()), 1e-12)
+    edges, rim = mesh_edges(result.hull_faces)
     preparation_seconds = time.monotonic()-started
 
     import matplotlib
@@ -480,14 +488,18 @@ def render_result(result, output_path, settings=None):
     interior = PathPatch(_mask_path([]), facecolor='#f3f1e8', edgecolor='none',
                          antialiased=False, alpha=1., zorder=1)
     axes.add_patch(interior)
-    mesh_artist = LineCollection([], colors='#b0b0b0', linewidths=.7, zorder=2)
-    rim_artist = LineCollection([], colors='black', linewidths=1.5, zorder=3)
-    for artist in (mesh_artist, rim_artist):
+    mesh_artist = LineCollection([], colors='#b0b0b0', linewidths=.7, zorder=2,
+                                 label='boat mesh')
+    rim_artist = LineCollection([], colors='black', linewidths=1.5, zorder=3,
+                                label='boat outline')
+    contact_artist = LineCollection([], colors='blue', linewidths=1.3, linestyles='solid',
+                                    zorder=4, label='physical waterline')
+    for artist in (mesh_artist, rim_artist, contact_artist):
         axes.add_collection(artist)
     header = figure.text(.5, .985, '', ha='center', va='top', fontsize=14.5,
                          fontfamily='DejaVu Sans Mono', color='black',
                          bbox={'facecolor': 'white', 'edgecolor': 'none', 'alpha': .85, 'pad': 3})
-    for artist in (interior, mesh_artist, rim_artist, header):
+    for artist in (interior, mesh_artist, rim_artist, contact_artist, header):
         artist.set_animated(True)
     figure.canvas.draw()
     background = figure.canvas.copy_from_bbox(figure.bbox)
@@ -543,13 +555,15 @@ def render_result(result, output_path, settings=None):
                     validation_seconds += time.monotonic()-before
                     phase = 'wetted display geometry'
                     phase_started = time.monotonic()
-                    masks, submerged, submerged_rim, _ = _wetted_display(
-                        hull, result.hull_faces, points, faces, loops, display_timings, projected)
+                    masks, _, _, contact = _wetted_display(
+                        hull, result.hull_faces, points, faces, loops, display_timings, projected,
+                        compute_submerged_edges=False)
                     path_started = time.monotonic()
                     interior.set_path(_mask_path(masks))
                     mask_path_seconds += time.monotonic()-path_started
-                    mesh_artist.set_segments(submerged[:, :, :2])
-                    rim_artist.set_segments(submerged_rim[:, :, :2])
+                    mesh_artist.set_segments(hull[edges, :2])
+                    rim_artist.set_segments(hull[rim, :2])
+                    contact_artist.set_segments(contact[:, :, :2])
                     header.set_text(header_text(stamp, angles[index, 0], angles[index, 1],
                                                 positions[index, 2]-positions[0, 2]))
                     geometry_seconds += time.monotonic()-before
@@ -557,7 +571,7 @@ def render_result(result, output_path, settings=None):
                     phase = 'Agg drawing'
                     phase_started = time.monotonic()
                     figure.canvas.restore_region(background)
-                    for artist in (water, interior, mesh_artist, rim_artist):
+                    for artist in (water, interior, mesh_artist, rim_artist, contact_artist):
                         axes.draw_artist(artist)
                     figure.draw_artist(header)
                     figure.canvas.blit(figure.bbox)
