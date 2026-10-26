@@ -14,19 +14,20 @@ build_workflow_model(topwaterCaseDir,prepared.model_name,true);
 initializeWecSim;
 prepared = load('prepared-case.mat');
 n = prepared.n;
-native_excitation_time = waves(1).waveAmpTime(:,1);
-assert(max(abs(native_excitation_time-prepared.time(:))) < 1e-9);
+native_wave_time = waves(1).waveAmpTime(:,1);
+native_excitation_time = prepared.time(:);
+assert(max(abs(native_wave_time-native_excitation_time)) < 1e-9);
 native_origin_elevation = waves.waveAmpTime(:,2);
 expected_origin_elevation = prepared.incident_origin_elevation_m(:);
 phase_max_abs_difference_m = max(abs(native_origin_elevation-expected_origin_elevation));
-save('native-phase.mat','native_excitation_time','native_origin_elevation', ...
+save('native-phase.mat','native_excitation_time','native_wave_time','native_origin_elevation', ...
     'expected_origin_elevation','phase_max_abs_difference_m','-v7');
 assert(phase_max_abs_difference_m <= 1e-12, ...
     'Native spectral incident elevation differs from the unchanged physical packet');
 native_excitation = native_spectral_excitation(body(1),waves,prepared.time);
 assert(isequal(size(native_excitation),[numel(prepared.time) 6]) && ...
     all(isfinite(native_excitation),'all'),'Native spectral excitation is incomplete');
-save('native-excitation.mat','native_excitation_time','native_excitation','-v7');
+save('native-excitation.mat','native_excitation_time','native_wave_time','native_excitation','-v7');
 startup = native_excitation_startup(prepared,native_excitation);
 save('native-excitation.mat','startup','-append');
 if prepared.force_only

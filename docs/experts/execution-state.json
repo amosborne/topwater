@@ -6,16 +6,16 @@
     "manifest":  null,
     "active_numerical_job":  null,
     "last_terminal_evidence":  {
-                                   "job":  "User-approved dry hull full gray mesh/black outline/solid blue waterline: full public render from unchanged saved Result, no previews or solver",
+                                   "job":  "Independently source-approved full unchanged simpleboat3001x6 native spectral force/startup comparison vs offlineoracle; accepted resourceprobe, explicit600s nativechild720s whole8GiB caps; no bus/motion/pinpromotion",
                                    "owner":  "/root",
-                                   "producer_pid":  15940,
-                                   "owner_launcher_pid":  27080,
-                                   "started_at":  "2026-10-26T16:17:33.849688+00:00",
+                                   "producer_pid":  32424,
+                                   "owner_launcher_pid":  21420,
+                                   "started_at":  "2026-10-26T23:06:42.610245+00:00",
                                    "exit_code":  0,
                                    "frozen_inputs_match":  true,
                                    "complete":  true,
-                                   "manifest":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\dry-hull-full-render-attempt1\\manifest.json",
-                                   "output":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\dry-hull-full-render-attempt1\\output.log"
+                                   "manifest":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\native-spectral-full-force-attempt1\\manifest.json",
+                                   "output":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\native-spectral-full-force-attempt1\\output.log"
                                },
     "note":  "Exact producer/owner and FFmpeg absence verified by independent CIM; frozen input hashes verified; terminal exit 0. Final separate idle readback follows before lease release."
 }

@@ -1,0 +1,844 @@
+# Historical checkpoint snapshot
+
+Superseded by docs/checkpoint-handoff.md. Recorded assignments and process status
+are historical evidence, not current authorization or proof of liveness.
+
+# Checkpoint handoff
+
+Updated 2026-10-26. Latest user steering controls scope. Read AGENTS.md and
+experts/coordination.md; consult shared-contract.md and the relevant expert state.
+Historical queued work is not authorization to restart it.
+
+## Current priority and completed workflow
+
+LATEST USER DECISION: pursue WEC-Sim's native spectral route instead of excitation
+convolution. Rework the force-calculation issue/PR scope substantially. Preserve
+earlier convolution evidence and stop its further development. WEC-Sim must
+calculate the original harmonic force sum from the exact physical components;
+Topwater supplies wave/coefficient inputs, not applied forces.
+
+ACTIVE USER GOAL: finish the visualization fix and simple-boat validation of the
+corrected spectral path. Latest visualization addition is an unlabeled, fixed
+mean-waterline outline; the moving physical waterline remains solid blue above
+the full gray mesh and black opening outline. The README explains mean-hull
+linearization and the existing exterior-trace continuation. Waterline separation
+is a qualitative geometry warning, not an accuracy bound. All50 renderer tests
+passed and a separate four-frame preview was supplied for USER review only.
+The exact tested source is integrated; no agent image review or preview during
+full rendering. Earlier full wireframe video was committed/pushed at9ec4be7.
+
+`mean-waterline-full-render-attempt1` is terminal success:751 decoded H264 frames,
+800x800,12.5fps,60.08s encoded duration; command136.093s, renderer125.468s.
+Video SHA9e654250c924749188aa184847349d5e98204369519dc41e464d4ef49b1191cf;
+video.log ends success with zero application warnings. All protected physics
+inputs remained byte-identical. Exact processes/frozen hashes/idle readback
+verified and lease released.
+`dry-hull-full-render-attempt1` is terminal success; exact processes/FFmpeg/frozen
+inputs checked and lease released. The nine-test
+combined native-block job also passed and was independently accepted. The actual
+simple-boat spectral force/motion comparison has NOT run yet.
+
+New packet/coefficient integration sources passed38 Python,14 native MATLAB and
+9 official H5 handoff controls in `spectral-handoff-check-attempt1`, independently
+accepted; terminal/process/frozen checks completed and lease released. WEC
+manifest `native-spectral-integration-source-v1/manifest-v2.json`
+SHAaa154432; BEMIO helper/prep/validator hashes in the source-review receipts.
+`native-spectral-resource-attempt1` is TERMINAL FAILURE (exit99). The watchdog
+stopped its exact owned Job at28.281s during MATLAB startup because a process
+executable query returned access denied; no native force-stage marker exists.
+Receipt records job empty and frozen inputs unchanged. Root independently
+verified every recorded owned PID plus MATLAB/FFmpeg absent, read back idle and
+released the lease. Preserve allocation1 unchanged. The reviewer confirmed a
+missing SYNCHRONIZE wait right in v1; the actual access-denied cause remains
+unproved. Watchdog v2 adds that right and same-handle terminal classification
+plus detailed diagnostics; still-live/unknown query failures remain fatal.
+NMR approved exact watchdog208cd33f/freezer7c82f792/README2580d141.
+Attempt2 is also TERMINAL FAILURE (exit99), allocation2 freezebf55b608/config
+3c820182,11.218s before native stage. Its detailed receipt identifies owned
+PID21160: executable-query access denied, same-handle wait258, exit code0,
+membership true. No solver-force conclusion follows. Root verified receipt Job
+empty/frozen true and all exact processes absent, read back idle, released lease.
+Attempt3 is TERMINAL FAILURE (exit99), root tool session83553 terminal.
+NMR approved v3 watchdog0069ed69/freezer7c82f792/READMEa24c409d; one50ms same-handle
+wait for the observed rundown condition, actual signal and fresh membership
+still required. New allocation3 freezeba320ca9/config0f4c17c9; same physical
+sources/probe/budgets. It passed startup and genuine H5 handoff (673 derived
+frequency nodes/487 headings), then watchdog PermissionError13 at79.235s while
+root read the status receipt around79.172s. No native-force stage exists.
+Receipt-file sharing/atomic replacement is a hypothesis, not proved; no process-
+query failure was recorded. Jobempty/frozen true, exact CIM absent, lease released.
+The old-v3 reader-sharing mechanism was reproduced in0.8s, and all6 v4
+nonnumerical publication controls passed in1.06s. NMR accepted exact
+watchdog35f68c17/receipt_io1beafa4f/check7242e7c6/README60984e18; retries are
+bounded250ms and clipped to active resource deadlines. Actual attempt3 action
+remains untraced, so retain the hypothesis distinction.
+Attempt4 is TERMINAL FAILURE (exit99), root session21199 terminal,
+allocation4 freeze21ed8d27/configbf0bc275, original scientific sources/budgets.
+V4 publisher worked (2 recovered calls/3 retries). Native initialization reached
+the full-clock `isequal` assertion and failed before force stage. Source trace:
+prepared time is NumPy arange*.02, native simu.time is MATLAB0:.02:60 and copied
+directly to waveAmpTime; binary-difference magnitude/count is NOT measured yet.
+Cleanup then hit another inaccessible owned process with exit0/wait258 even after
+50ms (PID11344). Receipt Jobempty/frozen true; root verified exact CIM absent,
+read back idle and released lease. No numerical job is live.
+`native-clock-diagnostic-attempt1` is TERMINAL SUCCESS, root session37024 terminal. NMR
+approved script ec64465e/runner7a9acced: prepared+actual simulation-class setup
+clock only, no hydro/waves/model/forces; fresh hidden MATLAB90s,138 frozen files.
+Measured: both3001 monotone0..60,340 unequal entries, firstt30.06, maximum
+7.105427357601002e-15s=1localULP; simulation==colon and prepared==multiply EXACT.
+First17 force-prefix times are byte-identical. Exact process/frozen/CIM/idle
+checks passed and lease released. No numerical job is live. NMR accepted
+construction-only interpretation and prospective private gate: exact own
+constructors/count/endpoints, finite/mono, indexed difference<=1localULP.
+WEC expert owns versioned v2 private probe additions (leave old files unchanged)
+and root run_workflow_case.m force-clock metadata fix: save exact prepared query
+clock and retain separate native wave clock. No force/time/sample/tolerance change.
+`native-spectral-resource-attempt5` is TERMINAL SUCCESS, root session55816 terminal, using
+allocation6 freeze de378754/confige7fd18e0. Allocation5 was source preparation
+only, superseded after review, never numerically launched. Final NMR-approved
+v5 watchdog3f65a6ee/READMEa145c3ca/freezer3baeba01 uses previously identified
+same-handle rundown checks under one total1s grace, actual signal mandatory and
+expiry checked before acceptance; primary failures kill exact Job promptly.
+Clock/callback manifest72ab1c21 approved: versioned v2 probe, exact prepared force
+queries, separate native wave clock, measured constructor/1ULP guard and corrected
+private callback ordering. Original time/count/force gates and resource limits
+unchanged. Root run_workflow_case timestamp metadata nowc8b250e6, uncommitted,
+frozen by this job. Exact Jobempty/frozen/driver0/watchdog0/hostCIM/idle checks
+passed and lease released; no numerical job is live. All17 calls used full
+671-frequency/485-direction bank and full3001 wave clock. Whole108.672s,
+prep92.132s, loop2.7027s; first.375s, steadymean.113905s/max.137577s. Cache
+sentinel is true only first call (direction sum4106.91), then cache reuse branch.
+Commit peak3489710080 bytes; sampledWS3948793856 bytes with19 disclosed gaps.
+NMR accepted RESOURCE ONLY in `native-spectral-resource-review-v1/acceptance.json`
+SHA3bf0c645. It does not establish force/startup/bus/motion agreement.
+Root explicitly allocated600s native-child/720s whole/8GiB commit+sampledWS for
+one fullforce comparison: mean/max-steady projections342s/413s plus~106s observed
+overhead, not a runtime guarantee. Qualification bundle
+`native-spectral-full-authorization1/qualification.json` SHA1bacfed9 binds four
+probe artifacts, independent acceptance and root budget. Full freeze generation
+completed: allocation1 freezedb680661/config8427140c,7721 bound files.
+CURRENT LIVE JOB: `native-spectral-full-force-attempt1`, root session57465,
+claimed and independently read back before launch. Unchanged3001x6 fullforce/
+startup comparison under600s nativechild/720s whole/8GiB limits. Reconcile exact
+ledger/process before any other numerical work or producer edits. No fullforce
+acceptance exists until report+independent measured review+terminal proof.
+Full wrapper cf0c8877/qualificationdbd2dd5b and actual-bus-v2 manifest750df5b3
+are independently source-approved. Bus still requires fullforce PASS+review;
+WEC expert owns source-only private motion harness with qualified PR9 overlay.
+Preserve all four resource attempts.
+Use FILE_SHARE_DELETE when reading any live atomic receipt to avoid introducing
+Windows reader-lock contention.
+Full-wrapper source has resumed in its separate directory; actual-bus source
+manifest16f2f6fb is independently
+approved, but requires full-force PASS and independent measured acceptance.
+The independently approved full-bank17-call resource probe remains bounded300s
+preparation/60s native/360s whole and aggregate8GiB committed memory hard cap;
+working-set sums are sampled, not a continuous RSS guarantee. Watchdog92c189e1,
+freezer7c82f792, original external freeze88a3fd1f/config74ebbc38 under
+`native-spectral-resource-allocation1`. No force or motion acceptance follows
+from this probe. Tested Topwater integration is committed/pushed atb1df338.
+Own-fork topic/PR14 now also pushed to exacte24c1a7; draft PR14 and issue12 were
+updated with passing small checks and explicit full-case gaps. Reference25b and
+held995 are unchanged. Normal authenticated public-repo push succeeded after
+ownership/payload verification; no force push, merge or upstream submission.
+Then qualify the hash-bound full3001x6
+force/startup/bus comparison and motion. Production pin
+995/reference merges remain held. For motion, use the already-qualified PR9
+inertia library in a private combined candidate; do not silently omit it.
+
+The original BEMIO agent's comparison-harness task hit a compaction/connection
+error. New bounded `/root/spectral_comparison_recovery` recovered the saved files
+without running jobs. Its completed source harness is in
+`native-spectral-force-comparison-v1`; independent review is required before use.
+
+The first `native-spectral-small-attempt1` is terminal PASS, frozen identities
+and exact processes verified, lease released and ledger idle. Baseline exposes
+both defects; phase-only fixes phases/field; weight-only fixes first-order
+weights. All4 phase/3 weight tests passed, with ActualNativeBus excluded.
+Independent measured review accepted this limited proof. Mean-drift, bus,
+full packet and dynamics are not accepted by this allocation. Tested
+phase head150a66df26914308f1a284b187f5f4e2480e647c; weight head
+f72c5ccd01846e9cb0258258e1419b4be6a03fa9; original27-file source manifest
+aa257b59. Independent source review approved this limited allocation. Add one
+nonzero mean-drift witness before accepting changed C0 weighting. A preclaim
+CIM reconciliation found zero MATLAB processes; the former shared engine is
+now absent externally. This task did not terminate it or attach to it.
+
+First bounded step: WEC expert authors small phase/directional-weight reproducers
+for the existing single FullDir path. Latest user correction requires ONE issue
+and ONE PR. Active combined issue12 and draft PR14 target our fork's
+`topwater/reference`. Issue13 is folded into12 and closed; final deletion versus
+retention cleanup is deferred per user. The active worktree is
+`wecsim-spectral-spectrum`, branch `fix/full-directional-spectrum`, head
+e24c1a73372baf37aebe37a8b6bf0cd0d2368b0c (tested integration on25b).
+Earlier independent phase/weight worktrees and baseline remain preserved.
+WEC expert owns combined source/tests/docs, plus shared private repro in
+`native-spectral-repro-v1`; authors run no numerical jobs.
+
+Combined sourceV2 is frozen under `source-manifest-v2.json`, SHA85472f70.
+It adds nonzero mean-drift coverage and deduplicates the bus check:9 controls.
+Both independent source reviews passed and the exact-head allocation above is
+now live; numerical acceptance remains pending. Do not resume any earlier job.
+The original v1 manifest and all measured reports remain unchanged.
+Numerical researcher independently reviews the mathematics/tests; BEMIO owner
+proposes the exact low-frequency/interpolation handoff without invented raw A/B.
+Authors run no numerical jobs. Root will allocate reviewed small checks serially,
+then complete-packet forces/native bus/startup before motion. No automatic full
+run, held pin promotion, reference-branch merge or upstream submission follows.
+
+The old own-fork issues1/2/11 and PRs8/10 are CLOSED as superseded for Topwater.
+Original bodies, user edits, branches/commits and studies remain preserved;
+PR bodies carry a prominent superseded status instead of claiming their old
+convolution diffs implement spectral input. Own Topwater issue35 is also closed
+as not planned for this route. Generic defect evidence is not disproven by this
+choice. Inertia issue3/PR9 remains independently open. The ONE spectral PR14
+references combined issue12 and states partial evidence and remaining checks;
+it remains draft until combined/native-block checks pass. No upstream write or
+merge occurred.
+
+Source investigation now confirms that native `irregExcF` already implements
+the original harmonic force sum. Three-column `spectrumImport` preserves exact
+supplied frequencies and phases, but ordinary per-heading objects reuse the
+first object's force coefficients and create one model branch per object
+(up to736 before exact-heading merging). Single-object FullDir avoids that
+model expansion, but the pinned source ignores supplied phase and has a
+direction-width discrepancy between elevation and force, plus interpolation/
+low-frequency support differences from the old oracle. These are source findings,
+not measured new-route results. Recommendation: investigate one vectorized native
+spectral input using existing harmonic evaluation, qualify a tiny analytic
+direction/phase/low-frequency example before any full packet. No extension is
+implemented yet. The phase/weight step above is now authorized; low-frequency/
+interpolation implementation awaits its bounded design. Detailed source evidence:
+[spectral route review](experts/wecsim_expert/spectral-force-route-review-2026-10-26.md).
+
+Current checkpoint, 2026-10-26 UTC: the actual-component candidate replay is
+terminal exit1 with unchanged frozen inputs; exact processes/CIM were verified
+absent and the numerical lease released. The process calculated and retained
+forces, but a source-path assertion failed afterward; this is not an accepted
+replay. Preserve `native-convolution-component-candidate-attempt1` and candidate
+worktrees. No numerical job is live. `native-convolution-controls-attempt2`
+is terminal PASS; all26 controls and the candidate minimal example passed,
+independently accepted. Exact processes/frozen identities were verified and its
+lease released before the current claim. Candidate head is
+2f039e560cda1e2bb44fd355bec2139e6172e822;
+fork identity manifest `native-convolution-forks-v3.json`, SHA d6bc86c6.
+The shared-phase replay, subsequent all-heading admission and single-component
+resource probe are terminal with frozen identities checked.
+The pre-existing shared engine 40036/29796 remains unrelated and untouched.
+
+The shared-phase replay reproduced every retained-heading kernel/response
+exactly. The separate `native-kernel-allheading-admission-attempt1` then passed
+the unchanged finite-probe reference/window/refinement gates at all25 headings,
+using the original mode scales. Receipt: `units/report.json`, SHA a503f95c.
+This qualifies the tested coefficient controls, not actual whole-case forces,
+startup, application, motion or physical accuracy.
+
+The actual first physical component probe also passed its input/resource guards:
+3001 output samples, full padded history and admitted T320 kernel; native call
+4.7419052 s, whole-process lifetime peak 4,002,521,088 bytes (3.73 GiB).
+Common-support incident-elevation error is 4.86e-17 m. Largest component relative
+RMS force difference against the offline oracle is 6.71e-5. These are component
+diagnostics, not total-force/startup acceptance. A simple736-component runtime
+projection is about58 minutes per pass; a full pass has not been measured.
+Evidence: `native-force-component-preflight-attempt1/probe/report.json` and
+`probe/native/resource.json`; terminal receipt and lease release are recorded.
+
+Own-fork issue11 tracks a private equivalent-convolution proposal. Root verified
+two new worktrees at eb722540: detached `wecsim-convolution-baseline` and topic
+`wecsim-imported-convolution` (`fix/imported-excitation-convolution`). WEC expert
+owns source/tests/example in the topic only: standard zero-padded FFT linear
+convolution for eligible uniform clocks, bounded-row direct fallback, unchanged
+history/ramp/lag/direction semantics. Authors run no numerical jobs. Independent
+source review, unchanged11 history/4group controls and full3001x6 cached native
+component replay are required before any full-case allocation. Replay gates are
+max-error/reference-peak and time-weighted-RMS-error/reference-RMS <=1e-10,
+with explicit zero behavior and no denominator floors. No production performance
+promotion, runtime pin change, merge or upstream action is authorized here.
+Measured evidence and the bounded replay requirements are recorded in
+[the resource checkpoint](experts/wecsim_expert/native-force-resource-checkpoint-2026-10-26.md).
+
+Issue11 source proposal V1 was independently rejected before execution: a small
+clock error can produce a large elevation error for steep imported records or
+very short ramps. Its five files and hashes are preserved in
+`artifacts/workflow/native-convolution-source-v1/manifest.json`. V2 independently
+passed source review with the researcher's fixed slope/ramp error certificate
+and steep-record/tiny-ramp fallback controls. The certificate uses the
+actual raw-elevation scale without a floor; it does not replace force replay
+under cancellation. BEMIO owner's paired replay and small-control runners are
+frozen in `native-convolution-replay-v1`; root reviewed identity/physical-input/
+reference separation and static checks. Exact73c7468 attempt1 passed11 history,
+4group and10/11 new controls, then failed an endpoint test fixture: it supplied
+three integration lags while its scalar oracle used five. Independent review
+approved the test-only consumer-grid correction without changing expected forces,
+tolerance or solver code. Attempt1 is terminal/frozen/CIM verified and released;
+its failed source/results remain preserved. Attempt2 passed all26 controls
+and the candidate minimal example; independent measured review accepted them.
+The subsequent candidate arm ended as described above. Further numerical work
+is halted under the latest user scope; baseline arm remains unexecuted.
+
+The actual full-band H5 readback is COMPLETE/PASS: 31 checks at120 frequencies
+and25 headings, exact normalized excitation/FK/SC signs, all raw A/B, old full
+radiation IRF/time/frequency/Ainf and physical metadata. Backscaled A/B differences
+5.68e-14/7.28e-12 are recorded floating-point roundtrips, not normalized-gate
+failures. H5 omits dry M, reported honestly; native M preservation is separate.
+Independent measured review accepted exchange only for the diagnostic +/-1 s
+kernel. Evidence: `native-fullband-h5-attempt1/readback/report.json`, SHA f57a489c.
+The H5 job is terminal/frozen/CIM checked and released. All-heading numerical
+admission subsequently passed as above; actual whole-case forces/startup/
+application/motion remain pending.
+
+The coefficient-only `native-kernel-t320-attempt1` is COMPLETE/PASS: both T320
+controls meet reference 1e-3, window-change 5e-4 and refinement-change 5e-4 limits
+in every mode, independently accepted. Coverage is the original finite probes,
+0/45/90 genuine headings plus seam, cutoff 12 and lag step .02. Maximum refined
+mode-peak-normalized error .00028372; no pointwise-relative or actual-case claim.
+Terminal/frozen/CIM checks passed and lease released. The bounded-memory
+implementation had reproduced every kernel and complex-response value exactly
+for cached T40/.005 and T80/.0025 after its fine-grid fixture passed. Evidence:
+`artifacts/workflow/native-kernel-blocked-replay-attempt2/units/report.json`.
+The commuted shortcut is stopped: corrected V3 still failed its bound guard.
+
+Directional aggregation/dispatch is pushed at **eb722540** in
+`artifacts/dependencies/wecsim-native-excitation`, published as own-fork draft
+PR #10 against `topwater/reference`.
+It explicitly depends on unmerged PR #8 (805bb29 replayed as 0335022). Its narrow
+library 68670932 passed strict zero/one-header audits and fresh API reopening.
+Same-input preprocessing measured baseline error 18 and corrected error 0.
+Native force-array assertions passed, but full group attempts 1/2/3 failed test
+fixture transport/count instrumentation. The latest independently reviewed fix
+queries literal block handles and applies regex only to names, retaining all
+count and force assertions. **Attempt4 PASS**: all four group/native-bus and
+eleven history controls pass on the exact head. Independent measured review
+accepted publishing the draft. Actual-case forces/startup/motion and integration
+with PR #8/#9 remain pending. No production pin or canonical physics data changed.
+
+The full-band producer completed all 3606 genuine solves through the existing
+API; solve stage 14.6 s after tabulation. New coefficient candidate:
+`native-fullband-producer-attempt1/coefficients/operator-manifest.json`, SHA
+f1f788f91cf42ae7d42eb86291f05636f9a1bdfc993fb028ae4d58d5ae28fdd4.
+Non-author preservation comparison and independent measured review PASS: every
+recorded old low-band/full-radiation/three-heading full-band/physical-geometry
+quantity is exactly preserved. New native.mat SHA0effe8d1; NC b4a1dc07. Actual
+3180 mesh-resolution/2040 irregular-frequency warnings remain unqualified.
+This is coefficient-candidate acceptance, not actual force/physical accuracy.
+Official H5 readback subsequently passed as above: the old actual-force H5 has
+full radiation but only34-point raw A/B; its radiation and common raw subset
+were preserved, and the new full120-point raw A/B verified against NC with
+explicit normalization. The short excitation window +/-1 s was solely a
+readback fixture, not force qualification.
+
+Latest qualification results are in
+experts/wecsim_expert/kernel-and-inertia-checkpoint-2026-10-26.md. The single
+160 s kernel control still failed pitch window stability; the fixed Tukey .25
+cached-kernel candidate failed surge reference error and surge/pitch window
+stability. No production settings or admission limits changed. Independent
+next-method review is read-only. Inertia API direct export failed both control
+and candidate strict audits with the same 53 unrelated changes. A reviewed
+single-property extraction stopped before output on XML lexical representation;
+independently reviewed V2 then passed strict control/candidate audits with zero
+versus one intended change and no other content or metadata change. The generic
+portable helper reproduced the exact 7b0c063c candidate; fresh MATLAB reopening
+passed. Fork PR #9 includes that binary at 67e7c93 and is ready for review:
+eight layout controls and three native tests (12 simulations), plus the public
+example (two simulations), passed on that exact head. Independent review accepted
+the evidence. Matrix claims use the tests' 1e-7 tolerance,
+not new roundoff maxima. No merge, runtime pin or upstream action.
+All these jobs are terminal, frozen-input/process checked and leases released.
+The commuted-kernel diagnostic then passed four scalar witnesses and the stored
+axes read, but failed its conservative 1e-12 axis-bound guard at T40 before full
+array replay; no
+interpretation or threshold adjustment. Independent review proposed a fixed
+centered lattice, tighter interpolation Taylor bound and explicit cached-kernel
+phase correction; WEC/BEMIO owns a new source-only V2 proposal. No numerical
+allocation or longer-window control follows automatically.
+
+Latest added user request: visualization expert should render water to the actual
+moving waterline and make the hull above it transparent, keeping wetted hull
+visible. `/root/result_renderer` implemented the bounded change in isolated
+worktree artifacts/worktrees/waterline-visualization. Cap independently approved
+the first renderer/tests/docs. Its 37 tests and four-frame preview passed, but
+full regeneration timed out at the unchanged240s budget; old video preserved,
+failed video.log retained. Job terminal/frozen/CIM/FFmpeg verified and released.
+User rejected extra per-frame polygons and increased runtime. A four-frame profile
+found772-857 mask polygons/frame and3291 Python clip calls across four frames.
+Visualization owner replaced this with one standard contact-contour PathPatch,
+one shared waterline calculation, and contact/coverage-split submerged edges.
+An overtopped-opening fixture exposed genuinely open physical contact; a narrow
+display-only closure fallback fixed it without changing physical contact or
+weakening tests. Final sourcea31179fa/tests ad373144 independently approved.
+Root's contour tests PASS48/48, same four-frame preview PASS with renderer1.344s
+versus1.765s, and full public video regeneration SUCCESS:751frames,800x800,
+12.5fps,60.08s, fully decoded. Renderer135.422s, totalCLI149.813s, unchanged240s
+budget. New canonical videoSHA74ed47aa..., root viewed peak51.44s and preview
+stills; extra full decode/keyframe job passed. All jobs terminal/frozen/CIM and
+FFmpeg verified, leases released. No producer, saved motion/surface or physics
+change. Versioned evidence: visualization_expert/waterline-transparency-2026-10-25.md.
+
+The seven-tick chart change is already integrated into the main baseline working
+tree: 23 plot/CLI tests pass. Root regenerated and viewed the complete PNG, then
+atomically published examples/simple-boat/result.png (SHA25697e01aa4...). Seven
+nice ticks are symmetric with zero in the middle, outer ticks at limits, shared
+translation range +/-1.5m and rotation range +/-7.5deg. Saved Result unchanged.
+
+User requested visible fork progress. Issues2/3 use plain-language evidence;
+issue1 and PR8 are updated. Inertia PR9 is now ready for review in our fork:
+fix/rigid-hydro-inertia-order at67e7c93, base topwater/reference25b58b. It includes
+the single-expression SLX correction and portable example/tests/packaging recipe.
+The old ad3ba0c draft checkpoint is superseded by the evidence above. Only the
+user may authorize merging; held runtime995 remains unchanged.
+
+The user's order is working end to end, then correctness, then speed. The saved
+canonical workflow was delivered under the earlier forcing path. The current
+WEC-owned-force transition has not passed actual-case startup/force/motion
+qualification; do not claim current-head end-to-end acceptance from those saved
+artifacts. No further production performance changes are authorized now.
+Native coupled dynamics remain unimplemented. No solver/render streaming.
+
+LATEST USER DECISION: switch the WEC backend so WEC-Sim computes wave excitation
+AND motion. Topwater must stop producing the applied wave forces between Capytaine
+and WEC-Sim. Preserve all phases/directions/startup conditions and verify forces,
+then motion, against the baseline before promotion. This is WEC integration, not
+Topwater-native implementation. Read shared-contract.md's force-ownership section.
+Three expert owners are SOURCE-IMPLEMENTING the agreed richer coefficient/H5 and
+directional-record handoff; no jobs by authors. Cap owns _capytaine_surface.py;
+BEMIO owns new prepare_workflow_hydrodynamics.m/validator; WEC owns backend/setup/
+main MATLAB files and selected-rigid history/sum/dispatch fork changes. Coordinate
+shared-file ownership. Production Python force synthesis is removed; old oracle
+is diagnostic only. Raw H5 common band retains genuine data while full radiation
+IRF/Ainf are computed first and preserved; no extra BEM/schema change is assumed.
+
+User briefly requested archive of issue1/PR8, then corrected: keep/update if needed.
+Root restored exact branch fix/imported-excitation-history at805bb29, reopened
+issue1/PR8, and removed obsolete archive tag. They are active, unmerged, and now
+describe the intended WEC-owned calculation. Local isolated candidate worktree
+wecsim-native-excitation is based on25b58b with explicit history cherry-pick0335022;
+further selected-rigid issue2 fixes remain separate. Do not merge/push/pin silently.
+New intended multiple-direction WEC input makes #1/#2 relevant; previous out-of-path
+classification is superseded for this transition. Drag/Flex stay excluded.
+
+Simscape inertia proof is now PASSED and terminal/released: minimal trial3 has
+8layout controls and same unit-torque before/after; full matrix attempt1 has12
+measurements, dry/adjusted native matrices plus unchanged algebraic residual
+matching M+A to roundoff. Independent Cap measured-evidence review accepted.
+See experts/wecsim_expert/inertia-adjustment-proof-2026-10-25.md for values and
+limits (not actual CIC loading/dynamic residual/full boat). Failed earlier
+expectation/link trials stay preserved. No library or pin was promoted.
+
+New BEMIO handoff component also PASSED19/19 on frozen25b58b source, with full
+radiationIRF/Ainf surviving official H5 readback; job native-handoff-tests-attempt1
+is terminal/frozen/CIM verified, lease released. No force/motion equivalence claim.
+All four main integration source blockers are now corrected and independently
+reviewed: whole-packet band coverage, retained-operator identity, comparison
+missing-output failure, and stale-clone internal connectivity. Refrozen source
+manifest d22f5ad4 covers18 files. Root's native-python-tests-attempt1 PASS36/36
+(5.12s) covers the backend and offline failure/identity gates. The isolated
+native-startup-tests-attempt1 PASS2/2 covers diagnostic scale/unchanged calm
+limits only. Reviewed test-only teardown correction01f60c was rerun as
+native-startup-tests-attempt2: PASS2/2, clean MATLAB log with no warnings. All
+jobs terminal/frozen/CIM verified, leases released. No numerical job is currently
+live. Actual fork clone/bus tests remain unexecuted. Private supported-API rigid
+library preparation saved/reopened, but strictauditFAILED188 changed entries
+and2added beyond exact1maskheader. WEC owns read-only diagnosis; no whitelist or
+promotion. See experts/wecsim_expert/native-excitation-handoff-checkpoint-2026-10-25.md.
+
+BEMIO found a genuine retained dense FK/SC/H bank (31c0b956) and GL2 full radiation
+data. Independently reviewed retained-operator-identity-attempt1 completed:
+physical/source/panel identity PASS; sole exact-grid failure is a4.44e-16rad/s
+floating-point alias. Job terminal/frozen/CIM verified, lease released. Root chose
+one fresh current producer run rather than add historical repacking/grid relabeling
+code. Independently reviewed native-coefficient-producer-attempt1 SUCCESS:
+1800genuineBEMcalls,8.5s after GFinit, exact current backend inputs/grids/cacheNone.
+Actualreceipts/source/outputhashes independently accepted for bounded forcecompare;
+operator manifest c57a86c7 under job's coefficients/. Fivecapytaine.libsDLLs missing
+from rootfreeze were producer-recorded before and match independent current hashes;
+limitation documented, includeall*.libsDLLs in futuremanifests. No newBEM needed.
+Job terminal/frozen/CIM verified, lease released; existingmesh/irregular warnings
+remain. No motion/surface/force history or canonical artifact was computed/changed.
+Main comparison manifest checks remain consistency links, not independent lineage
+proof. No actual WEC force/motion comparison or pin promotion yet.
+
+The independently reviewed private hidden-batch transport runs the same
+force-only workflow on held995, leaving the shared engine untouched.
+Attempt1 stopped BEFOREMATLAB at bytehash guard because resourcecopy LF→CRLF;
+terminal/frozen/lease released. Reviewed wrapper-only guardd434 normalizes CRLF
+before samehash;3puretestsPASS (attempt2; attempt1 collectionpathfailure preserved).
+Actual forcecomparison-attempt2 is TERMINAL: forces computed, then initial-calm
+gate FAILED; cleanup verified, no motion produced. All exact Python/MATLAB/
+launcher processes absent, frozen hashes verified and lease released. Native
+initial heave -37.257N versus offline -5.962N exceeds the 24.525N force-norm limit.
+Relative RMS differences are 1.052/2.703/0.252/2.446/1.301/4.353 percent for the
+six channels. Origin elevation phase error is 2.33e-15m. This run includes the
+held fork's full imported-history correction; excitation kernel is still +/-20s,
+dt.02, domega.005, while radiation memory is unchanged10s. No limits were relaxed.
+Stored selected-time replay native-force-discriminator-attempt1 SUCCESS: all10
+samples reproduce native forces within1.10e-10N. Initial heave endpoint-weight
+correction1.079N cannot explain31.295N gap. Terminal/frozen/CIM verified, released.
+Current discrepancy is our finite-kernel representation/settings, not a newly
+demonstrated WEC-Sim convolution bug; imported-history fix was included.
+
+Pure unit-frequency native-kernel-unit-attempt1 SUCCESS, no sea/history/motion:
+T20/40/80 atdw.005 andT80dw.0025, dt.02, genuine five heading columns. ConstantH
+at3.3rad/s yields1.01227/1.06008/1.00122, with refineddw1.00133; at3.4hardcutoff
+all approach.5 (Fourier jump limit), so longer lag alone cannot repair endpoint.
+Frequency quadrature changes are small versus hard-cutoff/window ringing.
+Terminal/frozen/CIM verified, released. The next unit-only cutoff experiment used
+already genuine full-frequency netCDF0/45/90 columns, with low-band identity
+checks and no new BEM or interpolated missing headings. Dense high-frequency
+production coverage would require1806 genuine additional solves, independent
+producer review and the actual-force gate.
+The cutoff3.4/6/12 experiment completed successfully with genuine existing raw
+columns. The3.4control reproduces earlierT20 exactly; worst heave unit error
+31779.6→341.9→184.7N/m, though other modes are not monotonic. All terminal/frozen/
+CIM checks passed and lease released. Topwater issue35 independently tracks this
+preprocessing/settings problem; it is distinct from radiation-surface issue31
+and generic WEC-Sim imported-history/summation fixes.
+
+Completed numerical job: native-kernel-wide-window-attempt1, reviewed driver
+d05b5489. Genuine12band only, T40/T80 atdw.005 plusT80dw.0025, dt.02, unit
+complex responses over.1:.005:3.4+knots, no sea/history/motion/BEM. Predeclared
+numerical admission per mode: maxcomplexerror/Sj<=1e-3; window/refinement change
+<=5e-4Sj. BothT80 grids must pass; zero modes have explicit exact-zero/N/A handling.
+Budget is finite-probe operator admission, not physical/startup/force assurance.
+Execution succeeded, but overall numerical admission FAILED. Both80s grids pass
+the0.1% reference-error budget in all six modes; frequency refinement passes.
+The40-to80s window-change gate fails five modes. Preserve this failure; do not
+retune the declared thresholds or promote80s. All exact processes terminal,
+frozen identities verified and lease released. WEC owns source preparation of
+ONE160s/dw.0025 unit control against saved80s refined data, requiring independent
+review before root allocation. Longer naive WEC time-by-lag query matrices need
+a bounded resource/method assessment before any actual736-record run.
+No numerical job is currently live. No production kernel setting or physical
+requirement has been changed yet.
+
+PrivateAPI audit diagnosis identifies an R2020b-to-R2025b full-save migration.
+WEC owns source-only preparation of separate untouched and one-header direct
+R2020b export controls; no audit whitelist, broad migration or binary promotion.
+
+Reviewed Cap coefficient exchange and existing surface Python controls now PASS
+45/45 in native-producer-tests-attempt1 (2.80s). Exact frozen identities and
+terminal producer/launcher absence verified; lease released. This proves the
+synthetic exchange/geometry fixtures, not a new BEM solve or WEC force/motion
+equivalence. Producer and its two test files are a separate component checkpoint;
+the main WEC handoff remains unpromoted and under author correction/rereview.
+
+LATEST SCOPE: user requests rigorous correctness reviews of Capytaine, BEMIO and
+WEC-Sim by their respective experts, LIMITED TO OUR CODEPATH. Supported inputs
+that reach a boundary count even if this boat's zeros/symmetry hide the defect;
+the active Rigid Hydro inertia correction is in scope regardless of this case's
+numeric impact. Never-entered Drag/Flex/multi-import-only branches are excluded.
+Three read-only audits are COMPLETE: capytaine_path_audit, bemio_path_audit and
+wecsim_surface_examples (WEC dynamics/lifecycle). No numerical work ran for them.
+Both source corrections are FROZEN and independently reviewed: lifecycle by
+the separate BEMIO/WEC expert; finite-boundary guard by the Capytaine expert.
+Root's current-path-checks-attempt2/session61218 is TERMINAL SUCCESS. Immutable
+old/fixed snapshots reproduce two primary-error failures and two setting failures;
+corrected backend suite21PASS and MATLAB suite13PASS (2setting +11finite guards).
+Exact process trees/frozen hashes verified, idle read back and lease released.
+No BEM/boat dynamics or shared-engine call.
+Attempt1 stopped at pytest default-temp permissions; it is terminal/released,
+preserved, and attempt2 uses owned basetemp with cache disabled. Do not edit
+snapshot/drivers until terminal/released. Authors ran no tests. Capytaine
+owner reconciled stale current-state documentation, without physics edits.
+Distinguish discarded intermediate calculations
+from functions not executed; prepared forces are the current applied authority.
+Stop broad generic fork/export/all-variant fixture expansion; preserve unfinished
+sources and failed evidence. No pin change/merge. Optional PRs stay separate.
+
+Every fix PR requires a minimal executable PRE/POST example and actual results.
+Examples are now published/read-back verified in PRs6/7/8 with tested heads
+unchanged. User found issue4/PR6 unreadable; both have been rewritten in plain
+language, leading with Windows cleanup failure and measured1openfile ->0 example.
+Use that human-first standard for future issues/PRs; see coordination.md.
+Latest issue-writing preference: give an upstream-candidate assessment with a
+reason instead of a submission disclaimer. Issue4 and PR6 now say candidateYES:
+generic importer cleanup with no Topwater-specific behavior. Both read back
+verified. This assessment does not authorize upstream contact or publication.
+User then refined the format: issues own problem/reproducer; PRs reference the
+issue and state change, affected area, test command/coverage and deficiencies.
+Issue5/PR7 have now been rewritten and read-back verified in that format; PR7
+code head206bac3 is unchanged. Preserve user edits to issue4 and PR6.
+User squash-merged PR6 on2026-10-26T00:27:39Z as76adb29201291ffdec3e805aba01151d762328b9
+into topwater/reference. Root only advised after exact-head/test review; did not
+merge. The user subsequently merged PR7 at2026-10-26T00:36:44Z as
+25b58bda96ab0272cbfb4b0755539d5bb8ca227e. Current topwater/reference contains
+handle+display fixes; only PR8 remains open among those three. Topwater's pin995
+stays held. Issue1/PR8 have also been rewritten/read-back verified in the agreed
+issue/PR format, preserving head805bb29 and stating that prepared loads replace
+its zero result. No upstream action or root merge occurred.
+
+Canonical attempt4 is TERMINAL SUCCESS: public60s WEC-Sim solve2393.743s,
+public render226.932s,3001 motion samples,751 surface frames,751 decoded H264
+frames at800x800/12.5fps/60.08s. Evidence:
+artifacts/workflow/canonical-pipeline-attempt4/{report.json,terminal.json,output.log}.
+Frozen source/input hashes and the exact recorded process tree were verified
+terminal by independent CIM; idle was read back and the lease released.
+Do NOT re-poll session61734 or restart this expensive run.
+
+Root viewed decoded0/30/51.44/60s frames: full hull/water coverage and readable
+HUD. Basic implementation/visual delivery passes; physics accuracy does not.
+Actual total-minus-incident RMS:5.987mm full exterior/2.242% incident RMS;
+7.993mm one-beam/2.960%; resolved peak65.087mm at44.56s. Full warning triage
+is docs/cli/warning-triage.md. Its remaining correctness questions own issues.
+
+User added automatic solve output result.png, then shared Y scales: translations
+share one symmetric metre range, rotations a separate symmetric degree range.
+New result_plot.py +solve_outputs.py publish NPZ/PNG after private preparation,
+with rollback on handled failures. Code/CLI tests286PASS1optional skip11.23s;
+latest shared-axis source checks44PASS5.07s. All jobs terminal/frozen/process
+verified and leases released. The PNG was generated FROM the completed Result,
+without rerunning physics: result-plot-backfill-attempt2/report.json,2160x1170,
+all3001 samples, native-q agreement2.63e-14. Original seven data/video/log files
+are BITEXACT. Root viewed final shared-axis PNG. Original result.log truthfully
+records the earlier solve; it was not retroactively edited to fake PNG creation.
+
+Public generator replay matches every sea array; unavailable-native check in a
+PRIVATE copy preserved all completed canonical files/logs. Public-replay-attempt1
+is terminal/released. Runtime is much slower than root's15-20minute estimate;
+report measured times, not real-time claims. JIT experiment fully reverted.
+
+No numerical job is live. All recorded component/inertia checks are terminal/released.
+Verify ledger/lease and exact processes before any additional numerical claim.
+Existing shared MATLAB CAPYTAINE_REFERENCE engine29796/launcher40036 was not
+quit or restored onscreen. Keep its window minimized/headless. TEMP/TMP must
+be normal AppData/Local/Temp before engine discovery/connect.
+
+## Public contract
+
+One flat examples/simple-boat/ contains exactly eight final files:
+boat.npz, sea.npz, result.npz, result.png, video.mp4, sea.log, result.log, video.log.
+Future generate-boat/boat.log is not implemented now. Commands:
+
+```powershell
+uv run topwater generate-sea [DIRECTORY] --record RECORD_ID [--seed N]
+uv run topwater solve [DIRECTORY] DURATION_SECONDS [--solver=native|wecsim]
+uv run topwater render [DIRECTORY]
+```
+
+Directory defaults to cwd; filenames are fixed. Native default fails clearly;
+independent native coupled dynamics remain excluded. No solve/render streaming
+or pipelining feature is authorized. Current WEC integration dt=.02s; surface
+output targets .08s (3001 motion samples/751 frames for60s, endpoints included).
+Future integration may be adaptive independently of saved output cadence.
+
+Preserve the accepted24ft/9ft/2500kg physical boat and measured stronger sea
+ndbc-46086-20231223T0040Z, seed42. Actual generate-sea replay reproduced EVERY
+stored sea array bit-exactly and generated canonical sea.log.
+
+Public NPZ files have numeric arrays only, exact keys, allow_pickle=False, no
+metadata/version/solver marker or incident-elevation cache. Boat is an uncapped
+convex physical triangular hull with exactly one inferred opening. Internal caps
+carry no mass/pressure and never define a waterline. Result includes its physical
+hull snapshot/CG, absolute poses and mandatory packed total-water geometry with
+independent surface times and frame-local connectivity/offsets.
+
+LATEST APPROVED GEOMETRY: preserve the producer water mesh; DO NOT cut/remesh
+triangles on export. Hull-interior portions are invalid fluid and implicitly
+excluded. A separate shared surface_geometry routine computes the physical
+hull/total-surface intersection. WEC output remains incident+diffraction+radiation
+from its already-computed motion; physics/forcing/motion are unchanged. The
+format also permits the native solver's own evolving mesh without a linear
+field decomposition. Current top-down render has its own documented limits.
+
+Delta metrics integrate exact represented-P1 moments over exterior support using
+temporary integration polygons, not an exported contact mesh. One-beam selection
+uses ORIGINAL source-triangle centroid distance to the independent waterline;
+this is an explicitly discrete band approximation. Exact3D wet-set diagnostics,
+startup gates and physical opening/cap checks remain. Native nonlinear output
+must not inherit fixed-mean linear applicability criteria indiscriminately.
+See docs/npz-format.md, cli/*.md and experts/shared-contract.md.
+
+## Latest verified checkpoint
+
+Pushed Topwater **bda901d**: eight-file example, PNG integration, logs and strategy.
+LFS upload342MB verified; Git LFS fsck passes and the development branch matches
+origin. Prior source checkpoint537cf08; runtime source SHA:
+_capytaine_surface.py2858b847efea11a97c50bd9d12c744bf3069723e32e5fa401309c4e2ee0f352a.
+
+- Complete workflow checks:270PASS/1optional libigl skip,14.11s;
+  artifacts/workflow/uncut-workflow-tests-attempt2.
+- Shared contact+geometry:34PASS; logical log/CLI/render integration59PASS,
+  including actual two-frame encode/decode. Rich Windows flush fragmentation is
+  fixed, console bytes/handler configuration preserved. Video summary timings
+  are rounded; source and encoded durations remain distinct.
+- Three-frame replay0/277/600: original world-grid vertices/connectivity BITEXACT,
+  retained arrays unchanged, physics/remesh calls forbidden. Full diagnostics
+  took4.2946s; opening+waterline alone.1436s. These are sparse smoke metrics,
+  NOT canonical60s disturbance statistics or proof of real-time throughput.
+- Paired diagnostic shortcuts:3.902s before/2.509s after (1.55x), packed output
+  BITEXACT, wet-value differenceZERO, metrics within1e-12;
+  artifacts/workflow/uncut-diagnostics-compare-attempt1. Independent source review
+  approved gates/ownership/area rules. All those jobs terminal/frozen/process
+  verified, leases released before current public run.
+
+No author is currently editing runtime. Root owns integration/execution. Experts
+may research/write non-runtime docs only. Native physics, forcing changes and
+new numerical campaigns remain excluded while the public run completes.
+
+## Correctness issues and parallel research
+
+User explicitly requested independent issues and WEC-Sim-only first-line scope:
+#31 causal radiation-surface phase; #32 reference mesh/irregular frequencies;
+#33 reconstructed field/prepared-body loads; #34 fixed-mean linear applicability.
+All four created/updated and first-line readback verified. #30 now links to them
+rather than owning their investigation checklists. Issue writes were explicitly
+authorized; no upstream messages/PRs/merges were authorized.
+
+Numerical researcher completed READ-ONLY #31 investigation:
+experts/numerical_methods_researcher/causal-phase-issue31-investigation-2026-10-25.md.
+No sign/normalization fault was proved. With the same band/quadrature, cosine
+inversion folds the raw negative-lag part into positive lags. Sharp bandlimits
+can produce negative ringing even for causal data; the77mm future contribution
+is not proof of noncausal BEM physics. Proposed later discriminator: ONE Heave
+near/far saved-transfer check plus known-causal analytic control, separating band
+from lag-window effects. No calculation, import, runtime edit or job was run.
+This proposal is NOT a new numerical allocation during the current lease.
+
+Keep provisional qualifications: complex near-field recovery not passed;
+42.7mm max/12.5mm RMS signed-lag-versus-causal sensitivity is NOT a true-error
+bound. Mesh/irregular-frequency risk, field/load interpolation discrepancy and
+restoring/wet-set warnings remain unresolved. Successful files/tests do not
+certify physical accuracy. Final actual logs still need triage after delivery.
+
+## WEC-Sim fork strategy request
+
+User was not aware how fork changes had progressed. Root disclosed five commits
+(six corrections) beyond official v7.1.0: forcing history/directional sum/once-only
+dispatch, File Solid inertia mapping, BEMIO handles, literal path display.
+The forcing/inertia categories are consequential model changes with SELECTED
+path evidence, not universal WEC-Sim validation. Resource/display fixes do not
+change numerical parsing or dynamics. Upstream remains untouched.
+
+Current clean pinned fork: amosborne/WEC-Sim, topwater/reference-v7.1.0,
+9952634f6f2e2746a1626484e27c3003d1e1d5a9; basea23d299(v7.1.0).
+Keep the runtime pin unchanged under the user HOLD; future fork work uses an
+isolated checkout. Causal reconstruction is in
+Topwater's adapter, not these fork changes.
+
+User now explicitly asks WEC-Sim expert to define a maintenance strategy and
+assess possible rework. /root/wecsim_surface_examples completed a bounded
+read-only assignment; owns docs/wecsim-fork-strategy.md (and concise KB state).
+Classify every logical patch as generic upstream candidate/Topwater integration/
+uncertain; check CURRENT upstream branch/release/issues/PRs; propose independent
+repros, minimal submission patches and tracking/rebase policy. Pay attention to
+R2020b->R2025b SLX migration noise/compatibility and precomputed-force assumptions.
+NO fetch/checkout/rebase/cherry-pick/fork edits, numerical work or upstream writes.
+Do not infer permission to submit PRs or rework the frozen fork. Plan/review first.
+
+## Current bounded fork rebuild assignment
+
+The first two fixes are published as separate internal PRs in OUR fork:
+https://github.com/amosborne/WEC-Sim/pull/6 (handles, issue4,
+0d364b1f6154c5b8bee99d95f4fbf7e62b024159) and
+https://github.com/amosborne/WEC-Sim/pull/7 (literal paths, issue5,
+206bac360222b86ebe33a903225f0dae118c7093). Both target topwater/reference and
+were independently based on exact clean releasea23d299. User merged PR6 only;
+no further root merge is authorized.
+Isolated checkout: artifacts/dependencies/wecsim-rebuild-v7.1.0. Old checkout
+and Topwater runtime pin9952634 remain unchanged; combined reference is now25b58bda.
+
+Root serial stock/fixed checks passed on Windows/MATLABR2025b: all9 fixed pass;
+stock7 expected fail/2 controls pass. All32 numeric fields EACH sphere/RM3 have
+exactly equal values (not byte identity). Independent source/harness review
+completed. Attempt1 wrapper and attempt2 helper-discovery failures are preserved;
+attempt3 is terminalSUCCESS, exact processes/hashes verified, idle read back and
+lease released. Only README/messages changed after successful tested blobs.
+Evidence/limits: experts/wecsim_expert/fork-rebuild-regressions-2026-10-25.md.
+No full WEC suite, other MATLAB/OS or dynamics simulation was run for these PRs.
+Issue1 history/lag correction is now internal PR8:
+https://github.com/amosborne/WEC-Sim/pull/8, branch fix/imported-excitation-history,
+805bb29b1aa5479988b61d5187f52809656cc82c independently atop a23d299. Source and
+independent scalar oracle were reviewed before root's serial execution. Windows/
+R2025b history-regressions-attempt1 passed all11 candidate tests; stock10fail/
+1regularCIC control pass, no incomplete tests. Selected stock witnesses are real
+preprocessing numerical crop/lag failures. All exact processes/hashes were verified
+terminal, idle read back and lease released; session78983 is CLOSED. Only README/
+message changed after tested source15a38c68. New test/helper/wrapper static clean.
+
+Its generic policy retains complete FILE history, zero-extends beyond it with a
+named warning, rejects invalid internal data, preserves the original lag grid and
+applies the legacy absolute-time SOURCE ramp once. Existing already-ramped direct
+calls stay valid. No new negative-time clamp or mandatory calm-start/padding gate.
+Evidence/limits: experts/wecsim_expert/imported-history-rebuild-2026-10-25.md.
+No dynamics, multi-import, full-suite, MATLAB/OS matrix or performance qualification.
+Inertia remains outstanding on the active rigid path; multi-import work is out
+of current scope. No upstream write; user merged PR6, combined branch76adb292,
+Topwater/oldcheckout995 and public artifacts unchanged. User later merged PR7;
+current combined reference25b58bda includes both resource/display corrections.
+Pin promotion and legacy branch retirement remain on hold.
+
+The broader issue3 source assignment is STOPPED by latest scope steering above.
+Preserve uncommitted tests/fileSolidInertiaOrderTest.m and tests/helpers/ in the
+isolated fix/file-solid-inertia-order branch. No generated SLX was promoted.
+Root's inertia-export-attempt1 supported API/save/export/reopen succeeded as
+R2020b, but strict audit FAILED with53 unexplained entries. Candidate SHA:
+82ca792005f4969ce578a48a0517b7633ff509d901e35db7928435115e1059f6, private
+under that job's private-library/exported/. Exact processes and frozen identities
+were verified terminal; idle read back and lease released. No native tensor
+probes ran. Do not relax the audit or resume export/native development now.
+
+New NARROW source assignment after d043f8d: WEC expert owns
+artifacts/workflow/rigid-inertia-probe-v1/ for the ACTIVE Rigid Hydro Solid only.
+Same inputs before/after, six independent wrench columns with direct initial
+acceleration, identical dry/production-adjusted bodies in two modes; six columns
+x two modes means twelve tiny native runs when later approved. Infer the native
+6x6 from measurements; label added residual composition separately as algebra.
+A single roll-torque option gives the smallest issue3 example. No model load,
+MATLAB call, test/job or source-library edit is allocated to author. Preserve
+the interrupted broad fixture. Root must obtain independent source review before
+any serial probe. No Drag/Flex, new SLX export, branch promotion or pin change.
+
+Completed read-only issue2 proposal is retained as OPTIONAL generic work:
+experts/wecsim_expert/multiimport-rebuild-proposal-2026-10-25.md and own-fork
+issue2 comment6405172942. No implementation or numerical job is allocated.
+Its needed future gate is simulated downstream native sum/bus evidence; old
+receipt was graph-only. Current priority is the actual-codepath/minimum-patch
+read-only audit, not completing all five generic fork issues.
+## Current fork process and next actions
+
+User requested unwind/rebuild through own-fork issues, focused branches and
+internal PRs. Issues-first is COMPLETE: amosborne/WEC-Sim issues1-5 cover history,
+aggregation/dispatch, inertia/SLX, handles and literal display. Expert enabled
+ONLY that fork's issues and verified every body. Subsequent isolated fixes and
+internal PRs are recorded above; no upstream writes occurred. Root CREATED
+clean topwater/reference at official latest releasev7.1.0/a23d299. The user has
+since merged handle fix PR6 as76adb292; it is not yet Topwater's runtime pin.
+Future internal PR base repo MUST be amosborne/WEC-Sim, branch topwater/reference.
+
+The user explicitly says DO NOT UPDATE TOPWATER YET. Keep9952634/current local
+checkout. Ultimately delete old topwater/reference-v7.1.0, but only after the
+new reference is reviewed/tested, Topwater repinned and old exact SHA retained
+under an immutable archive tag. Do not leave the old branch as a second active
+baseline. Release upgrades require a good reason and separately tested candidate;
+no automatic main/dev movement. No upstream issue or PR without specific explicit
+user permission. Current strategy: docs/wecsim-fork-strategy.md, independently
+reviewed; generic candidates are NOT automatically submission-ready.
+
+1. Working workflow/artifacts/source/docs are committed and pushed as bda901d.
+   Eight files, LFS objects and final shared-axis PNG verified. Authorized issue30
+   now records completion, actual times and independent correctness/fork links.
+2. Keep issue31's next stored-data/analytic-control experiment queued, not
+   automatically allocated; user prioritizes fork organization and working delivery.
+3. Continue fork rebuild only through bounded expert assignments and reviewed
+   own-fork issues/PRs. User's immediate steps were issues-first and clean reference
+   branch; those are done. Never silently replay coupled conditional changes,
+   switch the held Topwater pin, merge without authorization/checks, or contact
+   upstream. The required future branch retirement remains outstanding.
+4. The complete initial workflow has implementation evidence; the broader active
+   goal includes the newly requested fork reorganization. Do not declare that
+   future reorganization complete just because the example now runs.
+
+Use artifacts/workflow/claim_check.ps1, run_check.py and finish_check.ps1 for
+serial jobs. Claim, separate readback, run, verify terminal/frozen/process state,
+record idle under lease, separate readback, then release lease as FINAL action.
+PowerShell scriptblock invocation avoids local script execution-policy issues.
+Native DLL/FFmpeg/MATLAB jobs and authoritative CIM need unsandboxed execution.
+
+Historical failures and original policies remain in their evidence and Git.
+Attempt3 was intentionally stopped by user after320.329s; incomplete result.log
+has no END. Attempt2 retained the complete immutable field cache at
+C:/Users/alex/AppData/Local/Temp/topwater-wecsim-mt5icmiq/surface-recovery/completed-field.npz,
+SHA66039a8f78cfb8f9dcdec5d565e2197e9a06b01361521b19e0d5d46279613549.
+Do not alter/delete it. Earlier clipped export passed751 frames in28.5min but is
+superseded by the uncut contract; do not rerun it. Prior handoff chronology is
+preserved at commit537cf08 and older immutable checkpoints; no study/policy was
+deleted by condensing this handoff.

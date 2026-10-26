@@ -59,7 +59,8 @@ all six degrees of freedom during the WEC-Sim simulation.
 Incoming-wave excitation uses those fixed responses; moving the boat does not
 recompute its hydrodynamic geometry or diffraction solution. Motion still feeds
 back through displacement-dependent restoring forces, added water inertia and
-velocity-history-dependent radiation forces. This is a coupled linear system.
+velocity-history-dependent radiation forces. These hydrodynamic responses retain
+the mean-hull linearization.
 
 The reconstructed diffraction and radiation fields also remain referenced to
 the mean hull. Diffraction follows the incoming waves, while radiation is driven
