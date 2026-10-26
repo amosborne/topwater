@@ -16,11 +16,14 @@ simu.rho = n.rho;
 simu.gravity = n.g;
 simu.saveWorkspace = 0;
 simu.paraview.option = 0;
-% Scalar elevation is an unused importer compatibility input. The exact
-% directional packet supplies the six-component force table after preprocessing.
-waves = waveClass('elevationImport');
-waves.elevationFile = fullfile(pwd,'compatibility-elevation.txt');
-waves.direction = 0;
+% Each physical directional branch retains its origin phase and full history.
+% Native WEC-Sim computes and sums their excitation; no force table is supplied.
+clear waves
+for j = 1:numel(prepared.wave_files)
+    waves(j) = waveClass('elevationImport');
+    waves(j).elevationFile = prepared.wave_files{j};
+    waves(j).direction = prepared.wave_directions_deg(j);
+end
 body(1) = bodyClass(fullfile(pwd,'canonical.h5'));
 body(1).geometryFile = fullfile(pwd,'boat_cg.stl');
 body(1).mass = n.M(1,1);

@@ -2,7 +2,40 @@
 
 Updated2026-10-25. Currentauthority: [handoff](../../checkpoint-handoff.md),
 [physicalcontract](../shared-contract.md), [serialprocedure](../coordination.md).
-No active WECnumerical allocation or automaticfollowup. ROOT owns integration.
+No author execution allocation or automatic follow-up. Root owns integration.
+
+Root's native-excitation component checks passed: backend plus offline comparison
+36/36, and MATLAB startup diagnostic/gate2/2. After the reviewed test-only cwd
+teardown correction (`01f60c0c`), startup attempt2 again passed2/2 with a clean
+MATLAB log and no warnings. Exact frozen sources and process termination were
+verified; leases released. The first attempt's Windows deletion warnings remain
+preserved; production math did not change. These component checks do not qualify
+actual-case forces or new fork dispatch. Evidence:
+`artifacts/workflow/native-startup-tests-attempt2/`.
+
+User authorized WEC-Sim-owned excitation and motion. The unexecuted integration
+source now emits physical directional origin-elevation records, preserving both
+signed branches and padded absolute time; no Python force is supplied or rebound.
+MATLAB performs native initial-force certification and applied-bus identity.
+The agreed H5 handoff retains the exact original full-band radiation kernel/Ainf,
+with genuine dense raw excitation and its explicit low-frequency bridge.
+Offline force comparison remains separate from production. Isolated candidate
+`fix/native-imported-excitation` is based on combined `25b58b`, then explicit
+history dependency `805bb29` replayed as `0335022`; the separate group/rigid
+dispatch patch and supported API preparation sources await review/execution.
+Held runtime995, public artifacts and published topic branches are unchanged.
+See `artifacts/workflow/native-excitation-comparison-v1/README.md` for gates.
+
+Active rigid Hydro Simscape inertia evidence now PASSES the measured single-
+torque witness and twelve six-basis before/after runs. Corrected native dry
+matrix error is5.33e-15; native adjusted matrix plus unchanged algebraic residual
+matches M+A to3.55e-15. Eight layout controls pass. Independent review accepted
+these narrow claims; exact processes/frozen files were verified terminal and
+leases released. This does not test dynamic residual/CIC forces or boat accuracy.
+See [measured proof](inertia-adjustment-proof-2026-10-25.md). Failed earlier
+expectation/link trials remain preserved; no further inertia job is authorized.
+The broader interrupted Drag/Flex/export sources stay preserved and stopped.
+No library or public artifact was promoted by the inertia witness.
 
 Issues-first work is EXECUTED: enabled issues only in `amosborne/WEC-Sim`,
 checked duplicates, and created/read-back verified fork issues

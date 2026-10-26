@@ -8,16 +8,27 @@ maxNumCompThreads(1);
 addpath(genpath(fullfile(topwaterFork,'source')));
 prepared = load('prepared-case.mat');
 n = prepared.n;
-prepare_hydrodynamics(prepared);
+h = prepare_workflow_hydrodynamics(prepared);
 wecSimInputFile;
 build_workflow_model(topwaterCaseDir,prepared.model_name,true);
 initializeWecSim;
 prepared = load('prepared-case.mat');
 n = prepared.n;
+native_excitation = body(1).hydroForce.hf1.userDefinedFe;
+assert(isequal(size(native_excitation),[numel(prepared.time) 6]) && ...
+    all(isfinite(native_excitation),'all'),'Native directional excitation is incomplete');
+native_excitation_time = waves(1).waveAmpTime(:,1);
+assert(max(abs(native_excitation_time-prepared.time(:))) < 1e-9);
+save('native-excitation.mat','native_excitation_time','native_excitation','-v7');
+startup = native_excitation_startup(prepared,native_excitation);
+save('native-excitation.mat','startup','-append');
+if prepared.force_only
+    % Preprocessing-only comparison: no body model or trajectory is created.
+    return
+end
 build_workflow_model(topwaterCaseDir,prepared.model_name,false);
 load_system(fullfile(topwaterCaseDir,[prepared.model_name '.slx']));
-topwaterForceTable = [prepared.time prepared.force];
-configure_force_table(prepared.model_name);
+inspect_native_excitation(prepared.model_name);
 configure_cic_logging(prepared.model_name);
 assert(max(abs(body(1).centerGravity(:)-n.cg(:))) < 1e-12);
 assert(max(abs(body(1).centerBuoyancy(:)-n.cb(:))) < 1e-12);
@@ -47,9 +58,9 @@ q = x(:,1:6); q(:,1:3) = q(:,1:3)-n.cg(:)';
 assert(max(abs(q(1,:))) < 1e-8 && max(abs(x(1,7:12))) < 1e-9, ...
     'Actual native initial state is not the prepared equilibrium at rest');
 assert(max(abs(x(1,31:36))) < 1e-9,'Initial radiation memory is not zero');
-tolerance = 1e-9+1e-10*max(abs(prepared.force),[],1);
-assert(all(max(abs(x(:,25:30)-prepared.force),[],1) <= tolerance), ...
-    'Actual native excitation differs from prepared directional incoming field');
+tolerance = 1e-9+1e-10*max(abs(native_excitation),[],1);
+assert(all(max(abs(x(:,25:30)-native_excitation),[],1) <= tolerance), ...
+    'Actual applied excitation differs from WEC-Sim directional preparation');
 assert(max(abs(x(:,19:24)-(x(:,25:30)-x(:,31:36)-x(:,37:42)-x(:,43:48)-x(:,49:54)-x(:,55:60))),[],'all') < 1e-9);
 assert(all(x(:,49:60) == 0,'all'),'Unexpected viscous or linear damping');
 verify_balance(x,q,solid,hf.fAddedMass,simu.dt);
@@ -62,50 +73,8 @@ radiation = x(:,31:36);
 save('motion.mat','time','q','velocity','acceleration','excitation','radiation','-v7');
 close_owned_model(prepared.model_name);
 
-function prepare_hydrodynamics(prepared)
-n = prepared.n;
-h = readCAPYTAINE(struct(),prepared.netcdf_path);
-assert(h.Nb == 1 && all(h.dof == 6));
-assert(h.rho == n.rho && h.g == n.g && isinf(h.h));
-% Verify the official importer's one complex-convention conversion directly.
-names = erase(lower(string(ncread(prepared.netcdf_path,'influenced_dof')')),char(0));
-modes = ["surge","sway","heave","roll","pitch","yaw"];
-index = zeros(1,6);
-for j = 1:6, index(j) = find(names == modes(j)); end
-fk = named_array(prepared.netcdf_path,'Froude_Krylov_force',{'influenced_dof','wave_direction','omega','complex'});
-sc = named_array(prepared.netcdf_path,'diffraction_force',{'influenced_dof','wave_direction','omega','complex'});
-components = erase(string(ncread(prepared.netcdf_path,'complex')'),char(0));
-re = fk(index,:,:,components == "re")+sc(index,:,:,components == "re");
-im = fk(index,:,:,components == "im")+sc(index,:,:,components == "im");
-validate_workflow_hydrodynamics(h,'imported',re,im);
-assert(max(abs(h.ex_re*n.rho*n.g-re),[],'all') <= 1e-10*max(1,max(abs(re),[],'all')));
-assert(max(abs(h.ex_im*n.rho*n.g+im),[],'all') <= 1e-10*max(1,max(abs(im),[],'all')));
-h.cg = n.cg(:); h.cb = n.cb(:); h.Vo = n.volume;
-h.Khs = n.K/(n.rho*n.g);
-h = radiationIRF(h,10,501,2401,[],[]);
-h = excitationIRF(h,20,2001,2401,[],[]);
-h.Ainf = n.Ainf/n.rho;
-validate_workflow_hydrodynamics(h,'prepared');
-h.file = fullfile(pwd,'canonical');
-writeBEMIOH5(h);
-end
-
-function value = named_array(file,name,order)
-info = ncinfo(file,name);
-names = {info.Dimensions.Name};
-permutation = zeros(1,numel(order));
-for j = 1:numel(order), permutation(j) = find(strcmp(names,order{j})); end
-permutation = [permutation setdiff(1:numel(names),permutation,'stable')];
-value = permute(ncread(file,name),permutation);
-shape = size(value);
-assert(all(shape(numel(order)+1:end) == 1));
-value = reshape(value,shape(1:numel(order)));
-end
-
-function configure_force_table(model)
-% Only the copied case instance receives a data-binding override. The native
-% source/library and single-total imported-force dispatch remain unchanged.
-set_param([model '/Boat'],'LinkStatus','inactive');
+function inspect_native_excitation(model)
+% Read-only audit of the native once-only imported total, without rebinding.
 set_param(model,'SimulationCommand','update');
 parent = [model '/Boat/Hydrodynamic Body/Wave Diffraction and Excitation Force Calculation'];
 branches = find_system(parent,'SearchDepth',1,'LookUnderMasks','all','FollowLinks','on', ...
@@ -125,10 +94,13 @@ for j = 1:numel(active)
     end
 end
 assert(numel(selected) == 1,'Expected one active positive imported-force source');
-set_param(selected{1},'VariableName','topwaterForceTable');
+assert(strcmp(get_param(selected{1},'VariableName'),'[Nwave.waveAmpTime(:,1),body.hydroForce.hf1.userDefinedFe]'), ...
+    'Native imported excitation data binding changed');
 end
 
 function configure_cic_logging(model)
+% Only sink logging requires an editable case copy; excitation stays native.
+set_param([model '/Boat'],'LinkStatus','inactive');
 parent = [model '/Boat/Hydrodynamic Body/Wave Radiation Forces Calculation'];
 choices = find_system(parent,'LookUnderMasks','all','FollowLinks','on', ...
     'MatchFilter',@Simulink.match.activeVariants,'Name','Convolution Integral Calculation');

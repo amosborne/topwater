@@ -43,10 +43,27 @@ expectation/link trials stay preserved. No library or pin was promoted.
 New BEMIO handoff component also PASSED19/19 on frozen25b58b source, with full
 radiationIRF/Ainf surviving official H5 readback; job native-handoff-tests-attempt1
 is terminal/frozen/CIM verified, lease released. No force/motion equivalence claim.
-Main WEC integration review has blockers pending correction: whole-packet band
-coverage, retained-operator identity, comparison missing-output failure, and
-stale-clone internal connectivity. Authors own source fixes; root runs no job on
-that unfrozen integration until rereview. No numerical job is currently live.
+All four main integration source blockers are now corrected and independently
+reviewed: whole-packet band coverage, retained-operator identity, comparison
+missing-output failure, and stale-clone internal connectivity. Refrozen source
+manifest d22f5ad4 covers18 files. Root's native-python-tests-attempt1 PASS36/36
+(5.12s) covers the backend and offline failure/identity gates. The isolated
+native-startup-tests-attempt1 PASS2/2 covers diagnostic scale/unchanged calm
+limits only. Reviewed test-only teardown correction01f60c was rerun as
+native-startup-tests-attempt2: PASS2/2, clean MATLAB log with no warnings. All
+jobs terminal/frozen/CIM verified, leases released. No numerical job is currently
+live. Actual fork clone/bus tests remain unexecuted. Private supported-API rigid
+library preparation saved/reopened, but strictauditFAILED188 changed entries
+and2added beyond exact1maskheader. WEC owns read-only diagnosis; no whitelist or
+promotion. See experts/wecsim_expert/native-excitation-handoff-checkpoint-2026-10-25.md.
+
+BEMIO found a genuine retained dense FK/SC/H bank (31c0b956) and the GL2 full
+radiation data, but no proven drop-in full-contract native.mat. Cap owns a
+separate source-only retained-operator identity gate to compare the old physical
+operator against the canonical prepared case before any repacking/reuse. Main
+comparison manifest checks are consistency links, not independent historical
+lineage proof. If actual operator identity fails, freeze/run the current producer
+once instead. No actual WEC force/motion comparison or pin promotion yet.
 
 Reviewed Cap coefficient exchange and existing surface Python controls now PASS
 45/45 in native-producer-tests-attempt1 (2.80s). Exact frozen identities and

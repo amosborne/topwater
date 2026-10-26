@@ -13,7 +13,7 @@ from scipy.io import savemat
 from scipy.optimize import linear_sum_assignment
 from scipy.spatial.transform import Rotation
 
-from topwater._wecsim_setup import floating_equilibrium, prepare_case
+from topwater._wecsim_setup import IncomingTrain, floating_equilibrium, prepare_case
 from topwater import wecsim_backend as backend
 from topwater.hydrostatics import hydrostatics
 from topwater.inputs import InitialState
@@ -102,20 +102,78 @@ def test_native_mean_pose_and_global_embedding_are_applied_once(monkeypatch, tmp
                             mean_cg_m=center, physical_faces=np.array([[0, 1, 2]]),
                             mass_matrix=np.eye(6), world_from_native=embedding,
                             equilibrium=SimpleNamespace(orientation=equilibrium.as_quat(scalar_first=True)))
+    setup.body = SimpleNamespace(mesh=SimpleNamespace(vertices=vertices))
+    setup.train = SimpleNamespace(
+        directional_elevation_records=lambda times: (np.array([.2, .2+np.pi]),
+                                                      np.c_[np.cos(times), .3*np.sin(times)]),
+        carriers=SimpleNamespace(angular_frequencies=np.array([1.]), amplitudes=np.array([.2])),
+        theta=np.array([.2]), omega=np.array([0., 1.4]))
     hydro = SimpleNamespace(K=np.eye(6), Ainf=np.eye(6), cb=np.zeros(3), volume=1.,
-                            netcdf_path=tmp_path/'not-executed.nc')
+                            netcdf_path=tmp_path/'not-executed.nc', native_mat_path=tmp_path/'native.mat')
+    hydro.excitation_omega = np.array([.1, 3.4])
+    hydro.excitation_headings = np.array([0., 2*np.pi])
+    hydro.excitation = np.ones((2, 2, 6), dtype=complex)
     q = np.array([[0., 0., 0., 0., 0., 0.], [.3, -.2, .1, .04, -.03, .02]])
 
     def fake_native(workspace, fork):
         savemat(workspace/'motion.mat', dict(time=setup.time_s, q=q,
-                velocity=np.zeros((2, 6)), acceleration=np.zeros((2, 6))))
+                velocity=np.zeros((2, 6)), acceleration=np.zeros((2, 6)), excitation=np.ones((2, 6))))
 
     monkeypatch.setattr(backend, '_run_matlab', fake_native)
-    motion = backend.integrate_motion(setup, hydro, np.zeros((2, 6)), tmp_path/'case', tmp_path)
+    motion = backend.integrate_motion(setup, hydro, tmp_path/'case', tmp_path)
+    prepared = backend.loadmat(tmp_path/'case/prepared-case.mat')
+    assert 'force' not in prepared
+    assert not (tmp_path/'case/compatibility-elevation.txt').exists()
+    assert len(list((tmp_path/'case').glob('wave-*.txt'))) == 2
+    assert_allclose(motion.excitation_native, 1.)
     assert_allclose(motion.position_m, q[:, :3] @ embedding.T + center)
     expected = embedding @ Rotation.from_euler('xyz', q[:, 3:]).as_matrix() @ equilibrium.as_matrix()
     actual = Rotation.from_quat(motion.orientation_wxyz, scalar_first=True).as_matrix()
     assert_allclose(actual, expected, atol=1e-14)
+
+
+def test_directional_records_reconstruct_origin_field_at_padded_absolute_times():
+    train = IncomingTrain.__new__(IncomingTrain)
+    train.omega = np.array([0., .7, 1.4])
+    train.k = train.omega**2/9.81
+    train.theta = np.array([.3, 1.7])
+    train.carriers = SimpleNamespace(amplitudes=np.array([.4, .2]))
+    train.C = np.array([[[0., .2+.3j, .1-.05j], [0., -.03+.02j, .01+.02j]],
+                        [[0., -.1+.2j, .03+.01j], [0., .01-.04j, -.02+.01j]]])
+    times = np.array([-20.02, -4., 0., 11., 60., 80.02])
+    directions, records = train.directional_elevation_records(times)
+    assert_allclose(directions, np.mod([.3, .3+np.pi, 1.7, 1.7+np.pi], 2*np.pi))
+    assert_allclose(records.sum(axis=1), train.elevation([[0., 0.]], times)[:, 0],
+                    rtol=0, atol=1e-14)
+    xy = np.array([1.2, -.4])
+    field = np.zeros(len(times))
+    for j, theta in enumerate(directions):
+        coefficients = train.C.reshape(-1, len(train.omega))[j]
+        phase = train.k*(xy @ [np.cos(theta), np.sin(theta)])
+        field += (np.exp(-1j*times[:, None]*train.omega+1j*phase) @ coefficients).real
+    assert_allclose(field, train.elevation(xy, times)[:, 0], rtol=0, atol=1e-14)
+
+
+def test_genuinely_calm_sea_has_a_physical_zero_record():
+    train = IncomingTrain.__new__(IncomingTrain)
+    train.carriers = SimpleNamespace(amplitudes=np.zeros(2))
+    directions, records = train.directional_elevation_records(np.array([-1., 0., 1.]))
+    assert_allclose(directions, [0.])
+    assert_allclose(records, np.zeros((3, 1)))
+
+
+@pytest.mark.parametrize('packet_max, accepted', [(3.39, True), (3.4, True), (3.41, False)])
+def test_native_excitation_checks_whole_packet_not_only_carriers(packet_max, accepted):
+    setup = SimpleNamespace(train=SimpleNamespace(omega=np.array([0., packet_max]),
+                           carriers=SimpleNamespace(angular_frequencies=np.array([1.]))))
+    hydro = SimpleNamespace(excitation_omega=np.array([.1, 3.4]),
+                            excitation_headings=np.array([0., 2*np.pi]),
+                            excitation=np.ones((2, 2, 6), dtype=complex))
+    if accepted:
+        backend._validate_excitation_support(setup, hydro)
+    else:
+        with pytest.raises(ValueError, match='whole packet'):
+            backend._validate_excitation_support(setup, hydro)
 
 
 def test_warning_aggregation_does_not_repeat_every_sample():

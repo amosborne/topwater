@@ -164,7 +164,7 @@ class IncomingTrain:
         return value
 
     def excitation(self, omega, headings, transfer, stiffness, times):
-        """Preserve accepted periodic interpolation and declared low-omega bridge.
+        """OFFLINE BASELINE ORACLE ONLY; never called by the production solve.
 
         transfer has shape (frequency,heading,6), in dimensional native units
         with exp(-i*omega*t). The exact constant-pressure limit is K[:,Heave].
@@ -193,11 +193,29 @@ class IncomingTrain:
         scale = np.sum(self.carriers.amplitudes[:, None]*abs(carrier_h), axis=0)
         return force, scale
 
-    def certify_startup(self, setup, force, carrier_scale, *, maximum_seconds=480.):
-        """Full-hull Taylor bounds and engineering calm loads; fail inconclusive.
+    def directional_elevation_records(self, times):
+        """Physical elevations at native origin, keeping both signed branches.
+
+        No hydrodynamic transfer or force calculation occurs here. Directions
+        are propagation radians; absolute time and the original weighted C
+        coefficients are retained. A genuinely zero sea has one zero record.
+        """
+        times = np.asarray(times, dtype=float)
+        if times.ndim != 1 or not len(times) or not np.isfinite(times).all():
+            raise ValueError('directional elevation requires finite sample times')
+        active = np.flatnonzero(self.carriers.amplitudes)
+        if not len(active):
+            return np.zeros(1), np.zeros((len(times), 1))
+        directions = np.mod(self.theta[active, None] + [0., np.pi], 2*np.pi).reshape(-1)
+        coefficients = self.C[active].reshape(-1, len(self.omega))
+        elevation = (np.exp(-1j*times[:, None]*self.omega) @ coefficients.T).real
+        return directions, elevation
+
+    def certify_incident_startup(self, setup, *, maximum_seconds=480.):
+        """Full-hull incident eta/u and arrival bounds; fail inconclusive.
 
         These are startup conditions, not a proof of motion accuracy or linearity.
-        They use exactly the immutable field later used for forcing and export.
+        The native WEC preparation separately certifies its own initial force.
         """
         amplitude = float(self.carriers.amplitudes.sum())
         if amplitude == 0:
@@ -210,13 +228,6 @@ class IncomingTrain:
         speed_limit = CALM_FRACTION*float(self.carriers.amplitudes @ self.carriers.angular_frequencies)
         field.certify(lo[:2], hi[:2], [1., 1.], eta_limit, deadline)
         field.certify(np.r_[lo[:2], lo[2]], np.r_[hi[:2], 0.], [1., 1., .2], speed_limit, deadline)
-        first = np.asarray(force)[0]
-        weight = setup.body.mass*GRAVITY
-        length = float(np.ptp(setup.body.mesh.vertices, axis=0).max())
-        if (np.linalg.norm(first[:3]) > CALM_FRACTION*weight
-                or np.linalg.norm(first[3:]) > CALM_FRACTION*weight*length
-                or np.any(abs(first) > CALM_FRACTION*np.asarray(carrier_scale))):
-            raise ValueError('startup: initial six-component excitation exceeds the engineering calm limits')
         times = setup.time_s
         peak = np.zeros(len(times))
         temporal = np.exp(-1j*self.omega[:, None]*times)

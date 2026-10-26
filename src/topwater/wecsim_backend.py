@@ -54,6 +54,7 @@ class NativeMotion:
     acceleration_native: np.ndarray
     position_m: np.ndarray
     orientation_wxyz: np.ndarray
+    excitation_native: np.ndarray
 
 
 def _find_fork():
@@ -136,13 +137,10 @@ def solve(boat, sea, duration_s):
             density=WATER_DENSITY, gravity=GRAVITY, depth=np.inf,
             hydrostatic_stiffness=h.stiffness,
             cb=h.center_of_buoyancy, volume=h.displaced_volume)
-        started = _stage_started('prepared excitation and startup assessment')
-        force, carrier_scale = setup.train.excitation(
-            hydro.excitation_omega, hydro.excitation_headings, hydro.excitation,
-            hydro.K, setup.time_s)
-        setup.train.certify_startup(setup, force, carrier_scale)
-        _stage_complete('prepared excitation and startup assessment', started)
-        motion = integrate_motion(setup, hydro, force, workspace / 'body', fork)
+        started = _stage_started('incident field startup assessment')
+        setup.train.certify_incident_startup(setup)
+        _stage_complete('incident field startup assessment', started)
+        motion = integrate_motion(setup, hydro, workspace / 'body', fork)
         started = _stage_started('calm-restoring diagnostics')
         warn_restoring_departures(setup, motion)
         _stage_complete('calm-restoring diagnostics', started)
@@ -175,35 +173,87 @@ def _waves(sea):
                           sea.directions_rad, sea.phases_rad)
 
 
-def integrate_motion(setup, hydro, force, workspace, fork):
-    """Execute the unmodified maintained native WEC-Sim dynamics.
+def _validate_excitation_support(setup, hydro):
+    """Validate coefficient/whole-packet coverage without synthesizing forces."""
+    omega = np.asarray(hydro.excitation_omega, dtype=float)
+    headings = np.asarray(hydro.excitation_headings, dtype=float)
+    transfer = np.asarray(hydro.excitation)
+    packet = np.asarray(setup.train.omega, dtype=float)
+    if (omega.ndim != 1 or len(omega) < 2 or not np.isfinite(omega).all()
+            or np.any(np.diff(omega) <= 0) or abs(omega[0]-.1) > 1e-12
+            or packet.ndim != 1 or not len(packet) or not np.isfinite(packet).all()
+            or np.any(packet < 0) or packet[-1] > omega[-1]):
+        raise ValueError('excitation: retained whole packet is outside the supported transfer table')
+    if (headings.ndim != 1 or len(headings) < 2 or not np.isfinite(headings).all()
+            or np.any(np.diff(headings) <= 0) or abs(headings[0]) > 1e-12
+            or abs(headings[-1]-2*np.pi) > 1e-12
+            or transfer.shape != (len(omega), len(headings), 6)
+            or not np.isfinite(transfer).all()
+            or not np.allclose(transfer[:, 0], transfer[:, -1], rtol=0, atol=1e-10)):
+        raise ValueError('excitation: coefficient grid or periodic heading seam is invalid')
 
-    Only disposable model data bindings/loggers are configured. Mean equilibrium
-    orientation is already in the geometry and full mass tensor; it is applied
-    once again only when converting native perturbations back to body pose.
-    """
-    started = _stage_started('native MATLAB preparation, integration and audits')
+
+def _prepare_native_inputs(setup, hydro, workspace, *, force_only=False,
+                           excitation_irf_half_width_s=20.,
+                           excitation_irf_frequency_step_rad_s=.005):
+    """Write physical directional elevations and coefficient paths, no forces."""
+    _validate_excitation_support(setup, hydro)
+    half_width = float(excitation_irf_half_width_s)
+    frequency_step = float(excitation_irf_frequency_step_rad_s)
+    if not np.isfinite([half_width, frequency_step]).all() or min(half_width, frequency_step) <= 0:
+        raise ValueError('WEC-Sim: excitation kernel controls must be positive and finite')
     workspace = Path(workspace)
     workspace.mkdir(parents=True, exist_ok=False)
     library = resources.files('topwater').joinpath('data/wecsim')
     for name in ('wecSimInputFile.m', 'run_workflow_case.m', 'build_workflow_model.m',
-                 'WorkflowEngineGuard.m', 'validate_workflow_hydrodynamics.m'):
+                 'WorkflowEngineGuard.m', 'validate_workflow_hydrodynamics.m',
+                 'prepare_workflow_hydrodynamics.m', 'native_excitation_startup.m'):
         workspace.joinpath(name).write_text(library.joinpath(name).read_text(encoding='utf-8'), encoding='utf-8')
-    force = np.asarray(force, dtype=float)
-    if force.shape != (len(setup.time_s), 6) or not np.isfinite(force).all():
-        raise ValueError('WEC-Sim: prepared force must be finite and cover the exact native output grid')
     mean_vertices_cg = setup.mean_hull_vertices_m - setup.mean_cg_m
     _write_stl(workspace / 'boat_cg.stl', mean_vertices_cg, setup.physical_faces)
-    compatibility_time = np.arange(-1000, len(setup.time_s)+1001) * .02
-    np.savetxt(workspace / 'compatibility-elevation.txt',
-               np.c_[compatibility_time, np.zeros(len(compatibility_time))], delimiter='\t')
+    # Full file support is independent of cropping to the simulation interval.
+    # One additional sample prevents endpoint roundoff from invoking extension.
+    first = int(np.floor((setup.time_s[0]-half_width)/.02))-1
+    last = int(np.ceil((setup.time_s[-1]+half_width)/.02))+1
+    history_time = np.arange(first, last+1)*.02
+    directions, elevation = setup.train.directional_elevation_records(history_time)
+    if elevation.shape != (len(history_time), len(directions)) or not np.isfinite(elevation).all():
+        raise ValueError('WEC-Sim: directional elevation records are incomplete or nonfinite')
+    files = []
+    for j in range(len(directions)):
+        path = workspace / f'wave-{j+1:04d}.txt'
+        np.savetxt(path, np.c_[history_time, elevation[:, j]], delimiter='\t')
+        files.append(str(path.resolve()))
     native = dict(M=setup.mass_matrix, K=hydro.K, Ainf=hydro.Ainf,
                   cg=setup.mean_cg_m, cb=hydro.cb, volume=hydro.volume,
                   rho=WATER_DENSITY, g=GRAVITY)
+    carriers = setup.train.carriers
     savemat(workspace / 'prepared-case.mat',
-            dict(n=native, time=setup.time_s[:, None], force=force,
+            dict(n=native, time=setup.time_s[:, None], wave_files=np.asarray(files, dtype=object),
+                 wave_directions_deg=np.rad2deg(directions),
+                 carrier_omega_rad_s=carriers.angular_frequencies,
+                 carrier_amplitudes_m=carriers.amplitudes,
+                 carrier_directions_rad=setup.train.theta,
+                 boat_length_m=float(np.ptp(setup.body.mesh.vertices, axis=0).max()),
+                 native_mat_path=str(Path(hydro.native_mat_path).resolve()),
                  netcdf_path=str(Path(hydro.netcdf_path).resolve()),
+                 excitation_irf_half_width_s=half_width, excitation_irf_dt_s=.02,
+                 excitation_irf_frequency_step_rad_s=frequency_step,
+                 force_only=bool(force_only),
                  model_name='topwater_' + uuid.uuid4().hex[:12]))
+    return workspace
+
+
+def integrate_motion(setup, hydro, workspace, fork):
+    """Execute the unmodified maintained native WEC-Sim dynamics.
+
+    WEC-Sim computes excitation from the directional elevation records. Only
+    disposable model loggers are configured. Mean equilibrium
+    orientation is already in the geometry and full mass tensor; it is applied
+    once again only when converting native perturbations back to body pose.
+    """
+    started = _stage_started('native MATLAB preparation, integration and audits')
+    workspace = _prepare_native_inputs(setup, hydro, workspace)
     _run_matlab(workspace, Path(fork))
     path = workspace / 'motion.mat'
     if not path.is_file():
@@ -212,16 +262,17 @@ def integrate_motion(setup, hydro, force, workspace, fork):
     stamp = np.asarray(raw['time']).reshape(-1)
     q = np.asarray(raw['q'])
     velocity, acceleration = np.asarray(raw['velocity']), np.asarray(raw['acceleration'])
+    excitation = np.asarray(raw['excitation'])
     if (stamp.shape != setup.time_s.shape or not np.allclose(stamp, setup.time_s, rtol=0, atol=1e-9)
             or any(value.shape != (len(stamp), 6) or not np.isfinite(value).all()
-                   for value in (q, velocity, acceleration))):
+                   for value in (q, velocity, acceleration, excitation))):
         raise RuntimeError('WEC-Sim: native output is incomplete or nonfinite')
     perturbation = Rotation.from_euler('xyz', q[:, 3:]).as_matrix()
     equilibrium = Rotation.from_quat(setup.equilibrium.orientation, scalar_first=True).as_matrix()
     orientation = Rotation.from_matrix(setup.world_from_native @ perturbation @ equilibrium).as_quat(scalar_first=True)
     position = q[:, :3] @ setup.world_from_native.T + setup.mean_cg_m
     _stage_complete('native MATLAB preparation, integration and audits', started)
-    return NativeMotion(stamp, q, velocity, acceleration, position, orientation)
+    return NativeMotion(stamp, q, velocity, acceleration, position, orientation, excitation)
 
 
 def _run_matlab(workspace, fork):

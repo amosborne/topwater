@@ -60,6 +60,15 @@ The [measured inertia proof](experts/wecsim_expert/inertia-adjustment-proof-2026
 covers dry and adjusted native matrices plus an algebraic residual; actual
 H5/CIC loading, dynamic residual forces and full boat motion remain outside it.
 
+The replacement backend and private comparison failure/identity checks now pass
+36 Python tests (`artifacts/workflow/native-python-tests-attempt1/`). Two isolated
+MATLAB startup diagnostic controls also pass, including a clean rerun after
+the test-only temporary-directory teardown correction. All four
+integration source-review blockers are resolved. Actual fork dispatch/bus,
+retained-data lineage, same-input force and full motion checks remain pending;
+these component results do not qualify the replacement workflow.
+See the [handoff component evidence](experts/wecsim_expert/native-excitation-handoff-checkpoint-2026-10-25.md).
+
 ## Physical questions still open
 
 [Radiation phase #31](https://github.com/amosborne/topwater/issues/31),
