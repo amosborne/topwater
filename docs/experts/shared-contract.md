@@ -20,11 +20,15 @@ calm/rest/zero radiation memory and zero artificial ramp at startup.
 
 The agreed standard-H5 handoff first computes radiationIRF from the unchanged
 0.1..12 rad/s data, retaining its kernel/time/frequency arrays and direct Ainf.
-Standard raw tables then use the genuine common 0.1..3.4 rad/s grid, all 25
-periodic headings and exact A/B subsets plus genuine dense FK/diffraction data.
-The excitation kernel uses the existing dense operator and explicit low-frequency
-bridge on its own grid; no unsolved coefficients or new reader schema are invented.
-Readback must prove full-band radiation memory and added mass are retained.
+The original transition baseline used genuine common raw tables on0.1..3.4 rad/s
+with all25 periodic headings. The subsequently accepted full-band candidate uses
+genuine0.1..12 rad/s raw tables at all25 headings, including FK/diffraction;
+its common low-band data and full radiation objects are exactly preserved.
+Official H5 readback verifies that expanded candidate. The excitation kernel
+uses the genuine operator and explicit low-frequency bridge on its own grid;
+no unsolved coefficients or new reader schema are invented. Readback must prove
+full-band radiation memory and added mass are retained. Candidate acceptance
+does not promote the held runtime or qualify whole-case forces and motion.
 
 First compare WEC-computed forces with the offline old spectral reference on
 identical coefficients and wave records, including startup and endpoints, and
@@ -34,6 +38,48 @@ Then compare all six motion histories with the unchanged public baseline. Do not
 assume finite-kernel convolution is identical to direct spectral synthesis, silently
 relax the requirement, overwrite canonical results, or promote the held pin before
 the differences are reviewed. The eight-file public example contract is unchanged.
+
+### Prospective canonical WEC-Sim compatibility gates
+
+These are coordinator-selected engineering agreement criteria, independently
+reviewed before the new actual-case results. They qualify the fixed canonical
+transition only; they are neither general CLI requirements for other boats nor
+physical-accuracy guarantees. Finite-probe kernel admission does not guarantee
+them for the packet's complete spectrum and directional cancellations.
+
+Use the unchanged 0..60 s reference, dt .02, all original samples/endpoints and
+declared frame/origin mappings. Do not fit a time shift, phase, gain or rotation.
+For each force/moment channel, define P as the maximum absolute reference value
+and R as its time-weighted RMS, using trapezoidal integration over the full 60 s
+without mean removal. Both coarse and refined candidate histories must satisfy
+maximum absolute error <= .001 P and RMS error <= .001 R. Refined-minus-coarse
+sensitivity must satisfy .0005 P and .0005 R using those same reference scales.
+An exactly zero reference channel requires exact zero unless an independently
+derived dimensional roundoff allowance was frozen beforehand; no denominator
+floor or after-the-fact relaxation is permitted.
+
+Report every channel's initial/final value and error, signed extrema and times,
+absolute peak, RMS, maximum error and its time, and RMS error. Tiny nonzero
+reference channels retain their original denominators and are identified.
+Existing local calm, force/moment startup, initial rest, zero radiation memory
+and zero artificial-ramp gates remain separately mandatory. Complete padded
+history must cover both simulation endpoints and the declared kernel support.
+
+Actual downstream wave-excitation samples must match the prepared native total
+exactly once: maximum difference <= 1e-10 times that prepared channel's peak,
+with exact zero for a zero prepared channel. This implementation replay gate
+cannot substitute for reference-force agreement. On a force-gate failure, stop
+before motion and inspect retained worst samples and a few independent scalar
+directional contributions; do not tune physical inputs or budgets.
+
+After force acceptance, maximum world-position difference vector norm must be
+<= 1 mm and maximum relative-orientation rotation angle <= .01 degrees against
+the saved canonical trajectory. Use rotation matrices or normalized quaternions
+without fitting an alignment. Report all six raw motion channels, velocities,
+initial/final differences and peak-error times. Hold inertia, radiation operator
+and integration settings identical; isolate any separate consequential dynamics
+correction before attributing trajectory changes to excitation. Dependency
+promotion remains subject to the user's existing hold and merge instructions.
 
 Latest user authorization is workflow implementation, not native dynamics.
 Current physical inputs are examples/simple-boat/boat.npz and sea.npz, preserving

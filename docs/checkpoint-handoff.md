@@ -6,11 +6,52 @@ Historical queued work is not authorization to restart it.
 
 ## Current priority and completed workflow
 
-Checkpoint, 2026-10-26 UTC: all recorded jobs are terminal, frozen-input/process
-checked and leases released; execution is idle. Reconcile the ledger before
-another launch. The pre-existing shared engine 40036/29796 remains unrelated
-and must stay untouched. Current task is a source-only actual full-band H5
-readback proposal in `artifacts/workflow/native-fullband-h5-v1`; not allocated.
+Current checkpoint, 2026-10-26 UTC: execution ledger is idle and no numerical
+lease is held. The shared-phase replay, subsequent all-heading admission and
+single-component resource probe are terminal with frozen identities checked.
+The pre-existing shared engine 40036/29796 remains unrelated and untouched.
+
+The shared-phase replay reproduced every retained-heading kernel/response
+exactly. The separate `native-kernel-allheading-admission-attempt1` then passed
+the unchanged finite-probe reference/window/refinement gates at all25 headings,
+using the original mode scales. Receipt: `units/report.json`, SHA a503f95c.
+This qualifies the tested coefficient controls, not actual whole-case forces,
+startup, application, motion or physical accuracy.
+
+The actual first physical component probe also passed its input/resource guards:
+3001 output samples, full padded history and admitted T320 kernel; native call
+4.7419052 s, whole-process lifetime peak 4,002,521,088 bytes (3.73 GiB).
+Common-support incident-elevation error is 4.86e-17 m. Largest component relative
+RMS force difference against the offline oracle is 6.71e-5. These are component
+diagnostics, not total-force/startup acceptance. A simple736-component runtime
+projection is about58 minutes per pass; a full pass has not been measured.
+Evidence: `native-force-component-preflight-attempt1/probe/report.json` and
+`probe/native/resource.json`; terminal receipt and lease release are recorded.
+
+Own-fork issue11 tracks a private equivalent-convolution proposal. Root verified
+two new worktrees at eb722540: detached `wecsim-convolution-baseline` and topic
+`wecsim-imported-convolution` (`fix/imported-excitation-convolution`). WEC expert
+owns source/tests/example in the topic only: standard zero-padded FFT linear
+convolution for eligible uniform clocks, bounded-row direct fallback, unchanged
+history/ramp/lag/direction semantics. Authors run no numerical jobs. Independent
+source review, unchanged11 history/4group controls and full3001x6 cached native
+component replay are required before any full-case allocation. Replay gates are
+max-error/reference-peak and time-weighted-RMS-error/reference-RMS <=1e-10,
+with explicit zero behavior and no denominator floors. No production performance
+promotion, runtime pin change, merge or upstream action is authorized here.
+Measured evidence and the bounded replay requirements are recorded in
+[the resource checkpoint](experts/wecsim_expert/native-force-resource-checkpoint-2026-10-26.md).
+
+The actual full-band H5 readback is COMPLETE/PASS: 31 checks at120 frequencies
+and25 headings, exact normalized excitation/FK/SC signs, all raw A/B, old full
+radiation IRF/time/frequency/Ainf and physical metadata. Backscaled A/B differences
+5.68e-14/7.28e-12 are recorded floating-point roundtrips, not normalized-gate
+failures. H5 omits dry M, reported honestly; native M preservation is separate.
+Independent measured review accepted exchange only for the diagnostic +/-1 s
+kernel. Evidence: `native-fullband-h5-attempt1/readback/report.json`, SHA f57a489c.
+The H5 job is terminal/frozen/CIM checked and released. All-heading numerical
+admission subsequently passed as above; actual whole-case forces/startup/
+application/motion remain pending.
 
 The coefficient-only `native-kernel-t320-attempt1` is COMPLETE/PASS: both T320
 controls meet reference 1e-3, window-change 5e-4 and refinement-change 5e-4 limits
@@ -46,10 +87,11 @@ recorded old low-band/full-radiation/three-heading full-band/physical-geometry
 quantity is exactly preserved. New native.mat SHA0effe8d1; NC b4a1dc07. Actual
 3180 mesh-resolution/2040 irregular-frequency warnings remain unqualified.
 This is coefficient-candidate acceptance, not actual force/physical accuracy.
-Next is official H5 readback: original actual-force H5 has full radiation but
-only 34-point raw A/B; compare its radiation exactly, common raw subset, and new
-full 120-point raw A/B against verified NC with explicit normalization. Short
-excitation window +/-1 s is solely a readback fixture, not force qualification.
+Official H5 readback subsequently passed as above: the old actual-force H5 has
+full radiation but only34-point raw A/B; its radiation and common raw subset
+were preserved, and the new full120-point raw A/B verified against NC with
+explicit normalization. The short excitation window +/-1 s was solely a
+readback fixture, not force qualification.
 
 Latest qualification results are in
 experts/wecsim_expert/kernel-and-inertia-checkpoint-2026-10-26.md. The single
