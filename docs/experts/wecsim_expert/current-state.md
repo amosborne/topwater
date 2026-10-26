@@ -4,6 +4,30 @@ Updated2026-10-26 UTC. Currentauthority: [handoff](../../checkpoint-handoff.md),
 [physicalcontract](../shared-contract.md), [serialprocedure](../coordination.md).
 No author execution allocation or automatic follow-up. Root owns integration.
 
+Latest user steering halts the FFT path and requests the existing native spectral
+route first. Read-only [spectral route review](spectral-force-route-review-2026-10-26.md)
+confirms that pinned `spectrumImport` keeps imported frequencies and explicit
+third-column phases, and native `irregExcF` already evaluates the same harmonic
+force sum algebraically. Exact component density/phase mapping is documented.
+One vectorized native spectral payload is recommended for investigation;
+ordinary directional groups share first-wave coefficients and clone one force
+branch per group, while pinned FullDir needs phase/normalization/interpolation
+qualification and the low-positive-frequency bridge must be preserved. No
+implementation, jobs, pins or external updates are authorized by that review.
+
+Own-fork [issue11](https://github.com/amosborne/WEC-Sim/issues/11) is a private
+source-only equivalent-convolution proposal in `wecsim-imported-convolution`,
+based on eb722540. V1 was rejected before execution because coordinate-only
+eligibility did not bound steep-history/ramp resampling error; its five source
+files and hashes are preserved in `artifacts/workflow/native-convolution-source-v1/`.
+V2 adds a conservative source-elevation error certificate and direct fallback,
+with eleven new controls plus the unchanged11 history/four group controls.
+Independent source review passed; root's corrected fixture run passed all26
+controls and the minimal example at candidate2f039e5. The later actual candidate
+replay terminated exit1 without establishing equivalence. Both failed studies
+and frozen identities remain preserved; the path is halted by the latest steering.
+No author numerical execution or runtime pin change.
+
 Latest integration checkpoint: [PR #10](https://github.com/amosborne/WEC-Sim/pull/10)
 is a draft at `eb722540`, explicitly depending on PR #8. Exact-head four
 group/native-bus and eleven history controls pass; retained preprocessing error
@@ -15,8 +39,12 @@ probe gates at three genuine headings plus seam. The subsequent full-band
 25-heading Capytaine candidate completed 3606 genuine solves and preserved every
 old numerical quantity exactly. Non-author review accepted coefficient handoff
 only. Mesh-resolution (3180) and irregular-frequency (2040) warnings remain
-unqualified. Official actual H5 readback source is being prepared; no production
-settings/pin/public physics promotion occurred. Current evidence and limits:
+unqualified. Official actual H5 readback passed31 checks, followed by all25-heading
+numerical admission under the original scales. The first physical-component
+native call passed its input/resource guards (4.7419052s, whole-process lifetime
+peak3.73GiB); it does not qualify total forces/startup/motion. See
+[resource checkpoint](native-force-resource-checkpoint-2026-10-26.md).
+No production settings/pin/public physics promotion occurred. Current evidence and limits:
 [qualification checkpoint](kernel-and-inertia-checkpoint-2026-10-26.md).
 
 Active-rigid inertia [PR9](https://github.com/amosborne/WEC-Sim/pull/9) is ready

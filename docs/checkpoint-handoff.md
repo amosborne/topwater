@@ -6,9 +6,42 @@ Historical queued work is not authorization to restart it.
 
 ## Current priority and completed workflow
 
-Current checkpoint, 2026-10-26 UTC: execution ledger is idle and no numerical
-lease is held. The shared-phase replay, subsequent all-heading admission and
-single-component resource probe are terminal with frozen identities checked.
+LATEST USER SCOPE: read-only first-principles investigation of whether WEC-Sim's
+existing spectral-wave path can compute the original force sum from the exact
+wave components, phases and headings. Establish this before further convolution
+development. WEC expert owns native API/source feasibility; numerical researcher
+owns the independent mathematical requirements and proposed cheap falsifier.
+No implementation, simulation, FFT repair/rerun, pin promotion or fork publication
+is allocated. WEC force ownership is a requirement; imported-elevation convolution
+is a prior design choice whose necessity is now under review.
+
+Source investigation now confirms that native `irregExcF` already implements
+the original harmonic force sum. Three-column `spectrumImport` preserves exact
+supplied frequencies and phases, but ordinary per-heading objects reuse the
+first object's force coefficients and create one model branch per object
+(up to736 before exact-heading merging). Single-object FullDir avoids that
+model expansion, but the pinned source ignores supplied phase and has a
+direction-width discrepancy between elevation and force, plus interpolation/
+low-frequency support differences from the old oracle. These are source findings,
+not measured new-route results. Recommendation: investigate one vectorized native
+spectral input using existing harmonic evaluation, qualify a tiny analytic
+direction/phase/low-frequency example before any full packet. No extension is
+implemented or allocated. Detailed source evidence and alternatives:
+[spectral route review](experts/wecsim_expert/spectral-force-route-review-2026-10-26.md).
+
+Current checkpoint, 2026-10-26 UTC: the actual-component candidate replay is
+terminal exit1 with unchanged frozen inputs; exact processes/CIM were verified
+absent and the numerical lease released. The process calculated and retained
+forces, but a source-path assertion failed afterward; this is not an accepted
+replay. Preserve `native-convolution-component-candidate-attempt1` and candidate
+worktrees. No numerical job is live. `native-convolution-controls-attempt2`
+is terminal PASS; all26 controls and the candidate minimal example passed,
+independently accepted. Exact processes/frozen identities were verified and its
+lease released before the current claim. Candidate head is
+2f039e560cda1e2bb44fd355bec2139e6172e822;
+fork identity manifest `native-convolution-forks-v3.json`, SHA d6bc86c6.
+The shared-phase replay, subsequent all-heading admission and single-component
+resource probe are terminal with frozen identities checked.
 The pre-existing shared engine 40036/29796 remains unrelated and untouched.
 
 The shared-phase replay reproduced every retained-heading kernel/response
@@ -41,6 +74,25 @@ with explicit zero behavior and no denominator floors. No production performance
 promotion, runtime pin change, merge or upstream action is authorized here.
 Measured evidence and the bounded replay requirements are recorded in
 [the resource checkpoint](experts/wecsim_expert/native-force-resource-checkpoint-2026-10-26.md).
+
+Issue11 source proposal V1 was independently rejected before execution: a small
+clock error can produce a large elevation error for steep imported records or
+very short ramps. Its five files and hashes are preserved in
+`artifacts/workflow/native-convolution-source-v1/manifest.json`. V2 independently
+passed source review with the researcher's fixed slope/ramp error certificate
+and steep-record/tiny-ramp fallback controls. The certificate uses the
+actual raw-elevation scale without a floor; it does not replace force replay
+under cancellation. BEMIO owner's paired replay and small-control runners are
+frozen in `native-convolution-replay-v1`; root reviewed identity/physical-input/
+reference separation and static checks. Exact73c7468 attempt1 passed11 history,
+4group and10/11 new controls, then failed an endpoint test fixture: it supplied
+three integration lags while its scalar oracle used five. Independent review
+approved the test-only consumer-grid correction without changing expected forces,
+tolerance or solver code. Attempt1 is terminal/frozen/CIM verified and released;
+its failed source/results remain preserved. Attempt2 passed all26 controls
+and the candidate minimal example; independent measured review accepted them.
+The subsequent candidate arm ended as described above. Further numerical work
+is halted under the latest user scope; baseline arm remains unexecuted.
 
 The actual full-band H5 readback is COMPLETE/PASS: 31 checks at120 frequencies
 and25 headings, exact normalized excitation/FK/SC signs, all raw A/B, old full
