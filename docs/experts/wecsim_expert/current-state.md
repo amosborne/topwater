@@ -4,6 +4,14 @@ Updated2026-10-25. Currentauthority: [handoff](../../checkpoint-handoff.md),
 [physicalcontract](../shared-contract.md), [serialprocedure](../coordination.md).
 No author execution allocation or automatic follow-up. Root owns integration.
 
+Active-rigid inertia draft is locally packaged on isolated branch
+`fix/rigid-hydro-inertia-order`, commit `ad3ba0cfb212fb5fedbed84ef3891513cff5336e`,
+directly based on combined25b58b. Nine focused source/example/test/audit files
+are reviewable; no corrected SLX is included or promoted. The production-boundary
+assertion deliberately fails until that binary is independently qualified.
+Measured standalone evidence is linked; the portable packaged head is unexecuted.
+Root owns publication and next checks; no author push/PR/merge/pin change occurred.
+
 Root's native-excitation component checks passed: backend plus offline comparison
 36/36, and MATLAB startup diagnostic/gate2/2. After the reviewed test-only cwd
 teardown correction (`01f60c0c`), startup attempt2 again passed2/2 with a clean

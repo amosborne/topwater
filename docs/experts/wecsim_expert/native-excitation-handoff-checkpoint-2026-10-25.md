@@ -61,3 +61,56 @@ on identical coefficients and wave records, quantify all six channels and kernel
 window/quadrature sensitivity, then compare all six motion histories and the
 total-surface export. The first force-only comparison may use the explicitly held
 fork; that does not qualify the new combined fork or authorize changing its pin.
+
+## Fresh coefficient run
+
+The reviewed historical-bank identity check passed physical metadata, provenance
+and oriented-panel checks. Its exact common-grid gate rejected only a floating
+representation difference of 4.440892098500626e-16 rad/s. Rather than introduce
+historical repacking or relabeling, root ran the current producer once with the
+unchanged canonical inputs and production defaults.
+
+`native-coefficient-producer-attempt1/` completed all 1,800 genuine BEM solves
+(8.5 s after Green-function initialization). Its private `coefficients/` outputs
+include the full native FK/SC contract and source/input/geometry/output manifests.
+The independent reviewer verified all nine manifest file hashes, producer input
+and output hashes, and all 69 recorded Capytaine implementation/native file hashes.
+Operator manifest SHA256:
+`c57a86c780730f2fdc235cdc7503843583a5fce3aecb322bffd07ea26425826f`.
+
+Five `capytaine.libs` DLLs were omitted from the coordinator's frozen-input list;
+the producer's recorded pre-run hashes match their independently checked current
+hashes. This limitation is preserved, and subsequent manifests include those DLLs.
+No rerun or coefficient correction is justified by this omission alone.
+
+The producer, source and recorded dependency checks passed; exact process absence
+was independently verified and the lease released. The existing 1,374 mesh and
+612 irregular-frequency warnings remain unresolved physical qualifications.
+The existing-directory export warning concerns a fresh owned scratch directory,
+as covered by the CLI warning triage. No motion, surface or force history was
+computed in this job, and no canonical file was changed.
+
+## First actual force comparison
+
+`native-force-comparison-attempt2/` computed WEC-Sim's excitation using the
+accepted current coefficients and the held995 full-history correction. The
+origin elevation check differed by only 2.33e-15 m. The +/-20 s finite excitation
+kernel used dt=0.02 s and frequency step=0.005 rad/s; radiation memory stayed10 s.
+
+| Channel | RMS difference / reference RMS |
+|---|---:|
+| Surge | 1.052% |
+| Sway | 2.703% |
+| Heave | 0.252% |
+| Roll | 2.446% |
+| Pitch | 1.301% |
+| Yaw | 4.353% |
+
+The initial heave force was -37.257 N versus -5.962 N in the offline reference;
+the native force exceeded the unchanged24.525 N initial force-norm limit. The
+startup gate correctly rejected the run, with no body motion produced. Cleanup
+was verified; exact process-tree absence and frozen identities were checked
+before releasing the lease. This is a measured discrepancy, not accepted
+equivalence. Its cause remains unestablished; a stored-data convolution/kernel
+discriminator is next. No ramp, retiming, amplitude change or limit relaxation
+was introduced.

@@ -6,6 +6,26 @@ Historical queued work is not authorization to restart it.
 
 ## Current priority and completed workflow
 
+Latest added user request: visualization expert should render water to the actual
+moving waterline and make the hull above it transparent, keeping wetted hull
+visible. `/root/result_renderer` implemented the bounded change in isolated
+worktree artifacts/worktrees/waterline-visualization. Cap independently approved
+the frozen renderer/tests/docs; root tests and private preview precede full video
+regeneration. No producer, surface data or physics changes. The user explicitly
+requests regenerated chart/video from existing saved data.
+
+The seven-tick chart change is already integrated into the main baseline working
+tree: 23 plot/CLI tests pass. Root regenerated and viewed the complete PNG, then
+atomically published examples/simple-boat/result.png (SHA25697e01aa4...). Seven
+nice ticks are symmetric with zero in the middle, outer ticks at limits, shared
+translation range +/-1.5m and rotation range +/-7.5deg. Saved Result unchanged.
+
+User requested visible fork progress. Issues2/3 rewritten with plain-language
+current evidence; issue1 and PR8 updated. Inertia DRAFT PR9 now OPEN in our fork:
+fix/rigid-hydro-inertia-order at ad3ba0c, base topwater/reference25b58b. Nine focused
+portable example/test/recipe files, no SLX correction yet; new-head tests unrun
+and boundary assertion intentionally fails until audited patch. Not merge-ready.
+
 The user's order is working end to end, then correctness, then speed. The full
 public workflow now WORKS. No further performance changes are authorized now.
 Native coupled dynamics remain unimplemented. No solver/render streaming.
@@ -57,13 +77,41 @@ library preparation saved/reopened, but strictauditFAILED188 changed entries
 and2added beyond exact1maskheader. WEC owns read-only diagnosis; no whitelist or
 promotion. See experts/wecsim_expert/native-excitation-handoff-checkpoint-2026-10-25.md.
 
-BEMIO found a genuine retained dense FK/SC/H bank (31c0b956) and the GL2 full
-radiation data, but no proven drop-in full-contract native.mat. Cap owns a
-separate source-only retained-operator identity gate to compare the old physical
-operator against the canonical prepared case before any repacking/reuse. Main
-comparison manifest checks are consistency links, not independent historical
-lineage proof. If actual operator identity fails, freeze/run the current producer
-once instead. No actual WEC force/motion comparison or pin promotion yet.
+BEMIO found a genuine retained dense FK/SC/H bank (31c0b956) and GL2 full radiation
+data. Independently reviewed retained-operator-identity-attempt1 completed:
+physical/source/panel identity PASS; sole exact-grid failure is a4.44e-16rad/s
+floating-point alias. Job terminal/frozen/CIM verified, lease released. Root chose
+one fresh current producer run rather than add historical repacking/grid relabeling
+code. Independently reviewed native-coefficient-producer-attempt1 SUCCESS:
+1800genuineBEMcalls,8.5s after GFinit, exact current backend inputs/grids/cacheNone.
+Actualreceipts/source/outputhashes independently accepted for bounded forcecompare;
+operator manifest c57a86c7 under job's coefficients/. Fivecapytaine.libsDLLs missing
+from rootfreeze were producer-recorded before and match independent current hashes;
+limitation documented, includeall*.libsDLLs in futuremanifests. No newBEM needed.
+Job terminal/frozen/CIM verified, lease released; existingmesh/irregular warnings
+remain. No motion/surface/force history or canonical artifact was computed/changed.
+Main comparison manifest checks remain consistency links, not independent lineage
+proof. No actual WEC force/motion comparison or pin promotion yet.
+
+The independently reviewed private hidden-batch transport runs the same
+force-only workflow on held995, leaving the shared engine untouched.
+Attempt1 stopped BEFOREMATLAB at bytehash guard because resourcecopy LF→CRLF;
+terminal/frozen/lease released. Reviewed wrapper-only guardd434 normalizes CRLF
+before samehash;3puretestsPASS (attempt2; attempt1 collectionpathfailure preserved).
+Actual forcecomparison-attempt2 is TERMINAL: forces computed, then initial-calm
+gate FAILED; cleanup verified, no motion produced. All exact Python/MATLAB/
+launcher processes absent, frozen hashes verified and lease released. Native
+initial heave -37.257N versus offline -5.962N exceeds the 24.525N force-norm limit.
+Relative RMS differences are 1.052/2.703/0.252/2.446/1.301/4.353 percent for the
+six channels. Origin elevation phase error is 2.33e-15m. This run includes the
+held fork's full imported-history correction; excitation kernel is still +/-20s,
+dt.02, domega.005, while radiation memory is unchanged10s. No limits were relaxed.
+WEC owns a minimal stored-kernel/record replay discriminator for root's next
+serial diagnostic, separating actual convolution from finite-kernel effects.
+
+PrivateAPI audit diagnosis identifies an R2020b-to-R2025b full-save migration.
+WEC owns source-only preparation of separate untouched and one-header direct
+R2020b export controls; no audit whitelist, broad migration or binary promotion.
 
 Reviewed Cap coefficient exchange and existing surface Python controls now PASS
 45/45 in native-producer-tests-attempt1 (2.80s). Exact frozen identities and

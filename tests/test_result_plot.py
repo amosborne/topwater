@@ -119,3 +119,35 @@ def test_plot_rejects_wrong_contract_and_extension(tmp_path):
         motion_histories(object())
     with pytest.raises(ValueError, match='.png'):
         save_motion_plot(saved_motion_result([0., 1.]), tmp_path/'result.pdf')
+
+
+@pytest.mark.parametrize('extent', [0., 1e-9, 1., 1e9])
+def test_seven_nice_ticks_zero_middle_shared_rows_and_limits(tmp_path, monkeypatch, extent):
+    from matplotlib.backends.backend_agg import FigureCanvasAgg
+    import topwater.result_plot as module
+    times = np.array([0., 1., 2.])
+    histories = extent*np.array([[0., 0., 0., 0., 0., 0.],
+                                 [1., -.4, .7, -8., 3., .5],
+                                 [-.2, .8, -.6, 4., -2., 1.]])
+    monkeypatch.setattr(module, 'motion_histories', lambda result: (times, histories))
+    original = FigureCanvasAgg.print_png
+    observed = []
+
+    def inspect(canvas, *args, **kwargs):
+        observed.extend((axis.get_yticks().copy(), axis.get_ylim()) for axis in canvas.figure.axes)
+        return original(canvas, *args, **kwargs)
+
+    monkeypatch.setattr(FigureCanvasAgg, 'print_png', inspect)
+    save_motion_plot(saved_motion_result(times), tmp_path/'case'/'result.png')
+    assert len(observed) == 6
+    for index, (ticks, limits) in enumerate(observed):
+        assert len(ticks) == 7
+        assert ticks[3] == 0.
+        np.testing.assert_allclose(ticks, -ticks[::-1], rtol=0., atol=0.)
+        np.testing.assert_array_equal(limits, ticks[[0, -1]])
+        np.testing.assert_array_equal(ticks, observed[(index//3)*3][0])
+        np.testing.assert_array_equal(limits, observed[(index//3)*3][1])
+        assert np.max(abs(histories[:, index])) <= limits[1]/1.05
+        step = ticks[4]
+        nice = step/(10.**np.floor(np.log10(step)))
+        assert any(np.isclose(nice, value) for value in (1., 2., 2.5, 5., 10.))

@@ -5,6 +5,7 @@ calculation belongs here. Absolute quaternions remain the orientation authority;
 Euler curves are a display of departure from the initial attitude.
 """
 import os
+import math
 from pathlib import Path
 import tempfile
 import warnings
@@ -13,6 +14,19 @@ import numpy as np
 from scipy.spatial.transform import Rotation
 
 from .workflow_data import Result
+
+
+def _motion_ticks(values):
+    """Seven symmetric nice decimal ticks, with at least 5% data headroom."""
+    extent = float(np.max(np.abs(values)))
+    if extent == 0.:
+        step = 1.
+    else:
+        target = (extent/3)*1.05
+        power = 10.**math.floor(math.log10(target))
+        step = next(multiplier*power for multiplier in (1., 2., 2.5, 5., 10.)
+                    if multiplier*power >= target)
+    return np.arange(-3, 4, dtype=float)*step
 
 
 def motion_histories(result: Result):
@@ -76,10 +90,10 @@ def save_motion_plot(result: Result, path):
         if index >= 3:
             axis.set_xlabel('Time from declared initial state (s)')
     for row, values in zip(axes, (histories[:, :3], histories[:, 3:])):
-        extent = float(np.max(np.abs(values)))
-        limit = 1.05*extent if extent > 0 else 1.
+        ticks = _motion_ticks(values)
         for axis in row:
-            axis.set_ylim(-limit, limit)
+            axis.set_yticks(ticks)
+            axis.set_ylim(ticks[0], ticks[-1])
     figure.suptitle('Complete six motion histories; initial attitude removed')
     figure.text(.5, .014,
                 'CG displacement from initial position (m); fixed initial heading axes, z up. '

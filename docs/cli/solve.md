@@ -75,6 +75,9 @@ trim is removed. All native motion timestamps are used, with no smoothing.
 The PNG is 2160 by 1170 pixels (12 by 6.5 inches at 180 dpi).
 Translations share one symmetric Y range in metres; rotations share a separate
 symmetric Y range in degrees. Each range includes all three histories in its row.
+Each row has exactly seven equally spaced major Y ticks at nice decimal values,
+with zero always in the middle. The first and last ticks are the axis limits;
+the common row range retains at least 5% headroom over all saved motions.
 
 An initial bow with no resolved horizontal projection is a fatal plot limitation
 before either new output is published. Euler gimbal lock emits a presentation
