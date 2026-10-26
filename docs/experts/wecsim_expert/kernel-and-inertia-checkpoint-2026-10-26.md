@@ -46,13 +46,98 @@ No threshold was relaxed. The method reviewer is assessing whether a tighter
 bound or explicit correction is justified. Evidence:
 `artifacts/workflow/native-kernel-commuted-attempt1/replay/report.json`.
 
-The independent reviewer proposed one revised source-only diagnostic: a fixed
-centered reference lattice, a Taylor bound retaining interpolation's signed
-barycentre cancellation, and an explicit output-phase correction using the
-already cached kernel. Both numerical gates remain unchanged. The WEC/BEMIO
-expert owns a new V2 source proposal; it requires independent review before any
-allocation. This cached correction does not yet establish a cheap evaluator for
-a new longer window without a cached kernel. No such control is authorized.
+The corrected V3 shortcut also failed its unchanged bound guard in the first
+40 s case. Its four small scalar witnesses passed, but no full response replay
+or attribution followed. The shortcut is stopped; no further bound revisions
+or threshold changes are planned. Evidence:
+`artifacts/workflow/native-kernel-commuted-attempt3/replay/report.json`.
+
+## Fixed T320 controls passed the declared numerical admission
+
+The next control returned to the official finite quadrature. A dense fine-grid
+temporary would occupy 2.289 GiB, with several such temporaries potentially
+exceeding available RAM. An explicitly named private implementation processes
+256 independent time rows at once, preserving the complete frequency vector,
+integrand, interpolation, reduction order and normalization. Its private handoff
+copy changes only its function name and selected kernel-call name. Production
+and fork implementations remain unchanged.
+
+After independent source review, the 259-row/9601-frequency whole-versus-blocked
+fixture passed. Cached T40/.005 and T80/.0025 then reproduced every consumer
+kernel and complete complex-response value with exactly zero difference.
+Evidence: `artifacts/workflow/native-kernel-blocked-replay-attempt2/units/report.json`.
+Attempt1 was a preflight abort before launch on an inherited logging-style check;
+its evidence is preserved, and the logging-only correction passed static review.
+
+A separately allocated T320 pair then passed all predeclared gates in all modes:
+
+| Criterion | Worst result divided by mode peak reference scale | Limit |
+|---|---:|---:|
+| T320/.0025 reference error | 0.0002700813 | 0.001 |
+| T320/.00125 reference error | 0.0002837216 | 0.001 |
+| T320 coarse minus saved T160 coarse | 0.0003769891 | 0.0005 |
+| T320 fine minus coarse | 0.0000136456 | 0.0005 |
+
+The independent method reviewer accepted this finite-probe admission. These are
+mode-peak-normalized complex errors, not pointwise relative-error guarantees.
+Coverage remains the original query grid, genuine 0/45/90 degree headings plus
+seam, cutoff 12 rad/s, lag step .02 s and unchanged quadratic low-frequency
+bridge. Full-heading actual-force/startup and motion qualification remain open.
+Both jobs terminated with unchanged frozen identities; root verified fresh
+MATLAB/launcher/producer absence and released their leases. A working-set sample
+during T320 was about 1.1 GiB; no allocator peak-memory guarantee is claimed.
+Evidence: `artifacts/workflow/native-kernel-t320-attempt1/units/report.json`.
+
+## Genuine full-heading coefficient candidate is preserved exactly
+
+The separately allocated full-band producer completed all 3606 genuine solves
+through the existing API, with excitation .1..12 rad/s at all 25 periodic
+headings. Its core producer and physical geometry are unchanged. Actual solve
+time was 14.6 s after Green-function tabulation. The new operator manifest is
+`f1f788f91cf42ae7d42eb86291f05636f9a1bdfc993fb028ae4d58d5ae28fdd4`.
+
+The independently authored/reviewed preservation comparator passed. Every
+recorded numerical comparison is finite and exactly equal, with zero differences:
+all old low-band FK/SC/H values at all headings, full radiation A/B/Ainf, original
+three-heading full-band excitation, physical/frame metadata, oriented 17-panel
+geometry, zero-frequency limit and seam. Complete differences are retained.
+The non-author reviewer accepted only the coefficient-candidate handoff.
+All vendor `.libs` DLLs were included in this run's external freeze.
+
+Actual warnings remain: 3180 mesh-resolution and 2040 irregular-frequency
+warnings. They are not waived or physical-accuracy certification. First mesh
+warning: omega 1.5, panel radius 3.678 m versus wavelength/8 3.424 m. First
+irregular-frequency warning: omega 5.3, with a lid recommendation. Physical
+accuracy remains provisional under the existing issues.
+
+Evidence: `artifacts/workflow/native-fullband-producer-attempt1/` and
+`artifacts/workflow/native-fullband-preservation-attempt1/comparison/report.json`.
+Both jobs are terminal, frozen-input/process checked and released. Next gates are
+actual official H5 sign/normalization/full-radiation readback, all-heading
+numerical admission and actual forces/startup/application/motion. No production
+settings, dependency pin or canonical physics output changed.
+
+## Directional aggregation and dispatch have a tested draft PR
+
+[Fork PR #10](https://github.com/amosborne/WEC-Sim/pull/10) is a draft at
+`eb722540da07c3cba737193f43712bf395ff15fa`, explicitly dependent on unmerged
+PR #8. Four group/native-bus tests and eleven history controls pass on this exact
+head. The retained identical-input example measures maximum discrepancy 18 on
+the PR #8-only baseline and 0 on the paired candidate. Native applied-total
+assertions pass at `1e-10`, with measured fresh/regular/restored branch counts
+1/2/1 and rewired-clone rejection without deletion. Raw full-bus measurements
+were temporary; the claim is the retained test pass at its asserted tolerance.
+
+Attempts 1/2/3 exposed fixture workspace and count-query errors; they remain
+preserved. The final fixture uses WEC-Sim's base workspace with owned-variable
+restoration, literal block discovery, and regex only on actual names. No force
+or branch assertion was weakened. Strict library audits permit exactly one
+header change; fresh API reopening preserves its bytes and metadata.
+
+The independent reviewer accepted publishing the draft. Whole-boat/startup
+qualification remains pending, and the binary needs reconciliation/retesting
+after PR #8/#9 integration. No merge, pin change or upstream action occurred.
+Evidence: `artifacts/workflow/imported-group-head-attempt4/`.
 
 ## Inertia library packaging remains incomplete
 

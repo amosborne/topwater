@@ -4,6 +4,21 @@ Updated2026-10-26 UTC. Currentauthority: [handoff](../../checkpoint-handoff.md),
 [physicalcontract](../shared-contract.md), [serialprocedure](../coordination.md).
 No author execution allocation or automatic follow-up. Root owns integration.
 
+Latest integration checkpoint: [PR #10](https://github.com/amosborne/WEC-Sim/pull/10)
+is a draft at `eb722540`, explicitly depending on PR #8. Exact-head four
+group/native-bus and eleven history controls pass; retained preprocessing error
+is 18 before and 0 after. The strict one-header archive and fresh API reopen
+passed. Integration with PR #8/#9 and whole-boat force/startup/motion remain open.
+
+The fixed T320 coarse/refined coefficient controls passed all unchanged finite-
+probe gates at three genuine headings plus seam. The subsequent full-band
+25-heading Capytaine candidate completed 3606 genuine solves and preserved every
+old numerical quantity exactly. Non-author review accepted coefficient handoff
+only. Mesh-resolution (3180) and irregular-frequency (2040) warnings remain
+unqualified. Official actual H5 readback source is being prepared; no production
+settings/pin/public physics promotion occurred. Current evidence and limits:
+[qualification checkpoint](kernel-and-inertia-checkpoint-2026-10-26.md).
+
 Active-rigid inertia [PR9](https://github.com/amosborne/WEC-Sim/pull/9) is ready
 for review at pushed head `67e7c93f7039881a4af9b6f44a4f6232c029429c`, branch
 `fix/rigid-hydro-inertia-order`, based on combined25b58b. The corrected R2020b

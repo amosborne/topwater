@@ -6,6 +6,51 @@ Historical queued work is not authorization to restart it.
 
 ## Current priority and completed workflow
 
+Checkpoint, 2026-10-26 UTC: all recorded jobs are terminal, frozen-input/process
+checked and leases released; execution is idle. Reconcile the ledger before
+another launch. The pre-existing shared engine 40036/29796 remains unrelated
+and must stay untouched. Current task is a source-only actual full-band H5
+readback proposal in `artifacts/workflow/native-fullband-h5-v1`; not allocated.
+
+The coefficient-only `native-kernel-t320-attempt1` is COMPLETE/PASS: both T320
+controls meet reference 1e-3, window-change 5e-4 and refinement-change 5e-4 limits
+in every mode, independently accepted. Coverage is the original finite probes,
+0/45/90 genuine headings plus seam, cutoff 12 and lag step .02. Maximum refined
+mode-peak-normalized error .00028372; no pointwise-relative or actual-case claim.
+Terminal/frozen/CIM checks passed and lease released. The bounded-memory
+implementation had reproduced every kernel and complex-response value exactly
+for cached T40/.005 and T80/.0025 after its fine-grid fixture passed. Evidence:
+`artifacts/workflow/native-kernel-blocked-replay-attempt2/units/report.json`.
+The commuted shortcut is stopped: corrected V3 still failed its bound guard.
+
+Directional aggregation/dispatch is pushed at **eb722540** in
+`artifacts/dependencies/wecsim-native-excitation`, published as own-fork draft
+PR #10 against `topwater/reference`.
+It explicitly depends on unmerged PR #8 (805bb29 replayed as 0335022). Its narrow
+library 68670932 passed strict zero/one-header audits and fresh API reopening.
+Same-input preprocessing measured baseline error 18 and corrected error 0.
+Native force-array assertions passed, but full group attempts 1/2/3 failed test
+fixture transport/count instrumentation. The latest independently reviewed fix
+queries literal block handles and applies regex only to names, retaining all
+count and force assertions. **Attempt4 PASS**: all four group/native-bus and
+eleven history controls pass on the exact head. Independent measured review
+accepted publishing the draft. Actual-case forces/startup/motion and integration
+with PR #8/#9 remain pending. No production pin or canonical physics data changed.
+
+The full-band producer completed all 3606 genuine solves through the existing
+API; solve stage 14.6 s after tabulation. New coefficient candidate:
+`native-fullband-producer-attempt1/coefficients/operator-manifest.json`, SHA
+f1f788f91cf42ae7d42eb86291f05636f9a1bdfc993fb028ae4d58d5ae28fdd4.
+Non-author preservation comparison and independent measured review PASS: every
+recorded old low-band/full-radiation/three-heading full-band/physical-geometry
+quantity is exactly preserved. New native.mat SHA0effe8d1; NC b4a1dc07. Actual
+3180 mesh-resolution/2040 irregular-frequency warnings remain unqualified.
+This is coefficient-candidate acceptance, not actual force/physical accuracy.
+Next is official H5 readback: original actual-force H5 has full radiation but
+only 34-point raw A/B; compare its radiation exactly, common raw subset, and new
+full 120-point raw A/B against verified NC with explicit normalization. Short
+excitation window +/-1 s is solely a readback fixture, not force qualification.
+
 Latest qualification results are in
 experts/wecsim_expert/kernel-and-inertia-checkpoint-2026-10-26.md. The single
 160 s kernel control still failed pitch window stability; the fixed Tukey .25
@@ -66,8 +111,11 @@ the single-expression SLX correction and portable example/tests/packaging recipe
 The old ad3ba0c draft checkpoint is superseded by the evidence above. Only the
 user may authorize merging; held runtime995 remains unchanged.
 
-The user's order is working end to end, then correctness, then speed. The full
-public workflow now WORKS. No further performance changes are authorized now.
+The user's order is working end to end, then correctness, then speed. The saved
+canonical workflow was delivered under the earlier forcing path. The current
+WEC-owned-force transition has not passed actual-case startup/force/motion
+qualification; do not claim current-head end-to-end acceptance from those saved
+artifacts. No further production performance changes are authorized now.
 Native coupled dynamics remain unimplemented. No solver/render streaming.
 
 LATEST USER DECISION: switch the WEC backend so WEC-Sim computes wave excitation
