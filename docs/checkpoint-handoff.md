@@ -48,7 +48,12 @@ Issue5/PR7 have now been rewritten and read-back verified in that format; PR7
 code head206bac3 is unchanged. Preserve user edits to issue4 and PR6.
 User squash-merged PR6 on2026-10-26T00:27:39Z as76adb29201291ffdec3e805aba01151d762328b9
 into topwater/reference. Root only advised after exact-head/test review; did not
-merge. Topwater checkout/pin9952634 stays held; PRs7/8 remain unmerged.
+merge. The user subsequently merged PR7 at2026-10-26T00:36:44Z as
+25b58bda96ab0272cbfb4b0755539d5bb8ca227e. Current topwater/reference contains
+handle+display fixes; only PR8 remains open among those three. Topwater's pin995
+stays held. Issue1/PR8 have also been rewritten/read-back verified in the agreed
+issue/PR format, preserving head805bb29 and stating that prepared loads replace
+its zero result. No upstream action or root merge occurred.
 
 Canonical attempt4 is TERMINAL SUCCESS: public60s WEC-Sim solve2393.743s,
 public render226.932s,3001 motion samples,751 surface frames,751 decoded H264
@@ -218,7 +223,7 @@ https://github.com/amosborne/WEC-Sim/pull/7 (literal paths, issue5,
 were independently based on exact clean releasea23d299. User merged PR6 only;
 no further root merge is authorized.
 Isolated checkout: artifacts/dependencies/wecsim-rebuild-v7.1.0. Old checkout
-and Topwater runtime pin9952634 remain unchanged; combined reference is now76adb292.
+and Topwater runtime pin9952634 remain unchanged; combined reference is now25b58bda.
 
 Root serial stock/fixed checks passed on Windows/MATLABR2025b: all9 fixed pass;
 stock7 expected fail/2 controls pass. All32 numeric fields EACH sphere/RM3 have
@@ -246,7 +251,8 @@ Evidence/limits: experts/wecsim_expert/imported-history-rebuild-2026-10-25.md.
 No dynamics, multi-import, full-suite, MATLAB/OS matrix or performance qualification.
 Inertia remains outstanding on the active rigid path; multi-import work is out
 of current scope. No upstream write; user merged PR6, combined branch76adb292,
-Topwater/oldcheckout995 and public artifacts unchanged.
+Topwater/oldcheckout995 and public artifacts unchanged. User later merged PR7;
+current combined reference25b58bda includes both resource/display corrections.
 Pin promotion and legacy branch retirement remain on hold.
 
 The broader issue3 source assignment is STOPPED by latest scope steering above.
@@ -258,6 +264,17 @@ R2020b, but strict audit FAILED with53 unexplained entries. Candidate SHA:
 under that job's private-library/exported/. Exact processes and frozen identities
 were verified terminal; idle read back and lease released. No native tensor
 probes ran. Do not relax the audit or resume export/native development now.
+
+New NARROW source assignment after d043f8d: WEC expert owns
+artifacts/workflow/rigid-inertia-probe-v1/ for the ACTIVE Rigid Hydro Solid only.
+Same inputs before/after, six independent wrench columns with direct initial
+acceleration, identical dry/production-adjusted bodies in two modes; six columns
+x two modes means twelve tiny native runs when later approved. Infer the native
+6x6 from measurements; label added residual composition separately as algebra.
+A single roll-torque option gives the smallest issue3 example. No model load,
+MATLAB call, test/job or source-library edit is allocated to author. Preserve
+the interrupted broad fixture. Root must obtain independent source review before
+any serial probe. No Drag/Flex, new SLX export, branch promotion or pin change.
 
 Completed read-only issue2 proposal is retained as OPTIONAL generic work:
 experts/wecsim_expert/multiimport-rebuild-proposal-2026-10-25.md and own-fork

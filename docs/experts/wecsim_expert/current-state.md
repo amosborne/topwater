@@ -12,7 +12,8 @@ checked duplicates, and created/read-back verified fork issues
 [#4](https://github.com/amosborne/WEC-Sim/issues/4), and
 [#5](https://github.com/amosborne/WEC-Sim/issues/5).
 The user squash-merged handle fix PR #6 into `topwater/reference` as
-`76adb29201291ffdec3e805aba01151d762328b9`, based on release `a23d299`.
+`76adb29201291ffdec3e805aba01151d762328b9`, then display PR #7 as
+`25b58bda96ab0272cbfb4b0755539d5bb8ca227e`, based on release `a23d299`.
 The old branch/runtime pin `9952634` remains unchanged and on USER HOLD. The old branch is to be
 deleted only after its reviewed/tested replacement, exact repin and immutable
 archive tag. [Strategy and scope](../../wecsim-fork-strategy.md). No new fork
@@ -37,7 +38,7 @@ Broader OS/MATLAB compatibility remains untested. Root published both branches
 and verified internal [PR #6](https://github.com/amosborne/WEC-Sim/pull/6) and
 [PR #7](https://github.com/amosborne/WEC-Sim/pull/7) with these exact heads,
 base `topwater/reference`, and no cross-repository target. The user subsequently
-merged PR #6; PR #7 is still open. Topwater's pin remains on user hold. CI does not target
+merged PRs #6/#7; current reference is `25b58bda`. Topwater's pin remains on user hold. CI does not target
 this reference branch; local checks above are the validation evidence.
 
 ## Generic CLI integration checkpoint
