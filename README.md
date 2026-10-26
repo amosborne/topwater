@@ -49,6 +49,45 @@ at most 0.6 Hz. Breaking, slamming, flooding and loss of contact are outside the
 supported simulation scope. Changing supported boats must require input data
 only; the reference mesh is not a solver requirement.
 
+## WEC-Sim linear approximation
+
+The incoming wave field is specified independently of the boat. Capytaine
+calculates hydrodynamic responses about a fixed mean hull: its equilibrium
+position, orientation, draft and waterline. The boat itself is free to move in
+all six degrees of freedom during the WEC-Sim simulation.
+
+Incoming-wave excitation uses those fixed responses; moving the boat does not
+recompute its hydrodynamic geometry or diffraction solution. Motion still feeds
+back through displacement-dependent restoring forces, added water inertia and
+velocity-history-dependent radiation forces. This is a coupled linear system.
+
+The reconstructed diffraction and radiation fields also remain referenced to
+the mean hull. Diffraction follows the incoming waves, while radiation is driven
+by the computed motion. These disturbance fields are not rigidly carried along
+with the animated boat. The moving waterline is obtained afterward by intersecting
+the reconstructed total water surface with the current posed hull; it does not
+feed back into the forces.
+
+Motion can expose water locations inside the original mean-hull waterline
+footprint, where the exterior hydrodynamic solution is not defined. Today we
+approximate the disturbance at each such location using the nearest mean-waterline
+edge: find its closest boundary point, step outward by
+`min(0.025 m, 0.01 * beam)`, and copy the diffraction and radiation values from
+that exterior sample. Nearby exterior locations within this offset use the same
+trace policy. The incident wave is evaluated at the actual requested location.
+Thus only the disturbance is continued, approximately constant inward along a
+nearest-edge normal; the total water elevation is not held constant. The offset
+specifies where to sample outside the hull, not a maximum continuation distance.
+No blending or continuity guarantee is imposed where the nearest edge changes.
+
+This continuation does not solve a moving fluid boundary. Separation between
+the fixed mean waterline and moving waterline is a useful visual indication of
+departures from the assumed wetted geometry, rather than an accuracy estimate:
+small separation alone does not establish linear-model accuracy. Radiation-field
+phase uncertainty and fixed-mean applicability remain tracked in
+[issue #31](https://github.com/amosborne/topwater/issues/31) and
+[issue #34](https://github.com/amosborne/topwater/issues/34).
+
 ## Current foundation
 
 `HullMesh`, `RigidBody`, `WaveComponents`, `InitialState` and `SimulationInputs`

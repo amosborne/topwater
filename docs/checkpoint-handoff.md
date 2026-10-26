@@ -13,22 +13,36 @@ calculate the original harmonic force sum from the exact physical components;
 Topwater supplies wave/coefficient inputs, not applied forces.
 
 ACTIVE USER GOAL: finish the visualization fix and simple-boat validation of the
-corrected spectral path. Visualization is now complete:49 tests passed, user
-approved a separate preview, full public video751 frames verified in149.281s,
-source integrated and bytes matched. User explicitly wants previews for their
-review only, separate from full rendering. No further preview/agent image review.
+corrected spectral path. Latest visualization addition is an unlabeled, fixed
+mean-waterline outline; the moving physical waterline remains solid blue above
+the full gray mesh and black opening outline. The README explains mean-hull
+linearization and the existing exterior-trace continuation. Waterline separation
+is a qualitative geometry warning, not an accuracy bound. All50 renderer tests
+passed and a separate four-frame preview was supplied for USER review only.
+The exact tested source is integrated; no agent image review or preview during
+full rendering. Earlier full wireframe video was committed/pushed at9ec4be7.
 
-No numerical job is live. `dry-hull-full-render-attempt1` is terminal success;
-exact processes/FFmpeg/frozen inputs checked and lease released. The nine-test
+`mean-waterline-full-render-attempt1` is terminal success:751 decoded H264 frames,
+800x800,12.5fps,60.08s encoded duration; command136.093s, renderer125.468s.
+Video SHA9e654250c924749188aa184847349d5e98204369519dc41e464d4ef49b1191cf;
+video.log ends success with zero application warnings. All protected physics
+inputs remained byte-identical. Exact processes/frozen hashes/idle readback
+verified and lease released; no numerical job is live.
+`dry-hull-full-render-attempt1` is terminal success; exact processes/FFmpeg/frozen
+inputs checked and lease released. The nine-test
 combined native-block job also passed and was independently accepted. The actual
 simple-boat spectral force/motion comparison has NOT run yet.
 
-New packet/coefficient integration sources are frozen and source-approved for
-cheap tests: WEC manifest `native-spectral-integration-source-v1/manifest-v2.json`
+New packet/coefficient integration sources passed38 Python,14 native MATLAB and
+9 official H5 handoff controls in `spectral-handoff-check-attempt1`, independently
+accepted; terminal/process/frozen checks completed and lease released. WEC
+manifest `native-spectral-integration-source-v1/manifest-v2.json`
 SHAaa154432; BEMIO helper/prep/validator hashes in the source-review receipts.
-Next numerical allocation is Python spectral/backend tests and MATLAB14 fork
-controls plus9 handoff tests, then the hash-bound full3001x6 force/startup/bus
-comparison and motion. No further architecture work is queued. Production pin
+Next numerical allocation after the renderer is the independently source-approved
+full-bank17-call resource probe, bounded300s preparation/60s native/360s whole and
+aggregate8GiB. External watchdog/freeze sources are being prepared; no force or
+motion acceptance follows from this probe. Then qualify the hash-bound full3001x6
+force/startup/bus comparison and motion. Production pin
 995/reference merges remain held. For motion, use the already-qualified PR9
 inertia library in a private combined candidate; do not silently omit it.
 
@@ -56,7 +70,7 @@ and ONE PR. Active combined issue12 and draft PR14 target our fork's
 `topwater/reference`. Issue13 is folded into12 and closed; final deletion versus
 retention cleanup is deferred per user. The active worktree is
 `wecsim-spectral-spectrum`, branch `fix/full-directional-spectrum`, head
-748032696b3234bfefa58ce4609283da418df2bb (tested source fixes replayed onto25b).
+e24c1a73372baf37aebe37a8b6bf0cd0d2368b0c (tested integration on25b).
 Earlier independent phase/weight worktrees and baseline remain preserved.
 WEC expert owns combined source/tests/docs, plus shared private repro in
 `native-spectral-repro-v1`; authors run no numerical jobs.

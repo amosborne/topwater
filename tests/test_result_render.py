@@ -115,24 +115,76 @@ def test_full_dry_wireframe_black_outline_and_solid_blue_waterline_layers(tmp_pa
     monkeypatch.setattr(module, '_verify_video', lambda *args: None)
     monkeypatch.setattr(module, '_submerged_edges_from_contact', unexpected_submerged_clipping)
     render_result(result, tmp_path/'layers.mp4')
-    assert len(drawn) == 10  # Water, water-domain mask, then all three line layers per frame.
-    first = drawn[:5]
-    assert [item['zorder'] for item in first] == [0, 1, 2, 3, 4]
-    assert [item['label'] for item in first[2:]] == ['boat mesh', 'boat outline', 'physical waterline']
+    assert len(drawn) == 12  # Water/mask, fixed reference, then original three line layers per frame.
+    first = drawn[:6]
+    assert [item['zorder'] for item in first] == [0, 1, 1.5, 2, 3, 4]
+    assert [item['label'] for item in first[2:]] == [
+        'reference waterline', 'boat mesh', 'boat outline', 'physical waterline']
     edges, rim = mesh_edges(hull_faces)
-    np.testing.assert_array_equal(first[2]['segments'], hull[edges, :2])
-    np.testing.assert_array_equal(first[3]['segments'], hull[rim, :2])
+    np.testing.assert_array_equal(first[3]['segments'], hull[edges, :2])
+    np.testing.assert_array_equal(first[4]['segments'], hull[rim, :2])
     # Dry rim is at half-width2, while the mask and waterline remain at1.25.
-    assert np.max(abs(first[3]['segments'])) == pytest.approx(2.)
+    assert np.max(abs(first[4]['segments'])) == pytest.approx(2.)
     assert np.max(abs(first[1]['mask_vertices'])) == pytest.approx(1.25)
     water, faces = result.surface_frame(0)
     contact = waterline_segments(hull, hull_faces, water, faces)
-    np.testing.assert_allclose(first[4]['segments'], contact[:, :, :2], atol=1e-12)
-    np.testing.assert_allclose(first[2]['colors'], [[176/255, 176/255, 176/255, 1.]])
-    np.testing.assert_array_equal(first[3]['colors'], [[0., 0., 0., 1.]])
-    np.testing.assert_array_equal(first[4]['colors'], [[0., 0., 1., 1.]])
-    assert all(dashes is None for offset, dashes in first[4]['linestyle'])
-    assert not first[4]['effects']  # Solid blue, without a white halo.
+    np.testing.assert_allclose(first[5]['segments'], contact[:, :, :2], atol=1e-12)
+    np.testing.assert_allclose(first[2]['colors'], [[119/255, 119/255, 119/255, 1.]])
+    np.testing.assert_allclose(first[3]['colors'], [[176/255, 176/255, 176/255, 1.]])
+    np.testing.assert_array_equal(first[4]['colors'], [[0., 0., 0., 1.]])
+    np.testing.assert_array_equal(first[5]['colors'], [[0., 0., 1., 1.]])
+    assert all(dashes is not None for offset, dashes in first[2]['linestyle'])
+    assert all(dashes is None for offset, dashes in first[5]['linestyle'])
+    assert not first[5]['effects']  # Solid blue, without a white halo.
+
+
+def test_reference_waterline_is_flat_initial_hull_fixed_once_not_first_saved_water(tmp_path, monkeypatch):
+    from pathlib import Path
+    from matplotlib.axes import Axes
+    import imageio_ffmpeg
+    import topwater.result_render as module
+    original = saved_result()
+    hull, _, _, _ = flared_display_case()
+    water = original.surface_vertices_m.copy()
+    water[:, 2] = .2
+    result = replace(original, hull_vertices_m=hull, surface_vertices_m=water,
+        position_m=np.array([[0., 0., 0.], [.05, 0., .02], [.1, 0., .04]]),
+        orientation_wxyz=Rotation.from_euler('x', np.array([[0.], [.025], [.05]])).as_quat(scalar_first=True))
+    references, moving, computations = [], [], []
+    original_draw = Axes.draw_artist
+    original_reference = module._flat_reference_waterline
+
+    def reference(*args):
+        computations.append(True)
+        return original_reference(*args)
+
+    def draw(axes, artist):
+        assert not axes.figure.legends and axes.get_legend() is None
+        assert len(axes.figure.texts) == 1  # Existing HUD only; no new labels.
+        if artist.get_label() == 'reference waterline':
+            references.append(np.asarray(artist.get_segments()).copy())
+        elif artist.get_label() == 'physical waterline':
+            moving.append(np.asarray(artist.get_segments()).copy())
+        return original_draw(axes, artist)
+
+    def writer(path, *args, **kwargs):
+        Path(path).write_bytes(b'private static-reference test stub')
+        while True:
+            yield
+
+    monkeypatch.setattr(module, '_flat_reference_waterline', reference)
+    monkeypatch.setattr(Axes, 'draw_artist', draw)
+    monkeypatch.setattr(imageio_ffmpeg, 'write_frames', writer)
+    monkeypatch.setattr(module, '_verify_video', lambda *args: None)
+    render_result(result, tmp_path/'reference.mp4')
+    assert len(computations) == 1
+    assert len(references) == len(moving) == 2
+    np.testing.assert_array_equal(references[0], references[1])
+    # Flared hull half-width at flat z=0 is1.25; actual initial saved water is
+    # z=.2, with physical waterline half-width1.4. Reference does not use it.
+    assert np.max(abs(references[0])) == pytest.approx(1.25)
+    assert np.max(abs(moving[0])) == pytest.approx(1.4)
+    assert moving[0].shape != moving[1].shape or not np.allclose(moving[0], moving[1])
 
 
 def test_projection_rejects_uncovered_interior_hole_outside_hull():

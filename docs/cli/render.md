@@ -93,11 +93,20 @@ durations) and stage timings rounded to milliseconds.
 - Off-white mask only where the saved water lies inside the posed hull volume.
   Dry hull faces are transparent; their mesh and rim lines remain visible.
   Bottom-to-top drawing order is water surface (with its interior-water mask),
-  the full gray physical boat mesh, the black opening outline, then the solid
+  a dashed gray reference waterline, the full gray physical boat mesh, the black
+  opening outline, then the solid
   blue physical waterline. All dry and wetted edges are shown. The blue line
   has no halo and uses physical contact only, never an artificial closure trace.
   Water still reaches the actual moving hull intersection. This is a top-down
   schematic, without optical refraction or depth shading.
+- The dashed gray reference is the initial posed physical hull intersected with
+  flat world z=0, computed once and fixed in world coordinates. It is independent
+  of the first saved, possibly wavy surface. For the WEC-Sim workflow it shows
+  the mean-hull waterline used by the linearized model; for other producers it
+  is simply an initial-pose reference, without assuming their solver is linear.
+  Separation from the moving blue line is a qualitative geometry comparison,
+  not a force or motion accuracy bound. No label, legend, metric, or HUD change
+  is added. If the initial hull does not intersect z=0, the reference is empty.
 - TIME/ROLL/PITCH/HEAVE header. Roll/pitch are XYZ Euler departures from the
   initial attitude expressed in its initial horizontal heading frame. Heave is
   change in world CG height. Initial equilibrium trim is not wave-driven pitch.
@@ -111,6 +120,7 @@ durations) and stage timings rounded to milliseconds.
 |---|---|
 | Load | Missing/malformed NPZ members, invalid arrays, nonfinite values, invalid hull or surface indices, invalid quaternions or incompatible time endpoints. |
 | Before drawing | Nonuniform surface cadence, undefined initial horizontal heading, invalid output path or unsupported framing/budget. |
+| Before drawing | Ambiguous coplanar physical-hull/flat-z=0 intersection prevents a unique reference waterline. |
 | At each saved frame | Folded/degenerate XY projection, inconsistent face winding, non-manifold/disconnected sheet, crossing boundaries, overlapping/invalid triangulation, or an outer boundary entering the view. |
 | At each saved frame | Uncovered interior water hole outside the opaque hull footprint, or water missing a fixed view corner. A boat-shaped hole is supported. |
 | During display masking | A saved water hole extends outside the hull volume at its boundary elevation and would be exposed by transparent dry hull. Missing water is not invented. |

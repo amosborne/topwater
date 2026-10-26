@@ -1,5 +1,27 @@
 # Visualization expert: current state
 
+## Fixed mean-waterline reference, 2026-10-26
+
+The tested source is integrated into baseline: runtime SHA141046c5, regression
+SHA130fd07a, CLI documentation SHA595e14d5. All50 renderer tests passed in
+`mean-waterline-preview-attempt3`; its separate four-frame preview was supplied
+for the user's review, without agent visual inspection. Attempts1/2 remain as
+failed launcher/fixture evidence; the final correction only changed the fixture's
+single-axis rotation input shape. No physical solution changed.
+
+The initial posed hull intersects a flat world-z0 surface once to construct a
+fixed gray dashed mean-waterline reference. It sits above water/mask and below
+the full gray boat mesh, black opening outline and solid blue moving contact.
+There is no label or legend, per the user's decision. This geometry is derived
+from saved Result inputs without a solver-specific field or new NPZ array.
+Separation is a qualitative warning about mean-hull geometry, not an error bound.
+The full video job `mean-waterline-full-render-attempt1` passed:751 fully decoded
+H264 frames,800x800,12.5fps,60.08s; renderer125.468s, command136.093s. Public
+video SHA9e654250c924749188aa184847349d5e98204369519dc41e464d4ef49b1191cf.
+Log ends success with zero application warnings; the existing encoder duplicate-r
+notice does not affect the verified frame rate. All protected physics inputs are
+byte-identical. Exact process/frozen-input/idle checks passed and lease released.
+
 ## Completed full wireframe layering correction, 2026-10-26
 
 Latest user explicitly wants transparent dry **faces**, with dry edges retained.
