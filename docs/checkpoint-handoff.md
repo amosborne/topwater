@@ -1,142 +1,127 @@
 # Checkpoint handoff
 
-Updated 2026-10-27 UTC. Latest user steering controls scope. Follow AGENTS.md,
-coordination and the shared physical contract. Historical assignments are not
-permission to resume work.
+Updated2026-10-27 UTC. Follow AGENTS.md, coordination and shared contract.
+Latest user instructions control scope; historical assignments are not permission.
 
-## Current goal and status
+## Active goal and authorization
 
-The visualization fix and corrected-path simple-boat validation goal is complete
-at pushed checkpoint8703b02. Active implementation branch: baseline/fluid-body.
+USER ACTIVE GOAL: Finish validation and adoption of the new WEC-Sim reference,
+then complete fork cleanup. This now authorizes the previously deferred pin
+migration and planned cleanup AFTER validation. No upstream submissions or
+unrequested merges. Active project branch remains baseline/fluid-body.
 
-Latest user direction: Topwater-driven WEC-Sim features must clear a VERY HIGH
-engineering-rationale bar; user suspects the optional coefficient/BEMIO additions
-are an escape hatch. Source-only WEC and adversarial reviews conclude necessity
-has NOT been established. No code, pins, PR scope or numerical data changed.
+Exact merged reference:6b774228e1f6b31dee473e626204b0ef65e5ec38, based on official
+v7.1.0/a23d299. User squash-merged PR9 (4cf628e), then PR14 (6b774228). Keep merged
+PRs6/7/9/14 and closed issues4/5/3/12. Current default pin remains9952634 until
+real new-route qualification. Reference checkout is clean detached
+artifacts/dependencies/wecsim-reference-validation.
 
-Phase/weight defects remain demonstrated generic bugs. BEMIO optional-IRF writing
-merely avoids producing unused data and is not required for native harmonic forces.
-The component_view/accessor/body/initializer additions preserve our old numerical
-interpolation and raw-table representation; those agent choices do not prove a new
-public interface is needed. Previous acceptance proves the expanded candidate
-works, not that it is the minimal or preferred architecture.
+## Execution state and new-route evidence
 
-Existing documented bodyClass(hydroStruct) input may carry derived coefficients
-in STANDARD fields while retaining the consumed Ainf/radiation kernel separately.
-Source anchors: baseline bodyClass constructor113-138, initializer125-129,
-FullDir+CIC selection513-515 and radiation1162-1181. This route is source-supported,
-NOT execution-qualified; unused A/B omission and all executed consumers need a
-small constructor/preparation test. No undocumented fExt injection or fabricated
-low-frequency radiation coefficients is acceptable. Native common-axis H5 input
-also has low-frequency coverage and spline-interpolation constraints to assess.
-Do not drop sea components, change old study gates or promote the current extended
-candidate to make this review pass. No new numerical allocation is made here.
-Recommended next discriminator: standard WEC plus phase/weight fixes only, public
-struct input, a tiny low/off-grid/periodic-seam coefficient and wave test; no body
-trajectory. Preserve original studies under their original policies.
+LIVE native reference-adoption-run-attempt2, root toolsession11676, started
+2026-10-27T04:56:49.628461Z, outerguard11584/owner19892. Hidden MATLAB35832
+verified live via hostCIM; process receipt is authoritative for descendants.
+Numerical lease held. Do not launch another job or edit frozen producers/inputs.
+Earlier completed allocations passed terminal/frozen/CIM/idle/release checks.
 
-The earlier writing-only task is complete at448e629: open issue3/PR9 and issue12/PR14
-match accepted issue4/PR6 and issue5/PR7. Existing PR14 still contains the extensions
-under this necessity review; keep its source and prior evidence intact until a
-reviewed replacement is concrete. All merge/upstream/pin holds remain.
+- Topwater standard adapter is committed ONLY in isolated
+  artifacts/worktrees/standard-wecsim-input, branchwork/standard-wecsim-input,
+  exact9539192bb733663584483f33ef2fb3de273d6fcf. Not yet cherry-picked into active
+  baseline. Nonauthor source review e1998261 accepted this scope.
+- Tiny standard public-input gate: acceptance b787454d. All3 synthetic low/off-old-
+  grid/seam/omitted-empty-unusedAB cases pass; native13.75s; exact consumedCIC,
+  Ainf/mass/restoring. No extra WEC capability or fExt injection. Not a boat run.
+- Generic WEC PR14: acceptance4ffbf7f8; exact1556710 all10native regressions passed,
+  including actual native force block. FinalPR14diff10files:2production/2docs/6tests.
+- Focused Topwater Python: standard-adapter-python-attempt2,38pass2.99s at953 with
+  actual import-path assertion. Attempt1 temp-folder WinError5 caused12setup errors;
+  same source passed using fresh workspace basetemp. Failed allocation preserved.
+- Exact merged6b +953 native handoff: reference-handoff-attempt1,
+  21pass=13validators+8handoff,31.616s native/44.719s controlled.
+  Independent acceptance reference-handoff-review-v1/acceptance.json0cffbbc3 binds
+  this plus38Python. All terminal/frozen/CIM/idle/release checks complete.
 
-**NO LIVE NUMERICAL JOB.** Final private eight-file audit is terminal success.
-Root verified all owned process identities absent through host CIM, frozen inputs,
-separate idle-ledger readback and lease release LAST for each allocation. No
-numerical job or producer edit is queued. Final independent end-to-end acceptance
-76f5616a and warning triage147c92ad are complete. Scoped delivery was committed/pushed at8703b02 and the goal marked
-complete. Issue30 final validation update:
-https://github.com/amosborne/topwater/issues/30#issuecomment-6431729288
+Current full-case harness: reference-adoption-validation-v1/source-manifest.json
+6c9ecf96; independent source and staged-case review accepted. Preparation1 passed.
+Native run1 stopped BEFORE physics because sandbox MATLAB preferences were not
+writable; preserve reference-adoption-case1 and run-attempt1. All owned PIDs were
+verified absent by host CIM, frozen inputs unchanged, lease released.
 
-Pushed checkpoints:6ad9241 visualization, b1df338 spectral integration,
-d348e4c timestamp/full-force qualification, d9b2f1e accepted coupled motion.
-Own-fork issue12 and draft PR14 now correctly state boat force/bus/motion accepted,
-with the separately qualified PR9 inertia overlay explicitly identified.
+Fresh HOST-access preparation2 passed (41.75s controlled), case2 staged under
+artifacts/workflow/reference-adoption-case2. Terminal/CIM/frozen/idle/release checks
+complete. New run-allocation2 freeze c9ef8f30 contains9692files:21case/preparation
+paths relocated, other9671 identities EXACTLY unchanged. Native2100s/whole2400s/
+12GiB limits unchanged. Independent staged retry review approved. Native run2 is LIVE using HOST access
+(toolsession11676); monitor that handle, do not restart on observation timeout.
 
-## Actual delivery and evidence
+The one native run checks full3001x6 spectral forces/startup BEFORE integration,
+then actual once-only application/rest/zeroCIC/replay/balance and all6worldmotions
+against unchanged1mm/.01deg gates. Offline oracle is assertion-only, outside case;
+no reference force enters physics. No coefficient/convergence campaign.
 
-Private candidate: artifacts/workflow/native-spectral-private-candidate1/
-contains EXACTLY boat.npz, sea.npz, result.npz, result.png, video.mp4, sea.log,
-result.log and video.log. Reports/cache/provenance are outside that folder under
-native-spectral-private-evidence1/. Public canonical physics remains protected.
+New delivery source reference-adoption-delivery-v1 manifestb078f2fe independently
+approved: accepted NEW6b+953 motion required, fresh production TOTAL field ALWAYS,
+standard Result/PNG/logs, separate ordinary CLI render and exact8file/751frame
+audit. Producer source binds raw953CRLF528e plus exactCRLF-to-LF240 identity;
+no other scientific difference ignored. Caps1800s8GiBfield/300srender/300saudit
+are bounded proposals accepted as defensible; root claims each allocation.
 
-- Native full-force/startup: acceptance f460dc37. All3001x6 original samples pass
-  unchanged1e-10 peak/RMS gates; exact-zero channels exact. Worst relative maximum
-  3.414e-15 and RMS4.360e-15. No fitting, phase/gain change or external driving.
-- Actual native bus: acceptance547becf2. All3001x6 samples pass; actual query and
-  output times equal the prepared integer-multiply clock exactly.
-- Actual coupled motion: acceptance d934f305, reporta9cadd6e. Maximum world-position
-  vector difference0.059758mm (<1mm), relative SO3 angle0.001569854deg (<.01deg).
-  Outer once-only application/rest/zero initial radiation/full CIC replay pass.
-  Negative velocity history is inferred from fresh/native-zero initialization;
-  persistent negative velocity arrays were not directly measured.
-- New total-surface/Result/PNG assembly: reporta6c096b4, source97464850/contextfe12e956,
-  operatorf1f788f9/production surface240198ee, external freeze54a56b3e (9227files).
-  Saved new motion was reused; no new body integration or coefficient campaign.
-  Empty source bank required5760 radiation and671 combined-diffraction RHS solves
-  with SAME accepted17-panel/default-centroid BEM operator. No old field reused.
-- Full ordinary public render CLI:751 frames,800x800,12.5fps,60.08s encoded duration;
-  physical snapshots0..60s. Video SHAe5fce0e4b89114268c127a5dea57b4e51a108117b5d889576ddb33dbf902c2c4.
-  video.log ENDsuccess/warnings0. All9240 frozen render inputs unchanged.
-- Final audit: native-spectral-private-evidence1/final-report.json, final freeze
-  84c42f0f (9237files). Standard finite Result/schema,3001 motion/751 surface frames,
-  exact accepted new poses/0..60 endpoints/input identities/log END/PNG signature
-  and full751-frame decode passed. Root terminal/CIM/frozen/idle/release complete.
+## Delivery and adoption requirements
 
-Generic Python guard4118fd03 reuses tested v4observer53acfac6; four real containment
-controls passed before delivery. No further guard changes/retries are needed.
+After accepted newrefmotion: production TOTAL incident+diffraction+radiation
+surface, standardResult/PNG/fullCLIvideo/logs, exact8files and751decodedframes.
+Use saved new motion, no additional body solve. Field cache reuse requires EXACT
+all field inputs/dependencies, not merely compatible motions. Cap expert is
+checking whether such an existing identity proof is practical; otherwise fresh
+same-production field RHS work. No incident-only fallback/newphysics/remeshing.
 
-## Visualization and output requirements
+Before promotion preserve public canonical8files. Then publish reviewed new outputs
+with rollback/recovery pair; verify hashes/defaultnewpin preflight (notprivateoverride
+only). Commit/push source/pin/docs/output checkpoint, update issue30 MAIN description
+rather than adding status comments. Canonical files: boat/sea/result.npz, result.png,
+video.mp4, sea/result/video.log. Inputboat/sea remain unchanged. User forbids agent
+image views/previews during full render; automated complete decode allowed.
 
-Current renderer141046c5 passed50 display controls (mean-waterline-preview-attempt3).
-Current plotf39a7572 passed23 focused controls (seven-tick-plot-tests-attempt1).
-Do not attribute the earlier286-test workflow run to these later source hashes.
+The source uses existing bodyClass(hydroStruct) fields, official readCAPYTAINE /
+radiationIRF/rebuildHydroStruct. No customcomponent_view/accessor or BEMIOwriter
+extension remains in the merged fork. Spectral H5 export is skipped; consumed
+CIC/Ainf preserved; unused rawA/B/T omitted rather than fabricated/relabelled.
+Old legacy studies/tests retain original policies. Backend currentlyrequires
+CAPYTAINE_REFERENCE shared engine; defaultpreflight afterpin must be tested with
+an owned hidden engine, with terminal cleanup proof. No GUI MATLAB window.
 
-Water surface is visible up to the moving contact; full gray hull mesh, black
-opening outline and solid blue waterline retain their layer order. Fixed dashed
-mean-waterline reference has NO label. It is computed once at initial pose/flat
-z0. Separation is a qualitative geometry departure, not an accuracy bound.
-Result.png uses common translation/rotation row scales and seven nice symmetric
-ticks, zero centered, edge ticks at plot limits. README explains fixed-mean
-hydrodynamics, radiation/restoring feedback and explicit exterior-trace continuation.
-User forbids previews or agent image inspection during full rendering. No images
-were viewed in this delivery; automated complete video decoding is allowed.
+## Cleanup (authorized after adoption)
 
-## Field deltas, warnings and timing
+Plan: experts/wecsim_expert/fork-cleanup-plan-2026-10-27.md, corrected nativearchival.
+GitHub DOES support archivePullRequest; earlier contrary claims were wrong.
+Topwater is:pr is:archived verified17PRs13-29; merged11/12notarchived. WEC currently0.
+GraphQL Mutation archivePullRequest +DeleteIssue confirmed available; inputIDs are
+pullRequestId/issueId. Archive8/10 with native feature and verifyis:archived, not
+justclose/export/tag. Finalize authoritative superseded bodies first.
+Deleteobsoleteissues1/2/11/13 afterpreservingessentialhistoricalrecords/links.
+Keepmain/newref/releasetag. Delete6retiredfixbranches+unuseddev/gh-pages mirrors.
+ForkPagesdisabled; Actionsenabled, inheriteddocsdeployment mayrecreategh-pages;
+retireforkdocs automation asplanned. Verifyactual APIsettings rather than infer
+Actionsdisabled fromzero registeredworkflowentries.
+Afternewpinvalidated, tag exact995 immutablearchive/topwater-legacy-9952634 then
+retireold topwater/reference-v7.1.0 branch. Audit local dirty/unpublished work and
+source preservation before deletingobsoleteworktrees; preserveactiveadapter until
+integrated. Useonearchivebundle/dirtysnapshots, notmanyvisiblearchivebranches.
 
-New total-minus-incident projected-area/time RMS:5.98768mm over full domain,
-2.24251% of incident RMS; one-beam RMS7.99367mm/2.96028%; maximum65.0892mm.
-These are field contributions, not numerical error bounds. Direct old/new field
-subtraction is explicitly not comparable because saved physical XY grids differ;
-no regridding or fitted comparison was performed.
+User wants one authoritative issue/PR block, no assistantplay-by-play comments.
+Issue3/PR9 oldstatuscomments archivedlocally thenremoved; boththreadsnow0comments.
+PR9cleanupb2ceac6 keptall163retainedexecutable/test bytes identical toqualified67e;
+no newnativeexecutionatb2claimed. Original authoringtools stillversioned67e.
 
-Known physical warnings persist: calm restoring departures183%moment/132%force,
-338 unavailable flat-reference samples, represented wet-set departure29.15%,
-coarse mesh/irregular-frequency and provisional causal field projection. Issues31-34
-remain unresolved; compatibility does not certify physical accuracy. Higher new
-radiation-warning counts reflect empty vs prefilled source-cache accounting.
-Final WEC triage is under native-spectral-private-log-triage-v1 (report147c92ad).
-NMR final independent acceptance is private-delivery-review-v1/acceptance.json,
-SHA76f5616aac1a515ba26d8ee49b7f9277ba938b07e175bb96d96b44df94326215.
-It binds all8actualfiles/finalreport624ed7bb/source/test/force/bus/motion/triage evidence.
-Versioned evidence: experts/wecsim_expert/spectral-end-to-end-qualification-2026-10-27.md.
+## Limits and historical qualification
 
-Measured motion validation1382.281s; surface/export968.172s; render CLI153.797s
-(controlled155.531s); final audit29.219s. Geometry505.6s is mostly wet-set area335.4s
-and delta metrics143.6s; waterline intersections11.5s. Detailed accounting and
-MATLAB timing gaps: docs/workflow-timing-2026-10-27.md. No speed campaign started.
+Issues31-34remainphysicalaccuracy/applicability limitations; do not silently add
+new solver research to this goal. Keep warningsvisible andtriaged. No Topwater-
+specific newWECfeature withoutconcrete standard-interface blocker/highengineeringbar.
 
-## Holds and owners
-
-Production dependency pin9952634 remains HELD. Reference25b58bda stays unchanged.
-WEC topic exact e24c1a7 is pushed; PR14 remains draft. Motion private detached
-wecsim-spectral-inertia-validation overlays ONLY PR9 library7b0c063c. PR9 exact
-67e7c93 remains unmerged. No upstream issue/PR, merge or pin promotion is authorized.
-Topwater-native remains a nonworking prototype. No FFT/convolution fallback,
-streaming, new coefficient/convergence/mesh campaign or another body run is queued.
-
-Root owns integration/checkpoints/numerical execution. WEC owns fork/adapter,
-Cap approved final provider equivalence, NMR independently reviews physical gates.
-All scientific authors run no jobs. Preserve every worktree and failed study.
-Historical detail: experts/history/checkpoint-handoff-2026-10-27-pre-delivery.md
-and checkpoint-handoff-2026-10-26-pre-fullforce.md.
+Previous expanded e24+PR9 privateboat/field/video acceptance76f5616a and checkpoint
+8703b02 remain valid ONLYfor that earlier route. They do not qualify new953+6b.
+Historicalhandoff: experts/history/checkpoint-handoff-2026-10-27-pre-adoption.md.
+Visualization141046c5 has50focused controls; plotf39a7572 has23focused controls.
+Water/fullgraymesh/blackoutline/solidbluecontact +unlabeledfixedgraymeanoutline;
+plot7nice symmetric ticks withzero centered/commonrows/limitsatouterticks.

@@ -51,6 +51,8 @@ and [issue5](https://github.com/amosborne/WEC-Sim/issues/5)/[PR7](https://github
 scope changes, rewrite the description around the final change instead of
 appending progress reports. Keep detailed validation history, hashes and workflow
 bookkeeping in linked evidence notes.
+Keep one authoritative issue/PR main description current. Do not add assistant
+play-by-play status comments; use comments for substantive review or discussion.
 
 ## Numerical execution and recovery
 
