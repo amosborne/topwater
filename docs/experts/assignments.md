@@ -12,21 +12,24 @@ uncertainty <=10mm against the chosen linearized model, full60s and declared
 valid exterior output region. Saved motion/forcing and hydrodynamic data stay
 fixed. Internal transfer/derivative diagnostics do not replace this requirement.
 
-- CAP-ISSUE31-HEIGHT: screen and tail extension completed; PRIVATE causal-candidate
-  helper authoring authorized,
+- CAP-ISSUE31-HEIGHT: screen/tail completed and causal candidate rejected;
+  full-complex offline reconstruction IMPLEMENTATION authorized,
   capytaine_expert.
   Seven-probe all-six saved-motion screen: reproduce production cosine response
   and compare full-complex frequency reconstruction under prospective reference
   controls. The SAME chosen response has been extended from24 to48rad/s, seven
   probes/all six modes, with exact overlap and input-weighted tail checks.
-  Next: cached-data actual-height comparison of a causal full-complex candidate,
-  separating analytically justified instantaneous acceleration before inversion.
-  Verify endpoint conditioning and conventions; never fit a feedthrough to pass.
-  No body/mesh/source-method correction, motion rerun or production edit allocated.
-  Own helper and concise evidence/plan note; root owns numerical launch.
+  Own _capytaine_surface.py and focused field tests, plus expert notes. Preserve
+  intact full-H amplitude/phase with explicit prehistory/future policy, generic
+  input-driven chunked evaluation and all existing physical/contact gates.
+  No causal cut, fitted/runtime endpoint, body/mesh/source-method correction or
+  motion/forcing change. Deliver source plus whole-region qualification plan;
+  stop before tests/numerics pending independent review/root allocation.
 - NUM-ISSUE31-HEIGHT: independent numerical_methods_researcher review of reference
   design, source/API/physics conventions and actual height/uncertainty results.
   No physical implementation authorship or numerical execution delegated.
+  Also propose the minimum input-weighted tail evidence needed after sparse
+  high-frequency growth left the0.5mm allowance conditional; no automatic sweep.
 - Root owns scope, prospective controls, serial execution, acceptance, integration
   and checkpoint publication. Seven probes cannot establish the whole-region
   maximum; unresolved reference/tail uncertainty must remain visible.

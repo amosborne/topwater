@@ -49,16 +49,25 @@ reference sensitivity sum reaches 2.868 mm and remains dominated by future
 prefix dependence. A proposed 0.5 mm remaining-tail allocation is an explicit
 engineering assumption, not a measured error bound or accepted requirement.
 
-Next, compare a cached full-complex signed-lag causal candidate directly with
-actual saved-motion heights. Separate analytically derived instantaneous
-acceleration before inversion; do not fold negative lag forward or infer a
-causal-error bound from the future-continuation controls. The finite-low discrete
-operator endpoint differs from native symbolic infinity, which changes Green
-split. Its proposed feedthrough is a discrete-model endpoint, not added physical
-fluid dynamics. No physical correction or full reference qualification has been
-accepted. Seven probes remain a screen; final acceptance needs the declared
-valid full surface and all saved times, with common incident/diffraction terms
-preserved. No further BEM or mesh sweep is recommended by this review.
+The private full-complex positive-lag candidate was tested and **rejected**:
+[causal screen review](../../../artifacts/workflow/issue31-causal-review1/acceptance.json).
+It removes a 194.93 mm saved-motion contribution despite passing exact delay,
+fold and direct-restoration controls. Its band sensitivity is 11.13 mm. Merely
+keeping positive lag is therefore unsuitable here. The analytical discrete
+acceleration endpoint is numerically solvable; replacing spectral acceleration
+with saved acceleration changes the full reference by only 0.287 mm. Sparse
+high-frequency data do not establish asymptotic decay or no-growth above 48.
+
+Recommend preserving full-complex response for offline reconstruction, with
+explicit startup, future continuation and numerical uncertainty. A universal
+runtime causal kernel is not an additional user requirement. However, the
+chosen linear equations are causal: frequency-domain synthesis alone does not
+prove the rest-start physical solution, and the roughly 3 mm future controls
+are selected-case sensitivities rather than a universal anti-causal error bound.
+The remaining-tail allocation stays conditional. No correction or unconditional
+reference truth is accepted. Next implementation and total-field qualification
+belong to the coordinator and solver owner; no further kernel tuning, BEM or
+mesh sweep is recommended by this review.
 
 ## Historical provisional policy, 2026-10-25
 

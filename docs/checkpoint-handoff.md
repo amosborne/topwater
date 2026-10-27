@@ -80,6 +80,56 @@ This is private implementation/testing, not a selected production correction.
 Engineering convergence and explicit tail assumptions are sufficient; do not
 demand an infinite-frequency theorem. No numerical job currently allocated.
 
+The private causal candidate was EXECUTED and REJECTED. Its source/plan remain
+under artifacts/workflow/issue31-causal-screen1/; attempt1 failed cache-directory
+setup, attempt2 failed symbolic DOF use; both exact sources are preserved there.
+Only setup fixes were made before attempt3, source7353191b/plan059acd34,
+review803c76ac. Actual attempt3 report/arrays:
+artifacts/workflow/issue31-causal-attempt3/results/. Child1.078s; exit0/guard0/
+driver0/Jobempty/frozen; hostCIM allowned absent; finish1577 terminal0, independent
+idle readback/release-last. Ledger idle/owner null, lease absent.
+
+Delay/fold/direct numerical controls PASS, but candidate-vs-regular-reference
+max194.933mm at43.74s/probe4; old cosine max42.593mm. Candidate band36-to48
+sensitivity11.125mm and dt sensitivity1.397mm. Full-H versus saved-A*a reference
+change is only0.286675mm. Endpoint condition4920.88, residual4.44e-16. This rejects
+the destructive causal-only projection, not a sign/scaling/setup failure.
+Independent actual review: artifacts/workflow/issue31-causal-review1/acceptance.json,
+SHA8698b3ca8e2c5eac18097424cd9f4a32fd36f688295a7698fb0676aa2106153d.
+
+CURRENT AUTHORIZATION: CAP implements intact full-complex offline FFT(v) surface
+reconstruction in _capytaine_surface.py and focused field tests. No fitted
+endpoint, runtime asymptotic decomposition, causal cut, body/sourceK/mesh change,
+motion rerun or forcing change. Preserve incident/diffraction, exterior trace
+policy and physical/geometry failure gates. Reuse sourcebank and spatial chunks;
+generic inputs, no canonical whitelist. Explicit zero prehistory and smooth
+future continuation; preserve RAW t0 by default, record startup/pre-response and
+validate initial memory against derived A*a. No new initial-value override API
+or automatic zeroing of physical direct response. If a gate conflicts, report
+it rather than silently relax it. Any later qualified correction is budgeted.
+No tests or
+numerics until root's serial allocation; independent source/results review first.
+Stop authoring at source-ready, not production acceptance. Whole5929x751 total
+elevation qualification, full-run controls, regressions, logs/docs and outputs
+remain required. A universal causal-only kernel is not an extra user requirement.
+
+NMR owns a bounded read-only practical tail-qualification proposal. Sparse
+regular-H32/48/64/96 maxima .466/.248/.275/.835 show no-growth is NOT established.
+The0.5mm tail assumption therefore remains conditional, not accepted as an
+unconditional bound. Seek actual input-weighted tail evidence proportional to
+10mm, not primitive/transfer perfection or an automatic frequency/mesh campaign.
+Offline full-complex synthesis does not itself prove exact physical rest-start
+causality; future sensitivities are selected-continuation tests, not a bound on
+all possible anti-causal influence. Do not claim reference or goal complete yet.
+
+Next cheap reference task: TOP/receipt_reliability authors source-only
+artifacts/workflow/issue31-input-tail-screen1/ helper/plan, using existing sparse
+H48/64/96 and actual NEW input spectrum. NMR independently defines/reviews the
+weighting and explicit envelope assumptions. No new BEM or run delegated. First
+measure actual input weighting, then decide whether ONE justified48-to96 response
+extension is needed. Do not interpolate sparse samples as known tail or reuse
+unsupported0.5mm blindly. Root allocates all execution only after source review.
+
 The preceding bandwidth-control report is
 artifacts/workflow/issue31-green-bandwidth1/results/report.json:
 known-causal point flux at actual deep/shallow centroids, no body solve. The
