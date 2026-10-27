@@ -25,8 +25,49 @@ First saved-data discriminator completed in4.594s under guard120s/2GiB;
 Report: artifacts/workflow/issue31-stored-diagnostic1/results/report.json.
 Near/far Heave complex recovery remains about31.3%/3.48% at cutoff24, lag60;
 lag100 barely changes it. Matching-endpoint analytic controls are far closer.
-This is diagnosis, not production qualification; await independent result review
-and one targeted BEM discriminator. Do not fit a replacement to these residuals.
+Independent diagnostic review c6dd7158 accepted the interpretation only.
+This is diagnosis, not production qualification. Do not fit a replacement to these residuals.
+
+The fixed17facet Heave Green-split comparison completed in0.5s (guard3.329s),
+report `artifacts/workflow/issue31-green-diagnostic1/results3/report.json`
+(9da95c7d), accepted diagnostic review a28c7cf7. Same-source field evaluation
+changes remove most of the suspicious low-split high-frequency growth, but both
+splits retain substantial free-surface boundary residuals. Neither is a selected
+correction. Two earlier helper/API failures are preserved; original helpersv1/v2
+and all attempts remain. Successful helper SHAee80509d avoids cached LU wrappers
+and normalizes endpoint sources before numeric gradient stacking. No Capytaine
+library or production code was changed.
+The same17facet GL2/centroid comparison completed in0.672s (guard2.547s),
+report `artifacts/workflow/issue31-quadrature-diagnostic1/results/report.json`
+(2b9e3ce4), accepted diagnostic review85f85a18. GL2 reduces some raw residuals
+but does not qualify either split. Potential finite-difference witnesses expose
+an additional potential/gradient inconsistency in the high split; low reported
+boundary residuals alone are not proof of correctness.
+The extracted-Rankine mixed-integration identity predicts the observed low-split
+residual proportional to omega^2 and high-split residual independent of frequency.
+Kernel identity diagnostic completed in0.265s (guard1.891s), report
+`artifacts/workflow/issue31-kernel-diagnostic1/results/report.json` (185a1cbd),
+accepted independent review6e4ac9de. The extracted-Rankine identities predict
+raw residuals within1.3e-7absolute on fixedpanel0; directtheta1001/2001 evaluation
+also identifies a separate table-interpolation inconsistency. This is a cause
+finding, not a qualified correction or physical error bound.
+
+Current author assignment: private FIRST candidate only, no production change.
+Use common full-Green panel quadrature for exterior potential AND gradient by
+subtracting analytical Rankine terms and adding the same numerical quadrature
+terms. Keep original bodyK/source solves and production cosine inversion fixed.
+Dense .025..24rad/s Heave, near[0,1.25]/far[6,0], six original heldouts; directtheta
+1001 training versus2001 reference, productionlag60 gate (lag100 diagnostic only).
+Use per-point S=maxheldout|Hreference|; complex1%S at every heldout, amplitude2%
+and phase1degree where response>=5%S; S=0 uses1e-12seconds absolute and undefined
+phase. Reference theta convergence target0.1%S. No fitting or source/model tuning.
+Source/API review and explicit root allocation precede execution. If oldsourceK
+blocks the causal gate, stop and diagnose source-operator consistency rather than
+adjust the kernel to hide it. Six-mode and full saved-motion qualification follow
+only an informative first candidate. Canonical outputs remain unchanged.
+
+All owned processes are terminal; frozen-input/Jobempty/hostCIM/idle/readback/
+release-last passed. No numerical allocation is currently live.
 
 Coordinator adopts prospective candidate gates in
 experts/numerical_methods_researcher/issue31-method-gates-2026-10-27.md BEFORE
@@ -54,7 +95,7 @@ No upstream submission or assistant merge occurred.
 
 NO LIVE NUMERICAL JOB. All latest producer/encoder/owned MATLAB PIDs are terminal,
 frozen-input checks and separate idle/readback/release-last passed; lease absent.
-Last numerical job: issue31-stored-attempt1, terminal0. Recorded status
+Last numerical job: issue31-kernel-attempt1, terminal0. Recorded status
 is a checkpoint, not current liveness proof; revalidate before any future job.
 No repeat body integration is needed to investigate #31.
 

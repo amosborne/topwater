@@ -6,16 +6,16 @@
     "manifest":  null,
     "active_numerical_job":  null,
     "last_terminal_evidence":  {
-                                   "job":  "ACTUALadoptedMAIN6bDEFAULTcheckout/nooverride/ownedhiddenR2025b/realpreflightlicenses/terminalcleanup;no body/field;300s8GiB",
+                                   "job":  "Issue31 fixedpanel0 nearpoint exactRankine-vsquad identities 3omega + directtheta1001/2001 derivativewitness;no BEM/body;120s2GiB1thread",
                                    "owner":  "/root",
-                                   "producer_pid":  10796,
-                                   "owner_launcher_pid":  23452,
-                                   "started_at":  "2026-10-27T06:47:07.731890+00:00",
+                                   "producer_pid":  3744,
+                                   "owner_launcher_pid":  22336,
+                                   "started_at":  "2026-10-27T12:51:03.292402+00:00",
                                    "exit_code":  0,
                                    "frozen_inputs_match":  true,
                                    "complete":  true,
-                                   "manifest":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\reference-adoption-default-preflight-attempt1\\manifest.json",
-                                   "output":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\reference-adoption-default-preflight-attempt1\\output.log"
+                                   "manifest":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\issue31-kernel-attempt1\\manifest.json",
+                                   "output":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\issue31-kernel-attempt1\\output.log"
                                },
     "note":  "Exact producer/owner and FFmpeg absence verified by independent CIM; frozen input hashes verified; terminal exit 0. Final separate idle readback follows before lease release."
 }

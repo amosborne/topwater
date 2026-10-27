@@ -129,3 +129,90 @@ above and its existing `field/green-cache` directory. The helper copies that
 cache into its own output before use, so the historical cache remains immutable.
 Prospective cap120s/2GiB/one numerical thread; no launch before root allocation
 and independent helper review. No new production method is selected.
+
+The first two Green diagnostic launches failed in diagnostic instrumentation
+before publishing results: a post-solve engine cache returned an LU wrapper
+instead of numericK, then an incorrect pre-v3 solver-level Green attribute was
+used. Root verified terminal/frozen/process cleanup and lease release before
+each revision; both failed attempts and exact helper versions are preserved.
+Current extraction uses `solver.engine.green_function.evaluate` for raw body
+matrices, with numeric type/shape checks. These were helper API errors, not
+physical failures or evidence about the radiation method.
+
+The installed symbolic array stack handler also drops the requested axis in
+the public infinity-velocity route. The diagnostic avoids that route by
+normalizing the symbolic source vector FIRST and evaluating numeric fieldS/fullK
+matrix products with explicit component stacking. At finite frequencies it
+cross-checks the same numeric-source path against the public potential/velocity
+evaluators. No library or production correction is included; the endpoint is
+ancillary to the unchanged finite-frequency discriminator.
+
+## Successful Green discriminator and bounded follow-up
+
+The third Green attempt completed in0.5s (guard3.329s); root verified terminal0,
+unchanged inputs/process cleanup/release-last. Report
+`issue31-green-diagnostic1/results3/report.json` has SHA256
+9da95c7d1678841d8396f835cb613c42b9aa8160323fc53f603e8221ba1bc577;
+independent diagnostic acceptance is `issue31-green-review1/acceptance.json`
+(a28c7cf7). The two earlier instrumentation failures remain preserved.
+
+At32rad/s, using the SAME low-split sources and changing only the field split
+changes near Heave imaginaryHv by-0.287242, versus low matched+0.289287.
+At64rad/s the corresponding change is-0.624741 versus low+0.620008. This exposes
+large field-evaluation cancellation sensitivity before any source re-solve.
+Source-equation differences are also substantial, especially at lower frequencies.
+The low split's scaled near free-surface-condition residual is about99--101% at
+32/64rad/s. The high split is also unqualified (about162%/35% there) and much
+more ill-conditioned at0.687rad/s. Do not select high split as a blanket fix.
+The exact infinity unit-velocity potential is zero while its vertical derivative
+is[-0.8376657,-0.01604976] at near/far; this distinguishes displacement from
+acceleration endpoint behavior without validating a finite-band tail correction.
+
+The one next discriminator is native Gauss-Legendre2 versus centroid integration
+on the SAME17facets, both splits/five frequencies/two points. It records the
+Green-matrix free-surface residual before source contraction, source-solution
+residuals and cross-evaluation. A potential-only one-sided derivative witness at
+2.637rad/s near point uses frozenh=1e-4 and5e-5m to independently check the
+public gradient path. This is a localized integration diagnosis, not a general
+mesh campaign or permission to alter accepted dynamics. Prepared private helper:
+`artifacts/workflow/issue31-quadrature-diagnostic1/diagnose.py`; root allocation
+and exact-source independent review are required before execution.
+
+The quadrature diagnostic completed in0.672s (guard2.547s), with root's
+terminal/frozen/process/release checks. Report SHA256
+2b9e3ce4aa74b68bcbe244478c8dfb506ebed11a1cdb7378105fe3907bf82075 is in
+`issue31-quadrature-diagnostic1/results/report.json`; independent receipt
+`issue31-quadrature-review1/acceptance.json` begins85f85a18.
+GL2 reduces the low-split raw residual by roughly2.7x but does not qualify it;
+the near64rad/s contracted residual remains95%. High-split raw residual is
+frequency-independent,0.0372878 for centroid versus0.0152015 forGL2. The
+potential-only derivative witness does not justify selecting the high split:
+its GL2 difference from the public gradient is about100% at the tested near
+point, while centroid-low is0.0184%. These are diagnostics, not surface-error
+percentages.
+
+Source algebra predicts the low-split free-surface residual
+`2*k*(Q_R-I_R)` and high-split residual `2*(d_z I_R-d_z Q_R)` atz0, whereI is
+the native analytical Rankine integral andQ is its panel-quadrature sum, both
+including-1/(4pi). The observed frequency scaling matches those identities.
+The next kernel-only helper fixes original panel0 and nearpoint, with three
+frequencies; it verifies these identities without a BEM solve. At2.637rad/s
+only, native no-tabulation theta1001/2001 evaluation and the declared derivative
+h-pair separate integration mismatch from table interpolation. No-tabulation
+uses safe one-entry radial/vertical arrays; zero-size grids are avoided because
+release Fortran writes radial entry1 unconditionally. Prepared helper:
+`artifacts/workflow/issue31-kernel-diagnostic1/diagnose.py`; independent review
+and root allocation precede any run.
+
+The release [matrix assembly](https://github.com/capytaine/capytaine/blob/v3.0.0/libs/libDelhommeau/src/matrices.f90)
+and [wave evaluator](https://github.com/capytaine/capytaine/blob/v3.0.0/libs/libDelhommeau/src/Green_wave.f90)
+show why the third option is incomplete as a repair: it moves one vertical
+derivative Rankine contribution from numerical quadrature to analytical
+integration, while leaving the potential unchanged. A correction must treat
+potential and derivative together. For regular exterior field points, summing
+the full elementary Green function and gradient with the same quadrature is a
+concrete consistent representation to evaluate after diagnosis. No native
+all-terms-quadrature switch was found; native mesh quadrature changes the wave
+part only. Such a candidate would still need the independently frozen all-six
+complex-response and causal-transient gates. It is not selected by this note,
+and its spatial approximation remains distinct from full issue32 qualification.

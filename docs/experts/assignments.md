@@ -7,17 +7,17 @@ schedules authorized work and never grants scope. Update status in place.
 
 ## Radiation-surface correction, 2026-10-27
 
-- CAP-ISSUE31-CAUSE: authorized/source review, owner `issue31_cause`
-  (capytaine_expert). Diagnose conventions/endpoints/cached transfer evidence;
-  propose the cheapest one-mode near/far control. Own new diagnostic-plan note;
-  no production correction or numerical execution allocated yet.
-- NUM-ISSUE31-GATES: authorized/independent review, owner
-  `issue31_method_review` (numerical_methods_researcher). Derive causal transfer
-  requirements and prospective amplitude/phase/transient gates; primary sources,
-  no physical implementation or numerical execution. Own new method/gates note.
-- Coordinator owns requirements, numerical allocation, integration and checkpoint
-  publication. Accepted motion/forcing stay immutable. Stop initial assignments
-  at ranked cause hypotheses and a reviewed bounded diagnostic plan.
+- CAP-ISSUE31-CAUSE: initial stored/Green/quadrature diagnostics completed and
+  independently reviewed; capytaine_expert owns the next fixed-panel kernel
+  identity/table-interpolation diagnostic helper and concise source/evidence note.
+  No production correction or numerical launch is delegated; root allocates it.
+- NUM-ISSUE31-GATES: prospective method gates and diagnostic source/results reviews
+  completed; numerical_methods_researcher owns independent review of the next
+  helper/cause attribution and correction proposal, without physical authorship.
+- Coordinator owns requirements, serial execution, integration and checkpoints.
+  Accepted motion/forcing and canonical outputs remain unchanged. Stop the current
+  author/reviewer assignments at a verified mechanism and one justified correction
+  proposal; do not launch broad mesh studies or start optimization.
 
 The following assignments are historical and confer no current execution authority.
 
