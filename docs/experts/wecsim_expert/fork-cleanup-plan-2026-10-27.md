@@ -115,7 +115,13 @@ Audit local dirty/untracked work, unpublished commits, active references and
 archived source requirements before removing any local branch/worktree. Preserve
 the active standard-input adapter worktree and original failed-study evidence.
 Use one git bundle plus necessary dirty patches/source snapshots for obsolete
-trial work; avoid creating many visible archive branches. Local cleanup is included in the authorized goal after this preservation audit,
+trial work; avoid creating many visible archive branches. Preservation now exists
+in artifacts/workflow/wecsim-cleanup-preservation1: one bundle, six exact dirty/
+untracked snapshots and patches. The source is shallow at releasea23d299; retain
+shallow-boundaries.txt too. An independent bare restore with that boundary
+recovered24refs/all four unpublished trials and passed connectivity checks.
+A plain mirror clone without the boundary failed and is not recovery evidence.
+Historical issue bodies are preserved in ../history/wecsim-retired-workflows-2026-10-27.md. Local cleanup is included in the authorized goal after this preservation audit,
 not a side effect of remote pruning.
 
 ## Execution order after validated adoption
