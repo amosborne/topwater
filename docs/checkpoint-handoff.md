@@ -13,8 +13,9 @@ Compare the same exterior locations and clocks through the full60s. Preserve
 incident/diffraction/radiation; never adjust motion or phases to obtain agreement.
 
 The earlier23% figures are transfer-function diagnostics, NOT centimetre errors
-in the saved water. No qualified actual-trajectory height error has yet been
-measured. Do not claim the goal complete from proxy residuals or a few points.
+in the saved water. The actual-trajectory seven-probe screen is now complete,
+but its reference remains unqualified. Do not claim certified error or completion
+from method disagreement, proxy residuals or a few points.
 The user explicitly rejects pursuing perfection for its own sake.
 
 Priority: #31, then measured end-to-end speed, then #32-34. Upstream contributions
@@ -25,19 +26,44 @@ currently allocated. Root owns serial numerical execution and integration.
 
 ## Current execution and immediate work
 
-The PV24 bandwidth control is terminal0/guard0/Jobempty/frozen. HostCIM,
-independent idle readback and release-last completed; ledger idle/owner null and
-lease absent. No numerical process is allocated. Revalidate current liveness
-before the next job; a recorded checkpoint alone is not liveness proof.
+The actual-height screen is terminal0/guard0/Jobempty/frozen. HostCIM,
+independent idle readback and release-last completed; finish session11288 exited0.
+Ledger idle/owner null and lease absent. No numerical process is allocated.
+Revalidate current liveness before the next job; a checkpoint alone is not proof.
 
-Its report is artifacts/workflow/issue31-green-bandwidth1/results/report.json:
+Actual report: artifacts/workflow/issue31-height-screen1/results/report.json,
+with height-evidence.npz alongside. ALLsix accepted NEW motions were used.
+Cosine24 versus full-complex reference-candidate disagreement reaches42.6603mm
+at44.68s on an exterior continuation trace; the direct near exterior probe
+reaches31.9271mm and far probe3.46673mm. These are method differences, NOT
+certified errors against the linearized model. The conservative observed
+sensitivity sum reaches2.91712mm, dominated by future-extension/cut controls.
+Missing response above24rad/s remains unknown; reference_qualified=false and
+full_surface_acceptance=false. Fourteen controls took0.844s (guard2.094s).
+
+Independent actual-results review accepts this screen and its limits:
+artifacts/workflow/issue31-height-review1/acceptance.json, SHA9d55d233d3ae1534a35023dfc222cf6d3fee095e42b4d24319ca0abf1cf62664.
+Next: the smallest justified extra frequency-tail/reference check, then a reconstruction correction and whole-domain
+qualification. Do not restart body/sourceK/mesh or primitive precision campaigns.
+The user explicitly separates linear-model numerical accuracy from the harder
+nonlinear/experimental model-error question.
+
+CAP is preparing a PRIVATE24-to48rad/s response extension at the SAME seven
+probes/all six modes/native17facet operator, with overlap24, saved-motion height
+differences and an absolute input-weighted upper-band envelope. Root has not
+allocated execution; independent source/control review comes first. This extends
+frequency support, not the physical model. Engineering convergence and explicit
+tail assumptions are sufficient; do not demand an infinite-frequency theorem.
+
+The preceding bandwidth-control report is
+artifacts/workflow/issue31-green-bandwidth1/results/report.json:
 known-causal point flux at actual deep/shallow centroids, no body solve. The
 shallow omitted-band discrepancy reaches1.31% of its flux-transfer scale; the
 same-band cosine/KK discrepancy is about0.116%. This establishes a finite-band
 contribution, NOT the cause of the entire23% boat-mode residual or an actual
 water-height error. Independent review0e8722d0 accepts only that diagnostic.
 
-Next: a PRIVATE seven-probe actual-height screen, ALLsix NEW saved motions.
+Completed PRIVATE seven-probe actual-height screen, ALLsix NEW saved motions:
 Use existing full-complex transfer cache, not another primitive-precision study.
 Reproduce current cosine24 reconstruction with NEWv; compare full-complex
 frequency reconstruction with explicit zero prehistory, smooth future-extension,
@@ -49,8 +75,8 @@ Unknown frequency-tail error must remain explicit, not silently assumed zero.
 
 Owners: capytaine_expert authors the bounded helper/implementation; independent
 numerical_methods_researcher reviews reference design, source and actual results.
-Root selects parameters/leases/acceptance. No next numerical launch until the
-actual-height plan and prospective controls have independent review. Planned FFT
+Root selects parameters/leases/acceptance. No next numerical launch until its
+bounded next plan and prospective controls have independent review. The screen's FFT
 periods256/512/1024s must be truly distinct; dt.02/.01, smooth future continuations
 10/20s, bands12/18/24. Preserve all original motion knots and compare all3001
 input times. Interior future cuts20/40s test earlier-prefix independence in
