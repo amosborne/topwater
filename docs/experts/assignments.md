@@ -12,8 +12,8 @@ uncertainty <=10mm against the chosen linearized model, full60s and declared
 valid exterior output region. Saved motion/forcing and hydrodynamic data stay
 fixed. Internal transfer/derivative diagnostics do not replace this requirement.
 
-- CAP-ISSUE31-HEIGHT: screen/tail completed and causal candidate rejected;
-  full-complex offline reconstruction IMPLEMENTATION authorized,
+- CAP-ISSUE31-HEIGHT: completed: full-complex offline reconstruction implemented,
+  whole-region qualification and physical replay accepted; old causal candidate rejected,
   capytaine_expert.
   Seven-probe all-six saved-motion screen: reproduce production cosine response
   and compare full-complex frequency reconstruction under prospective reference
@@ -25,7 +25,7 @@ fixed. Internal transfer/derivative diagnostics do not replace this requirement.
   No causal cut, fitted/runtime endpoint, body/mesh/source-method correction or
   motion/forcing change. Deliver source plus whole-region qualification plan;
   stop before tests/numerics pending independent review/root allocation.
-- NUM-ISSUE31-HEIGHT: independent numerical_methods_researcher review of reference
+- NUM-ISSUE31-HEIGHT: completed: independent numerical_methods_researcher review of reference
   design, source/API/physics conventions and actual height/uncertainty results.
   No physical implementation authorship or numerical execution delegated.
   Also propose the minimum input-weighted tail evidence needed after sparse
@@ -34,8 +34,11 @@ fixed. Internal transfer/derivative diagnostics do not replace this requirement.
   and checkpoint publication. Seven probes cannot establish the whole-region
   maximum; unresolved reference/tail uncertainty must remain visible.
 
-Prior diagnostic studies and their failed gates remain preserved. No correction
-has yet been accepted into production. Speed and #32-34 remain later work.
+The selected-case correction is accepted and enabled: maximum difference plus
+reference uncertainty 5.784425 mm over all5929 targets/751 frames, conditional
+on the documented response envelope. Final integration checks pass50 tests in
+24.20s with no skips. Root owns final evidence/publication/issue closure;
+speed and #32-34 remain later work. Preserve all failed studies.
 
 The following assignments are historical and confer no current execution authority.
 

@@ -1,35 +1,21 @@
-{
-  "state": "running",
-  "execution_owner": "/root",
-  "assignment": "Issue31 reviewedVARIANT2 whole5929x751 conditional TOTAL numericalqualification; saved11520RHS+12only;firstchunkearlystop/chunk128;noWEC/body/publicoverwrite;1200.0s3GiB1thread",
-  "claimed_at": "2026-10-27T17:01:10.5736450Z",
-  "manifest": "C:\\Users\\alex\\topwater\\artifacts\\workflow\\issue31-full-attempt2\\manifest.json",
-  "active_numerical_job": {
-    "producer_pid": 30120,
-    "owner_pid": 24388,
-    "started_at": "2026-10-27T17:01:13.403434+00:00",
-    "host": "OsborneEE",
-    "command": [
-      "C:\\Users\\alex\\topwater\\.venv\\Scripts\\python.exe",
-      "C:\\Users\\alex\\topwater\\artifacts\\workflow\\private-python-guard-v2\\run.py",
-      "--config",
-      "C:\\Users\\alex\\topwater\\artifacts\\workflow\\issue31-full-allocation2\\guard-config.json",
-      "--config-sha256",
-      "8f7c5e7d5d0b7a6135ee4efae66ca523efc8bafbdd84ae62e7408665e52fcebd"
-    ],
-    "output": "C:\\Users\\alex\\topwater\\artifacts\\workflow\\issue31-full-attempt2\\output.log"
-  },
-  "last_terminal_evidence": {
-    "job": "Issue31 reviewedvariant2 Hermite input controls+cachedfirstchunk tail-only budgetupdate;noBEM/WEC/body/qualification;60.0s2GiB1thread",
-    "owner": "/root",
-    "producer_pid": 37376,
-    "owner_launcher_pid": 32068,
-    "started_at": "2026-10-27T16:52:08.763184+00:00",
-    "exit_code": 0,
-    "frozen_inputs_match": true,
-    "complete": true,
-    "manifest": "C:\\Users\\alex\\topwater\\artifacts\\workflow\\issue31-hermite-attempt2\\manifest.json",
-    "output": "C:\\Users\\alex\\topwater\\artifacts\\workflow\\issue31-hermite-attempt2\\output.log"
-  },
-  "note": "Claimed by coordinator; independent readback required before execution."
+﻿{
+    "state":  "idle",
+    "execution_owner":  null,
+    "assignment":  null,
+    "claimed_at":  null,
+    "manifest":  null,
+    "active_numerical_job":  null,
+    "last_terminal_evidence":  {
+                                   "job":  "Issue31 saved-array actualMAXdifference metadata location/time only;noBEM/physics/test rerun;30s1GiB1thread",
+                                   "owner":  "/root",
+                                   "producer_pid":  2160,
+                                   "owner_launcher_pid":  35612,
+                                   "started_at":  "2026-10-27T18:40:00.213494+00:00",
+                                   "exit_code":  0,
+                                   "frozen_inputs_match":  true,
+                                   "complete":  true,
+                                   "manifest":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\issue31-max-location-attempt1\\manifest.json",
+                                   "output":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\issue31-max-location-attempt1\\output.log"
+                               },
+    "note":  "Exact producer/owner and FFmpeg absence verified by independent CIM; frozen input hashes verified; terminal exit 0. Final separate idle readback follows before lease release."
 }

@@ -683,7 +683,10 @@ class SurfaceKernel:
     direct_acceleration: np.ndarray | None = None
 
 
-_SURFACE_POLICY_ACCEPTED = False
+# Selected simple-boat60s qualification: difference plus reference uncertainty
+# <=10mm throughout the declared surface (issue31). Other cases/settings require
+# their own accuracy assessment; runtime geometry/startup gates still apply.
+_SURFACE_POLICY_ACCEPTED = True
 
 
 def require_surface_readiness():

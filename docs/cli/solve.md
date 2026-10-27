@@ -9,10 +9,11 @@ uv run topwater solve examples/simple-boat 60 --solver=wecsim
 ```
 
 DIRECTORY defaults to the current directory. The input/output filenames are
-fixed. The earlier provisional method completed the selected 60-second public
-workflow. Its replacement is currently gated off pending issue #31's full-surface
-numerical qualification; readiness fails clearly rather than publishing an
-unqualified replacement. Earlier outputs remain historical evidence.
+fixed. Full-complex surface reconstruction is enabled following the selected
+60-second simple-boat qualification: maximum elevation difference plus reference
+uncertainty is 5.78 mm against the chosen linearized model, below the 10 mm target.
+This is conditional selected-case evidence, not a guarantee for other inputs.
+See [the qualification and its assumptions](../experts/numerical_methods_researcher/issue31-selected-case-acceptance-2026-10-27.md).
 
 The native backend is the intended default. Native coupled dynamics are not yet
 available; omitting `--solver=wecsim` must report that limitation without silently
@@ -176,7 +177,7 @@ remain unqualified. [Evidence and scope](../experts/wecsim_expert/current-state.
   represented incoming packet, direct sideband diffraction, and radiation driven
   by all six saved fixed-mean native modal velocities. Angular velocities are
   not replaced by Euler-angle rates.
-- The pending radiation method preserves the full complex frequency response.
+- The radiation method preserves the full complex frequency response.
   Its default band is 0--48 rad/s at 0.025 rad/s spacing, with a 1024 s FFT
   period and FFT timestep half the saved motion timestep. Every saved velocity
   knot is retained. Velocity is zero before startup; a prescribed 20 s cubic
@@ -185,8 +186,9 @@ remain unqualified. [Evidence and scope](../experts/wecsim_expert/current-state.
   motion. Higher frequencies are set to zero, leaving tail uncertainty to be
   evaluated. Raw initial radiation is preserved; no separate acceleration
   response is added. Spatial chunks contain at most 128 evaluation points.
-  These settings need whole-domain validation against the 1 cm linear-model
-  elevation requirement, including reference uncertainty. Offline synthesis
+  These settings passed whole-domain validation for the selected simple-boat
+  case against the 1 cm linear-model elevation requirement, including reference
+  uncertainty. Other inputs/settings need their own accuracy assessment. Offline synthesis
   does not establish exact causal rest-start physics for arbitrary inputs.
 - Disturbance fields near/inside the mean hull footprint use an explicit exterior
   trace at offset `min(0.025 m, 0.01*beam)`. The incident contribution is evaluated
@@ -245,7 +247,7 @@ the initial hydrostatic wetted area. It reports first/last exceedance and the
 worst fraction/time. This uses the reconstructed piecewise-linear total graph;
 it is not a nonlinear-physics truth estimate.
 
-The pending method logs its band, FFT period/timestep, input interpolation,
+The method logs its band, FFT period/timestep, input interpolation,
 future continuation, pre-response and raw startup value in `SURFACE_NUMERICS`
 records. These are numerical diagnostics, not automatic accuracy certificates.
 The earlier cosine projection and failed causal-only cut remain investigation
@@ -270,11 +272,16 @@ silently suppressed or converted into numerical-accuracy claims.
 
 ## Current support and detection limits
 
-The former selected-case provisional policy is historical. The new full-complex
-method is awaiting whole-region qualification under issue #31 and its readiness
-gate is closed. The requirement is at most 1 cm numerical elevation error,
-including reference uncertainty, against the chosen linearized model. It does
-not quantify error against nonlinear calculations or real water. Runtime input,
+The former cosine projection is historical. The full-complex method passed
+issue #31's selected-case qualification at all 5929 targets and 751 saved frames
+through 60 s, including exterior-trace continuation. Maximum runtime/reference
+difference was 0.341 mm; the largest pointwise difference plus reference
+uncertainty was 5.784 mm. The 1 cm requirement concerns numerical elevation error
+against the chosen linearized model, not nonlinear calculations or real water.
+The omitted-frequency allowance assumes that each regular response stays below
+twice its maximum calibrated from 36--48 and 64/96 rad/s, with no unseen larger
+resonance. This is an explicit engineering assumption, not a proven universal
+bound or a qualification of the underlying BEM mesh. Runtime input,
 initial-state, topology, finite-data, and output gates remain mandatory. A
 motion-only result is never substituted for the required total-surface output.
 

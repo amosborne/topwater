@@ -1,5 +1,18 @@
 # Current state: Topwater expert (solver implementation HELD)
 
+## Issue31 integration acceptance, 2026-10-27
+
+Full-complex WEC-Sim surface postprocessing is enabled after selected-case
+whole-region qualification (5.784425mm combined numerical budget versus10mm).
+This does not implement native dynamics or qualify nonlinear/model accuracy.
+Final root-executed integration cohort passes50tests in24.20s, no skips;
+independent receipt verifies all numeric module ASTs unchanged apart from the
+readiness Boolean. Exact cohort, terminal proofs and artifact identities are
+in [the tracked acceptance record](../numerical_methods_researcher/issue31-acceptance-evidence-2026-10-27.json).
+Canonical result/video/logs are regenerated; all motion and inputs are unchanged.
+No numerical job is delegated. Root owns final checkpoint/issue closure and
+future measured-speed allocation; #32–34 remain separate.
+
 ## Current workflow geometry checkpoint (2026-10-25)
 
 Latest user explicitly approved the simpler uncut-surface contract. Preserve the

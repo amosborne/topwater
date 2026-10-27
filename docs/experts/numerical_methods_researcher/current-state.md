@@ -1,36 +1,51 @@
 # Current state: independent numerical-methods review
 
-## Latest issue 31 checkpoint, 2026-10-27
+Final integration addendum: the promoted policy passed50 selected integration
+tests in24.20s with no skips; independent receipt review accepted exact coverage
+and unchanged numerical module AST apart from the readiness Boolean.
 
-The target remains maximum elevation difference plus numerical reference
-uncertainty <=10 mm against the chosen linearized model over all declared
-5929 targets/751 times. Nonlinear/experimental accuracy is separate.
-Implementation `d3630fe` preserves full complex response; independent source
-review and 42 focused tests pass. Production readiness remains closed.
+## Accepted selected-case reconstruction, 2026-10-27
 
-The measured 128-query pilot passed its source-bank, Fourier and resource
-checks (actual review `0757ef55`). The first full attempt then stopped after
-128 queries: combined estimate 12.3233 mm, dominated by the 11.7158 mm analytic
-tail triangle bound. Actual candidate/reference maximum was only 0.009218 mm.
-[Independent actual review](../../../artifacts/workflow/issue31-full-review1/acceptance.json)
-recomputed every saved 751-by-128 value. Full coverage, common fields and
-geometry are not qualified by this rejected partial attempt.
+The simple-boat case passes the user's **10 mm maximum elevation difference
+including numerical reference uncertainty**, against the chosen linearized
+model. All **5,929 targets at 751 times** were checked. The largest combined
+estimate is **5.7844 mm**; the actual runtime/reference difference is at most
+**0.3412 mm**, with maximum time-weighted RMS **0.08965 mm**. These are numerical
+reconstruction quantities, not nonlinear or experimental error estimates.
 
-The original [Hermite jump-tail derivation](issue31-hermite-tail-2026-10-27.md)
-and actual polynomial controls pass. A [tighter exact-input integral enclosure](issue31-input-integral-enclosure-2026-10-27.md)
-is independently derived: fixed Fourier-grid period8192 and upper target512,
-magnitude trapezoid plus curvature/off-grid allowances and analytic remaining
-tail. Variant2 source and independent controls must pass before retry. This
-changes reference uncertainty accounting, not runtime physics, the response
-envelope or the 10 mm threshold. Root owns serial execution and acceptance;
-this reviewer authors no physical correction and runs no numerical job.
+The [selected-case acceptance note](issue31-selected-case-acceptance-2026-10-27.md)
+links the exact reports and hashes. The independent root-executed saved-array
+audit checked every combined value, all 47 chunks, common incident/diffraction
+identities, unchanged motion and the complete exported water geometry. All 751
+existing physical geometry/contact/startup frames passed. This reviewer authored
+the independent validator, not the physical correction, and launched no solver
+or numerical job.
 
-The same-point factor2 regular-response envelope from dense36--48 plus64/96 is
-an explicit selected-case engineering assumption, with known32/prior-probe
-witnesses. It is not a proof of no unseen resonance or #32 model resolution.
-Never replace pointwise evidence with the former proposed0.5 mm allowance.
+The reference remains conditional on the explicitly accepted, location-specific
+regular-response envelope: twice the maximum calibrated from 36--48 and 64/96
+rad/s, with known-32/prior-probe checks, bounds uncomputed frequencies. This is
+an engineering assumption excluding unseen larger resonances or faster growth,
+not a theorem or a mesh/model-resolution qualification. The known Hermite input
+tail is enclosed independently; no uniform 0.5 mm allowance is used.
+
+The fixed-mean wetted-area warning remains: worst symmetric difference is
+18.27% at 44.64 s. Retain it as a model-applicability limitation requiring later
+evaluation; it does not invalidate reconstruction accuracy against that same
+linearized model. Broader model questions in issues #32--34 remain separate.
+
+Canonical Result, motion plot, logs and the regenerated video are published.
+The [video log](../../../examples/simple-boat/video.log) records decoded
+verification of 751 frames, 12.5 fps, 800 by 800 pixels and the complete 60 s
+source interval. Readiness was enabled after cleanup by changing only its
+Boolean; the coordinator verified numerical-function ASTs were unchanged.
+Final integration checks pass50 tests with no skips. Checkpoint push and issue
+closure remain coordinator follow-up, recorded in the handoff and GitHub issue.
 
 ## Prior investigation summaries
+
+The following are historical intermediate findings, superseded for current
+acceptance by the note above. Failed studies and their original policies remain
+preserved; statements that qualification was pending describe those checkpoints.
 
 The user requires **at most 10 mm numerical surface-height error against the
 chosen linearized model**. Nonlinear and real-world accuracy are separate.

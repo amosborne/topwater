@@ -134,6 +134,7 @@ def test_weighted_spectrum_has_no_hidden_factor_or_conjugation():
 
 def test_total_surface_capability_checks_selected_policy(monkeypatch):
     import topwater._capytaine_surface as producer
+    monkeypatch.setattr(producer, '_SURFACE_POLICY_ACCEPTED', False)
     with pytest.raises(ValueError, match='whole-domain numerical qualification'):
         require_surface_readiness()
     monkeypatch.setattr(producer, '_SURFACE_POLICY_ACCEPTED', True)

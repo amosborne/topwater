@@ -1,51 +1,45 @@
 # Current state: Capytaine expert
 
-## Active issue31: saved-trajectory height accuracy, 2026-10-27
+## Issue31 accepted and published, 2026-10-27
 
-User acceptance is <=10mm maximum numerical TOTAL surface-height error INCLUDING
-reference uncertainty against the chosen LINEARIZED model. Freeze accepted WEC
-motion/forcing, mean hull and native hydrodynamic data. No WEC rerun, body/sourceK
-correction, mesh/model campaign or upstream work. Root owns serial execution,
-acceptance, source freeze and public artifacts; handoff/ledger control allocation.
+Independent final review accepts the selected simple-boat60s surface against the
+chosen fixed-mean LINEARIZED model:5929 targets,5899 exterior queries and751
+surface times, including384 continuation targets. Maximum candidate/reference
+difference is0.341183mm; maximum combined difference plus reference uncertainty
+is5.784425mm, below the user10mm requirement. All751 existing physical geometry,
+opening/contact and startup checks passed. Accepted motion/forcing, mean hull,
+incident/diffraction/radiation, clocks, axes and exterior-trace policy are unchanged.
+This surface work did not rerun WEC-Sim or modify body/source physics.
 
-The gated intact full-complex offline implementation is committed at d3630fe;
-root's focused field regressions passed42 tests in17.81s. Runtime preserves fullH,
-exact saved velocity knots, zero velocity prehistory, explicit smooth future and
-RAW startup. It adds no acceleration term and makes no universal causality claim.
-The ONE active production readiness gate remains FALSE pending whole-domain
-qualification. No public replacement or gate promotion has occurred.
+Qualification is CONDITIONAL on the explicit pointwise regular-response envelope:
+C=2maxknown|R| from dense36..48rad/s and64/96, with known32/prior-probe checks;
+no unseen larger resonance/faster growth is assumed. Input-tail enclosure and
+all-point numerical controls include above-Nyquist accounting. This does not
+qualify nonlinear/experimental accuracy, mesh/model resolution or universal
+boat/case accuracy. Issues32-34 remain open. Existing six calm-restoring warnings
+are inherited from unchanged motion; the qualified geometry wet-set warning
+(18.27% peak) remains explicit. The retired projection warning is no longer active.
 
-The actual128-query pilot passed:62.641s total, source warmup50.484s, field5.813s,
-FFT1.093s, peakJobcommit543100928B. It retained the11520RHS sourcebank. Actual
-surface is5899unique exteriorqueries for5929targets/751frames,384continued nodes.
-Pilot spacing.05/.1 changes max0.1403/0.7079mm; finalfuture10max0.9567mm. These
-are pilot/cost evidence, not full-domain acceptance. Only64/96 pair calibration
-(12extraRHS) is allocated beyond that bank, not a high-frequency sweep.
+Canonical result.npz (SHA prefixd3438810), result.png (275ac...) and truthful
+result.log are published with permanent prior-file backups. Video is regenerated:
+751 frames at12.5fps,800x800, covering source0..60s; render142.641s. No preview
+inspection was performed. Runtime retains full complexH, declared offline future
+and raw startup; no separate acceleration term is added at runtime. Root promoted
+only the readiness Boolean (source SHA prefix6d8edb3), with numerical AST unchanged.
+Final integration checks pass50 tests in24.20s with no skips and independent
+receipt review. Root owns final repository/issue bookkeeping and any next work.
 
-Full attempt1 correctly stopped after128queries: combined conservative budget
-12.323328mm, dominated by11.715798mm absolute-jump tail enclosure. Actual runtime
-versus declared reference difference was only0.009218mm there. This was a loose
-uncertainty-budget rejection, not evidence of actual12mm error. Setup took
-140.436s before18.485s firstchunk; the next variant profiles exact preloop stages.
-Original sources/plans/rootpolicy1 and failed arrays remain immutable/preserved.
+Measured recovery geometry540.829s dominates the remaining delivery cost:
+wet-set integration355.109s and disturbance metrics157.192s. These are evidence
+for the NEXT measured-speed phase, not authorization for optimization now.
+All failed studies, source variants, conditional policies and cached evidence
+remain preserved. No new workflow run was performed for this documentation task.
 
-Validation alone separatesA from the unchanged finite-low discrete operator:
-regular complexR on C1-Hermite(v/a) plus exact saved/right-limitA*a. Runtime does
-not addA or overwrite t0. PointwiseC=2maxknown|R| (dense36..48+64/96, known32 and
-prior7 checked) is an explicit selected-case ENGINEERING growth/no-resonance
-assumption, not proof/model-resolution qualification. All actual-target numerical
-controls, unchanged incident/diffraction identity and physical geometry/startup
-gates still need full validation. Seven probes cannot supply global allowance.
-
-Current source-ready variant2 tightens ONLY the input integral: fixed8192s
-coefficient-frequency grid,48..512 magnitude trapezoid with genuine complex-
-interpolation curvature/offgrid-phase enclosures, then original analytic jump
-remainder to infinity. RuntimeFFT remains1024s, C/physics/10mm unchanged. Tiny
-independent controls and a cached-firstchunk rebudget (no new fields) are next
-under root allocation after review. Fresh helper/runner/plans are private under
-artifacts/workflow/issue31-whole-surface2. No numerical author run occurred.
-
-Detailed versions, hashes, proofs and failed studies:
+Evidence: artifacts/workflow/issue31-final-method-review1/acceptance.json,
+issue31-independent-check-attempt1/results/report.json,
+issue31-recovery-attempt1/results/report.json and
+issue31-publication-attempt1/results/report.json (all under artifacts/workflow).
+Detailed versions/hashes/history:
 [issue31 diagnostic evidence](issue31-diagnostic-plan-2026-10-27.md).
 
 ## Historical checkpoints below

@@ -655,3 +655,33 @@ scientific imports or numerical execution occurred while source was drafted.
 New fullvariant01f5 also instruments exact preloop stages (policy/input/cache/
 geometry/Green/bank/trace/reference/endpoint/prior7/train/incident spatial+temporal).
 No broad performance changes, BEM sweep, WEC rerun or readiness flip is included.
+
+
+## Final selected-case acceptance and canonical delivery, 2026-10-27
+
+Authoritative final method review accepts the full5929-target/751-time surface
+(5899 actual exterior queries,384 continued targets):0.341183mm maximum runtime/
+reference difference and5.784425mm combined difference plus reference uncertainty,
+within10mm. All751 unchanged physical geometry/contact/opening/startup gates pass.
+Accepted motion/forcing, chosen fixed-mean operator, incident/diffraction/radiation,
+clocks/basis and trace continuation are preserved. No WEC/body rerun or physical
+source correction was needed. Evidence: issue31-final-method-review1/acceptance.json
+and issue31-independent-check-attempt1/results/report.json under artifacts/workflow.
+
+The conditional pointwise factor2 regular-response growth/no-unseen-resonance
+assumption remains explicit; numerical reconstruction acceptance is NOT nonlinear,
+experimental or mesh/model-resolution qualification. Issues32-34 remain open.
+The standard canonicalNPZ/PNG and truthful cached-surface result.log are published
+with prior artifacts backed up; result SHA prefixd3438810 and PNG275ac.... Six
+unchanged-motion calm-restoring warnings and the new18.27% peak wet-set warning
+retain their provenance; retired42.7mm projection warning is excluded. Video was
+regenerated:751 frames,12.5fps,800x800, source0..60s,142.641s render, no previews
+inspected. Publication/recovery reports are preserved under their attempt folders.
+
+Root promoted ONLY the readiness Boolean, source SHA prefix6d8edb3; numerical
+function AST is unchanged. Final integration regressions pass50 tests in24.20s,
+with no skips and independent receipt review. Repository/issue bookkeeping
+remains coordinator-owned. Recovery geometry
+cost540.829s includes wet-set integration355.109s and disturbance metrics157.192s;
+these measured costs guide the next speed phase without authorizing optimization
+here. This final documentation update ran no workflows and changed no source.

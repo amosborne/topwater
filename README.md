@@ -19,8 +19,9 @@ diffracted and radiated water surface from the saved motion without feedback.
 The maintained WEC-Sim reference is based on official v7.1.0. The standard-input
 replacement matches the original canonical trajectory within0.0598mm position
 and0.00157degree orientation. These are compatibility results, not physical-error
-bounds. Mesh resolution, radiation-field phase, field/load consistency and linear
-applicability remain qualified in [the warning triage](docs/cli/warning-triage.md).
+bounds. Surface reconstruction now meets the selected-case 1 cm numerical target
+under its stated reference assumptions. Mesh resolution, field/load consistency
+and linear applicability remain open in [the warning triage](docs/cli/warning-triage.md).
 An earlier ten-second minimum-mesh reference remains available for
 [historical reproduction](reference/wecsim/README.md).
 
@@ -86,10 +87,9 @@ No blending or continuity guarantee is imposed where the nearest edge changes.
 This continuation does not solve a moving fluid boundary. Separation between
 the fixed mean waterline and moving waterline is a useful visual indication of
 departures from the assumed wetted geometry, rather than an accuracy estimate:
-small separation alone does not establish linear-model accuracy. Radiation-field
-phase uncertainty and fixed-mean applicability remain tracked in
-[issue #31](https://github.com/amosborne/topwater/issues/31) and
-[issue #34](https://github.com/amosborne/topwater/issues/34).
+small separation alone does not establish linear-model accuracy. The numerical
+reconstruction check is recorded in [issue #31](https://github.com/amosborne/topwater/issues/31);
+fixed-mean applicability remains open in [issue #34](https://github.com/amosborne/topwater/issues/34).
 
 The reconstruction target is **1 cm maximum numerical elevation error against
 this chosen linearized model**, including reference uncertainty. We hold the
@@ -99,6 +99,11 @@ grid points and times. Numerical resolution checks and an allowance for omitted
 frequencies contribute to the reference uncertainty. The difference plus that
 uncertainty must fit within 1 cm. This check does not establish that the linear
 model predicts nonlinear calculations or real water within 1 cm.
+
+For the selected 60-second case, all 5929 surface targets and 751 saved frames
+pass: maximum difference is 0.341 mm, and maximum difference plus reference
+uncertainty is 5.784 mm. This relies on a stated high-frequency response envelope;
+see [the qualification and limitations](docs/experts/numerical_methods_researcher/issue31-selected-case-acceptance-2026-10-27.md).
 
 ## Current foundation
 

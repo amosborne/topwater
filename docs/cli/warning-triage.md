@@ -1,57 +1,56 @@
 # Canonical workflow warning triage
 
-## Current canonical result
+## Current canonical result — issue #31 qualification
 
-The published eight files use the accepted6b774228 reference and standard public
-coefficient input. All3001 motion samples,751 total-surface frames and751 fully
-decoded800x800 video frames cover0..60s. Video cadence is12.5fps, encoded length
-60.08s. The result log accurately records fresh field reconstruction from an
-independently accepted native trajectory; it does not claim another body solve.
-See [result.log](../../examples/simple-boat/result.log),
-[sea.log](../../examples/simple-boat/sea.log), [video.log](../../examples/simple-boat/video.log)
-and [qualification scope](../experts/wecsim_expert/current-state.md).
+The eight files in `examples/simple-boat/` retain the accepted WEC-Sim motion
+and the same boat/sea inputs. The corrected full-complex reconstruction supplies
+all 751 total-surface frames; all 3001 motion samples are unchanged. The refreshed
+video passes complete decode, dimensions and cadence checks: 751 frames,
+800 × 800, 12.5 fps, physical time 0–60 s, encoded duration 60.08 s.
 
-All three logs end successfully with no ERROR records. Sea/video have0 WARNING
-rows; result has34. These are rendered rows and summaries, not34 independent
-physical events. Independent review classified every row, including multiline
-continuations: restoring6, tabulation-progress1, causal-projection1,
-mesh-resolution17, irregular-frequency8 and wet-set1. No unexplained family remains.
+All three [result](../../examples/simple-boat/result.log),
+[sea](../../examples/simple-boat/sea.log) and [video](../../examples/simple-boat/video.log)
+logs end successfully with no ERROR records. Sea/video have zero WARNING rows;
+result has seven: six inherited calm-restoring records and one newly evaluated
+wetted-set warning. These are records/summaries, not seven independent events.
+The publication log explicitly identifies cached qualified surface publication;
+it does not claim another WEC-Sim solve, BEM evaluation or geometry replay.
+Its video-pending statement describes publication time; the later video.log
+records the successful separate render. Logs are not edited retrospectively.
 
 | Item | Meaning and disposition |
 |---|---|
-| Mesh resolution / irregular frequencies | The same17-panel mean hull is used. Radiation transfer warnings affect5418 mesh-resolution and4506 irregular-frequency solves; combined diffraction has382 mesh-resolution warnings. Repetitions are summarized. Accuracy remains unqualified in [#32](https://github.com/amosborne/topwater/issues/32). |
-| Causal radiation projection | Retained method sensitivity is42.7mm maximum /12.5mm RMS versus a signed-lag diagnostic at tested points. That diagnostic is noncausal and is not a reference solution or error bound. Keep [#31](https://github.com/amosborne/topwater/issues/31) open. |
-| Calm restoring departure | Moment:2013 samples, first9.68s, peak183%; force:1170 samples, first16.66s, peak132%. These compare fixed-mean restoring with a calm geometric diagnostic; they are not dynamic-error percentages. Evaluate in [#34](https://github.com/amosborne/topwater/issues/34). |
-| Calm diagnostic unavailable |338 samples, first23.08s. The flat reference intersects the opening rim; this does not establish flooding in the actual disturbed sea. Actual output opening/contact guards passed. |
-| Represented wetted surface | Symmetric-difference area exceeds the10% reporting threshold from25.84s through51.6s; worst29.15% at44.64s. This is a fixed-mean applicability departure, not a nonlinear motion-error bound. |
-| Green-function tabulation | Initialization progress emitted at WARNING level by Capytaine. It is not a physical finding or failed computation. |
-| Native WEC direction warning | The separate native transcript has one coverage-heuristic warning for the repacked periodic grid. Its endpoint test shifts/wraps directions differently from interpolation. Every consumed component heading is supplied, and all six force comparisons pass. This does not qualify the original genuine15degree BEM heading resolution. |
-| Native setup information | Visualization depth200m retains `deepWater=1` and infinite-depth dispersion. Imported-frequency information confirms no Traditional/EqualEnergy resampling. Neither changes the selected physics. |
-| Field/load consistency | Compatibility of native forces/motion does not resolve the provisional field/load relation. [#33](https://github.com/amosborne/topwater/issues/33) remains open; this campaign does not claim a new force-field closure result. |
-| Encoder duplicate-rate notice | External FFmpeg stderr retains the known duplicate `-r` notice. Full decode and cadence checks pass751 frames at12.5fps. This is configuration noise; generated logs are preserved rather than edited retrospectively. |
+| Surface reconstruction | All 5929 targets × 751 frames pass the 10 mm numerical linear-model requirement: maximum runtime/reference difference 0.341 mm; maximum pointwise difference plus reference uncertainty 5.784 mm. The old 42.7 mm cosine-projection discrepancy belongs to the retired method and is not a current warning. See [qualification and assumptions](../experts/numerical_methods_researcher/issue31-selected-case-acceptance-2026-10-27.md). |
+| Calm restoring departure | Six inherited records include moment: 2013 samples, first 9.68 s, peak 183%; force: 1170 samples, first 16.66 s, peak 132%. These compare fixed-mean restoring with a flat calm-water diagnostic, not nonlinear dynamic error. Expected for the unchanged trajectory, but substantial and needing evaluation under [#34](https://github.com/amosborne/topwater/issues/34). |
+| Calm diagnostic unavailable | Included in those six records: 338 samples, first 23.08 s. The flat reference intersects the opening rim. This is unavailable diagnostic coverage, not evidence of actual-sea flooding. Every actual reconstructed-surface opening/contact gate passed. |
+| Represented wetted surface | One new record: symmetric-difference area exceeds 10% from 29.04 to 53.12 s, worst 18.27% at 44.64 s. Expected fixed-mean applicability departure, retained for further evaluation under #34. This is not a numerical reconstruction failure or a nonlinear motion-error percentage. |
+| Mesh resolution / irregular frequencies | Cached publication performs no new BEM evaluation and does not re-emit old producer warnings. Its log links the actual [source evaluation](../../artifacts/workflow/issue31-full-allocation2/child.log). The unchanged coarse mean-hull representation remains unqualified under [#32](https://github.com/amosborne/topwater/issues/32); passing #31 does not resolve that issue. |
+| Field/load consistency | The surface and applied-force workflows retain their existing relationship. [#33](https://github.com/amosborne/topwater/issues/33) remains open; unchanged motion and numerical reconstruction accuracy do not establish force-field closure. |
+| Native direction/setup information | Prior native transcript retains the periodic-grid direction-coverage heuristic warning and visualization-only 200 m depth information. Actual component/force preservation checks passed; infinite-depth physics is unchanged. No native dynamics rerun occurred in this publication. |
+| Encoder messages | Current video.log has no warnings and complete verification passes. Any external FFmpeg duplicate-rate notice in the retained transcript is configuration noise, not a failed cadence check. |
 
 ### Measured surface disturbance
 
 These are **total-minus-incident elevation differences**, not numerical or
 physical errors. Exterior support excludes the posed hull. Spatial P1 moments
-use projected-area weights; time integration includes every saved surface frame
-and startup. The near band selects original source-triangle centroids within one
-beam horizontally of the actual waterline and integrates their exterior portions.
+use projected-area weights; time integration includes all saved frames/startup.
+The near band selects original source triangles by centroid distance within
+one beam of the actual waterline and integrates their exterior portions.
 
 | Region | RMS difference | RMS / incident RMS | Resolved maximum absolute difference |
 |---|---:|---:|---:|
-| Full exterior patch |5.98768mm|2.24251%|65.0892mm|
-| One-beam band |7.99367mm|2.96028%|65.0892mm|
+| Full exterior patch | 5.08038 mm | 1.90312% | 39.1241 mm |
+| One-beam band | 5.99504 mm | 2.22013% | 39.1241 mm |
 
-The resolved maximum is at44.56s, approximately(2.02544,1.10729,0.329675)m world
-coordinates. Initial represented total local elevation is bounded by0.000645412m
-on the stated conservative exterior support; no total disturbed-fluid velocity
-bound is established. New and old saved XY grids differ, so no misleading
-indexwise field subtraction or regridding was performed.
+The resolved peak is at 43.36 s, approximately
+(2.800242, 0.207352, -0.171332) m world coordinates. The surface correction
+changes these disturbance metrics; it does not change solved boat motion.
 
-The warnings remain visible qualifications requiring further physical evaluation.
-A small RMS disturbance, finite arrays and internal force agreement do not resolve
-phase, reference resolution, force-field closure or nonlinear applicability.
+The reference uncertainty includes numerical controls and an omitted-frequency
+allowance conditional on the explicitly calibrated response envelope. It does
+not estimate nonlinear or experimental error. Warnings concerning the underlying
+hydrodynamic data and physical applicability remain open. No full-hull total
+disturbed-fluid velocity bound has been established.
 
 ## Archived attempt-2 assessment
 
