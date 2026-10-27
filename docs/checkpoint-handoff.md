@@ -8,18 +8,39 @@ coordination and shared-contract; historical assignments are not authorization.
 Finish the visualization fix and simple-boat validation of the corrected native
 WEC-Sim spectral path. Working branch remains `baseline/fluid-body`.
 
-**No numerical job is live.** `native-spectral-full-force-attempt1` is terminal
-success, coordinator `/root`, tool session57465 terminal. Exact Jobempty/driver0/
-watchdog0/frozen/hostCIM/idle checks passed and lease released. Check the execution
-ledger and actual process before another claim; do not restart a terminal job.
-Manifest: `artifacts/workflow/native-spectral-full-force-attempt1/manifest.json`.
-Output: `artifacts/workflow/native-spectral-full-allocation1/comparison/`.
-Frozen input bundle db680661/config8427140c binds7721 files. Allocation is600s
-native child,720s whole,8GiB continuous Job commit cap plus sampled working-set
-limit (sampling gaps are explicit). No automatic budget increase or retry.
-All producers/inputs/dependencies remain frozen until exact terminal proof.
+**NO LIVE NUMERICAL JOB.** Coupled motion `native-spectral-motion-attempt1`,
+session95832 is TERMINAL SUCCESS. Watcher reports Jobempty/driver0/watchdog0,
+all7903 frozen files unchanged; native34296 completed/cleanup_verified. Root
+verified ALL observed PIDs absent via hostCIM, independent idle readback passed,
+lease released LAST. Whole1382.281s, peak commit6590115840B; sampledWS6428798976B
+has disclosed sampling gaps. Independent measured acceptance d934f305 is complete (reporta9cadd6e).
+Report: `native-spectral-motion-allocation1/report.json`: all outer-force,
+initial-rest and radiation-history gates pass; maximum position difference
+5.975797863270701e-05m (<.001m), relative orientation.0015698538181314137deg
+(<.01deg). No fitting/force-history injection. Saved motion must be reused for
+PRIVATE end-to-end artifacts. Root checkpointd348e4c is pushed.
 
-This run compares all3001 original0..60s/.02 six-channel native forces against
+Actual bus attempt2/session39311 is TERMINAL SUCCESS, processes/frozen inputs
+verified and lease released before motion staging. All3001x6 actual native bus
+samples satisfy unchanged gates; actual Clock/query/output times are identical.
+Reportdcb734f4, independent BUS-only acceptance547becf2; whole386.656s.
+
+Prior bus attempt1/session31435 is TERMINAL FAILURE. Caseallocation1/watch1
+preserved; exact Jobempty/frozen/hostCIM/idle checks complete and lease released.
+The bus attempt stopped at209.11s on optional image metadata for NEW owned
+PID27728 (membership/creation verified, wait258/exit0, no previously known image).
+No force-array comparison exists from attempt1. V4 now permits fixed same-handle
+1s grace for new ownership/creation-verified rundown candidates, actual signal/
+membership/expiry proof and mandatory native-engine executable binding retained.
+Its NNcontrols passed digest6/observer9/real-runtime5, independently accepted.
+Metadata watch2 freeze failed beforeMATLAB on cross-API EXE permission semantics;
+v4 compares file type across APIs while retaining FULL same-API checks.
+
+Preceding `native-spectral-full-force-attempt1` is terminal success (session57465),
+exact Jobempty/driver0/watchdog0/frozen/hostCIM/idle checks complete, lease released.
+Its output is `native-spectral-full-allocation1/comparison`, freezedb680661.
+
+The completed force study compares all3001 original0..60s/.02 native forces against
 the offline original spectral oracle, plus startup gates. Both per-channel
 maximum error <=1e-10 reference peak and trapezoidal RMS error <=1e-10 reference
 RMS; exact-zero channels require exact zero. No phase/time/gain fitting.
@@ -27,7 +48,7 @@ Measured fullforce/startup agreement is now independently accepted: all six
 maximum/RMS gates passed, worst relative errors3.414e-15/4.360e-15; phase error
 5.412e-15m. Controlled whole497.594s, peak commit3584798720B. Acceptance receipt
 `native-spectral-full-force-review-v1/acceptance.json` SHAf460dc37 binds report
-137ecc5a plus runtime/native outputs. Actual signal bus and motion remain unproved.
+137ecc5a plus runtime/native outputs. Actual signal bus is independently accepted; coupled motion remains unproved.
 The old full-batch redundant isvalid cleanup warning is explicitly triaged as
 secondary after successful verified cleanup; no rerun solely for that warning.
 
@@ -77,31 +98,45 @@ Use FILE_SHARE_DELETE when reading a live atomic receipt.
 
 ## Remaining acceptance and ownership
 
-1. Fullforce/startup run is accepted and terminal. Next allocate actual bus only.
-2. Actual native signal-bus v2 source manifest750df5b3 is independently approved.
-   Requires full-force PASS plus independent receipt before allocation. All3001
-   outputs must satisfy unchanged1e-10peak/exactzero gates; actual Clock values
-   and output timestamps retained, constructor/1ULP proof, no resampling.
-   Stdlib preparation already copied accepted input bytes to
-   `native-spectral-actual-bus-allocation1/case`, config at its parent. Prep
-   freeze196cee3a binds7744 originals/harness/review inputs. Recovery expert is
-   authoring `native-model-watchdog-v1` to freeze new+original case and run hidden
-   bus/motion batches using the approved observer; source review before launch.
-3. Motion v2 source under `native-spectral-motion-validation-v1`, manifestb05351f9,
-   is independently approved. Requires accepted forces AND bus before execution.
-   Root later creates isolated e24 + ONLY qualified PR9 Body_Elements.slx overlay
+1. Fullforce/startup and actual signal-bus comparisons are independently accepted
+   and terminal. Coupled-motion attempt1/session95832 is independently accepted, receiptd934f305.
+2. After terminal process/hash verification, independently review actual outer
+   once-only force, initial rest/zero CIC history/full replay and all6 world poses.
+3. Motion v2 certificate manifestb05351f9 and staged validator v3 manifest2f37980c
+   are independently source-approved. Requires accepted forces AND bus before
+   preparation/execution. Prepare-only imports science under a separate root
+   lease but starts no MATLAB; run-staged verifies the final frozen case and
+   rewrites no inputs. Raw CRLF bytes remain frozen; only canonical LF conversion
+   proves the exact single logging-hook recipe.
+   Root created detached `wecsim-spectral-inertia-validation` at e24 with ONLY
+   qualified source/lib/WEC-Sim/WECSim_Lib_Body_Elements.slx overlay
    SHA7b0c063c8c4db2dced7e42257002989d69cdbb7a789a21f0a044ca26c793d828.
    Verify outer-model once-only force application, initial rest/zero radiation
    history and all six motions: max world-position vector error1mm and relative
    rotation angle.01deg, no fitting. Reference trajectory/forces never drive model.
-4. Canonical physics files, dependency pin/reference branch and merges remain held.
+4. After accepted motion, deliver a PRIVATE candidate through the SAME production
+   pose conversion, restoring diagnostics, total-surface reconstruction, Result
+   export/result.png and public render CLI. Reuse saved new motion; do not rerun
+   body integration. Exact8files; provenance/delta reports outside the folder.
+   The prior public video proves renderer behavior only, not corrected-path export.
+   Necessary same-production field RHS solves are authorized; no new coefficient,
+   mesh-refinement or convergence campaign. Old completed-field arrays cannot be
+   reused with new motion. WEC owns single surface_context.py b2881929 and driver;
+   Cap independently reviewed context. Default centroid BEM quadrature is unchanged.
+5. Canonical physics files, dependency pin/reference branch and merges remain held.
    Do not mark goal complete from resource/small-test evidence.
 
 Root is the sole numerical owner. WEC expert owns producer/MATLAB source; recovery
 expert owns private watchers; NMR independently reviews, authors run no jobs.
-Only private source/evidence work may occur in parallel. Recovery owns model
-watchdog; WEC expert is coordinating staged motion execution and its frozen
-private overlay. Preserve all existing worktrees and changes.
+Only private source/evidence work may occur in parallel. Reviewed model-watchdog
+v4 supports BUS/staged-Motion and within-verification hash deduplication.
+The tiny v2 fixture exposed Windows path-stat versus handle-fstat ctime semantics:
+all fields agree except stable ctime values, confirmed in
+`digest-boundary-check-attempt1/stat-observation.json`. V3 retains separate full
+path-before/after and handle-before/after checks, common-field cross identity
+(file TYPE, not cross-API permissions) and fresh pre/post scopes. No physical
+guards/tolerances change. Do not edit live V4 inputs. WEC expert owns
+approved staged motion v3 source. Preserve all existing worktrees and changes.
 
 ## Fork/reference holds and scope
 
