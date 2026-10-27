@@ -6,15 +6,26 @@ permission to resume work.
 
 ## Current goal and status
 
-Goal: finish the visualization fix and simple-boat validation of the corrected
-WEC-Sim spectral path. Active implementation branch: baseline/fluid-body.
+The visualization fix and corrected-path simple-boat validation goal is complete
+at pushed checkpoint8703b02. Active implementation branch: baseline/fluid-body.
+
+Latest user request: match the issue/PR style already accepted into the fork's
+reference branch. Open issue3/PR9 and issue12/PR14 are rewritten and published,
+using accepted issue4/PR6 and issue5/PR7 as the models. Issues carry plain-language
+problem/example/cause/acceptance/upstream candidacy; PRs reference the issue and
+cover change/files/tests/limits. Internal progress history and pin/approval
+bookkeeping were removed from those descriptions. Detailed evidence remains linked.
+No source, tests, numerical data, dependency pins or branch/PR states changed.
+The inertia test description distinguishes3native and8sample-reading tests.
+Coordination.md now links the accepted examples and directs future scope changes
+to replace stale descriptions instead of appending progress reports.
 
 **NO LIVE NUMERICAL JOB.** Final private eight-file audit is terminal success.
 Root verified all owned process identities absent through host CIM, frozen inputs,
 separate idle-ledger readback and lease release LAST for each allocation. No
 numerical job or producer edit is queued. Final independent end-to-end acceptance
-76f5616a and warning triage147c92ad are complete. This checkpoint records the completed scoped delivery; verify its
-commit is pushed before marking the active goal complete. Issue30 final update:
+76f5616a and warning triage147c92ad are complete. Scoped delivery was committed/pushed at8703b02 and the goal marked
+complete. Issue30 final validation update:
 https://github.com/amosborne/topwater/issues/30#issuecomment-6431729288
 
 Pushed checkpoints:6ad9241 visualization, b1df338 spectral integration,

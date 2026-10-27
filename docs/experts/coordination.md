@@ -41,6 +41,11 @@ before/after example may be linked from the PR. Preserve user-edited wording.
 Internal tracking details must not obscure what a human reviewer needs.
 For fork fixes, state whether the change is an upstream PR candidate and why.
 Keep that technical assessment separate from permission to submit upstream.
+Use accepted own-fork [issue4](https://github.com/amosborne/WEC-Sim/issues/4)/[PR6](https://github.com/amosborne/WEC-Sim/pull/6)
+and [issue5](https://github.com/amosborne/WEC-Sim/issues/5)/[PR7](https://github.com/amosborne/WEC-Sim/pull/7) as the writing examples. When
+scope changes, rewrite the description around the final change instead of
+appending progress reports. Keep detailed validation history, hashes and workflow
+bookkeeping in linked evidence notes.
 
 ## Numerical execution and recovery
 
