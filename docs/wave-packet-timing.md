@@ -35,28 +35,34 @@ one during the shared dwell, then reverse the transition during ramp-down.
 Multiplying the envelope by its carrier wave gives the target time trace:
 
 \[
-\eta_j(t)=A_j E_j(t)\cos\!\left(2\pi t/T_j+\phi_j\right),
+\eta_j(t)=A_j E_j(t)\cos\!\left(2\pi(t-a)/T_j+\phi_j\right),
 \]
 
-with equal amplitudes A_j=1 m and fixed phases phi_j=0 in this illustration.
+where a=14.5s is the common dwell start. Both A_j=1m and both specified
+phases phi_j=0 in this illustration, so both waves are crests at dwell start.
 The envelope, rather than the oscillating height, defines dwell: a zero
 crossing during dwell still represents a full-amplitude wave. Phases need not
 be adjusted to make the wave end at a zero crossing.
 
 ## Phase reference
 
-In this temporal illustration, the reference point is x=0 and the time origin
-is the plotted **global t=0**, using the cosine convention above. Both original
-carriers have phase0 there. This is not phase0 at the dwell start or at the
-centre of the envelope. Because their frequencies differ, their relative phase
-changes with time: at the dwell start14.5s it is75degrees (4s carrier minus6s
-carrier), modulo360degrees.
+The specified phases apply at the reference point x=0 and **common dwell start**,
+using local time tau=t-a. That is when all components begin the full-amplitude
+part of the case with their prescribed phases. The ramps lead into those
+phases without resets. A component specified at90degrees crosses zero at dwell
+start while its envelope is still at full amplitude.
 
-Each discrete Fourier bin has its own phase, `arg(X_k)`, referenced to that same
-time origin. These phases also encode the packet's position within the record;
-they are not all zero just because the original carrier phase is zero. Changing
-the time reference to t_ref would add `2*pi*f_k*t_ref` to each bin phase when
-writing the cosine in terms of `t-t_ref`. It would not change the waveform.
+The example was regenerated to meet this convention; this changes the carrier
+waveforms relative to the earlier global-t0 version, while preserving envelopes,
+periods and dwell. The older figures remain in Git5aa0170/84fbc8f.
+
+The FFT operates on a global-time sample record. To display each bin's phase
+relative to dwell start, use `X_dwell = X_global * exp(+i*2*pi*f*a)`.
+Restore the negative phase factor before a global-grid inverse transform.
+Bin phases still include the envelope and need not all be zero even when the
+specified original carrier phases are zero. The phase panels explicitly use
+the dwell reference, not globalt0. Production input conventions have not yet
+been changed; this is the agreed convention for the redesigned test.
 
 ## Read the frequency plots
 
@@ -93,7 +99,10 @@ quintic joins do not by themselves settle those timing questions.
 
 ## Executed numerical checks
 
-The inverse transform reproduces the target traces with maximum error 4.81e-16 m. The time/frequency energy check differs by at most 4.44e-14 m² s. Both envelopes are exactly one over the same sampled 10 s dwell.
+Both global- and dwell-referenced inverse forms reproduce the new target traces
+with maximum error4.44e-16m. An independent selected-time direct component sum
+differs by at most2.00e-15m. Both envelopes are exactly one over the same sampled
+10s dwell; both specified zero-phase carriers equal1m at dwell start.
 
 The discrete cosine amplitudes are `2*abs(X_k)/N` for positive interior bins;
 DC and Nyquist use `abs(X_k)/N` once. The negative-frequency partner is therefore
@@ -105,3 +114,59 @@ modification of the reconstructed packet. All saved complex coefficients remain
 in the inverse transform, including bins outside the displayed frequency range.
 
 See the [executed evidence](experts/numerical_methods_researcher/wave-packet-timing-demo-2026-10-27.json) for parameters, normalization and checks. These checks demonstrate the spectral construction, not physical propagation or boat settling.
+
+## Actual sea periods and cycle-based ramp lengths
+
+The current unchanged sea.npz has384 carriers spanning0.03024–0.49481Hz,
+or2.02–33.07s periods. The variance-weighted median period is9.80s; the central
+approximately90% of source variance spans4.31–15.97s. Weights are A², not an
+unweighted count of components or a measurement of energy in the finite packet.
+
+| Cycles per ramp | Median ramp | Central approximately90% variance range | Longest ramp |
+|---|---:|---:|---:|
+| 1 | 9.8 s | 4.3–16.0 s | 33.1 s |
+| 2 | 19.6 s | 8.6–31.9 s | 66.1 s |
+| 3 | 29.4 s | 12.9–47.9 s | 99.2 s |
+
+These are seconds **per ramp**, outside the requested dwell. They explain why
+two cycles should not become a default without a design reason. No carrier
+was removed, rephased or rescaled in this read-only statistics calculation.
+[Period/variance evidence](experts/numerical_methods_researcher/wave-ramp-period-stats-2026-10-27.json).
+
+## Preliminary common-ramp bandwidth screen
+
+Equal ramp durations in seconds, with equal dwell and shape, share an envelope
+spectrum. Each carrier shifts that spectrum to its own frequency. Equal cycle
+counts at different periods do not share the same absolute envelope spectrum.
+
+A cheap reference-point temporal screen used all actual source carriers and
+their phases interpreted at dwell start, a60s dwell, and common quintic ramps.
+It projected the target onto the existing positive wave-frequency band through
+0.533459Hz, with DC explicitly removed. This is not the spatial construction,
+not a propagated field over the hull, and not a qualified minimum ramp.
+
+| Each ramp | Maximum target-to-bandlimited elevation difference |
+|---|---:|
+| 1 s | 98.1 mm |
+| 2 s | 13.6 mm |
+| 4 s | 7.0 mm |
+| 8 s | 2.4 mm |
+| 16 s | 0.39 mm |
+
+The existing requested positive-frequency grid has671nodes at omega-step0.005,
+independent of ramp duration. A sharper target does not automatically increase
+that count: it increases the difficulty of representing the desired target
+inside the same band. Expanding the band or refining its sampling changes cost.
+This grid count is not a complete BEM/WEC runtime measurement.
+
+The1024-to2048s padding checks at1/2s ramps changed dwell elevations by up to
+0.321/0.199mm respectively. These are screen sensitivities, not reference-error
+bounds. Calm thresholds and allocation of packet-construction error within the
+overall error budget remain to be selected. No source frequencies were pruned.
+[Bandwidth-screen evidence](experts/numerical_methods_researcher/wave-ramp-bandwidth-screen-2026-10-27.json).
+
+The next investigation may discard the polynomial constraints. See the
+[three researched alternatives](research/minimal-pulse-spectra-2026-10-27.md):
+constrained minimax/equiripple, Slepian concentration, and sparse frequency
+selection. Their objectives differ; no optimal ramp or numerical savings have
+yet been established for this case.

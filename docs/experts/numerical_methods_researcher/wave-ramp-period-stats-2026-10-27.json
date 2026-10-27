@@ -1,0 +1,157 @@
+{
+  "complete": true,
+  "source": "C:\\Users\\alex\\topwater\\examples\\simple-boat\\sea.npz",
+  "source_sha256": "9ba25ba3258e6c4cec47847ef4e52f69b4af84fae55dc07ba471708ee3951ce4",
+  "input_keys": [
+    "amplitudes_m",
+    "angular_frequencies_rad_s",
+    "directions_rad",
+    "phases_rad"
+  ],
+  "count": 384,
+  "frequency_hz": [
+    0.03024186126517374,
+    0.4948102898098657
+  ],
+  "period_s": [
+    2.0209765653504435,
+    33.066747817919236
+  ],
+  "weighting": "A^2 / sum(A^2); proportional to linear carrier elevation variance",
+  "quantile_convention": "Stable ascending frequency sort; first frequency whose cumulative A^2 weight >= q",
+  "weighted_frequency_inverse_cdf_hz": {
+    "0.01": 0.05329339790000074,
+    "0.05": 0.06261255982596955,
+    "0.25": 0.0819740244611774,
+    "0.5": 0.10209030011629977,
+    "0.75": 0.16029593108888052,
+    "0.95": 0.2321226509799733,
+    "0.99": 0.378111877508134
+  },
+  "period_note": "Interval endpoints invert and reverse frequency endpoints; ramp table uses N/f_q",
+  "central_energy_intervals": {
+    "0.9": {
+      "frequency_hz": [
+        0.06261255982596955,
+        0.2321226509799733
+      ],
+      "period_s": [
+        4.308067290194253,
+        15.971236486409138
+      ],
+      "inclusive_actual_weight": 0.903610949330227
+    },
+    "0.98": {
+      "frequency_hz": [
+        0.05329339790000074,
+        0.378111877508134
+      ],
+      "period_s": [
+        2.644719881825156,
+        18.764050321512453
+      ],
+      "inclusive_actual_weight": 0.9844751019219568
+    }
+  },
+  "weight_below_frequency": {
+    "0.05": 0.004149679673849747,
+    "0.075": 0.1634027373325569,
+    "0.1": 0.47233546884100175
+  },
+  "ramp_rule": "R=N*T=N/f seconds PER ramp; dwell excluded",
+  "ramp_cycles": {
+    "1": {
+      "min_s": 2.0209765653504435,
+      "max_s": 33.066747817919236,
+      "variance_weighted_mean_s": 9.67632414105415,
+      "inverse_frequency_quantile_duration_s": {
+        "0.01": 18.764050321512453,
+        "0.05": 15.971236486409138,
+        "0.25": 12.198986283436607,
+        "0.5": 9.795249880359002,
+        "0.75": 6.238461533034936,
+        "0.95": 4.308067290194253,
+        "0.99": 2.644719881825156
+      },
+      "central_energy_intervals_s": {
+        "0.9": [
+          4.308067290194253,
+          15.971236486409138
+        ],
+        "0.98": [
+          2.644719881825156,
+          18.764050321512453
+        ]
+      }
+    },
+    "2": {
+      "min_s": 4.041953130700887,
+      "max_s": 66.13349563583847,
+      "variance_weighted_mean_s": 19.3526482821083,
+      "inverse_frequency_quantile_duration_s": {
+        "0.01": 37.528100643024906,
+        "0.05": 31.942472972818276,
+        "0.25": 24.397972566873214,
+        "0.5": 19.590499760718004,
+        "0.75": 12.476923066069872,
+        "0.95": 8.616134580388506,
+        "0.99": 5.289439763650312
+      },
+      "central_energy_intervals_s": {
+        "0.9": [
+          8.616134580388506,
+          31.942472972818276
+        ],
+        "0.98": [
+          5.289439763650312,
+          37.528100643024906
+        ]
+      }
+    },
+    "3": {
+      "min_s": 6.062929696051331,
+      "max_s": 99.20024345375771,
+      "variance_weighted_mean_s": 29.028972423162447,
+      "inverse_frequency_quantile_duration_s": {
+        "0.01": 56.29215096453736,
+        "0.05": 47.91370945922742,
+        "0.25": 36.596958850309825,
+        "0.5": 29.38574964107701,
+        "0.75": 18.71538459910481,
+        "0.95": 12.92420187058276,
+        "0.99": 7.934159645475467
+      },
+      "central_energy_intervals_s": {
+        "0.9": [
+          12.92420187058276,
+          47.91370945922741
+        ],
+        "0.98": [
+          7.934159645475468,
+          56.292150964537356
+        ]
+      }
+    }
+  },
+  "no_data_changes": true,
+  "no_physics_qualification": true,
+  "helper_sha256": "f25387f035317b8bf721895cc3bd50cdb46572778e6f84e30ff6268fa8b52444",
+  "execution": {
+    "terminal": {
+      "job": "ActualseaNPZ frequency/period/energyquantile N1/2/3ramptable only;no solvers/physicschanges/inputtrimming;30s512MiB1thread",
+      "owner": "/root",
+      "producer_pid": 3440,
+      "owner_launcher_pid": 16496,
+      "started_at": "2026-10-27T21:05:08.834956+00:00",
+      "exit_code": 0,
+      "frozen_inputs_match": true,
+      "complete": true,
+      "manifest": "C:\\Users\\alex\\topwater\\artifacts\\workflow\\wave-ramp-period-stats-attempt1\\manifest.json",
+      "output": "C:\\Users\\alex\\topwater\\artifacts\\workflow\\wave-ramp-period-stats-attempt1\\output.log"
+    },
+    "guard_receipt_sha256": "a2098e1d7519e0b8ef195fdaa69b07adeeb78e5960b931c6a7d13b433859b615",
+    "guard_exit_code": 0,
+    "driver_exit_code": 0,
+    "job_empty_verified": true
+  }
+}

@@ -1,57 +1,77 @@
 # Checkpoint handoff
 
-Updated 2026-10-27 UTC. Latest user steering controls scope. Historical evidence
+Updated2026-10-27UTC. Latest user steering controls scope; historical evidence
 and queued assignments do not authorize execution. Follow AGENTS.md/coordination.
 
-## Current priority: packet timing and 1D demonstration
+## Current priority: pulse design and simulation timing, issue36
 
-Latest follow-up is complete: spectra are discrete cosine-component amplitude
-bars, with separate bin-phase panels. Original carriers are cosine phase0 at
-globalt=0/referencex=0, not DWELLstart; their relative phase at14.5s is75degrees.
-Per-bin phases include envelope timing. Original waveforms and complex FFT
-coefficients are unchanged. Display amplitudes use2abs(X)/N for positive
-interior bins, DC/Nyquist once. Phase mask1e-4 is display-only.
+The user requested research into the TOP3 minimal-spectral alternatives for
+pulse-like waveforms. Polynomial and derivative constraints MAY be discarded;
+quintic/cycle-count examples are baselines, not selected optimal policies.
+Research is complete and independently reviewed:
+[three-option note](research/minimal-pulse-spectra-2026-10-27.md).
+Recommendation: constrained minimax/equiripple first; DPSS concentration and
+sparse frequency selection are alternatives with different objectives. No method
+has been implemented or numerically qualified. Actual runtime savings are not
+implied by fewer coefficients/bandwidth alone. Specify dwell ripple, peak quiet
+height, finite horizon, transition gap, overshoot and cost before an optimum.
+The simpler rectangle-series baseline must put its jumps INSIDE transition
+gaps, not at dwell endpoints (avoids unfair half-height endpoint error).
 
-Root job wave-packet-timing-bars-attempt1 terminal0/frozen/guard0/driver0/Jobempty;
-exact producer29372/owner35528 and all guarded host identities absent. finish_check
-terminal0, idle/null readback then release-last. Plotting1.375s, complexinverse
-error<=4.811e-16m. NMR authored the saved-data replot and TOP reviewed source;
-root alone executed. No image inspection, WEC/BEM or physical/canonical change.
-Original four-panel figure/evidence are preserved in Git5aa0170 and private
-results/previous-publication/. Current ledger idle/null and lease absent.
+Accepted design directions: CLI requested time means DWELL; specified original
+carrier phases apply at the common dwell start and fixed spatial reference
+point; target2–3s initial calm, then physical packet and genuinely measured boat
+settling with an explicit cap/failure. Timing/profile/threshold/runtime changes
+are still investigation work; production code and canonical boat/sea/results
+are unchanged. No upstream or WEC-fork change is authorized.
 
-Latest user steering supersedes the former next-speed priority. Step back before
-further radiation reconstruction or optimization to investigate wave-packet
-timing and simulation duration. Retain quintic smooth-join constraints. The CLI
-requested time means DWELL (full-amplitude interval); investigate ramps tied to
-each original carrier period, initially2cycles per ramp, with2–3s calm startup
-and measured settling afterward. Thresholds/alignment/runtime changes remain
-under investigation; no production behavior has changed.
+## Completed current evidence
 
-The requested standalone1D demonstration is complete:
-[time/frequency construction](wave-packet-timing.md) and
-docs/images/wave-packet-dwell-time-frequency.png (2380x2040,
-SHAed4eb050d20d4fb38c1dd271a7734ae121dbd1ea7f5f5d7cb5fffecbfb41e4d2).
-Two original periods4s/6s have ramps8s/12s and identicalDWELL14.5–24.5s.
-Six panels show envelopes, time traces, envelope/packet bin amplitudes and phases.
-Complex FFT/IFFT reconstruction error <=4.811e-16m; Parseval error4.441e-14m2s.
-This is an intended1D profile demonstration, NOT propagated wave physics,
-startup/calm certification or a WEC-Sim run. No previews/images were inspected.
+- Latest illustrative plot: docs/images/wave-packet-dwell-time-frequency.png,
+  2380x2040, SHAaacb6df90f8af35c42b987abfe918203969c5d6d0906c0ff634587c243225c2e.
+  Periods4/6s, ramps8/12s, commonDWELL14.5–24.5s, specified phases both0 AT DWELL.
+  Both carriers are1m crests there. Discrete cosine amplitude/phase bars; phase
+  panels use tau=t-14.5 and x0. Fourier bins can have nonzero envelope phases.
+  New waveforms/coefficients intentionally differ from former globalt0 examples;
+  old inputs/envelopes remain preserved. Global/dwell inverse errors4.441e-16m,
+  selected independent direct sum1.998e-15m. This is an illustrative time trace,
+  NOT a propagated field, calm certification or WEC-Sim run.
+- Phase plot source/run: wave-packet-dwell-phase1/ and attempt1/results;
+  new complex spectrum SHAea1e42032205bc04747962d4f255784c94afd71790a40185b57062df5db4f1c8.
+- Actualsea statistics: all384carriers,0.03024–0.49481Hz, periods2.021–33.067s,
+  variance-weighted median9.795s, central90% variance4.308–15.971s. Two-cycle
+  ramp median19.59s, maximum66.13s PER ramp. No carriers changed/dropped.
+- Cheap COMMONseconds quintic baseline: referencex0 only,60sDWELL and existing
+  cutoff0.53345874Hz. R1/2/4/8/16s maximum target-to-bandlimited differences
+  98.074/13.615/6.967/2.363/0.391mm. Explicit DC removal;1024→2048padding
+  R1/2s changes dwell by0.321/0.199mm. These are temporal projection screens,
+  NOT shortest physical ramp acceptance or whole-hull1cm qualification.
+  Existing requested native positiveomega grid has671nodes independent ofR;
+  diagnostic FFT bins are a different grid, not a complete cost measurement.
 
-Root job wave-packet-timing-plots-attempt1 terminal0/frozen/guard0/driver0/
-Jobempty, exact producer32352/owner9992 and all guarded host identities absent.
-finish_check terminal0 then idle/null readback/release-last completed. NMR authored
-the original illustrative source; TOP reviewed source; root alone executed.
-Original plot/data work0.844s. Report/complex spectra are
-under that attempt's results/; tracked numerical evidence is
-docs/experts/numerical_methods_researcher/wave-packet-timing-demo-2026-10-27.json.
-All canonical output and production sources remain unchanged.
+Tracked reports and explanation:
+[construction/timing note](wave-packet-timing.md),
+docs/experts/numerical_methods_researcher/wave-packet-timing-demo-2026-10-27.json,
+wave-ramp-period-stats-2026-10-27.json and wave-ramp-bandwidth-screen-2026-10-27.json.
+Raw results/helpers remain under artifacts/workflow/ using the corresponding
+wave-packet-dwell-phase*, wave-ramp-period-stats* and wave-ramp-bandwidth-screen*
+names. Prior figures preserved in Git5aa0170/84fbc8f and private backups.
 
-[Issue36](https://github.com/amosborne/topwater/issues/36) is the new focused
-timing investigation, recording DWELL and cycle-based ramps. Remaining work is
-to establish physical packet alignment/propagation, threshold-defined startup
-and ending, sustained measured settling/cap behavior, input/CLI implementation
-and appropriate new-case qualification. No further numerical job is allocated.
+All THREE latest root jobs are terminal0/frozen/guard0/driver0/Jobempty with exact
+guarded host process absence independently checked, finishterminal0/idle/null
+readback then release-last: phase22888/34540;stats3440/16496;screen12460/3292.
+Latest ledger idle/null, lease absent. No images/previews were inspected.
+NMR authored bounded helpers; TOP reviewed source; root alone executed.
+Separate /root/minimal_pulse_research authored only the research note; original
+NMR reviewed it independently. No numerical job is currently allocated.
+
+## Next scope and ownership
+
+Issue36 is the authoritative investigation; update its main body and issue30
+at checkpoints. Deliver the three options/tradeoffs to the user before selecting
+and implementing a new synthesis policy. No automatic optimizer/BEM/WEC/video
+campaign. Keep further reconstruction/speed work behind this design decision;
+issues32–34 remain separate. Shared contract owns physical requirements.
 
 ## Completed goal and acceptance
 

@@ -7,6 +7,21 @@ schedules authorized work and never grants scope. Update status in place.
 
 ## Wave-packet timing and dwell, 2026-10-27
 
+LATEST completed bounded work: NMR authored the dwell-phase illustration and
+actualsea period/common-ramp bandwidth diagnostic helpers; TOP reviewed source;
+root alone executed serially and completed all terminal/frozen/guard/host/idle/
+release checks. See current handoff and docs/wave-packet-timing.md for actual
+results. No physical solver/input/canonical change occurred.
+
+PULSE-RESEARCH-001, completed: separate numerical_methods_researcher agent
+authored only docs/research/minimal-pulse-spectra-2026-10-27.md, primary sources,
+exactly3 options/tradeoffs and a cheap future experiment proposal. Original NMR
+independently reviewed it; no blocker after clarifying rectangle jump placement.
+No researcher ran an optimizer or physics job. User permits dropping polynomial
+constraints for research; dwell-reference phases and DWELL semantics persist.
+No next numerical job is allocated. The earlier assignments below are completed
+illustration checkpoints, not mandates to keep quintic/two-cycle timing.
+
 - PACKET-TIMING-ILLUSTRATION, completed: numerical_methods_researcher owned only
   the private intended-profile plotting helper and plan, no execution. Two
   different original periods, two-cycle ramps, identical10s dwell; show time

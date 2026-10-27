@@ -2,12 +2,27 @@
 
 ## Wave-packet timing investigation, user steering 2026-10-27
 
+Latest research clarification: polynomial/smoothness constraints may be removed
+when researching minimal spectral representations of pulse-like envelopes.
+Compare bandwidth and significant component count separately under declared
+dwell, ripple, quiet-tail and finite-horizon requirements. Earlier quintic/two-
+cycle examples remain baselines, not a mandatory optimal design or committed
+production policy. This does not relax physical startup/contact or error gates.
+
 Issue36 investigates timing before further radiation-reconstruction changes or
 optimization. The requested CLI time is to mean full-amplitude DWELL, excluding
-initial calm, ramps and measured settling. Retain the existing quintic smooth
-joins; begin with ramps of two periods of each ORIGINAL sea component, not each
-generated sideband. Demonstrate different ramp durations around a common dwell
-in1D time/frequency plots before choosing the physical alignment.
+initial calm, ramps and measured settling. Initial demonstrations used quintic
+joins and two periods of each ORIGINAL carrier per ramp; these are examples,
+not a chosen optimal policy. Common-second ramp timing and non-polynomial
+spectral synthesis are now under investigation. No runtime policy has changed.
+
+Specified carrier phases for the redesigned packet are referenced at the common
+DWELLstart and fixed spatial reference point, so each case starts its full-
+amplitude interval with those phases. This changes the proposed test semantics;
+implement the explicit time-reference conversion and document it before changing
+production inputs. Existing accepted sea.npz/global-time conventions remain
+unchanged until that implementation is reviewed. Demonstrations may adopt the
+new dwell reference now while preserving their earlier versions.
 
 Target2–3s initial calm, threshold-defined incoming-wave departure and actual
 dynamic extension until sustained boat rest. Calm/rest thresholds, exposure

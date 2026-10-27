@@ -1,22 +1,26 @@
 # Current state: independent numerical-methods review
 
-## Current priority: issue36 packet timing, 2026-10-27
+## Current priority: issue36 pulse design, 2026-10-27
 
-User has redirected work before further reconstruction/optimization. Retain
-quintic joins; CLI requested time means DWELL; investigate per-original-carrier
-cycle-based ramps (initially2cycles),2–3s calm startup and measured settling.
-The illustrative1D time/frequency demonstration is complete: T4/6s,R8/12s,
-common10s dwell. Original data generation0.844s, FFTroundtrip<=4.811e-16m and
-Parseval<=4.441e-14m2s. A subsequent root-executed1.375s saved-data replot now
-shows SIX panels: time profiles, discrete per-bin cosine amplitudes and phases.
-Phase reference isglobalt0/x0, not DWELLstart; originalcarrierphi0 both, relative
-phase75degrees at14.5s. Original complex data are unchanged; amplitudes2abs(X)/N,
-DC/Nyquist once, phase mask1e-4 display-only. Figure/evidence are in
-[the construction note](../../wave-packet-timing.md). Guard/terminal/frozen/host
-absence and idle/readback/release passed. No physical propagation, WEC/BEM job,
-solver or canonical-data edit occurred or is delegated next.
-Issue36 owns the broader timing investigation. Existing #31 acceptance below
-remains scoped to its original packet and trajectory.
+User now permits discarding polynomial/smoothness constraints for minimal
+spectral-signature research. DWELL semantics and specified carrier phases at
+common dwell start remain the design directions. Top3 primary-source research
+is in [the note](../../research/minimal-pulse-spectra-2026-10-27.md): minimax /
+equiripple (first candidate), DPSS concentration, sparse frequency selection.
+This role independently reviewed the separate researcher's note; no blocker.
+Rectangle baseline jumps must lie inside transition gaps, not dwell endpoints.
+No optimized policy or runtime savings is qualified or implemented.
+
+Root completed the latest phase-at-DWELL illustration: specifiedphi0 both gives
+both1m crests at14.5s, unchanged ramps8/12s and10sDWELL. Six discrete amplitude /
+phase panels use tau=t-14.5 atx0. New waveforms are intentional, old cases kept.
+Global/dwell inverse errors4.44e-16m; selected direct sum2.00e-15m. Root also ran
+actualsea period stats and cheap common-second ramp bandwidth screens. See
+[the construction/evidence note](../../wave-packet-timing.md). All are bounded
+temporal diagnostics, not propagated fields or whole-hull physical acceptance.
+Sources reviewed by TOP; root alone executed; all serial cleanup/release passed.
+Canonical inputs/results and physical solver code are unchanged. No next job
+is allocated. Prior #31 acceptance below remains scoped to its original case.
 
 Final integration addendum: the promoted policy passed50 selected integration
 tests in24.20s with no skips; independent receipt review accepted exact coverage
