@@ -5,6 +5,22 @@ current user request), `running`, or `completed`. Current project authorization
 is recorded only in [the handoff](../checkpoint-handoff.md); an execution lease
 schedules authorized work and never grants scope. Update status in place.
 
+## Radiation-surface correction, 2026-10-27
+
+- CAP-ISSUE31-CAUSE: authorized/source review, owner `issue31_cause`
+  (capytaine_expert). Diagnose conventions/endpoints/cached transfer evidence;
+  propose the cheapest one-mode near/far control. Own new diagnostic-plan note;
+  no production correction or numerical execution allocated yet.
+- NUM-ISSUE31-GATES: authorized/independent review, owner
+  `issue31_method_review` (numerical_methods_researcher). Derive causal transfer
+  requirements and prospective amplitude/phase/transient gates; primary sources,
+  no physical implementation or numerical execution. Own new method/gates note.
+- Coordinator owns requirements, numerical allocation, integration and checkpoint
+  publication. Accepted motion/forcing stay immutable. Stop initial assignments
+  at ranked cause hypotheses and a reviewed bounded diagnostic plan.
+
+The following assignments are historical and confer no current execution authority.
+
 ## Canonical workflow implementation, 2026-10-25
 
 Current user authorization is the canonical NPZ/directory CLI plan in the handoff.

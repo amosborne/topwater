@@ -5,10 +5,41 @@ Latest user instructions control scope; historical assignments are not permissio
 
 ## Active goal and authorization
 
-Finish validation and adoption of the new WEC-Sim reference, then complete fork
-cleanup. The user authorizes pin migration and planned cleanup AFTER validation.
-No upstream submissions, outside contacts, assistant merges, main pushes or
-bookkeeping PRs. Active implementation branch stays baseline/fluid-body.
+Current goal: resolve Topwater issue #31, the causal radiation-surface
+amplitude/phase discrepancy in `topwater solve --solver=wecsim`.
+User priority: #31 first, then measured end-to-end performance, then #32-34.
+Upstream contributions are deferred. No upstream contact/issues/PRs or merges.
+Active implementation branch remains `baseline/fluid-body`.
+
+Start with bounded saved-transfer and analytic controls, one mode and near/far
+points. Establish cause and prospective acceptance gates before correcting the
+method. Preserve accepted boat motion/forcing, incident/diffraction physics,
+physical inputs and old studies. Numerical work is serial under the coordinator's
+lease. Authors do not independently approve consequential physical corrections.
+Full reference-convergence/applicability campaigns (#32-34), native dynamics and
+optimization are not current assignments; targeted discriminators needed for #31
+may be scheduled explicitly. No numerical job is currently allocated.
+
+First saved-data discriminator completed in4.594s under guard120s/2GiB;
+4385frozen files, terminal0/Jobempty/hostCIM/frozen/readback/release-last passed.
+Report: artifacts/workflow/issue31-stored-diagnostic1/results/report.json.
+Near/far Heave complex recovery remains about31.3%/3.48% at cutoff24, lag60;
+lag100 barely changes it. Matching-endpoint analytic controls are far closer.
+This is diagnosis, not production qualification; await independent result review
+and one targeted BEM discriminator. Do not fit a replacement to these residuals.
+
+Coordinator adopts prospective candidate gates in
+experts/numerical_methods_researcher/issue31-method-gates-2026-10-27.md BEFORE
+any candidate validation: per-point/per-mode complex1%S, amplitude2%/phase1degree
+where response>=5%S, explicit zero handling, allsix/heldout/nearfar/waterline,
+causal analytic bursts with1mm and1%peak criteria and independent references.
+These are engineering reconstruction tolerances, not physical accuracy bounds;
+they deliberately distinguish the current material discrepancy while preserving
+small-response safeguards. Exact transient error requires an independent causal
+reference. Actual BEM transient sensitivities cannot substitute for that proof.
+
+Previous reference-adoption and cleanup goal is COMPLETE at55e44a5. Its evidence
+below remains the immutable starting point, not authorization to repeat its runs.
 
 Merged fork reference and DEFAULT runtime pin are now
 6b774228e1f6b31dee473e626204b0ef65e5ec38 over official v7.1.0/a23d299.
@@ -23,9 +54,9 @@ No upstream submission or assistant merge occurred.
 
 NO LIVE NUMERICAL JOB. All latest producer/encoder/owned MATLAB PIDs are terminal,
 frozen-input checks and separate idle/readback/release-last passed; lease absent.
-Last numerical job: actual default-preflight-attempt1, terminal0. Recorded status
+Last numerical job: issue31-stored-attempt1, terminal0. Recorded status
 is a checkpoint, not current liveness proof; revalidate before any future job.
-No additional physics run is needed for this goal.
+No repeat body integration is needed to investigate #31.
 
 Independent accepted receipts under artifacts/workflow:
 - reference-adoption-motion-review-v1/acceptance.json286f3a82: NEW6b+953 full3001x6
@@ -115,12 +146,12 @@ Historical issue text and redirected links are retained in the committed
 retired-workflow record. Execution evidence is in `wecsim-cleanup-execution1`;
 independent audit is `reference-adoption-completion-review-v1/audit.json`.
 Final publication is tracked by `reference-adoption-completion-audit1/report.json`.
-No further numerical work or cleanup operation is queued.
+Fork cleanup is complete; #31 work is controlled by the current scope above.
 
 ## Persistent limits and visuals
 
-Physical issues31-34 remain open; compatibility is not physical accuracy. Do not
-expand this goal into convergence/solver research. Keep warnings visible/triaged.
+Physical issues31-34 remain open; compatibility is not physical accuracy. Only
+#31 is currently authorized; do not expand into the deferred investigations. Keep warnings visible/triaged.
 No Topwater-specific WEC capability without a demonstrated standard-interface
 blocker and strong engineering rationale. Old expanded e24 route acceptance76f5616a
 is historical only. See experts/history/checkpoint-handoff-2026-10-27-pre-adoption.md.
