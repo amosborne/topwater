@@ -1,5 +1,24 @@
 # Shared physical and producer/consumer contract
 
+## Surface reconstruction accuracy, user decision 2026-10-27
+
+For issue31, the user requires maximum numerical water-elevation error <=0.01m,
+INCLUDING reference numerical uncertainty, against the chosen linearized model.
+Preserve the completed WEC-Sim trajectory/forcing and the chosen mean-hull data;
+this requirement does not ask for comparison with nonlinear physics or experiments.
+Compare actual total elevations at the same coordinates/clocks over the full60s
+and declared valid exterior domain. No phase alignment or motion modification.
+
+The reference must preserve complex response amplitude/phase and qualify startup,
+frequency/time integration, padding/future independence and numerical uncertainty.
+A finite-band signed-lag output or agreement of two unqualified approximations
+alone is insufficient. Report unresolved tail uncertainty rather than call it zero.
+A few-probe screen is not a whole-region maximum. Keep the continuation policy
+explicit; never sample invalid mean-hull interior Green functions silently.
+Internal transfer-function percentages and derivative tolerances are diagnostic
+checks, not replacements for this accepted height requirement. They do not change
+this user's1cm criterion or qualify mesh/model accuracy tracked separately.
+
 ## Canonical NPZ workflow extension, 2026-10-25
 
 ### Authorized WEC-Sim force-ownership transition

@@ -5,19 +5,27 @@ current user request), `running`, or `completed`. Current project authorization
 is recorded only in [the handoff](../checkpoint-handoff.md); an execution lease
 schedules authorized work and never grants scope. Update status in place.
 
-## Radiation-surface correction, 2026-10-27
+## Radiation-surface height accuracy, 2026-10-27
 
-- CAP-ISSUE31-CAUSE: initial stored/Green/quadrature diagnostics completed and
-  independently reviewed; capytaine_expert owns the next fixed-panel kernel
-  identity/table-interpolation diagnostic helper and concise source/evidence note.
-  No production correction or numerical launch is delegated; root allocates it.
-- NUM-ISSUE31-GATES: prospective method gates and diagnostic source/results reviews
-  completed; numerical_methods_researcher owns independent review of the next
-  helper/cause attribution and correction proposal, without physical authorship.
-- Coordinator owns requirements, serial execution, integration and checkpoints.
-  Accepted motion/forcing and canonical outputs remain unchanged. Stop the current
-  author/reviewer assignments at a verified mechanism and one justified correction
-  proposal; do not launch broad mesh studies or start optimization.
+User acceptance for #31: maximum numerical elevation error plus reference
+uncertainty <=10mm against the chosen linearized model, full60s and declared
+valid exterior output region. Saved motion/forcing and hydrodynamic data stay
+fixed. Internal transfer/derivative diagnostics do not replace this requirement.
+
+- CAP-ISSUE31-HEIGHT: authorized PRIVATE helper authoring, capytaine_expert.
+  Seven-probe all-six saved-motion screen: reproduce production cosine response
+  and compare full-complex frequency reconstruction under prospective reference
+  controls. No new BEM/body-source/mesh campaign or production edit allocated.
+  Own helper and concise evidence/plan note; root owns numerical launch.
+- NUM-ISSUE31-HEIGHT: independent numerical_methods_researcher review of reference
+  design, source/API/physics conventions and actual height/uncertainty results.
+  No physical implementation authorship or numerical execution delegated.
+- Root owns scope, prospective controls, serial execution, acceptance, integration
+  and checkpoint publication. Seven probes cannot establish the whole-region
+  maximum; unresolved reference/tail uncertainty must remain visible.
+
+Prior diagnostic studies and their failed gates remain preserved. No correction
+has yet been accepted into production. Speed and #32-34 remain later work.
 
 The following assignments are historical and confer no current execution authority.
 

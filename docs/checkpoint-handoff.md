@@ -1,83 +1,106 @@
 # Checkpoint handoff
 
-Updated 2026-10-27 UTC. Follow AGENTS.md, coordination and shared contract.
-Latest user instructions control scope; historical assignments are not permission.
+Updated 2026-10-27 UTC. Follow AGENTS.md and coordination. Latest user steering
+controls scope; historical plans and diagnostic gates do not authorize campaigns.
 
-## Active goal and authorization
+## Active goal and user acceptance
 
-Current goal: resolve Topwater issue #31, the causal radiation-surface
-amplitude/phase discrepancy in `topwater solve --solver=wecsim`.
-User priority: #31 first, then measured end-to-end performance, then #32-34.
-Upstream contributions are deferred. No upstream contact/issues/PRs or merges.
-Active implementation branch remains `baseline/fluid-body`.
+Resolve Topwater #31. User CONFIRMED **1 cm maximum numerical water-elevation
+error INCLUDING reference uncertainty, against the chosen LINEARIZED model**.
+This is reconstruction accuracy, not a nonlinear-model or experimental comparison.
+Freeze the accepted WEC-Sim motion/forcing, mean hull and chosen hydrodynamic data.
+Compare the same exterior locations and clocks through the full60s. Preserve
+incident/diffraction/radiation; never adjust motion or phases to obtain agreement.
 
-Start with bounded saved-transfer and analytic controls, one mode and near/far
-points. Establish cause and prospective acceptance gates before correcting the
-method. Preserve accepted boat motion/forcing, incident/diffraction physics,
-physical inputs and old studies. Numerical work is serial under the coordinator's
-lease. Authors do not independently approve consequential physical corrections.
-Full reference-convergence/applicability campaigns (#32-34), native dynamics and
-optimization are not current assignments; targeted discriminators needed for #31
-may be scheduled explicitly. No numerical job is currently allocated.
+The earlier23% figures are transfer-function diagnostics, NOT centimetre errors
+in the saved water. No qualified actual-trajectory height error has yet been
+measured. Do not claim the goal complete from proxy residuals or a few points.
+The user explicitly rejects pursuing perfection for its own sake.
 
-First saved-data discriminator completed in4.594s under guard120s/2GiB;
-4385frozen files, terminal0/Jobempty/hostCIM/frozen/readback/release-last passed.
-Report: artifacts/workflow/issue31-stored-diagnostic1/results/report.json.
-Near/far Heave complex recovery remains about31.3%/3.48% at cutoff24, lag60;
-lag100 barely changes it. Matching-endpoint analytic controls are far closer.
-Independent diagnostic review c6dd7158 accepted the interpretation only.
-This is diagnosis, not production qualification. Do not fit a replacement to these residuals.
+Priority: #31, then measured end-to-end speed, then #32-34. Upstream contributions
+are deferred. Active branch remains baseline/fluid-body; no main pushes,
+assistant merges, bookkeeping PRs or upstream contact/issues/PRs.
+No WEC-Sim rerun, body-source correction, mesh campaign or native dynamics is
+currently allocated. Root owns serial numerical execution and integration.
 
-The fixed17facet Heave Green-split comparison completed in0.5s (guard3.329s),
-report `artifacts/workflow/issue31-green-diagnostic1/results3/report.json`
-(9da95c7d), accepted diagnostic review a28c7cf7. Same-source field evaluation
-changes remove most of the suspicious low-split high-frequency growth, but both
-splits retain substantial free-surface boundary residuals. Neither is a selected
-correction. Two earlier helper/API failures are preserved; original helpersv1/v2
-and all attempts remain. Successful helper SHAee80509d avoids cached LU wrappers
-and normalizes endpoint sources before numeric gradient stacking. No Capytaine
-library or production code was changed.
-The same17facet GL2/centroid comparison completed in0.672s (guard2.547s),
-report `artifacts/workflow/issue31-quadrature-diagnostic1/results/report.json`
-(2b9e3ce4), accepted diagnostic review85f85a18. GL2 reduces some raw residuals
-but does not qualify either split. Potential finite-difference witnesses expose
-an additional potential/gradient inconsistency in the high split; low reported
-boundary residuals alone are not proof of correctness.
-The extracted-Rankine mixed-integration identity predicts the observed low-split
-residual proportional to omega^2 and high-split residual independent of frequency.
-Kernel identity diagnostic completed in0.265s (guard1.891s), report
-`artifacts/workflow/issue31-kernel-diagnostic1/results/report.json` (185a1cbd),
-accepted independent review6e4ac9de. The extracted-Rankine identities predict
-raw residuals within1.3e-7absolute on fixedpanel0; directtheta1001/2001 evaluation
-also identifies a separate table-interpolation inconsistency. This is a cause
-finding, not a qualified correction or physical error bound.
+## Current execution and immediate work
 
-Current author assignment: private FIRST candidate only, no production change.
-Use common full-Green panel quadrature for exterior potential AND gradient by
-subtracting analytical Rankine terms and adding the same numerical quadrature
-terms. Keep original bodyK/source solves and production cosine inversion fixed.
-Dense .025..24rad/s Heave, near[0,1.25]/far[6,0], six original heldouts; directtheta
-1001 training versus2001 reference, productionlag60 gate (lag100 diagnostic only).
-Use per-point S=maxheldout|Hreference|; complex1%S at every heldout, amplitude2%
-and phase1degree where response>=5%S; S=0 uses1e-12seconds absolute and undefined
-phase. Reference theta convergence target0.1%S. No fitting or source/model tuning.
-Source/API review and explicit root allocation precede execution. If oldsourceK
-blocks the causal gate, stop and diagnose source-operator consistency rather than
-adjust the kernel to hide it. Six-mode and full saved-motion qualification follow
-only an informative first candidate. Canonical outputs remain unchanged.
+The PV24 bandwidth control is terminal0/guard0/Jobempty/frozen. HostCIM,
+independent idle readback and release-last completed; ledger idle/owner null and
+lease absent. No numerical process is allocated. Revalidate current liveness
+before the next job; a recorded checkpoint alone is not liveness proof.
 
-All owned processes are terminal; frozen-input/Jobempty/hostCIM/idle/readback/
-release-last passed. No numerical allocation is currently live.
+Its report is artifacts/workflow/issue31-green-bandwidth1/results/report.json:
+known-causal point flux at actual deep/shallow centroids, no body solve. The
+shallow omitted-band discrepancy reaches1.31% of its flux-transfer scale; the
+same-band cosine/KK discrepancy is about0.116%. This establishes a finite-band
+contribution, NOT the cause of the entire23% boat-mode residual or an actual
+water-height error. Independent review0e8722d0 accepts only that diagnostic.
 
-Coordinator adopts prospective candidate gates in
-experts/numerical_methods_researcher/issue31-method-gates-2026-10-27.md BEFORE
-any candidate validation: per-point/per-mode complex1%S, amplitude2%/phase1degree
-where response>=5%S, explicit zero handling, allsix/heldout/nearfar/waterline,
-causal analytic bursts with1mm and1%peak criteria and independent references.
-These are engineering reconstruction tolerances, not physical accuracy bounds;
-they deliberately distinguish the current material discrepancy while preserving
-small-response safeguards. Exact transient error requires an independent causal
-reference. Actual BEM transient sensitivities cannot substitute for that proof.
+Next: a PRIVATE seven-probe actual-height screen, ALLsix NEW saved motions.
+Use existing full-complex transfer cache, not another primitive-precision study.
+Reproduce current cosine24 reconstruction with NEWv; compare full-complex
+frequency reconstruction with explicit zero prehistory, smooth future-extension,
+padding/time-integration and supported-band controls. First screen can reject
+or expose reference uncertainty; it cannot qualify the full published region.
+Reference uncertainty allocation2mm is internal planning within10mm,
+not a request for machine precision or an extra user physical requirement.
+Unknown frequency-tail error must remain explicit, not silently assumed zero.
+
+Owners: capytaine_expert authors the bounded helper/implementation; independent
+numerical_methods_researcher reviews reference design, source and actual results.
+Root selects parameters/leases/acceptance. No next numerical launch until the
+actual-height plan and prospective controls have independent review. Planned FFT
+periods256/512/1024s must be truly distinct; dt.02/.01, smooth future continuations
+10/20s, bands12/18/24. Preserve all original motion knots and compare all3001
+input times. Interior future cuts20/40s test earlier-prefix independence in
+addition to post60 extension/prestart checks. Unknown >24rad/s support remains
+explicit; numerical sensitivities alone are not a certified tail bound.
+
+## Exact saved inputs and coordinate scope
+
+- Accepted NEW motion: artifacts/workflow/reference-adoption-case3/native/motion.mat,
+  SHAaf127598fd6bcf3b8bd9bbe727e10f8109df8f9a73f7d87411aa18f69f9c31df.
+  Native time3001x1; q/velocity/acceleration3001x6. Mode order is fixed mean native
+  Surge/Sway/Heave/Roll/Pitch/Yaw, not Euler-rate/world-velocity substitution.
+- Accepted snapshot: same campaign motion-comparison.npz, SHAd588619a. Current
+  completed-field cache q/v/a payloads match it exactly.
+- Current field cache: artifacts/workflow/reference-adoption-private-evidence1/
+  field-work/surface-recovery/completed-field.npz, SHA2000203da3645e3861a667cfd0fe0ee287bc352a3cc8b8a2f3367ba30bc63ec7.
+  It contains all NEW motion, poses/coordinate transforms,751 surface times,
+  xy_native_m5929x2, total/incident elevation751x5929. It does NOT retain a
+  radiation/diffraction source bank or separate radiation/diffraction surfaces.
+- Existing transfer cache: artifacts/workflow/surface-response-attempt1/field/
+  response.npz, SHA110380140cbab1dbcd2e6f72a6e5efc7ae0c0a6598af3a5fe62959065e7e8492.
+  Complex Hv960x7x6 at .025..24rad/s; old radiation response arrays must NOT be
+  reused with the new trajectory. Recompute from NEWv. Original/current mean
+  hulls differ only by recorded roundoff up to1.4844e-18m, not byte identity.
+- The first three probes are direct [6,0],[0,1.25],[3.5,0]. Four others are
+  exterior traces for two mean-interior targets; report xy AND target_xy.
+  Seven probes do not establish a maximum over5929x751. Final scope must cover
+  all declared valid published exterior nodes/times or supply a valid bound;
+  continuation regions and their shared policy must be reported explicitly.
+
+## Preserved diagnostic findings
+
+Source and canonical outputs remain unchanged by #31; all new kernels are
+PRIVATE studies, not accepted production corrections. No library fork changed.
+Detailed original gates/results remain in
+[the archived checkpoint](experts/history/checkpoint-handoff-2026-10-27-transfer-screening.md)
+and [Capytaine diagnostic record](experts/capytaine_expert/issue31-diagnostic-plan-2026-10-27.md).
+Do not delete/relabel failed studies when adopting the user height requirement.
+
+Mixed analytical-Rankine/numerical-wave integration and a separate native
+precision/approximation path have been identified. Neither a Green split nor GL2
+alone is qualified. Native point precision retains both E1 and angular arithmetic
+limitations; do not blame E1 casting alone.
+The double-precision fixed-point witness passes its bounded checks (review52ddd89f).
+The adaptive SciPy Heave study passes ALL field/reference controls but fails the
+finite-band cosine recovery proxy (reviewb63d3a9d, report98036466,158.562s).
+That is not a sourceK-causality proof or an actual height error. Its precise
+frequency/derivative gates were diagnostic engineering choices, not the user's
+end requirement. Do not launch more sourceK or whole-model investigations merely
+to perfect those proxies; first measure actual-height error and reference limits.
 
 Previous reference-adoption and cleanup goal is COMPLETE at55e44a5. Its evidence
 below remains the immutable starting point, not authorization to repeat its runs.
@@ -95,7 +118,7 @@ No upstream submission or assistant merge occurred.
 
 NO LIVE NUMERICAL JOB. All latest producer/encoder/owned MATLAB PIDs are terminal,
 frozen-input checks and separate idle/readback/release-last passed; lease absent.
-Last numerical job: issue31-kernel-attempt1, terminal0. Recorded status
+Last numerical job: issue31-bandwidth-attempt1, terminal0 (diagnostic only). Recorded status
 is a checkpoint, not current liveness proof; revalidate before any future job.
 No repeat body integration is needed to investigate #31.
 
