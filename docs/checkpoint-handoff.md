@@ -3,9 +3,14 @@
 Updated 2026-10-27 UTC. Latest user steering controls scope. Historical evidence
 and queued assignments do not authorize execution. Follow AGENTS.md/coordination.
 
-## Active goal and acceptance
+## Completed goal and acceptance
 
-Resolve #31: maximum numerical water-elevation difference PLUS reference
+Issue #31 is resolved and closed (2026-10-27T18:45:47Z). Accepted checkpoint
+`2fe5e96` is pushed to origin/baseline/fluid-body, including both canonical LFS
+objects. Issue30/31 authoritative bodies are updated and remotely verified;
+issues30,32,33,34 remain OPEN. No upstream or WEC-fork change was made.
+
+Requirement: maximum numerical water-elevation difference PLUS reference
 uncertainty <=0.010 m against the chosen LINEARIZED model over the full declared
 5929 targets × 751 frames / 60 s, including continuation. This does not measure
 error against nonlinear physics or experiments. Preserve accepted WEC-Sim
@@ -19,7 +24,7 @@ The production readiness flag is now TRUE; its promotion changes only the flag
 and comment. All production function/class ASTs match the qualified source.
 The gate regression explicitly exercises both False rejection and True admission.
 
-## Current execution and remaining work
+## Execution state and final evidence
 
 Final integration regression job issue31-final-tests-attempt1 PASSED50 tests in
 24.20s with no skips. Exact root session82774 terminal0/frozen, guard0/driver0/
@@ -37,9 +42,11 @@ uncertainty5.443242mm gives5.784425mm. No qualification or data changed.
 Documentation and warning triage are complete. The tracked evidence bundle is
 docs/experts/numerical_methods_researcher/issue31-acceptance-evidence-2026-10-27.json,
 SHA10a1e9489eb9d32104a784758d6ec6e819b288c49b3b9ec492a51bb2383919a1.
-Remaining: commit/push baseline/fluid-body including
-canonical result/video/logs, update authoritative issue30/31 descriptions and
-close31 only after final acceptance audit. Do not mark the goal complete early.
+Source, artifacts, tests, review, documentation, warnings, LFS publication and
+issue closure are complete. Root's requirement-by-requirement audit found no
+remaining #31 work. This handoff refresh records closure after the substantive
+checkpoint. No jobs remain live/allocated; ledger idle/null, lease absent.
+Future speed work needs its own bounded serial allocation, not a resumed #31 run.
 
 ## Accepted method and scope
 
@@ -99,8 +106,9 @@ resolved peak39.1241mm at43.36s. These are disturbance metrics, not error.
 
 ## Priorities and ownership
 
-Finish31, then measured end-to-end speed, then32(model resolution),33(field/load
-consistency),34(linear applicability). No speed or further model campaign now.
+31 is complete. Next priority is measured end-to-end speed, then32(model
+resolution),33(field/load consistency),34(linear applicability). No speed or
+further model campaign is currently allocated.
 CAP owns physical field implementation, NMR independent method review, TOP
 execution receipts/integration helpers; root owns serial execution and acceptance.
 Native Topwater dynamics remain a nonworking prototype. WEC reference6b774228
