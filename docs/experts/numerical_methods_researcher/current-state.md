@@ -6,8 +6,12 @@ User has redirected work before further reconstruction/optimization. Retain
 quintic joins; CLI requested time means DWELL; investigate per-original-carrier
 cycle-based ramps (initially2cycles),2–3s calm startup and measured settling.
 The illustrative1D time/frequency demonstration is complete: T4/6s,R8/12s,
-common10s dwell. Root executed the reviewed helper in0.844s, FFTroundtrip
-<=4.811e-16m and Parseval<=4.441e-14m2s. Four panels and evidence are in
+common10s dwell. Original data generation0.844s, FFTroundtrip<=4.811e-16m and
+Parseval<=4.441e-14m2s. A subsequent root-executed1.375s saved-data replot now
+shows SIX panels: time profiles, discrete per-bin cosine amplitudes and phases.
+Phase reference isglobalt0/x0, not DWELLstart; originalcarrierphi0 both, relative
+phase75degrees at14.5s. Original complex data are unchanged; amplitudes2abs(X)/N,
+DC/Nyquist once, phase mask1e-4 display-only. Figure/evidence are in
 [the construction note](../../wave-packet-timing.md). Guard/terminal/frozen/host
 absence and idle/readback/release passed. No physical propagation, WEC/BEM job,
 solver or canonical-data edit occurred or is delegated next.

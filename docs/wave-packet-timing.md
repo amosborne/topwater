@@ -18,7 +18,7 @@ The different ramp lengths extend outward from the common dwell. Thus total
 packet lengths are 26 s and 34 s even though both dwells are 10 s. This is one
 candidate alignment, rather than an implemented or qualified test policy.
 
-![Two wave packets with different ramps and a common dwell, shown in time and frequency](images/wave-packet-dwell-time-frequency.png)
+![Two packets with common dwell, shown as time traces and discrete frequency amplitudes and phases](images/wave-packet-dwell-time-frequency.png)
 
 ## Construct the envelopes and waves
 
@@ -43,6 +43,21 @@ The envelope, rather than the oscillating height, defines dwell: a zero
 crossing during dwell still represents a full-amplitude wave. Phases need not
 be adjusted to make the wave end at a zero crossing.
 
+## Phase reference
+
+In this temporal illustration, the reference point is x=0 and the time origin
+is the plotted **global t=0**, using the cosine convention above. Both original
+carriers have phase0 there. This is not phase0 at the dwell start or at the
+centre of the envelope. Because their frequencies differ, their relative phase
+changes with time: at the dwell start14.5s it is75degrees (4s carrier minus6s
+carrier), modulo360degrees.
+
+Each discrete Fourier bin has its own phase, `arg(X_k)`, referenced to that same
+time origin. These phases also encode the packet's position within the record;
+they are not all zero just because the original carrier phase is zero. Changing
+the time reference to t_ref would add `2*pi*f_k*t_ref` to each bin phase when
+writing the cosine in terms of `t-t_ref`. It would not change the waveform.
+
 ## Read the frequency plots
 
 A finite envelope has a frequency distribution rather than a single spectral
@@ -53,9 +68,15 @@ magnitudes alone are insufficient for reconstruction.
 
 The figure separates the envelope spectrum from the wave-packet spectrum so
 that ramp effects can be distinguished from the change of carrier frequency.
-The inverse transform uses the full complex coefficients and is checked against
-the constructed time traces. Padding samples the spectrum more finely; it does
-not add physical information or make a finite packet monochromatic.
+Spectra are plotted as bars at the discrete bin frequencies. Their heights are
+the amplitudes of the actual cosine components, rather than a connected curve
+or a continuous spectral density. Phase panels give the corresponding bin
+phases. The inverse transform uses the full complex coefficients and is checked
+against the constructed time traces.
+
+Padding samples the spectrum more finely; it does not add physical information
+or make a finite packet monochromatic. The discrete amplitudes and bin spacing
+belong to the declared192s Fourier-series record and must be used together.
 
 ## What this does not establish
 
@@ -74,6 +95,13 @@ quintic joins do not by themselves settle those timing questions.
 
 The inverse transform reproduces the target traces with maximum error 4.81e-16 m. The time/frequency energy check differs by at most 4.44e-14 m² s. Both envelopes are exactly one over the same sampled 10 s dwell.
 
-The displayed spectra are the positive-frequency half of `dt * abs(rFFT)`, without doubling; the omitted negative half is its complex conjugate. The record is 192 s at 128 samples/s, giving 1/192 Hz frequency-bin spacing. Full complex coefficients, rather than magnitudes alone, are used for the inverse.
+The discrete cosine amplitudes are `2*abs(X_k)/N` for positive interior bins;
+DC and Nyquist use `abs(X_k)/N` once. The negative-frequency partner is therefore
+already accounted for in each positive-frequency cosine amplitude. Envelope
+amplitudes are dimensionless and wave amplitudes are in metres. The record is
+192s at128samples/s, giving1/192Hz bin spacing. The phase display omits bins
+below a stated small-amplitude threshold; that is a plotting mask, not a
+modification of the reconstructed packet. All saved complex coefficients remain
+in the inverse transform, including bins outside the displayed frequency range.
 
 See the [executed evidence](experts/numerical_methods_researcher/wave-packet-timing-demo-2026-10-27.json) for parameters, normalization and checks. These checks demonstrate the spectral construction, not physical propagation or boat settling.

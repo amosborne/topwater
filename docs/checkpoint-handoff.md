@@ -5,6 +5,21 @@ and queued assignments do not authorize execution. Follow AGENTS.md/coordination
 
 ## Current priority: packet timing and 1D demonstration
 
+Latest follow-up is complete: spectra are discrete cosine-component amplitude
+bars, with separate bin-phase panels. Original carriers are cosine phase0 at
+globalt=0/referencex=0, not DWELLstart; their relative phase at14.5s is75degrees.
+Per-bin phases include envelope timing. Original waveforms and complex FFT
+coefficients are unchanged. Display amplitudes use2abs(X)/N for positive
+interior bins, DC/Nyquist once. Phase mask1e-4 is display-only.
+
+Root job wave-packet-timing-bars-attempt1 terminal0/frozen/guard0/driver0/Jobempty;
+exact producer29372/owner35528 and all guarded host identities absent. finish_check
+terminal0, idle/null readback then release-last. Plotting1.375s, complexinverse
+error<=4.811e-16m. NMR authored the saved-data replot and TOP reviewed source;
+root alone executed. No image inspection, WEC/BEM or physical/canonical change.
+Original four-panel figure/evidence are preserved in Git5aa0170 and private
+results/previous-publication/. Current ledger idle/null and lease absent.
+
 Latest user steering supersedes the former next-speed priority. Step back before
 further radiation reconstruction or optimization to investigate wave-packet
 timing and simulation duration. Retain quintic smooth-join constraints. The CLI
@@ -15,19 +30,19 @@ under investigation; no production behavior has changed.
 
 The requested standalone1D demonstration is complete:
 [time/frequency construction](wave-packet-timing.md) and
-docs/images/wave-packet-dwell-time-frequency.png (2430x1530,
-SHA48420d5c703abdff089c26deedb946bda4a8b74ab4222e86be3a61756893f093).
+docs/images/wave-packet-dwell-time-frequency.png (2380x2040,
+SHAed4eb050d20d4fb38c1dd271a7734ae121dbd1ea7f5f5d7cb5fffecbfb41e4d2).
 Two original periods4s/6s have ramps8s/12s and identicalDWELL14.5–24.5s.
-Four panels show envelopes, time traces, envelope spectra and packet spectra.
+Six panels show envelopes, time traces, envelope/packet bin amplitudes and phases.
 Complex FFT/IFFT reconstruction error <=4.811e-16m; Parseval error4.441e-14m2s.
 This is an intended1D profile demonstration, NOT propagated wave physics,
 startup/calm certification or a WEC-Sim run. No previews/images were inspected.
 
 Root job wave-packet-timing-plots-attempt1 terminal0/frozen/guard0/driver0/
 Jobempty, exact producer32352/owner9992 and all guarded host identities absent.
-finish_check terminal0 then idle/null readback/release-last completed. Current
-ledger idle/null, lease absent. NMR authored illustrative source; TOP reviewed
-source; root alone executed. Actual plot work0.844s. Report/complex spectra are
+finish_check terminal0 then idle/null readback/release-last completed. NMR authored
+the original illustrative source; TOP reviewed source; root alone executed.
+Original plot/data work0.844s. Report/complex spectra are
 under that attempt's results/; tracked numerical evidence is
 docs/experts/numerical_methods_researcher/wave-packet-timing-demo-2026-10-27.json.
 All canonical output and production sources remain unchanged.

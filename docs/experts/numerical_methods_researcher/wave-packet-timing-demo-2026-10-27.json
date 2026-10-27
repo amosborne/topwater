@@ -1,6 +1,42 @@
 {
   "complete": true,
-  "scope": "1D time-domain illustration; not a propagated WEC-Sim case",
+  "scope": "Saved-data plot revision only; no new packet or physics",
+  "spectrum_sha256": "19442cfb44a931e838fbb1d38954819f33d225bc33d21e9c095df7eb5cf6dbf9",
+  "report_sha256": "795e6cda85eca6d926d2c9a3269ca3ab7862b071287969bc1175dca940b7ada5",
+  "original_helper_sha256": "a097d2a2d9d6c6e2e8d9a5806176839f1b66d1c346e23c66d0f5b56a953fe757",
+  "helper_sha256": "cf7a075571a0dab36a0591ce77e853a2bfd628937b96ac824bb1395bc41b50c9",
+  "output_sha256": "ed4eb050d20d4fb38c1dd271a7734ae121dbd1ea7f5f5d7cb5fffecbfb41e4d2",
+  "original_data_unchanged": true,
+  "no_new_spectrum": true,
+  "normalization": "2*abs(X)/N positive interior bins; abs(X)/N at DC and Nyquist",
+  "phase_convention": "A_k*cos(2*pi*f_k*t+arg(X_k)); x=0 and global t=0",
+  "time_origin_shift": "For tau=t-t_ref: phi_new=arg(X)+2*pi*f*t_ref, modulo 2*pi",
+  "carrier_and_bin_phase_distinction": "Carrier phases zero do not require packet-bin phases to be zero",
+  "carrier_phases_rad": [
+    0.0,
+    0.0
+  ],
+  "dwell_start_carrier_phase_difference_T4_minus_T6_deg": 75.0,
+  "phase_mask_fraction_of_each_curve_peak": 0.0001,
+  "display_only_mask": true,
+  "displayed_phase_counts_envelope_packet_by_carrier": [
+    [
+      46,
+      111
+    ],
+    [
+      47,
+      97
+    ]
+  ],
+  "common_dwell_s": [
+    14.5,
+    24.5
+  ],
+  "packet_reconstruction_max_error_m": 4.810966440042345e-16,
+  "envelope_reconstruction_max_error": 4.685235176806148e-16,
+  "bin_spacing_hz": 0.005208333333333333,
+  "wall_seconds": 1.375,
   "packets": [
     {
       "carrier_period_s": 4.0,
@@ -31,69 +67,38 @@
       "total_target_support_s": 34.0
     }
   ],
-  "polynomial": "S(u)=10u^3-15u^4+6u^5, clipped to u in[0,1]",
-  "envelope": "S((t-start)/R)*S((end-t)/R)",
-  "common_dwell_start_s": 14.5,
-  "common_dwell_end_s": 24.5,
-  "common_dwell_duration_s": 10.0,
-  "nominal_earliest_ramp_start_s": 2.5,
-  "amplitude_choice": "Both carriers have1m amplitude; spectra use the same normalization.",
-  "waveform": "A*envelope*cos(2*pi*carrier_frequency*t+phase), reference origin",
-  "fft": {
+  "common_dwell_duration_s": 10,
+  "fft_record": {
     "sample_count": 24576,
     "dt_s": 0.0078125,
     "padded_record_s": 192.0,
     "bin_spacing_hz": 0.005208333333333333,
-    "nyquist_hz": 64.0,
-    "normalization": "Display DT*abs(rfft): positive-frequency complex-transform magnitude, no doubling.",
-    "note": "Forward FFT is unscaled; inverse FFT includes1/N. Negative frequencies are conjugates.",
-    "inverse": "irfft of the original COMPLEX coefficients, never amplitude-only",
-    "reconstruction_max_error_m": [
-      3.3306690738754696e-16,
-      4.810966440042345e-16
-    ],
-    "error_budget_m": 1e-12,
-    "energy_time_m2_s": [
-      8.134199134197916,
-      9.698676053083393
-    ],
-    "energy_frequency_m2_s": [
-      8.134199134197885,
-      9.698676053083348
-    ],
-    "parseval_max_error_m2_s": 4.440892098500626e-14
+    "nyquist_hz": 64.0
   },
-  "no_propagation": true,
-  "no_calm_certification": true,
-  "no_BEM": true,
-  "no_WEC": true,
-  "no_canonical_changes": true,
-  "output_sha256": {
-    "two-packet-time-frequency.png": "48420d5c703abdff089c26deedb946bda4a8b74ab4222e86be3a61756893f093",
-    "two-packet-spectrum.npz": "19442cfb44a931e838fbb1d38954819f33d225bc33d21e9c095df7eb5cf6dbf9"
-  },
-  "helper_sha256": "a097d2a2d9d6c6e2e8d9a5806176839f1b66d1c346e23c66d0f5b56a953fe757",
-  "wall_seconds": 0.8440000000118744,
+  "original_time_frequency_energy_check_error_m2_s": 4.440892098500626e-14,
   "published_plot": "docs/images/wave-packet-dwell-time-frequency.png",
   "png_dimensions_px": [
-    2430,
-    1530
+    2380,
+    2040
   ],
   "terminal_evidence": {
-    "job": "Illustrative1D two packet time/frequency/commonDWELL plots;samephaseFFT reconstruction;noBEM/WEC/physicalproducer/canonicalwrite;60s1GiB1thread",
+    "job": "Illustrative saved1D packet discreteamplitude/phase bars;originalcomplexcoefficients/globalphaseorigin;noBEM/WEC/physicalproducer/canonicalwrite;60s1GiB1thread",
     "owner": "/root",
-    "producer_pid": 32352,
-    "owner_launcher_pid": 9992,
-    "started_at": "2026-10-27T20:14:03.167936+00:00",
+    "producer_pid": 29372,
+    "owner_launcher_pid": 35528,
+    "started_at": "2026-10-27T20:55:59.636720+00:00",
     "exit_code": 0,
     "frozen_inputs_match": true,
     "complete": true,
-    "manifest": "C:\\Users\\alex\\topwater\\artifacts\\workflow\\wave-packet-timing-plots-attempt1\\manifest.json",
-    "output": "C:\\Users\\alex\\topwater\\artifacts\\workflow\\wave-packet-timing-plots-attempt1\\output.log"
+    "manifest": "C:\\Users\\alex\\topwater\\artifacts\\workflow\\wave-packet-timing-bars-attempt1\\manifest.json",
+    "output": "C:\\Users\\alex\\topwater\\artifacts\\workflow\\wave-packet-timing-bars-attempt1\\output.log"
   },
-  "guard_receipt_sha256": "5f7e4e328357d5ec99c0d071a0470c5c6fcc6c33a95c53221545fafaa2c209c1",
-  "job_empty_verified": true,
+  "guard_receipt_sha256": "dad35e388c678942648a92c08f97eb4c25e974e88f0004bac5d73d40bb8bf18b",
   "guard_exit_code": 0,
   "driver_exit_code": 0,
-  "raw_spectra_local": "artifacts/workflow/wave-packet-timing-plots-attempt1/results/two-packet-spectrum.npz"
+  "job_empty_verified": true,
+  "previous_plot_commit": "5aa0170",
+  "previous_plot_sha256": "48420d5c703abdff089c26deedb946bda4a8b74ab4222e86be3a61756893f093",
+  "raw_spectra_local": "artifacts/workflow/wave-packet-timing-plots-attempt1/results/two-packet-spectrum.npz",
+  "no_physical_or_canonical_change": true
 }

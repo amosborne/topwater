@@ -27,6 +27,13 @@ The root-executed plot is complete: four panels, shared10s dwell, periods4/6s,
 ramps8/12s; FFT roundtrip<=4.811e-16m. Guard/terminal/frozen/host absence and
 idle/readback/release passed. No physical run or further allocation follows.
 
+PACKET-TIMING-BARS, completed user follow-up: NMR authored a fresh saved-data
+replot, TOP reviewed source/preparation, root executed only. The current figure
+has six panels with discrete cosine-amplitude bars and bin phases referenced
+to globalt0/x0. Original packets/complex coefficients are unchanged; all serial
+terminal/frozen/host absence/idle/readback/release checks pass. No next job is
+allocated. The original four-panel version remains historical evidence.
+
 ## Radiation-surface height accuracy, 2026-10-27
 
 User acceptance for #31: maximum numerical elevation error plus reference
