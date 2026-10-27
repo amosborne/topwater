@@ -9,10 +9,10 @@ uv run topwater solve examples/simple-boat 60 --solver=wecsim
 ```
 
 DIRECTORY defaults to the current directory. The input/output filenames are
-fixed. Production surface reconstruction is integrated under the provisional
-linear-reference policy below. The selected 60-second case has completed the
-public solve/render workflow; that establishes implementation, not physical
-accuracy or general qualification.
+fixed. The earlier provisional method completed the selected 60-second public
+workflow. Its replacement is currently gated off pending issue #31's full-surface
+numerical qualification; readiness fails clearly rather than publishing an
+unqualified replacement. Earlier outputs remain historical evidence.
 
 The native backend is the intended default. Native coupled dynamics are not yet
 available; omitting `--solver=wecsim` must report that limitation without silently
@@ -174,14 +174,20 @@ remain unqualified. [Evidence and scope](../experts/wecsim_expert/current-state.
   Global heading is an embedding applied once to output geometry and body pose.
 - Surface reconstruction adds no feedback to body dynamics. It combines the
   represented incoming packet, direct sideband diffraction, and radiation driven
-  by the saved native CG velocities and world angular velocities. Angular
-  velocities are not replaced by Euler-angle rates.
-- The provisional surface-radiation operator uses cutoff 24 rad/s and frequency
-  spacing no larger than `min(0.025 rad/s, 0.98*pi/duration)`, with causal lags
-  through the entire body history. Both direct velocity and direct acceleration
-  terms are zero. Surface memory is not truncated to the body's 10 s force-memory
-  cutoff. This selected numerical approximation has not passed full complex
-  near-field transfer recovery.
+  by all six saved fixed-mean native modal velocities. Angular velocities are
+  not replaced by Euler-angle rates.
+- The pending radiation method preserves the full complex frequency response.
+  Its default band is 0--48 rad/s at 0.025 rad/s spacing, with a 1024 s FFT
+  period and FFT timestep half the saved motion timestep. Every saved velocity
+  knot is retained. Velocity is zero before startup; a prescribed 20 s cubic
+  Hermite continuation takes final velocity/acceleration smoothly to rest after
+  the saved interval. This continuation is numerical padding, not predicted
+  motion. Higher frequencies are set to zero, leaving tail uncertainty to be
+  evaluated. Raw initial radiation is preserved; no separate acceleration
+  response is added. Spatial chunks contain at most 128 evaluation points.
+  These settings need whole-domain validation against the 1 cm linear-model
+  elevation requirement, including reference uncertainty. Offline synthesis
+  does not establish exact causal rest-start physics for arbitrary inputs.
 - Disturbance fields near/inside the mean hull footprint use an explicit exterior
   trace at offset `min(0.025 m, 0.01*beam)`. The incident contribution is evaluated
   at the actual target locations. This continuation and geometric intersection
@@ -239,10 +245,12 @@ the initial hydrostatic wetted area. It reports first/last exceedance and the
 worst fraction/time. This uses the reconstructed piecewise-linear total graph;
 it is not a nonlinear-physics truth estimate.
 
-Every reconstructed surface reports the selected radiation projection's observed
-near/far-point difference from a signed-lag diagnostic: up to 42.7 mm maximum and
-12.5 mm RMS on the tested motion. That diagnostic is noncausal and is not a
-reference solution or error bound. The producer also reports direct sideband
+The pending method logs its band, FFT period/timestep, input interpolation,
+future continuation, pre-response and raw startup value in `SURFACE_NUMERICS`
+records. These are numerical diagnostics, not automatic accuracy certificates.
+The earlier cosine projection and failed causal-only cut remain investigation
+evidence; their old discrepancies are not reused as new-run error estimates.
+The producer also reports direct sideband
 field-versus-prepared-body load differences, without modifying the accepted
 body loads. Total-minus-incident surface metrics describe the produced geometry;
 they are not an accuracy certificate.
@@ -262,12 +270,11 @@ silently suppressed or converted into numerical-accuracy claims.
 
 ## Current support and detection limits
 
-The coordinator accepted a provisional linear surface policy for the selected
-stronger-buoy 60 s trajectory on the unchanged 17-panel mean wetted hull.
-[Independent method review](../experts/numerical_methods_researcher/surface-reconstruction-review-2026-10-25.md).
-This opens the source capability gate; it is not evidence that the complete
-generic CLI has passed, that other boats/seas/durations are qualified, or that
-the field reproduces the full complex near-field response. Runtime input,
+The former selected-case provisional policy is historical. The new full-complex
+method is awaiting whole-region qualification under issue #31 and its readiness
+gate is closed. The requirement is at most 1 cm numerical elevation error,
+including reference uncertainty, against the chosen linearized model. It does
+not quantify error against nonlinear calculations or real water. Runtime input,
 initial-state, topology, finite-data, and output gates remain mandatory. A
 motion-only result is never substituted for the required total-surface output.
 

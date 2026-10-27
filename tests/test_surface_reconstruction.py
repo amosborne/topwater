@@ -134,10 +134,10 @@ def test_weighted_spectrum_has_no_hidden_factor_or_conjugation():
 
 def test_total_surface_capability_checks_selected_policy(monkeypatch):
     import topwater._capytaine_surface as producer
-    require_surface_readiness()
-    monkeypatch.setattr(producer, '_SURFACE_POLICY_ACCEPTED', False)
-    with pytest.raises(ValueError, match='pilot'):
+    with pytest.raises(ValueError, match='whole-domain numerical qualification'):
         require_surface_readiness()
+    monkeypatch.setattr(producer, '_SURFACE_POLICY_ACCEPTED', True)
+    require_surface_readiness()
 
 
 def test_wet_set_area_is_geometric_and_owns_shared_vertical_prism_edges_once():
@@ -355,6 +355,9 @@ def calm_surface_case(monkeypatch, tmp_path):
     from scipy.spatial.transform import Rotation
     from topwater.workflow_data import Boat
     import topwater._capytaine_surface as producer
+    # These analytical zero-field tests qualify geometry integration only.
+    # They do not certify the production numerical surface policy.
+    monkeypatch.setattr(producer, '_SURFACE_POLICY_ACCEPTED', True)
 
     vertices = np.array([[-1., -1., 0.], [1., -1., 0.], [1., 1., 0.], [-1., 1., 0.],
                          [-1., -1., 1.], [1., -1., 1.], [1., 1., 1.], [-1., 1., 1.]])
@@ -377,7 +380,7 @@ def calm_surface_case(monkeypatch, tmp_path):
         world_from_native=embedding, equilibrium=SimpleNamespace(orientation=np.array([1., 0., 0., 0.])),
         mean_cg_m=np.zeros(3), hydrostatic=SimpleNamespace(wetted_area=8.), train=train)
     motion = SimpleNamespace(time_s=stamp, position_m=np.zeros((2, 3)), orientation_wxyz=orientation,
-                             velocity_native=np.zeros((2, 6)))
+                             velocity_native=np.zeros((2, 6)), acceleration_native=np.zeros((2, 6)))
     waterline = np.array([[-1., -1., 0.], [1., -1., 0.], [1., 1., 0.], [-1., 1., 0.], [0., 0., -.5]])
     hydro = SimpleNamespace(directory=tmp_path/'hydrodynamics',
         body=SimpleNamespace(mesh=SimpleNamespace(vertices=waterline)), depth=np.inf,

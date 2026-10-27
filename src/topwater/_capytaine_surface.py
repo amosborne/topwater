@@ -2,9 +2,9 @@
 
 Capytaine is imported only when a producer is explicitly called.  All harmonic
 quantities use Re(A exp(-i omega t)), fixed mean-world axes and the mean CG.
-Coefficient production does not qualify transient field reconstruction. A
-surface kernel requires explicit acceptance of its numerical approximation;
-the selected causal projection retains a documented near-field phase error.
+Coefficient production does not qualify transient field reconstruction.
+The full-complex offline approximation requires explicit saved-case numerical
+qualification; historical causal-kernel routines remain for preserved studies.
 """
 from dataclasses import dataclass
 from functools import wraps
@@ -578,6 +578,102 @@ def radiation_acceleration_direct(hydro, xy):
     return direct
 
 
+@dataclass(frozen=True)
+class OfflineRadiationSettings:
+    """Explicit finite-band OFFLINE policy, requiring case-specific qualification.
+
+    The future polynomial is a numerical continuation, not predicted body motion.
+    None for fft_dt_s selects half the saved motion interval.  No motion sample,
+    transfer phase, initial radiation sample or physical direct term is changed.
+    """
+    period_s: float = 1024.
+    fft_dt_s: float | None = None
+    future_s: float = 20.
+    maximum_omega_rad_s: float = 48.
+    omega_step_rad_s: float = .025
+    chunk_points: int = 128
+
+
+def offline_radiation_response(omega, velocity_transfer, time_s, velocity, acceleration,
+                               *, output_time_s=None, settings=None):
+    """Full complex H_eta,v applied to the complete saved native velocity.
+
+    H uses exp(-i*w*t); NumPy's inverse uses exp(+i*w*t), hence conj(H).
+    Before zero the input is exactly zero. After the last saved v/a jet a C1
+    Hermite continuation reaches rest. Frequencies above the declared band are
+    zero. These finite-data choices are logged, NOT a universal causality claim
+    or an automatic numerical-error certificate. A*a is already part of full H:
+    never add it a second time or force its first sample to zero.
+    """
+    settings = OfflineRadiationSettings() if settings is None else settings
+    stamp = _grid(time_s, 'motion time_s', zero=True)
+    w = _grid(omega, 'transfer omega', zero=True)
+    H = _finite(velocity_transfer, (len(w), None, 6), 'velocity_transfer', complex_value=True)
+    v = _finite(velocity, (len(stamp), 6), 'native velocity')
+    a = _finite(acceleration, v.shape, 'native acceleration')
+    output = stamp if output_time_s is None else _grid(output_time_s, 'output time_s', zero=True)
+    native_dt = stamp[1]-stamp[0]
+    dt = native_dt/2 if settings.fft_dt_s is None else float(settings.fft_dt_s)
+    period, future, band = settings.period_s, settings.future_s, settings.maximum_omega_rad_s
+    if (not np.isfinite([dt, period, future, band]).all() or min(dt, period, future, band) <= 0
+            or stamp[0] != 0 or w[0] != 0 or np.any(v[0] != 0)
+            or not np.allclose(np.diff(stamp), native_dt, rtol=0, atol=1e-12)):
+        raise ValueError('Offline radiation requires positive finite settings, uniform zero-start history and exact initial velocity rest')
+    n = int(round(period/dt))
+    if (n % 4 or abs(n*dt-period) > 1e-10 or band > np.pi/dt
+            or w[-1] < band or output[0] < 0 or output[-1] > stamp[-1]):
+        raise ValueError('Offline FFT period/grid/band must cover the requested history without frequency extrapolation')
+    knot_indices = np.rint(stamp/dt).astype(int)
+    selected = np.rint(output/dt).astype(int)
+    steps = int(round(future/dt))
+    if (not np.allclose(knot_indices*dt, stamp, rtol=0, atol=1e-10)
+            or not np.allclose(selected*dt, output, rtol=0, atol=1e-10)
+            or steps < 1 or abs(steps*dt-future) > 1e-10):
+        raise ValueError('Saved motion, output clocks and future duration must be exactly represented by FFT dt')
+    zero = n//4
+    last = int(knot_indices[-1])
+    if zero+last+steps >= n:
+        raise ValueError('FFT period does not fit the saved history and declared smooth future')
+    values = np.zeros((n, 6))
+    inside = np.arange(last+1)*dt
+    for mode in range(6):
+        values[zero:zero+last+1, mode] = np.interp(inside, stamp, v[:, mode])
+    values[zero+knot_indices] = v  # Preserve every native sample exactly.
+    if not np.array_equal(values[zero+knot_indices], v):
+        raise ValueError('Offline interpolation changed saved velocity samples')
+    u = np.arange(1, steps+1)/steps
+    values[zero+last+1:zero+last+steps+1] = (
+        (2*u**3-3*u**2+1)[:, None]*v[-1]
+        +future*(u**3-2*u**2+u)[:, None]*a[-1])
+    # Accumulate modes into one output spectrum: no FFT-frequency x point x DOF
+    # tensor. Spatial chunking by the caller bounds this remaining allocation.
+    f = 2*np.pi*np.fft.rfftfreq(n, dt)
+    keep = f <= band
+    vf = rfft(values, axis=0)
+    spectrum = np.zeros((len(f), H.shape[1]), dtype=complex)
+    for point in range(H.shape[1]):
+        for mode in range(6):
+            response = (np.interp(f[keep], w, H[:, point, mode].real)
+                        +1j*np.interp(f[keep], w, H[:, point, mode].imag))
+            spectrum[keep, point] += np.conj(response)*vf[keep, mode]
+    field = irfft(spectrum, n=n, axis=0)
+    pre = field[:zero]
+    result = field[zero+selected].copy()
+    evidence = dict(method='intact full-complex offline FFT(v)',
+        period_s=float(period), fft_dt_s=float(dt), n_fft=n, fft_time_origin_s=-period/4,
+        maximum_omega_rad_s=float(band), hard_zero_above_band=True,
+        transfer_interpolation='linear real and imaginary, supplied zero-frequency endpoint',
+        saved_motion_interpolation='linear with every original native velocity knot exact',
+        prehistory='zero native velocity', future_duration_s=float(future),
+        future_policy='C1 Hermite from saved final velocity/acceleration to zero velocity/acceleration',
+        pre_response_max_abs_m=np.max(np.abs(pre), axis=0).tolist(),
+        raw_initial_radiation_m=field[zero].tolist(), initial_sample_modified=False,
+        direct_term_policy='intact H, no separately added acceleration; raw initial value preserved',
+        universal_causality_claim=False, numerical_accuracy_qualified=False,
+        unresolved_response_above_band=True)
+    return result, evidence
+
+
 @dataclass
 class SurfaceKernel:
     lag_s: np.ndarray
@@ -587,18 +683,19 @@ class SurfaceKernel:
     direct_acceleration: np.ndarray | None = None
 
 
-_SURFACE_POLICY_ACCEPTED = True
+_SURFACE_POLICY_ACCEPTED = False
 
 
 def require_surface_readiness():
-    """Check availability of the coordinator-accepted provisional field policy.
+    """Require explicit whole-domain qualification of the active offline policy.
 
-    Acceptance is selected-case engineering qualification, not full-complex
-    recovery or nonlinear wave/body accuracy. Runtime geometry/startup gates
-    still apply independently to every produced result.
+    Native coefficient availability and historical cosine-kernel acceptance do
+    not qualify the new method. Runtime geometry/startup gates still apply
+    independently. Only controlled private qualification may override this gate
+    before coordinator acceptance; there is no public CLI bypass.
     """
     if not _SURFACE_POLICY_ACCEPTED:
-        raise ValueError('WEC-Sim total-surface reconstruction awaits selected-case causal-projection pilot acceptance')
+        raise ValueError('WEC-Sim full-complex offline surface reconstruction awaits whole-domain numerical qualification')
 
 
 def cosine_kernel(omega, velocity_transfer, lag_s, *, direct_velocity, direct_acceleration=None):
@@ -992,11 +1089,11 @@ def _delta_moments(vertices, faces, incident_at_vertices, hull, beam, segments, 
     return output, (startup_peak if startup_bounds is not None else None)
 
 
-def reconstruct_total_surface(hydro, setup, motion, surface_time_s):
+def reconstruct_total_surface(hydro, setup, motion, surface_time_s, *, radiation_settings=None):
     """Return packed original total-field grids; hull interiors are invalid water.
 
     Numerical policy: fixed mean-hull linear diffraction/radiation, positive
-    sideband frequencies, finite-band causal field operator over the complete
+    sideband frequencies, intact finite-band offline complex response over the complete
     trajectory, exact incident at targets, explicit exterior-trace continuation
     of disturbances near/inside the mean footprint. This is an export of a
     selected linear reference approximation, not nonlinear contact dynamics.
@@ -1016,6 +1113,8 @@ def reconstruct_total_surface(hydro, setup, motion, surface_time_s):
     if hydro.depth != np.inf:
         raise ValueError('The current incoming-train total-surface policy requires infinite depth')
     velocity = _finite(motion.velocity_native, (len(stamp), 6), 'native radiation-input velocity')
+    acceleration = _finite(motion.acceleration_native, velocity.shape, 'native radiation-input acceleration')
+    radiation_settings = OfflineRadiationSettings() if radiation_settings is None else radiation_settings
     position = _finite(motion.position_m, (len(stamp), 3), 'world position')
     rotation = Rotation.from_quat(motion.orientation_wxyz, scalar_first=True)
     matrices = rotation.as_matrix()
@@ -1050,34 +1149,35 @@ def reconstruct_total_surface(hydro, setup, motion, surface_time_s):
     field_xy, inverse = np.unique(mapped, axis=0, return_inverse=True)
     print(f'Surface: evaluating total linear field at {len(field_xy)} exterior points; '
           f'{int(continued.sum())} target points use an explicit {trace_offset:g} m disturbance trace.', file=sys.stderr)
-    print('Surface numerical approximation: the selected causal finite-band projection showed '
-          '42.7 mm maximum / 12.5 mm RMS difference from a signed-lag diagnostic at tested near/far points. '
-          'That noncausal diagnostic is not a reference solution or an accuracy bound; '
-          'full-complex near-field transfer recovery has not passed.', file=sys.stderr)
-    # Delta omega < pi/T keeps the transform's periodic images outside the
-    # requested +/-T window. It does not by itself certify causal projection.
-    maximum = 24.
-    step = min(.025, .98*np.pi/stamp[-1])
+    print('Surface numerical approximation: intact complex offline response; zero velocity prehistory, '
+          'smooth prescribed future and finite frequency band. Raw startup is preserved. '
+          'Whole-domain numerical accuracy and remaining-tail uncertainty require separate qualification.', file=sys.stderr)
+    maximum = radiation_settings.maximum_omega_rad_s
+    step = radiation_settings.omega_step_rad_s
+    if not np.isfinite([maximum, step]).all() or min(maximum, step) <= 0:
+        raise ValueError('Radiation frequency range and spacing must be positive and finite')
+    if not isinstance(radiation_settings.chunk_points, int) or radiation_settings.chunk_points < 1:
+        raise ValueError('Radiation spatial chunk size must be a positive integer')
     count = int(np.ceil(maximum/step))
     omega = np.linspace(0., maximum, count+1)
+    radiation_evidence = []
     with threadpool_limits(1):
-        transfer = radiation_velocity_transfer(hydro, field_xy, omega[1:], shared_green=True)
-        progress = _StageProgress('radiation convolution', len(field_xy), 'field points')
+        progress = _StageProgress('offline radiation reconstruction', len(field_xy), 'field points')
         radiation = np.empty((len(surface_time), len(field_xy)))
-        for start in range(0, len(field_xy), 128):
-            end = min(start+128, len(field_xy))
-            values = np.concatenate([np.zeros_like(transfer[:1, start:end]), transfer[:, start:end]])
-            candidate = cosine_kernel(omega, values, stamp,
-                                      direct_velocity=np.zeros((end-start, 6)))
-            # This is the fixed selected finite-band numerical policy. Its
-            # actual-response sensitivity and causal-projection bias are stated
-            # in the producer evidence; no full-complex-recovery pass is implied.
-            candidate.accepted = True
-            response = convolve_radiation(candidate, stamp, velocity)
-            for j in range(end-start):
-                radiation[:, start+j] = np.interp(surface_time, stamp, response[:, j])
+        for start in range(0, len(field_xy), radiation_settings.chunk_points):
+            end = min(start+radiation_settings.chunk_points, len(field_xy))
+            # radiation_results retains the source bank across spatial chunks;
+            # only native field evaluation repeats, never the body/source solve.
+            transfer = radiation_velocity_transfer(hydro, field_xy[start:end], omega[1:], shared_green=True)
+            values = np.concatenate([np.zeros_like(transfer[:1]), transfer])
+            response, evidence = offline_radiation_response(omega, values, stamp, velocity, acceleration,
+                output_time_s=surface_time, settings=radiation_settings)
+            radiation[:, start:end] = response
+            evidence.update(field_point_start=start, field_point_end=end)
+            radiation_evidence.append(evidence)
+            print('SURFACE_NUMERICS '+json.dumps(evidence, allow_nan=False, separators=(',', ':')), file=sys.stderr)
+            del transfer, values
             progress.update(end)
-        del transfer
         progress.finish()
         _, scattered_spectrum = combined_diffraction(
             hydro, setup.train, field_xy, return_forces=False, return_incident=False)
@@ -1099,6 +1199,7 @@ def reconstruct_total_surface(hydro, setup, motion, surface_time_s):
         opening_rim=body.mesh.opening_rim, artificial_faces=body.mesh.artificial_faces,
         physical_faces=setup.physical_faces, xy_native_m=xy, water_faces=faces,
         axis_x_m=axes[0], axis_y_m=axes[1], total_elevation_m=total, incident_elevation_m=incident,
+        radiation_numerics_json=np.array(json.dumps(radiation_evidence, allow_nan=False)),
         world_from_native=embedding, mean_rotation=Rotation.from_quat(
             setup.equilibrium.orientation, scalar_first=True).as_matrix(),
         mean_cg_m=setup.mean_cg_m, initial_wetted_area_m2=np.array(setup.hydrostatic.wetted_area),

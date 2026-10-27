@@ -24,7 +24,42 @@ assistant merges, bookkeeping PRs or upstream contact/issues/PRs.
 No WEC-Sim rerun, body-source correction, mesh campaign or native dynamics is
 currently allocated. Root owns serial numerical execution and integration.
 
-## Current execution and immediate work
+## Latest implementation and immediate work
+
+Full-H offline implementation source235989db and focused tests544ec0fa/19595990
+passed independent source reviewa75ccbde27caeddd96e5ad97deccd72793aa57ddc3c96cbf787ec8614a03d3fb
+at artifacts/workflow/issue31-offline-source-review1/acceptance.json.
+Actual focused suite:42 PASSED in17.81s, test_offline_radiation.py and
+test_surface_reconstruction.py. Evidence: issue31-offline-tests-attempt3/terminal.json
+and issue31-offline-tests-allocation3/child.log +guard-receipt.json. Earlier tests
+attempt1/2 failed sandbox temporary-directory/rename permissions, not numerical
+assertions; attempt3 used workspace OS/pytest temp and host execution with the
+same source/settings. Guard0/driver0/Jobempty/frozen; hostCIM exactowned absent;
+finish74554 terminal0, separateidle/readback/release-last. Ledger idle/null and
+lease absent. Source freeze lifted. No full canonical solve/render rerun.
+
+Implementation preserves raw startup, full complex H and all native samples;
+logs policy/startup/pre-response per spatial chunk. ONE production readiness flag
+remains FALSE until whole-domain qualification. Root updated docs/cli/solve.md
+to describe pending settings/failures/limits, not claim final accuracy.
+
+NEXT CAP source-only assignment: concrete whole5929x751 qualification helper/plan
+using accepted saved motion, unchanged incident/diffraction/trace/geometry checks;
+include a SHORT field+FFT runtime/memory pilot before any large allocation.
+Sourcebank/chunking cost must be measured. No WEC rerun or gate flip. Prospective
+per-point reference controls and uncertainty, matched clocks/basis, independent
+frequency-sum spot checks and common incident/diffraction identity are required.
+Root executes serially only after review.
+
+Input-tail helper/plan are source-ready at issue31-input-tail-screen1/, author
+hashesb47b4529/33c39bef; NMR review pending. Use final accepted hashes for execution.
+Decision screen uses full-H tail envelope PLUS existing per-probe Uref_est <=10mm;
+no default0.5mm assumption, no automatic saved-a semantics charge for an unchanged
+full-H reference. Passing is necessary only, not whole-field or tail qualification.
+Sparse sample input values use direct DFT, not complex interpolation with an
+arbitrary time-origin phase. Preparation source is under input-tail-allocation1/.
+
+## Completed study evidence and current boundaries
 
 Both actual-height screen and tail extension are terminal0/guard0/Jobempty/frozen.
 HostCIM, independent idle readback and release-last completed; latest finish
