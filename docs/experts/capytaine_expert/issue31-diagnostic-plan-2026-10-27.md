@@ -216,3 +216,291 @@ all-terms-quadrature switch was found; native mesh quadrature changes the wave
 part only. Such a candidate would still need the independently frozen all-six
 complex-response and causal-transient gates. It is not selected by this note,
 and its spatial approximation remains distinct from full issue32 qualification.
+
+## Verified cause and first candidate, frozen before validation
+
+Kernel report `issue31-kernel-diagnostic1/results/report.json`, SHA256
+185a1cbd2f864ced446d439d938f154617be84ebc87c2ab4608d73702f03e287,
+completed in0.265s (guard1.891s). Root reports terminal0/frozen/Jobempty and
+process cleanup. Predicted low/high extracted-Rankine residual identities match
+within1.3e-7/1.9e-9 absolute on the fixed panel. At2.637rad/s, removing table
+interpolation reduces the split-potential mismatch from0.00350 (centroid) or
+0.000231 (GL2) to roughly1e-7. Potential-only derivatives also improve, with
+finite angular-integration and finite-difference floors retained. These findings
+identify mixed integration and separate interpolation errors; they do not
+qualify the original17panel hydrodynamics.
+
+Root authorized the first PRIVATE field candidate. Keep original low-split,
+centroid, tabulated bodyK/source equations unchanged. At strictly exterior
+regular field points, form the SAME full Green integral and full gradient with
+the existing centroid points/weights:
+
+```text
+S_common = S_native - I_R - sign*I_ref + Q_R + sign*Q_ref
+grad_common = grad_native - grad_I_R - sign*grad_I_ref
+              + grad_Q_R + sign*grad_Q_ref
+```
+
+The reflected analytical integral is obtained at the reflected FIELD point;
+its vertical derivative changes sign. The independent point-quadrature kernel
+uses-1/(4pi*r), with gradient with respect to the field coordinate. Both potential
+and gradient are changed together. This is a consistent regular-field quadrature
+representation, not a fitted correction, motion change or blanket accuracy claim.
+Original native transfers must replay the immutable saved data before any
+candidate conclusion. Reject interior/boundary field points explicitly.
+
+Private helper `artifacts/workflow/issue31-field-candidate1/diagnose.py` uses
+Heave, the existing near/far points, training0.025..24rad/s and the six original
+held-outs. Training uses native directtheta1001 evaluation; held-out reference
+uses the equivalent high split/directtheta2001 with the SAME original sources.
+Low-split directtheta2001 controls separate angular-integration sensitivity;
+tabulated common-integral values and original native values remain separate.
+The direct reference is independent of table interpolation, not continuum truth.
+Production cosine inversion and lag60 remain unchanged; lag100 is diagnostic
+only and cannot waive a failed production gate.
+
+Root adopted these prospective gates before candidate results:
+
+- EACH point hasS=max(abs(held-out reference transfer)); every complex error
+  <=0.01S. Where abs(reference)>=0.05S, amplitude error<=2% and phase<=1degree.
+  Exactly zeroS uses1e-12s absolute Heave-transfer allowance and undefined phase.
+- Native directtheta1001 versus2001 held-out transfer difference<=0.001S.
+- Actual LOW1001 candidate versus actual HIGH2001 reference AND LOW2001 versus
+  HIGH2001 split consistency each<=0.001S. Forward candidate field transfer must
+  also pass complex/amplitude/phase gates independently of kernel recovery.
+- Regular nonzero modal Robin residual<=1e-4 of the larger of its two terms;
+  absolute errors are retained, exact zero scales remain undefined relatively
+  with1e-12 dimensional roundoff allowance.
+- At2.637rad/s near point, BOTH fixed one-sided derivative errors at
+  h=[5e-5,2.5e-5]m and their pair difference must be<=1e-4 times the declared
+  same-point nonzero derivative scale. No best-h selection or retrospective
+  tolerance adjustment. Zero scale uses1e-12 absolute allowance.
+
+Fail closed unless the report contains exactly12 required Robin blocks and2
+fixed-pair derivative blocks. A failed field/reference/angular control is not
+evidence of body-source acausality. The original pre-review c535 helper is
+preserved beside the revised helper; these gate-chain additions were adopted
+before any candidate execution or results.
+
+Proposed allocation300s/2GiB/one numerical thread, internal285s budget, with
+independent exact-source/API review before root freezes and runs it. If the
+original source operator prevents causal recovery, stop and report the block;
+do not tune kernel/window settings or fit away the discrepancy. All-six modes,
+causal burst tests and full saved-motion/publication acceptance remain required
+after an informative first Heave candidate. No production implementation has
+changed at this authoring checkpoint.
+
+## First candidate outcome and staged elementary-point follow-up
+
+The first candidate completed in14.796s (guard16.484s) with root's terminal0,
+frozen/process/Jobempty checks. Report
+`issue31-field-candidate1/results/report.json` SHA256
+d4d1e1ea6111991c72a82dce646f93c0d87e68c24923c8607dc09f5d0f10ea90
+has a FALSE verdict. Robin, broad forward-field and theta gates passed; strict
+actual-reference/split and derivative controls failed. Far reference disagreement
+reaches0.00021543s versus0.00015330s budget. Low1001 derivative pair fails while
+low2001 passes; HIGH2001 reference derivative disagreement is about13.4%.
+The remaining near cosine-recovery residual is0.070217s (22.7% of its transfer
+scale), much larger than the near reference-value difference, but failed
+reference controls prohibit attributing it solely to source causality.
+
+The next PRIVATE helper `issue31-point-candidate1/diagnose.py` assembles the
+native elementary wave kernel with direct/reflected POINT Rankine values and
+their paired gradients, identical centroid weights and-1/(4pi) normalization.
+It avoids analytical PANEL subtraction. Installed scalar/vectorized f2py API
+signatures were verified from binary metadata and release `interface.f90`.
+The original bodyK/source equations, geometry and cosine kernel remain unchanged.
+Native `exp_e1` still has an internal single-precision special-function step;
+point assembly does not promise to remove that inherited precision floor.
+
+Stage1 evaluates ONLY six held-outs and the unchanged field/reference/theta/
+Robin/fixed-pair derivative gates. Any failure publishes its negative evidence
+and stops BEFORE dense960frequency training. No field failure is attributed to
+source causality. A passing stage permits the same dense Heave near/far recovery
+check. No new fitting, band/window selection, SciPy formula, production field
+correction or physics output change is included in this helper.
+
+Any eventually accepted shared field-operator correction must be checked for
+both radiation AND diffraction evaluation, preserving incident components and
+accepted boat motion/forcing. This does not authorize a separate issue33 load-
+closure campaign. Current execution remains the single staged Heave candidate.
+
+The native elementary-point attempt completed in0.609s (guard2.407s), with
+root's successful cleanup/release. Report86ff5da6 under
+`issue31-point-candidate1/results/report.json` has FALSE field controls and
+correctly skipped dense training. Reference/derivative floors are essentially
+unchanged after removing analytical panel subtraction. No production correction
+or source-causality conclusion follows.
+
+## Focused complex128 special-function witness
+
+Private helper `issue31-exp1-witness1/diagnose.py` evaluates the SAME published
+elementary Green integral at original panel0 centroid/nearpoint/2.637rad/s only.
+It uses existing `scipy.special.exp1`, not a new E1 implementation or library fork.
+Forzeta=z+i*r*cos(theta), theta in[-pi/2,pi/2], the imaginary coordinate is
+explicitly nonnegative, including+0 at the negative-real branch endpoints.
+The integrand is exp(zeta)*E1(zeta)+i*pi*exp(zeta). Published gradient identities
+are differentiated with respect to the field coordinate. The exact Lipschitz
+identity supplies I2=I1+2/r1; a separately quadratured I2 remains diagnostic.
+
+Both low/high full-point potential and gradient are retained with-1/(4pi)
+normalization. Independent outgoing-wave checks compare numerically integrated
+imaginary components with BesselJ0/J1 identities. Native1001/2001 and SciPy
+complex1281001/2001 cases retain the fixed derivativeh-pair, Robin and evaluator
+budgets. The one-point witness does not qualify all source panels, frequencies,
+Heave transfer, all-six reconstruction or production physics.
+
+References: [Capytaine3.0 Green theory](https://capytaine.org/v3.0.0/theory_manual/inf_depth_green_function.html)
+and [SciPy E1 branch convention](https://docs.scipy.org/doc/scipy/reference/generated/scipy.special.exp1.html).
+Exact-source independent review and coordinator allocation precede execution.
+
+The witness completed in0.094s (guard1.782s); root verified terminal0/frozen and
+cleanup. Report SHA2560d6b3793ccdce207a095564a28eeda293c429a8a3ee4bd3d261cde42398d3093
+is in `issue31-exp1-witness1/results/report.json`. Independent acceptance
+`issue31-exp1-review1/acceptance.json` SHA52ddd89f1eaa06e62ad57c2bebdd79d1a076c43285ddc81d170086ab2537260f
+accepts ONLY this fixed-point precision witness. SciPy FD errors are about
+2e-11--9e-11, native about5e-6--2.6e-5; SciPy Robin error is about2.8e-17 and
+independent Bessel errors are at floating-point roundoff. Attribution is the
+native precision/approximation path, not uniquely E1: native angular-grid and
+normalization arithmetic also contribute.
+
+## Prospective adaptive full-Heave field candidate
+
+Root confirmed adaptive angular integration BEFORE this candidate's results,
+because near-surface source centroids create angular endpoint widths around
+1e-4rad, below a fixed1001point grid step. The physical integral, original
+sourceK/modal basis and cosine kernel remain unchanged. Existing complex,
+amplitude/phase, Robin and fixedh-pair gates are unchanged.
+
+Private helper `issue31-scipy-candidate1/diagnose.py` uses witnessed complex128
+SciPy exp1 expressions with quad_vec, normmax, workers1 and subdivisionlimit2000:
+
+| Role | Rule | epsabs | epsrel |
+|---|---|---|---|
+| Candidate | gk21 |1e-11|1e-10|
+| Independent held-out reference | gk15 |1e-12|1e-11|
+| Reference convergence control | gk21 |5e-13|5e-12|
+
+Geometry-derived breakpoints resolve the narrowest angular endpoint layer;
+they are not tuned to response phase. Every integration records error estimate,
+status, evaluation count and interval count, and fails on unsuccessful convergence
+or subdivision-limit exhaustion. Propagated angular transfer estimates and
+candidate/reference/reference-convergence differences must satisfy the same
+0.001S per-point budget. Independent Bessel imaginary checks remain active.
+The angular-convergence name replaces theta-convergence because integration is
+now adaptive; no transfer or derivative tolerance is relaxed.
+
+Six held-outs and all evaluator/reference controls precede dense960frequency
+training. On any failure, stop before training. If field controls pass, retain
+the same60s production recovery and100s diagnostic window, with no best-window
+waiver. This remains private Heave/two-point work; all-six, startup, complete
+saved-motion and common radiation/diffraction qualification remain ahead.
+
+Before execution, root required every evaluator call (including derivative,
+reference and dense-training calls) to pass its existing independent Bessel
+control. Every returned angular estimate must be finite/nonnegative and no
+larger than max(epsabs,epsrel*maxabs(integral)), with finite integral values;
+solver success alone is insufficient because the returned estimate includes
+roundoff. No multiplier or tolerance waiver is applied. Original pre-review
+a90 helper bytes remain preserved. Reported estimates remain numerical estimates,
+not rigorous physical error bounds.
+
+The first adaptive launch stopped after3.672s at the self-imposed tighter
+angular request9.937rad/s: status2 roundoff, estimated error5.39675e-13 versus
+requested3.21566e-13. This negative attempt and exact a3 helper remain preserved;
+root verified terminal99/frozen/process cleanup/release-last before revision.
+The reference requests above were then prospectively revised, with independent
+review agreement: candidate remains1e-11/1e-10, reference1e-12/1e-11 and tighter
+control5e-13/5e-12. Only these primitive quadrature requests changed. All physical
+gates, status/error-budget checks, Bessel controls and derivative tolerances remain.
+
+Saved original Heave source vectors give9.937rad/s sum(area*abs(sigma_v))=4.12857.
+The corresponding angular-error-to-transfer factor is6.69959s, so the observed
+roundoff floor propagates to about3.62e-12s, versus the unchanged far-point
+0.001S budget about1.53e-4s. The revised primitive requests remain far below
+that budget while permitting SciPy's internal tol/8 convergence test above the
+observed floor. No failed integration is accepted or silently waived. Root owns
+the new results2 allocation; no rerun was performed during source revision.
+
+The second adaptive run completed in158.562s (guard160.422s). Its results2 report
+SHA98036466d170b33dd2418f5cde019928bafaabdc685fe76f8276a9711c6301e1 passes ALL
+field/reference/angular/Robin/derivative/Bessel controls, while cosine recovery
+still differs by0.0702219s near (22.66% of reference peak) and about1.66% far.
+The100s lag diagnostic is nearly unchanged. This isolates a reconstruction/data
+question, but does not establish a bodyK defect: the shallowest source centroid
+depth0.000922m implies a Gaussian frequency scale around103rad/s, above band24.
+
+Root's next allocation is ONLY a cheap known-causal point-Green bandwidth
+control. `issue31-green-bandwidth1/diagnose.py` imports the extracted qualified
+primitive `issue31-point-primitive-v1/green.py`; its normalized mathematical
+diff is only a shape-derived centroid count. Original404 and all prior outputs
+remain untouched. Actual source centroids0/1, fixed nearpoint, input volume flux
+and transfer units s/m^2 are explicit. Analytic Bessel real transfer drives the
+same24rad/s cosine and60/100s recovery. Independent finite-band KK24 uses Cauchy
+PV quadrature. Compare cosine-minus-KK24 separately from KK24-minus-full-Green;
+no high-band scan or body/source correction is allocated.
+
+## User-directed end quantity: saved-trajectory surface height
+
+Latest steering asks how to establish the surface answer, analogous to motion
+accuracy, for visualization/diagnostics and a future native-solver benchmark.
+Postprocessing cannot change the accepted WEC-Sim motion, but it can change
+surface/contact/wetted-set diagnostics. Internal transfer and derivative tests
+are diagnostics, not a substitute for a height requirement.
+
+Root's1cm maximum surface-height target is a PROPOSAL, not user acceptance.
+The proposed comparison freezes the saved trajectory and declared displayed
+domain/times, comparing TOTAL elevation at identical valid exterior coordinates
+against an independently qualified causal fixed-mean linear reference. Report
+maximum/RMS difference and reference numerical uncertainty separately; an adopted
+budget should cover both. Endpoints and near-waterline points remain included.
+A representative-point screen can reject cheaply but cannot prove a full-domain
+maximum. This would qualify reconstruction of the chosen linear baseline, not
+true-fluid accuracy or the full deferred mesh/applicability investigations.
+No new bodyK correction, expensive campaign or production change is currently
+allocated. Finish the authorized cheap bandwidth-control review, then stop at
+the height-reference proposal for coordinator/user prioritization.
+
+
+## Accepted height requirement and actual-motion evidence ? 2026-10-27
+
+The user subsequently CONFIRMED <=10mm maximum numerical surface-height error
+INCLUDING reference uncertainty against the chosen LINEARIZED model. Earlier
+wording above describing1cm as a proposal is historical. No nonlinear truth
+comparison is requested. Keep accepted motion/forcing and physical inputs fixed.
+
+The completed ALL6 seven-probe screen recomputes current cosine radiation from
+NEW accepted native velocity/acceleration; it never reuses old radiation history.
+Cosine24 minus full-complex reference-candidate reaches42.6603mm at44.68s on a
+continuation trace; the direct near exterior reaches31.9271mm. Its uncertainty
+sensitivity sum reaches2.91712mm, mostly interior future-cut controls. These are
+method differences with an unqualified reference, not certified physical errors.
+FFT sign, exact periods/time origins, startup, smooth future continuations,
+interpolation and original motion-knot preservation were checked. Response above
+24rad/s was explicitly unknown. Root verified terminal/frozen/process cleanup.
+
+The completed same17-facet native ALL6/7-probe24-to48 extension took26.422s.
+Report `artifacts/workflow/issue31-tail-extension1/results/report.json` SHA256
+7de711731e238e3bb65a9dd15854ae02a39364ec4d4759cfacccc355053a75a2.
+Original0..24 samples remain unchanged; native20/22/24 overlap error is exactly0.
+Maximum saved-motion48-minus24 change is0.0591576mm. The36-to48 absolute
+input-weighted spectral envelope is at most0.0386197mm and bounds ONLY that
+represented finite band, not response above48. Updated observed sensitivity sum
+is at most2.86777mm. The selected-case tail evidence is encouraging but does not
+certify an infinite-tail bound or whole-domain accuracy. Reference remains
+unqualified; whole5929-by751 TOTAL surface acceptance remains false.
+
+This job used a300s/4GiB/one-thread guard, internal240s cap; actual child26.422s,
+terminal0/guard0/Jobempty/frozen, root independently verified host process absence,
+idle readback and release-last (finish36942). No body integration, motion, sourceK,
+mesh or forcing change occurred. Existing scientific failures remain preserved.
+
+Next bounded source-only work is a private causal signed-lag reconstruction
+comparison using the SAME saved ALL6 response and accepted trajectory. Derive
+and independently review the finite-low native operator's instantaneous
+acceleration endpoint before inversion; do not fit it or substitute the symbolic
+infinity branch. Restore saved acceleration exactly once. Compare reference and
+candidate using the SAME regular memory/direct term and report differences from
+the previous spectral-derivative FFT reference explicitly. Smooth-future
+sensitivity is not a bound on the actual negative-lag contribution. No production
+method is selected until measured actual-height evidence and review support it.

@@ -12,14 +12,17 @@ uncertainty <=10mm against the chosen linearized model, full60s and declared
 valid exterior output region. Saved motion/forcing and hydrodynamic data stay
 fixed. Internal transfer/derivative diagnostics do not replace this requirement.
 
-- CAP-ISSUE31-HEIGHT: screen completed; next PRIVATE helper authoring authorized,
+- CAP-ISSUE31-HEIGHT: screen and tail extension completed; PRIVATE causal-candidate
+  helper authoring authorized,
   capytaine_expert.
   Seven-probe all-six saved-motion screen: reproduce production cosine response
   and compare full-complex frequency reconstruction under prospective reference
-  controls. Next bounded proposal extends the SAME chosen response from24 to48
-  rad/s, seven probes/all six modes, with overlap and input-weighted tail checks.
-  No body/mesh/source-method correction, motion rerun or production edit allocated;
-  extending response support does not change the chosen hydrodynamic model.
+  controls. The SAME chosen response has been extended from24 to48rad/s, seven
+  probes/all six modes, with exact overlap and input-weighted tail checks.
+  Next: cached-data actual-height comparison of a causal full-complex candidate,
+  separating analytically justified instantaneous acceleration before inversion.
+  Verify endpoint conditioning and conventions; never fit a feedthrough to pass.
+  No body/mesh/source-method correction, motion rerun or production edit allocated.
   Own helper and concise evidence/plan note; root owns numerical launch.
 - NUM-ISSUE31-HEIGHT: independent numerical_methods_researcher review of reference
   design, source/API/physics conventions and actual height/uncertainty results.

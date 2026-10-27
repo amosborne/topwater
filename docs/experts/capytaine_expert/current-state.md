@@ -1,5 +1,43 @@
 # Current state: Capytaine expert
 
+## Active issue31: actual saved-trajectory height accuracy ? 2026-10-27
+
+The user requires <=10mm maximum numerical TOTAL surface-height error including
+reference uncertainty against the chosen linearized model. Accepted WEC-Sim
+motion/forcing, mean hull and hydrodynamic operator remain fixed. No bodyK,
+mesh, WEC rerun or source-physics correction is allocated. Root owns execution.
+
+The ALL6 seven-probe actual-motion screen finds cosine24 versus full-complex
+method differences up to42.6603mm (direct near exterior31.9271mm). These are
+method disagreements, not certified errors. Its reference remains unqualified.
+The same17-facet native24-to48rad/s extension completed in26.422s; overlap at
+20/22/24rad/s is exactly identical and original0..24 samples are preserved.
+Maximum actual48-minus24 change is0.0591576mm; the36-to48 absolute input-weighted
+finite-band envelope is at most0.0386197mm. Observed sensitivity sum reaches
+2.86777mm, dominated by alternative-future controls. That sum is an engineering
+estimate, not a rigorous uncertainty bound, and response above48 is unresolved.
+Seven probes do not qualify the full5929-by751 total surface.
+
+Next assigned work is a private saved-response causal signed-lag screen,
+separating an analytically derived acceleration feedthrough before inversion
+if its discrete endpoint assumptions hold. The finite-low-frequency operator
+endpoint need not equal Capytaine's symbolic-infinity branch. No fitted
+feedthrough or production correction has been adopted. Alternative-future
+sensitivity does not bound the negative-lag contribution for the actual motion.
+Independent review is required before root executes the candidate.
+
+Evidence: `artifacts/workflow/issue31-height-screen1/results/report.json` and
+`artifacts/workflow/issue31-tail-extension1/results/report.json` (tail SHA256
+7de711731e238e3bb65a9dd15854ae02a39364ec4d4759cfacccc355053a75a2).
+Detailed versions, prior failed studies and acceptance limits are recorded in
+[the diagnostic note](issue31-diagnostic-plan-2026-10-27.md). Production still
+uses its prior provisional reconstruction; no correction is claimed here.
+
+## Historical checkpoints below
+
+The following dated sections preserve historical evidence. Current scope and
+current motion/reference status are the active section above and the handoff.
+
 ## Current reusable workflow and path audit — 2026-10-25
 
 The public canonical workflow is delivered at checkpoint `bda901d`.

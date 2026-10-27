@@ -26,8 +26,9 @@ currently allocated. Root owns serial numerical execution and integration.
 
 ## Current execution and immediate work
 
-The actual-height screen is terminal0/guard0/Jobempty/frozen. HostCIM,
-independent idle readback and release-last completed; finish session11288 exited0.
+Both actual-height screen and tail extension are terminal0/guard0/Jobempty/frozen.
+HostCIM, independent idle readback and release-last completed; latest finish
+session36942 exited0 (earlier screen finish11288 also exited0).
 Ledger idle/owner null and lease absent. No numerical process is allocated.
 Revalidate current liveness before the next job; a checkpoint alone is not proof.
 
@@ -48,12 +49,36 @@ qualification. Do not restart body/sourceK/mesh or primitive precision campaigns
 The user explicitly separates linear-model numerical accuracy from the harder
 nonlinear/experimental model-error question.
 
-CAP is preparing a PRIVATE24-to48rad/s response extension at the SAME seven
-probes/all six modes/native17facet operator, with overlap24, saved-motion height
-differences and an absolute input-weighted upper-band envelope. Root has not
-allocated execution; independent source/control review comes first. This extends
-frequency support, not the physical model. Engineering convergence and explicit
-tail assumptions are sufficient; do not demand an infinite-frequency theorem.
+The PRIVATE24-to48rad/s same-operator extension is now complete:
+artifacts/workflow/issue31-tail-extension1/results/report.json, transfer-extension.npz
+and height-evidence.npz. Child26.422s; exit0/guard0/Jobempty/frozen; hostCIM all
+owned identities absent; finish session36942 terminal0 with independent idle
+readback/release-last. Ledger idle/owner null, lease absent. Recomputed20/22/24
+overlap has EXACTzero discrepancy, and old0..24 samples are unchanged. The maximum
+actual48-minus24 elevation change is0.0591576mm. The36-to48 absolute input-weighted
+envelope is at most0.0386197mm; Uref_est reaches2.86777mm. These are seven-probe
+engineering convergence evidence, not full-domain acceptance or an infinite-tail
+bound. Independent actual-results reviewf0904700ca9c9988db34e1eda173ecec5bcf4bf086e3ae42fc1d342ae6e828e6
+accepts this conditional engineering evidence; source review58ae4b8f passed.
+Review receipt: artifacts/workflow/issue31-tail-review1/acceptance.json.
+Root accepts48band as a CONDITIONAL comparison reference with an explicit0.5mm
+remaining-tail engineering allowance, pending analytic feedthrough separation and
+no unresolved high-frequency growth/resonance. This is an assumption, not a
+proven infinite-tail bound. Existing sparse Heave32/64 evidence does not prove
+all-mode tail absence. Final qualification must state assumptions/uncertainty
+and cover the full declared region, not just these seven probes.
+
+Next bounded CAP source-only work: directly test a full-complex signed-lag causal
+candidate against saved-motion reference, considering analytically derived
+instantaneous acceleration before inversion. Future-extension sensitivity is NOT
+a bound on actual negative-lag contribution; do not assume truncation passes.
+The finite-low discrete operator endpoint differs from native symbolic-infinity
+(which switches Green split). NMR provisionally accepts the algebraic endpoint
+derivation under explicit conditions, with the jump term exactly once and
+invertibility/conditioning checks. No fitted feedthrough or sourceK correction.
+This is private implementation/testing, not a selected production correction.
+Engineering convergence and explicit tail assumptions are sufficient; do not
+demand an infinite-frequency theorem. No numerical job currently allocated.
 
 The preceding bandwidth-control report is
 artifacts/workflow/issue31-green-bandwidth1/results/report.json:
