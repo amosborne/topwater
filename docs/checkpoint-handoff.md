@@ -9,16 +9,36 @@ permission to resume work.
 The visualization fix and corrected-path simple-boat validation goal is complete
 at pushed checkpoint8703b02. Active implementation branch: baseline/fluid-body.
 
-Latest user request: match the issue/PR style already accepted into the fork's
-reference branch. Open issue3/PR9 and issue12/PR14 are rewritten and published,
-using accepted issue4/PR6 and issue5/PR7 as the models. Issues carry plain-language
-problem/example/cause/acceptance/upstream candidacy; PRs reference the issue and
-cover change/files/tests/limits. Internal progress history and pin/approval
-bookkeeping were removed from those descriptions. Detailed evidence remains linked.
-No source, tests, numerical data, dependency pins or branch/PR states changed.
-The inertia test description distinguishes3native and8sample-reading tests.
-Coordination.md now links the accepted examples and directs future scope changes
-to replace stale descriptions instead of appending progress reports.
+Latest user direction: Topwater-driven WEC-Sim features must clear a VERY HIGH
+engineering-rationale bar; user suspects the optional coefficient/BEMIO additions
+are an escape hatch. Source-only WEC and adversarial reviews conclude necessity
+has NOT been established. No code, pins, PR scope or numerical data changed.
+
+Phase/weight defects remain demonstrated generic bugs. BEMIO optional-IRF writing
+merely avoids producing unused data and is not required for native harmonic forces.
+The component_view/accessor/body/initializer additions preserve our old numerical
+interpolation and raw-table representation; those agent choices do not prove a new
+public interface is needed. Previous acceptance proves the expanded candidate
+works, not that it is the minimal or preferred architecture.
+
+Existing documented bodyClass(hydroStruct) input may carry derived coefficients
+in STANDARD fields while retaining the consumed Ainf/radiation kernel separately.
+Source anchors: baseline bodyClass constructor113-138, initializer125-129,
+FullDir+CIC selection513-515 and radiation1162-1181. This route is source-supported,
+NOT execution-qualified; unused A/B omission and all executed consumers need a
+small constructor/preparation test. No undocumented fExt injection or fabricated
+low-frequency radiation coefficients is acceptable. Native common-axis H5 input
+also has low-frequency coverage and spline-interpolation constraints to assess.
+Do not drop sea components, change old study gates or promote the current extended
+candidate to make this review pass. No new numerical allocation is made here.
+Recommended next discriminator: standard WEC plus phase/weight fixes only, public
+struct input, a tiny low/off-grid/periodic-seam coefficient and wave test; no body
+trajectory. Preserve original studies under their original policies.
+
+The earlier writing-only task is complete at448e629: open issue3/PR9 and issue12/PR14
+match accepted issue4/PR6 and issue5/PR7. Existing PR14 still contains the extensions
+under this necessity review; keep its source and prior evidence intact until a
+reviewed replacement is concrete. All merge/upstream/pin holds remain.
 
 **NO LIVE NUMERICAL JOB.** Final private eight-file audit is terminal success.
 Root verified all owned process identities absent through host CIM, frozen inputs,

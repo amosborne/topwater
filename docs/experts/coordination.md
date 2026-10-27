@@ -25,6 +25,11 @@ in parallel. Return concise findings with evidence; do not flood the coordinator
 with raw logs. A separate reviewer checks consequential physical corrections.
 Generic WEC-Sim fixes belong in its maintained fork; case configuration stays here.
 Capytaine and WEC-Sim experts jointly approve the interface; WEC-Sim owns BEMIO.
+New WEC-Sim capabilities introduced for Topwater must clear a very high engineering
+bar: show a concrete requirement that existing public interfaces cannot meet,
+compare simpler data-preparation alternatives, and identify the physical and
+maintenance consequences. A passing Topwater case does not prove an extension is
+necessary. Keep convenience changes distinct from demonstrated generic bugs.
 
 Correctness reviews follow the actual Topwater workflow and the supported inputs
 that can reach it. A case's zeros or symmetry do not exempt an executed physical
