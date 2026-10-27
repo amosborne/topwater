@@ -37,7 +37,7 @@ The existing unrelated shared MATLAB engine was left untouched.
 ## Next bounded proposal
 
 A simple736-component extrapolation is about58 minutes per force pass; that full
-runtime is unmeasured. Own-fork [issue11](https://github.com/amosborne/WEC-Sim/issues/11)
+runtime is unmeasured. Own-fork [issue11](../history/wecsim-retired-workflows-2026-10-27.md#issue-11)
 tracks a private standard linear-convolution candidate, based on PR8/PR10's
 `eb722540`. The isolated candidate is
 `artifacts/dependencies/wecsim-imported-convolution`; the unchanged detached

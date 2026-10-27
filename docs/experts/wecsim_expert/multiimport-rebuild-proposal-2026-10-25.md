@@ -1,7 +1,7 @@
 # Queued aggregation and dispatch rebuild
 
 Read-only numerical-methods review for own-fork issue
-[#2](https://github.com/amosborne/WEC-Sim/issues/2). This is a proposal, not an
+[#2](../history/wecsim-retired-workflows-2026-10-27.md#issue-2). This is a proposal, not an
 implementation or numerical allocation. Inertia authoring remains the current
 WEC expert assignment.
 

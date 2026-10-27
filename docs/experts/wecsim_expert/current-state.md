@@ -1,4 +1,4 @@
-﻿# Current state: WEC-Sim / BEMIO expert
+# Current state: WEC-Sim / BEMIO expert
 
 Updated 2026-10-27 UTC. Authority: [handoff](../../checkpoint-handoff.md),
 [physical contract](../shared-contract.md), [coordination](../coordination.md).
@@ -22,7 +22,8 @@ are omitted rather than fabricated. No custom coefficient-view/accessor or BEMIO
 writer extension remains in the merged fork. WEC-Sim computes forces and motion;
 Topwater supplies physical waves/coefficient inputs, never applied force histories.
 
-**Default pin9952634 remains held. New-reference full-boat validation is pending.**
+**New-reference force/motion validation is accepted; default pin9952634 remains held.**
+Fresh field/delivery and adopted-default readiness are still pending.
 The user authorizes completing validation/adoption, then the
 [fork cleanup plan](fork-cleanup-plan-2026-10-27.md). Pin/source/output publication
 and cleanup are root-owned later steps, not consequences of source approval.
@@ -39,28 +40,33 @@ and cleanup are root-owned later steps, not consequences of source approval.
   [Independent acceptance0cffbbc3](../../../artifacts/workflow/reference-handoff-review-v1/acceptance.json)
   binds actual source/import paths and measured evidence. Sparse-bin/CG-CB fixture
   warnings do not qualify angular interpolation or physical accuracy.
-- Canonical validation source6c9ecf96 is independently reviewed. It compares all
-  3001x6 native forces before integration at unchanged1e-10 peak/RMS/exact-zero
-  gates, then checks actual once-only application, fresh rest/zero-history/full
-  CIC replay and motion within1mm/.01deg in the SAME run.
-  [Source and commands](../../../artifacts/workflow/reference-adoption-validation-v1/README.md).
-- **Case1 failed before physics:** sandbox MATLAB startup could not write its
-  preferences folder. [Original failure](../../../artifacts/workflow/reference-adoption-case1/matlab.log)
-  and all failed artifacts remain. Host-access case2 passed full force/startup
-  comparison, but its body run was interrupted after1055.703s when the guard
-  could not replace its live receipt (WinError5/.25s retry budget). No motion
-  output exists. All owned processes are terminal, frozen inputs unchanged and
-  lease released. The Topwater expert owns a bounded publication fix/tests
-  before another full run. Guard-v2 subsequently passed all nine real Windows
-  controls and independent acceptancecc4ff62f; fresh case3 is now running under
-  the ledger owner. No successful canonical motion is claimed.
-- Delivery sourceb078f2fe is independently source-reviewed, **unexecuted**. It
-  requires accepted NEW motion, screens old-cache motion inputs by exact bytes
-  and selects fresh production field reconstruction. Same operatorf1f788f9,
-  centroid quadrature and normalized producer source240198 are retained; raw953
-  CRLF source528e2e94 is separately bound. Result/PNG, ordinary CLI render and
-  exact-eight-file audit remain pending.
+- **Full canonical6b/953 motion is independently accepted:**
+  [receipt286f3a82](../../../artifacts/workflow/reference-adoption-motion-review-v1/acceptance.json)
+  binds [case3 reportec4d8d8d](../../../artifacts/workflow/reference-adoption-case3/report.json).
+  All3001x6 force/startup/phase, actual once-only application, rest/negative-history
+  certificate, full CIC replay and clock gates pass. Maximum position difference
+  is59.758 micrometres and relative SO3 angle0.00156985deg, within1mm/.01deg.
+  This is numerical compatibility, not hydrodynamic accuracy. The native allocation
+  is terminal with frozen inputs and process/cleanup proof verified.
+- Measured controlled runtime1212.407s includes simulation745.503s, native force
+  replay305.104s, initialization49.085s and model preparation51.773s; it is not all
+  integration time. Stage timings and raw outputs are retained in the case3 report.
+  Its final MATLAB log has one coarse-direction coverage warning plus visualization-
+  depth/imported-frequency informational messages. Nodal force agreement does not
+  establish accuracy of the original angular coefficient grid. Earlier startup/
+  guard failures remain preserved under their original case/allocation directories.
+- **Fresh TOTAL field assembly is the current root allocation**, using this saved
+  accepted motion: no body rerun or new coefficient campaign. Delivery sourceb078f2fe
+  is independently reviewed. Same operatorf1f788f9, centroid quadrature and normalized
+  producer source240198 remain; raw953 CRLF source528e2e94 is separately bound.
+  Old-cache inputs are screened by exact bytes; no old field is reused. Result/PNG,
+  full ordinary CLI render and exact-eight-file audit remain pending.
   [Delivery requirements](../../../artifacts/workflow/reference-adoption-delivery-v1/README.md).
+- Corrected default-preflight sourcedf6dd55a is independently source-approved,
+  **unexecuted**. It requires the adopted main adapter/default6b checkout, owns a
+  fresh hidden shared engine, calls actual preflight and requests MATLAB-side
+  exit only after PID verification; terminal checks remain mandatory.
+  [Default-path check](../../../artifacts/workflow/reference-adoption-preflight-v1/README.md).
 
 ## Preserved evidence and limits
 

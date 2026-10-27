@@ -28,7 +28,7 @@ its actual contribution target, current source and existing issues/PRs; reuse a
 relevant existing issue instead of creating a duplicate. State measured coverage
 and missing compatibility evidence honestly.
 
-Topwater now uses WEC-Sim's EXISTING public `bodyClass(hydroStruct)` spectral
+The replacement Topwater adapter uses WEC-Sim's EXISTING public `bodyClass(hydroStruct)` spectral
 input. WEC-Sim computes excitation and motion. Boat/sea configuration and derived
 coefficient preparation stay in Topwater; the fork needs no Topwater-specific
 coefficient view/accessor or optional excitation-IRF writer extension. Prefer

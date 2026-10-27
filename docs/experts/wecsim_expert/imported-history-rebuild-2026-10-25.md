@@ -1,6 +1,6 @@
 # Isolated imported-excitation history correction
 
-Own-fork issue [#1](https://github.com/amosborne/WEC-Sim/issues/1) is rebuilt
+Own-fork issue [#1](../history/wecsim-retired-workflows-2026-10-27.md#issue-1) is rebuilt
 independently from official v7.1.0 (`a23d299`). This correction concerns the
 first imported wave's excitation preprocessing. It does not change directional
 aggregation, applied-force dispatch, inertia, radiation or the held runtime pin.

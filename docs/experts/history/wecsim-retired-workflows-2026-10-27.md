@@ -4,6 +4,8 @@ Captured 2026-10-27T05:00:02.198731+00:00. This record preserves the abandoned i
 
 Native archived PRs preserve their own review history. Failed numerical studies retain their original policies and results under artifacts/workflow; this record changes no acceptance.
 
+Original issue links inside the preserved quotations below may be retired. Use the local records: [Issue1](#issue-1), [Issue2](#issue-2), [Issue11](#issue-11), [Issue13](#issue-13).
+
 ## Associated pull requests
 
 - PR8: Preserve imported wave history and force timing; head `805bb29b1aa5479988b61d5187f52809656cc82c`, base `25b58bda96ab0272cbfb4b0755539d5bb8ca227e`; source branch `fix/imported-excitation-history`.
@@ -289,3 +291,5 @@ Historical investigations and exact producer/input identities remain in the link
 ## Local source recovery
 
 One Git bundle preserves all rebuild-store refs, including detached worktree heads and unpublished trials: `artifacts/workflow/wecsim-cleanup-preservation1/wecsim-trials.bundle`, SHA256 `d27eaf012274f080babccd1ffd1552013bae4aa9e387fff83affe98d4603c920`. The source store is shallow at releasea23d299: preserve `shallow-boundaries.txt` beside the bundle. A plain mirror clone was correctly rejected because that boundary metadata was absent; an independent bare restore using the original boundary recovered all24refs, all four unpublished trial commits and6b, and passed connectivity checks without network or alternates. Six exact dirty/untracked source snapshots and binary patches are retained beside it, with hashes in `recovery-manifest.json`. The active953 Topwater worktree, clean995 legacy checkout and official release remain separately recoverable. No local worktree has yet been removed.
+
+Independent cleanup review also found24ignored Simulink compile files in the two retired `tests/slprj` trees (1,490,350bytes). Exact snapshots and per-file hashes are now preserved in `ignored-snapshots.json` beside the bundle. No local worktree has yet been removed.
