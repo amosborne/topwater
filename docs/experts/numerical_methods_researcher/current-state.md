@@ -1,6 +1,36 @@
 # Current state: independent numerical-methods review
 
-## Current issue 31 review, 2026-10-27
+## Latest issue 31 checkpoint, 2026-10-27
+
+The target remains maximum elevation difference plus numerical reference
+uncertainty <=10 mm against the chosen linearized model over all declared
+5929 targets/751 times. Nonlinear/experimental accuracy is separate.
+Implementation `d3630fe` preserves full complex response; independent source
+review and 42 focused tests pass. Production readiness remains closed.
+
+The measured 128-query pilot passed its source-bank, Fourier and resource
+checks (actual review `0757ef55`). The first full attempt then stopped after
+128 queries: combined estimate 12.3233 mm, dominated by the 11.7158 mm analytic
+tail triangle bound. Actual candidate/reference maximum was only 0.009218 mm.
+[Independent actual review](../../../artifacts/workflow/issue31-full-review1/acceptance.json)
+recomputed every saved 751-by-128 value. Full coverage, common fields and
+geometry are not qualified by this rejected partial attempt.
+
+The original [Hermite jump-tail derivation](issue31-hermite-tail-2026-10-27.md)
+and actual polynomial controls pass. A [tighter exact-input integral enclosure](issue31-input-integral-enclosure-2026-10-27.md)
+is independently derived: fixed Fourier-grid period8192 and upper target512,
+magnitude trapezoid plus curvature/off-grid allowances and analytic remaining
+tail. Variant2 source and independent controls must pass before retry. This
+changes reference uncertainty accounting, not runtime physics, the response
+envelope or the 10 mm threshold. Root owns serial execution and acceptance;
+this reviewer authors no physical correction and runs no numerical job.
+
+The same-point factor2 regular-response envelope from dense36--48 plus64/96 is
+an explicit selected-case engineering assumption, with known32/prior-probe
+witnesses. It is not a proof of no unseen resonance or #32 model resolution.
+Never replace pointwise evidence with the former proposed0.5 mm allowance.
+
+## Prior investigation summaries
 
 The user requires **at most 10 mm numerical surface-height error against the
 chosen linearized model**. Nonlinear and real-world accuracy are separate.

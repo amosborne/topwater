@@ -1,44 +1,59 @@
 # Current state: Capytaine expert
 
-## Active issue31: actual saved-trajectory height accuracy ? 2026-10-27
+## Active issue31: saved-trajectory height accuracy, 2026-10-27
 
-The user requires <=10mm maximum numerical TOTAL surface-height error including
-reference uncertainty against the chosen linearized model. Accepted WEC-Sim
-motion/forcing, mean hull and hydrodynamic operator remain fixed. No bodyK,
-mesh, WEC rerun or source-physics correction is allocated. Root owns execution.
+User acceptance is <=10mm maximum numerical TOTAL surface-height error INCLUDING
+reference uncertainty against the chosen LINEARIZED model. Freeze accepted WEC
+motion/forcing, mean hull and native hydrodynamic data. No WEC rerun, body/sourceK
+correction, mesh/model campaign or upstream work. Root owns serial execution,
+acceptance, source freeze and public artifacts; handoff/ledger control allocation.
 
-The ALL6 seven-probe actual-motion screen finds cosine24 versus full-complex
-method differences up to42.6603mm (direct near exterior31.9271mm). These are
-method disagreements, not certified errors. Its reference remains unqualified.
-The same17-facet native24-to48rad/s extension completed in26.422s; overlap at
-20/22/24rad/s is exactly identical and original0..24 samples are preserved.
-Maximum actual48-minus24 change is0.0591576mm; the36-to48 absolute input-weighted
-finite-band envelope is at most0.0386197mm. Observed sensitivity sum reaches
-2.86777mm, dominated by alternative-future controls. That sum is an engineering
-estimate, not a rigorous uncertainty bound, and response above48 is unresolved.
-Seven probes do not qualify the full5929-by751 total surface.
+The gated intact full-complex offline implementation is committed at d3630fe;
+root's focused field regressions passed42 tests in17.81s. Runtime preserves fullH,
+exact saved velocity knots, zero velocity prehistory, explicit smooth future and
+RAW startup. It adds no acceleration term and makes no universal causality claim.
+The ONE active production readiness gate remains FALSE pending whole-domain
+qualification. No public replacement or gate promotion has occurred.
 
-Next assigned work is a private saved-response causal signed-lag screen,
-separating an analytically derived acceleration feedthrough before inversion
-if its discrete endpoint assumptions hold. The finite-low-frequency operator
-endpoint need not equal Capytaine's symbolic-infinity branch. No fitted
-feedthrough or production correction has been adopted. Alternative-future
-sensitivity does not bound the negative-lag contribution for the actual motion.
-Independent review is required before root executes the candidate.
+The actual128-query pilot passed:62.641s total, source warmup50.484s, field5.813s,
+FFT1.093s, peakJobcommit543100928B. It retained the11520RHS sourcebank. Actual
+surface is5899unique exteriorqueries for5929targets/751frames,384continued nodes.
+Pilot spacing.05/.1 changes max0.1403/0.7079mm; finalfuture10max0.9567mm. These
+are pilot/cost evidence, not full-domain acceptance. Only64/96 pair calibration
+(12extraRHS) is allocated beyond that bank, not a high-frequency sweep.
 
-Evidence: `artifacts/workflow/issue31-height-screen1/results/report.json` and
-`artifacts/workflow/issue31-tail-extension1/results/report.json` (tail SHA256
-7de711731e238e3bb65a9dd15854ae02a39364ec4d4759cfacccc355053a75a2).
-Detailed versions, prior failed studies and acceptance limits are recorded in
-[the diagnostic note](issue31-diagnostic-plan-2026-10-27.md). Production still
-uses its prior provisional reconstruction; no correction is claimed here.
+Full attempt1 correctly stopped after128queries: combined conservative budget
+12.323328mm, dominated by11.715798mm absolute-jump tail enclosure. Actual runtime
+versus declared reference difference was only0.009218mm there. This was a loose
+uncertainty-budget rejection, not evidence of actual12mm error. Setup took
+140.436s before18.485s firstchunk; the next variant profiles exact preloop stages.
+Original sources/plans/rootpolicy1 and failed arrays remain immutable/preserved.
+
+Validation alone separatesA from the unchanged finite-low discrete operator:
+regular complexR on C1-Hermite(v/a) plus exact saved/right-limitA*a. Runtime does
+not addA or overwrite t0. PointwiseC=2maxknown|R| (dense36..48+64/96, known32 and
+prior7 checked) is an explicit selected-case ENGINEERING growth/no-resonance
+assumption, not proof/model-resolution qualification. All actual-target numerical
+controls, unchanged incident/diffraction identity and physical geometry/startup
+gates still need full validation. Seven probes cannot supply global allowance.
+
+Current source-ready variant2 tightens ONLY the input integral: fixed8192s
+coefficient-frequency grid,48..512 magnitude trapezoid with genuine complex-
+interpolation curvature/offgrid-phase enclosures, then original analytic jump
+remainder to infinity. RuntimeFFT remains1024s, C/physics/10mm unchanged. Tiny
+independent controls and a cached-firstchunk rebudget (no new fields) are next
+under root allocation after review. Fresh helper/runner/plans are private under
+artifacts/workflow/issue31-whole-surface2. No numerical author run occurred.
+
+Detailed versions, hashes, proofs and failed studies:
+[issue31 diagnostic evidence](issue31-diagnostic-plan-2026-10-27.md).
 
 ## Historical checkpoints below
 
 The following dated sections preserve historical evidence. Current scope and
 current motion/reference status are the active section above and the handoff.
 
-## Current reusable workflow and path audit — 2026-10-25
+## Current reusable workflow and path audit â€” 2026-10-25
 
 The public canonical workflow is delivered at checkpoint `bda901d`.
 `artifacts/workflow/canonical-pipeline-attempt4/` records terminal success:

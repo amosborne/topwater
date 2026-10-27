@@ -91,6 +91,15 @@ phase uncertainty and fixed-mean applicability remain tracked in
 [issue #31](https://github.com/amosborne/topwater/issues/31) and
 [issue #34](https://github.com/amosborne/topwater/issues/34).
 
+The reconstruction target is **1 cm maximum numerical elevation error against
+this chosen linearized model**, including reference uncertainty. We hold the
+hydrodynamic data and solved motion fixed, calculate a separate reference that
+retains the full complex response, and compare elevations at the same published
+grid points and times. Numerical resolution checks and an allowance for omitted
+frequencies contribute to the reference uncertainty. The difference plus that
+uncertainty must fit within 1 cm. This check does not establish that the linear
+model predicts nonlinear calculations or real water within 1 cm.
+
 ## Current foundation
 
 `HullMesh`, `RigidBody`, `WaveComponents`, `InitialState` and `SimulationInputs`

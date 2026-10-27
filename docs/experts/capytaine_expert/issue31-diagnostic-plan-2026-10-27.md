@@ -504,3 +504,154 @@ candidate using the SAME regular memory/direct term and report differences from
 the previous spectral-derivative FFT reference explicitly. Smooth-future
 sensitivity is not a bound on the actual negative-lag contribution. No production
 method is selected until measured actual-height evidence and review support it.
+
+
+## Causal-cut rejection and bounded implementation ? 2026-10-27
+
+Causal attempt3 completed in1.078s with numerical sign/delay/direct controls
+passing. Report `artifacts/workflow/issue31-causal-attempt3/results/report.json`
+SHA0e773e274430264d4a0a868a8b88271f905592bd95723d9ab8a9c27b991d5489.
+The analytically derived finite-low discrete acceleration endpoint has condition
+4920.88 and source residual4.44e-16. Removing that term before signed inversion,
+cutting negative lags and restoring savedA*a changes actual height by194.933mm,
+versus42.593mm for the original cosine policy. Its36-to48 sensitivity is11.125mm.
+Reject this cut; do not tune band, endpoint or model to rescue it. The full-H FFT
+reference and regular-memory-plus-savedA*a reference differ by only0.286675mm.
+Sparse regular response grows at96rad/s; no universal no-growth/tail proof exists.
+The two instrumentation failures (missing tabulation directory and symbolic DOF
+array use) and their exact helper/plan bytes remain in attempt1/2-source folders.
+
+Root authorized implementation of intact full-complex offline FFT(v), with no
+runtime endpoint extraction, causal cutting, physical motion/model change or
+separate direct acceleration addition. Scope is `_capytaine_surface.py` and
+focused field tests. The generic API preserves raw startup, saved velocity knots
+and full complex phase; fixes zero velocity prehistory, an explicit smooth final
+v/a-to-rest continuation and a declared period/grid/frequency band. Spatial chunks
+reuse the native source bank and bound FFT/transfer storage. Native incident,
+diffraction, exterior traces and geometry/startup gates remain unchanged.
+One active readiness flag is FALSE pending whole-domain qualification. A private
+qualification process may explicitly override it with recorded scope/source;
+there is no public bypass. No tests or numerical jobs were run while authoring.
+
+Whole-domain qualification plan: freeze accepted NEW motion, native operator,
+sea inputs, point/trace mapping and original5929-point/751-frame clocks. Replay
+all6 radiation inputs in spatial chunks with full H, comparing production results
+against independently assembled full-complex Fourier output at IDENTICAL points.
+Retain exact same incident/diffraction histories, and verify the TOTAL difference
+and unchanged motion/forcing explicitly. Run declared period512/1024, dt.02/.01,
+future10/20, interior futurecuts20/40 and band36/48 controls over ALL valid points,
+plus startup/pre-response and savedA*a first-sample diagnostic. Reuse transfer
+chunks across controls, not repeated BEM. Sum declared grouped sensitivities,
+implementation differences, direct/interpolation semantics change where relevant
+and a separately justified remaining-tail allowance. Require max error plus
+reference uncertainty <=10mm; seven-point evidence alone cannot pass this gate.
+If reference uncertainty or current physical startup gates fail, report the
+specific conflict and stop. Do not silently zero initial radiation, alter the
+trajectory, fit phases or expand into body/sourceK/mesh corrections. Tail policy
+is an explicit engineering assumption awaiting its separate bounded review.
+
+
+## Reviewed gated implementation and measured-pilot proposal
+
+Independent source review accepted the new production full-H API, chunking,
+metadata and focused regressions. Root's focused test run passed42 tests in17.81s;
+prior sandbox temporary-directory setup failures are preserved. Root verified
+terminal/frozen/process absence/idle/release and committed d3630fe. The active
+production readiness gate remains FALSE; tests do not certify physical accuracy.
+
+The separate input-tail screen completed in0.188s. Root reports max ASSUMED
+full-H tail plus known uncertainty4.457671mm at the7 existing probes. It remains
+conditional on its growth envelope and beyond-Nyquist treatment; it does not
+qualify5929-point coverage or justify copying a seven-probe budget everywhere.
+
+Fresh private source: `artifacts/workflow/issue31-whole-surface1/pilot.py` with
+plan.md alongside. Exact current native geometry/context identity is asserted,
+128 actual unique exterior queries combine extent and nearest-source coverage,
+and all unchanged0.025..48rad/s6DOF sources are computed once and retained. Then
+actual field evaluation reuses that bank with an unchanged RHS count. Production
+FFT and four control costs are timed; independent inverse Fourier sums check
+actual field spots. Root guard OS peak working-set/commit measurement MUST
+accompany the pilot before a larger allocation. Source-only authoring/AST checks
+have run; no pilot or new scientific calculation has been launched by this expert.
+The plan specifies pointwise whole-grid uncertainty, verified common incident/
+diffraction, startup/direct-term checks, existing geometry gates and <=10mm
+combined criterion. Stop after pilot review; no speculative large allocation.
+
+
+Before any pilot data, root required transfer-frequency interpolation uncertainty
+separately from high-cutoff convergence. The pilot and full recipe now compare
+native.025 spacing with coarsened.05/.1 from the SAME stored H, with no new solves.
+Whole pointwise uncertainty must include this grouped sensitivity and observed
+convergence; only a measured-height-error justification can propose targeted
+midpoint checks. No automatic denser BEM campaign is authorized. Existing guard
+records continuous kernelJobcommit peak, sampled aggregate working-set/private
+and per-process lifetime memory peaks; pilot PID binds those external measurements.
+No new native memory-wrapper implementation was needed. Pilot source/plan remain
+pending independent final-byte acceptance, not numerical execution or qualification.
+
+
+## Actual pilot and full-runner source checkpoint
+
+Root's pilot completed62.641s, with source warmup50.484s, native cached field
+128queries5.813s, productionFFT1.093s. Actual domain5899unique exteriorqueries,
+5929targets,384continued nodes.11520RHS sourcebank is retained in pilot-results.
+Guard peakJobcommit543100928B and sampled aggregate working set491053056B with
+no gaps. Direct inverse-sum error8.67e-16m. Source/context identity passed. Pilot
+spacing.05/.1 maxima0.140293/0.707945mm, finalfuture10max0.956670mm; no pilot
+accuracy rejection. Root verified terminal/frozen/CIM/idle/release. Full-domain
+cost/uncertainty still needs the actual full runner; no sourcebank warmup repeats.
+
+Root explicitly allocated only64/96 endpoint-envelope calibration (12RHS plus
+2field frequencies/chunk), no band sweep. Full source-ready runner is qualify.py
+and qualification-plan.md alongside the preserved pilot. Prospective root/NMR
+cap1200s/3GiB/chunk128/internal1140, justified by measured pilot costs. It measures
+and checkpoints actual firstchunk controls/oldcosine work and rejects a failed
+combined budget or necessary resource projection early. Conservative budget
+failure does not establish actual physical error>10mm.
+
+The revised VALIDATION reference is fullcomplexR=H+i*w*A on C1-Hermite velocity
+through exact savedv/a, plus exact saved/right-limitA*a at original output knots.
+Runtime is unchanged fullH linearv FFT with rawstartup; no A is added there.
+At0 symmetric spectral derivative and saved right limit differ ifa0!=0; measured
+candidate-reference difference includes this convention. No startup overwrite.
+The independently derived compact-cubic jump formula bounds all omitted regular
+continuum above48 (includingaboveNyquist) by C/pi times
+abs(a0)/48+J2/(2*48^2)+J3/(3*48^3), summed over modes. C is pointwise2maxknown|R|
+fromdense36..48 plus64/96; unseen-growth/no-resonance remains an explicit ROOT
+engineering assumption, not measured proof. The new hermite_tail.py and tiny
+check_hermite_tail.py controls use pulse and multi-interval polynomial quadrature,
+zero/scaling and exact endpoint-jump tests; source review and root execution are
+separate from the full wrapper. No scientific imports/run occurred while authoring.
+
+
+## Full attempt1 conservative rejection and variant2 source
+
+`issue31-full-attempt1/results/report.json` records an EARLY REJECTION after128
+queries: maxcombined12.323328mm, tail11.715798mm, future0.298435mm, spacing0.600117mm,
+interpolation0.006531mm and dt0.0000472mm. NMR measured actual candidate/reference
+max0.009218mm in the retained checkpoint. The failure is the loose absolute-jump
+uncertainty bound, not demonstrated12mm physical error. Root proved terminal0,
+frozen/CIM/idle/release; all original helper/runner/plans/rootpolicy1 bytes were
+preserved under issue31-whole-surface2/preserved-attempt1 with hashreceipt, and
+original paths are untouched. Firstchunk took18.485s with140.436s preloop setup.
+
+Root/NMR prospectively selected a tighter mathematical INPUT-only enclosure,
+not a solver/kernel/physics or criterion adjustment. Fixed coefficient-transform
+period8192s and targetupper512rad/s; runtime responseFFT remains1024s. Cover
+floor(48/h)h..ceil(512/h)h. Exact jumpDFT numerators are periodic/conjugate folded,
+but denominator powers use ACTUALfrequency. Magnitude trapezoid bounds complex
+linear interpolation by convexity; explicit perinterval M*h^3/12 covers its
+second-derivative remainder, an explicit phase allowance covers rounded input
+coefficient times, then the original jump bound covers continuum beyondactualB.
+Multiply by SAMEpointwiseC/pi once. No term is simply dropped or fitted.
+
+New a3ec Hermite helper/control sources and tail-enclosure-plan are independently
+reviewed before root's tiny allocation. Optional cached128 diagnostic freezes
+acceptedmotion and retainedfirstchunk, verifies oldcombined from unchanged
+candidate/reference/allU, replaces ONLY oldtail, retains10mm/C/otherU and hashes/
+arrays; fullscope qualification stays false. It avoids another field/setup job
+if the genuine tighter bound still cannot qualify the known chunk. No author
+scientific imports or numerical execution occurred while source was drafted.
+New fullvariant01f5 also instruments exact preloop stages (policy/input/cache/
+geometry/Green/bank/trace/reference/endpoint/prior7/train/incident spatial+temporal).
+No broad performance changes, BEM sweep, WEC rerun or readiness flip is included.
