@@ -1,0 +1,99 @@
+{
+  "complete": true,
+  "scope": "1D time-domain illustration; not a propagated WEC-Sim case",
+  "packets": [
+    {
+      "carrier_period_s": 4.0,
+      "carrier_frequency_hz": 0.25,
+      "carrier_amplitude_m": 1.0,
+      "carrier_phase_rad": 0.0,
+      "ramp_cycles": 2.0,
+      "ramp_duration_s": 8.0,
+      "ramp_up_start_s": 6.5,
+      "full_strength_start_s": 14.5,
+      "full_strength_end_s": 24.5,
+      "ramp_down_end_s": 32.5,
+      "dwell_duration_s": 10.0,
+      "total_target_support_s": 26.0
+    },
+    {
+      "carrier_period_s": 6.0,
+      "carrier_frequency_hz": 0.16666666666666666,
+      "carrier_amplitude_m": 1.0,
+      "carrier_phase_rad": 0.0,
+      "ramp_cycles": 2.0,
+      "ramp_duration_s": 12.0,
+      "ramp_up_start_s": 2.5,
+      "full_strength_start_s": 14.5,
+      "full_strength_end_s": 24.5,
+      "ramp_down_end_s": 36.5,
+      "dwell_duration_s": 10.0,
+      "total_target_support_s": 34.0
+    }
+  ],
+  "polynomial": "S(u)=10u^3-15u^4+6u^5, clipped to u in[0,1]",
+  "envelope": "S((t-start)/R)*S((end-t)/R)",
+  "common_dwell_start_s": 14.5,
+  "common_dwell_end_s": 24.5,
+  "common_dwell_duration_s": 10.0,
+  "nominal_earliest_ramp_start_s": 2.5,
+  "amplitude_choice": "Both carriers have1m amplitude; spectra use the same normalization.",
+  "waveform": "A*envelope*cos(2*pi*carrier_frequency*t+phase), reference origin",
+  "fft": {
+    "sample_count": 24576,
+    "dt_s": 0.0078125,
+    "padded_record_s": 192.0,
+    "bin_spacing_hz": 0.005208333333333333,
+    "nyquist_hz": 64.0,
+    "normalization": "Display DT*abs(rfft): positive-frequency complex-transform magnitude, no doubling.",
+    "note": "Forward FFT is unscaled; inverse FFT includes1/N. Negative frequencies are conjugates.",
+    "inverse": "irfft of the original COMPLEX coefficients, never amplitude-only",
+    "reconstruction_max_error_m": [
+      3.3306690738754696e-16,
+      4.810966440042345e-16
+    ],
+    "error_budget_m": 1e-12,
+    "energy_time_m2_s": [
+      8.134199134197916,
+      9.698676053083393
+    ],
+    "energy_frequency_m2_s": [
+      8.134199134197885,
+      9.698676053083348
+    ],
+    "parseval_max_error_m2_s": 4.440892098500626e-14
+  },
+  "no_propagation": true,
+  "no_calm_certification": true,
+  "no_BEM": true,
+  "no_WEC": true,
+  "no_canonical_changes": true,
+  "output_sha256": {
+    "two-packet-time-frequency.png": "48420d5c703abdff089c26deedb946bda4a8b74ab4222e86be3a61756893f093",
+    "two-packet-spectrum.npz": "19442cfb44a931e838fbb1d38954819f33d225bc33d21e9c095df7eb5cf6dbf9"
+  },
+  "helper_sha256": "a097d2a2d9d6c6e2e8d9a5806176839f1b66d1c346e23c66d0f5b56a953fe757",
+  "wall_seconds": 0.8440000000118744,
+  "published_plot": "docs/images/wave-packet-dwell-time-frequency.png",
+  "png_dimensions_px": [
+    2430,
+    1530
+  ],
+  "terminal_evidence": {
+    "job": "Illustrative1D two packet time/frequency/commonDWELL plots;samephaseFFT reconstruction;noBEM/WEC/physicalproducer/canonicalwrite;60s1GiB1thread",
+    "owner": "/root",
+    "producer_pid": 32352,
+    "owner_launcher_pid": 9992,
+    "started_at": "2026-10-27T20:14:03.167936+00:00",
+    "exit_code": 0,
+    "frozen_inputs_match": true,
+    "complete": true,
+    "manifest": "C:\\Users\\alex\\topwater\\artifacts\\workflow\\wave-packet-timing-plots-attempt1\\manifest.json",
+    "output": "C:\\Users\\alex\\topwater\\artifacts\\workflow\\wave-packet-timing-plots-attempt1\\output.log"
+  },
+  "guard_receipt_sha256": "5f7e4e328357d5ec99c0d071a0470c5c6fcc6c33a95c53221545fafaa2c209c1",
+  "job_empty_verified": true,
+  "guard_exit_code": 0,
+  "driver_exit_code": 0,
+  "raw_spectra_local": "artifacts/workflow/wave-packet-timing-plots-attempt1/results/two-packet-spectrum.npz"
+}

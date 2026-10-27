@@ -1,5 +1,21 @@
 # Shared physical and producer/consumer contract
 
+## Wave-packet timing investigation, user steering 2026-10-27
+
+Issue36 investigates timing before further radiation-reconstruction changes or
+optimization. The requested CLI time is to mean full-amplitude DWELL, excluding
+initial calm, ramps and measured settling. Retain the existing quintic smooth
+joins; begin with ramps of two periods of each ORIGINAL sea component, not each
+generated sideband. Demonstrate different ramp durations around a common dwell
+in1D time/frequency plots before choosing the physical alignment.
+
+Target2–3s initial calm, threshold-defined incoming-wave departure and actual
+dynamic extension until sustained boat rest. Calm/rest thresholds, exposure
+alignment, input ownership and stopping implementation remain under investigation.
+Do not infer calm from an instantaneous zero crossing or silently force late
+motion to zero. Current production inputs/outputs and #31 qualification remain
+unchanged; a redesigned physical case needs new appropriate qualification.
+
 ## Surface reconstruction accuracy, user decision 2026-10-27
 
 For issue31, the user requires maximum numerical water-elevation error <=0.01m,

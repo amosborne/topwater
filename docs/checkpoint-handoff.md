@@ -3,6 +3,41 @@
 Updated 2026-10-27 UTC. Latest user steering controls scope. Historical evidence
 and queued assignments do not authorize execution. Follow AGENTS.md/coordination.
 
+## Current priority: packet timing and 1D demonstration
+
+Latest user steering supersedes the former next-speed priority. Step back before
+further radiation reconstruction or optimization to investigate wave-packet
+timing and simulation duration. Retain quintic smooth-join constraints. The CLI
+requested time means DWELL (full-amplitude interval); investigate ramps tied to
+each original carrier period, initially2cycles per ramp, with2–3s calm startup
+and measured settling afterward. Thresholds/alignment/runtime changes remain
+under investigation; no production behavior has changed.
+
+The requested standalone1D demonstration is complete:
+[time/frequency construction](wave-packet-timing.md) and
+docs/images/wave-packet-dwell-time-frequency.png (2430x1530,
+SHA48420d5c703abdff089c26deedb946bda4a8b74ab4222e86be3a61756893f093).
+Two original periods4s/6s have ramps8s/12s and identicalDWELL14.5–24.5s.
+Four panels show envelopes, time traces, envelope spectra and packet spectra.
+Complex FFT/IFFT reconstruction error <=4.811e-16m; Parseval error4.441e-14m2s.
+This is an intended1D profile demonstration, NOT propagated wave physics,
+startup/calm certification or a WEC-Sim run. No previews/images were inspected.
+
+Root job wave-packet-timing-plots-attempt1 terminal0/frozen/guard0/driver0/
+Jobempty, exact producer32352/owner9992 and all guarded host identities absent.
+finish_check terminal0 then idle/null readback/release-last completed. Current
+ledger idle/null, lease absent. NMR authored illustrative source; TOP reviewed
+source; root alone executed. Actual plot work0.844s. Report/complex spectra are
+under that attempt's results/; tracked numerical evidence is
+docs/experts/numerical_methods_researcher/wave-packet-timing-demo-2026-10-27.json.
+All canonical output and production sources remain unchanged.
+
+[Issue36](https://github.com/amosborne/topwater/issues/36) is the new focused
+timing investigation, recording DWELL and cycle-based ramps. Remaining work is
+to establish physical packet alignment/propagation, threshold-defined startup
+and ending, sustained measured settling/cap behavior, input/CLI implementation
+and appropriate new-case qualification. No further numerical job is allocated.
+
 ## Completed goal and acceptance
 
 Issue #31 is resolved and closed (2026-10-27T18:45:47Z). Accepted checkpoint
@@ -44,9 +79,9 @@ docs/experts/numerical_methods_researcher/issue31-acceptance-evidence-2026-10-27
 SHA10a1e9489eb9d32104a784758d6ec6e819b288c49b3b9ec492a51bb2383919a1.
 Source, artifacts, tests, review, documentation, warnings, LFS publication and
 issue closure are complete. Root's requirement-by-requirement audit found no
-remaining #31 work. This handoff refresh records closure after the substantive
-checkpoint. No jobs remain live/allocated; ledger idle/null, lease absent.
-Future speed work needs its own bounded serial allocation, not a resumed #31 run.
+remaining #31 work. No jobs remain live/allocated; ledger idle/null, lease absent.
+The packet-timing investigation above now precedes further reconstruction/speed
+work. Future jobs need their own bounded serial allocation.
 
 ## Accepted method and scope
 
@@ -106,9 +141,10 @@ resolved peak39.1241mm at43.36s. These are disturbance metrics, not error.
 
 ## Priorities and ownership
 
-31 is complete. Next priority is measured end-to-end speed, then32(model
-resolution),33(field/load consistency),34(linear applicability). No speed or
-further model campaign is currently allocated.
+31 is complete for its original case. Current priority is packet timing/start-stop
+design and the requested1D time/frequency plots, BEFORE further reconstruction
+or measured-speed work;32(model resolution),33(field/load consistency),34(linear
+applicability) remain separate later work. No speed/model campaign is allocated.
 CAP owns physical field implementation, NMR independent method review, TOP
 execution receipts/integration helpers; root owns serial execution and acceptance.
 Native Topwater dynamics remain a nonworking prototype. WEC reference6b774228

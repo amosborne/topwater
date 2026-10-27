@@ -1,5 +1,19 @@
 # Current state: independent numerical-methods review
 
+## Current priority: issue36 packet timing, 2026-10-27
+
+User has redirected work before further reconstruction/optimization. Retain
+quintic joins; CLI requested time means DWELL; investigate per-original-carrier
+cycle-based ramps (initially2cycles),2–3s calm startup and measured settling.
+The illustrative1D time/frequency demonstration is complete: T4/6s,R8/12s,
+common10s dwell. Root executed the reviewed helper in0.844s, FFTroundtrip
+<=4.811e-16m and Parseval<=4.441e-14m2s. Four panels and evidence are in
+[the construction note](../../wave-packet-timing.md). Guard/terminal/frozen/host
+absence and idle/readback/release passed. No physical propagation, WEC/BEM job,
+solver or canonical-data edit occurred or is delegated next.
+Issue36 owns the broader timing investigation. Existing #31 acceptance below
+remains scoped to its original packet and trajectory.
+
 Final integration addendum: the promoted policy passed50 selected integration
 tests in24.20s with no skips; independent receipt review accepted exact coverage
 and unchanged numerical module AST apart from the readiness Boolean.

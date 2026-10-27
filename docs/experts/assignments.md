@@ -5,6 +5,28 @@ current user request), `running`, or `completed`. Current project authorization
 is recorded only in [the handoff](../checkpoint-handoff.md); an execution lease
 schedules authorized work and never grants scope. Update status in place.
 
+## Wave-packet timing and dwell, 2026-10-27
+
+- PACKET-TIMING-ILLUSTRATION, completed: numerical_methods_researcher owned only
+  the private intended-profile plotting helper and plan, no execution. Two
+  different original periods, two-cycle ramps, identical10s dwell; show time
+  envelopes/waves and frequency spectra. This is not propagated wave physics.
+- PACKET-TIMING-RECEIPT, completed: topwater_expert owned private source review
+  and root-run guard preparation, no execution. Root owns the serial small
+  plotting allocation, verification, publication and acceptance.
+- PACKET-DESIGN, investigation framed in issue36: coordinator owns requirements
+  and CLI/input semantics; numerical_methods_researcher owns bounded analytical
+  method proposals; wecsim_expert owns measured-stop feasibility in the generated
+  model. No solver/fork changes, BEM/body/render run or implementation campaign
+  is allocated by this issue framing.
+
+Requested CLI time means DWELL; keep polynomial smooth joins and investigate
+cycle-based ramps,2–3s initial calm and measured settling. Packet design precedes
+further reconstruction/speed work. Preserve the accepted original #31 case.
+The root-executed plot is complete: four panels, shared10s dwell, periods4/6s,
+ramps8/12s; FFT roundtrip<=4.811e-16m. Guard/terminal/frozen/host absence and
+idle/readback/release passed. No physical run or further allocation follows.
+
 ## Radiation-surface height accuracy, 2026-10-27
 
 User acceptance for #31: maximum numerical elevation error plus reference

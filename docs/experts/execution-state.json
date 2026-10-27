@@ -6,16 +6,16 @@
     "manifest":  null,
     "active_numerical_job":  null,
     "last_terminal_evidence":  {
-                                   "job":  "Issue31 saved-array actualMAXdifference metadata location/time only;noBEM/physics/test rerun;30s1GiB1thread",
+                                   "job":  "Illustrative1D two packet time/frequency/commonDWELL plots;samephaseFFT reconstruction;noBEM/WEC/physicalproducer/canonicalwrite;60s1GiB1thread",
                                    "owner":  "/root",
-                                   "producer_pid":  2160,
-                                   "owner_launcher_pid":  35612,
-                                   "started_at":  "2026-10-27T18:40:00.213494+00:00",
+                                   "producer_pid":  32352,
+                                   "owner_launcher_pid":  9992,
+                                   "started_at":  "2026-10-27T20:14:03.167936+00:00",
                                    "exit_code":  0,
                                    "frozen_inputs_match":  true,
                                    "complete":  true,
-                                   "manifest":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\issue31-max-location-attempt1\\manifest.json",
-                                   "output":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\issue31-max-location-attempt1\\output.log"
+                                   "manifest":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\wave-packet-timing-plots-attempt1\\manifest.json",
+                                   "output":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\wave-packet-timing-plots-attempt1\\output.log"
                                },
     "note":  "Exact producer/owner and FFmpeg absence verified by independent CIM; frozen input hashes verified; terminal exit 0. Final separate idle readback follows before lease release."
 }
