@@ -17,8 +17,6 @@ Imported wave forces can lose input history or use the wrong time offsets
 
 Forces calculated from an imported wave record can be wrong near the start and end of a simulation. WEC-Sim first cuts the record to the requested output times, discarding nearby wave samples that the force calculation still needs. The force response can also be shifted when its time offsets are not centered on zero.
 
-
-
 ## How this relates to Topwater
 
 The working Topwater workflow uses Capytaine and WEC-Sim:
@@ -98,7 +96,6 @@ The replacement work is tracked in [#12](https://github.com/amosborne/WEC-Sim/is
 
 The original defect reports, commits, tests and numerical evidence remain preserved. Closing this item does not disprove the generic history/aggregation/performance findings. Its branch is retained; it is no longer a proposed change for the active Topwater route. No production pin, reference-branch merge or upstream submission is included in this transition.
 
-
 ## Issue 2
 
 Sum directional imported-wave forces and apply the total once
@@ -146,7 +143,7 @@ Target: `amosborne/WEC-Sim:topwater/reference`; runtime pin `9952634` and canoni
 
 Comment by amosborne, 2026-10-25T23:57:21Z:
 
-ï»¿Read-only design review for this fork work item is complete; implementation remains queued after the inertia checkpoint.
+Read-only design review for this fork work item is complete; implementation remains queued after the inertia checkpoint.
 
 Recommended representation: one aggregate `hydroForce.hf#.userDefinedFe` history plus one active imported excitation branch, preserving the original wave array. Evaluate each component's own signal/direction with PR #8 history/ramp semantics and sum fresh arrays on the common simulation output grid. Different raw-file grids are valid; do not require identical raw timestamps.
 
@@ -155,7 +152,6 @@ Compatibility correction: official v7.1.0/a23d299 `initializeWecSim.m` lines322-
 Acceptance gap: historical dispatch receipt has `body_simulated:false`; it proves graph structure, not the applied force. New tests must SIMULATE the actual copied native excitation parent and capture its downstream sum/applied-force signal. Two distinct analytic six-channel components must yield F1+F2 once, excluding F1,2F1 and2(F1+F2), without Topwater force-table rebinding. Exercise ordering, repeat initialization, one/two/one components, regular/import transitions, incompatible output grids, protected custom wiring and an unchanged regular-wave control. Changed Flex dispatch needs its own >6DOF excitation-parent witness; no full Flex dynamics claim follows.
 
 Only recognized native clones and their exact positive sum ports may be reconciled; preserve unrelated/custom blocks and reject ambiguous modified clones. No code/model/numerical job, pin change, merge or upstream write occurred in this review.
-
 
 
 Comment by amosborne, 2026-10-26T03:46:49Z:
@@ -191,7 +187,6 @@ Superseded for the Topwater integration by the user's decision to pursue WEC-Sim
 The replacement work is tracked in [#12](https://github.com/amosborne/WEC-Sim/issues/12) (preserve supplied directional phases) and [#13](https://github.com/amosborne/WEC-Sim/issues/13) (consistent directional force weights), followed by exact component/coefficient handoff and complete force/startup/motion verification.
 
 The original defect reports, commits, tests and numerical evidence remain preserved. Closing this item does not disprove the generic history/aggregation/performance findings. Its branch is retained; it is no longer a proposed change for the active Topwater route. No production pin, reference-branch merge or upstream submission is included in this transition.
-
 
 ## Issue 11
 
@@ -246,7 +241,6 @@ The replacement work is tracked in [#12](https://github.com/amosborne/WEC-Sim/is
 
 The original defect reports, commits, tests and numerical evidence remain preserved. Closing this item does not disprove the generic history/aggregation/performance findings. Its branch is retained; it is no longer a proposed change for the active Topwater route. No production pin, reference-branch merge or upstream submission is included in this transition.
 
-
 ## Issue 13
 
 Keep directional wave-force amplitudes consistent with wave elevation
@@ -290,6 +284,14 @@ Historical investigations and exact producer/input identities remain in the link
 
 ## Local source recovery
 
-One Git bundle preserves all rebuild-store refs, including detached worktree heads and unpublished trials: `artifacts/workflow/wecsim-cleanup-preservation1/wecsim-trials.bundle`, SHA256 `d27eaf012274f080babccd1ffd1552013bae4aa9e387fff83affe98d4603c920`. The source store is shallow at releasea23d299: preserve `shallow-boundaries.txt` beside the bundle. A plain mirror clone was correctly rejected because that boundary metadata was absent; an independent bare restore using the original boundary recovered all24refs, all four unpublished trial commits and6b, and passed connectivity checks without network or alternates. Six exact dirty/untracked source snapshots and binary patches are retained beside it, with hashes in `recovery-manifest.json`. The active953 Topwater worktree, clean995 legacy checkout and official release remain separately recoverable. No local worktree has yet been removed.
+One Git bundle preserves all rebuild-store refs, including detached worktree heads and unpublished trials: `artifacts/workflow/wecsim-cleanup-preservation1/wecsim-trials.bundle`, SHA256 `d27eaf012274f080babccd1ffd1552013bae4aa9e387fff83affe98d4603c920`. The source store is shallow at releasea23d299: preserve `shallow-boundaries.txt` beside the bundle. A plain mirror clone was correctly rejected because that boundary metadata was absent; an independent bare restore using the original boundary recovered all24refs, all four unpublished trial commits and6b, and passed connectivity checks without network or alternates. Six exact dirty/untracked source snapshots and binary patches are retained beside it, with hashes in `recovery-manifest.json`. The active953 Topwater worktree, clean995 legacy checkout and official release remain separately recoverable. At capture time, no local worktree had been removed.
 
-Independent cleanup review also found24ignored Simulink compile files in the two retired `tests/slprj` trees (1,490,350bytes). Exact snapshots and per-file hashes are now preserved in `ignored-snapshots.json` beside the bundle. No local worktree has yet been removed.
+Independent cleanup review also found24ignored Simulink compile files in the two retired `tests/slprj` trees (1,490,350bytes). Exact snapshots and per-file hashes are now preserved in `ignored-snapshots.json` beside the bundle. At capture time, no local worktree had been removed.
+
+Final pre-deletion API snapshot: `artifacts/workflow/wecsim-cleanup-execution1/before.json`, SHA256 `b99b4ad30653a77ab6217f6407ffa4d3e53667ca1611de608aba3f2eeed4cb7e`. Substantive issue text/comments match the original capture; only an encoded BOM prefix was normalized for display. Both raw captures remain preserved.
+
+## Completed retirement
+
+After validated adoption at7e1b854, GitHub natively archived PR8/10; obsolete issues1/2/11/13 were deleted with their text preserved above. Nine retired remote heads (including the old runtime branch) were removed with atomic expected-head leases. Only main and topwater/reference remain. The exact995 runtime is recoverable through archive/topwater-legacy-9952634. Fork Actions are disabled to prevent inherited docs deployment recreating gh-pages.
+
+Eleven audited local trial worktrees and13 trial/legacy local branch refs were retired. Active953 and6b validation provenance, the shared Git store and official release checkout remain. Snapshot/hash checks preceded removal; numerical study directories were left intact. Full operation receipts are in artifacts/workflow/wecsim-cleanup-execution1.

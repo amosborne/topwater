@@ -43,7 +43,7 @@ Independent accepted receipts under artifacts/workflow:
   pass2.69s plus DEFAULT6b/nooverride/owned hiddenR2025b actualpreflight, all three
   licenses, no loaded models, server exit0/heldnativehandle/shared-name gone.
   Actualbackend712f0547; preflightfreeze172fb5a6; helper32.563s. The receipt binds
-  tested working bytes before final commit; verify committed source hashes match.
+  tested working bytes; the completion audit verifies committed source identity.
 - Earlier38Python+21native handoff0cffbbc3, generic10spectrum4ffbf7f8, tiny3public
   casesb787454d remain supporting selected-path evidence.
 
@@ -81,42 +81,41 @@ component-view/accessor/BEMIO writer extension. Spectral H5 skipped, consumedCIC
 Ainf preserved, unused rawA/B/T omitted. Native Topwater remains an incomplete
 prototype. No remeshing/incident-only fallback/nonlinear-physics claim.
 
-Remaining goal work: commit/push the qualified source/pin/docs/public checkpoint,
-update issue30 MAIN, then execute and verify the cleanup below. Do not re-run
-physics or inspect images. Preserve active953 source and6b validation provenance.
+## Completed fork cleanup
 
-## Fork cleanup after validated adoption
+Adoption checkpoint `7e1b854` is pushed. Technical adoption and cleanup passed
+independent current-state audit3968adb4. Final publication and remote verification
+are recorded in `reference-adoption-completion-audit1/report.json`; consult that
+receipt before claiming whole-goal completion.
+See [completion record](experts/wecsim_expert/fork-cleanup-plan-2026-10-27.md).
 
-Authoritative plan: experts/wecsim_expert/fork-cleanup-plan-2026-10-27.md.
-Native GitHub archivePullRequest is supported (Topwater13-29 already archived).
-Finalize PR8/10 superseded main bodies, then ARCHIVE and verify is:archived;
-closed alone is insufficient. GraphQL input pullRequestId; payload pullRequest.
-Delete obsolete issues1/2/11/13 (deleteIssue issueId) after preservation/link checks.
-Keep merged6/7/9/14 and closed3/4/5/12. No upstream mutations.
-Delete six retired fix branches plus dev/gh-pages, checking actual current head
-before each delete. Main is upstream mirror; new topwater/reference stays6b.
-Pages is disabled; Actions currently enabled but zero workflow entries despite
-four inherited workflow files. Individualdocs endpoint404; WEC expert recommends
-recording settings/no active runs, disabling Actions ONLYinamosborne/WEC-Sim,
-reading backfalse, then deletinggh-pages. This reversibly disables fork CI too;
-checks currently run locally. Do not change upstream/Topwater Actions or mirror
-source, or trigger CI just to register a workflow.
-After new pin/default readiness, publish/verify immutable archive/topwater-legacy-9952634
-at exact995 then remove old topwater/reference-v7.1.0 (remote/local as appropriate).
-Keep official release tag unchanged. No newer-release rebase in this goal.
+Only remote branches `main`0753b2e (unchanged upstream mirror) and
+`topwater/reference`6b remain. Nine obsolete heads were removed with expected-SHA
+leases. Verified annotated tag `archive/topwater-legacy-9952634` preserves exact995;
+the old runtime branch is removed and official v7.1.0 tag is unchanged.
+PR8/10 were natively archived; obsolete issues1/2/11/13 were deleted after
+preservation. Merged PR6/7/9/14 and closed fix issues3/4/5/12 remain.
 
-Recovery: artifacts/workflow/wecsim-cleanup-preservation1 holds original issue/
-PR/branch snapshot, one184.6MB Git bundle d27eaf01, six dirty/untracked snapshots
-and patches, and original shallow-boundaries.txt. Independent bare recovery WITH
-that boundary restored24refs/all four unpublished trials and6b without network
-or alternates and passed connectivity. Plain mirror clone without shallow metadata
-failed; do not treat it as recovery. A further24 ignored Simulink files (1.49MB)
-are now hashed/copied in ignored-snapshots.json. Old numerical study directories
-stay untouched. Audit source/ignored changes again before removing obsolete
-worktrees. Keep active953 and6b;6b shares wecsim-rebuild-v7.1.0/.git, so NEVER
-remove its common store while linked. Three historical issue links are redirected
-in committed79a95d2 docs; original issue quotations remain in committed historical
-record. No remote issues/PRs/branches or local worktrees retired yet.
+Actions is disabled ONLY in our WEC-Sim fork, preventing inherited documentation
+deployment from recreating gh-pages. Topwater Actions remains enabled. Review
+documentation deployment before deliberately re-enabling fork CI; current checks
+were run locally. Upstream and mirror source are unchanged.
+
+Eleven obsolete local worktrees and thirteen local trial/legacy heads were removed.
+Keep default6b, stocka23, the clean detacheda23 common parent, linked6b validation
+and qualified953 Topwater source. Their shared Git store remains intact. Other
+Topwater worktrees and original failed numerical studies are preserved.
+
+Recovery evidence: `artifacts/workflow/wecsim-cleanup-preservation1` contains the
+184.6MB bundle d27eaf01, original shallow boundary, six dirty/untracked source
+snapshots and24 ignored Simulink files. Independent offline recovery WITH the
+shallow boundary restored24refs/all four unpublished trials and passed connectivity.
+A plain clone without that boundary failed and is not the recovery method.
+Historical issue text and redirected links are retained in the committed
+retired-workflow record. Execution evidence is in `wecsim-cleanup-execution1`;
+independent audit is `reference-adoption-completion-review-v1/audit.json`.
+Final publication is tracked by `reference-adoption-completion-audit1/report.json`.
+No further numerical work or cleanup operation is queued.
 
 ## Persistent limits and visuals
 

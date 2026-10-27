@@ -4,7 +4,8 @@ Updated 2026-10-27 UTC. Authority: [handoff](../../checkpoint-handoff.md),
 [physical contract](../shared-contract.md), [coordination](../coordination.md).
 Root owns acceptance, integration and serial execution. Consult the
 [execution ledger](../execution-state.json) for live/terminal status; this page
-confers no execution permission.
+confers no execution permission. Latest numerical allocations are terminal; the
+coordinator reports an idle ledger and absent lease at this checkpoint.
 
 ## Adopted reference and workflow
 
@@ -26,9 +27,12 @@ fabricated. No custom coefficient-view/accessor or BEMIO writer extension remain
 Topwater supplies waves/coefficient data and reconstructs the total surface.
 
 **The accepted eight-file result is now promoted to `examples/simple-boat`.**
-Boat/sea are unchanged. Cleanup is the next authorized phase; it is NOT complete.
-The legacy995 branch remains until its archive is verified and retirement follows
-[the cleanup plan](fork-cleanup-plan-2026-10-27.md). Root owns those actions.
+Boat/sea are unchanged. Adoption checkpoint7e1b854 is pushed. **Cleanup actions are
+complete**. Independent current-state audit confirms source/output identity,
+remote/local retirement and recovery preservation.
+Only fork branches `main`0753b2e and `topwater/reference`6b remain; exact995 is
+preserved by the verified tag `archive/topwater-legacy-9952634`, not an active
+legacy branch. [Completion/recovery record](fork-cleanup-plan-2026-10-27.md).
 
 ## Accepted evidence
 
@@ -61,10 +65,18 @@ The legacy995 branch remains until its archive is verified and retirement follow
   Result2b615b56, PNG275ac4c5, videoe5fce0e4. Physical inputs are unchanged and the
   verified rollback copy of all eight original files is retained.
 
+- [Cleanup execution](../../../artifacts/workflow/wecsim-cleanup-execution1/) verifies
+  native archival8/10, deletion of obsolete issues1/2/11/13 and nine remote heads,
+  fork-only Actions disable, plus removal of11 old worktrees/13 trial refs.
+  Merged PR6/7/9/14 and closed issues3/4/5/12 remain. The shared-store bundle,
+  shallow boundary, six dirty and24 ignored snapshots passed recovery checks.
+  Production6b, stocka23, the clean common parent/linked validation and source953
+  remain; original failed studies are preserved.
+
 ## Limits and preserved history
 
 This is implementation/numerical compatibility acceptance, not physical accuracy.
-Issues31?34 remain unresolved. The native coarse-direction warning is a coverage
+Issues31-34 remain unresolved. The native coarse-direction warning is a coverage
 heuristic for the repacked nodes; matching forces does not establish genuine
 angular coefficient resolution. Mesh/irregular-frequency, field-phase and fixed-
 mean applicability warnings are not error bounds or blanket waivers.
@@ -78,3 +90,6 @@ and [retired workflows](../history/wecsim-retired-workflows-2026-10-27.md) retai
 original evidence/policies. Do not resume retired studies from historical plans.
 Generic fixes remain upstream candidates; no upstream issue/PR/contact is
 authorized without explicit user permission.
+
+[Independent completion audit](../../../artifacts/workflow/reference-adoption-completion-review-v1/audit.json)
+records the current source, API and recovery checks.

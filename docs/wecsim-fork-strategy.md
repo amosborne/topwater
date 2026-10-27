@@ -39,8 +39,10 @@ Adopted2026-10-27: the default pin is6b774228. The active Topwater adapter match
 reviewed953; full native force/motion, fresh total-field delivery and actual default-path
 preflight have independent acceptance. The canonical eight files now match
 the accepted private result, with boat/sea unchanged and verified rollback retained.
-Cleanup remains the next authorized phase; the old995 branch stays until its
-archive is verified. Current evidence and phase belong in the
+Cleanup actions are complete: only `main` and `topwater/reference` remain;
+exact995 is retained by the verified `archive/topwater-legacy-9952634` tag.
+Adoption checkpoint7e1b854 is pushed. Independent completion audit and cleanup
+proofs are recorded in the cleanup record. Current evidence and phase belong in the
 [handoff](checkpoint-handoff.md) and [expert state](experts/wecsim_expert/current-state.md).
 
 ## Future fixes and promotion
@@ -90,9 +92,11 @@ a newer base, and retire a local patch only after its replacement passes checks.
 The imported-elevation/convolution route is retired for Topwater. Its results,
 limitations and abandoned fixes remain in the committed
 [retired-workflow record](experts/history/wecsim-retired-workflows-2026-10-27.md);
-PR14 does not claim to fix those unused paths. AFTER validated adoption, follow
-[fork cleanup](experts/wecsim_expert/fork-cleanup-plan-2026-10-27.md): keep merged
-PR history/issues3/4/5/12, natively archive PR8/10, delete obsolete issues1/2/11/13
-and retired branches, and preserve release/legacy pins plus dirty/unpublished
-study source before local cleanup. GitHub issues/PRs remain the per-fix history;
-no second custom status ledger or archive-branch proliferation is needed.
+PR14 does not claim to fix those unused paths. The
+[cleanup record](experts/wecsim_expert/fork-cleanup-plan-2026-10-27.md) confirms
+native archival8/10, deletion of obsolete issues/branches and verified preservation
+of legacy/source history. Merged fixes and their closed issues remain authoritative;
+Actions is disabled only in this fork, with current qualification using local tests.
+Handle documentation deployment before deliberately re-enabling fork CI. GitHub
+issues/PRs remain the per-fix history; no duplicate status ledger or extra archive
+branches are needed. Physical issues31-34 remain outside this cleanup.

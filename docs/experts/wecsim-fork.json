@@ -26,8 +26,13 @@
   "delivery_evidence": "artifacts/workflow/reference-adoption-private-review-v1/acceptance.json",
   "interface": "Existing bodyClass(hydroStruct), official BEMIO import/radiation normalization; no component-view/accessor or optional BEMIO-writer extension. WEC computes excitation and motion.",
   "legacy_runtime_commit": "9952634f6f2e2746a1626484e27c3003d1e1d5a9",
-  "legacy_retirement_state": "Pending default-path validation and verified archive tag before old branch removal",
+  "legacy_retirement_state": "Complete: retired remote and active-local old runtime refs after verified archive tag; original source/data recoverable",
   "upstream_submission_authorized": false,
   "default_preflight_evidence": "artifacts/workflow/reference-adoption-main-review-v1/acceptance.json",
-  "public_promotion_evidence": "artifacts/workflow/reference-adoption-promotion1/report.json"
+  "public_promotion_evidence": "artifacts/workflow/reference-adoption-promotion1/report.json",
+  "legacy_runtime_tag": "archive/topwater-legacy-9952634",
+  "fork_actions_enabled": false,
+  "fork_actions_policy": "Disabled only in amosborne/WEC-Sim to prevent inherited documentation deployment recreating gh-pages; current required checks run locally. Deliberately review documentation publishing before re-enabling fork CI.",
+  "fork_cleanup_evidence": "artifacts/workflow/wecsim-cleanup-execution1/summary.json",
+  "completion_audit_evidence": "artifacts/workflow/reference-adoption-completion-audit1/report.json"
 }
