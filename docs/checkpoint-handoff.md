@@ -18,20 +18,29 @@ artifacts/dependencies/wecsim-reference-validation.
 
 ## Execution state and new-route evidence
 
-NO LIVE NUMERICAL JOB. Native run2 stopped after1055.703s when the private guard
-could not replace its live receipt (WinError5,16 retries/.25s). This was a
-monitoring publication failure; memory peak6.513GB was below12GiB, no deadline
-failure. All owned recorded PIDs verified absent via hostCIM, frozen inputs match,
-finish_check completed, separate idle readback and lease release done.
-No motion.mat or complete motion report exists; do NOT claim motion acceptance.
+LIVE native reference-adoption-run-attempt3 under root toolsession89285.
+Started 2026-10-27T05:36:09.554294+00:00; outerproducer 24952, owner 17392.
+Numerical lease HELD. Monitor actual tool handle and native log; avoid live receipt
+reads. Do not launch another numerical job or edit frozen producer/input files.
 
-Topwater expert /root/receipt_reliability owns SOURCE-ONLY private-python-guard-v2:
-retain unchanged Windows Job/limits/ownership observer, defer transient live
-receipt replacement failures without sleeping in the control loop, mandatory
-initial/final publication remains fail-closed. Oldv1/v4 sources remain intact.
-Need independent source review and root serial deterministic Win32 lock tests
-(pre/post, whole deadline/WS while locked, terminal-lock alternate evidence)
-plus original guard controls BEFORE another full native run. No automatic retry.
+Earlier run2 stopped after1055.703s due live receipt replacement WinError5/.25s.
+Full forces/startup/phase were separately accepted (afbb5210); no motion existed.
+All run2/control/prep3 processes and frozen inputs were reconciled before release.
+
+Guard-v2 correction is now independently ACCEPTED, source manifestd168ff67,
+acceptance guard-v2-review-v1/acceptance.jsoncc4ff62f. Root control allocation2
+passed9/9 in17.313s: real Win32 lock pre/post, deadline and WS enforcement while
+locked, terminal-lock99/alternate, and original containment controls. Hard-memory
+fixture uses SAME128MiB allocation denied under read-back64MiB and succeeding
+under256MiB; no unsupported peak-counter upper bound. Controlattempt1's old peak
+assertion failed and is preserved. Runtime resource predicates remain unchanged.
+All control processes/frozen inputs/idle/release verified. Oldv1/v4 untouched.
+
+Fresh case3 preparation passed under v2, all terminal/CIM/frozen/idle/release
+checks complete. Full run-config3 ready; run-allocation3/freeze.json756cc7cf
+contains9699files and15stagednativeinputs. Independent final staged review approved this exact freeze/config.
+Native2100s/whole2400s/12GiB remain unchanged. Native3 is LIVE with HOST access
+(toolsession89285); preserve its claim and monitor the SAME handle. All force/startup/body/once-only/rest/CIC/motion gates remain intact.
 
 - Topwater standard adapter is committed ONLY in isolated
   artifacts/worktrees/standard-wecsim-input, branchwork/standard-wecsim-input,
@@ -140,11 +149,11 @@ plot7nice symmetric ticks withzero centered/commonrows/limitsatouterticks.
 
 ## Additional adoption readiness and preservation
 
-Default-preflight source reference-adoption-preflight-v1 initially blocked by
-NMR: Python engine.quit() disconnects attached shared clients and cannot request
-server shutdown. WEC author is correcting to MATLAB-side exit(0), retaining
-proven owned PID/held handle/launcher/shared-name terminal proof. Await new source
-manifest and independent approval. No preflight execution or pin change occurred.
+Default-preflight source reference-adoption-preflight-v1 corrected manifest
+df6dd55a is independently source-approved. It requests MATLAB-side exit(0) only
+after owned PID recheck; expected transport loss is diagnostic, not terminal
+proof. Held native handle, launcher0 and shared-name absence remain mandatory.
+No preflight execution/pin adoption yet; actual adopted MAIN/default6b required.
 
 Historical issue record and source-recovery instructions pushed atd146b07.
 artifacts/workflow/wecsim-cleanup-preservation1 holds one184.6MBbundle, six exact

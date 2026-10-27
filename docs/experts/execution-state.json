@@ -1,21 +1,35 @@
-﻿{
-    "state":  "idle",
-    "execution_owner":  null,
-    "assignment":  null,
-    "claimed_at":  null,
-    "manifest":  null,
-    "active_numerical_job":  null,
-    "last_terminal_evidence":  {
-                                   "job":  "HOST-access cleanretry afterMATLAB pre-physics sandboxprefdirfailure: ONE6b+953force-gated60snativebodyrun;2100snative2400swhole12GiB",
-                                   "owner":  "/root",
-                                   "producer_pid":  11584,
-                                   "owner_launcher_pid":  19892,
-                                   "started_at":  "2026-10-27T04:56:49.628461+00:00",
-                                   "exit_code":  99,
-                                   "frozen_inputs_match":  true,
-                                   "complete":  true,
-                                   "manifest":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\reference-adoption-run-attempt2\\manifest.json",
-                                   "output":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\reference-adoption-run-attempt2\\output.log"
-                               },
-    "note":  "Exact producer/owner and FFmpeg absence verified by independent CIM; frozen input hashes verified; terminal exit 99. Final separate idle readback follows before lease release."
+{
+  "state": "running",
+  "execution_owner": "/root",
+  "assignment": "ONE unchanged6b+953canonical60sforce-before-motion/fullbodygates usingindependentlytestedguardv2;2100snative2400swhole12GiB;HOSTaccess",
+  "claimed_at": "2026-10-27T05:35:49.5349915Z",
+  "manifest": "C:\\Users\\alex\\topwater\\artifacts\\workflow\\reference-adoption-run-attempt3\\manifest.json",
+  "active_numerical_job": {
+    "producer_pid": 24952,
+    "owner_pid": 17392,
+    "started_at": "2026-10-27T05:36:09.554294+00:00",
+    "host": "OsborneEE",
+    "command": [
+      "C:\\Users\\alex\\topwater\\.venv\\Scripts\\python.exe",
+      "C:\\Users\\alex\\topwater\\artifacts\\workflow\\private-python-guard-v2\\run.py",
+      "--config",
+      "C:\\Users\\alex\\topwater\\artifacts\\workflow\\reference-adoption-run-allocation3\\guard-config.json",
+      "--config-sha256",
+      "750cfa8dc52a512e083ae43ce695487dd8d16dc546374f016574b5adcf7a5443"
+    ],
+    "output": "C:\\Users\\alex\\topwater\\artifacts\\workflow\\reference-adoption-run-attempt3\\output.log"
+  },
+  "last_terminal_evidence": {
+    "job": "Unchanged6b/953/operatorf1 preparation3 using independently testedv2monitor;600s8GiB;noMATLAB/body",
+    "owner": "/root",
+    "producer_pid": 12904,
+    "owner_launcher_pid": 34296,
+    "started_at": "2026-10-27T05:32:41.271466+00:00",
+    "exit_code": 0,
+    "frozen_inputs_match": true,
+    "complete": true,
+    "manifest": "C:\\Users\\alex\\topwater\\artifacts\\workflow\\reference-adoption-prep-attempt3\\manifest.json",
+    "output": "C:\\Users\\alex\\topwater\\artifacts\\workflow\\reference-adoption-prep-attempt3\\output.log"
+  },
+  "note": "Claimed by coordinator; independent readback required before execution."
 }

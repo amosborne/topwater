@@ -51,7 +51,9 @@ and cleanup are root-owned later steps, not consequences of source approval.
   could not replace its live receipt (WinError5/.25s retry budget). No motion
   output exists. All owned processes are terminal, frozen inputs unchanged and
   lease released. The Topwater expert owns a bounded publication fix/tests
-  before another full run. No successful canonical motion is claimed.
+  before another full run. Guard-v2 subsequently passed all nine real Windows
+  controls and independent acceptancecc4ff62f; fresh case3 is now running under
+  the ledger owner. No successful canonical motion is claimed.
 - Delivery sourceb078f2fe is independently source-reviewed, **unexecuted**. It
   requires accepted NEW motion, screens old-cache motion inputs by exact bytes
   and selects fresh production field reconstruction. Same operatorf1f788f9,
