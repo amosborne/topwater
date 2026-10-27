@@ -1,35 +1,21 @@
-{
-  "state": "running",
-  "execution_owner": "/root",
-  "assignment": "HOST-access cleanretry afterMATLAB pre-physics sandboxprefdirfailure: ONE6b+953force-gated60snativebodyrun;2100snative2400swhole12GiB",
-  "claimed_at": "2026-10-27T04:56:33.5128924Z",
-  "manifest": "C:\\Users\\alex\\topwater\\artifacts\\workflow\\reference-adoption-run-attempt2\\manifest.json",
-  "active_numerical_job": {
-    "producer_pid": 11584,
-    "owner_pid": 19892,
-    "started_at": "2026-10-27T04:56:49.628461+00:00",
-    "host": "OsborneEE",
-    "command": [
-      "C:\\Users\\alex\\topwater\\.venv\\Scripts\\python.exe",
-      "C:\\Users\\alex\\topwater\\artifacts\\workflow\\private-python-guard-v1\\run.py",
-      "--config",
-      "C:\\Users\\alex\\topwater\\artifacts\\workflow\\reference-adoption-run-allocation2\\guard-config.json",
-      "--config-sha256",
-      "a284c753b0f3877d88f0fdc1fea8898c10c2e13ffab9ea7490739dc4d3f5d0ff"
-    ],
-    "output": "C:\\Users\\alex\\topwater\\artifacts\\workflow\\reference-adoption-run-attempt2\\output.log"
-  },
-  "last_terminal_evidence": {
-    "job": "Unchanged reviewed6b/953 preparation for cleanHOST-access retry after pre-physics sandboxstartup failure;600s8GiB",
-    "owner": "/root",
-    "producer_pid": 22216,
-    "owner_launcher_pid": 34744,
-    "started_at": "2026-10-27T04:53:58.721335+00:00",
-    "exit_code": 0,
-    "frozen_inputs_match": true,
-    "complete": true,
-    "manifest": "C:\\Users\\alex\\topwater\\artifacts\\workflow\\reference-adoption-prep-attempt2\\manifest.json",
-    "output": "C:\\Users\\alex\\topwater\\artifacts\\workflow\\reference-adoption-prep-attempt2\\output.log"
-  },
-  "note": "Claimed by coordinator; independent readback required before execution."
+﻿{
+    "state":  "idle",
+    "execution_owner":  null,
+    "assignment":  null,
+    "claimed_at":  null,
+    "manifest":  null,
+    "active_numerical_job":  null,
+    "last_terminal_evidence":  {
+                                   "job":  "HOST-access cleanretry afterMATLAB pre-physics sandboxprefdirfailure: ONE6b+953force-gated60snativebodyrun;2100snative2400swhole12GiB",
+                                   "owner":  "/root",
+                                   "producer_pid":  11584,
+                                   "owner_launcher_pid":  19892,
+                                   "started_at":  "2026-10-27T04:56:49.628461+00:00",
+                                   "exit_code":  99,
+                                   "frozen_inputs_match":  true,
+                                   "complete":  true,
+                                   "manifest":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\reference-adoption-run-attempt2\\manifest.json",
+                                   "output":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\reference-adoption-run-attempt2\\output.log"
+                               },
+    "note":  "Exact producer/owner and FFmpeg absence verified by independent CIM; frozen input hashes verified; terminal exit 99. Final separate idle readback follows before lease release."
 }

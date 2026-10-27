@@ -18,11 +18,20 @@ artifacts/dependencies/wecsim-reference-validation.
 
 ## Execution state and new-route evidence
 
-LIVE native reference-adoption-run-attempt2, root toolsession11676, started
-2026-10-27T04:56:49.628461Z, outerguard11584/owner19892. Hidden MATLAB35832
-verified live via hostCIM; process receipt is authoritative for descendants.
-Numerical lease held. Do not launch another job or edit frozen producers/inputs.
-Earlier completed allocations passed terminal/frozen/CIM/idle/release checks.
+NO LIVE NUMERICAL JOB. Native run2 stopped after1055.703s when the private guard
+could not replace its live receipt (WinError5,16 retries/.25s). This was a
+monitoring publication failure; memory peak6.513GB was below12GiB, no deadline
+failure. All owned recorded PIDs verified absent via hostCIM, frozen inputs match,
+finish_check completed, separate idle readback and lease release done.
+No motion.mat or complete motion report exists; do NOT claim motion acceptance.
+
+Topwater expert /root/receipt_reliability owns SOURCE-ONLY private-python-guard-v2:
+retain unchanged Windows Job/limits/ownership observer, defer transient live
+receipt replacement failures without sleeping in the control loop, mandatory
+initial/final publication remains fail-closed. Oldv1/v4 sources remain intact.
+Need independent source review and root serial deterministic Win32 lock tests
+(pre/post, whole deadline/WS while locked, terminal-lock alternate evidence)
+plus original guard controls BEFORE another full native run. No automatic retry.
 
 - Topwater standard adapter is committed ONLY in isolated
   artifacts/worktrees/standard-wecsim-input, branchwork/standard-wecsim-input,
@@ -51,8 +60,11 @@ Fresh HOST-access preparation2 passed (41.75s controlled), case2 staged under
 artifacts/workflow/reference-adoption-case2. Terminal/CIM/frozen/idle/release checks
 complete. New run-allocation2 freeze c9ef8f30 contains9692files:21case/preparation
 paths relocated, other9671 identities EXACTLY unchanged. Native2100s/whole2400s/
-12GiB limits unchanged. Independent staged retry review approved. Native run2 is LIVE using HOST access
-(toolsession11676); monitor that handle, do not restart on observation timeout.
+12GiB limits unchanged. Independent staged retry review approved. Run2 is now terminal FAILED due live
+receipt publication as described above. Full six-channel force/startup gates
+passed before body integration: native_force_replay371.997649s; max normalized
+force difference about2.6e-15. Native initialization57.376647s/modelprep73.979564s.
+Body integration was interrupted; no successful motion output. Preservecase2.
 
 The one native run checks full3001x6 spectral forces/startup BEFORE integration,
 then actual once-only application/rest/zeroCIC/replay/balance and all6worldmotions
@@ -125,3 +137,19 @@ Historicalhandoff: experts/history/checkpoint-handoff-2026-10-27-pre-adoption.md
 Visualization141046c5 has50focused controls; plotf39a7572 has23focused controls.
 Water/fullgraymesh/blackoutline/solidbluecontact +unlabeledfixedgraymeanoutline;
 plot7nice symmetric ticks withzero centered/commonrows/limitsatouterticks.
+
+## Additional adoption readiness and preservation
+
+Default-preflight source reference-adoption-preflight-v1 initially blocked by
+NMR: Python engine.quit() disconnects attached shared clients and cannot request
+server shutdown. WEC author is correcting to MATLAB-side exit(0), retaining
+proven owned PID/held handle/launcher/shared-name terminal proof. Await new source
+manifest and independent approval. No preflight execution or pin change occurred.
+
+Historical issue record and source-recovery instructions pushed atd146b07.
+artifacts/workflow/wecsim-cleanup-preservation1 holds one184.6MBbundle, six exact
+dirty/untracked snapshots/binary patches and original shallow-boundaries.txt.
+Plain mirror clone failed on missing pre-release parent (expected shallow store);
+independent bare recovery WITH original shallow file recovered24refs/all four
+unpublished trials and6b, and passed connectivity without network/alternates.
+No issues/PRs/branches/worktrees have been archived/deleted yet.

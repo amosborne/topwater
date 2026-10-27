@@ -46,9 +46,12 @@ and cleanup are root-owned later steps, not consequences of source approval.
   [Source and commands](../../../artifacts/workflow/reference-adoption-validation-v1/README.md).
 - **Case1 failed before physics:** sandbox MATLAB startup could not write its
   preferences folder. [Original failure](../../../artifacts/workflow/reference-adoption-case1/matlab.log)
-  and all failed artifacts remain. Host-access case2 preparation has written
-  `prepared-no-matlab`; root owns terminal reconciliation and the subsequent
-  native launch. No successful new-reference canonical motion is claimed.
+  and all failed artifacts remain. Host-access case2 passed full force/startup
+  comparison, but its body run was interrupted after1055.703s when the guard
+  could not replace its live receipt (WinError5/.25s retry budget). No motion
+  output exists. All owned processes are terminal, frozen inputs unchanged and
+  lease released. The Topwater expert owns a bounded publication fix/tests
+  before another full run. No successful canonical motion is claimed.
 - Delivery sourceb078f2fe is independently source-reviewed, **unexecuted**. It
   requires accepted NEW motion, screens old-cache motion inputs by exact bytes
   and selects fresh production field reconstruction. Same operatorf1f788f9,
