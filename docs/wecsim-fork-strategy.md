@@ -1,4 +1,4 @@
-﻿# WEC-Sim fork maintenance strategy
+# WEC-Sim fork maintenance strategy
 
 **Do not create upstream issues or PRs, or contact upstream maintainers, without
 specific, explicit user permission.** Preparing, reviewing or merging changes in
@@ -28,20 +28,20 @@ its actual contribution target, current source and existing issues/PRs; reuse a
 relevant existing issue instead of creating a duplicate. State measured coverage
 and missing compatibility evidence honestly.
 
-The replacement Topwater adapter uses WEC-Sim's EXISTING public `bodyClass(hydroStruct)` spectral
+The adopted Topwater adapter uses WEC-Sim's EXISTING public `bodyClass(hydroStruct)` spectral
 input. WEC-Sim computes excitation and motion. Boat/sea configuration and derived
 coefficient preparation stay in Topwater; the fork needs no Topwater-specific
 coefficient view/accessor or optional excitation-IRF writer extension. Prefer
 existing native interfaces. A proposed capability extension needs a demonstrated
 failure of those interfaces and a reviewed engineering rationale.
 
-Adoption checkpoint,2026-10-27: the default pin remains9952634. Focused standard-
-interface checks passed, and full-case forces passed, but body validation was
-interrupted by an external guard publication failure. The guard repair's nine
-controls passed and have independent acceptance. New-route motion/delivery/default-pin
-qualification is not claimed. Current authority and subsequent evidence belong
-in the [handoff](checkpoint-handoff.md) and
-[expert state](experts/wecsim_expert/current-state.md), not a growing history here.
+Adopted2026-10-27: the default pin is6b774228. The active Topwater adapter matches
+reviewed953; full native force/motion, fresh total-field delivery and actual default-path
+preflight have independent acceptance. The canonical eight files now match
+the accepted private result, with boat/sea unchanged and verified rollback retained.
+Cleanup remains the next authorized phase; the old995 branch stays until its
+archive is verified. Current evidence and phase belong in the
+[handoff](checkpoint-handoff.md) and [expert state](experts/wecsim_expert/current-state.md).
 
 ## Future fixes and promotion
 

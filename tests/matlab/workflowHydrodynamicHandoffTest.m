@@ -112,63 +112,100 @@ verify_rejection(testCase,@() prepare_workflow_hydrodynamics(p),'Native/prepared
 testCase.verifyFalse(isfile('canonical.h5'));
 end
 
-function testSpectralViewOmitsUnusedIRFAndPreservesEveryRawRadiationField(testCase)
+function testStandardSpectralStructPreservesConsumedRadiationAndPhysics(testCase)
 p = testCase.TestData.prepared;
 legacy = prepare_workflow_hydrodynamics(p);
 expected = readBEMIOH5([legacy.file '.h5'],1,0);
-expected.hydro_coeffs.excitation = rmfield(expected.hydro_coeffs.excitation,'impulse_response_fun');
-p.component_view = spectral_view_fixture(p.n);
+delete([legacy.file '.h5']);
+p.spectral_hydro = spectral_struct_fixture(p.n);
 p = rmfield(p,{'excitation_irf_half_width_s','excitation_irf_dt_s', ...
     'excitation_irf_frequency_step_rad_s'});
 [h,nativeHydro] = prepare_workflow_hydrodynamics(p);
+testCase.verifyFalse(isfile('canonical.h5'));
 testCase.verifyFalse(isfield(h,'ex_K'));
-testCase.verifyFalse(isfield(h,'ex_t'));
-testCase.verifyFalse(isfield(h,'ex_w'));
 testCase.verifyFalse(isfield(nativeHydro.hydro_coeffs.excitation,'impulse_response_fun'));
-testCase.verifyEqual(nativeHydro.hydro_coeffs.excitation.component_view,p.component_view);
-actual = nativeHydro;
-actual.hydro_coeffs.excitation = rmfield(actual.hydro_coeffs.excitation,'component_view');
-testCase.verifyEqual(actual,expected);
+testCase.verifyFalse(isfield(nativeHydro.hydro_coeffs.added_mass,'all'));
+testCase.verifyFalse(isfield(nativeHydro.hydro_coeffs.radiation_damping,'all'));
+testCase.verifyFalse(isfield(nativeHydro.simulation_parameters,'T'));
+testCase.verifyEqual(nativeHydro.simulation_parameters.w,p.spectral_hydro.simulation_parameters.w(:)');
+testCase.verifyEqual(nativeHydro.simulation_parameters.direction,p.spectral_hydro.simulation_parameters.direction(:)');
+testCase.verifyEqual(nativeHydro.hydro_coeffs.excitation,p.spectral_hydro.hydro_coeffs.excitation);
+testCase.verifyEqual(nativeHydro.hydro_coeffs.mean_drift,p.spectral_hydro.hydro_coeffs.mean_drift);
+testCase.verifyEqual(nativeHydro.properties.centerGravity,expected.properties.centerGravity);
+testCase.verifyEqual(nativeHydro.properties.centerBuoyancy,expected.properties.centerBuoyancy);
+testCase.verifyEqual(nativeHydro.properties.volume,expected.properties.volume);
+testCase.verifyEqual(nativeHydro.hydro_coeffs.linear_restoring_stiffness,expected.hydro_coeffs.linear_restoring_stiffness);
+testCase.verifyEqual(nativeHydro.hydro_coeffs.added_mass.inf_freq,expected.hydro_coeffs.added_mass.inf_freq);
+testCase.verifyEqual(nativeHydro.hydro_coeffs.radiation_damping.impulse_response_fun, ...
+    expected.hydro_coeffs.radiation_damping.impulse_response_fun);
 testCase.verifyEqual(h.ra_K,legacy.ra_K);
 testCase.verifyEqual(h.ra_t,legacy.ra_t);
 testCase.verifyEqual(h.ra_w,legacy.ra_w);
 testCase.verifyEqual(h.Ainf,legacy.Ainf);
-info = h5info([h.file '.h5'],'/body1/hydro_coeffs/excitation');
-testCase.verifyFalse(any(endsWith({info.Groups.Name},'/impulse_response_fun')));
+testCase.verifyEqual(h.A,legacy.A);
+testCase.verifyEqual(h.B,legacy.B);
+% Exercise this exact zero-boundary transport through ordinary native preparation.
+frequencies = [.05;.1;.15]/(2*pi);
+directions = [0;45];
+phase = [.2 -.3;.7 .1;-.4 .8];
+spectrum = ones(3,1);
+spread = ones(3,2);
+file = fullfile(pwd,'standard-spectrum.mat');
+save(file,'frequencies','directions','phase','spectrum','spread');
+simu = simulationClass;
+simu.dt = .02; simu.endTime = .04; simu.rampTime = 0;
+simu.rho = p.n.rho; simu.gravity = p.n.g; simu.cicEndTime = 10;
+simu.outputDir = fullfile(pwd,'unused-simulation-output');
+simu.simMechanicsFile = fullfile(pwd,'not-loaded.slx');
+simu.setup();
+body = bodyClass(nativeHydro);
+body.mass = p.n.M(1,1); body.inertia = diag(p.n.M(4:6,4:6))';
+body.setDOF(1,0);
+body.loadHydroData(body.hydroStruct,1);
+waves = waveClass('spectrumImportFullDir');
+waves.spectrumFile = file;
+waves.setup(nativeHydro.simulation_parameters.w,'infinite',0,simu.dt, ...
+    simu.maxIt,simu.time,simu.gravity,simu.rho);
+body.checkInputs('off',simu.stateSpace,0,waves.typeNum);
+body.hydroForcePre(waves,simu,1);
+testCase.verifyEqual(waves.omega,frequencies.*2.*pi);
+testCase.verifyEqual(waves.phase,phase);
+testCase.verifyEqual(body.hydroForce.hf1.fAddedMass,legacy.Ainf.*p.n.rho);
+expectedCIC = zeros(numel(simu.cicTime),6,6);
+dimensionalKernel = legacy.ra_K.*p.n.rho;
+for row = 1:6
+    for column = 1:6
+        expectedCIC(:,row,column) = interp1(legacy.ra_t, ...
+            squeeze(dimensionalKernel(row,column,:)),simu.cicTime,'spline');
+    end
+end
+testCase.verifyEqual(body.hydroForce.hf1.irkb,expectedCIC);
 end
 
-function testPartialWriterIRFIsFatalBeforeExistingOutputChanges(testCase)
-h = prepare_workflow_hydrodynamics(testCase.TestData.prepared);
-before = read_file_bytes([h.file '.h5']);
-partial = rmfield(h,'ex_t');
-testCase.verifyError(@() writeBEMIOH5(partial),'WECsim:IncompleteExcitationIRF');
-testCase.verifyEqual(read_file_bytes([h.file '.h5']),before);
-end
-
-function testInvalidSpectralViewFailsBeforeH5(testCase)
+function testInvalidStandardSpectralInputFailsBeforeExport(testCase)
 p = testCase.TestData.prepared;
-view = spectral_view_fixture(p.n);
-p.component_view = view;
-p.component_view.re(1,2,2) = NaN;
+standard = spectral_struct_fixture(p.n);
+p.spectral_hydro = standard;
+p.spectral_hydro.hydro_coeffs.excitation.re(1,2,2) = NaN;
 testCase.verifyError(@() prepare_workflow_hydrodynamics(p),'Topwater:NonfiniteHydrodynamics');
 testCase.verifyFalse(isfile('canonical.h5'));
-p.component_view = view;
-p.component_view.md(1,2,2) = .01;
+p.spectral_hydro = standard;
+p.spectral_hydro.hydro_coeffs.mean_drift(1,2,2) = .01;
 verify_rejection(testCase,@() prepare_workflow_hydrodynamics(p),'mean drift');
-testCase.verifyFalse(isfile('canonical.h5'));
-p.component_view = view;
-p.component_view.re(1,2,1) = p.component_view.re(1,2,1)+.01;
+p.spectral_hydro = standard;
+p.spectral_hydro.hydro_coeffs.excitation.re(1,2,1) = ...
+    p.spectral_hydro.hydro_coeffs.excitation.re(1,2,1)+.01;
 verify_rejection(testCase,@() prepare_workflow_hydrodynamics(p),'zero limit');
 testCase.verifyFalse(isfile('canonical.h5'));
 end
 
-function view = spectral_view_fixture(n)
+function h = spectral_struct_fixture(n)
 omega = [0 .05 .1 .15 .2];
 headings = [-180 0 45 180];
-view = struct('omega_rad_s',omega(:),'headings_deg',headings(:), ...
-    're',zeros(6,numel(headings),numel(omega)), ...
-    'im',zeros(6,numel(headings),numel(omega)), ...
-    'md',zeros(6,numel(headings),numel(omega)));
+h.simulation_parameters = struct('w',omega,'direction',headings);
+h.hydro_coeffs.excitation = struct('re',zeros(6,numel(headings),numel(omega)), ...
+    'im',zeros(6,numel(headings),numel(omega)));
+h.hydro_coeffs.mean_drift = zeros(6,numel(headings),numel(omega));
 for mode = 1:6
     for direction = 1:numel(headings)
         theta = mod(headings(direction)*pi/180,2*pi);
@@ -177,18 +214,11 @@ for mode = 1:6
             if omega(iw) < .1
                 value = n.K(mode,3)+(omega(iw)/.1)^2*(value-n.K(mode,3));
             end
-            view.re(mode,direction,iw) = real(value)/(n.rho*n.g);
-            view.im(mode,direction,iw) = -imag(value)/(n.rho*n.g);
+            h.hydro_coeffs.excitation.re(mode,direction,iw) = real(value)/(n.rho*n.g);
+            h.hydro_coeffs.excitation.im(mode,direction,iw) = -imag(value)/(n.rho*n.g);
         end
     end
 end
-end
-
-function value = read_file_bytes(file)
-fid = fopen(file,'rb');
-assert(fid ~= -1,'Cannot read owned test output');
-cleanup = onCleanup(@() fclose(fid));
-value = fread(fid,Inf,'*uint8');
 end
 
 function [p,native] = coefficient_fixture(folder)

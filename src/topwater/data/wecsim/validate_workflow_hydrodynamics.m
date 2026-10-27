@@ -1,8 +1,8 @@
 function validate_workflow_hydrodynamics(h,stage,rawReal,rawImaginary)
 % Check only arrays consumed by this single-body BEMIO workflow, never water depth.
-if strcmp(stage,'component_view')
-    assert(nargin == 2,'Component-view validation takes no raw excitation arrays');
-    validate_component_view(h);
+if strcmp(stage,'spectral_input')
+    assert(nargin == 2,'Standard struct validation takes no raw excitation arrays');
+    validate_spectral_input(h);
     return
 end
 fields = {'rho','g','w','T','theta','Nf','Nh','A','B', ...
@@ -68,32 +68,35 @@ else
 end
 end
 
-function validate_component_view(view)
-if ~isstruct(view) || ~isscalar(view)
-    error('Topwater:InvalidHydrodynamics','component_view must be one coefficient struct');
+function validate_spectral_input(h)
+if ~isstruct(h) || ~isscalar(h) || ~isfield(h,'simulation_parameters') ...
+        || ~isfield(h,'hydro_coeffs') || ~isfield(h.hydro_coeffs,'excitation') ...
+        || ~isfield(h.hydro_coeffs,'mean_drift') ...
+        || ~all(isfield(h.simulation_parameters,{'w','direction'})) ...
+        || ~all(isfield(h.hydro_coeffs.excitation,{'re','im'}))
+    error('Topwater:InvalidHydrodynamics','Standard spectral hydro struct is incomplete');
 end
-for field = {'omega_rad_s','headings_deg','re','im','md'}
-    name = field{1};
-    if ~isfield(view,name)
-        error('Topwater:InvalidHydrodynamics','component_view is missing %s',name);
+w = h.simulation_parameters.w;
+theta = h.simulation_parameters.direction;
+require_finite(w,'spectral_input.w');
+require_finite(theta,'spectral_input.direction');
+require_grid(w,'spectral_input.w',3,false);
+require_grid(theta,'spectral_input.direction',2,false);
+if w(1) ~= 0 || theta(1) ~= -180 || theta(end) ~= 180
+    error('Topwater:InvalidHydrodynamics','Standard coefficient input needs zero and exact -180/180 boundary nodes');
+end
+shape = [6 numel(theta) numel(w)];
+values = {h.hydro_coeffs.excitation.re,h.hydro_coeffs.excitation.im,h.hydro_coeffs.mean_drift};
+for k = 1:numel(values)
+    value = values{k};
+    require_finite(value,'spectral_input.coefficients');
+    require_shape(value,shape,'spectral_input.coefficients',false);
+    if ~isequal(value(:,1,:),value(:,end,:))
+        error('Topwater:InvalidHydrodynamics','Standard coefficient periodic boundary values differ');
     end
-    require_finite(view.(name),['component_view.' name]);
 end
-require_grid(view.omega_rad_s,'component_view.omega_rad_s',3,false);
-require_grid(view.headings_deg,'component_view.headings_deg',2,false);
-if view.omega_rad_s(1) ~= 0 || view.headings_deg(1) ~= -180 || view.headings_deg(end) ~= 180
-    error('Topwater:InvalidHydrodynamics','component_view needs zero-frequency and exact -180/180 boundary nodes');
-end
-shape = [6 numel(view.headings_deg) numel(view.omega_rad_s)];
-for field = {'re','im','md'}
-    name = field{1};
-    require_shape(view.(name),shape,['component_view.' name],false);
-    if ~isequal(view.(name)(:,1,:),view.(name)(:,end,:))
-        error('Topwater:InvalidHydrodynamics','component_view.%s periodic boundary values differ',name);
-    end
-end
-if any(view.md ~= 0,'all')
-    error('Topwater:InvalidHydrodynamics','component_view mean drift must be explicitly disabled/zero');
+if any(h.hydro_coeffs.mean_drift ~= 0,'all')
+    error('Topwater:InvalidHydrodynamics','Standard spectral input mean drift must be explicitly disabled/zero');
 end
 end
 

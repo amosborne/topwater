@@ -1,452 +1,193 @@
-2026-10-25T21:44:20.242Z INFO solve BEGIN directory=examples\simple-boat duration=60.0 solver=wecsim
-2026-10-25T21:44:20.242Z INFO solve STAGE validate solve inputs and backend
-2026-10-25T21:44:21.428Z INFO solve STAGE solve motion and total surface
-2026-10-25T21:44:23.072Z INFO solve STAGE equilibrium and incoming-train preparation started
-2026-10-25T21:44:25.809Z INFO solve STAGE equilibrium and incoming-train preparation complete elapsed_s=2.7
-2026-10-25T21:44:26.966Z WARNING solve [2:44:26 PM] WARNING  Precomputing tabulation, it may take a few seconds.      
-2026-10-25T21:46:13.406Z INFO solve STAGE coefficient preparation started total=1800 unit=BEM solves
-2026-10-25T21:46:18.433Z INFO solve PROGRESS coefficient preparation completed=264/1800 unit=BEM solves elapsed_s=5.0
-2026-10-25T21:46:21.581Z WARNING solve [2:46:21 PM] WARNING  Mesh resolution for                                      
-2026-10-25T21:46:21.581Z WARNING solve                       RadiationProblem(body=FloatingBody(..., name="boat"),    
-2026-10-25T21:46:21.595Z WARNING solve                       omega=1.500, water_depth=inf, radiating_dof='Surge',     
-2026-10-25T21:46:21.599Z WARNING solve                       rho=1025.0):                                             
-2026-10-25T21:46:21.600Z WARNING solve                       The resolution of the mesh of body FloatingBody(...,     
-2026-10-25T21:46:21.601Z WARNING solve                       name="boat") might be insufficient for omega=1.5.        
-2026-10-25T21:46:21.602Z WARNING solve                       This warning appears because the largest panel of the    
-2026-10-25T21:46:21.603Z WARNING solve                       mesh has radius (3.678 m) > wavelength/8 (3.424 m).      
-2026-10-25T21:46:23.460Z INFO solve PROGRESS coefficient preparation completed=520/1800 unit=BEM solves elapsed_s=10.0
-2026-10-25T21:46:28.466Z INFO solve PROGRESS coefficient preparation completed=768/1800 unit=BEM solves elapsed_s=15.1
-2026-10-25T21:46:33.484Z INFO solve PROGRESS coefficient preparation completed=868/1800 unit=BEM solves elapsed_s=20.1
-2026-10-25T21:46:38.496Z INFO solve PROGRESS coefficient preparation completed=962/1800 unit=BEM solves elapsed_s=25.1
-2026-10-25T21:46:43.521Z INFO solve PROGRESS coefficient preparation completed=1031/1800 unit=BEM solves elapsed_s=30.1
-2026-10-25T21:46:48.539Z INFO solve PROGRESS coefficient preparation completed=1093/1800 unit=BEM solves elapsed_s=35.1
-2026-10-25T21:46:53.631Z INFO solve PROGRESS coefficient preparation completed=1163/1800 unit=BEM solves elapsed_s=40.2
-2026-10-25T21:46:55.234Z WARNING solve [2:46:55 PM] WARNING  Irregular frequencies for                                
-2026-10-25T21:46:55.234Z WARNING solve                       RadiationProblem(body=FloatingBody(..., name="boat"),    
-2026-10-25T21:46:55.234Z WARNING solve                       omega=5.300, water_depth=inf, radiating_dof='Surge',     
-2026-10-25T21:46:55.234Z WARNING solve                       rho=1025.0):                                             
-2026-10-25T21:46:55.234Z WARNING solve                       The body FloatingBody(..., name="boat") might display    
-2026-10-25T21:46:55.234Z WARNING solve                       irregular frequencies for omega=5.3.                     
-2026-10-25T21:46:55.234Z WARNING solve                       Setting a lid for the floating body is recommended.      
-2026-10-25T21:46:58.655Z INFO solve PROGRESS coefficient preparation completed=1270/1800 unit=BEM solves elapsed_s=45.2
-2026-10-25T21:47:03.675Z INFO solve PROGRESS coefficient preparation completed=1470/1800 unit=BEM solves elapsed_s=50.3
-2026-10-25T21:47:08.652Z WARNING solve [2:47:08 PM] WARNING  Exporting problem in already existing directory:         
-2026-10-25T21:47:08.652Z WARNING solve                       C:\Users\alex\AppData\Local\Temp\topwater-wecsim-fp0ue3jr
-2026-10-25T21:47:08.652Z WARNING solve                       \hydrodynamics                                           
-2026-10-25T21:47:08.652Z INFO solve                                    You might be overwriting existing files!    
-2026-10-25T21:47:08.664Z INFO solve STAGE coefficient preparation complete completed=1800/1800 unit=BEM solves elapsed_s=55.2
-2026-10-25T21:47:08.664Z WARNING solve Capytaine: Mesh resolution warning applies to 1374 solves in build_hydrodynamics; first warning retained. These limitations remain unqualified.
-2026-10-25T21:47:08.664Z WARNING solve Capytaine: Irregular frequencies warning applies to 612 solves in build_hydrodynamics; first warning retained. These limitations remain unqualified.
-2026-10-25T21:47:08.664Z INFO solve STAGE prepared excitation and startup assessment started
-2026-10-25T21:48:04.465Z INFO solve STAGE prepared excitation and startup assessment complete elapsed_s=55.8
-2026-10-25T21:48:04.465Z INFO solve STAGE native MATLAB preparation, integration and audits started
-2026-10-25T21:49:02.310Z INFO solve Reading Capytaine netcdf output file...
-2026-10-25T21:49:02.313Z INFO solve Calculating radiation IRFs...
-2026-10-25T21:49:02.313Z INFO solve Calculating excitation IRFs...
-2026-10-25T21:49:02.313Z INFO solve Writing data in h5 format...
-2026-10-25T21:49:02.313Z INFO solve WEC-Sim: An open-source code for simulating wave energy converters
-2026-10-25T21:49:02.313Z INFO solve Version: 7.1.0
-2026-10-25T21:49:02.313Z INFO solve Initializing the Simulation Class...
-2026-10-25T21:49:02.313Z INFO solve 	Case Dir: C:\Users\alex\AppData\Local\Temp\topwater-wecsim-fp0ue3jr\body 
-2026-10-25T21:49:02.313Z INFO solve WEC-Sim: An open-source code for simulating wave energy converters
-2026-10-25T21:49:02.313Z INFO solve Version: 7.1.0
-2026-10-25T21:49:02.313Z INFO solve Initializing the Simulation Class...
-2026-10-25T21:49:02.313Z INFO solve 	Case Dir: C:\Users\alex\AppData\Local\Temp\topwater-wecsim-fp0ue3jr\body 
-2026-10-25T21:49:02.313Z INFO solve WEC-Sim Pre-processing ...   
-2026-10-25T21:49:02.313Z INFO solve 	Infinite water depth specified in BEM and "waves.waterDepth" not specified in input file.
-2026-10-25T21:49:02.313Z INFO solve Set water depth to 200m for visualization.
-2026-10-25T21:49:02.313Z INFO solve Elapsed time is 0.846320 seconds.
-2026-10-25T21:49:02.313Z INFO solve WEC-Sim Simulation Settings:
-2026-10-25T21:49:02.313Z INFO solve 	Start Time                     (sec) = 0
-2026-10-25T21:49:02.313Z INFO solve 	End Time                       (sec) = 60
-2026-10-25T21:49:02.313Z INFO solve 	Time Step Size                 (sec) = 0.02
-2026-10-25T21:49:02.313Z INFO solve 	Ramp Function Time             (sec) = 0
-2026-10-25T21:49:02.313Z INFO solve 	Convolution Integral Interval  (sec) = 10
-2026-10-25T21:49:02.313Z INFO solve 	 Number of Time Steps     = 3000 
-2026-10-25T21:49:02.313Z INFO solve Wave Environment: 
-2026-10-25T21:49:02.313Z INFO solve 	Wave Type                           = Waves with imported wave elevation time-history
-2026-10-25T21:49:02.313Z INFO solve 	Wave Elevation Time-Series File    	= C:\Users\alex\AppData\Local\Temp\topwater-wecsim-fp0ue3jr\body\compatibility-elevation.txt  
-2026-10-25T21:49:02.313Z INFO solve List of Body:
-2026-10-25T21:49:02.313Z INFO solve Number of Hydro Bodies = 1 
-2026-10-25T21:49:02.313Z INFO solve 	***** Body Number 1, Name: boat *****
-2026-10-25T21:49:02.313Z INFO solve 	Body CG                          (m) = [0,0,0.156606]
-2026-10-25T21:49:02.313Z INFO solve 	Body Mass                       (kg) = 2500 
-2026-10-25T21:49:02.313Z INFO solve 	Body Moments of Inertia       (kgm2) = [1354.85,9684.12,10642.3]
-2026-10-25T21:49:02.313Z INFO solve 	Body Products of Inertia      (kgm2) = [-1.23993E-16,-70.0352,2.58375E-15]
-2026-10-25T21:49:02.313Z INFO solve List of PTO(s): No PTO in the system
-2026-10-25T21:49:02.315Z INFO solve List of Constraint(s): Number of Constraints = 1 
-2026-10-25T21:49:02.315Z INFO solve 	***** Constraint Name: Free6DOF *****
-2026-10-25T21:49:02.315Z INFO solve Elapsed time is 0.197582 seconds.
-2026-10-25T21:49:02.315Z INFO solve Simulating the WEC device defined in the SimMechanics model C:\Users\alex\AppData\Local\Temp\topwater-wecsim-fp0ue3jr\body\topwater_55b4192771ac.slx...
-2026-10-25T21:49:02.364Z INFO solve STAGE native MATLAB preparation, integration and audits complete elapsed_s=57.9
-2026-10-25T21:49:02.364Z INFO solve STAGE calm-restoring diagnostics started
-2026-10-25T21:49:03.361Z WARNING solve warning [calm-restoring-moment] at 9.68 s: exact calm-water moment differs from linear restoring by 10.2% (10% reporting threshold; not a dynamic error estimate)
-2026-10-25T21:49:03.808Z WARNING solve warning [calm-restoring-force] at 16.66 s: exact calm-water force differs from linear restoring by 10% (10% reporting threshold; not a dynamic error estimate)
-2026-10-25T21:49:03.976Z WARNING solve warning [calm-restoring-unavailable] at 23.08 s: opening rim reaches the water surface (clearance -0.00153448 m); flat-reference geometry cannot assess restoring here
-2026-10-25T21:49:06.412Z WARNING solve warning summary [calm-restoring-moment]: 2013 samples, first 9.68 s, last 60 s, peak departure 183%
-2026-10-25T21:49:06.412Z WARNING solve warning summary [calm-restoring-force]: 1170 samples, first 16.66 s, last 60 s, peak departure 132%
-2026-10-25T21:49:06.412Z WARNING solve warning summary [calm-restoring-unavailable]: 338 samples, first 23.08 s, last 59.7 s
-2026-10-25T21:49:06.412Z INFO solve STAGE calm-restoring diagnostics complete elapsed_s=4.0
-2026-10-25T21:49:07.446Z INFO solve Surface: evaluating total linear field at 5899 exterior points; 384 target points use an explicit 0.025 m disturbance trace.
-2026-10-25T21:49:07.457Z WARNING solve Surface numerical approximation: the selected causal finite-band projection showed 42.7 mm maximum / 12.5 mm RMS difference from a signed-lag diagnostic at tested near/far points. That noncausal diagnostic is not a reference solution or an accuracy bound; full-complex near-field transfer recovery has not passed.
-2026-10-25T21:49:07.488Z INFO solve STAGE radiation transfers started total=960 unit=frequencies
-2026-10-25T21:49:12.535Z INFO solve PROGRESS radiation transfers completed=15/960 unit=frequencies elapsed_s=5.1
-2026-10-25T21:49:17.834Z INFO solve PROGRESS radiation transfers completed=29/960 unit=frequencies elapsed_s=10.3
-2026-10-25T21:49:22.900Z INFO solve PROGRESS radiation transfers completed=47/960 unit=frequencies elapsed_s=15.4
-2026-10-25T21:49:25.641Z WARNING solve [2:49:25 PM] WARNING  Mesh resolution for                                      
-2026-10-25T21:49:25.641Z WARNING solve                       RadiationProblem(body=FloatingBody(..., name="boat"),    
-2026-10-25T21:49:25.641Z WARNING solve                       omega=1.450, water_depth=inf, radiating_dof='Surge',     
-2026-10-25T21:49:25.641Z WARNING solve                       rho=1025.0):                                             
-2026-10-25T21:49:25.641Z WARNING solve                       The resolution of the mesh of body FloatingBody(...,     
-2026-10-25T21:49:25.641Z WARNING solve                       name="boat") might be insufficient for                   
-2026-10-25T21:49:25.641Z WARNING solve                       omega=1.4500000000000002.                                
-2026-10-25T21:49:25.641Z WARNING solve                       This warning appears because the largest panel of the    
-2026-10-25T21:49:25.641Z WARNING solve                       mesh has radius (3.678 m) > wavelength/8 (3.665 m).      
-2026-10-25T21:49:28.146Z INFO solve PROGRESS radiation transfers completed=65/960 unit=frequencies elapsed_s=20.7
-2026-10-25T21:49:33.272Z INFO solve PROGRESS radiation transfers completed=86/960 unit=frequencies elapsed_s=25.8
-2026-10-25T21:49:38.633Z INFO solve PROGRESS radiation transfers completed=103/960 unit=frequencies elapsed_s=31.1
-2026-10-25T21:49:43.641Z INFO solve PROGRESS radiation transfers completed=126/960 unit=frequencies elapsed_s=36.2
-2026-10-25T21:49:48.918Z INFO solve PROGRESS radiation transfers completed=143/960 unit=frequencies elapsed_s=41.4
-2026-10-25T21:49:54.247Z INFO solve PROGRESS radiation transfers completed=158/960 unit=frequencies elapsed_s=46.8
-2026-10-25T21:49:59.477Z INFO solve PROGRESS radiation transfers completed=175/960 unit=frequencies elapsed_s=52.0
-2026-10-25T21:50:04.663Z INFO solve PROGRESS radiation transfers completed=192/960 unit=frequencies elapsed_s=57.2
-2026-10-25T21:50:09.705Z INFO solve PROGRESS radiation transfers completed=209/960 unit=frequencies elapsed_s=62.2
-2026-10-25T21:50:09.717Z WARNING solve [2:50:09 PM] WARNING  Irregular frequencies for                                
-2026-10-25T21:50:09.717Z WARNING solve                       RadiationProblem(body=FloatingBody(..., name="boat"),    
-2026-10-25T21:50:09.718Z WARNING solve                       omega=5.250, water_depth=inf, radiating_dof='Surge',     
-2026-10-25T21:50:09.718Z WARNING solve                       rho=1025.0):                                             
-2026-10-25T21:50:09.718Z WARNING solve                       The body FloatingBody(..., name="boat") might display    
-2026-10-25T21:50:09.718Z WARNING solve                       irregular frequencies for omega=5.25.                    
-2026-10-25T21:50:09.718Z WARNING solve                       Setting a lid for the floating body is recommended.      
-2026-10-25T21:50:14.781Z INFO solve PROGRESS radiation transfers completed=224/960 unit=frequencies elapsed_s=67.3
-2026-10-25T21:50:19.785Z INFO solve PROGRESS radiation transfers completed=238/960 unit=frequencies elapsed_s=72.3
-2026-10-25T21:50:24.834Z INFO solve PROGRESS radiation transfers completed=255/960 unit=frequencies elapsed_s=77.3
-2026-10-25T21:50:29.890Z INFO solve PROGRESS radiation transfers completed=272/960 unit=frequencies elapsed_s=82.4
-2026-10-25T21:50:35.066Z INFO solve PROGRESS radiation transfers completed=293/960 unit=frequencies elapsed_s=87.6
-2026-10-25T21:50:40.205Z INFO solve PROGRESS radiation transfers completed=312/960 unit=frequencies elapsed_s=92.7
-2026-10-25T21:50:45.534Z INFO solve PROGRESS radiation transfers completed=329/960 unit=frequencies elapsed_s=98.0
-2026-10-25T21:50:50.598Z INFO solve PROGRESS radiation transfers completed=346/960 unit=frequencies elapsed_s=103.1
-2026-10-25T21:50:55.957Z INFO solve PROGRESS radiation transfers completed=362/960 unit=frequencies elapsed_s=108.5
-2026-10-25T21:51:01.674Z INFO solve PROGRESS radiation transfers completed=378/960 unit=frequencies elapsed_s=114.2
-2026-10-25T21:51:06.862Z INFO solve PROGRESS radiation transfers completed=394/960 unit=frequencies elapsed_s=119.4
-2026-10-25T21:51:11.886Z INFO solve PROGRESS radiation transfers completed=410/960 unit=frequencies elapsed_s=124.4
-2026-10-25T21:51:17.067Z INFO solve PROGRESS radiation transfers completed=424/960 unit=frequencies elapsed_s=129.6
-2026-10-25T21:51:22.467Z INFO solve PROGRESS radiation transfers completed=435/960 unit=frequencies elapsed_s=135.0
-2026-10-25T21:51:27.584Z INFO solve PROGRESS radiation transfers completed=446/960 unit=frequencies elapsed_s=140.1
-2026-10-25T21:51:32.790Z INFO solve PROGRESS radiation transfers completed=459/960 unit=frequencies elapsed_s=145.3
-2026-10-25T21:51:37.963Z INFO solve PROGRESS radiation transfers completed=474/960 unit=frequencies elapsed_s=150.5
-2026-10-25T21:51:43.195Z INFO solve PROGRESS radiation transfers completed=489/960 unit=frequencies elapsed_s=155.7
-2026-10-25T21:51:49.374Z INFO solve PROGRESS radiation transfers completed=497/960 unit=frequencies elapsed_s=161.9
-2026-10-25T21:51:54.711Z INFO solve PROGRESS radiation transfers completed=503/960 unit=frequencies elapsed_s=167.2
-2026-10-25T21:52:00.136Z INFO solve PROGRESS radiation transfers completed=515/960 unit=frequencies elapsed_s=172.7
-2026-10-25T21:52:05.328Z INFO solve PROGRESS radiation transfers completed=524/960 unit=frequencies elapsed_s=177.8
-2026-10-25T21:52:10.720Z INFO solve PROGRESS radiation transfers completed=538/960 unit=frequencies elapsed_s=183.2
-2026-10-25T21:52:15.915Z INFO solve PROGRESS radiation transfers completed=553/960 unit=frequencies elapsed_s=188.4
-2026-10-25T21:52:21.119Z INFO solve PROGRESS radiation transfers completed=569/960 unit=frequencies elapsed_s=193.6
-2026-10-25T21:52:26.261Z INFO solve PROGRESS radiation transfers completed=585/960 unit=frequencies elapsed_s=198.8
-2026-10-25T21:52:31.506Z INFO solve PROGRESS radiation transfers completed=602/960 unit=frequencies elapsed_s=204.0
-2026-10-25T21:52:36.586Z INFO solve PROGRESS radiation transfers completed=619/960 unit=frequencies elapsed_s=209.1
-2026-10-25T21:52:41.685Z INFO solve PROGRESS radiation transfers completed=630/960 unit=frequencies elapsed_s=214.2
-2026-10-25T21:52:47.420Z INFO solve PROGRESS radiation transfers completed=637/960 unit=frequencies elapsed_s=219.9
-2026-10-25T21:52:54.020Z INFO solve PROGRESS radiation transfers completed=644/960 unit=frequencies elapsed_s=226.5
-2026-10-25T21:52:59.156Z INFO solve PROGRESS radiation transfers completed=648/960 unit=frequencies elapsed_s=231.7
-2026-10-25T21:53:04.246Z INFO solve PROGRESS radiation transfers completed=665/960 unit=frequencies elapsed_s=236.8
-2026-10-25T21:53:09.436Z INFO solve PROGRESS radiation transfers completed=689/960 unit=frequencies elapsed_s=241.9
-2026-10-25T21:53:14.542Z INFO solve PROGRESS radiation transfers completed=711/960 unit=frequencies elapsed_s=247.1
-2026-10-25T21:53:19.643Z INFO solve PROGRESS radiation transfers completed=715/960 unit=frequencies elapsed_s=252.2
-2026-10-25T21:53:25.361Z INFO solve PROGRESS radiation transfers completed=722/960 unit=frequencies elapsed_s=257.9
-2026-10-25T21:53:30.513Z INFO solve PROGRESS radiation transfers completed=735/960 unit=frequencies elapsed_s=263.0
-2026-10-25T21:53:36.576Z INFO solve PROGRESS radiation transfers completed=752/960 unit=frequencies elapsed_s=269.1
-2026-10-25T21:53:41.723Z INFO solve PROGRESS radiation transfers completed=772/960 unit=frequencies elapsed_s=274.2
-2026-10-25T21:53:46.747Z INFO solve PROGRESS radiation transfers completed=795/960 unit=frequencies elapsed_s=279.3
-2026-10-25T21:53:51.791Z INFO solve PROGRESS radiation transfers completed=820/960 unit=frequencies elapsed_s=284.3
-2026-10-25T21:53:57.001Z INFO solve PROGRESS radiation transfers completed=843/960 unit=frequencies elapsed_s=289.5
-2026-10-25T21:54:02.298Z INFO solve PROGRESS radiation transfers completed=870/960 unit=frequencies elapsed_s=294.8
-2026-10-25T21:54:07.307Z INFO solve PROGRESS radiation transfers completed=888/960 unit=frequencies elapsed_s=299.8
-2026-10-25T21:54:12.706Z INFO solve PROGRESS radiation transfers completed=900/960 unit=frequencies elapsed_s=305.2
-2026-10-25T21:54:17.859Z INFO solve PROGRESS radiation transfers completed=918/960 unit=frequencies elapsed_s=310.4
-2026-10-25T21:54:23.048Z INFO solve PROGRESS radiation transfers completed=935/960 unit=frequencies elapsed_s=315.6
-2026-10-25T21:54:28.348Z INFO solve PROGRESS radiation transfers completed=952/960 unit=frequencies elapsed_s=320.9
-2026-10-25T21:54:33.948Z INFO solve PROGRESS radiation transfers completed=958/960 unit=frequencies elapsed_s=326.5
-2026-10-25T21:54:37.287Z INFO solve STAGE radiation transfers complete completed=960/960 unit=frequencies elapsed_s=329.8
-2026-10-25T21:54:37.287Z WARNING solve Capytaine: Mesh resolution warning applies to 5010 solves in radiation_velocity_transfer; first warning retained. These limitations remain unqualified.
-2026-10-25T21:54:37.287Z WARNING solve Capytaine: Irregular frequencies warning applies to 4242 solves in radiation_velocity_transfer; first warning retained. These limitations remain unqualified.
-2026-10-25T21:54:37.288Z INFO solve STAGE radiation convolution started total=5899 unit=field points
-2026-10-25T21:54:42.379Z INFO solve PROGRESS radiation convolution completed=384/5899 unit=field points elapsed_s=5.1
-2026-10-25T21:54:48.071Z INFO solve PROGRESS radiation convolution completed=768/5899 unit=field points elapsed_s=10.8
-2026-10-25T21:54:55.979Z INFO solve PROGRESS radiation convolution completed=1152/5899 unit=field points elapsed_s=18.7
-2026-10-25T21:55:01.267Z INFO solve PROGRESS radiation convolution completed=1664/5899 unit=field points elapsed_s=24.0
-2026-10-25T21:55:06.815Z INFO solve PROGRESS radiation convolution completed=2944/5899 unit=field points elapsed_s=29.5
-2026-10-25T21:55:12.291Z INFO solve PROGRESS radiation convolution completed=3712/5899 unit=field points elapsed_s=35.0
-2026-10-25T21:55:17.479Z INFO solve PROGRESS radiation convolution completed=4736/5899 unit=field points elapsed_s=40.2
-2026-10-25T21:55:22.502Z INFO solve STAGE radiation convolution complete completed=5899/5899 unit=field points elapsed_s=45.2
-2026-10-25T21:55:22.549Z INFO solve STAGE diffraction transfers started total=671 unit=positive sidebands
-2026-10-25T21:55:27.824Z INFO solve PROGRESS diffraction transfers completed=12/671 unit=positive sidebands elapsed_s=5.3
-2026-10-25T21:55:33.019Z INFO solve PROGRESS diffraction transfers completed=28/671 unit=positive sidebands elapsed_s=10.5
-2026-10-25T21:55:38.069Z INFO solve PROGRESS diffraction transfers completed=44/671 unit=positive sidebands elapsed_s=15.5
-2026-10-25T21:55:43.291Z INFO solve PROGRESS diffraction transfers completed=60/671 unit=positive sidebands elapsed_s=20.7
-2026-10-25T21:55:48.814Z INFO solve PROGRESS diffraction transfers completed=75/671 unit=positive sidebands elapsed_s=26.3
-2026-10-25T21:55:54.041Z INFO solve PROGRESS diffraction transfers completed=86/671 unit=positive sidebands elapsed_s=31.5
-2026-10-25T21:55:59.055Z INFO solve PROGRESS diffraction transfers completed=94/671 unit=positive sidebands elapsed_s=36.5
-2026-10-25T21:56:04.610Z INFO solve PROGRESS diffraction transfers completed=103/671 unit=positive sidebands elapsed_s=42.1
-2026-10-25T21:56:09.782Z INFO solve PROGRESS diffraction transfers completed=109/671 unit=positive sidebands elapsed_s=47.2
-2026-10-25T21:56:14.837Z INFO solve PROGRESS diffraction transfers completed=118/671 unit=positive sidebands elapsed_s=52.3
-2026-10-25T21:56:20.190Z INFO solve PROGRESS diffraction transfers completed=129/671 unit=positive sidebands elapsed_s=57.6
-2026-10-25T21:56:25.316Z INFO solve PROGRESS diffraction transfers completed=140/671 unit=positive sidebands elapsed_s=62.8
-2026-10-25T21:56:30.362Z INFO solve PROGRESS diffraction transfers completed=150/671 unit=positive sidebands elapsed_s=67.8
-2026-10-25T21:56:35.544Z INFO solve PROGRESS diffraction transfers completed=161/671 unit=positive sidebands elapsed_s=73.0
-2026-10-25T21:56:40.751Z INFO solve PROGRESS diffraction transfers completed=172/671 unit=positive sidebands elapsed_s=78.2
-2026-10-25T21:56:46.106Z INFO solve PROGRESS diffraction transfers completed=184/671 unit=positive sidebands elapsed_s=83.6
-2026-10-25T21:56:51.146Z INFO solve PROGRESS diffraction transfers completed=200/671 unit=positive sidebands elapsed_s=88.6
-2026-10-25T21:56:56.183Z INFO solve PROGRESS diffraction transfers completed=226/671 unit=positive sidebands elapsed_s=93.6
-2026-10-25T21:57:01.364Z INFO solve PROGRESS diffraction transfers completed=252/671 unit=positive sidebands elapsed_s=98.8
-2026-10-25T21:57:06.518Z INFO solve PROGRESS diffraction transfers completed=276/671 unit=positive sidebands elapsed_s=104.0
-2026-10-25T21:57:10.853Z WARNING solve [2:57:10 PM] WARNING  Mesh resolution for                                      
-2026-10-25T21:57:10.853Z WARNING solve                       LinearPotentialFlowProblem(body=FloatingBody(...,        
-2026-10-25T21:57:10.854Z WARNING solve                       name="boat"), omega=1.450, water_depth=inf, rho=1025.0): 
-2026-10-25T21:57:10.854Z WARNING solve                       The resolution of the mesh of body FloatingBody(...,     
-2026-10-25T21:57:10.854Z WARNING solve                       name="boat") might be insufficient for omega=1.45.       
-2026-10-25T21:57:10.854Z WARNING solve                       This warning appears because the largest panel of the    
-2026-10-25T21:57:10.854Z WARNING solve                       mesh has radius (3.678 m) > wavelength/8 (3.665 m).      
-2026-10-25T21:57:11.614Z INFO solve PROGRESS diffraction transfers completed=292/671 unit=positive sidebands elapsed_s=109.1
-2026-10-25T21:57:16.631Z INFO solve PROGRESS diffraction transfers completed=307/671 unit=positive sidebands elapsed_s=114.1
-2026-10-25T21:57:21.690Z INFO solve PROGRESS diffraction transfers completed=322/671 unit=positive sidebands elapsed_s=119.1
-2026-10-25T21:57:26.844Z INFO solve PROGRESS diffraction transfers completed=335/671 unit=positive sidebands elapsed_s=124.3
-2026-10-25T21:57:32.039Z INFO solve PROGRESS diffraction transfers completed=348/671 unit=positive sidebands elapsed_s=129.5
-2026-10-25T21:57:37.281Z INFO solve PROGRESS diffraction transfers completed=362/671 unit=positive sidebands elapsed_s=134.7
-2026-10-25T21:57:42.485Z INFO solve PROGRESS diffraction transfers completed=377/671 unit=positive sidebands elapsed_s=139.9
-2026-10-25T21:57:47.782Z INFO solve PROGRESS diffraction transfers completed=392/671 unit=positive sidebands elapsed_s=145.2
-2026-10-25T21:57:52.855Z INFO solve PROGRESS diffraction transfers completed=406/671 unit=positive sidebands elapsed_s=150.3
-2026-10-25T21:57:58.279Z INFO solve PROGRESS diffraction transfers completed=422/671 unit=positive sidebands elapsed_s=155.7
-2026-10-25T21:58:03.499Z INFO solve PROGRESS diffraction transfers completed=441/671 unit=positive sidebands elapsed_s=161.0
-2026-10-25T21:58:08.597Z INFO solve PROGRESS diffraction transfers completed=462/671 unit=positive sidebands elapsed_s=166.0
-2026-10-25T21:58:13.605Z INFO solve PROGRESS diffraction transfers completed=480/671 unit=positive sidebands elapsed_s=171.1
-2026-10-25T21:58:18.793Z INFO solve PROGRESS diffraction transfers completed=498/671 unit=positive sidebands elapsed_s=176.2
-2026-10-25T21:58:23.888Z INFO solve PROGRESS diffraction transfers completed=514/671 unit=positive sidebands elapsed_s=181.3
-2026-10-25T21:58:28.955Z INFO solve PROGRESS diffraction transfers completed=527/671 unit=positive sidebands elapsed_s=186.4
-2026-10-25T21:58:34.405Z INFO solve PROGRESS diffraction transfers completed=536/671 unit=positive sidebands elapsed_s=191.9
-2026-10-25T21:58:39.476Z INFO solve PROGRESS diffraction transfers completed=549/671 unit=positive sidebands elapsed_s=196.9
-2026-10-25T21:58:44.734Z INFO solve PROGRESS diffraction transfers completed=562/671 unit=positive sidebands elapsed_s=202.2
-2026-10-25T21:58:50.037Z INFO solve PROGRESS diffraction transfers completed=574/671 unit=positive sidebands elapsed_s=207.5
-2026-10-25T21:58:55.111Z INFO solve PROGRESS diffraction transfers completed=588/671 unit=positive sidebands elapsed_s=212.6
-2026-10-25T21:59:00.434Z INFO solve PROGRESS diffraction transfers completed=603/671 unit=positive sidebands elapsed_s=217.9
-2026-10-25T21:59:05.604Z INFO solve PROGRESS diffraction transfers completed=618/671 unit=positive sidebands elapsed_s=223.1
-2026-10-25T21:59:10.696Z INFO solve PROGRESS diffraction transfers completed=633/671 unit=positive sidebands elapsed_s=228.1
-2026-10-25T21:59:15.748Z INFO solve PROGRESS diffraction transfers completed=648/671 unit=positive sidebands elapsed_s=233.2
-2026-10-25T21:59:20.956Z INFO solve PROGRESS diffraction transfers completed=664/671 unit=positive sidebands elapsed_s=238.4
-2026-10-25T21:59:23.291Z INFO solve STAGE diffraction transfers complete completed=671/671 unit=positive sidebands elapsed_s=240.7
-2026-10-25T21:59:23.293Z WARNING solve Capytaine: Mesh resolution warning applies to 382 solves in combined_diffraction; first warning retained. These limitations remain unqualified.
-2026-10-25T21:59:23.293Z INFO solve STAGE field synthesis and load comparison started total=1 unit=completed field
-2026-10-25T22:03:49.615Z WARNING solve WARNING [field-load-consistency]: exact-sideband field/prepared-body load maximum differences force_N=[20.7354, 18.0728, 47.5506] moment_Nm=[21.6547, 90.0598, 16.2102]; the accepted body loads are unchanged.
-2026-10-25T22:03:49.615Z INFO solve STAGE field synthesis and load comparison complete completed=1/1 unit=completed field elapsed_s=266.3
-2026-10-25T22:03:51.437Z INFO solve STAGE surface geometry and diagnostics started total=751 unit=frames
-2026-10-25T22:03:56.526Z INFO solve PROGRESS surface geometry and diagnostics completed=3/751 unit=frames elapsed_s=5.1
-2026-10-25T22:04:03.430Z INFO solve PROGRESS surface geometry and diagnostics completed=7/751 unit=frames elapsed_s=12.0
-2026-10-25T22:04:09.379Z INFO solve PROGRESS surface geometry and diagnostics completed=12/751 unit=frames elapsed_s=17.9
-2026-10-25T22:04:14.711Z INFO solve PROGRESS surface geometry and diagnostics completed=16/751 unit=frames elapsed_s=23.3
-2026-10-25T22:04:21.399Z INFO solve PROGRESS surface geometry and diagnostics completed=19/751 unit=frames elapsed_s=30.0
-2026-10-25T22:04:27.577Z INFO solve PROGRESS surface geometry and diagnostics completed=21/751 unit=frames elapsed_s=36.1
-2026-10-25T22:04:33.961Z INFO solve PROGRESS surface geometry and diagnostics completed=23/751 unit=frames elapsed_s=42.5
-2026-10-25T22:04:41.888Z INFO solve PROGRESS surface geometry and diagnostics completed=25/751 unit=frames elapsed_s=50.4
-2026-10-25T22:04:47.410Z INFO solve PROGRESS surface geometry and diagnostics completed=27/751 unit=frames elapsed_s=56.0
-2026-10-25T22:04:52.741Z INFO solve PROGRESS surface geometry and diagnostics completed=32/751 unit=frames elapsed_s=61.3
-2026-10-25T22:04:57.974Z INFO solve PROGRESS surface geometry and diagnostics completed=36/751 unit=frames elapsed_s=66.5
-2026-10-25T22:05:03.496Z INFO solve PROGRESS surface geometry and diagnostics completed=41/751 unit=frames elapsed_s=72.1
-2026-10-25T22:05:09.874Z INFO solve PROGRESS surface geometry and diagnostics completed=45/751 unit=frames elapsed_s=78.4
-2026-10-25T22:05:15.369Z INFO solve PROGRESS surface geometry and diagnostics completed=47/751 unit=frames elapsed_s=83.9
-2026-10-25T22:05:21.267Z INFO solve PROGRESS surface geometry and diagnostics completed=51/751 unit=frames elapsed_s=89.8
-2026-10-25T22:05:27.936Z INFO solve PROGRESS surface geometry and diagnostics completed=55/751 unit=frames elapsed_s=96.5
-2026-10-25T22:05:33.767Z INFO solve PROGRESS surface geometry and diagnostics completed=60/751 unit=frames elapsed_s=102.3
-2026-10-25T22:05:39.533Z INFO solve PROGRESS surface geometry and diagnostics completed=65/751 unit=frames elapsed_s=108.1
-2026-10-25T22:05:45.089Z INFO solve PROGRESS surface geometry and diagnostics completed=70/751 unit=frames elapsed_s=113.7
-2026-10-25T22:05:50.834Z INFO solve PROGRESS surface geometry and diagnostics completed=75/751 unit=frames elapsed_s=119.4
-2026-10-25T22:05:56.256Z INFO solve PROGRESS surface geometry and diagnostics completed=80/751 unit=frames elapsed_s=124.8
-2026-10-25T22:06:01.902Z INFO solve PROGRESS surface geometry and diagnostics completed=85/751 unit=frames elapsed_s=130.5
-2026-10-25T22:06:07.708Z INFO solve PROGRESS surface geometry and diagnostics completed=90/751 unit=frames elapsed_s=136.3
-2026-10-25T22:06:12.886Z INFO solve PROGRESS surface geometry and diagnostics completed=95/751 unit=frames elapsed_s=141.4
-2026-10-25T22:06:18.774Z INFO solve PROGRESS surface geometry and diagnostics completed=100/751 unit=frames elapsed_s=147.3
-2026-10-25T22:06:24.427Z INFO solve PROGRESS surface geometry and diagnostics completed=105/751 unit=frames elapsed_s=153.0
-2026-10-25T22:06:30.236Z INFO solve PROGRESS surface geometry and diagnostics completed=109/751 unit=frames elapsed_s=158.8
-2026-10-25T22:06:35.339Z INFO solve PROGRESS surface geometry and diagnostics completed=114/751 unit=frames elapsed_s=163.9
-2026-10-25T22:06:41.296Z INFO solve PROGRESS surface geometry and diagnostics completed=119/751 unit=frames elapsed_s=169.9
-2026-10-25T22:06:46.716Z INFO solve PROGRESS surface geometry and diagnostics completed=123/751 unit=frames elapsed_s=175.3
-2026-10-25T22:06:52.196Z INFO solve PROGRESS surface geometry and diagnostics completed=127/751 unit=frames elapsed_s=180.8
-2026-10-25T22:06:57.706Z INFO solve PROGRESS surface geometry and diagnostics completed=130/751 unit=frames elapsed_s=186.3
-2026-10-25T22:07:03.638Z INFO solve PROGRESS surface geometry and diagnostics completed=134/751 unit=frames elapsed_s=192.2
-2026-10-25T22:07:09.261Z INFO solve PROGRESS surface geometry and diagnostics completed=138/751 unit=frames elapsed_s=197.8
-2026-10-25T22:07:14.514Z INFO solve PROGRESS surface geometry and diagnostics completed=142/751 unit=frames elapsed_s=203.1
-2026-10-25T22:07:20.291Z INFO solve PROGRESS surface geometry and diagnostics completed=147/751 unit=frames elapsed_s=208.9
-2026-10-25T22:07:26.114Z INFO solve PROGRESS surface geometry and diagnostics completed=152/751 unit=frames elapsed_s=214.7
-2026-10-25T22:07:31.789Z INFO solve PROGRESS surface geometry and diagnostics completed=157/751 unit=frames elapsed_s=220.4
-2026-10-25T22:07:38.543Z INFO solve PROGRESS surface geometry and diagnostics completed=161/751 unit=frames elapsed_s=227.1
-2026-10-25T22:07:44.621Z INFO solve PROGRESS surface geometry and diagnostics completed=165/751 unit=frames elapsed_s=233.2
-2026-10-25T22:07:50.062Z INFO solve PROGRESS surface geometry and diagnostics completed=169/751 unit=frames elapsed_s=238.6
-2026-10-25T22:07:55.909Z INFO solve PROGRESS surface geometry and diagnostics completed=173/751 unit=frames elapsed_s=244.5
-2026-10-25T22:08:01.541Z INFO solve PROGRESS surface geometry and diagnostics completed=177/751 unit=frames elapsed_s=250.1
-2026-10-25T22:08:07.251Z INFO solve PROGRESS surface geometry and diagnostics completed=181/751 unit=frames elapsed_s=255.8
-2026-10-25T22:08:12.308Z INFO solve PROGRESS surface geometry and diagnostics completed=184/751 unit=frames elapsed_s=260.9
-2026-10-25T22:08:18.417Z INFO solve PROGRESS surface geometry and diagnostics completed=187/751 unit=frames elapsed_s=267.0
-2026-10-25T22:08:24.290Z INFO solve PROGRESS surface geometry and diagnostics completed=191/751 unit=frames elapsed_s=272.9
-2026-10-25T22:08:30.668Z INFO solve PROGRESS surface geometry and diagnostics completed=195/751 unit=frames elapsed_s=279.2
-2026-10-25T22:08:36.720Z INFO solve PROGRESS surface geometry and diagnostics completed=199/751 unit=frames elapsed_s=285.3
-2026-10-25T22:08:42.099Z INFO solve PROGRESS surface geometry and diagnostics completed=203/751 unit=frames elapsed_s=290.7
-2026-10-25T22:08:48.117Z INFO solve PROGRESS surface geometry and diagnostics completed=207/751 unit=frames elapsed_s=296.7
-2026-10-25T22:08:54.752Z INFO solve PROGRESS surface geometry and diagnostics completed=211/751 unit=frames elapsed_s=303.3
-2026-10-25T22:09:00.654Z INFO solve PROGRESS surface geometry and diagnostics completed=214/751 unit=frames elapsed_s=309.2
-2026-10-25T22:09:07.153Z INFO solve PROGRESS surface geometry and diagnostics completed=217/751 unit=frames elapsed_s=315.7
-2026-10-25T22:09:12.532Z INFO solve PROGRESS surface geometry and diagnostics completed=220/751 unit=frames elapsed_s=321.1
-2026-10-25T22:09:18.730Z INFO solve PROGRESS surface geometry and diagnostics completed=222/751 unit=frames elapsed_s=327.3
-2026-10-25T22:09:25.810Z INFO solve PROGRESS surface geometry and diagnostics completed=225/751 unit=frames elapsed_s=334.4
-2026-10-25T22:09:31.092Z INFO solve PROGRESS surface geometry and diagnostics completed=227/751 unit=frames elapsed_s=339.7
-2026-10-25T22:09:36.311Z INFO solve PROGRESS surface geometry and diagnostics completed=229/751 unit=frames elapsed_s=344.9
-2026-10-25T22:09:42.403Z INFO solve PROGRESS surface geometry and diagnostics completed=231/751 unit=frames elapsed_s=351.0
-2026-10-25T22:09:48.797Z INFO solve PROGRESS surface geometry and diagnostics completed=233/751 unit=frames elapsed_s=357.4
-2026-10-25T22:09:54.702Z INFO solve PROGRESS surface geometry and diagnostics completed=235/751 unit=frames elapsed_s=363.3
-2026-10-25T22:09:59.958Z INFO solve PROGRESS surface geometry and diagnostics completed=237/751 unit=frames elapsed_s=368.5
-2026-10-25T22:10:06.878Z INFO solve PROGRESS surface geometry and diagnostics completed=240/751 unit=frames elapsed_s=375.4
-2026-10-25T22:10:12.367Z INFO solve PROGRESS surface geometry and diagnostics completed=243/751 unit=frames elapsed_s=380.9
-2026-10-25T22:10:20.119Z INFO solve PROGRESS surface geometry and diagnostics completed=246/751 unit=frames elapsed_s=388.7
-2026-10-25T22:10:25.187Z INFO solve PROGRESS surface geometry and diagnostics completed=248/751 unit=frames elapsed_s=393.7
-2026-10-25T22:10:32.058Z INFO solve PROGRESS surface geometry and diagnostics completed=251/751 unit=frames elapsed_s=400.6
-2026-10-25T22:10:38.653Z INFO solve PROGRESS surface geometry and diagnostics completed=254/751 unit=frames elapsed_s=407.2
-2026-10-25T22:10:45.350Z INFO solve PROGRESS surface geometry and diagnostics completed=257/751 unit=frames elapsed_s=413.9
-2026-10-25T22:10:51.176Z INFO solve PROGRESS surface geometry and diagnostics completed=260/751 unit=frames elapsed_s=419.7
-2026-10-25T22:10:57.434Z INFO solve PROGRESS surface geometry and diagnostics completed=263/751 unit=frames elapsed_s=426.0
-2026-10-25T22:11:04.049Z INFO solve PROGRESS surface geometry and diagnostics completed=266/751 unit=frames elapsed_s=432.6
-2026-10-25T22:11:09.246Z INFO solve PROGRESS surface geometry and diagnostics completed=268/751 unit=frames elapsed_s=437.8
-2026-10-25T22:11:15.650Z INFO solve PROGRESS surface geometry and diagnostics completed=271/751 unit=frames elapsed_s=444.2
-2026-10-25T22:11:22.168Z INFO solve PROGRESS surface geometry and diagnostics completed=274/751 unit=frames elapsed_s=450.7
-2026-10-25T22:11:28.631Z INFO solve PROGRESS surface geometry and diagnostics completed=277/751 unit=frames elapsed_s=457.2
-2026-10-25T22:11:35.719Z INFO solve PROGRESS surface geometry and diagnostics completed=280/751 unit=frames elapsed_s=464.3
-2026-10-25T22:11:42.675Z INFO solve PROGRESS surface geometry and diagnostics completed=283/751 unit=frames elapsed_s=471.2
-2026-10-25T22:11:52.825Z INFO solve PROGRESS surface geometry and diagnostics completed=285/751 unit=frames elapsed_s=481.4
-2026-10-25T22:11:59.406Z INFO solve PROGRESS surface geometry and diagnostics completed=287/751 unit=frames elapsed_s=488.0
-2026-10-25T22:12:06.464Z INFO solve PROGRESS surface geometry and diagnostics completed=289/751 unit=frames elapsed_s=495.0
-2026-10-25T22:12:12.341Z INFO solve PROGRESS surface geometry and diagnostics completed=291/751 unit=frames elapsed_s=500.9
-2026-10-25T22:12:17.759Z INFO solve PROGRESS surface geometry and diagnostics completed=293/751 unit=frames elapsed_s=506.3
-2026-10-25T22:12:23.474Z INFO solve PROGRESS surface geometry and diagnostics completed=296/751 unit=frames elapsed_s=512.0
-2026-10-25T22:12:30.911Z INFO solve PROGRESS surface geometry and diagnostics completed=299/751 unit=frames elapsed_s=519.5
-2026-10-25T22:12:37.340Z INFO solve PROGRESS surface geometry and diagnostics completed=302/751 unit=frames elapsed_s=525.9
-2026-10-25T22:12:42.825Z INFO solve PROGRESS surface geometry and diagnostics completed=304/751 unit=frames elapsed_s=531.4
-2026-10-25T22:12:48.657Z INFO solve PROGRESS surface geometry and diagnostics completed=307/751 unit=frames elapsed_s=537.2
-2026-10-25T22:12:54.415Z INFO solve PROGRESS surface geometry and diagnostics completed=310/751 unit=frames elapsed_s=543.0
-2026-10-25T22:13:00.307Z INFO solve PROGRESS surface geometry and diagnostics completed=313/751 unit=frames elapsed_s=548.9
-2026-10-25T22:13:07.185Z INFO solve PROGRESS surface geometry and diagnostics completed=317/751 unit=frames elapsed_s=555.7
-2026-10-25T22:13:14.405Z INFO solve PROGRESS surface geometry and diagnostics completed=319/751 unit=frames elapsed_s=563.0
-2026-10-25T22:13:20.046Z INFO solve PROGRESS surface geometry and diagnostics completed=321/751 unit=frames elapsed_s=568.6
-2026-10-25T22:13:27.043Z INFO solve PROGRESS surface geometry and diagnostics completed=324/751 unit=frames elapsed_s=575.6
-2026-10-25T22:13:33.355Z INFO solve PROGRESS surface geometry and diagnostics completed=327/751 unit=frames elapsed_s=581.9
-2026-10-25T22:13:38.479Z INFO solve PROGRESS surface geometry and diagnostics completed=330/751 unit=frames elapsed_s=587.0
-2026-10-25T22:13:43.650Z INFO solve PROGRESS surface geometry and diagnostics completed=332/751 unit=frames elapsed_s=592.2
-2026-10-25T22:13:49.796Z INFO solve PROGRESS surface geometry and diagnostics completed=335/751 unit=frames elapsed_s=598.4
-2026-10-25T22:13:55.408Z INFO solve PROGRESS surface geometry and diagnostics completed=338/751 unit=frames elapsed_s=604.0
-2026-10-25T22:14:00.690Z INFO solve PROGRESS surface geometry and diagnostics completed=340/751 unit=frames elapsed_s=609.3
-2026-10-25T22:14:05.797Z INFO solve PROGRESS surface geometry and diagnostics completed=343/751 unit=frames elapsed_s=614.4
-2026-10-25T22:14:11.257Z INFO solve PROGRESS surface geometry and diagnostics completed=346/751 unit=frames elapsed_s=619.8
-2026-10-25T22:14:16.319Z INFO solve PROGRESS surface geometry and diagnostics completed=349/751 unit=frames elapsed_s=624.9
-2026-10-25T22:14:21.935Z INFO solve PROGRESS surface geometry and diagnostics completed=352/751 unit=frames elapsed_s=630.5
-2026-10-25T22:14:27.036Z INFO solve PROGRESS surface geometry and diagnostics completed=354/751 unit=frames elapsed_s=635.6
-2026-10-25T22:14:33.221Z INFO solve PROGRESS surface geometry and diagnostics completed=357/751 unit=frames elapsed_s=641.8
-2026-10-25T22:14:40.329Z INFO solve PROGRESS surface geometry and diagnostics completed=360/751 unit=frames elapsed_s=648.9
-2026-10-25T22:14:45.401Z INFO solve PROGRESS surface geometry and diagnostics completed=362/751 unit=frames elapsed_s=654.0
-2026-10-25T22:14:52.696Z INFO solve PROGRESS surface geometry and diagnostics completed=365/751 unit=frames elapsed_s=661.3
-2026-10-25T22:14:59.379Z INFO solve PROGRESS surface geometry and diagnostics completed=368/751 unit=frames elapsed_s=667.9
-2026-10-25T22:15:04.388Z INFO solve PROGRESS surface geometry and diagnostics completed=370/751 unit=frames elapsed_s=673.0
-2026-10-25T22:15:09.996Z INFO solve PROGRESS surface geometry and diagnostics completed=372/751 unit=frames elapsed_s=678.6
-2026-10-25T22:15:15.025Z INFO solve PROGRESS surface geometry and diagnostics completed=374/751 unit=frames elapsed_s=683.6
-2026-10-25T22:15:22.079Z INFO solve PROGRESS surface geometry and diagnostics completed=377/751 unit=frames elapsed_s=690.6
-2026-10-25T22:15:27.473Z INFO solve PROGRESS surface geometry and diagnostics completed=379/751 unit=frames elapsed_s=696.0
-2026-10-25T22:15:34.757Z INFO solve PROGRESS surface geometry and diagnostics completed=382/751 unit=frames elapsed_s=703.3
-2026-10-25T22:15:45.402Z INFO solve PROGRESS surface geometry and diagnostics completed=384/751 unit=frames elapsed_s=714.0
-2026-10-25T22:15:51.308Z INFO solve PROGRESS surface geometry and diagnostics completed=385/751 unit=frames elapsed_s=719.9
-2026-10-25T22:15:58.919Z INFO solve PROGRESS surface geometry and diagnostics completed=387/751 unit=frames elapsed_s=727.5
-2026-10-25T22:16:06.475Z INFO solve PROGRESS surface geometry and diagnostics completed=389/751 unit=frames elapsed_s=735.0
-2026-10-25T22:16:12.558Z INFO solve PROGRESS surface geometry and diagnostics completed=392/751 unit=frames elapsed_s=741.1
-2026-10-25T22:16:19.263Z INFO solve PROGRESS surface geometry and diagnostics completed=395/751 unit=frames elapsed_s=747.8
-2026-10-25T22:16:24.640Z INFO solve PROGRESS surface geometry and diagnostics completed=398/751 unit=frames elapsed_s=753.2
-2026-10-25T22:16:30.029Z INFO solve PROGRESS surface geometry and diagnostics completed=401/751 unit=frames elapsed_s=758.6
-2026-10-25T22:16:36.302Z INFO solve PROGRESS surface geometry and diagnostics completed=403/751 unit=frames elapsed_s=764.9
-2026-10-25T22:16:42.623Z INFO solve PROGRESS surface geometry and diagnostics completed=406/751 unit=frames elapsed_s=771.2
-2026-10-25T22:16:49.225Z INFO solve PROGRESS surface geometry and diagnostics completed=410/751 unit=frames elapsed_s=777.8
-2026-10-25T22:16:55.458Z INFO solve PROGRESS surface geometry and diagnostics completed=414/751 unit=frames elapsed_s=784.0
-2026-10-25T22:17:01.555Z INFO solve PROGRESS surface geometry and diagnostics completed=418/751 unit=frames elapsed_s=790.1
-2026-10-25T22:17:07.220Z INFO solve PROGRESS surface geometry and diagnostics completed=422/751 unit=frames elapsed_s=795.8
-2026-10-25T22:17:13.447Z INFO solve PROGRESS surface geometry and diagnostics completed=426/751 unit=frames elapsed_s=802.0
-2026-10-25T22:17:19.967Z INFO solve PROGRESS surface geometry and diagnostics completed=430/751 unit=frames elapsed_s=808.5
-2026-10-25T22:17:26.213Z INFO solve PROGRESS surface geometry and diagnostics completed=434/751 unit=frames elapsed_s=814.8
-2026-10-25T22:17:31.427Z INFO solve PROGRESS surface geometry and diagnostics completed=437/751 unit=frames elapsed_s=820.0
-2026-10-25T22:17:36.442Z INFO solve PROGRESS surface geometry and diagnostics completed=440/751 unit=frames elapsed_s=825.0
-2026-10-25T22:17:42.414Z INFO solve PROGRESS surface geometry and diagnostics completed=444/751 unit=frames elapsed_s=831.0
-2026-10-25T22:17:48.489Z INFO solve PROGRESS surface geometry and diagnostics completed=448/751 unit=frames elapsed_s=837.1
-2026-10-25T22:17:54.345Z INFO solve PROGRESS surface geometry and diagnostics completed=452/751 unit=frames elapsed_s=842.9
-2026-10-25T22:18:00.056Z INFO solve PROGRESS surface geometry and diagnostics completed=456/751 unit=frames elapsed_s=848.6
-2026-10-25T22:18:05.098Z INFO solve PROGRESS surface geometry and diagnostics completed=460/751 unit=frames elapsed_s=853.7
-2026-10-25T22:18:10.131Z INFO solve PROGRESS surface geometry and diagnostics completed=463/751 unit=frames elapsed_s=858.7
-2026-10-25T22:18:15.301Z INFO solve PROGRESS surface geometry and diagnostics completed=467/751 unit=frames elapsed_s=863.9
-2026-10-25T22:18:20.340Z INFO solve PROGRESS surface geometry and diagnostics completed=472/751 unit=frames elapsed_s=868.9
-2026-10-25T22:18:25.879Z INFO solve PROGRESS surface geometry and diagnostics completed=476/751 unit=frames elapsed_s=874.4
-2026-10-25T22:18:31.307Z INFO solve PROGRESS surface geometry and diagnostics completed=480/751 unit=frames elapsed_s=879.9
-2026-10-25T22:18:36.611Z INFO solve PROGRESS surface geometry and diagnostics completed=484/751 unit=frames elapsed_s=885.2
-2026-10-25T22:18:42.909Z INFO solve PROGRESS surface geometry and diagnostics completed=489/751 unit=frames elapsed_s=891.5
-2026-10-25T22:18:47.982Z INFO solve PROGRESS surface geometry and diagnostics completed=493/751 unit=frames elapsed_s=896.5
-2026-10-25T22:18:53.087Z INFO solve PROGRESS surface geometry and diagnostics completed=497/751 unit=frames elapsed_s=901.7
-2026-10-25T22:18:58.371Z INFO solve PROGRESS surface geometry and diagnostics completed=501/751 unit=frames elapsed_s=906.9
-2026-10-25T22:19:04.359Z INFO solve PROGRESS surface geometry and diagnostics completed=504/751 unit=frames elapsed_s=912.9
-2026-10-25T22:19:10.618Z INFO solve PROGRESS surface geometry and diagnostics completed=507/751 unit=frames elapsed_s=919.2
-2026-10-25T22:19:16.981Z INFO solve PROGRESS surface geometry and diagnostics completed=511/751 unit=frames elapsed_s=925.5
-2026-10-25T22:19:22.274Z INFO solve PROGRESS surface geometry and diagnostics completed=516/751 unit=frames elapsed_s=930.8
-2026-10-25T22:19:28.115Z INFO solve PROGRESS surface geometry and diagnostics completed=521/751 unit=frames elapsed_s=936.7
-2026-10-25T22:19:34.294Z INFO solve PROGRESS surface geometry and diagnostics completed=524/751 unit=frames elapsed_s=942.9
-2026-10-25T22:19:40.220Z INFO solve PROGRESS surface geometry and diagnostics completed=528/751 unit=frames elapsed_s=948.8
-2026-10-25T22:19:47.260Z INFO solve PROGRESS surface geometry and diagnostics completed=533/751 unit=frames elapsed_s=955.8
-2026-10-25T22:19:52.794Z INFO solve PROGRESS surface geometry and diagnostics completed=538/751 unit=frames elapsed_s=961.4
-2026-10-25T22:19:57.797Z INFO solve PROGRESS surface geometry and diagnostics completed=544/751 unit=frames elapsed_s=966.4
-2026-10-25T22:20:04.043Z INFO solve PROGRESS surface geometry and diagnostics completed=548/751 unit=frames elapsed_s=972.6
-2026-10-25T22:20:10.334Z INFO solve PROGRESS surface geometry and diagnostics completed=553/751 unit=frames elapsed_s=978.9
-2026-10-25T22:20:15.939Z INFO solve PROGRESS surface geometry and diagnostics completed=560/751 unit=frames elapsed_s=984.5
-2026-10-25T22:20:21.788Z INFO solve PROGRESS surface geometry and diagnostics completed=566/751 unit=frames elapsed_s=990.4
-2026-10-25T22:20:27.217Z INFO solve PROGRESS surface geometry and diagnostics completed=572/751 unit=frames elapsed_s=995.8
-2026-10-25T22:20:32.745Z INFO solve PROGRESS surface geometry and diagnostics completed=578/751 unit=frames elapsed_s=1001.3
-2026-10-25T22:20:38.629Z INFO solve PROGRESS surface geometry and diagnostics completed=584/751 unit=frames elapsed_s=1007.2
-2026-10-25T22:20:44.265Z INFO solve PROGRESS surface geometry and diagnostics completed=589/751 unit=frames elapsed_s=1012.8
-2026-10-25T22:20:49.377Z INFO solve PROGRESS surface geometry and diagnostics completed=594/751 unit=frames elapsed_s=1017.9
-2026-10-25T22:20:54.535Z INFO solve PROGRESS surface geometry and diagnostics completed=599/751 unit=frames elapsed_s=1023.1
-2026-10-25T22:20:59.976Z INFO solve PROGRESS surface geometry and diagnostics completed=603/751 unit=frames elapsed_s=1028.5
-2026-10-25T22:21:05.818Z INFO solve PROGRESS surface geometry and diagnostics completed=607/751 unit=frames elapsed_s=1034.4
-2026-10-25T22:21:12.095Z INFO solve PROGRESS surface geometry and diagnostics completed=611/751 unit=frames elapsed_s=1040.7
-2026-10-25T22:21:18.112Z INFO solve PROGRESS surface geometry and diagnostics completed=615/751 unit=frames elapsed_s=1046.7
-2026-10-25T22:21:23.713Z INFO solve PROGRESS surface geometry and diagnostics completed=619/751 unit=frames elapsed_s=1052.3
-2026-10-25T22:21:29.781Z INFO solve PROGRESS surface geometry and diagnostics completed=623/751 unit=frames elapsed_s=1058.3
-2026-10-25T22:21:35.059Z INFO solve PROGRESS surface geometry and diagnostics completed=627/751 unit=frames elapsed_s=1063.6
-2026-10-25T22:21:41.028Z INFO solve PROGRESS surface geometry and diagnostics completed=631/751 unit=frames elapsed_s=1069.6
-2026-10-25T22:21:49.125Z INFO solve PROGRESS surface geometry and diagnostics completed=635/751 unit=frames elapsed_s=1077.7
-2026-10-25T22:21:55.481Z INFO solve PROGRESS surface geometry and diagnostics completed=639/751 unit=frames elapsed_s=1084.0
-2026-10-25T22:22:02.715Z INFO solve PROGRESS surface geometry and diagnostics completed=642/751 unit=frames elapsed_s=1091.3
-2026-10-25T22:22:08.102Z INFO solve PROGRESS surface geometry and diagnostics completed=645/751 unit=frames elapsed_s=1096.7
-2026-10-25T22:22:14.680Z INFO solve PROGRESS surface geometry and diagnostics completed=649/751 unit=frames elapsed_s=1103.2
-2026-10-25T22:22:20.640Z INFO solve PROGRESS surface geometry and diagnostics completed=653/751 unit=frames elapsed_s=1109.2
-2026-10-25T22:22:27.073Z INFO solve PROGRESS surface geometry and diagnostics completed=657/751 unit=frames elapsed_s=1115.6
-2026-10-25T22:22:33.263Z INFO solve PROGRESS surface geometry and diagnostics completed=661/751 unit=frames elapsed_s=1121.8
-2026-10-25T22:22:38.813Z INFO solve PROGRESS surface geometry and diagnostics completed=665/751 unit=frames elapsed_s=1127.4
-2026-10-25T22:22:46.049Z INFO solve PROGRESS surface geometry and diagnostics completed=669/751 unit=frames elapsed_s=1134.6
-2026-10-25T22:22:51.142Z INFO solve PROGRESS surface geometry and diagnostics completed=673/751 unit=frames elapsed_s=1139.7
-2026-10-25T22:22:56.473Z INFO solve PROGRESS surface geometry and diagnostics completed=680/751 unit=frames elapsed_s=1145.0
-2026-10-25T22:23:02.009Z INFO solve PROGRESS surface geometry and diagnostics completed=686/751 unit=frames elapsed_s=1150.6
-2026-10-25T22:23:08.003Z INFO solve PROGRESS surface geometry and diagnostics completed=692/751 unit=frames elapsed_s=1156.6
-2026-10-25T22:23:13.213Z INFO solve PROGRESS surface geometry and diagnostics completed=697/751 unit=frames elapsed_s=1161.8
-2026-10-25T22:23:18.453Z INFO solve PROGRESS surface geometry and diagnostics completed=704/751 unit=frames elapsed_s=1167.0
-2026-10-25T22:23:23.575Z INFO solve PROGRESS surface geometry and diagnostics completed=711/751 unit=frames elapsed_s=1172.1
-2026-10-25T22:23:29.313Z INFO solve PROGRESS surface geometry and diagnostics completed=719/751 unit=frames elapsed_s=1177.9
-2026-10-25T22:23:34.912Z INFO solve PROGRESS surface geometry and diagnostics completed=727/751 unit=frames elapsed_s=1183.5
-2026-10-25T22:23:40.602Z INFO solve PROGRESS surface geometry and diagnostics completed=735/751 unit=frames elapsed_s=1189.2
-2026-10-25T22:23:45.894Z INFO solve PROGRESS surface geometry and diagnostics completed=742/751 unit=frames elapsed_s=1194.5
-2026-10-25T22:23:51.497Z INFO solve PROGRESS surface geometry and diagnostics completed=750/751 unit=frames elapsed_s=1200.1
-2026-10-25T22:23:52.265Z INFO solve Surface total-minus-incident metrics (projected area/time; one-beam band uses ORIGINAL source-triangle-centroid horizontal distance to independent total-surface/physical-hull waterline; exact exterior portions only, not an exact distance-band region): {"full": {"area_time_m2_s": 11168.552347261966, "mean_delta_m": -4.646883677617978e-06, "rms_delta_m": 0.005987256940900866, "incident_rms_m": 0.26700782217482, "relative_rms": 0.022423526367631227, "relative_rms_status": "defined", "maximum_abs_delta_m": 0.0650872084325485, "resolved_peak_time_s": 44.56, "resolved_peak_world_xyz_m": [2.0254330606916864, 1.1072862609324434, 0.32967685592515794]}, "one_beam": {"area_time_m2_s": 3993.287110121034, "mean_delta_m": -5.184091557989093e-05, "rms_delta_m": 0.007993200569647793, "incident_rms_m": 0.27003191401764753, "relative_rms": 0.02960094772029579, "relative_rms_status": "defined", "maximum_abs_delta_m": 0.0650872084325485, "resolved_peak_time_s": 44.56, "resolved_peak_world_xyz_m": [2.0254330606916864, 1.1072862609324434, 0.32967685592515794]}}
-2026-10-25T22:23:52.265Z WARNING solve WEC-Sim applicability: represented wet-set symmetric-difference area exceeds 10% of initial wetted area; first=25.84s, worst=29.14% at 44.64s, last=51.6s. This is a fixed-mean linear-model limitation, not a nonlinear motion-error estimate.
-2026-10-25T22:23:52.265Z INFO solve Surface startup: represented total local |eta|<=0.000645411m on positive-area exterior portions of source faces whose XY boxes overlap the initial hull XY bounds (conservative support may extend beyond that rectangle). The separate full-hull incident eta/velocity bounds remain in force; no total disturbed-fluid velocity bound has been established.
-2026-10-25T22:23:52.365Z INFO solve Surface postprocess wall times_s: {"opening-clearance": 34.11436389986193, "independent-waterline": 26.1779270003899, "waterline-delta-metrics": 327.18961410137126, "wet-set-area": 812.907218399574, "total-postprocess": 1201.6042369999923}
-2026-10-25T22:23:52.365Z INFO solve STAGE surface geometry and diagnostics complete completed=751/751 unit=frames elapsed_s=1200.9
-2026-10-25T22:24:10.876Z INFO solve STAGE publish validated result
-2026-10-25T22:24:11.961Z INFO solve PUBLISHED examples\simple-boat\result.npz
-2026-10-25T22:24:11.962Z INFO solve Wrote examples\simple-boat\result.npz; existing video.mp4 was left unchanged
-2026-10-25T22:24:11.962Z INFO solve END status=success elapsed_s=2391.718000 output_published=true warnings=56
+2026-10-27T06:01:59.025Z INFO resume-accepted-native-motion BEGIN duration_s=60 body_integrations=0 coefficient_campaigns=0 same_production_field_rhs=true pin_held=true
+2026-10-27T06:01:59.025Z INFO resume-accepted-native-motion STAGE resume independently accepted native WEC-Sim trajectory; this is not a fresh public solve
+2026-10-27T06:02:01.223Z INFO resume-accepted-native-motion NEW reference6b774228 / Topwater9539192; fresh field selected, no old field reused
+2026-10-27T06:02:28.223Z INFO resume-accepted-native-motion STAGE unchanged calm-restoring diagnostics on the saved new motion
+2026-10-27T06:02:28.398Z WARNING resume-accepted-native-motion warning [calm-restoring-moment] at 9.68 s: exact calm-water moment differs from linear restoring by 10.2% (10% reporting threshold; not a dynamic error estimate)
+2026-10-27T06:02:28.516Z WARNING resume-accepted-native-motion warning [calm-restoring-force] at 16.66 s: exact calm-water force differs from linear restoring by 10% (10% reporting threshold; not a dynamic error estimate)
+2026-10-27T06:02:28.608Z WARNING resume-accepted-native-motion warning [calm-restoring-unavailable] at 23.08 s: opening rim reaches the water surface (clearance -0.00154855 m); flat-reference geometry cannot assess restoring here
+2026-10-27T06:02:29.165Z WARNING resume-accepted-native-motion warning summary [calm-restoring-moment]: 2013 samples, first 9.68 s, last 60 s, peak departure 183%
+2026-10-27T06:02:29.165Z WARNING resume-accepted-native-motion warning summary [calm-restoring-force]: 1170 samples, first 16.66 s, last 60 s, peak departure 132%
+2026-10-27T06:02:29.172Z WARNING resume-accepted-native-motion warning summary [calm-restoring-unavailable]: 338 samples, first 23.08 s, last 59.7 s
+2026-10-27T06:02:30.028Z WARNING resume-accepted-native-motion [23:02:30] WARNING  Precomputing tabulation, it may take a few seconds.        
+2026-10-27T06:03:20.371Z INFO resume-accepted-native-motion STAGE same-operator field postprocessing radiation_rhs=5760 combined_diffraction_rhs=671; retained source bank is empty
+2026-10-27T06:03:20.371Z INFO resume-accepted-native-motion Existing centroid BEM quadrature and provisional field policy retained; issues31-34 remain unresolved
+2026-10-27T06:03:20.643Z INFO resume-accepted-native-motion Surface: evaluating total linear field at 5899 exterior points; 384 target points use an explicit 0.025 m disturbance trace.
+2026-10-27T06:03:20.643Z WARNING resume-accepted-native-motion Surface numerical approximation: the selected causal finite-band projection showed 42.7 mm maximum / 12.5 mm RMS difference from a signed-lag diagnostic at tested near/far points. That noncausal diagnostic is not a reference solution or an accuracy bound; full-complex near-field transfer recovery has not passed.
+2026-10-27T06:03:20.650Z INFO resume-accepted-native-motion STAGE radiation transfers started total=960 unit=frequencies
+2026-10-27T06:03:25.679Z INFO resume-accepted-native-motion PROGRESS radiation transfers completed=47/960 unit=frequencies elapsed_s=5.0
+2026-10-27T06:03:26.739Z WARNING resume-accepted-native-motion [23:03:26] WARNING  Mesh resolution for RadiationProblem(body=FloatingBody(...,
+2026-10-27T06:03:26.739Z WARNING resume-accepted-native-motion                     name="boat"), omega=1.450, water_depth=inf,                
+2026-10-27T06:03:26.739Z WARNING resume-accepted-native-motion                     radiating_dof='Surge', rho=1025.0):                        
+2026-10-27T06:03:26.739Z WARNING resume-accepted-native-motion                     The resolution of the mesh of body FloatingBody(...,       
+2026-10-27T06:03:26.739Z WARNING resume-accepted-native-motion                     name="boat") might be insufficient for                     
+2026-10-27T06:03:26.739Z WARNING resume-accepted-native-motion                     omega=1.4500000000000002.                                  
+2026-10-27T06:03:26.739Z WARNING resume-accepted-native-motion                     This warning appears because the largest panel of the mesh 
+2026-10-27T06:03:26.739Z WARNING resume-accepted-native-motion                     has radius (3.678 m) > wavelength/8 (3.665 m).             
+2026-10-27T06:03:30.708Z INFO resume-accepted-native-motion PROGRESS radiation transfers completed=95/960 unit=frequencies elapsed_s=10.1
+2026-10-27T06:03:35.721Z INFO resume-accepted-native-motion PROGRESS radiation transfers completed=143/960 unit=frequencies elapsed_s=15.1
+2026-10-27T06:03:40.801Z INFO resume-accepted-native-motion PROGRESS radiation transfers completed=192/960 unit=frequencies elapsed_s=20.2
+2026-10-27T06:03:42.611Z WARNING resume-accepted-native-motion [23:03:42] WARNING  Irregular frequencies for                                  
+2026-10-27T06:03:42.611Z WARNING resume-accepted-native-motion                     RadiationProblem(body=FloatingBody(..., name="boat"),      
+2026-10-27T06:03:42.611Z WARNING resume-accepted-native-motion                     omega=5.250, water_depth=inf, radiating_dof='Surge',       
+2026-10-27T06:03:42.611Z WARNING resume-accepted-native-motion                     rho=1025.0):                                               
+2026-10-27T06:03:42.611Z WARNING resume-accepted-native-motion                     The body FloatingBody(..., name="boat") might display      
+2026-10-27T06:03:42.611Z WARNING resume-accepted-native-motion                     irregular frequencies for omega=5.25.                      
+2026-10-27T06:03:42.611Z WARNING resume-accepted-native-motion                     Setting a lid for the floating body is recommended.        
+2026-10-27T06:03:45.882Z INFO resume-accepted-native-motion PROGRESS radiation transfers completed=239/960 unit=frequencies elapsed_s=25.2
+2026-10-27T06:03:50.960Z INFO resume-accepted-native-motion PROGRESS radiation transfers completed=284/960 unit=frequencies elapsed_s=30.3
+2026-10-27T06:03:55.992Z INFO resume-accepted-native-motion PROGRESS radiation transfers completed=331/960 unit=frequencies elapsed_s=35.3
+2026-10-27T06:04:01.040Z INFO resume-accepted-native-motion PROGRESS radiation transfers completed=378/960 unit=frequencies elapsed_s=40.4
+2026-10-27T06:04:06.129Z INFO resume-accepted-native-motion PROGRESS radiation transfers completed=425/960 unit=frequencies elapsed_s=45.5
+2026-10-27T06:04:11.165Z INFO resume-accepted-native-motion PROGRESS radiation transfers completed=469/960 unit=frequencies elapsed_s=50.5
+2026-10-27T06:04:16.199Z INFO resume-accepted-native-motion PROGRESS radiation transfers completed=513/960 unit=frequencies elapsed_s=55.5
+2026-10-27T06:04:21.273Z INFO resume-accepted-native-motion PROGRESS radiation transfers completed=561/960 unit=frequencies elapsed_s=60.6
+2026-10-27T06:04:26.285Z INFO resume-accepted-native-motion PROGRESS radiation transfers completed=609/960 unit=frequencies elapsed_s=65.6
+2026-10-27T06:04:31.332Z INFO resume-accepted-native-motion PROGRESS radiation transfers completed=658/960 unit=frequencies elapsed_s=70.7
+2026-10-27T06:04:36.415Z INFO resume-accepted-native-motion PROGRESS radiation transfers completed=707/960 unit=frequencies elapsed_s=75.8
+2026-10-27T06:04:41.431Z INFO resume-accepted-native-motion PROGRESS radiation transfers completed=755/960 unit=frequencies elapsed_s=80.8
+2026-10-27T06:04:46.507Z INFO resume-accepted-native-motion PROGRESS radiation transfers completed=805/960 unit=frequencies elapsed_s=85.9
+2026-10-27T06:04:51.536Z INFO resume-accepted-native-motion PROGRESS radiation transfers completed=853/960 unit=frequencies elapsed_s=90.9
+2026-10-27T06:04:56.589Z INFO resume-accepted-native-motion PROGRESS radiation transfers completed=901/960 unit=frequencies elapsed_s=95.9
+2026-10-27T06:05:01.613Z INFO resume-accepted-native-motion PROGRESS radiation transfers completed=950/960 unit=frequencies elapsed_s=101.0
+2026-10-27T06:05:02.609Z INFO resume-accepted-native-motion STAGE radiation transfers complete completed=960/960 unit=frequencies elapsed_s=102.0
+2026-10-27T06:05:02.609Z WARNING resume-accepted-native-motion Capytaine: Mesh resolution warning applies to 5418 solves in radiation_velocity_transfer; first warning retained. These limitations remain unqualified.
+2026-10-27T06:05:02.609Z WARNING resume-accepted-native-motion Capytaine: Irregular frequencies warning applies to 4506 solves in radiation_velocity_transfer; first warning retained. These limitations remain unqualified.
+2026-10-27T06:05:02.609Z INFO resume-accepted-native-motion STAGE radiation convolution started total=5899 unit=field points
+2026-10-27T06:05:07.902Z INFO resume-accepted-native-motion PROGRESS radiation convolution completed=1792/5899 unit=field points elapsed_s=5.3
+2026-10-27T06:05:13.053Z INFO resume-accepted-native-motion PROGRESS radiation convolution completed=3456/5899 unit=field points elapsed_s=10.4
+2026-10-27T06:05:18.413Z INFO resume-accepted-native-motion PROGRESS radiation convolution completed=5248/5899 unit=field points elapsed_s=15.8
+2026-10-27T06:05:20.523Z INFO resume-accepted-native-motion STAGE radiation convolution complete completed=5899/5899 unit=field points elapsed_s=17.9
+2026-10-27T06:05:20.544Z INFO resume-accepted-native-motion STAGE diffraction transfers started total=671 unit=positive sidebands
+2026-10-27T06:05:25.601Z INFO resume-accepted-native-motion PROGRESS diffraction transfers completed=42/671 unit=positive sidebands elapsed_s=5.1
+2026-10-27T06:05:30.607Z INFO resume-accepted-native-motion PROGRESS diffraction transfers completed=80/671 unit=positive sidebands elapsed_s=10.1
+2026-10-27T06:05:35.630Z INFO resume-accepted-native-motion PROGRESS diffraction transfers completed=120/671 unit=positive sidebands elapsed_s=15.1
+2026-10-27T06:05:40.645Z INFO resume-accepted-native-motion PROGRESS diffraction transfers completed=162/671 unit=positive sidebands elapsed_s=20.1
+2026-10-27T06:05:45.745Z INFO resume-accepted-native-motion PROGRESS diffraction transfers completed=205/671 unit=positive sidebands elapsed_s=25.2
+2026-10-27T06:05:50.833Z INFO resume-accepted-native-motion PROGRESS diffraction transfers completed=249/671 unit=positive sidebands elapsed_s=30.3
+2026-10-27T06:05:55.518Z WARNING resume-accepted-native-motion [23:05:55] WARNING  Mesh resolution for                                        
+2026-10-27T06:05:55.518Z WARNING resume-accepted-native-motion                     LinearPotentialFlowProblem(body=FloatingBody(...,          
+2026-10-27T06:05:55.518Z WARNING resume-accepted-native-motion                     name="boat"), omega=1.450, water_depth=inf, rho=1025.0):   
+2026-10-27T06:05:55.518Z WARNING resume-accepted-native-motion                     The resolution of the mesh of body FloatingBody(...,       
+2026-10-27T06:05:55.518Z WARNING resume-accepted-native-motion                     name="boat") might be insufficient for omega=1.45.         
+2026-10-27T06:05:55.518Z WARNING resume-accepted-native-motion                     This warning appears because the largest panel of the mesh 
+2026-10-27T06:05:55.518Z WARNING resume-accepted-native-motion                     has radius (3.678 m) > wavelength/8 (3.665 m).             
+2026-10-27T06:05:55.957Z INFO resume-accepted-native-motion PROGRESS diffraction transfers completed=293/671 unit=positive sidebands elapsed_s=35.4
+2026-10-27T06:06:00.997Z INFO resume-accepted-native-motion PROGRESS diffraction transfers completed=336/671 unit=positive sidebands elapsed_s=40.5
+2026-10-27T06:06:06.093Z INFO resume-accepted-native-motion PROGRESS diffraction transfers completed=378/671 unit=positive sidebands elapsed_s=45.5
+2026-10-27T06:06:11.150Z INFO resume-accepted-native-motion PROGRESS diffraction transfers completed=420/671 unit=positive sidebands elapsed_s=50.6
+2026-10-27T06:06:16.224Z INFO resume-accepted-native-motion PROGRESS diffraction transfers completed=467/671 unit=positive sidebands elapsed_s=55.7
+2026-10-27T06:06:21.244Z INFO resume-accepted-native-motion PROGRESS diffraction transfers completed=515/671 unit=positive sidebands elapsed_s=60.7
+2026-10-27T06:06:26.337Z INFO resume-accepted-native-motion PROGRESS diffraction transfers completed=563/671 unit=positive sidebands elapsed_s=65.8
+2026-10-27T06:06:31.408Z INFO resume-accepted-native-motion PROGRESS diffraction transfers completed=610/671 unit=positive sidebands elapsed_s=70.9
+2026-10-27T06:06:36.444Z INFO resume-accepted-native-motion PROGRESS diffraction transfers completed=657/671 unit=positive sidebands elapsed_s=75.9
+2026-10-27T06:06:37.948Z INFO resume-accepted-native-motion STAGE diffraction transfers complete completed=671/671 unit=positive sidebands elapsed_s=77.4
+2026-10-27T06:06:37.948Z WARNING resume-accepted-native-motion Capytaine: Mesh resolution warning applies to 382 solves in combined_diffraction; first warning retained. These limitations remain unqualified.
+2026-10-27T06:06:37.948Z INFO resume-accepted-native-motion STAGE field synthesis started total=1 unit=completed field
+2026-10-27T06:08:54.655Z INFO resume-accepted-native-motion STAGE field synthesis complete completed=1/1 unit=completed field elapsed_s=136.7
+2026-10-27T06:08:54.833Z INFO resume-accepted-native-motion STAGE surface geometry and diagnostics started total=751 unit=frames
+2026-10-27T06:09:00.419Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=7/751 unit=frames elapsed_s=5.6
+2026-10-27T06:09:05.853Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=14/751 unit=frames elapsed_s=11.0
+2026-10-27T06:09:11.394Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=21/751 unit=frames elapsed_s=16.6
+2026-10-27T06:09:16.436Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=28/751 unit=frames elapsed_s=21.6
+2026-10-27T06:09:22.040Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=36/751 unit=frames elapsed_s=27.2
+2026-10-27T06:09:27.657Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=44/751 unit=frames elapsed_s=32.8
+2026-10-27T06:09:33.218Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=52/751 unit=frames elapsed_s=38.4
+2026-10-27T06:09:38.873Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=60/751 unit=frames elapsed_s=44.0
+2026-10-27T06:09:44.383Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=68/751 unit=frames elapsed_s=49.5
+2026-10-27T06:09:49.927Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=76/751 unit=frames elapsed_s=55.1
+2026-10-27T06:09:55.511Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=84/751 unit=frames elapsed_s=60.7
+2026-10-27T06:10:01.013Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=92/751 unit=frames elapsed_s=66.2
+2026-10-27T06:10:06.548Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=100/751 unit=frames elapsed_s=71.7
+2026-10-27T06:10:12.237Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=108/751 unit=frames elapsed_s=77.4
+2026-10-27T06:10:17.266Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=116/751 unit=frames elapsed_s=82.4
+2026-10-27T06:10:22.509Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=124/751 unit=frames elapsed_s=87.7
+2026-10-27T06:10:27.967Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=133/751 unit=frames elapsed_s=93.1
+2026-10-27T06:10:33.440Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=142/751 unit=frames elapsed_s=98.6
+2026-10-27T06:10:39.044Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=151/751 unit=frames elapsed_s=104.2
+2026-10-27T06:10:44.118Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=159/751 unit=frames elapsed_s=109.3
+2026-10-27T06:10:49.166Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=167/751 unit=frames elapsed_s=114.3
+2026-10-27T06:10:54.214Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=175/751 unit=frames elapsed_s=119.4
+2026-10-27T06:10:59.812Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=184/751 unit=frames elapsed_s=125.0
+2026-10-27T06:11:04.885Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=192/751 unit=frames elapsed_s=130.1
+2026-10-27T06:11:09.906Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=200/751 unit=frames elapsed_s=135.1
+2026-10-27T06:11:15.102Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=208/751 unit=frames elapsed_s=140.3
+2026-10-27T06:11:20.564Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=216/751 unit=frames elapsed_s=145.7
+2026-10-27T06:11:25.995Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=224/751 unit=frames elapsed_s=151.2
+2026-10-27T06:11:31.495Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=232/751 unit=frames elapsed_s=156.7
+2026-10-27T06:11:36.824Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=240/751 unit=frames elapsed_s=162.0
+2026-10-27T06:11:42.160Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=248/751 unit=frames elapsed_s=167.3
+2026-10-27T06:11:47.846Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=256/751 unit=frames elapsed_s=173.0
+2026-10-27T06:11:53.552Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=264/751 unit=frames elapsed_s=178.7
+2026-10-27T06:11:59.083Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=272/751 unit=frames elapsed_s=184.3
+2026-10-27T06:12:04.257Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=279/751 unit=frames elapsed_s=189.4
+2026-10-27T06:12:09.356Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=286/751 unit=frames elapsed_s=194.5
+2026-10-27T06:12:14.400Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=293/751 unit=frames elapsed_s=199.6
+2026-10-27T06:12:19.440Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=300/751 unit=frames elapsed_s=204.6
+2026-10-27T06:12:24.587Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=307/751 unit=frames elapsed_s=209.8
+2026-10-27T06:12:29.694Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=314/751 unit=frames elapsed_s=214.9
+2026-10-27T06:12:34.859Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=321/751 unit=frames elapsed_s=220.0
+2026-10-27T06:12:40.579Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=329/751 unit=frames elapsed_s=225.7
+2026-10-27T06:12:45.765Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=336/751 unit=frames elapsed_s=230.9
+2026-10-27T06:12:50.920Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=343/751 unit=frames elapsed_s=236.1
+2026-10-27T06:12:56.364Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=350/751 unit=frames elapsed_s=241.5
+2026-10-27T06:13:01.908Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=357/751 unit=frames elapsed_s=247.1
+2026-10-27T06:13:07.225Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=364/751 unit=frames elapsed_s=252.4
+2026-10-27T06:13:12.605Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=371/751 unit=frames elapsed_s=257.8
+2026-10-27T06:13:18.178Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=379/751 unit=frames elapsed_s=263.3
+2026-10-27T06:13:23.653Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=387/751 unit=frames elapsed_s=268.8
+2026-10-27T06:13:29.214Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=395/751 unit=frames elapsed_s=274.4
+2026-10-27T06:13:34.719Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=403/751 unit=frames elapsed_s=279.9
+2026-10-27T06:13:40.113Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=411/751 unit=frames elapsed_s=285.3
+2026-10-27T06:13:45.548Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=419/751 unit=frames elapsed_s=290.7
+2026-10-27T06:13:51.001Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=427/751 unit=frames elapsed_s=296.2
+2026-10-27T06:13:56.044Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=434/751 unit=frames elapsed_s=301.2
+2026-10-27T06:14:01.070Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=441/751 unit=frames elapsed_s=306.2
+2026-10-27T06:14:06.776Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=449/751 unit=frames elapsed_s=311.9
+2026-10-27T06:14:11.811Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=456/751 unit=frames elapsed_s=317.0
+2026-10-27T06:14:16.970Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=464/751 unit=frames elapsed_s=322.1
+2026-10-27T06:14:22.578Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=473/751 unit=frames elapsed_s=327.7
+2026-10-27T06:14:27.851Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=481/751 unit=frames elapsed_s=333.0
+2026-10-27T06:14:32.888Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=489/751 unit=frames elapsed_s=338.1
+2026-10-27T06:14:38.021Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=497/751 unit=frames elapsed_s=343.2
+2026-10-27T06:14:43.363Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=505/751 unit=frames elapsed_s=348.5
+2026-10-27T06:14:48.490Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=513/751 unit=frames elapsed_s=353.7
+2026-10-27T06:14:53.787Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=521/751 unit=frames elapsed_s=359.0
+2026-10-27T06:14:58.843Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=529/751 unit=frames elapsed_s=364.0
+2026-10-27T06:15:03.979Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=537/751 unit=frames elapsed_s=369.1
+2026-10-27T06:15:09.086Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=545/751 unit=frames elapsed_s=374.3
+2026-10-27T06:15:14.443Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=553/751 unit=frames elapsed_s=379.6
+2026-10-27T06:15:19.731Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=561/751 unit=frames elapsed_s=384.9
+2026-10-27T06:15:25.226Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=569/751 unit=frames elapsed_s=390.4
+2026-10-27T06:15:30.811Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=577/751 unit=frames elapsed_s=396.0
+2026-10-27T06:15:36.357Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=585/751 unit=frames elapsed_s=401.5
+2026-10-27T06:15:41.953Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=593/751 unit=frames elapsed_s=407.1
+2026-10-27T06:15:47.082Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=600/751 unit=frames elapsed_s=412.2
+2026-10-27T06:15:52.097Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=607/751 unit=frames elapsed_s=417.3
+2026-10-27T06:15:57.726Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=615/751 unit=frames elapsed_s=422.9
+2026-10-27T06:16:02.747Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=622/751 unit=frames elapsed_s=427.9
+2026-10-27T06:16:08.433Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=630/751 unit=frames elapsed_s=433.6
+2026-10-27T06:16:14.061Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=638/751 unit=frames elapsed_s=439.2
+2026-10-27T06:16:19.774Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=646/751 unit=frames elapsed_s=444.9
+2026-10-27T06:16:24.974Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=653/751 unit=frames elapsed_s=450.1
+2026-10-27T06:16:30.220Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=660/751 unit=frames elapsed_s=455.4
+2026-10-27T06:16:35.986Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=668/751 unit=frames elapsed_s=461.2
+2026-10-27T06:16:41.192Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=675/751 unit=frames elapsed_s=466.4
+2026-10-27T06:16:46.604Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=682/751 unit=frames elapsed_s=471.8
+2026-10-27T06:16:51.914Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=689/751 unit=frames elapsed_s=477.1
+2026-10-27T06:16:57.107Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=694/751 unit=frames elapsed_s=482.3
+2026-10-27T06:17:02.953Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=700/751 unit=frames elapsed_s=488.1
+2026-10-27T06:17:08.569Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=706/751 unit=frames elapsed_s=493.7
+2026-10-27T06:17:14.114Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=713/751 unit=frames elapsed_s=499.3
+2026-10-27T06:17:19.152Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=720/751 unit=frames elapsed_s=504.3
+2026-10-27T06:17:24.766Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=728/751 unit=frames elapsed_s=509.9
+2026-10-27T06:17:29.903Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=735/751 unit=frames elapsed_s=515.1
+2026-10-27T06:17:35.579Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=743/751 unit=frames elapsed_s=520.7
+2026-10-27T06:17:41.236Z INFO resume-accepted-native-motion PROGRESS surface geometry and diagnostics completed=751/751 unit=frames elapsed_s=526.4
+2026-10-27T06:17:41.266Z INFO resume-accepted-native-motion Surface total-minus-incident metrics (projected area/time; one-beam band uses ORIGINAL source-triangle-centroid horizontal distance to independent total-surface/physical-hull waterline; exact exterior portions only, not an exact distance-band region): {"full": {"area_time_m2_s": 11168.564213931992, "mean_delta_m": -4.649452200243773e-06, "rms_delta_m": 0.0059876779319830474, "incident_rms_m": 0.2670078809604247, "relative_rms": 0.0224250981298583, "relative_rms_status": "defined", "maximum_abs_delta_m": 0.06508923093703345, "resolved_peak_time_s": 44.56, "resolved_peak_world_xyz_m": [2.025436746081809, 1.1072886344760717, 0.32967463078212816]}, "one_beam": {"area_time_m2_s": 3993.28321767815, "mean_delta_m": -5.18416334737402e-05, "rms_delta_m": 0.007993670468510784, "incident_rms_m": 0.270031217429899, "relative_rms": 0.02960276424553012, "relative_rms_status": "defined", "maximum_abs_delta_m": 0.06508923093703345, "resolved_peak_time_s": 44.56, "resolved_peak_world_xyz_m": [2.025436746081809, 1.1072886344760717, 0.32967463078212816]}}
+2026-10-27T06:17:41.266Z WARNING resume-accepted-native-motion WEC-Sim applicability: represented wet-set symmetric-difference area exceeds 10% of initial wetted area; first=25.84s, worst=29.15% at 44.64s, last=51.6s. This is a fixed-mean linear-model limitation, not a nonlinear motion-error estimate.
+2026-10-27T06:17:41.266Z INFO resume-accepted-native-motion Surface startup: represented total local |eta|<=0.000645412m on positive-area exterior portions of source faces whose XY boxes overlap the initial hull XY bounds (conservative support may extend beyond that rectangle). The separate full-hull incident eta/velocity bounds remain in force; no total disturbed-fluid velocity bound has been established.
+2026-10-27T06:17:41.356Z INFO resume-accepted-native-motion Surface postprocess wall times_s: {"opening-clearance": 15.350536399782868, "independent-waterline": 11.971638000075473, "waterline-delta-metrics": 149.36702089977916, "wet-set-area": 349.5091319001658, "total-postprocess": 526.5844612999936}
+2026-10-27T06:17:41.356Z INFO resume-accepted-native-motion STAGE surface geometry and diagnostics complete completed=751/751 unit=frames elapsed_s=526.5
+2026-10-27T06:17:58.616Z INFO resume-accepted-native-motion PUBLISHED C:\Users\alex\topwater\artifacts\workflow\reference-adoption-private-candidate1\result.npz
+2026-10-27T06:17:58.616Z INFO resume-accepted-native-motion PUBLISHED C:\Users\alex\topwater\artifacts\workflow\reference-adoption-private-candidate1\result.png
+2026-10-27T06:17:58.616Z INFO resume-accepted-native-motion END status=success elapsed_s=959.593000 output_published=true warnings=34

@@ -1,4 +1,4 @@
-"""Physical FullDir wave data and a derived coefficient view for WEC-Sim.
+"""Physical FullDir waves and ordinary coefficient inputs for WEC-Sim.
 
 This module prepares waves and coefficients separately. It never multiplies
 wave coefficients by hydrodynamic coefficients or constructs applied forces.
@@ -12,7 +12,7 @@ from scipy.interpolate import RegularGridInterpolator
 @dataclass(frozen=True)
 class SpectralInputs:
     wave: dict
-    component_view: dict
+    hydro: dict
     coefficients: np.ndarray
     original_omega_rad_s: np.ndarray
     native_omega_rad_s: np.ndarray
@@ -91,7 +91,7 @@ def _coherent_waves(train):
     return positive, native, frequency_hz, unique, degrees, rows.T
 
 
-def _component_view(hydro, native_omega, directions_rad, directions_deg):
+def _spectral_hydro(hydro, native_omega, directions_rad, directions_deg):
     source_w = _grid(hydro.excitation_omega, 'native coefficient frequencies', first=.1)
     source_theta = _grid(hydro.excitation_headings, 'native coefficient headings', first=0.)
     H = _finite(hydro.excitation, 'native dimensional excitation')
@@ -108,29 +108,31 @@ def _component_view(hydro, native_omega, directions_rad, directions_deg):
         raise ValueError('The complete physical packet exceeds genuine coefficient support')
     # Include a genuine upper coverage boundary, not an extra wave/quadrature
     # node. This prevents a second Hz comparison from dropping the last packet row.
-    view_w = np.unique(np.r_[0., native_omega, source_w[-1]])
-    view_theta = np.unique(np.r_[-180., directions_deg, 180.])
+    table_w = np.unique(np.r_[0., native_omega, source_w[-1]])
+    table_theta = np.unique(np.r_[-180., directions_deg, 180.])
     by_degree = dict(zip(directions_deg, directions_rad))
     query_theta = np.array([np.pi if abs(value) == 180. else by_degree[value]
-                            for value in view_theta])
-    query = np.empty((len(view_w), len(view_theta), 2))
-    query[:, :, 0] = np.maximum(view_w, source_w[0])[:, None]
+                            for value in table_theta])
+    query = np.empty((len(table_w), len(table_theta), 2))
+    query[:, :, 0] = np.maximum(table_w, source_w[0])[:, None]
     query[:, :, 1] = query_theta[None, :]
     sampled = RegularGridInterpolator((source_w, source_theta), H, bounds_error=True)(query)
-    low = view_w < source_w[0]
+    low = table_w < source_w[0]
     limit = K[:, 2]
-    sampled[low] = limit+(view_w[low, None, None]/source_w[0])**2*(sampled[low]-limit)
+    sampled[low] = limit+(table_w[low, None, None]/source_w[0])**2*(sampled[low]-limit)
     factor = float(density.item()*gravity.item())
     real = sampled.real.transpose(2, 1, 0).copy()/factor
     imaginary = -sampled.imag.transpose(2, 1, 0).copy()/factor
     if not np.isfinite(real).all() or not np.isfinite(imaginary).all():
         raise ValueError('Derived excitation coefficients are nonfinite')
-    return dict(omega_rad_s=view_w[:, None], headings_deg=view_theta[:, None],
-                re=real, im=imaginary, md=np.zeros_like(real))
+    # These are existing public bodyClass(hydroStruct) fields, not a WEC extension.
+    return dict(simulation_parameters=dict(w=table_w[:, None], direction=table_theta[:, None]),
+                hydro_coeffs=dict(excitation=dict(re=real, im=imaginary),
+                                  mean_drift=np.zeros_like(real)))
 
 
 def prepare_spectral_inputs(setup, hydro):
-    """Prepare exact coherent waves and the old coefficient operator's node view."""
+    """Prepare exact coherent waves and the old coefficient operator's ordinary input table."""
     original, native, frequency_hz, directions, degrees, C = _coherent_waves(setup.train)
     dw, dtheta = _native_frequency_widths(native), _native_direction_widths(degrees)
     if np.any(dw <= 0) or np.any(dtheta <= 0):
@@ -149,6 +151,6 @@ def prepare_spectral_inputs(setup, hydro):
         raise ValueError('Physical spectrum representation overflowed or became nonfinite')
     wave = dict(frequencies=frequency_hz[:, None], directions=degrees[:, None],
                 spectrum=spectrum[:, None], spread=spread, phase=phase)
-    view = _component_view(hydro, native, directions, degrees)
-    return SpectralInputs(wave, view, C.copy(), original.copy(), native.copy(),
+    standard = _spectral_hydro(hydro, native, directions, degrees)
+    return SpectralInputs(wave, standard, C.copy(), original.copy(), native.copy(),
                           native-original, directions.copy(), dw, dtheta)

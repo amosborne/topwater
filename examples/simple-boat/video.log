@@ -1,25 +1,25 @@
-2026-10-26T22:08:55.433Z INFO render BEGIN directory=C:\Users\alex\topwater\examples\simple-boat
-2026-10-26T22:08:55.534Z INFO render STAGE load self-contained result
-2026-10-26T22:09:06.068Z INFO render STAGE render and verify complete video
-2026-10-26T22:09:06.741Z INFO render render progress: 1/751 frames; elapsed=0.671s validation=0.109s mask=0.015s path=0.000s edges=0.000s contact=0.016s draw=0.031s send=0.000s
-2026-10-26T22:09:12.982Z INFO render render progress: 50/751 frames; elapsed=6.921s validation=2.849s mask=0.185s path=0.016s edges=0.000s contact=0.625s draw=1.935s send=0.031s
-2026-10-26T22:09:19.799Z INFO render render progress: 100/751 frames; elapsed=13.734s validation=5.643s mask=0.511s path=0.032s edges=0.000s contact=1.320s draw=3.903s send=0.172s
-2026-10-26T22:09:27.191Z INFO render render progress: 150/751 frames; elapsed=21.125s validation=8.567s mask=0.745s path=0.032s edges=0.000s contact=2.118s draw=5.997s send=0.311s
-2026-10-26T22:09:34.839Z INFO render render progress: 200/751 frames; elapsed=28.765s validation=11.671s mask=0.931s path=0.063s edges=0.000s contact=2.933s draw=8.052s send=0.651s
-2026-10-26T22:09:42.866Z INFO render render progress: 250/751 frames; elapsed=36.796s validation=14.750s mask=1.149s path=0.095s edges=0.000s contact=3.588s draw=10.300s send=0.903s
-2026-10-26T22:09:50.987Z INFO render render progress: 300/751 frames; elapsed=44.921s validation=17.911s mask=1.337s path=0.095s edges=0.000s contact=4.524s draw=12.562s send=1.199s
-2026-10-26T22:09:59.182Z INFO render render progress: 350/751 frames; elapsed=53.109s validation=21.170s mask=1.651s path=0.111s edges=0.000s contact=5.357s draw=14.829s send=1.386s
-2026-10-26T22:10:07.339Z INFO render render progress: 400/751 frames; elapsed=61.265s validation=24.658s mask=1.853s path=0.127s edges=0.000s contact=6.133s draw=17.094s send=1.576s
-2026-10-26T22:10:15.837Z INFO render render progress: 450/751 frames; elapsed=69.765s validation=28.060s mask=2.087s path=0.127s edges=0.000s contact=6.982s draw=19.357s send=2.062s
-2026-10-26T22:10:23.978Z INFO render render progress: 500/751 frames; elapsed=77.906s validation=31.281s mask=2.213s path=0.158s edges=0.000s contact=7.887s draw=21.670s send=2.373s
-2026-10-26T22:10:31.243Z INFO render render progress: 550/751 frames; elapsed=85.171s validation=34.874s mask=2.511s path=0.158s edges=0.000s contact=8.687s draw=24.026s send=2.561s
-2026-10-26T22:10:40.524Z INFO render render progress: 600/751 frames; elapsed=94.453s validation=38.503s mask=2.820s path=0.158s edges=0.000s contact=9.406s draw=26.400s send=2.858s
-2026-10-26T22:10:47.547Z INFO render render progress: 650/751 frames; elapsed=101.468s validation=41.986s mask=3.038s path=0.174s edges=0.000s contact=10.219s draw=28.606s send=3.106s
-2026-10-26T22:10:57.489Z INFO render render progress: 700/751 frames; elapsed=111.421s validation=45.814s mask=3.242s path=0.174s edges=0.000s contact=11.016s draw=30.951s send=3.495s
-2026-10-26T22:11:07.037Z INFO render render progress: 750/751 frames; elapsed=120.968s validation=49.301s mask=3.427s path=0.205s edges=0.000s contact=11.965s draw=33.236s send=3.918s
-2026-10-26T22:11:07.163Z INFO render render progress: 751/751 frames; elapsed=121.093s validation=49.348s mask=3.427s path=0.205s edges=0.000s contact=11.996s draw=33.283s send=3.918s
-2026-10-26T22:11:11.538Z INFO render PUBLISHED C:\Users\alex\topwater\examples\simple-boat\video.mp4
-2026-10-26T22:11:11.538Z INFO render VIDEO frames=751 fps=12.5 size=800x800 source_end_s=60.000 encoded_duration_s=60.080 verified=true
-2026-10-26T22:11:11.538Z INFO render TIMING render preparation_s=0.015 setup_s=0.438 geometry_s=83.392 draw_s=33.283 encoder_start_s=0.047 encoder_send_s=3.918 encoder_close_s=1.985 verification_s=2.390 elapsed_s=125.468
-2026-10-26T22:11:11.538Z INFO render Wrote C:\Users\alex\topwater\examples\simple-boat\video.mp4
-2026-10-26T22:11:11.538Z INFO render END status=success elapsed_s=136.093000 output_published=true warnings=0
+2026-10-27T06:22:08.218Z INFO render BEGIN directory=C:\Users\alex\topwater\artifacts\workflow\reference-adoption-private-candidate1
+2026-10-27T06:22:08.330Z INFO render STAGE load self-contained result
+2026-10-27T06:22:20.003Z INFO render STAGE render and verify complete video
+2026-10-27T06:22:20.742Z INFO render render progress: 1/751 frames; elapsed=0.734s validation=0.125s mask=0.000s path=0.000s edges=0.000s contact=0.015s draw=0.047s send=0.000s
+2026-10-27T06:22:27.314Z INFO render render progress: 50/751 frames; elapsed=7.312s validation=2.969s mask=0.252s path=0.000s edges=0.000s contact=0.733s draw=2.045s send=0.047s
+2026-10-27T06:22:34.296Z INFO render render progress: 100/751 frames; elapsed=14.297s validation=5.926s mask=0.469s path=0.000s edges=0.000s contact=1.475s draw=4.096s send=0.236s
+2026-10-27T06:22:41.507Z INFO render render progress: 150/751 frames; elapsed=21.500s validation=8.781s mask=0.768s path=0.000s edges=0.000s contact=2.167s draw=6.112s send=0.420s
+2026-10-27T06:22:48.915Z INFO render render progress: 200/751 frames; elapsed=28.906s validation=11.661s mask=1.017s path=0.000s edges=0.000s contact=2.891s draw=8.197s send=0.716s
+2026-10-27T06:22:56.730Z INFO render render progress: 250/751 frames; elapsed=36.719s validation=14.512s mask=1.281s path=0.000s edges=0.000s contact=3.736s draw=10.377s send=0.858s
+2026-10-27T06:23:04.108Z INFO render render progress: 300/751 frames; elapsed=44.109s validation=17.324s mask=1.534s path=0.000s edges=0.000s contact=4.482s draw=12.629s send=1.029s
+2026-10-27T06:23:12.089Z INFO render render progress: 350/751 frames; elapsed=52.078s validation=20.513s mask=1.642s path=0.000s edges=0.000s contact=5.321s draw=14.869s send=1.356s
+2026-10-27T06:23:19.136Z INFO render render progress: 400/751 frames; elapsed=59.125s validation=23.341s mask=1.844s path=0.015s edges=0.000s contact=6.056s draw=16.887s send=1.418s
+2026-10-27T06:23:26.091Z INFO render render progress: 450/751 frames; elapsed=66.078s validation=26.174s mask=1.953s path=0.015s edges=0.000s contact=6.813s draw=18.937s send=1.434s
+2026-10-27T06:23:33.571Z INFO render render progress: 500/751 frames; elapsed=73.562s validation=29.206s mask=2.080s path=0.015s edges=0.000s contact=7.640s draw=21.154s send=1.496s
+2026-10-27T06:23:39.648Z INFO render render progress: 550/751 frames; elapsed=79.641s validation=32.376s mask=2.330s path=0.015s edges=0.000s contact=8.318s draw=23.088s send=1.496s
+2026-10-27T06:23:47.293Z INFO render render progress: 600/751 frames; elapsed=87.281s validation=35.181s mask=2.409s path=0.063s edges=0.000s contact=9.195s draw=25.247s send=1.543s
+2026-10-27T06:23:53.523Z INFO render render progress: 650/751 frames; elapsed=93.516s validation=38.138s mask=2.594s path=0.063s edges=0.000s contact=10.022s draw=27.450s send=1.575s
+2026-10-27T06:24:01.513Z INFO render render progress: 700/751 frames; elapsed=101.500s validation=41.195s mask=2.839s path=0.078s edges=0.000s contact=10.777s draw=29.533s send=1.575s
+2026-10-27T06:24:09.390Z INFO render render progress: 750/751 frames; elapsed=109.391s validation=43.949s mask=2.992s path=0.094s edges=0.000s contact=11.651s draw=31.595s send=1.622s
+2026-10-27T06:24:09.504Z INFO render render progress: 751/751 frames; elapsed=109.500s validation=43.995s mask=2.992s path=0.094s edges=0.000s contact=11.667s draw=31.610s send=1.638s
+2026-10-27T06:24:13.598Z INFO render PUBLISHED C:\Users\alex\topwater\artifacts\workflow\reference-adoption-private-candidate1\video.mp4
+2026-10-27T06:24:13.598Z INFO render VIDEO frames=751 fps=12.5 size=800x800 source_end_s=60.000 encoded_duration_s=60.080 verified=true
+2026-10-27T06:24:13.598Z INFO render TIMING render preparation_s=0.031 setup_s=0.438 geometry_s=75.705 draw_s=31.610 encoder_start_s=0.063 encoder_send_s=1.638 encoder_close_s=1.797 verification_s=2.297 elapsed_s=113.594
+2026-10-27T06:24:13.598Z INFO render Wrote C:\Users\alex\topwater\artifacts\workflow\reference-adoption-private-candidate1\video.mp4
+2026-10-27T06:24:13.598Z INFO render END status=success elapsed_s=125.375000 output_published=true warnings=0

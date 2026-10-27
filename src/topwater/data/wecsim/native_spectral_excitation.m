@@ -4,11 +4,10 @@ assert(isscalar(waves) && strcmp(waves.type,'spectrumImportFullDir'), ...
     'Expected one native FullDir wave object');
 assert(body.dof == 6 && body.yaw.option == 0 && body.largeXYDisplacement.option == 0, ...
     'Spectral workflow requires fixed linear six-DOF excitation');
-data = getExcitationData(body.hydroData(1),waves.type);
-assert(data.uses_component_view,'Native spectral component view is missing');
+data = body.hydroData(1).simulation_parameters;
 assert(all(ismember(waves.omega(:),data.w(:))) && ...
     all(ismember(waves.fullDirectionalSpectrum.directions(:),data.direction(:))), ...
-    'Native spectral queries differ from the prepared component nodes');
+    'Native spectral queries differ from the prepared ordinary coefficient nodes');
 h = body.hydroForce.hf1.fExt;
 directions = waves.fullDirectionalSpectrum.directions;
 nDirection = numel(directions);

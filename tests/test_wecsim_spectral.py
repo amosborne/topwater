@@ -30,10 +30,10 @@ def case():
     return SimpleNamespace(train=train), hydro
 
 
-def dimensional_view(inputs, hydro, frequency_index, heading_index):
-    view = inputs.component_view
-    return ((view['re'][:, heading_index, frequency_index]
-             - 1j*view['im'][:, heading_index, frequency_index])*hydro.density*hydro.gravity)
+def dimensional_coefficients(inputs, hydro, frequency_index, heading_index):
+    table = inputs.hydro['hydro_coeffs']['excitation']
+    return ((table['re'][:, heading_index, frequency_index]
+             - 1j*table['im'][:, heading_index, frequency_index])*hydro.density*hydro.gravity)
 
 
 def test_coherent_branches_and_native_spectrum_preserve_physical_components():
@@ -57,13 +57,17 @@ def test_coherent_branches_and_native_spectrum_preserve_physical_components():
     np.testing.assert_array_equal(setup.train.C, original)
     np.testing.assert_array_equal(hydro.excitation, raw_H)
     assert set(data.wave) == {'frequencies', 'directions', 'spectrum', 'spread', 'phase'}
+    assert set(data.hydro) == {'simulation_parameters', 'hydro_coeffs'}
+    assert set(data.hydro['simulation_parameters']) == {'w', 'direction'}
+    assert set(data.hydro['hydro_coeffs']) == {'excitation', 'mean_drift'}
+    assert set(data.hydro['hydro_coeffs']['excitation']) == {'re', 'im'}
 
 
-def test_view_matches_independent_bilinear_cell_and_quadratic_bridge():
+def test_standard_coefficients_match_independent_bilinear_cell_and_quadratic_bridge():
     setup, hydro = case()
     data = prepare_spectral_inputs(setup, hydro)
-    w = data.component_view['omega_rad_s'].reshape(-1)
-    theta = data.component_view['headings_deg'].reshape(-1)
+    w = data.hydro['simulation_parameters']['w'].reshape(-1)
+    theta = data.hydro['simulation_parameters']['direction'].reshape(-1)
     column = int(np.flatnonzero(theta == 45.)[0])
     # Heading pi/4 is the midpoint of two genuine source columns.
     anchor = (hydro.excitation[0, 0]+hydro.excitation[0, 1])/2
@@ -72,27 +76,27 @@ def test_view_matches_independent_bilinear_cell_and_quadratic_bridge():
     row = int(np.flatnonzero(w == query)[0])
     fraction = (query-.1)/(.2-.1)
     expected = anchor+fraction*(upper-anchor)
-    np.testing.assert_allclose(dimensional_view(data, hydro, row, column), expected, rtol=0, atol=2e-14)
+    np.testing.assert_allclose(dimensional_coefficients(data, hydro, row, column), expected, rtol=0, atol=2e-14)
     query = data.native_omega_rad_s[0]
     row = int(np.flatnonzero(w == query)[0])
     expected = hydro.K[:, 2]+(query/.1)**2*(anchor-hydro.K[:, 2])
-    np.testing.assert_allclose(dimensional_view(data, hydro, row, column), expected, rtol=0, atol=2e-14)
-    np.testing.assert_array_equal(data.component_view['re'][:, :, 0],
+    np.testing.assert_allclose(dimensional_coefficients(data, hydro, row, column), expected, rtol=0, atol=2e-14)
+    np.testing.assert_array_equal(data.hydro['hydro_coeffs']['excitation']['re'][:, :, 0],
         np.repeat((hydro.K[:, 2]/(hydro.density*hydro.gravity))[:, None], len(theta), axis=1))
-    assert np.all(data.component_view['im'][:, :, 0] == 0)
-    assert np.all(data.component_view['md'] == 0)
-    np.testing.assert_array_equal(data.component_view['re'][:, 0], data.component_view['re'][:, -1])
-    np.testing.assert_array_equal(data.component_view['im'][:, 0], data.component_view['im'][:, -1])
+    assert np.all(data.hydro['hydro_coeffs']['excitation']['im'][:, :, 0] == 0)
+    assert np.all(data.hydro['hydro_coeffs']['mean_drift'] == 0)
+    np.testing.assert_array_equal(data.hydro['hydro_coeffs']['excitation']['re'][:, 0], data.hydro['hydro_coeffs']['excitation']['re'][:, -1])
+    np.testing.assert_array_equal(data.hydro['hydro_coeffs']['excitation']['im'][:, 0], data.hydro['hydro_coeffs']['excitation']['im'][:, -1])
 
 
-def test_hz_native_order_is_the_view_query_identity_without_new_wave_field():
+def test_hz_native_order_is_the_standard_query_identity_without_new_wave_field():
     setup, hydro = case()
     data = prepare_spectral_inputs(setup, hydro)
     native = (data.wave['frequencies'].reshape(-1)*2)*np.pi
     np.testing.assert_array_equal(data.native_omega_rad_s, native)
     np.testing.assert_array_equal(data.omega_roundtrip_error_rad_s, native-setup.train.omega[1:])
-    assert np.isin(native, data.component_view['omega_rad_s']).all()
-    assert data.component_view['omega_rad_s'][-1, 0] == hydro.excitation_omega[-1]
+    assert np.isin(native, data.hydro['simulation_parameters']['w']).all()
+    assert data.hydro['simulation_parameters']['w'][-1, 0] == hydro.excitation_omega[-1]
     assert len(data.wave['frequencies']) == len(setup.train.omega)-1
     assert 'omega_rad_s' not in data.wave
 
@@ -114,7 +118,7 @@ def test_calm_and_zero_energy_rows_need_no_random_phases_or_denominator_floor():
         assert np.all(data.wave[field] == 0)
     assert data.coefficients.shape == (4, 2)
     assert np.all(data.coefficients == 0)
-    assert np.isfinite(data.component_view['re']).all()
+    assert np.isfinite(data.hydro['hydro_coeffs']['excitation']['re']).all()
 
 
 @pytest.mark.parametrize('failure', ['dc', 'nonfinite', 'outside', 'seam', 'inactive', 'underflow'])

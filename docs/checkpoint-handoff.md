@@ -10,98 +10,80 @@ cleanup. The user authorizes pin migration and planned cleanup AFTER validation.
 No upstream submissions, outside contacts, assistant merges, main pushes or
 bookkeeping PRs. Active implementation branch stays baseline/fluid-body.
 
-Merged fork reference:6b774228e1f6b31dee473e626204b0ef65e5ec38, based on official
-v7.1.0/a23d299. User merged PR6/7/9/14. Keep those merged PRs and closed fix
-issues4/5/3/12. Current production pin is still9952634; source/public adoption is
-pending final delivery and default-path verification.
+Merged fork reference and DEFAULT runtime pin are now
+6b774228e1f6b31dee473e626204b0ef65e5ec38 over official v7.1.0/a23d299.
+The user merged PR6/7/9/14; keep these and closed fix issues4/5/3/12.
+The standard953 adapter is integrated in the active main workspace. Four physical
+handoff files are exact953 after CRLF normalization; backend differs only by the
+pin. Held-pin regression now explicitly selects995. Default checkout
+artifacts/dependencies/topwater-wec-sim is clean trackedtopwater/reference6b.
+No upstream submission or assistant merge occurred.
 
-Replacement adapter is committed ONLY in artifacts/worktrees/standard-wecsim-input,
-branch work/standard-wecsim-input, exact9539192bb733663584483f33ef2fb3de273d6fcf.
-Runtime validation checkout artifacts/dependencies/wecsim-reference-validation
-is clean detached6b. Both remain frozen while the live allocation runs.
+## Execution and accepted adoption
 
-## Execution and accepted evidence
+NO LIVE NUMERICAL JOB. All latest producer/encoder/owned MATLAB PIDs are terminal,
+frozen-input checks and separate idle/readback/release-last passed; lease absent.
+Last numerical job: actual default-preflight-attempt1, terminal0. Recorded status
+is a checkpoint, not current liveness proof; revalidate before any future job.
+No additional physics run is needed for this goal.
 
-LIVE field assembly: reference-adoption-assembly-attempt1, ROOT toolsession76436.
-Started2026-10-27T06:01:52.430807Z; outerproducer35992, owner35640. Lease HELD.
-Monitor the SAME actual tool handle and append-only child/result logs. Avoid live
-replaceable receipt reads. Do not edit frozen inputs/producers or launch another
-numerical job. Config reference-adoption-assembly-config1; final freeze
-reference-adoption-assembly1/freeze.json53be5d65 (9711files),1800s/8GiB.
-This generates fresh TOTAL incident+diffraction+radiation surface, standardResult,
-PNG and logs from accepted saved motion. No body rerun/coefficient campaign.
-Candidate: artifacts/workflow/reference-adoption-private-candidate1.
-Evidence: artifacts/workflow/reference-adoption-private-evidence1.
+Independent accepted receipts under artifacts/workflow:
+- reference-adoption-motion-review-v1/acceptance.json286f3a82: NEW6b+953 full3001x6
+  forces/startup/phase/actualonce-only application/rest/negative-history/fullCIC/
+  clocks/motion. Max difference59.758um/.00156985deg (limits1mm/.01deg).
+  Reportcase3ec4d8d8d, freeze756cc7cf. Whole1212.407s; simulation745.50s,
+  nativeforce305.10s, init49.09s/model51.77s. No physical-accuracy claim.
+- reference-adoption-private-review-v1/acceptance.json4622b301: fresh TOTALfield,
+  standard Result/PNG/logs and actual ordinaryCLI render, exact8files,
+  3001motion/751surface/751FULLdecodedvideo. Finalreport2104ca1f, assembly1f16fa47,
+  sourceb078f2fe, fieldfreeze53be5d65/renderd8ecf8b8/final8f28fef0.
+  Whole field987s, CLI render126.906s, audit26.032s. No extra body integration or
+  coefficient campaign. Fresh-field source raw953CRLF528e/LF240 both verified.
+- reference-adoption-main-review-v1/acceptance.json3712ab33: actual MAIN38tests
+  pass2.69s plus DEFAULT6b/nooverride/owned hiddenR2025b actualpreflight, all three
+  licenses, no loaded models, server exit0/heldnativehandle/shared-name gone.
+  Actualbackend712f0547; preflightfreeze172fb5a6; helper32.563s. The receipt binds
+  tested working bytes before final commit; verify committed source hashes match.
+- Earlier38Python+21native handoff0cffbbc3, generic10spectrum4ffbf7f8, tiny3public
+  casesb787454d remain supporting selected-path evidence.
 
-NEW6b+953 full motion is independently ACCEPTED:
-reference-adoption-motion-review-v1/acceptance.json286f3a82 binds
-reference-adoption-case3/report.jsonec4d8d8d and run-allocation3/freeze756cc7cf.
-All3001x6 pre-body forces/startup/phase, actual once-only application, initial
-rest, negative-history certificate/fullCIC replay, actual clocks and six motions
-pass unchanged gates. Max position difference59.758um; SO3 difference.00156985deg
-against original canonical (limits1mm/.01deg). No phase/time/gain fitting.
-Whole1212.407s; BEMIO2.62/init49.09/force305.10/model51.77/simulation745.50/
-post-audits1.21s. Peak Job memory counter6.4745GB. Actual terminal/frozen/CIM/
-independent idle/readback/release-last all passed before field claim.
+Guard-v2 d168ff67 measuredcc4ff62f passed9realWindows controls. Live optional
+publication defers only Win5/32/33 without retry sleeps; resource controls and
+mandatory initial/final receipts stay active/fail closed. Keep oldv1/v4 and
+failed attempts unchanged. Case1 sandboxprefs failed beforephysics; case2 guard
+publication interrupted motion; revised memory-control test validates actual
+128MiB denial64MiB/success256MiB without asserting undocumented peak semantics.
 
-Other accepted checks:38 focused Python +21 native validators/handoff (0cffbbc3),
-10 generic PR14 native controls (4ffbf7f8), tiny3 public-input cases (b787454d).
-These have exact source/import-path evidence; not physical-accuracy guarantees.
+## Canonical output and source state
 
-Guard-v2 source d168ff67, independent measured acceptancecc4ff62f, passed9 real
-Windows controls. Optional live receipt replacement defers only Win5/32/33 without
-retry sleeps; time/WS checks and hard Job cap remain active. Initial/final receipts
-remain mandatory. Read-back64MiB denies the same128MiB allocation accepted under
-256MiB; peak-counter semantics are not overclaimed. Oldv1/v4 untouched.
-Run1 failed sandbox MATLAB preferences before physics; run2 was interrupted by
-receipt replacement after1055.703s; the first guard-control attempt exposed an
-invalid peak assertion. Preserve all original attempts and policies. HOST access
-is required for MATLAB preferences/temp. No GUI MATLAB window.
+The reviewed eight private files are PROMOTED byte-for-byte to examples/simple-boat:
+boat.npz/sea.npz/result.npz/result.png/video.mp4/sea.log/result.log/video.log.
+Promotion proof reference-adoption-promotion1/report.json binds private462/main3712.
+Boat4168e1a7/sea9ba25ba3 unchanged; newresult2b615b56/PNG275ac4c5/videoe5fce0e4.
+Original8files343MB retained and hash-verified in reference-adoption-public-rollback1
+against the original field freeze. Public logs faithfully retain private generation
+paths and explicitly resumed accepted motion; do not claim another public solveCLI.
+Actual qualification was native body + fresh production field + ordinaryCLIrender
++ actual adopted-main defaultpreflight. No agent image views/previews occurred.
 
-## Delivery, source adoption and publication remaining
+All three logsENDsuccess; sea/video0WARNING/result34 knownrows (including wrapped
+continuations): restoring6/tabulation-info1/projection1/mesh17/irregular8/wetset1.
+Native batch one endpoint-coverage heuristic warning plus two INFO messages;
+all consumed headings supplied, force replay exact within fixed tolerances.
+Genuine15deg BEM angular accuracy remains unqualified. T-I RMS5.98768mm=2.24251%,
+onebeam7.99367mm=2.96028%, maximum65.0892mm at44.56s. These are field disturbance,
+not error bounds. Old/newXY differ; no indexwise subtraction/regridding.
+See docs/cli/warning-triage.md for current complete dispositions/physical31-34.
 
-Delivery source manifestb078f2fe is independently approved. It ALWAYS creates
-fresh same-production field; old cache is screen-only. Producer binds raw953CRLF
-528e2e94 AND exactCRLF-to-LF240198ee. No other scientific difference ignored.
-The selected field allocation is1800s/8GiB; render/audit proposals300s each require
-fresh root claims/freezes. After assembly, separately run ordinary CLI render with
-PYTHONPATH explicitly953/src, then final exact-eight-file/751decoded-frame audit.
-Use build_freeze.py --phase verify-final for the final audit. Do not inspect
-images or produce previews during the full render; automated decode is allowed.
-Native warning triage: final case3 has one coarse-direction coverage-heuristic
-warning plus two INFO messages (visualization200m/imported frequencies). Wrapped
-endpoint heuristic differs from actual interpolation; all physical heading nodes
-are supplied and force replay passes. This does not qualify the genuine15deg BEM
-heading accuracy. Infinite-depth k=omega^2/g remains unchanged. Update final
-warning triage from actual final logs; retain physical issues31-34.
+Current code uses existing bodyClass(hydroStruct), official readCAPYTAINE /
+radiationIRF/rebuildHydroStruct. WEC computes wave forces and motion; no custom
+component-view/accessor/BEMIO writer extension. Spectral H5 skipped, consumedCIC/
+Ainf preserved, unused rawA/B/T omitted. Native Topwater remains an incomplete
+prototype. No remeshing/incident-only fallback/nonlinear-physics claim.
 
-After private delivery acceptance:
-- Integrate953 into baseline, preserving current-state docs if cherry-pick conflicts.
-  Change backend SUPPORTED_FORK_COMMIT and docs/experts/wecsim-fork.json to6b;
-  update solve docs and fork strategy. The held-fork unit test must explicitly
-  monkeypatch995 rather than implicitly depending on the old default pin.
-- Adopt the clean default artifacts/dependencies/topwater-wec-sim checkout onto
-  topwater/reference6b. Preserve old995 recovery first. No fork override is set
-  in the host environment (checked). Run appropriate focused source/pin tests.
-- Execute reviewed default-preflight source df6dd55a under existing root Job,
-  HOST/300s8GiB, after actual MAIN source/pin adoption. It requires DEFAULT6b
-  without TOPWATER_WECSIM_PATH and exercises actual backend.preflight/licenses.
-  It owns one fresh hidden sharedCAPYTAINE_REFERENCE engine, requests MATLAB-side
-  exit(0) only after PID proof, and requires held-handle/launcher0/shared-name
-  terminal proof. Source approval is not measured readiness. No public-solve CLI
-  claim: this campaign uses real native body + fresh production field + CLI render.
-- Preserve all eight original public files for rollback, then promote reviewed
-  candidate, verify hashes/default readiness, commit/push baseline and update
-  issue30 MAIN description. No play-by-play comments. Canonical exact8:
-  boat.npz/sea.npz/result.npz/result.png/video.mp4/sea.log/result.log/video.log.
-  Boat4168e1a7 and sea9ba25ba3 stay unchanged; original result9c1c708e,
-  PNG97e01aa4/video9e654250 stay protected until promotion.
-
-The adapter uses existing bodyClass(hydroStruct), official readCAPYTAINE /
-radiationIRF/rebuildHydroStruct. WEC computes applied wave forces. No custom
-component_view/accessor/BEMIO writer extension; spectral H5 skipped, consumed
-CIC/Ainf preserved, unused rawA/B/T omitted. Native Topwater is still a nonworking
-prototype. No new nonlinear-physics claim, water remeshing or incident-only field.
+Remaining goal work: commit/push the qualified source/pin/docs/public checkpoint,
+update issue30 MAIN, then execute and verify the cleanup below. Do not re-run
+physics or inspect images. Preserve active953 source and6b validation provenance.
 
 ## Fork cleanup after validated adoption
 
@@ -113,8 +95,12 @@ Delete obsolete issues1/2/11/13 (deleteIssue issueId) after preservation/link ch
 Keep merged6/7/9/14 and closed3/4/5/12. No upstream mutations.
 Delete six retired fix branches plus dev/gh-pages, checking actual current head
 before each delete. Main is upstream mirror; new topwater/reference stays6b.
-Pages is disabled; Actions currently enabled but zero workflow entries. Retire
-fork docs deployment before gh-pages deletion; do not infer Actions disabled.
+Pages is disabled; Actions currently enabled but zero workflow entries despite
+four inherited workflow files. Individualdocs endpoint404; WEC expert recommends
+recording settings/no active runs, disabling Actions ONLYinamosborne/WEC-Sim,
+reading backfalse, then deletinggh-pages. This reversibly disables fork CI too;
+checks currently run locally. Do not change upstream/Topwater Actions or mirror
+source, or trigger CI just to register a workflow.
 After new pin/default readiness, publish/verify immutable archive/topwater-legacy-9952634
 at exact995 then remove old topwater/reference-v7.1.0 (remote/local as appropriate).
 Keep official release tag unchanged. No newer-release rebase in this goal.
@@ -129,7 +115,7 @@ are now hashed/copied in ignored-snapshots.json. Old numerical study directories
 stay untouched. Audit source/ignored changes again before removing obsolete
 worktrees. Keep active953 and6b;6b shares wecsim-rebuild-v7.1.0/.git, so NEVER
 remove its common store while linked. Three historical issue links are redirected
-in current dirty docs; original issue quotations remain in committed historical
+in committed79a95d2 docs; original issue quotations remain in committed historical
 record. No remote issues/PRs/branches or local worktrees retired yet.
 
 ## Persistent limits and visuals

@@ -1,51 +1,57 @@
 # Canonical workflow warning triage
 
-## Completed canonical run
+## Current canonical result
 
-Public solve and render succeeded in `canonical-pipeline-attempt4`, with
-3,001 motion samples and 751 decoded video frames over the complete 0-60 s
-history. Evidence: [result.log](../../examples/simple-boat/result.log),
-[video.log](../../examples/simple-boat/video.log) and the private
-`artifacts/workflow/canonical-pipeline-attempt4/report.json`. `sea.log` records
-successful generation with zero warnings. The solve reports 56 WARNING records;
-this counts rendered rows/summaries, not distinct physical events.
+The published eight files use the accepted6b774228 reference and standard public
+coefficient input. All3001 motion samples,751 total-surface frames and751 fully
+decoded800x800 video frames cover0..60s. Video cadence is12.5fps, encoded length
+60.08s. The result log accurately records fresh field reconstruction from an
+independently accepted native trajectory; it does not claim another body solve.
+See [result.log](../../examples/simple-boat/result.log),
+[sea.log](../../examples/simple-boat/sea.log), [video.log](../../examples/simple-boat/video.log)
+and [qualification scope](../experts/wecsim_expert/current-state.md).
 
-| Current item | Actual result / disposition |
+All three logs end successfully with no ERROR records. Sea/video have0 WARNING
+rows; result has34. These are rendered rows and summaries, not34 independent
+physical events. Independent review classified every row, including multiline
+continuations: restoring6, tabulation-progress1, causal-projection1,
+mesh-resolution17, irregular-frequency8 and wet-set1. No unexplained family remains.
+
+| Item | Meaning and disposition |
 |---|---|
-| Mesh resolution and irregular frequencies | Warnings remain, including the affected-solve summaries. Expected for this minimal reference; accuracy consequences still need qualification in [#32](https://github.com/amosborne/topwater/issues/32). |
-| Causal radiation projection | Retain the 42.7 mm maximum / 12.5 mm RMS diagnostic sensitivity warning. It is not a true-error bound. Investigation is [#31](https://github.com/amosborne/topwater/issues/31). |
-| Field/load consistency | Maximum force-component differences [20.7354, 18.0728, 47.5506] N and moment-component differences [21.6547, 90.0598, 16.2102] Nm. The accepted body loads are unchanged. Evaluate in [#33](https://github.com/amosborne/topwater/issues/33). |
-| Calm-reference restoring | Moment departure: 2,013 samples, first 9.68 s, peak 183%; force departure: 1,170 samples, first 16.66 s, peak 132%. These are reference/model departures, not dynamic-error percentages. |
-| Calm-reference diagnostic unavailable | 338 samples, first 23.08 s. Flat-reference rim intersection does not establish flooding in the actual sea. |
-| Represented wet-set departure | Above the 10% reporting threshold from first 25.84 s through last 51.6 s; worst 29.14% at 44.64 s. Evaluate with restoring/applicability in [#34](https://github.com/amosborne/topwater/issues/34). |
-| Initialization and scratch messages | Green-function tabulation and visualization-only 200 m depth are expected initialization information. The existing-directory warning concerns a fresh owned scratch directory. Neither establishes physical accuracy or an unexpected cross-case overwrite. |
-| Path display and importer handles | Their specific fixes are in the pinned fork; no escaped-path warning or cleanup failure blocked this run. Fork changes are separately tracked in our WEC-Sim issues 1-5. |
-| Encoder duplicate `-r` warning | Appears in the private wrapper output because native encoder stderr is outside the documented Python tee. Both rates select 12.5 fps; full decode verified 751 frames, 800-square, 60.08 s. This is presentation/configuration noise, not an observed cadence failure. Do not retrospectively edit the generated video log. |
+| Mesh resolution / irregular frequencies | The same17-panel mean hull is used. Radiation transfer warnings affect5418 mesh-resolution and4506 irregular-frequency solves; combined diffraction has382 mesh-resolution warnings. Repetitions are summarized. Accuracy remains unqualified in [#32](https://github.com/amosborne/topwater/issues/32). |
+| Causal radiation projection | Retained method sensitivity is42.7mm maximum /12.5mm RMS versus a signed-lag diagnostic at tested points. That diagnostic is noncausal and is not a reference solution or error bound. Keep [#31](https://github.com/amosborne/topwater/issues/31) open. |
+| Calm restoring departure | Moment:2013 samples, first9.68s, peak183%; force:1170 samples, first16.66s, peak132%. These compare fixed-mean restoring with a calm geometric diagnostic; they are not dynamic-error percentages. Evaluate in [#34](https://github.com/amosborne/topwater/issues/34). |
+| Calm diagnostic unavailable |338 samples, first23.08s. The flat reference intersects the opening rim; this does not establish flooding in the actual disturbed sea. Actual output opening/contact guards passed. |
+| Represented wetted surface | Symmetric-difference area exceeds the10% reporting threshold from25.84s through51.6s; worst29.15% at44.64s. This is a fixed-mean applicability departure, not a nonlinear motion-error bound. |
+| Green-function tabulation | Initialization progress emitted at WARNING level by Capytaine. It is not a physical finding or failed computation. |
+| Native WEC direction warning | The separate native transcript has one coverage-heuristic warning for the repacked periodic grid. Its endpoint test shifts/wraps directions differently from interpolation. Every consumed component heading is supplied, and all six force comparisons pass. This does not qualify the original genuine15degree BEM heading resolution. |
+| Native setup information | Visualization depth200m retains `deepWater=1` and infinite-depth dispersion. Imported-frequency information confirms no Traditional/EqualEnergy resampling. Neither changes the selected physics. |
+| Field/load consistency | Compatibility of native forces/motion does not resolve the provisional field/load relation. [#33](https://github.com/amosborne/topwater/issues/33) remains open; this campaign does not claim a new force-field closure result. |
+| Encoder duplicate-rate notice | External FFmpeg stderr retains the known duplicate `-r` notice. Full decode and cadence checks pass751 frames at12.5fps. This is configuration noise; generated logs are preserved rather than edited retrospectively. |
 
 ### Measured surface disturbance
 
-These describe the produced **total-minus-incident elevation**, not its numerical
-or physical error. Exterior support excludes the posed hull. Spatial P1 moments
-are projected-area weighted; time integration includes every saved surface frame
+These are **total-minus-incident elevation differences**, not numerical or
+physical errors. Exterior support excludes the posed hull. Spatial P1 moments
+use projected-area weights; time integration includes every saved surface frame
 and startup. The near band selects original source-triangle centroids within one
-beam horizontally of the independent actual waterline, then integrates their
-exterior portions; it is a discrete band approximation.
+beam horizontally of the actual waterline and integrates their exterior portions.
 
-| Region | RMS delta | RMS delta / incident RMS | Resolved maximum absolute delta |
+| Region | RMS difference | RMS / incident RMS | Resolved maximum absolute difference |
 |---|---:|---:|---:|
-| Full exterior patch | 5.987 mm | 2.242% | 65.087 mm |
-| One-beam band | 7.993 mm | 2.960% | 65.087 mm |
+| Full exterior patch |5.98768mm|2.24251%|65.0892mm|
+| One-beam band |7.99367mm|2.96028%|65.0892mm|
 
-The resolved maximum is at 44.56 s, world location approximately
-(2.02543,1.10729,0.329677) m. A small RMS disturbance does not resolve the phase,
-reference-resolution, load-consistency or linear-applicability questions above.
-The full run passed its actual opening/contact and startup guards. Initial
-represented total local elevation was bounded by 0.000645411 m on the stated
-conservative exterior support; no total disturbed-fluid velocity bound is claimed.
+The resolved maximum is at44.56s, approximately(2.02544,1.10729,0.329675)m world
+coordinates. Initial represented total local elevation is bounded by0.000645412m
+on the stated conservative exterior support; no total disturbed-fluid velocity
+bound is established. New and old saved XY grids differ, so no misleading
+indexwise field subtraction or regridding was performed.
 
-The user prioritizes working delivery, then correctness, then speed. These
-warnings remain visible qualifications on the working example; they are not
-silently accepted as harmless and no new accuracy campaign is implied here.
+The warnings remain visible qualifications requiring further physical evaluation.
+A small RMS disturbance, finite arrays and internal force agreement do not resolve
+phase, reference resolution, force-field closure or nonlinear applicability.
 
 ## Archived attempt-2 assessment
 

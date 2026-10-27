@@ -6,83 +6,75 @@ Root owns acceptance, integration and serial execution. Consult the
 [execution ledger](../execution-state.json) for live/terminal status; this page
 confers no execution permission.
 
-## Active reference and adoption
+## Adopted reference and workflow
 
-The user squash-merged inertia PR9 and spectral PR14. Our release-based reference
-is now **6b774228e1f6b31dee473e626204b0ef65e5ec38**, including merged PR6/7/9/14.
-Its clean detached checkout is `artifacts/dependencies/wecsim-reference-validation`.
-The isolated Topwater standard-input adapter is **9539192bb733663584483f33ef2fb3de273d6fcf**,
-branch `work/standard-wecsim-input`, at `artifacts/worktrees/standard-wecsim-input`.
-It has not been adopted into the active implementation branch.
+**The default pin is6b774228e1f6b31dee473e626204b0ef65e5ec38.** The user merged
+PR6/7/9/14 into the release-based `topwater/reference`. The default checkout is
+`artifacts/dependencies/topwater-wec-sim`, clean on that branch; no path override
+was used for actual default-path preflight.
 
-The route uses WEC-Sim's EXISTING public `bodyClass(hydroStruct)` input. Official
-BEMIO import/normalization and `rebuildHydroStruct` prepare ordinary excitation
-fields; consumed Ainf/CIC/restoring inputs remain unchanged. Unused raw A/B/T
-are omitted rather than fabricated. No custom coefficient-view/accessor or BEMIO
-writer extension remains in the merged fork. WEC-Sim computes forces and motion;
-Topwater supplies physical waves/coefficient inputs, never applied force histories.
+Adapter9539192bb733663584483f33ef2fb3de273d6fcf is integrated into the active
+`baseline/fluid-body` checkout with its scientific files exact after only CRLF-to-LF normalization. The backend differs
+only by the validated6b pin. The source953 worktree and detached6b validation
+checkout remain for provenance, not as required runtime overrides.
 
-**New-reference force/motion validation is accepted; default pin9952634 remains held.**
-Fresh field/delivery and adopted-default readiness are still pending.
-The user authorizes completing validation/adoption, then the
-[fork cleanup plan](fork-cleanup-plan-2026-10-27.md). Pin/source/output publication
-and cleanup are root-owned later steps, not consequences of source approval.
+WEC-Sim computes forces and motion through its EXISTING public
+`bodyClass(hydroStruct)` spectral input. Official BEMIO import/normalization and
+`rebuildHydroStruct` prepare ordinary excitation fields; consumed Ainf/CIC and
+restoring inputs remain unchanged. Unused raw A/B/T are omitted rather than
+fabricated. No custom coefficient-view/accessor or BEMIO writer extension remains.
+Topwater supplies waves/coefficient data and reconstructs the total surface.
 
-## Evidence for this standard-input route
+**The accepted eight-file result is now promoted to `examples/simple-boat`.**
+Boat/sea are unchanged. Cleanup is the next authorized phase; it is NOT complete.
+The legacy995 branch remains until its archive is verified and retirement follows
+[the cleanup plan](fork-cleanup-plan-2026-10-27.md). Root owns those actions.
 
-- The tiny public-input discriminator passed all three low/off-grid/seam and
-  missing/empty-unused-A/B cases. Consumed CIC/Ainf/mass/restoring were exact.
-  [Independent acceptance](../../../artifacts/workflow/standard-input-review-v1/acceptance.json).
-- Narrowed PR14 passed ten generic native regressions, including the native force
-  block. [Acceptance](../../../artifacts/workflow/standard-spectrum-unit-review-v1/acceptance.json).
-- Exact6b/953 passed **38 focused Python checks and21 MATLAB cases**
-  (13 validators +8 handoff), with no failed/incomplete native cases.
-  [Independent acceptance0cffbbc3](../../../artifacts/workflow/reference-handoff-review-v1/acceptance.json)
-  binds actual source/import paths and measured evidence. Sparse-bin/CG-CB fixture
-  warnings do not qualify angular interpolation or physical accuracy.
-- **Full canonical6b/953 motion is independently accepted:**
-  [receipt286f3a82](../../../artifacts/workflow/reference-adoption-motion-review-v1/acceptance.json)
+## Accepted evidence
+
+- Tiny public-input discrimination passed three low/off-grid/seam and missing/
+  empty-unused-A/B cases; consumed CIC/Ainf/mass/restoring were exact.
+  [Acceptance](../../../artifacts/workflow/standard-input-review-v1/acceptance.json).
+  Narrowed PR14 also passed ten native regressions, including the real force block.
+- Exact6b/953 passed38 Python and21 MATLAB cases (13 validators +8 handoff).
+  [Acceptance0cffbbc3](../../../artifacts/workflow/reference-handoff-review-v1/acceptance.json).
+- Full canonical3001x6 forces/startup/phase, once-only application, rest/negative-
+  history certificate, full CIC replay, clocks and motion passed.
+  [Acceptance286f3a82](../../../artifacts/workflow/reference-adoption-motion-review-v1/acceptance.json)
   binds [case3 reportec4d8d8d](../../../artifacts/workflow/reference-adoption-case3/report.json).
-  All3001x6 force/startup/phase, actual once-only application, rest/negative-history
-  certificate, full CIC replay and clock gates pass. Maximum position difference
-  is59.758 micrometres and relative SO3 angle0.00156985deg, within1mm/.01deg.
-  This is numerical compatibility, not hydrodynamic accuracy. The native allocation
-  is terminal with frozen inputs and process/cleanup proof verified.
-- Measured controlled runtime1212.407s includes simulation745.503s, native force
-  replay305.104s, initialization49.085s and model preparation51.773s; it is not all
-  integration time. Stage timings and raw outputs are retained in the case3 report.
-  Its final MATLAB log has one coarse-direction coverage warning plus visualization-
-  depth/imported-frequency informational messages. Nodal force agreement does not
-  establish accuracy of the original angular coefficient grid. Earlier startup/
-  guard failures remain preserved under their original case/allocation directories.
-- **Fresh TOTAL field assembly is the current root allocation**, using this saved
-  accepted motion: no body rerun or new coefficient campaign. Delivery sourceb078f2fe
-  is independently reviewed. Same operatorf1f788f9, centroid quadrature and normalized
-  producer source240198 remain; raw953 CRLF source528e2e94 is separately bound.
-  Old-cache inputs are screened by exact bytes; no old field is reused. Result/PNG,
-  full ordinary CLI render and exact-eight-file audit remain pending.
-  [Delivery requirements](../../../artifacts/workflow/reference-adoption-delivery-v1/README.md).
-- Corrected default-preflight sourcedf6dd55a is independently source-approved,
-  **unexecuted**. It requires the adopted main adapter/default6b checkout, owns a
-  fresh hidden shared engine, calls actual preflight and requests MATLAB-side
-  exit only after PID verification; terminal checks remain mandatory.
-  [Default-path check](../../../artifacts/workflow/reference-adoption-preflight-v1/README.md).
+  Maximum position difference59.758 micrometres and SO3 angle0.00156985deg meet
+  1mm/.01deg. Controlled runtime1212.407s includes simulation745.503s and native
+  force replay305.104s; it is not all integration time. Failed prior attempts remain.
+- Fresh TOTAL incident/diffraction/radiation field, standard Result/PNG, full
+  ordinary CLI render and exact-eight audit passed from the saved NEW motion.
+  No body rerun, coefficient campaign or old-field substitution.
+  [Private acceptance4622b301](../../../artifacts/workflow/reference-adoption-private-review-v1/acceptance.json)
+  binds final report2104ca1f,3001 motion/751 surface samples and751 decoded frames.
+  Same operatorf1f788f9,17 panels and centroid quadrature were retained.
+- The active Topwater checkout passed38 focused tests in2.69s and real default preflight: clean6b
+  checkout, no override, hidden fresh R2025b, all three required licenses, zero
+  loaded models and verified owned-server shutdown.
+  [Default-path acceptance3712ab33](../../../artifacts/workflow/reference-adoption-main-review-v1/acceptance.json).
+  This readiness check performed no further body integration or public solve.
+- [Promotion report](../../../artifacts/workflow/reference-adoption-promotion1/report.json)
+  verifies all eight canonical files byte-for-byte against the accepted candidate:
+  Result2b615b56, PNG275ac4c5, videoe5fce0e4. Physical inputs are unchanged and the
+  verified rollback copy of all eight original files is retained.
 
-## Preserved evidence and limits
+## Limits and preserved history
 
-The earlier e24 optional-view route's accepted forces, bus, motion and private
-8-file delivery are HISTORY, not acceptance of6b/953:
-[earlier motion](spectral-motion-qualification-2026-10-27.md),
-[earlier end-to-end qualification](spectral-end-to-end-qualification-2026-10-27.md).
-Public canonical files remain unchanged. Physical issues31–34 remain unresolved;
-mesh/irregular-frequency, field-phase and fixed-mean applicability warnings are
-not error bounds or blanket waivers.
+This is implementation/numerical compatibility acceptance, not physical accuracy.
+Issues31?34 remain unresolved. The native coarse-direction warning is a coverage
+heuristic for the repacked nodes; matching forces does not establish genuine
+angular coefficient resolution. Mesh/irregular-frequency, field-phase and fixed-
+mean applicability warnings are not error bounds or blanket waivers.
 
-[Inertia component proof](inertia-pr9-qualification-2026-10-26.md) covers the active
-Rigid Hydro boundary, not Drag/Flex or general hydrodynamic accuracy.
-[Engine lifecycle](workflow-engine-lifecycle-2026-10-25.md),
-[retired imported-history study](imported-history-rebuild-2026-10-25.md) and
-[kernel/rejected-route evidence](kernel-and-inertia-checkpoint-2026-10-26.md)
-retain their original versions and policies. Do not resume retired studies from
-historical plans. No upstream issue/PR/contact is authorized without explicit user
-permission.
+Earlier e24 optional-view qualification is historical evidence, not the current
+architecture: [motion](spectral-motion-qualification-2026-10-27.md),
+[end-to-end](spectral-end-to-end-qualification-2026-10-27.md).
+[Inertia proof](inertia-pr9-qualification-2026-10-26.md) covers active Rigid Hydro,
+not Drag/Flex or general accuracy. [Engine lifecycle](workflow-engine-lifecycle-2026-10-25.md)
+and [retired workflows](../history/wecsim-retired-workflows-2026-10-27.md) retain
+original evidence/policies. Do not resume retired studies from historical plans.
+Generic fixes remain upstream candidates; no upstream issue/PR/contact is
+authorized without explicit user permission.

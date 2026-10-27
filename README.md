@@ -9,19 +9,21 @@ implementation is the existing **P0 Rankine-panel core**, extracted from
 instantaneous added mass. It has **no coupled time-domain wave-response path**.
 The archived nonlinear diagnostic runtime is a different, unqualified experiment.
 
-The first minimum-mesh Capytaine -> official BEMIO -> WEC-Sim reference is
-complete: ten seconds of six-DOF motion from rest, a shared upstream incident
-packet and a centered isometric video. The17-panel,0.02s fixed-step result has
-independent input/interface/physics/video reviews; temporal and mesh accuracy
-remain unestablished. [Reproduction and artifacts](reference/wecsim/README.md).
+The canonical60s workflow is complete in [examples/simple-boat](examples/simple-boat/):
+boat and sea inputs, six-DOF motion and total free-surface geometry in `result.npz`,
+`result.png`, `video.mp4`, and one log for each implemented CLI stage. Capytaine
+provides hydrodynamic coefficients; WEC-Sim computes wave excitation and motion
+through its existing public inputs. Topwater reconstructs the total incident,
+diffracted and radiated water surface from the saved motion without feedback.
 
-The accepted stronger buoy-derived reference now has a complete60s trajectory
-and incident-water video. The active work packages that physical case into a
-reusable NPZ workflow and extends the WEC-Sim output with reconstructed total
-water geometry. Surface reconstruction reads the computed motion without
-feeding back into dynamics. The total-surface method is a provisional linear
-approximation with a disclosed near-hull phase limitation; the complete new
-canonical solve/render is being verified.
+The maintained WEC-Sim reference is based on official v7.1.0. The standard-input
+replacement matches the original canonical trajectory within0.0598mm position
+and0.00157degree orientation. These are compatibility results, not physical-error
+bounds. Mesh resolution, radiation-field phase, field/load consistency and linear
+applicability remain qualified in [the warning triage](docs/cli/warning-triage.md).
+An earlier ten-second minimum-mesh reference remains available for
+[historical reproduction](reference/wecsim/README.md).
+
 Native solver implementation remains held. See [the current handoff](docs/checkpoint-handoff.md)
 for authorization and [AGENTS.md](AGENTS.md) for startup and expert routing.
 The broader [Topwater comparison/runtime goal](docs/time-domain-baseline-goal.md)

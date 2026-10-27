@@ -3,12 +3,13 @@ function [h,nativeHydro] = prepare_workflow_hydrodynamics(prepared)
 n = prepared.n;
 native = load(prepared.native_mat_path);
 verify_native_identity(native,n);
-if isfield(prepared,'component_view')
-    view = prepared.component_view;
-    validate_workflow_hydrodynamics(view,'component_view');
-    zero = repmat(n.K(:,3)/(n.rho*n.g),1,numel(view.headings_deg));
-    assert(isequal(view.re(:,:,1),zero) && all(view.im(:,:,1) == 0,'all'), ...
-        'Derived component view zero limit differs from physical heave stiffness');
+if isfield(prepared,'spectral_hydro')
+    transport = prepared.spectral_hydro;
+    validate_workflow_hydrodynamics(transport,'spectral_input');
+    zero = repmat(n.K(:,3)/(n.rho*n.g),1,numel(transport.simulation_parameters.direction));
+    assert(isequal(transport.hydro_coeffs.excitation.re(:,:,1),zero) ...
+        && all(transport.hydro_coeffs.excitation.im(:,:,1) == 0,'all'), ...
+        'Standard coefficient input zero limit differs from physical heave stiffness');
 end
 h = readCAPYTAINE(struct(),prepared.netcdf_path);
 assert(h.Nb == 1 && all(h.dof == 6),'The workflow requires one six-mode body');
@@ -55,18 +56,24 @@ h = set_excitation_coefficients(h,'sc',sc);
 h = set_excitation_coefficients(h,'ex',total);
 validate_workflow_hydrodynamics(h,'imported', ...
     permute(real(total),[3 2 1]),permute(imag(total),[3 2 1]));
-if isfield(prepared,'component_view')
-    % Native harmonic workflow: preserve every raw coefficient/radiation
-    % object; the derived node view is a separate public struct input.
+if isfield(prepared,'spectral_hydro')
     validate_workflow_hydrodynamics(h,'spectral');
-    h.file = fullfile(pwd,'canonical');
-    % The official writer omits an excitation IRF when all its fields are
-    % absent. Do not build or fabricate an unused impulse-response kernel.
-    writeBEMIOH5(h);
-    nativeHydro = verify_h5_roundtrip(h,fullRadiation,true);
-    nativeHydro.hydro_coeffs.excitation.component_view = view;
-    fprintf('WEC-Sim spectral handoff: %i derived frequency nodes, %i headings; no excitation IRF.\n', ...
-        numel(view.omega_rad_s),numel(view.headings_deg));
+    % Official BEMIO conversion, followed by ordinary public input preparation.
+    % CIC consumes Ainf and its own kernel/time, not raw frequency A/B tables.
+    nativeHydro = rebuildHydroStruct(h,1,0);
+    nativeHydro.simulation_parameters = rmfield(nativeHydro.simulation_parameters,'T');
+    nativeHydro.simulation_parameters.w = transport.simulation_parameters.w(:)';
+    nativeHydro.simulation_parameters.direction = transport.simulation_parameters.direction(:)';
+    nativeHydro.hydro_coeffs.excitation = transport.hydro_coeffs.excitation;
+    nativeHydro.hydro_coeffs.mean_drift = transport.hydro_coeffs.mean_drift;
+    nativeHydro.hydro_coeffs.added_mass = rmfield(nativeHydro.hydro_coeffs.added_mass,'all');
+    nativeHydro.hydro_coeffs.radiation_damping = rmfield(nativeHydro.hydro_coeffs.radiation_damping,'all');
+    assert(isequal(nativeHydro.hydro_coeffs.added_mass.inf_freq,fullRadiation.Ainf) ...
+        && isequal(nativeHydro.hydro_coeffs.radiation_damping.impulse_response_fun.K,fullRadiation.ra_K) ...
+        && isequal(nativeHydro.hydro_coeffs.radiation_damping.impulse_response_fun.t(:),fullRadiation.ra_t(:)), ...
+        'Standard struct preparation changed the consumed radiation operator');
+    fprintf('WEC-Sim standard struct handoff: %i derived frequency nodes, %i headings; CIC/Ainf retained.\n', ...
+        numel(nativeHydro.simulation_parameters.w),numel(nativeHydro.simulation_parameters.direction));
     return
 end
 halfWidth = positive_scalar(prepared.excitation_irf_half_width_s,'excitation IRF half width');
@@ -102,7 +109,7 @@ assert(isequal(h.ra_K,fullRadiation.ra_K) && isequal(h.ra_t,fullRadiation.ra_t) 
 validate_workflow_hydrodynamics(h,'prepared');
 h.file = fullfile(pwd,'canonical');
 writeBEMIOH5(h);
-nativeHydro = verify_h5_roundtrip(h,fullRadiation,false);
+nativeHydro = verify_h5_roundtrip(h,fullRadiation);
 fprintf('WEC-Sim excitation IRF: +/-%.8g s, dt %.8g s, omega 0..%.8g rad/s, domega %.8g rad/s; %i headings.\n', ...
     halfWidth,dt,omega(end),kernelOmega(2)-kernelOmega(1),h.Nh);
 fprintf('WEC-Sim radiation IRF retained: omega %.8g..%.8g rad/s, time %.8g..%.8g s.\n', ...
@@ -181,7 +188,7 @@ assert(all(shape(numel(order)+1:end) == 1));
 value = reshape(value,shape(1:numel(order)));
 end
 
-function readback = verify_h5_roundtrip(h,fullRadiation,spectral)
+function readback = verify_h5_roundtrip(h,fullRadiation)
 file = [h.file '.h5'];
 readback = readBEMIOH5(file,1,0);
 assert(isequal(readback.hydro_coeffs.radiation_damping.impulse_response_fun.K,fullRadiation.ra_K) ...
@@ -191,17 +198,12 @@ assert(isequal(readback.hydro_coeffs.radiation_damping.impulse_response_fun.K,fu
 radiationOmega = h5read(file,'/body1/hydro_coeffs/radiation_damping/impulse_response_fun/w');
 assert(isequal(radiationOmega(:),fullRadiation.ra_w(:)), ...
     'H5 roundtrip changed radiation quadrature frequency metadata');
-if ~spectral
-    excitationOmega = h5read(file,'/body1/hydro_coeffs/excitation/impulse_response_fun/w');
-    assert(isequal(readback.hydro_coeffs.excitation.impulse_response_fun.f,h.ex_K) ...
-        && isequal(readback.hydro_coeffs.excitation.impulse_response_fun.t(:),h.ex_t(:)), ...
-        'H5 roundtrip changed the native excitation kernel');
-    assert(isequal(excitationOmega(:),h.ex_w(:)), ...
-        'H5 roundtrip changed excitation quadrature frequency metadata');
-else
-    assert(~isfield(readback.hydro_coeffs.excitation,'impulse_response_fun'), ...
-        'Spectral coefficient-only H5 unexpectedly contains an excitation IRF');
-end
+excitationOmega = h5read(file,'/body1/hydro_coeffs/excitation/impulse_response_fun/w');
+assert(isequal(readback.hydro_coeffs.excitation.impulse_response_fun.f,h.ex_K) ...
+    && isequal(readback.hydro_coeffs.excitation.impulse_response_fun.t(:),h.ex_t(:)), ...
+    'H5 roundtrip changed the native excitation kernel');
+assert(isequal(excitationOmega(:),h.ex_w(:)), ...
+    'H5 roundtrip changed excitation quadrature frequency metadata');
 assert(isequal(readback.simulation_parameters.w(:),h.w(:)) ...
     && isequal(readback.simulation_parameters.direction(:),h.theta(:)), ...
     'H5 roundtrip changed raw coefficient reference grids');

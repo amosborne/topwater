@@ -79,24 +79,34 @@ mandatory before replacing the baseline.
 Finite excitation lag, quadrature and record padding can change numerical
 forces; source exchange tests do not prove that those differences are small.
 
-## Spectral component view (source-only additions)
+## Standard public spectral input
 
-The preceding 19-test result binds its original frozen helper/test identities.
-It does not qualify these new spectral additions. Three additional handoff
-tests are authored in `workflowHydrodynamicHandoffTest.m`, bringing that file to
-nine cases; the coefficient-guard file retains its existing thirteen controls.
-Authors have not executed the new tests.
+The earlier measured results above bind their original helper/test identities.
+The selected path uses unextended WEC-Sim `bodyClass(hydroStruct)` and ordinary
+coefficient fields. The maintained default checkout is
+`artifacts/dependencies/topwater-wec-sim`, pinned to6b774228; an explicit
+`TOPWATER_WECSIM_PATH` must select that same reviewed revision. The old995 runtime
+lacks the FullDir corrections and is rejected before physical preparation.
 
-Use the coordinator-frozen fork containing the reviewed optional-excitation-IRF
-writer support via `TOPWATER_WECSIM_PATH`; held995's writer does not support the
-new no-IRF case. Do not silently change the runtime pin. The existing legacy
-tests cover all-three-IRF-fields-present. New tests check spectral omission with
-every other official raw/radiation/physical readback field exactly preserved,
-partial IRF rejection before an existing output is truncated, and invalid
-derived-view finite/zero-drift/H0 failures before H5 creation.
+Eight handoff cases retain the six legacy imported-history/H5 controls and add
+standard spectral-struct preservation plus invalid-input checks. The spectral
+branch performs official `readCAPYTAINE`, normalization, full-band `radiationIRF`
+and `rebuildHydroStruct`; then supplies derived excitation samples through existing
+`simulation_parameters.w/direction`, `hydro_coeffs.excitation.re/im` and
+`hydro_coeffs.mean_drift`. The input table includes the exact native component
+nodes and periodic boundaries, retaining the old bilinear/quadratic policy.
 
-The selected spectral handoff accepts `prepared.component_view` and returns
-`[h,nativeHydro]`. It builds no excitation IRF or dummy kernel; the official
-writer/reader exchange raw coefficients and full radiation, and the view is
-attached only to the returned public body struct. This is a coefficient/IO gate,
-not native harmonic force, startup, applied-bus or motion acceptance.
+Ainf, CIC kernel/time, restoring and physical properties stay unchanged. Unused
+raw frequency A/B and raw-period metadata are omitted from this mode-specific
+struct instead of relabeled or invented. The genuine producer/raw BEMIO arrays
+remain unchanged outside that runtime transport. No excitation IRF or H5 is
+needed on the spectral branch. Legacy imported-elevation preparation still
+computes a genuine excitation IRF and uses the unchanged official H5 writer.
+
+Run the command above for `workflowHydrodynamicHandoffTest.m`, together with
+`workflowHydrodynamicsTest.m` for the existing thirteen coefficient guards.
+Python coverage: `uv run pytest tests/test_wecsim_spectral.py tests/test_wecsim_backend.py`.
+The21 native validator/handoff cases and38 focused Python checks passed at6b+953.
+The canonical full force/application/rest/CIC/motion and fresh eight-file delivery
+also passed independent review. These are selected-case compatibility checks, not
+mesh/time convergence or general physical-accuracy claims.

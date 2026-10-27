@@ -30,7 +30,7 @@ from .inputs import InitialState
 
 
 ENGINE_NAME = 'CAPYTAINE_REFERENCE'
-SUPPORTED_FORK_COMMIT = '9952634f6f2e2746a1626484e27c3003d1e1d5a9'
+SUPPORTED_FORK_COMMIT = '6b774228e1f6b31dee473e626204b0ef65e5ec38'
 APPLICABILITY_WARNING_FRACTION = .10
 
 
@@ -96,9 +96,9 @@ def preflight():
         if installed != expected:
             raise BackendUnavailableError(f'WEC-Sim: expected {distribution} {expected}, found {installed}')
     fork = _find_fork()
-    if not (fork / 'source/functions/getExcitationData.m').is_file():
+    if SUPPORTED_FORK_COMMIT == '9952634f6f2e2746a1626484e27c3003d1e1d5a9':
         raise BackendUnavailableError(
-            'WEC-Sim: the held fork lacks native spectral component-view support; '
+            'WEC-Sim: the held fork lacks corrected FullDir phases and directional weights; '
             'a separately validated fork revision is required')
     if util.find_spec('topwater._capytaine_surface') is None:
         raise BackendUnavailableError('WEC-Sim: required total-surface reconstruction is not available')
@@ -198,7 +198,7 @@ def _validate_excitation_support(setup, hydro):
 
 
 def _prepare_native_inputs(setup, hydro, workspace, *, force_only=False):
-    """Write physical spectral components and an excitation-only coefficient view."""
+    """Write physical spectral components and ordinary public hydroStruct coefficients."""
     from ._wecsim_spectral import prepare_spectral_inputs
 
     _validate_excitation_support(setup, hydro)
@@ -228,7 +228,7 @@ def _prepare_native_inputs(setup, hydro, workspace, *, force_only=False):
     carriers = setup.train.carriers
     savemat(workspace / 'prepared-case.mat',
             dict(n=native, time=setup.time_s[:, None],
-                 spectral_file=str(spectral_file.resolve()), component_view=spectral.component_view,
+                 spectral_file=str(spectral_file.resolve()), spectral_hydro=spectral.hydro,
                  incident_origin_elevation_m=setup.train.elevation([[0., 0.]], setup.time_s)[:, 0],
                  carrier_omega_rad_s=carriers.angular_frequencies,
                  carrier_amplitudes_m=carriers.amplitudes,

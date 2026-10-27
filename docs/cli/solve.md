@@ -91,7 +91,7 @@ and licensed Simulink, Simscape, and Simscape Multibody. These are optional
 dependencies of the WEC-Sim workflow, not requirements for rendering.
 
 The maintained fork is pinned to
-`9952634f6f2e2746a1626484e27c3003d1e1d5a9`. Set `TOPWATER_WECSIM_PATH` to its
+`6b774228e1f6b31dee473e626204b0ef65e5ec38`. Set `TOPWATER_WECSIM_PATH` to its
 checkout directory, or use the repository-local fallback
 `artifacts/dependencies/topwater-wec-sim`. A different or unverifiable revision
 fails readiness rather than running unreviewed engine code.
@@ -125,12 +125,12 @@ their focused regression checks passed within the linked checkpoint's scope.
 
 ## Assumptions and hard-coded policies
 
-The native wave-force handoff described here has passed 36 Python component
-checks and two isolated MATLAB startup checks; the latter rerun has no warnings.
-The complete replacement workflow remains unexecuted and unqualified.
-Completed example files remain the unchanged comparison baseline from the
-previous force-table adapter. Independent force/startup and motion comparisons
-must pass before the new handoff or a replacement fork pin is accepted.
+The standard public-interface spectral handoff passed the selected canonical60s
+force, startup, applied-force, rest/radiation-memory and motion comparisons at the
+pinned6b774228 reference. Fresh total-surface reconstruction, six-DOF PNG and all
+751 frames through the ordinary render CLI also passed independent review.
+These checks establish compatibility for that case; the physical limitations below
+remain unqualified. [Evidence and scope](../experts/wecsim_expert/current-state.md).
 
 - Open water, infinite depth, zero forward speed, density 1025 kg/m3 and gravity
   9.81 m/s2.
@@ -148,23 +148,25 @@ must pass before the new handoff or a replacement fork pin is accepted.
   is `f <= min(0.6 Hz, sqrt(g/(4*pi*beam)))`. This is an operating-envelope
   assumption, not a mesh or time-convergence certificate. A finite packet's
   spectrum differs from the stationary measured spectrum.
-- WEC-Sim computes wave excitation from physical directional elevation histories,
-  then integrates body motion. Topwater supplies coefficients and elevations,
-  without a force table or imported-source rebinding. Each signed-kappa branch
-  retains its own propagation direction, phase, absolute time and full file
-  history. A single scalar elevation sum is not used for directional forcing.
-- BEMIO builds the native excitation kernel from genuine full-heading
-  0.1–3.4 rad/s coefficients and the declared low-frequency bridge: below 0.1 rad/s,
-  `H = H0 + (omega/0.1)^2 * (H(0.1,heading)-H0)`, with the exact constant-pressure
-  limit `H0 = K[:,heave]`. This approximation applies to body loads; it is not
-  substituted for missing spatial surface fields. Initial source controls use
-  excitation lags ±20 s at 0.02 s spacing and frequency spacing 0.005 rad/s;
-  finite-window/quadrature differences from the old spectral calculation remain
-  unqualified. Directional records include that kernel's past/future margins.
-- The standard H5 raw coefficient grid uses genuine 0.1–3.4 rad/s/full-heading
-  data. Its radiation IRF and infinity added mass are built first from the
-  original 0.1–12 rad/s data and preserved exactly; the shorter raw table does
-  not shorten the consumed radiation kernel.
+- WEC-Sim computes harmonic excitation from one full-directional spectrum with
+  supplied phases, then integrates body motion. Topwater encodes the unchanged
+  coherent physical components as spectrum density/spreading/phase inputs; no
+  applied force history is supplied. Signed-kappa branches retain their separate
+  headings, phases, absolute time and spatial origin, with no additional ramp.
+- Topwater samples coefficient inputs at every actual component frequency and
+  heading using the retained complex bilinear interpolation. Below 0.1 rad/s,
+  `H = H0 + (omega/0.1)^2 * (H(0.1,heading)-H0)`, where `H0 = K[:,heave]`.
+  This is a declared coefficient approximation, not a new WEC-Sim capability or
+  a substitute for spatial free-surface fields. Ordinary native spectral
+  preparation consumes these coefficient nodes and computes the force sum.
+- Official BEMIO import/normalization and `rebuildHydroStruct` prepare the existing
+  public `bodyClass(hydroStruct)` input. Its ordinary excitation axes contain
+  derived nodes. The consumed radiation IRF/time and direct Ainf remain from
+  the genuine original 0.1?12 rad/s operator. Unused raw A/B and period metadata
+  are omitted from this fixed FullDir+CIC struct; no raw coefficient is invented.
+  The genuine original producer arrays remain unchanged. Spectral forcing needs
+  no excitation IRF or H5 export; the legacy imported-elevation study path retains
+  ordinary excitation-IRF/H5 preparation under its original policies.
 - Native WEC-Sim dynamics retain fixed-step ode4, 0.02 s body/CIC sampling,
   10 s body-radiation memory, full mass/inertia coupling, and all six free modes.
   Viscous/linear damping, PTO, mooring, and prescribed motion remain off.
@@ -200,7 +202,7 @@ must pass before the new handoff or a replacement fork pin is accepted.
 | Readiness, before physical preparation | Missing/wrong dependency versions, missing maintained fork, unreviewed revision or modified fork source, unavailable total-surface capability. |
 | Physical setup | Invalid inputs, unsupported incident support, unresolved default heading, missing force/moment balance, unstable supported equilibrium, initial rim immersion or lack of buoyant contact. |
 | Incoming-field assessment, before body integration | Full-hull initial elevation/fluid-speed bound fails or remains inconclusive; incoming-wave envelope does not arrive during the requested interval. |
-| Native preprocessing | H5/physical CG, CB, volume, stiffness or infinity added mass differ; phase convention, finite coefficient/kernel data, full-radiation preservation or parameter-level full inertia identity fails; native initial force/moment exceeds calm limits; directional totals do not have exactly one positive native imported branch. |
+| Native preprocessing | Prepared physical CG, CB, volume, stiffness or infinity added mass differ; phase convention, finite coefficient/kernel data, full-radiation preservation or parameter-level full inertia identity fails; native initial force/moment exceeds calm limits; native FullDir setup loses physical components or coefficient-node identity. |
 | Native integration/output audit | Solver failure, nonfinite/incomplete output, wrong grid/endpoints/initial state, nonzero initial radiation memory, applied excitation differs from WEC-Sim's prepared total, inconsistent force-component sum, Newton-Euler/CIC/added-mass-delay audit failure. |
 | Required surface/export | Missing or invalid total surface, unsupported contact/export geometry, initial represented total elevation exceeds the local calm limit, incomplete coverage, or invalid common result arrays. |
 

@@ -14,7 +14,7 @@ issue branches and focused PRs, removed after merge.
 
 Current reference:6b774228e1f6b31dee473e626204b0ef65e5ec38, based on official
 v7.1.0/a23d299 plus merged PR6, PR7, PR9 and PR14. main matches current upstream
-main0753b2e. The existing Topwater pin remains9952634 on the old branch.
+main0753b2e. Topwater now pins6b after accepted native motion, fresh eight-file delivery and actual default-path preflight. The old995 branch remains only until archive verification.
 
 ## PRs
 
@@ -80,11 +80,16 @@ Delete after the archive/reference checks:
 - dev (unused fork mirror; exactly matches upstream c6b02e39)
 - gh-pages (unused fork mirror; exactly matches upstream f1c51e87)
 
-Fork Pages is disabled. Actions permissions remain enabled: inherited docs.yml can
-recreate gh-pages on a later main/dev push. Retire the fork's documentation
-publishing workflow through fork settings before deleting that branch; upstream
-workflows and sources remain untouched. Do not confuse zero currently registered
-workflow entries with Actions being disabled.
+Fork Pages is disabled. Actions currently permits workflows, but the registry is
+empty and the individual docs.yml endpoint returns404. Four inherited workflow
+files still exist; docs.yml publishes gh-pages on main/dev pushes using the
+repository token. After adoption, record settings and confirm no queued/running
+runs, disable Actions ONLY in amosborne/WEC-Sim, read back enabled=false, then
+delete gh-pages. This is one reversible setting; it preserves mirror source and
+prevents branch recreation. It also disables inherited fork test workflows;
+qualification currently uses local tests. Future fork CI must be deliberately
+re-enabled with documentation publishing handled first. Do not trigger CI merely
+to register a workflow or change upstream/Topwater repository settings.
 
 Squash merging means topic heads need not be ancestors of the new reference.
 Use verified PR merged status and recorded exact head identities, not only
@@ -92,12 +97,10 @@ Use verified PR merged status and recorded exact head identities, not only
 
 ## Old-runtime retirement gate
 
-Do not delete topwater/reference-v7.1.0 yet. Topwater's recorded dependency and
-checkout still select9952634. The new standard-input adapter is committed only in
-an isolated Topwater worktree9539192; its38 Python and21native validator/handoff tests pass. Full new-route canonical
-qualification remains unfinished; the first full attempt failed MATLAB startup
-before physics because sandbox preferences were unwritable. Existing expanded-path
-boat validation is not proof of the replacement adapter.
+The replacement is now validated/adopted: independent motion286f3a82, private
+artifact4622b301 and actual main/default-readiness3712ab33 acceptances are complete.
+The production checkout/pin use6b. The old runtime branch may retire only AFTER
+publishing and verifying the exact995 archive tag; no deletion has occurred yet.
 
 After the replacement is validated and its dependency-pin change is authorized:
 
@@ -106,8 +109,7 @@ After the replacement is validated and its dependency-pin change is authorized:
 3. Verify the tag/archive can recover historical producer identity.
 4. Delete the old runtime branch.
 
-No rebase to a new upstream release or production pin update is part of the first
-cleanup phase. Keep the v7.1.0 release tag unchanged.
+No rebase to a new upstream release is part of this cleanup. Keep the v7.1.0 release tag unchanged.
 
 ## Local checkouts
 
