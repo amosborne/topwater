@@ -1,8 +1,11 @@
 # Current state: WEC-Sim / BEMIO expert
 
-Updated2026-10-26 UTC. Currentauthority: [handoff](../../checkpoint-handoff.md),
+Updated2026-10-27 UTC. Currentauthority: [handoff](../../checkpoint-handoff.md),
 [physicalcontract](../shared-contract.md), [serialprocedure](../coordination.md).
 No author execution allocation or automatic follow-up. Root owns integration.
+
+Final integration acceptance: private-delivery-review-v1/acceptance.json (76f5616a) independently accepts the complete private artifact chain. Public/pin/reference/merge holds and physical issues31-34 remain.
+
 
 Native spectral integration passed the independently reviewed component allocation
 at exact fork head e24c1a73372baf37aebe37a8b6bf0cd0d2368b0c:38 Python controls,
@@ -12,9 +15,21 @@ inputs/process termination verified and lease released. The optional normalized
 excitation-only node view, supplied-phase RNG isolation and optional excitation
 IRF writer support are covered; raw hydro/radiation preservation is checked.
 [Implementation and measured limits](spectral-handoff-implementation-2026-10-26.md).
-Full simple-boat forces, startup, actual applied bus and motion remain pending.
-The held995 pin lacks this capability and remains held; use the explicit candidate
-for private qualification. No pin promotion, merge or author numerical job.
+Full simple-boat force/startup replay (acceptance f460dc37), actual native signal
+bus (547becf2), and coupled motion/outer application/rest/CIC (d934f305) are now
+independently accepted. Motion used exact e24 plus ONLY the qualified PR9 inertia
+library7b0c063c in a private detached overlay. Maximum position/orientation differences
+were0.059758mm/0.001569854deg under the unchanged1mm/0.01deg limits.
+[Measured qualification and limits](spectral-motion-qualification-2026-10-27.md).
+The new-motion private eight-file candidate is now complete: standard Result/PNG,
+normal logs and751 decoded video frames; final audit passed3001 motion samples,
+751 surface frames and0..60 endpoints. Evidence:
+`artifacts/workflow/native-spectral-private-evidence1/final-report.json`.
+Final log triage found only the retained qualification families (issues31–34),
+with34 result WARNING rows and0 sea/video application warnings; the known external
+FFmpeg duplicate-rate notice has no observed cadence failure. Independent final
+delivery acceptance76f5616a is complete; this does not certify physical accuracy.
+Held995, reference branch and merge holds remain unchanged; no author numerical job.
 
 Current native spectral step is ONE own-fork issue12/draft PR14, with combined
 topic `wecsim-spectral-spectrum` based on25b58b. The initial separate-head
