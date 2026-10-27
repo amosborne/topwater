@@ -5,14 +5,42 @@ and queued assignments do not authorize execution. Follow AGENTS.md/coordination
 
 ## Current priority: pulse design and simulation timing, issue36
 
+LATEST requested minimax chart/comparison is complete. See
+[comparison note](research/minimax-packet-comparison-2026-10-27.md),
+docs/images/wave-minimax-time-frequency.png (2240x1920,
+SHA70e24f64a5434b8f6f3dbd1297e02f9e90747db874811cf05ad8eab5a0c2b3a3)
+and wave-minimax-versus-quintic.png (2080x1280,
+SHAb555f5c6b1aed1bcec8a934ec5547ca23589b2071bf2dfed6c4e9e05d4903b93).
+Same carriers4/6s,8/12s gaps,10sDWELL14.5–24.5, phase0 atDWELL and EXACTsame
+K30/P192 spectral budget for minimax and unnormalized quintic projection.
+Grey ideal quintic is unlimited-band context, not the fair budget comparator.
+
+Sampled peak dwell/quiet errors: R8s minimax0.42208% vs projectedQ1.28731%;
+R12s minimax0.057321% vs projectedQ0.376701%. Minimax dense+derivative upper
+bounds0.524255/0.139031% remain below Q observed peaks. Both dense refinement
+flags are FALSE: residuals5.146e-6/3.542e-7 above LPgrid objectives after3solves.
+This is an accepted approximate finite-grid illustration, NOT exact continuum
+optimality, a strict continuous transition-cap proof, a physical shortest ramp
+or measured runtime saving. Independent actual review accepts that scope.
+
+Root job wave-minimax-attempt1 session76411 terminal0/frozen/guard0/driver0/
+Jobempty; producer35584/owner35220 and all guarded host identities absent,
+finishterminal0/idle/null readback/release-last. Actualwork2.641s, inverse4.44e-16m.
+NMR authored source; separate researcher reviewed method/source/actual numbers;
+TOP prepared reviewed execution. No image inspection or physical/canonical edit.
+Tracked report: docs/experts/numerical_methods_researcher/minimax-packet-demo-2026-10-27.json.
+Raw source/data under artifacts/workflow/wave-minimax-demo1/ and attempt1/results/.
+Current ledger idle/null, lease absent. No next numerical job is allocated.
+
 The user requested research into the TOP3 minimal-spectral alternatives for
 pulse-like waveforms. Polynomial and derivative constraints MAY be discarded;
 quintic/cycle-count examples are baselines, not selected optimal policies.
 Research is complete and independently reviewed:
 [three-option note](research/minimal-pulse-spectra-2026-10-27.md).
 Recommendation: constrained minimax/equiripple first; DPSS concentration and
-sparse frequency selection are alternatives with different objectives. No method
-has been implemented or numerically qualified. Actual runtime savings are not
+sparse frequency selection are alternatives with different objectives. The
+bounded prototype above is illustrative; no method is installed in production
+or qualified as a propagated wave input. Actual runtime savings are not
 implied by fewer coefficients/bandwidth alone. Specify dwell ripple, peak quiet
 height, finite horizon, transition gap, overshoot and cost before an optimum.
 The simpler rectangle-series baseline must put its jumps INSIDE transition

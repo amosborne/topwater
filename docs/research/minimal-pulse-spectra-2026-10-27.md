@@ -1,6 +1,8 @@
 # Minimal spectra for a finite wave event
 
-Research proposal, 2026-10-27; no implementation or numerical experiment.
+Research proposal, 2026-10-27. A subsequently requested bounded
+[minimax chart comparison](minimax-packet-comparison-2026-10-27.md) is now executed;
+it is an illustration, not a qualified production wave generator.
 Scope: [issue36](https://github.com/amosborne/topwater/issues/36), allowing the
 polynomial shape and derivative constraints to be discarded. Current production
 inputs and accepted results are unchanged. The coordinator owns experiments.

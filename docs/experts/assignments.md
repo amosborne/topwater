@@ -7,6 +7,13 @@ schedules authorized work and never grants scope. Update status in place.
 
 ## Wave-packet timing and dwell, 2026-10-27
 
+MINIMAX-ILLUSTRATION, completed: user explicitly requested option1 charts.
+NMR authored only the boundedLP/plot helper, separate researcher reviewed method/
+source/actual results, TOP prepared root-only guard. Root ran two same-budget
+cases in2.641s; artifacts/docs published. All serial terminal/frozen/guard/host/
+idle/release checks passed. Approximate-grid and between-node caveats retained;
+no production/physical qualification, further optimizer sweep or next job.
+
 LATEST completed bounded work: NMR authored the dwell-phase illustration and
 actualsea period/common-ramp bandwidth diagnostic helpers; TOP reviewed source;
 root alone executed serially and completed all terminal/frozen/guard/host/idle/

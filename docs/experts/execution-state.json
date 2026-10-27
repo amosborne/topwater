@@ -6,16 +6,16 @@
     "manifest":  null,
     "active_numerical_job":  null,
     "last_terminal_evidence":  {
-                                   "job":  "Illustrative1Dx0 actualsea commonramp bandwidth/errors/padding/nativegridcount screen;no solvers/wholehullaccuracy/inputtrimming;60s1GiB1thread",
+                                   "job":  "Reviewed boundedgrid minimax vs samebudgetquinticprojection twoLPcases;no physicalproducer/physicalminimumclaims;noBEM/WEC/physicalproducer/canonicalwrite;120s1GiB1thread",
                                    "owner":  "/root",
-                                   "producer_pid":  12460,
-                                   "owner_launcher_pid":  3292,
-                                   "started_at":  "2026-10-27T21:16:00.696434+00:00",
+                                   "producer_pid":  35584,
+                                   "owner_launcher_pid":  35220,
+                                   "started_at":  "2026-10-27T23:13:57.206563+00:00",
                                    "exit_code":  0,
                                    "frozen_inputs_match":  true,
                                    "complete":  true,
-                                   "manifest":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\wave-ramp-bandwidth-screen-attempt1\\manifest.json",
-                                   "output":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\wave-ramp-bandwidth-screen-attempt1\\output.log"
+                                   "manifest":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\wave-minimax-attempt1\\manifest.json",
+                                   "output":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\wave-minimax-attempt1\\output.log"
                                },
     "note":  "Exact producer/owner and FFmpeg absence verified by independent CIM; frozen input hashes verified; terminal exit 0. Final separate idle readback follows before lease release."
 }

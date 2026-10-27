@@ -9,7 +9,16 @@ is in [the note](../../research/minimal-pulse-spectra-2026-10-27.md): minimax /
 equiripple (first candidate), DPSS concentration, sparse frequency selection.
 This role independently reviewed the separate researcher's note; no blocker.
 Rectangle baseline jumps must lie inside transition gaps, not dwell endpoints.
-No optimized policy or runtime savings is qualified or implemented.
+No production policy or runtime savings is qualified or implemented.
+
+User-requested minimax illustration is now executed and independently reviewed:
+[comparison](../../research/minimax-packet-comparison-2026-10-27.md). SameK30
+dictionary as quintic projection; R8/12s and10sDWELL. Sampled worst errors
+0.42208/0.057321% vs Q1.28731/0.376701%; inverse4.44e-16m, work2.641s.
+Both dense refinement flags remainFALSE (small residuals explicitly reported),
+so this is an approximate grid minimax candidate, not continuum optimality or
+physical acceptance. Between-node allowances retained. Source by this role,
+reviewed by separate researcher, execution by root, all cleanup/release passed.
 
 Root completed the latest phase-at-DWELL illustration: specifiedphi0 both gives
 both1m crests at14.5s, unchanged ramps8/12s and10sDWELL. Six discrete amplitude /

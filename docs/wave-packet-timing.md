@@ -170,3 +170,8 @@ The next investigation may discard the polynomial constraints. See the
 constrained minimax/equiripple, Slepian concentration, and sparse frequency
 selection. Their objectives differ; no optimal ramp or numerical savings have
 yet been established for this case.
+
+The requested [minimax-versus-quintic chart comparison](research/minimax-packet-comparison-2026-10-27.md)
+is now available. It holds the spectral dictionary fixed and reports actual
+dwell/quiet errors, rather than comparing finite-band minimax with an unlimited
+quintic as though they had equal cost.
