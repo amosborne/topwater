@@ -1,35 +1,44 @@
 # Shared physical and producer/consumer contract
 
-## Wave-packet timing investigation, user steering 2026-10-27
+## Per-component packet interface, user decision 2026-10-27
 
-Latest research clarification: polynomial/smoothness constraints may be removed
-when researching minimal spectral representations of pulse-like envelopes.
-Compare bandwidth and significant component count separately under declared
-dwell, ripple, quiet-tail and finite-horizon requirements. Earlier quintic/two-
-cycle examples remain baselines, not a mandatory optimal design or committed
-production policy. This does not relax physical startup/contact or error gates.
+Inputs: base frequency f0, phase phi0 DIRECTLY at dwell MIDPOINT, rest duration,
+ramp duration, dwell duration and maximum spectral-component count N. Timing:
+rest → ramp → dwell → ramp → rest. Total window2*rest+2*ramp+dwell. Each
+original sea component gets its own construction; preserve its amplitude,
+phase and direction. No start-phase conversion is part of the new interface.
+Bandwidth/frequency placement and achieved quality are outputs. A base-wave
+frequency range does not automatically constrain final generated frequencies.
 
-Issue36 investigates timing before further radiation-reconstruction changes or
-optimization. The requested CLI time is to mean full-amplitude DWELL, excluding
-initial calm, ramps and measured settling. Initial demonstrations used quintic
-joins and two periods of each ORIGINAL carrier per ramp; these are examples,
-not a chosen optimal policy. Common-second ramp timing and non-polynomial
-spectral synthesis are now under investigation. No runtime policy has changed.
+Latest user preference: deterministic fixed quintic ramps, direct Fourier
+coefficients and retain N largest magnitudes, not lowest physical frequencies.
+No optimizer. The example uses rest10/ramp5/dwell100, f0.01/.1/1Hz, midpoint
+phases0/45/90degrees and N10/20/40. Window130s, midpoint65s. Frequency/phase
+bar plots, time trace and measured errors are outputs, not a preset qualitypass.
 
-Specified carrier phases for the redesigned packet are referenced at the common
-DWELLstart and fixed spatial reference point, so each case starts its full-
-amplitude interval with those phases. This changes the proposed test semantics;
-implement the explicit time-reference conversion and document it before changing
-production inputs. Existing accepted sea.npz/global-time conventions remain
-unchanged until that implementation is reviewed. Demonstrations may adopt the
-new dwell reference now while preserving their earlier versions.
+The present example projects the complex template onto positive j/130Hz modes,
+discards DC/negative analytic content explicitly and separately normalizes the
+midpoint sum. It is not ordinary real-wave Fourier truncation. Report that
+projection loss/meanbias separately from finite-N truncation; it can dominate
+atlowf0 and is not a fundamental physical limit. Largest-coefficient selection
+is rawL2-optimal on the fixed positive dictionary before normalization, not
+minimax. MoreN need not monotonically reduce normalized peakerror.
 
-Target2–3s initial calm, threshold-defined incoming-wave departure and actual
-dynamic extension until sustained boat rest. Calm/rest thresholds, exposure
-alignment, input ownership and stopping implementation remain under investigation.
-Do not infer calm from an instantaneous zero crossing or silently force late
-motion to zero. Current production inputs/outputs and #31 qualification remain
-unchanged; a redesigned physical case needs new appropriate qualification.
+The intended ramp envelope is symmetric when fall reverses rise. Midpoint real
+weights preserve conjugate reflection and mirrored magnitude for anycarrierphi.
+Full oscillating waves need not beeven; no paired physical-frequency requirement
+is imposed. Final component coverage/direction handling and whole-hull physical
+propagation must be reviewed before production use. These are only1D examples.
+No production inputs, canonical results, solver or WEC-Sim fork changed.
+
+## Simulation timing integration remains separate
+
+CLI requested time means dwell. Actual body settling must be measured; it is
+not implied by the requested incoming-wave rest interval and need not return
+the body to its original position/heading. Future integration needs an explicit
+did-not-settle outcome/cap and unchanged physical startup/contact guards.
+Do not add damping merely to force rest or infer calm from one zero crossing.
+Current runtime timing policy remains unchanged until separately implemented.
 
 ## Surface reconstruction accuracy, user decision 2026-10-27
 

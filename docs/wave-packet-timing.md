@@ -1,5 +1,31 @@
 # Wave-packet timing: a 1D construction example
 
+**Current example:** the user selected optimizer-free quintic ramps and
+largest-N Fourier coefficients, with rest10/ramp5/dwell100/ramp5/rest10,
+N10/20/40 and phases referenced DIRECTLY to dwell midpoint65s. See
+[the generated comparisons](research/pulse40-three-examples.md). The older
+figures and dwell-start phase discussion below remain historical illustrations
+under their original policies; no production timing policy has been changed.
+
+**Latest clarification:** the sea-carrier grid and packet-construction grid are
+separate. Each original component gets its own deterministic packet based on
+base frequency and requested dwell (100s in the current study), preserving
+phase at the common dwell start and direction. The carrier band is not an
+automatic hard bound on the packet's final components. The earlier shared-
+envelope study is superseded; see [the design note](research/wave-grid100-design.md).
+
+**Latest candidate:** 0.01–1 Hz with 0.001 Hz spacing, revisiting the narrower
+band below. This means 991 inclusive frequency centres and a 1000 s repetition
+period for exact common-grid harmonics. Empty slots may remain zero. Final
+packet support, event timing and boat-specific eligibility need qualification;
+production inputs and runtime policy remain unchanged.
+
+**Earlier input requirement:** redesigned sea inputs were restricted to0.05–0.5Hz,
+including all final incident packet sidebands. The illustrations below predate
+that hard band; they are not compliant production inputs. The existing solver
+and canonical case have not yet been changed. See the frequency-grid discussion
+below and issue36 for the next design.
+
 This illustration addresses [issue #36](https://github.com/amosborne/topwater/issues/36):
 use ramps measured in wave cycles while giving different packets the **same
 full-amplitude dwell**. The requested CLI duration is intended to mean dwell;
@@ -175,3 +201,39 @@ The requested [minimax-versus-quintic chart comparison](research/minimax-packet-
 is now available. It holds the spectral dictionary fixed and reports actual
 dwell/quiet errors, rather than comparing finite-band minimax with an unlimited
 quintic as though they had equal cost.
+
+## Start from the sea spectrum and its frequency resolution
+
+For the redesigned test, use the allowed incoming band0.05–0.5Hz. This is a
+physical input choice, not a request to minimize bandwidth by discarding
+whatever is inconvenient. Apply it to the final incident components; internal
+radiation-response frequency coverage remains a separate requirement.
+
+The stored stronger observation's frequency edges were inspected directly in
+`src/topwater/data/stronger-sea-observation.npz`. Most measured bins are0.01Hz
+wide; the end bins0.03–0.0325Hz and0.4925–0.495Hz are0.0025Hz wide. The observation
+does not supply measured energy above0.495Hz merely because the allowed upper
+limit is0.5Hz. Its0.0425–0.0525Hz bin straddles the new lower bound, so a future
+band-limited generator needs explicit partial-bin energy handling.
+
+| Quantity | Current choice | Meaning |
+|---|---|---|
+| Measured source bands | Mostly0.01Hz wide | Resolution of the supplied sea-spectrum data |
+| Realization sampling | 8stratified frequencies per source band | Typical0.00125Hz stratum width; frequency positions are nonuniform |
+| Packet quadrature | 0.005rad/s, about0.000796Hz | Separate grid used to construct the finite event |
+
+The generator preserves each source band's integrated variance and samples its
+directional distribution. That is a sensible starting density, not proof of
+adequate frequency/directional/motion accuracy. Finer sampling does not invent
+new measured detail within a source band. Keep the existing packet grid initially,
+then assess a finer grid while preserving the same underlying sea realization.
+Do not rerandomize the waves and mistake a different realization for a numerical
+resolution comparison. Neither density is a blanket shortest-ramp guarantee.
+
+The current canonical sea spans0.03024–0.49481Hz. Existing statistics report
+0.415% of its source variance below0.05Hz; that is not a bound on motion error
+or a license to silently modify the accepted case. Generate and qualify the
+new intentionally band-limited case separately, retaining in-band energy without
+renormalizing it to replace discarded energy. Near-edge carriers leave little
+room for symmetric packet sidebands, so final absolute-frequency constraints
+must be included in the next synthesis problem.

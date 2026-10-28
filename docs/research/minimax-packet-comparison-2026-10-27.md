@@ -1,5 +1,21 @@
 # Minimax versus quintic: equal spectral budget
 
+**Latest user choice:** the current example uses no optimizer, a fixed quintic
+and largest-N Fourier selection; see [the N10/20/40 plots](pulse40-three-examples.md).
+This older minimax comparison remains preserved under its original policy.
+
+**Latest discussion:** the user proposes0.01–1Hz/.001Hz for sea carriers and
+clarifies that each carrier has its own packet construction based on base
+frequency and dwell. Packet offsets/spacing are a separate choice; carrier
+limits are not automatically final-component bounds. The study below used a
+different grid and remains an illustration. Preserve its original results.
+
+**Earlier band discussion:** the previously requested incoming band was
+0.05–0.5Hz. This example does not enforce it: the6s carrier withK30 sidebands
+reaches0.0104167Hz. Preserve this comparison as originally run. The later
+0.01–1Hz proposal admits that lower value, but the old example does not use
+the new0.001Hz grid or100sDWELL and is not a qualified production input.
+
 This is the first bounded option1 demonstration for [issue36](https://github.com/amosborne/topwater/issues/36),
 not a production waveform generator or propagated wave solution.
 

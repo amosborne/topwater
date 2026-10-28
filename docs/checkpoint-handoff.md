@@ -1,57 +1,65 @@
 # Checkpoint handoff
 
-Updated2026-10-27UTC. Latest user steering controls scope; historical evidence
-and queued assignments do not authorize execution. Follow AGENTS.md/coordination.
+Updated 2026-10-27 local date. Latest user steering controls scope; historical
+evidence and queued assignments do not authorize execution. Follow AGENTS.md.
 
-## Current priority: pulse design and simulation timing, issue36
+## Current outcome: optimizer-free quintic examples, issue #36
 
-LATEST requested minimax chart/comparison is complete. See
-[comparison note](research/minimax-packet-comparison-2026-10-27.md),
-docs/images/wave-minimax-time-frequency.png (2240x1920,
-SHA70e24f64a5434b8f6f3dbd1297e02f9e90747db874811cf05ad8eab5a0c2b3a3)
-and wave-minimax-versus-quintic.png (2080x1280,
-SHAb555f5c6b1aed1bcec8a934ec5547ca23589b2071bf2dfed6c4e9e05d4903b93).
-Same carriers4/6s,8/12s gaps,10sDWELL14.5–24.5, phase0 atDWELL and EXACTsame
-K30/P192 spectral budget for minimax and unnormalized quintic projection.
-Grey ideal quintic is unlimited-band context, not the fair budget comparator.
+The user's latest requested example is COMPLETE: three base frequencies
+0.01/0.1/1Hz, phases0/45/90degrees DIRECTLY at dwell MIDPOINT65s, each shown
+for N10/20/40. Exact profile:10s rest,5s ramp,100s dwell,5s ramp,10s rest.
+Latest user preference is NO OPTIMIZER: fixed quintic envelope, direct Fourier
+coefficients, largest-N magnitude selection. No LP/greedy method in this run.
 
-Sampled peak dwell/quiet errors: R8s minimax0.42208% vs projectedQ1.28731%;
-R12s minimax0.057321% vs projectedQ0.376701%. Minimax dense+derivative upper
-bounds0.524255/0.139031% remain below Q observed peaks. Both dense refinement
-flags are FALSE: residuals5.146e-6/3.542e-7 above LPgrid objectives after3solves.
-This is an accepted approximate finite-grid illustration, NOT exact continuum
-optimality, a strict continuous transition-cap proof, a physical shortest ramp
-or measured runtime saving. Independent actual review accepts that scope.
+Plots: docs/images/wave-quintic-n-time.png (2720x1760),
+wave-quintic-n-spectrum.png and wave-quintic-n-phase.png (2720x1600).
+Rows are base frequencies; columns are N10/20/40. Images were NOT inspected;
+source/metrics/header/dimensions/hash verified for user review. Narrative and
+reproducible exact source: docs/research/pulse40-three-examples.md and
+docs/research/quintic_packet_example.py. Full coefficients/metrics/identities:
+docs/experts/numerical_methods_researcher/quintic-packets-2026-10-27.json.
 
-Root job wave-minimax-attempt1 session76411 terminal0/frozen/guard0/driver0/
-Jobempty; producer35584/owner35220 and all guarded host identities absent,
-finishterminal0/idle/null readback/release-last. Actualwork2.641s, inverse4.44e-16m.
-NMR authored source; separate researcher reviewed method/source/actual numbers;
-TOP prepared reviewed execution. No image inspection or physical/canonical edit.
-Tracked report: docs/experts/numerical_methods_researcher/minimax-packet-demo-2026-10-27.json.
-Raw source/data under artifacts/workflow/wave-minimax-demo1/ and attempt1/results/.
-Current ledger idle/null, lease absent. No next numerical job is allocated.
+Actual helper time6.8867303s, guard8.5s. Each case normalizes its midpoint sum
+to unit amplitude, applies requested phase directly, uses j/130Hz positive
+harmonics and keeps nested10/20/40 largest magnitudes. Symmetric envelope
+magnitudes hold to2.2e-14; anchors to3.4e-16; quadrature128/256 differences
+<=3.1e-16. Tailbound separates omitted positive coefficients from top40.
 
-The user requested research into the TOP3 minimal-spectral alternatives for
-pulse-like waveforms. Polynomial and derivative constraints MAY be discarded;
-quintic/cycle-count examples are baselines, not selected optimal policies.
-Research is complete and independently reviewed:
-[three-option note](research/minimal-pulse-spectra-2026-10-27.md).
-Recommendation: constrained minimax/equiripple first; DPSS concentration and
-sparse frequency selection are alternatives with different objectives. The
-bounded prototype above is illustrative; no method is installed in production
-or qualified as a propagated wave input. Actual runtime savings are not
-implied by fewer coefficients/bandwidth alone. Specify dwell ripple, peak quiet
-height, finite horizon, transition gap, overshoot and cost before an optimum.
-The simpler rectangle-series baseline must put its jumps INSIDE transition
-gaps, not at dwell endpoints (avoids unfair half-height endpoint error).
+IMPORTANT limitation: this is positive projection of the COMPLEX template
+a(t)*exp(i(2pi*f0*(t-65)+phi)), NOT ordinary real-wave Fourier truncation.
+DC/negative analytic content is discarded, never folded; normalization changes
+the rawL2 projection. N40 worstcomplexscore bounds29.1142/7.6348/5.8205percent;
+real-target maxerrors24.4837/9.9826/5.9692cm forunit1m. The0.01Hz case loses
+2.895% analyticenergy toDC/negative content and has+3.8236cm meanbias. This is
+a method-specific limitation, not a physical impossibility or accuracy pass.
+Do not call these minimax optima, a production sea or qualified boat physics.
 
-Accepted design directions: CLI requested time means DWELL; specified original
-carrier phases apply at the common dwell start and fixed spatial reference
-point; target2–3s initial calm, then physical packet and genuinely measured boat
-settling with an explicit cap/failure. Timing/profile/threshold/runtime changes
-are still investigation work; production code and canonical boat/sea/results
-are unchanged. No upstream or WEC-fork change is authorized.
+Raw evidence: artifacts/workflow/pulse40-three-quintic-attempt1/results.
+Sourcea957e80224959bec5c3bc1b694a498568188bc9d7348b9b1bb45614e6a69244c;
+source/actual independent reviews accepted consistency, not quality. Root alone
+ran the guarded job; all9cases complete. Producer32800/owner32496/guard33420/
+driver20416/conhost7680/python37344 hostabsent, terminal0/frozen/guard0/driver0/
+Jobempty, finishterminal0; separateidle/null/nojob/nolease readback confirmed.
+No next numerical job is allocated. No production/CLI/canonical/WEC-fork change.
+
+User now has a fully explicit per-component interface:
+f0,phi(midpoint),rest,ramp,dwell,N. Bandwidth/frequency placement/quality outputs.
+Any next study must follow latest user steering; do not resume optimization,
+surface reconstruction, dynamics or performance campaigns automatically.
+At checkpoint commit/push baseline/fluid-body and update authoritative #36/#30
+main bodies; preserve all historical failed-policy studies under originalpolicy.
+
+## Preserved superseded studies
+
+pulse40-three-attempt1 and pulse40-three-midpoint-attempt1 were CLAIMED ONLY,
+then cancelled beforelaunch when user changed the requested formulation. Their
+cancelled-unlaunched.json records preserve verified manifests; no producer was
+started. The earlier pulse40-three-symmetric-attempt1 ran3.010s with start-phase
+anchor under its old policy and was fully cleaned; do not publish it ascurrent.
+wave-grid100-attempt1 ran8.922s with an obsolete common-envelope/final-band
+restriction (55s/12s ramps), not the user's current per-component definition.
+All old source/config/results stay unchanged; no old publisher scripts should
+be run against the current issue descriptions or canonical examples.
 
 ## Completed current evidence
 

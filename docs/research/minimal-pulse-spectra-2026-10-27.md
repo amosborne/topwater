@@ -1,5 +1,11 @@
 # Minimal spectra for a finite wave event
 
+**Latest user choice:** use an optimizer-free fixed-quintic construction and
+retain the largest N Fourier coefficients. The requested
+[N10/20/40 comparisons](pulse40-three-examples.md) are generated with phases
+defined directly at dwell midpoint. The optimization proposals below remain
+research alternatives, not the selected implementation or a queued assignment.
+
 Research proposal, 2026-10-27. A subsequently requested bounded
 [minimax chart comparison](minimax-packet-comparison-2026-10-27.md) is now executed;
 it is an illustration, not a qualified production wave generator.
@@ -8,6 +14,14 @@ polynomial shape and derivative constraints to be discarded. Current production
 inputs and accepted results are unchanged. The coordinator owns experiments.
 
 ## What should be minimized?
+
+The latest clarification separates the desired sea-carrier grid (proposed
+0.01–1Hz/.001Hz) from packet-construction offsets and spacing. Each carrier
+gets its own deterministic packet based on base frequency and requested dwell,
+under a documented policy. Do not impose the carrier range as a hard final-
+component bound. All generated physical components still need consistent
+frequency/direction handling and adequate hydrodynamic coverage. No production
+policy is implemented or qualified by the earlier illustrations.
 
 The useful target is a nearly unit **complex envelope** during the requested
 dwell and small elevation tails over declared quiet intervals. It is not

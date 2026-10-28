@@ -7,6 +7,44 @@ schedules authorized work and never grants scope. Update status in place.
 
 ## Wave-packet timing and dwell, 2026-10-27
 
+QUINTIC-N-COMPARISON, completed: latest user chose NO optimizer and requested
+N10/20/40 for3basefrequencies0.01/.1/1Hz, rest10/ramp5/dwell100/ramp5/rest10,
+phases0/45/90 DIRECTatmidpoint65. NMR authored newquintichelper/plan and note;
+independent NMR reviewed source and actual consistency; TOP prepared rootguard.
+Root alone ran9cases in6.8867s, fully verified terminal/frozen/hostidle/release,
+published3plots/exactsource/coefficientevidence. No imagesinspected. No quality
+pass/globaloptimality/physicalclaim; complex-template positiveprojection loss
+explicit. Prior optimizers/common-envelope studies below are historical.
+No next numericaljob or production/canonical change allocated.
+
+PULSE40-THREE, authorized: exact user example rest10/ramp5/dwell100/ramp5/rest10,
+N40,phi0; rootselected base frequencies0.01,0.1,1Hz. Independent positive-
+frequency selection and complex coefficient fit, measured quality outputs.
+minimal_pulse_research owns pulse40-three-design1 source/plan and draftnote;
+issue31_method_review owns independent source+actual review; receipt_reliability
+owns guard/resource preparation. Root alone executes bounded180s/1GiB/1thread
+job, verifies frozen/hostterminal/idle/release, publishes evidence andcheckpoint.
+Scope excludes production/canonical/physical solver changes and imageinspection.
+Acceptance is finite/anchor/count/guard validity and honest continuous quality
+bounds, not a physical accuracy threshold or global frequency-selection optimum.
+
+GRID100-DESIGN, completed/superseded premise: root ran the reviewed diagnostic
+in8.922s;55s/12s reflect the extra common-envelope/final-band restriction.
+User clarified distinct carrier/construction grids and unique per-component
+packets based onf0,D; no corrected numerical allocation yet. Preserve old
+evidence, do not publish it as the requested solution. Serialcleanup complete.
+
+Original bounded assignment: latest user requests solving0.01–1Hz/.001Hz grid
+with100sDWELL. minimal_pulse_research owns new diagnostic source and draft note;
+issue31_method_review independently reviews method/source/results without
+authoring it; receipt_reliability prepares frozen root-only guard/resource plan.
+Root alone executes one reviewed bounded job and integrates results/charts.
+Acceptance: explicit provisional tolerances, certified continuum bounds or
+honest unresolved classification, no generic optimum/whole-sea claims, exact
+final-grid support, discrete spectra, preserved directions/dwell phases.
+Exclude all physical producers, production/canonical changes and image inspection.
+Stop at independently reviewed diagnostic publication and checkpoint.
+
 MINIMAX-ILLUSTRATION, completed: user explicitly requested option1 charts.
 NMR authored only the boundedLP/plot helper, separate researcher reviewed method/
 source/actual results, TOP prepared root-only guard. Root ran two same-budget

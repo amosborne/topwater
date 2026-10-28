@@ -1,6 +1,59 @@
 # Current state: independent numerical-methods review
 
-## Current priority: issue36 pulse design, 2026-10-27
+## Current outcome: optimizer-free quintic examples, 2026-10-27
+
+User requested N10/20/40 for0.01/.1/1Hz, phases0/45/90atMIDPOINT65, window
+rest10/ramp5/dwell100/ramp5/rest10. Directquintic Fourier source+actualreview
+accepted consistency; root ran9cases in6.8867s and fullycleanedserialslot.
+Nooptimizer/LP/greedy method used. Source/plots/numbers in
+[example note](../../research/pulse40-three-examples.md) and
+[evidence](quintic-packets-2026-10-27.json). Positivecomplex-template projection
+discards DC/negative content, not ordinaryrealwaveFFT. N40worstscore29.11/7.63/
+5.82percent; lowf0loss ismethod-specific, notphysicalfundamental. Noqualitypass,
+productionchange or nextjob. Preserve oldstudies below underoriginalpolicies.
+
+## Historical intermediate proposals (superseded)
+
+
+Current authorized example: rest10/ramp5/dwell100/ramp5/rest10,N40,phi0,
+basefrequencies0.01/0.1/1Hz. Source pulse40-three-design1/demo.py independently
+accepted abbba7b5014c9d4a65654270b0242a56de806ded3d171d8a19b726106b9df948,
+plan.jsoncf24e4919d433e4b2cf65366dc3a334ca4418db9d58cf6b03f7ba284b29dd02e.
+Finite positive dictionary greedyselection then angular minimaxLP; score includes
+dwellcomplexerror,quietamp,rampovershootabove1. Measured continuous bound;
+no1%gate/globaloptimality/physicalclaim. Rootsoleexecution pendingguardready;
+no researcher numericaljob. Current state below is historical discussion.
+
+Current accepted parameterization:f0,phi0 atdwellstart,R,D,Ncomponentsmaximum;
+construction chooses frequencies/coefficients. User asks objective definition.
+Read-only recommendation:minimaxnormalizedcomplex-envelopeerror forunitdwell
+andzerocalm overfinitehorizon; freeboundedramps, documentedfrequency/normguards,
+continuousvalidation. Notadopted/noimplementation/noallocation. Selectable
+frequencies make general problemnonconvex; report bestvalidatedcandidate not
+unproven globaloptimum. Prior bandwidth/binwidth input proposals superseded.
+
+LATEST: each original wave component gets its own deterministic packet(f0,D),
+not a mandatory shared envelope. Separate sea carrier grid0.01–1/.001Hz from
+packet offset bandwidth/spacing. D100s shared; phases at commondwellstart;
+preserve directions. Dcontrols spectral width scale, notminphysicalfrequency;
+ramps control neededoffsetbandwidth; spacing controls uniformgridrecurrence;
+ripple/overshoot need explicit constraints. New construction policy not chosen.
+Priorrootjob completed restricted55s/12s in8.922s, allterminal/idle/releasepassed;
+its edge-clearance premise is superseded, not a general packet requirement.
+No new numerical job, production change or canonical replacement allocated.
+
+Latest candidate is 0.01–1 Hz at 0.001 Hz spacing, revisiting the narrower
+band below. Read-only review: 991 inclusive centres; exact harmonic grid repeats
+at 1000 s; slots need not all carry energy. Final sidebands and boat-specific
+short-wave eligibility still need checking. No implementation/numerical job.
+
+Earlier user requirement fixes all final nonzero incoming components, including
+packet sidebands, to0.05–0.5Hz. Runtime/canonical case remain unchanged. Earlier
+minimax6s/K30 example reaches0.0104167Hz and is historical, not compliant with
+the new input requirement. Generator metadata shows mostly0.01Hz source bands,
+8stratified carriers per band (typical0.00125Hz strata), packet grid0.005rad/s
+(~0.000796Hz). Retain that packet spacing as a starting investigation value;
+source sampling density is not a convergence result. No new job is allocated.
 
 User now permits discarding polynomial/smoothness constraints for minimal
 spectral-signature research. DWELL semantics and specified carrier phases at
