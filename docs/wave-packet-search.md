@@ -2,6 +2,8 @@
 
 `topwater.wave_packets` constructs one real, amplitude-scaled temporal packet.
 It does not run a fluid/body solver, propagate a wave or modify a sea archive.
+The directory solve workflow supplies its timing and original carrier inputs;
+`generate-sea` continues to write only the original four carrier arrays.
 
 ```python
 from topwater.wave_packets import minimum_cutoff_packet
@@ -107,3 +109,37 @@ not an exact minimum of continuous-time exceedance. Dwell errors are diagnostics
 
 [Complete coefficient/search history evidence](experts/numerical_methods_researcher/packet-cutoff-search-2026-10-27.json).
 Plots were generated for user review without agent image inspection.
+
+
+## Directory solve timing
+
+`topwater solve [DIRECTORY] DWELL --rest REST --ramp RAMP --solver=wecsim`
+uses the positional time for **dwell**, not total simulation length. Defaults
+are10s rest and5s ramp on each side. Thus `DWELL=100` means the complete130s
+window: rest0?10, ramp10?15, dwell15?115, ramp115?120, rest120?130. Target
+carrier phases are specified directly at midpoint65s; zero phase means a target
+crest at the solver wave reference point. Changing the dwell changes that
+reference time without modifying the original carrier phase values. Sea uses the
+standard physical convention `cos(k dot x - omega*(t-midpoint) + phase)`.
+This utility uses positive time, so an adapter passes `-Sea.phases_rad` to it
+and conjugates its positive-time Fourier coefficients for negative-time wave
+synthesis. That sign mapping preserves the original spatial/temporal convention;
+it does not shift the requested midpoint reference or rewrite carrier inputs.
+
+The CLI passes dwell/rest/ramp to the backend and records dwell, per-side rest
+and ramp, total, midpoint, fixed0.01s time step and phase interpretation in
+`result.log`. It rejects nonfinite/nonpositive dwell/ramp, negative rest and
+misalignment before entering the backend. `sea.npz` and `boat.npz` remain input
+sources; solve does not replace them or add a packet archive to the example.
+Duration-dependent construction belongs to the solver workflow, keeping this
+constructor usable by a future native backend. The native dynamics backend is
+still unavailable. Backend-specific physical/DC/startup assumptions and fatal
+checks are documented on the [solve page](cli/solve.md).
+
+The utility tolerance applies to one amplitude-scaled component. The WEC-Sim
+workflow allocates its0.01m incident reference-point budget proportionally:
+`component_tolerance = 0.01 * component_amplitude / sum(amplitudes)`. Independent
+per-component0.01m tolerances would not establish that aggregate budget. Neither
+allocation is a1cm body-motion or propagated-surface accuracy claim; spatial
+startup/physical checks remain backend responsibilities. Standard outputs remain `result.npz`, `result.png` and
+`result.log`; a separate render updates the video and its log.

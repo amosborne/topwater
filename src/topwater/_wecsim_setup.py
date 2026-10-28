@@ -1,14 +1,14 @@
 """Shared mean geometry and physical incoming train for the WEC-Sim workflow.
 
-The packet is an initial spatial window propagated with signed-kappa dispersion,
-not a time-dependent multiplier on body force. Its definition is independent of
-the requested stopping time. The profile and bounding method reproduce the
-accepted REF002 construction; no amplitude or phase is fitted to the response.
+Packets are constructed in time, decomposed into physical harmonics and then
+propagated with dispersion. WEC-Sim owns the wave-force sum; no time-dependent
+force multiplier or fitted response is introduced.
 """
 from collections import deque
 from dataclasses import dataclass
 import itertools
 import math
+import sys
 import time
 
 import numpy as np
@@ -21,11 +21,12 @@ from .frames import rotation_matrix
 from .hydrostatics import equilibrate_heave
 from .inputs import InitialState, RigidBody, WaveComponents
 from .sea_states import validate_envelope
+from .wave_packets import TIME_STEP_S, minimum_cutoff_packet
 
 
-TIME_STEP_S = .02
 RADIATION_MEMORY_S = 10.
 CALM_FRACTION = .001
+PACKET_ENVELOPE_TOLERANCE_M = .01
 
 
 @dataclass(frozen=True)
@@ -42,6 +43,7 @@ class PreparedCase:
     native_waves: WaveComponents
     time_s: np.ndarray
     train: object
+    world_vertical_offset_m: float = 0.
 
 
 def floating_equilibrium(body):
@@ -80,14 +82,16 @@ def floating_equilibrium(body):
     return state, h
 
 
-def prepare_case(body, waves, duration_s):
+def prepare_case(body, waves, dwell_s, *, rest_s=10., ramp_s=5.):
     """Construct native mean-boat geometry and a single global embedding."""
-    duration_s = float(duration_s)
-    if not np.isfinite(duration_s) or duration_s <= 0:
-        raise ValueError('duration must be positive and finite')
+    timing = np.asarray([dwell_s, rest_s, ramp_s], dtype=float)
+    if (not np.isfinite(timing).all() or dwell_s <= 0 or rest_s < 0 or ramp_s <= 0
+            or not np.allclose(timing/TIME_STEP_S, np.round(timing/TIME_STEP_S), rtol=0, atol=1e-8)):
+        raise ValueError('dwell/ramp must be positive and rest nonnegative, aligned to 0.01 s')
+    duration_s = float(dwell_s+2*rest_s+2*ramp_s)
     steps = int(round(duration_s / TIME_STEP_S))
     if steps < 1 or abs(steps * TIME_STEP_S - duration_s) > 1e-9:
-        raise ValueError('WEC-Sim duration must be a positive multiple of the fixed 0.02 s time step')
+        raise ValueError('WEC-Sim duration must be a positive multiple of the fixed 0.01 s time step')
     beam = float(np.ptp(body.mesh.vertices[:, 1]))
     validate_envelope(waves, beam_m=beam, gravity=GRAVITY)
     equilibrium, h = floating_equilibrium(body)
@@ -107,61 +111,90 @@ def prepare_case(body, waves, duration_s):
     mass = np.zeros((6, 6))
     mass[:3, :3] = body.mass * np.eye(3)
     mass[3:, 3:] = mean_rotation @ body.inertia_cg @ mean_rotation.T
-    train = IncomingTrain(native, beam)
+    train = IncomingTrain(native, beam, dwell_s=dwell_s, rest_s=rest_s, ramp_s=ramp_s)
     return PreparedCase(body, equilibrium, h, vertices, body.mesh.faces[body.mesh.physical_faces],
                         h.wetted_triangles, equilibrium.position.copy(), mass, embedding,
-                        native, np.arange(steps + 1) * TIME_STEP_S, train)
-
-
-def spatial_window(tau):
-    q = np.clip((abs(np.asarray(tau)) - 15.) / 10., 0., 1.)
-    return 1 - 10 * q**3 + 15 * q**4 - 6 * q**5
-
-
-def _window_spectrum(nu):
-    x, w = np.polynomial.legendre.leggauss(256)
-    tau = 20 + 5*x
-    weights = 5*w*spatial_window(tau)/np.pi
-    flat = np.asarray(nu).reshape(-1)
-    result = np.empty_like(flat)
-    for start in range(0, len(flat), 2048):
-        part = flat[start:start+2048]
-        result[start:start+2048] = 15/np.pi*np.sinc(15*part/np.pi) + np.cos(part[:, None]*tau) @ weights
-    return result.reshape(np.shape(nu))
+                        native, np.arange(steps + 1) * TIME_STEP_S, train, train.dc_mean_m)
 
 
 class IncomingTrain:
-    """Accepted fixed40s/15s/25s incoming packet, with arbitrary carrier count.
+    """Quintic packets, with a separate static sea-level reference offset.
 
     C[carrier,sign,frequency] multiplies exp(i*signed_k*s-i*omega*t).
-    Frequencies, carrier amplitudes and phases remain unchanged. The finite
-    packet has sidebands and is not the original stationary measured spectrum.
+    Carrier phases are directly at dwell midpoint in the physical convention
+    cos(k.s-omega*(t-midpoint)+phase). DC shifts the native mean-water reference;
+    it is never silently removed from the physical incoming surface.
     """
-    def __init__(self, waves, beam_m):
-        maximum = 2*np.pi*min(.6, np.sqrt(GRAVITY/(4*np.pi*beam_m)))
-        self.omega = np.r_[np.arange(0., maximum, .005), maximum]
-        dw = np.diff(self.omega)
-        weights = np.r_[dw[0]/2, (dw[:-1]+dw[1:])/2, dw[-1]/2]
+    def __init__(self, waves, beam_m, *, dwell_s=100., rest_s=10., ramp_s=5.,
+                 envelope_tolerance_m=PACKET_ENVELOPE_TOLERANCE_M):
+        validate_envelope(waves, beam_m=beam_m, gravity=GRAVITY)
+        self.period_s = float(dwell_s+2*rest_s+2*ramp_s)
+        self.midpoint_s = self.period_s/2
+        self.rest_s, self.ramp_s, self.dwell_s = float(rest_s), float(ramp_s), float(dwell_s)
+        self.envelope_tolerance_m = float(envelope_tolerance_m)
+        if not np.isfinite(envelope_tolerance_m) or envelope_tolerance_m <= 0:
+            raise ValueError('Packet envelope tolerance must be positive finite metres')
+        amplitude = float(waves.amplitudes.sum())
+        rows, dc, diagnostics = [], [], []
+        maximum_bin = 2
+        for j, (a, w, phi) in enumerate(zip(waves.amplitudes, waves.angular_frequencies, waves.phases)):
+            if a == 0:
+                rows.append(np.zeros(0, complex)); dc.append(0.)
+                continue
+            tolerance = envelope_tolerance_m*float(a)/amplitude
+            packet = minimum_cutoff_packet(float(w/(2*np.pi)), float(-phi), rest_s, ramp_s,
+                dwell_s, amplitude_m=float(a), error_tolerance_m=tolerance)
+            count = packet.positive_components
+            positive = np.conj(2*packet.coefficients[1:count+1])
+            if len(packet.target.time_s) % 2 == 0 and count == len(packet.target.time_s)//2:
+                positive[-1] *= .5  # Real-FFT Nyquist is a singleton, like DC.
+            rows.append(positive)
+            dc.append(packet.dc_m)
+            maximum_bin = max(maximum_bin, count)
+            diagnostics.append(dict(carrier=j, cutoff_hz=packet.cutoff_hz, positive_bins=count,
+                allocated_tolerance_m=tolerance,
+                certified_exceedance_m=packet.diagnostics['certified_envelope_exceedance_bound_m']))
+        self.omega = 2*np.pi*np.arange(maximum_bin+1)/self.period_s
         self.k = self.omega**2 / GRAVITY
         self.theta = waves.directions
         self.carriers = waves
-        group = GRAVITY / (2*waves.angular_frequencies)
-        k0 = waves.angular_frequencies**2 / GRAVITY
-        nu = group[:, None, None] * (np.array([1., -1.])[None, :, None]*self.k - k0[:, None, None])
-        jacobian = 2*group[:, None]*self.omega[None, :]/GRAVITY*weights
-        self.C = (waves.amplitudes[:, None, None] * _window_spectrum(nu)
-                  * np.exp(1j*(waves.phases[:, None, None] + 40*nu)) * jacobian[:, None, :])
+        self.C = np.zeros((len(rows), 2, len(self.omega)), complex)
+        for j, values in enumerate(rows):
+            self.C[j, 0, 1:len(values)+1] = values
+        self.dc_by_carrier_m = np.asarray(dc, dtype=float)
+        self.dc_mean_m = float(self.dc_by_carrier_m.sum())
+        self.packet_diagnostics = diagnostics
+        certified = sum(item['certified_exceedance_m'] for item in diagnostics)
+        self.certified_origin_exceedance_m = float(certified)
+        operating_limit = min(.6, np.sqrt(GRAVITY/(4*np.pi*beam_m)))
+        outside = self.omega/(2*np.pi) > operating_limit
+        outside_l1 = float(abs(self.C[:, :, outside]).sum())
+        if outside_l1 > 0:
+            all_l1 = float(abs(self.C).sum())
+            print('warning [packet-sideband-operating-envelope]: '
+                  f'carrier_limit_hz={operating_limit:.9g} '
+                  f'packet_max_hz={self.omega[-1]/(2*np.pi):.9g} '
+                  f'positive_nodes_above_limit={int(outside.sum())} '
+                  f'above_limit_amplitude_l1_m={outside_l1:.9g} '
+                  f'above_limit_l1_fraction={outside_l1/all_l1:.9g}; '
+                  'generated sidebands retained with genuine coefficient coverage; '
+                  'mesh and linear-model accuracy are not certified', file=sys.stderr)
+        print(f'PACKET rest_s={rest_s:g} ramp_s={ramp_s:g} dwell_s={dwell_s:g} '
+              f'total_s={self.period_s:g} midpoint_s={self.midpoint_s:g} dt_s={TIME_STEP_S:g} '
+              f'positive_frequency_nodes={maximum_bin} cutoff_hz={maximum_bin/self.period_s:.9g} '
+              f'active_carriers={len(diagnostics)} allocated_total_tolerance_m={envelope_tolerance_m:g} '
+              f'certified_origin_exceedance_m={certified:.9g} dc_mean_m={self.dc_mean_m:.9g}',
+              file=sys.stderr)
 
     def elevation(self, xy, times):
         xy, times = np.atleast_2d(xy), np.atleast_1d(times)
-        value = np.zeros((len(times), len(xy)))
         temporal = np.exp(-1j*times[:, None]*self.omega)
+        spatial = np.zeros((len(self.omega), len(xy)), dtype=complex)
         for j in np.flatnonzero(self.carriers.amplitudes):
             s = xy @ np.array([np.cos(self.theta[j]), np.sin(self.theta[j])])
-            spatial = (self.C[j, 0, :, None]*np.exp(1j*self.k[:, None]*s)
-                       + self.C[j, 1, :, None]*np.exp(-1j*self.k[:, None]*s))
-            value += (temporal @ spatial).real
-        return value
+            spatial += (self.C[j, 0, :, None]*np.exp(1j*self.k[:, None]*s)
+                        + self.C[j, 1, :, None]*np.exp(-1j*self.k[:, None]*s))
+        return (temporal @ spatial).real+float(getattr(self, 'dc_mean_m', 0.))
 
     def excitation(self, omega, headings, transfer, stiffness, times):
         """OFFLINE BASELINE ORACLE ONLY; never called by the production solve.
@@ -209,6 +242,7 @@ class IncomingTrain:
         directions = np.mod(self.theta[active, None] + [0., np.pi], 2*np.pi).reshape(-1)
         coefficients = self.C[active].reshape(-1, len(self.omega))
         elevation = (np.exp(-1j*times[:, None]*self.omega) @ coefficients.T).real
+        elevation[:, ::2] += getattr(self, 'dc_by_carrier_m', np.zeros(len(self.theta)))[active]
         return directions, elevation
 
     def certify_incident_startup(self, setup, *, maximum_seconds=480.):
@@ -224,7 +258,7 @@ class IncomingTrain:
         field = _FieldBounds(self)
         lo = setup.mean_hull_vertices_m.min(axis=0)
         hi = setup.mean_hull_vertices_m.max(axis=0)
-        eta_limit = CALM_FRACTION*amplitude
+        eta_limit = self.envelope_tolerance_m
         speed_limit = CALM_FRACTION*float(self.carriers.amplitudes @ self.carriers.angular_frequencies)
         field.certify(lo[:2], hi[:2], [1., 1.], eta_limit, deadline)
         field.certify(np.r_[lo[:2], lo[2]], np.r_[hi[:2], 0.], [1., 1., .2], speed_limit, deadline)
@@ -232,7 +266,7 @@ class IncomingTrain:
         peak = np.zeros(len(times))
         temporal = np.exp(-1j*self.omega[:, None]*times)
         for j in np.flatnonzero(self.carriers.amplitudes):
-            value = (self.C[j].sum(axis=0) @ temporal)
+            value = (self.C[j].sum(axis=0) @ temporal)+self.dc_by_carrier_m[j]
             peak += abs(value)**2
         arrival = np.sqrt(peak/np.sum(self.carriers.amplitudes**2)).max()
         if arrival < .25:
@@ -242,6 +276,7 @@ class IncomingTrain:
 class _FieldBounds:
     """Order-six combined-field box bounds, preserving cancellation at centers."""
     def __init__(self, train):
+        self.dc_mean_m = float(getattr(train, 'dc_mean_m', 0.))
         values = train.C.reshape(-1)
         direction = np.broadcast_to(train.theta[:, None, None], train.C.shape).reshape(-1)
         signs = np.broadcast_to(np.array([1., -1.])[None, :, None], train.C.shape).reshape(-1)
@@ -299,7 +334,7 @@ class _FieldBounds:
             for axis, power in enumerate(alpha):
                 factor *= self.powers[axis][power]
                 width *= half[:, axis]**power/math.factorial(power)
-            value = abs((phase @ factor).real) if dimension == 2 else np.linalg.norm(
+            value = abs((phase @ factor).real+(self.dc_mean_m if sum(alpha) == 0 else 0.)) if dimension == 2 else np.linalg.norm(
                 (phase @ (factor[:, None]*self.velocity)).real, axis=1)
             if sum(alpha) == 0:
                 center_value = value.copy()

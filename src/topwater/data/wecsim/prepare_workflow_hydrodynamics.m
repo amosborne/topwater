@@ -20,8 +20,10 @@ require_close(h.ex_re*n.rho*n.g,rawReal,'Imported excitation real convention');
 require_close(h.ex_im*n.rho*n.g,-rawImaginary,'Imported excitation imaginary convention');
 h.cg = n.cg(:); h.cb = n.cb(:); h.Vo = n.volume;
 h.Khs = n.K/(n.rho*n.g);
-% This unchanged full-band transform precedes any common-grid raw-table subset.
-fullRadiation = radiationIRF(h,10,501,2401,[],[]);
+% Preserve the ten-second memory on the same grid as native integration.
+memorySteps = round(10/n.time_step_s);
+assert(abs(memorySteps*n.time_step_s-10) < 1e-12);
+fullRadiation = radiationIRF(h,10,memorySteps+1,2401,[],[]);
 fullRadiation.Ainf = n.Ainf/n.rho;
 [omega,headings,fk,sc,total,zeroLimit] = dense_excitation(native,n);
 [found,frequencyIndex] = ismember(omega(:),fullRadiation.w(:));

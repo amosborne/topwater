@@ -104,7 +104,8 @@ def test_modified_fork_source_is_rejected_even_at_pinned_head(monkeypatch, tmp_p
         backend._find_fork()
 
 
-def test_native_mean_pose_and_global_embedding_are_applied_once(monkeypatch, tmp_path):
+@pytest.mark.parametrize('water_level', [0., .013, -.017])
+def test_native_mean_pose_and_global_embedding_are_applied_once(monkeypatch, tmp_path, water_level):
     equilibrium = Rotation.from_euler('y', -.07)
     embedding = Rotation.from_euler('z', 1.2).as_matrix()
     center = np.array([0., 0., .2])
@@ -112,20 +113,22 @@ def test_native_mean_pose_and_global_embedding_are_applied_once(monkeypatch, tmp
     setup = SimpleNamespace(time_s=np.array([0., .02]), mean_hull_vertices_m=vertices,
                             mean_cg_m=center, physical_faces=np.array([[0, 1, 2]]),
                             mass_matrix=np.eye(6), world_from_native=embedding,
-                            equilibrium=SimpleNamespace(orientation=equilibrium.as_quat(scalar_first=True)))
+                            equilibrium=SimpleNamespace(orientation=equilibrium.as_quat(scalar_first=True)),
+                            world_vertical_offset_m=water_level)
     setup.body = SimpleNamespace(mesh=SimpleNamespace(vertices=vertices))
     setup.train = SimpleNamespace(
         directional_elevation_records=lambda times: (np.array([.2, .2+np.pi]),
                                                       np.c_[np.cos(times), .3*np.sin(times)]),
         carriers=SimpleNamespace(angular_frequencies=np.array([1.]), amplitudes=np.array([.2])),
         theta=np.array([.2]), omega=np.array([0., 1.4]))
-    setup.train.elevation = lambda xy, times: np.zeros((len(times), len(xy)))
+    setup.train.elevation = lambda xy, times: np.full((len(times), len(xy)), water_level)
     hydro = SimpleNamespace(K=np.eye(6), Ainf=np.eye(6), cb=np.zeros(3), volume=1.,
                             netcdf_path=tmp_path/'not-executed.nc', native_mat_path=tmp_path/'native.mat')
     hydro.excitation_omega = np.array([.1, 3.4])
     hydro.excitation_headings = np.array([0., 2*np.pi])
     hydro.excitation = np.ones((2, 2, 6), dtype=complex)
     q = np.array([[0., 0., 0., 0., 0., 0.], [.3, -.2, .1, .04, -.03, .02]])
+    q[:, 2] -= water_level
 
     def fake_native(workspace, fork):
         savemat(workspace/'motion.mat', dict(time=setup.time_s, q=q,
@@ -152,7 +155,10 @@ def test_native_mean_pose_and_global_embedding_are_applied_once(monkeypatch, tmp
     assert 'spectral_hydro' in prepared
     assert 'component_view' not in prepared
     assert_allclose(motion.excitation_native, 1.)
-    assert_allclose(motion.position_m, q[:, :3] @ embedding.T + center)
+    assert_allclose(motion.position_m, q[:, :3] @ embedding.T + center+[0., 0., water_level])
+    assert_allclose(motion.position_m[0], center, atol=1e-15)
+    assert_allclose(prepared['n']['initial_q'][0, 0].reshape(-1), [0., 0., -water_level, 0., 0., 0.])
+    assert_allclose(prepared['incident_origin_elevation_m'], 0.)
     expected = embedding @ Rotation.from_euler('xyz', q[:, 3:]).as_matrix() @ equilibrium.as_matrix()
     actual = Rotation.from_quat(motion.orientation_wxyz, scalar_first=True).as_matrix()
     assert_allclose(actual, expected, atol=1e-14)

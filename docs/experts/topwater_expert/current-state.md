@@ -1,4 +1,30 @@
-# Current state: Topwater expert (solver implementation HELD)
+# Current state: Topwater expert
+
+
+## Current authorized packet integration, 2026-10-27
+
+Current goal: integrate the fixed10ms minimum-cutoff packet constructor into
+WEC-Sim directory solve and regenerate the simple-boat130s outputs. CLI positional
+time now means DWELL; `100 --rest 10 --ramp 5` selects130s total and midpoint65s.
+Source work in cli.py validates scalar timing/10ms alignment before backend use,
+passes explicit rest/ramp keywords, logs timing/phase semantics and preserves the
+original four-array Sea contract. Sea physical phase remains
+`k dot x - omega*(t-midpoint) + phase`; sign-convention mapping belongs to the
+WEC-Sim expert. Native dynamics are still unavailable.
+
+CLI/data docs and mocked publication/failure tests are reviewable source only;
+no integration test, packet preflight, MATLAB job or canonical publication has
+been run for this new workflow. Root owns serial execution/acceptance. WEC-Sim
+expert owns backend construction, DC/heading treatment and physical source gates.
+The WEC-Sim design allocates its0.01m incident reference-point budget over
+carriers as0.01*A_j/sum(A); whole-hull startup still needs separate checks.
+This is not a propagated-surface/body accuracy guarantee. Actual packet counts,
+guard feasibility and construction cost remain unmeasured for the384carriers.
+
+Sources: [CLI](../../../src/topwater/cli.py),
+[packet search](../../../src/topwater/wave_packets.py),
+[workflow CLI tests](../../../tests/test_cli_workflow.py),
+[packet/search workflow documentation](../../wave-packet-search.md).
 
 ## Issue31 integration acceptance, 2026-10-27
 

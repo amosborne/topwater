@@ -18,7 +18,12 @@ def parser():
                                epilog='Documentation: docs/cli/solve.md')
     solve.add_argument('directory', nargs='?', type=Path, default=Path('.'),
                        help='Example directory (default: current directory)')
-    solve.add_argument('duration', type=float, help='Positive simulation duration in seconds')
+    solve.add_argument('dwell', type=float, metavar='DWELL',
+                       help='Positive full-strength dwell in seconds; total includes rest/ramp on both sides')
+    solve.add_argument('--rest', type=float, default=10.,
+                       help='Quiet target interval on each side in seconds (default: 10)')
+    solve.add_argument('--ramp', type=float, default=5.,
+                       help='Quintic ramp on each side in seconds (default: 5)')
     solve.add_argument('--solver', choices=('native', 'wecsim'), default='native',
                        help='Backend (default: native; currently unavailable)')
     render = commands.add_parser('render', help='Render result.npz; docs/cli/render.md',
@@ -27,6 +32,24 @@ def parser():
                         help='Example directory (default: current directory)')
     return root
 
+
+
+def _solve_timing(args):
+    """Validate CLI timing before loading data or entering a solver backend."""
+    import math
+    from .wave_packets import TIME_STEP_S
+    for name, value, positive in (('dwell', args.dwell, True), ('ramp', args.ramp, True),
+                                   ('rest', args.rest, False)):
+        if not math.isfinite(value) or (value <= 0 if positive else value < 0):
+            raise ValueError(f'{name} must be {"positive" if positive else "nonnegative"} and finite')
+        steps = value/TIME_STEP_S
+        if not math.isfinite(steps) or not math.isclose(value, round(steps)*TIME_STEP_S,
+                rel_tol=0., abs_tol=8*sys.float_info.epsilon*max(abs(value), TIME_STEP_S)):
+            raise ValueError(f'{name} must align to the fixed {TIME_STEP_S:g}s timestep')
+    total = 2*args.rest+2*args.ramp+args.dwell
+    if not math.isfinite(total):
+        raise ValueError('total packet duration must be finite')
+    return total, total/2, TIME_STEP_S
 
 def main(argv=None):
     args = parser().parse_args(argv)
@@ -48,10 +71,14 @@ def main(argv=None):
                 print(f'Wrote {destination}: {len(waves.amplitudes)} components; '
                       f'record={args.record}; seed={waves.seed}')
             elif args.command == 'solve':
-                import math
                 log.event('INFO', 'STAGE validate solve inputs and backend')
-                if not math.isfinite(args.duration) or args.duration <= 0:
-                    raise ValueError('duration must be positive and finite')
+                total, midpoint, timestep = _solve_timing(args)
+                log.event('INFO', f'PACKET dwell_s={args.dwell:g} rest_each_s={args.rest:g} '
+                    f'ramp_each_s={args.ramp:g} total_s={total:g} '
+                    f'dwell_midpoint_s={midpoint:g} time_step_s={timestep:g}')
+                log.event('INFO', 'SEA phases_rad specify target carrier phases DIRECTLY at dwell midpoint; '
+                    'phase zero means a target carrier crest at the solver wave reference point; '
+                    'finite Fourier truncation may depart from that target')
                 if args.solver == 'native':
                     raise RuntimeError('native coupled dynamics are not implemented; '
                                        'use --solver=wecsim with its documented dependencies')
@@ -61,7 +88,7 @@ def main(argv=None):
                 boat = Boat.load(args.directory / 'boat.npz')
                 sea = Sea.load(args.directory / 'sea.npz')
                 log.event('INFO', 'STAGE solve motion and total surface')
-                result = solve(boat, sea, args.duration)
+                result = solve(boat, sea, args.dwell, rest_s=args.rest, ramp_s=args.ramp)
                 log.event('INFO', 'STAGE prepare and publish result archive and six-DOF plot')
                 destination, plot = save_solve_outputs(result, args.directory)
                 log.published(destination)

@@ -5,7 +5,7 @@ Capytaine. This adapter only attaches to the existing CAPYTAINE_REFERENCE
 shared engine. Temporary BEMIO, Simulink and source-field products never become
 public outputs. The caller owns atomic publication of the returned Result.
 """
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from contextlib import contextmanager
 from importlib import import_module, metadata, resources, util
 import io
@@ -23,7 +23,7 @@ import numpy as np
 from scipy.io import loadmat, savemat
 from scipy.spatial.transform import Rotation
 
-from ._wecsim_setup import prepare_case
+from ._wecsim_setup import prepare_case, TIME_STEP_S
 from .constants import GRAVITY, WATER_DENSITY
 from .hydrostatics import FloodingError, LossOfContactError, hydrostatics
 from .inputs import InitialState
@@ -121,7 +121,7 @@ def preflight():
     return fork, producer
 
 
-def solve(boat, sea, duration_s):
+def solve(boat, sea, dwell_s, *, rest_s=10., ramp_s=5.):
     """Return complete standard motion AND total water-air geometry.
 
     No incident-only substitute is permitted. No public file is written here.
@@ -132,26 +132,50 @@ def solve(boat, sea, duration_s):
     body = boat.to_body()
     waves = _waves(sea)
     started = _stage_started('equilibrium and incoming-train preparation')
-    setup = prepare_case(body, waves, duration_s)
+    setup = prepare_case(body, waves, dwell_s, rest_s=rest_s, ramp_s=ramp_s)
     _stage_complete('equilibrium and incoming-train preparation', started)
+    started = _stage_started('incident field startup assessment')
+    setup.train.certify_incident_startup(setup)
+    _stage_complete('incident field startup assessment', started)
     with _scratch_directory() as workspace:
         h = setup.hydrostatic
+        # Extend genuine coefficient coverage for the complete selected packet.
+        last_excitation_index = max(34, int(np.ceil(setup.train.omega[-1]*10)))
+        excitation_omega = np.arange(1, last_excitation_index+1)/10
+        radiation_omega = np.arange(1, max(120, last_excitation_index)+1)/10
         hydro = producer.build_hydrodynamics(
             setup.wet_triangles_m, setup.mean_cg_m, setup.mass_matrix, workspace / 'hydrodynamics',
             density=WATER_DENSITY, gravity=GRAVITY, depth=np.inf,
             hydrostatic_stiffness=h.stiffness,
-            cb=h.center_of_buoyancy, volume=h.displaced_volume)
-        started = _stage_started('incident field startup assessment')
-        setup.train.certify_incident_startup(setup)
-        _stage_complete('incident field startup assessment', started)
+            cb=h.center_of_buoyancy, volume=h.displaced_volume,
+            excitation_omega=excitation_omega, radiation_omega=radiation_omega)
         motion = integrate_motion(setup, hydro, workspace / 'body', fork)
         started = _stage_started('calm-restoring diagnostics')
         warn_restoring_departures(setup, motion)
         _stage_complete('calm-restoring diagnostics', started)
         surface_time = np.linspace(0., motion.time_s[-1],
                                    max(2, int(round(motion.time_s[-1] / .08)) + 1))
-        vertices, faces, vertex_offsets, face_offsets = producer.reconstruct_total_surface(
-            hydro, setup, motion, surface_time)
+        offset = float(setup.world_vertical_offset_m)
+        computational_motion = replace(motion,
+            position_m=motion.position_m-np.array([0., 0., offset]))
+        offset_marker = workspace / 'surface-world-offset.json'
+        offset_marker.write_text(json.dumps(dict(
+            world_vertical_offset_m=offset, stored_surface_frame='computational_mean_zero',
+            recovery='Translate recovered hull/body/surface world z by this offset once.'))+'\n',
+            encoding='utf-8')
+        try:
+            vertices, faces, vertex_offsets, face_offsets = producer.reconstruct_total_surface(
+                hydro, setup, computational_motion, surface_time)
+        except BaseException as error:
+            recovery = getattr(error, 'recovery_directory', None)
+            if recovery is not None:
+                try:
+                    shutil.copy2(offset_marker, Path(recovery)/offset_marker.name)
+                except OSError as marker_error:
+                    error.add_note(f'World-offset recovery marker remains at {offset_marker}: {marker_error}')
+            raise
+        vertices = np.asarray(vertices).copy()
+        vertices[:, 2] += offset
         return Result(
             time_s=motion.time_s, position_m=motion.position_m,
             orientation_wxyz=motion.orientation_wxyz,
@@ -222,14 +246,17 @@ def _prepare_native_inputs(setup, hydro, workspace, *, force_only=False):
                  native_omega_rad_s=spectral.native_omega_rad_s,
                  omega_roundtrip_error_rad_s=spectral.omega_roundtrip_error_rad_s,
                  domega_rad_s=spectral.domega_rad_s, dtheta_rad=spectral.dtheta_rad))
+    offset = float(getattr(setup, 'world_vertical_offset_m', 0.))
     native = dict(M=setup.mass_matrix, K=hydro.K, Ainf=hydro.Ainf,
                   cg=setup.mean_cg_m, cb=hydro.cb, volume=hydro.volume,
-                  rho=WATER_DENSITY, g=GRAVITY)
+                  rho=WATER_DENSITY, g=GRAVITY, water_level_offset_m=offset,
+                  initial_q=np.array([0., 0., -offset, 0., 0., 0.]),
+                  time_step_s=TIME_STEP_S)
     carriers = setup.train.carriers
     savemat(workspace / 'prepared-case.mat',
             dict(n=native, time=setup.time_s[:, None],
                  spectral_file=str(spectral_file.resolve()), spectral_hydro=spectral.hydro,
-                 incident_origin_elevation_m=setup.train.elevation([[0., 0.]], setup.time_s)[:, 0],
+                 incident_origin_elevation_m=setup.train.elevation([[0., 0.]], setup.time_s)[:, 0]-offset,
                  carrier_omega_rad_s=carriers.angular_frequencies,
                  carrier_amplitudes_m=carriers.amplitudes,
                  carrier_directions_rad=setup.train.theta,
@@ -267,6 +294,7 @@ def integrate_motion(setup, hydro, workspace, fork):
     equilibrium = Rotation.from_quat(setup.equilibrium.orientation, scalar_first=True).as_matrix()
     orientation = Rotation.from_matrix(setup.world_from_native @ perturbation @ equilibrium).as_quat(scalar_first=True)
     position = q[:, :3] @ setup.world_from_native.T + setup.mean_cg_m
+    position[:, 2] += float(getattr(setup, 'world_vertical_offset_m', 0.))
     _stage_complete('native MATLAB preparation, integration and audits', started)
     return NativeMotion(stamp, q, velocity, acceleration, position, orientation, excitation)
 
@@ -503,7 +531,7 @@ def warn_restoring_departures(setup, motion, *, stream=None):
             h = hydrostatics(setup.body, state, density=WATER_DENSITY, gravity=GRAVITY)
         except (FloodingError, LossOfContactError) as error:
             warning.observe('calm-restoring-unavailable', stamp,
-                            f'{error}; flat-reference geometry cannot assess restoring here')
+                            f'{error}; mean-sea-reference geometry cannot assess restoring here')
             continue
         exact = np.r_[h.force + [0., 0., -weight], h.moment]
         linear = -setup.hydrostatic.stiffness @ q
@@ -514,7 +542,7 @@ def warn_restoring_departures(setup, motion, *, stream=None):
             fraction = float(difference / denominator)
             if fraction > APPLICABILITY_WARNING_FRACTION:
                 warning.observe('calm-restoring-' + name, stamp,
-                                f'exact calm-water {name} differs from linear restoring by {100*fraction:.3g}% '
+                                f'exact mean-sea-reference calm-water {name} differs from linear restoring by {100*fraction:.3g}% '
                                 '(10% reporting threshold; not a dynamic error estimate)', severity=fraction)
     warning.finish()
 

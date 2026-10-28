@@ -281,6 +281,11 @@ def test_exterior_p1_moments_partition_triangle_with_all_vertices_outside_hull()
         np.testing.assert_allclose(result[:5], [7., 32/3, 571/12, 6., 571/12], atol=1e-12)
         np.testing.assert_allclose(result[5:8], vertices[0])
     assert peak == 0
+    shifted_moments, shifted_peak = _delta_moments(vertices, faces, incident, hull, 10., segments,
+        startup_bounds=[[-.5, -.5], [.5, .5]], startup_vertical_offset_m=.02)
+    assert shifted_peak == pytest.approx(.02)
+    for region in moments:
+        np.testing.assert_array_equal(shifted_moments[region], moments[region])
     # The original source centroid is 1/6m below the actual lower waterline.
     # Selecting this face deliberately selects ALL of its valid exterior
     # portion; the reported band is not an exact clipped distance region.
@@ -441,10 +446,13 @@ def test_production_calm_geometry_preserves_original_grid_and_oblique_world_view
     assert 'field-load-consistency' not in diagnostic
 
 
-def test_failed_frame_preserves_primary_context_and_replays_without_physics(calm_surface_case, monkeypatch, tmp_path, capsys):
+@pytest.mark.parametrize('world_vertical_offset', [0., .002, -.003])
+def test_failed_frame_preserves_primary_context_and_replays_without_physics(calm_surface_case, monkeypatch, tmp_path, capsys, world_vertical_offset):
     import json
     from topwater.workflow_data import Result
     case = calm_surface_case
+    case.setup.world_vertical_offset_m = world_vertical_offset
+    case.setup.train.envelope_tolerance_m = .01
     producer = case.producer
     original_metrics = producer._delta_moments
     original_error = ValueError('sentinel contact diagnostic failure')
@@ -480,7 +488,8 @@ def test_failed_frame_preserves_primary_context_and_replays_without_physics(calm
     output = tmp_path/'replayed-result.npz'
     producer.replay_surface_cache(cache, diagnostic_directory=tmp_path/'replay-diagnostics', output_path=output)
     result = Result.load(output)
-    np.testing.assert_array_equal(result.position_m, case.motion.position_m)
+    np.testing.assert_array_equal(result.position_m, case.motion.position_m+[0., 0., world_vertical_offset])
+    np.testing.assert_allclose(result.surface_vertices_m[:, 2], world_vertical_offset, atol=1e-14)
     np.testing.assert_array_equal(result.orientation_wxyz, case.motion.orientation_wxyz)
     np.testing.assert_array_equal(result.surface_time_s, case.stamp)
     np.testing.assert_array_equal(np.unique(result.hull_faces), np.arange(len(result.hull_vertices_m)))

@@ -110,10 +110,11 @@ def replay_surface_cache(cache_path, *, diagnostic_directory, output_path=None):
         used, remapped = np.unique(physical, return_inverse=True)
         physical_vertices = data['body_vertices_m'][used]
         physical_faces = remapped.reshape(physical.shape)
-        result = Result(time_s=data['motion_time_s'], position_m=data['motion_position_m'],
+        world_shift = np.array([0., 0., float(data.get('world_vertical_offset_m', 0.))])
+        result = Result(time_s=data['motion_time_s'], position_m=data['motion_position_m']+world_shift,
             orientation_wxyz=data['motion_orientation_wxyz'], hull_vertices_m=physical_vertices,
             hull_faces=physical_faces, cg_m=data['body_cg_m'], surface_time_s=data['surface_time_s'],
-            surface_vertices_m=packed[0], surface_faces=packed[1],
+            surface_vertices_m=packed[0]+world_shift, surface_faces=packed[1],
             surface_vertex_offsets=packed[2], surface_face_offsets=packed[3])
         result.save(output_path, overwrite=False)
     return packed
@@ -1023,7 +1024,8 @@ def _metric_triangle_rows(triangle):
     return np.column_stack((area, first, square, maximum, inc_square, peak))
 
 
-def _delta_moments(vertices, faces, incident_at_vertices, hull, beam, segments, *, startup_bounds=None):
+def _delta_moments(vertices, faces, incident_at_vertices, hull, beam, segments, *, startup_bounds=None,
+                   startup_vertical_offset_m=0.):
     """Exact exterior-support P1 moments, without constructing an output mesh.
 
     A convex solid's exterior is NOT convex. For each boundary source triangle,
@@ -1069,7 +1071,7 @@ def _delta_moments(vertices, faces, incident_at_vertices, hull, beam, segments, 
         local = positive & regional_mask
         if np.any(local):
             startup_area += float(stats[local, 0].sum())
-            startup_peak = max(startup_peak, float(np.max(abs(parts[local, :, 2]))))
+            startup_peak = max(startup_peak, float(np.max(abs(parts[local, :, 2]+startup_vertical_offset_m))))
 
     if np.any(exterior):
         accumulate(rows[exterior], near[exterior], regional[exterior])
@@ -1206,7 +1208,10 @@ def reconstruct_total_surface(hydro, setup, motion, surface_time_s, *, radiation
         world_from_native=embedding, mean_rotation=Rotation.from_quat(
             setup.equilibrium.orientation, scalar_first=True).as_matrix(),
         mean_cg_m=setup.mean_cg_m, initial_wetted_area_m2=np.array(setup.hydrostatic.wetted_area),
-        beam_m=np.array(beam), calm_eta_limit_m=np.array(.001*float(np.sum(setup.train.carriers.amplitudes))))
+        beam_m=np.array(beam),
+        world_vertical_offset_m=np.array(float(getattr(setup, 'world_vertical_offset_m', 0.))),
+        calm_eta_limit_m=np.array(float(getattr(setup.train, 'envelope_tolerance_m',
+            .001*float(np.sum(setup.train.carriers.amplitudes))))))
     if hasattr(motion, 'acceleration_native'):
         completed['motion_acceleration_native'] = np.asarray(motion.acceleration_native)
     if hasattr(motion, 'q'):
@@ -1271,6 +1276,7 @@ def _export_completed_field_impl(completed, recovery_directory, cache_path, *, t
     initial_area = float(completed['initial_wetted_area_m2'])
     beam = float(completed['beam_m'])
     calm_limit = float(completed['calm_eta_limit_m'])
+    world_vertical_offset = float(completed.get('world_vertical_offset_m', 0.))
     graph = WaterGraphPartition(xy, faces)
     packed_vertices, packed_faces = [], []
     vertex_offsets, face_offsets = [0], [0]
@@ -1309,7 +1315,8 @@ def _export_completed_field_impl(completed, recovery_directory, cache_path, *, t
             startup_bounds = ([native_hull[:, :2].min(axis=0), native_hull[:, :2].max(axis=0)]
                               if i == 0 else None)
             frame_moments, initial_peak = measured(stage, _delta_moments, native_points, faces,
-                incident[i], native_hull, beam, waterline_world @ embedding, startup_bounds=startup_bounds)
+                incident[i], native_hull, beam, waterline_world @ embedding, startup_bounds=startup_bounds,
+                startup_vertical_offset_m=world_vertical_offset)
             for name in moments:
                 moments[name].append(frame_moments[name])
             stage = 'wet-set-area'

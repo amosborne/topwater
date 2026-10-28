@@ -7,6 +7,42 @@ Root owns acceptance, integration and serial execution. Consult the
 confers no execution permission. Latest numerical allocations are terminal; the
 coordinator reports an idle ledger and absent lease at this checkpoint.
 
+## Active packet integration (source checkpoint; not yet validated)
+
+Coordinator authorized the new directory solve contract: positional dwell,
+rest/ramp defaults10/5s, dwell100 means total130s, packet/native dt.01s,
+surface cadence.08s. Canonical boat/sea carrier arrays stay unchanged; phases
+refer directly to midpoint65 in the existing negative-time physical convention.
+`_wecsim_setup` calls the utility with negative phase and conjugates positive
+phasors; each sideband keeps original heading and its own dispersion. Aggregate
+1cm envelope-exceedance budget is allocated proportional to carrier amplitude.
+Original carrier operating eligibility is retained; generated sidebands above
+it are warned about and retain genuine H coverage, without mesh-accuracy claims.
+
+The approved DC reference shift keeps all computational BEM/CG/K geometry fixed.
+Native initial heave−d supplies static fullK-heave-column coupling; physical
+motion and surface receive+d once. Surface geometry runs in computational frame;
+startup tests physical dynamic+d and private replay restores the world offset.
+Native net-load/startup, applied-force, full inertia, CIC and equation-of-motion
+audits remain. No Topwater force history or fork change was introduced.
+
+Source-only implementation is being independently reviewed by Capytaine and
+numerical-methods agents. Focused tests added for phase/direction/coherence,
+aggregate budget, fullK/DC initial pose and cache replay. This author has run
+no tests, MATLAB or numerical jobs. Root owns checks, preflight, execution,
+acceptance and publication; no new physical result is claimed here.
+
+Root's first pure-Python readiness job reports terminal0 with frozen sources
+matching, empty Job/absent owned PIDs and a separate idle ledger. Preparation
+took23.102s for384carriers (368active):128positive frequency nodes through
+.984615Hz,272unique headings,34816dense native pairs. Preserved uniformDC is
+.01216723m; summed certified origin envelope exceedance is.00942218m. Full-hull
+height/velocity and native net-force gates were NOT run in that allocation.
+Canonical input bytes remained identical. These are readiness observations,
+not a completed dynamics/surface validation. Subsequent generic source fixes
+handle a Nyquist singleton without doubling and accept genuinely empty calm
+Sea arrays in the native spectral packing; both await root's focused tests.
+
 ## Adopted reference and workflow
 
 **The default pin is6b774228e1f6b31dee473e626204b0ef65e5ec38.** The user merged

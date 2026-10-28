@@ -4,8 +4,8 @@ Solve a boat/sea example and write its complete `result.npz` and six-DOF
 motion plot `result.png` after motion and total free-surface validation.
 
 ```powershell
-uv run topwater solve [DIRECTORY] DURATION_SECONDS [--solver=native|wecsim]
-uv run topwater solve examples/simple-boat 60 --solver=wecsim
+uv run topwater solve [DIRECTORY] DWELL [--rest SECONDS] [--ramp SECONDS] [--solver=native|wecsim]
+uv run topwater solve examples/simple-boat 100 --rest 10 --ramp 5 --solver=wecsim
 ```
 
 DIRECTORY defaults to the current directory. The input/output filenames are
@@ -14,6 +14,8 @@ fixed. Full-complex surface reconstruction is enabled following the selected
 uncertainty is 5.78 mm against the chosen linearized model, below the 10 mm target.
 This is conditional selected-case evidence, not a guarantee for other inputs.
 See [the qualification and its assumptions](../experts/numerical_methods_researcher/issue31-selected-case-acceptance-2026-10-27.md).
+The new dwell-based 130-second packet integration is awaiting its own production
+validation; the earlier 60-second trajectory is historical evidence.
 
 The native backend is the intended default. Native coupled dynamics are not yet
 available; omitting `--solver=wecsim` must report that limitation without silently
@@ -23,15 +25,23 @@ using another solver.
 
 The example directory supplies `boat.npz` and `sea.npz`. The shared file-format
 documentation defines their numeric arrays, units, and coordinate conventions.
-The requested duration is a positive number of seconds. WEC-Sim currently
-requires a duration that is an integer multiple of its fixed 0.02 s time step.
+DWELL is the positive full-amplitude target interval in seconds. Rest defaults
+to 10 s on each end; ramp defaults to 5 s on each side. Total simulation time is
+`2*rest + 2*ramp + dwell`: the example above runs 130 s, including both endpoints.
+Each timing input must align to the fixed 0.01 s integration/packet grid. Ramp
+must be positive and rest nonnegative. The end time is fixed; settling is
+reported through the motion, not used to extend this run automatically.
 
 Boat inputs include the complete physical convex hull shell, mass, body CG, and
 full inertia tensor about CG. The single opening is inferred from the uncapped
 shell; its artificial topology cap is an internal product and carries no pressure.
 Sea inputs supply explicit component amplitudes, angular frequencies, global
 propagation directions, and phases. Solving does not regenerate the sea or change
-the input files.
+the input files. Their phase numbers refer directly to the midpoint of the
+requested dwell, 65 s in the example, using
+`cos(k dot x - omega*(t-midpoint) + phase)`. Phases are not retimed inside the
+sea archive. The target at the spatial origin is a carrier multiplied by the
+quintic rest/ramp/dwell/ramp/rest envelope.
 
 ## Outputs and replacement
 
@@ -63,6 +73,9 @@ execution. No public persistent cache is produced. Diagnostics go to the termina
 
 A failed surface export may retain private field/replay data in its system-temp
 directory so export can be diagnosed without repeating the body/field solve.
+The private cache records its computational mean-water frame and vertical world
+offset. Public replay restores that offset once to both motion and surface;
+older caches default to zero offset. No extra public NPZ metadata is required.
 The original stage error is preserved and the recovery location is printed.
 If temporary-file cleanup also fails, that secondary failure is reported without
 replacing the original error. A cleanup failure after otherwise successful work
@@ -139,21 +152,41 @@ remain unqualified. [Evidence and scope](../experts/wecsim_expert/current-state.
   incoming direction; an energetic sea with no resolved dominant direction is
   rejected. Calm water uses zero heading.
 - Calm-water equilibrium balances heave, roll and pitch before simulation time
-  zero. The heave/roll/pitch branch must be stably restoring. Initial motion and
-  radiation memory are zero; no simulated warmup is hidden in the duration.
-- The incoming train uses the accepted fixed initial spatial window: group-time
-  center 40 s, plateau half-width 15 s, support half-width 25 s, and quintic
-  transitions. Signed-kappa dispersion propagates that field. Requested duration
-  changes the stopping time, not the startup field. There is no temporal force ramp.
-- Sideband angular-frequency spacing is 0.005 rad/s. The project support limit
-  is `f <= min(0.6 Hz, sqrt(g/(4*pi*beam)))`. This is an operating-envelope
-  assumption, not a mesh or time-convergence certificate. A finite packet's
-  spectrum differs from the stationary measured spectrum.
+  zero. The heave/roll/pitch branch must be stably restoring. Initial physical
+  pose is that equilibrium, velocity and radiation memory are zero.
+- Each original carrier gets its own real quintic time packet at the origin.
+  One FFT supplies DC and all contiguous positive harmonics up to the first
+  certified passing cutoff, at frequency spacing `1/total_time`. Negative
+  harmonics are the real signal's conjugates, not additional opposite-heading
+  waves. Every retained positive harmonic propagates in its original carrier
+  heading with its own deep-water dispersion. There is no force multiplier.
+- The sole packet acceptance criterion is that absolute elevation never exceeds
+  its target amplitude envelope by more than its allocated tolerance. Allocate
+  the aggregate 0.01 m budget proportional to original carrier amplitude, so the
+  sum of conservative per-carrier bounds stays within 0.01 m at the origin.
+  Fixed 10 ms samples plus a curvature/roundoff allowance certify that bound
+  between samples. Dwell waveform mismatch is a diagnostic, not another gate.
+  Calm conditions over the actual full hull require a separate startup check.
+- Original carrier eligibility remains
+  `f <= min(0.6 Hz, sqrt(g/(4*pi*beam)))`. Generated packet sidebands above this
+  operating assumption are retained and warned about, with cutoff, count and
+  amplitude L1 contribution. All require genuine coefficient coverage. This
+  rule is not a mesh/time convergence certificate; finite packets differ from
+  the original stationary sea spectrum.
+- A nonzero packet DC is preserved as uniform static mean water level `d`.
+  BEM geometry, CG and restoring stay in the original computational mean-zero
+  frame. Native initial heave is `-d`; native restoring therefore supplies the
+  full static `d*K[:,heave]` load, including coupled moments. Exported body and
+  water positions receive `+d` once. No zero-frequency diffraction/radiation
+  solve, artificial epsilon-frequency wave or applied force history is added.
 - WEC-Sim computes harmonic excitation from one full-directional spectrum with
   supplied phases, then integrates body motion. Topwater encodes the unchanged
   coherent physical components as spectrum density/spreading/phase inputs; no
   applied force history is supplied. Signed-kappa branches retain their separate
   headings, phases, absolute time and spatial origin, with no additional ramp.
+  Equal frequency/heading coefficients are summed coherently; exactly zero
+  direction rows are omitted. A single-heading sea has an exact-zero second
+  column solely to satisfy native FullDir's directional-grid requirement.
 - Topwater samples coefficient inputs at every actual component frequency and
   heading using the retained complex bilinear interpolation. Below 0.1 rad/s,
   `H = H0 + (omega/0.1)^2 * (H(0.1,heading)-H0)`, where `H0 = K[:,heave]`.
@@ -163,12 +196,13 @@ remain unqualified. [Evidence and scope](../experts/wecsim_expert/current-state.
 - Official BEMIO import/normalization and `rebuildHydroStruct` prepare the existing
   public `bodyClass(hydroStruct)` input. Its ordinary excitation axes contain
   derived nodes. The consumed radiation IRF/time and direct Ainf remain from
-  the genuine original 0.1?12 rad/s operator. Unused raw A/B and period metadata
+  a genuine 0.1--12 rad/s operator, extended if packet coverage requires it.
+  Unused raw A/B and period metadata
   are omitted from this fixed FullDir+CIC struct; no raw coefficient is invented.
   The genuine original producer arrays remain unchanged. Spectral forcing needs
   no excitation IRF or H5 export; the legacy imported-elevation study path retains
   ordinary excitation-IRF/H5 preparation under its original policies.
-- Native WEC-Sim dynamics retain fixed-step ode4, 0.02 s body/CIC sampling,
+- Native WEC-Sim dynamics retain fixed-step ode4, 0.01 s body/CIC sampling,
   10 s body-radiation memory, full mass/inertia coupling, and all six free modes.
   Viscous/linear damping, PTO, mooring, and prescribed motion remain off.
 - Equilibrium orientation is included once in the mean geometry and inertia.
@@ -214,9 +248,9 @@ remain unqualified. [Evidence and scope](../experts/wecsim_expert/current-state.
 | Native integration/output audit | Solver failure, nonfinite/incomplete output, wrong grid/endpoints/initial state, nonzero initial radiation memory, applied excitation differs from WEC-Sim's prepared total, inconsistent force-component sum, Newton-Euler/CIC/added-mass-delay audit failure. |
 | Required surface/export | Missing or invalid total surface, unsupported contact/export geometry, initial represented total elevation exceeds the local calm limit, incomplete coverage, or invalid common result arrays. |
 
-Calm-start engineering limits are `max|eta| <= .001*sum(a)` and
+Calm-start engineering limits are physical `max|eta| <= 0.01 m` and
 `max|u| <= .001*sum(a*omega)` throughout the initial full-hull bounding region.
-Initial force/moment norms must not exceed `.001*m*g` and `.001*m*g*L`, with
+Initial net excitation-plus-restoring force/moment norms must not exceed `.001*m*g` and `.001*m*g*L`, with
 `L` the maximum hull dimension, and every native component must also be within
 `.001` of its carrier-load scale. The current combined incoming-field bound uses order-six
 Taylor boxes, initial widths 1 m/1 m/0.2 m, at most three refinement levels, and a
@@ -233,7 +267,7 @@ maximum departure. Wet-set departures are detected at each saved surface frame;
 their first/last exceedance and worst fraction/time are emitted when surface
 export completes.
 
-The implemented restoring diagnostic compares exact **calm-water** restoring at
+The implemented restoring diagnostic compares exact **mean-sea-reference calm-water** restoring at
 each computed pose with the linear fixed-mean `-K*q` wrench. Force and moment are
 assessed separately. A warning starts above 10% relative difference, normalized
 by the larger exact/linear norm with floors `.001*m*g` and `.001*m*g*L` to avoid

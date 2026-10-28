@@ -3,6 +3,57 @@
 Updated2026-10-27 local. Latest user steering controls scope; historical evidence
 and queued assignments do not authorize execution. Follow AGENTS.md.
 
+## ACTIVE USER GOAL: integrate packet utility and rerun simple boat
+
+User now explicitly authorizes production integration plus full simple-boat
+rerun. CONFIRMED timing: rest10/ramp5/dwell100/ramp5/rest10, total130s,
+native/packet timestep.01s, phases referenced directly at midpoint65s.
+No further user questions are needed for this configuration. Preserve canonical
+boat and sea carrier arrays; regenerate result.npz/result.png/video.mp4 and
+their logs through ordinary directory CLI after targeted integration checks.
+
+TOPreceipt_reliability ownsCLI/Sea docstring/tests/test_cli_workflow.py and
+generate-sea/searchdocs; WECexpertpacket_wecsim_integration owns backend,
+all_wecsim* and shippedMATLABmodelresources, associatedtests andsolve docs.
+CLI agreed solve DIRECTORY DWELL --rest10 --ramp5 --solverwecsim. Rootowns
+npzcontract, acceptance/serialexecution, backups/publication/checkpoints.
+No agent numerical jobs. KeepMATLABhidden. No fork/upstreamchange ormerge.
+
+Physical integration decisions: useutilityphase=-Sea.phase becauseSea retains
+physicalcos(kx-omega*(t-mid)+phase); conjugateglobalutilityphasors forWEC's
+negative-time convention. Preserve headings, recompute sidebanddispersion and
+coherentlysum equalheading/frequency only. Allocateaggregate1cm budget percarrier
+proportionalamplitude. Keepgenuinehydro support for everyfinalfrequency.
+
+DCgauge approved withindependentCapytaine review: keepcomputationalBEMgeometry/
+meanCG/CB/rotationcenter unchanged; separateworld_vertical_offset d=sumDC.
+Nativeinitialheave=-d, q' nativehydrostaticrestoring suppliesconstantDC load;
+exportposition=computationalmeanCG+R*q'+d once andsurface=dynamicfield+d once.
+No zero-frequency diffraction/radiation, fakeepsilonwaves or Topwater applied
+forcehistories. Startupchecks use netpositiveforcing minusK*q0 andphysicaltotal
+water/velocity. Numericaltests mustexercise full6DOFK offdiagonals, phase/sign,
+DC-only initialphysicalpose, zeroDC recovery andtranslation-covariantwetset.
+Capytainereviewer packet_mean_frame_review authoredno correction/nojobs.
+
+Production integration source independently accepted by NMR; Capytaine separately
+reviewed the DC coordinate shift. Pure384-carrier preparation passed in23.102s:
+128positive nodes through0.984615Hz, DC+0.01216723m, summed certified origin
+envelope exceedance0.00942218m. This is not a whole-hull startup certificate.
+
+Targeted integration cohort:170passed in56.93s, no skips. Root guard terminal0,
+frozen inputs match, Jobempty and every recorded process absent onhost. Finish
+terminal0; separateidle/null/nojob/nolease readback confirmed. Evidence summary:
+docs/experts/packet-integration-tests-2026-10-27.json. Full130s native solve and
+video remain REQUIRED; no new motion or surface result has been published yet.
+
+Next: reviewed ordinaryCLI launcher artifacts/workflow/simple-boat-packet-run1,
+guard1800s/10GiB/one thread, owned hiddenMATLABengine then solve100 --rest10
+--ramp5 --solverwecsim, ownedenginequit and ordinaryrender. Exact8file rollback
+backup verified at artifacts/workflow/simple-boat-packet-rerun-backup1. Inputs
+unchanged. Newpacket invalidates oldtrajectory equality and oldselected60s field
+bound; validate newnativephysics/inputmapping and report applicability limits.
+Fullsurfacecadence remains.08s (12.5fps), separatefrom.01 integrationstep.
+
 ## Current outcome: fixed10ms minimum-cutoff utility implemented
 
 Latest authorized implementation COMPLETE: src/topwater/wave_packets.py exposes

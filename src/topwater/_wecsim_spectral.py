@@ -53,9 +53,16 @@ def _native_direction_widths(degrees):
 
 def _coherent_waves(train):
     original = _grid(train.omega, 'packet frequencies', first=0.)
-    theta = _finite(train.theta, 'physical carrier directions', real=True)
-    amplitudes = _finite(train.carriers.amplitudes, 'carrier amplitudes', real=True)
-    C = _finite(train.C, 'physical packet coefficients')
+    theta = np.asarray(train.theta)
+    amplitudes = np.asarray(train.carriers.amplitudes)
+    C = np.asarray(train.C)
+    if (any(not np.issubdtype(value.dtype, np.number) for value in (theta, amplitudes, C))
+            or not np.isrealobj(theta) or not np.isrealobj(amplitudes)):
+        raise ValueError('Packet directions/amplitudes must be real numeric and coefficients numeric')
+    if theta.size or amplitudes.size or C.size:
+        theta = _finite(theta, 'physical carrier directions', real=True)
+        amplitudes = _finite(amplitudes, 'carrier amplitudes', real=True)
+        C = _finite(C, 'physical packet coefficients')
     if (theta.ndim != 1 or amplitudes.shape != theta.shape or np.any(amplitudes < 0)
             or C.shape != (len(theta), 2, len(original))):
         raise ValueError('Packet coefficients must have carrier, signed branch, frequency axes')
@@ -66,9 +73,20 @@ def _coherent_waves(train):
     active = np.flatnonzero(amplitudes)
     if len(active):
         directions = np.mod(theta[active, None]+np.array([0., np.pi]), 2*np.pi).reshape(-1)
+        physical_rows = C[active, :, 1:].reshape(-1, len(original)-1)
+        nonzero = np.any(physical_rows != 0, axis=1)
+        directions, physical_rows = directions[nonzero], physical_rows[nonzero]
         unique, inverse = np.unique(directions, return_inverse=True)
         rows = np.zeros((len(unique), len(original)-1), dtype=complex)
-        np.add.at(rows, inverse, C[active, :, 1:].reshape(-1, len(original)-1))
+        np.add.at(rows, inverse, physical_rows)
+        if not len(unique):
+            unique = np.array([0., np.pi])
+            rows = np.zeros((2, len(original)-1), complex)
+        elif len(unique) == 1:
+            # FullDir's directional quadrature needs two headings. The added
+            # column is exactly zero and creates no counter-propagating wave.
+            unique = np.r_[unique, np.mod(unique[0]+np.pi, 2*np.pi)]
+            rows = np.vstack([rows, np.zeros((1, len(original)-1), complex)])
     else:
         # A calm sea needs a valid two-column FullDir representation. Both
         # columns are exactly zero, so their headings add no physical waves.

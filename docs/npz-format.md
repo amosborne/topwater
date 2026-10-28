@@ -27,9 +27,12 @@ See [mesh validation and tooling](mesh-tooling.md) for current support limits.
 
 Four equal-length vectors: `amplitudes_m`, `angular_frequencies_rad_s`,
 `directions_rad`, `phases_rad`. Amplitudes are nonnegative; angular frequencies
-are positive. Empty vectors mean calm water. The stationary component phase is
-`k*(x*cos(direction)+y*sin(direction)) - omega*t + phase`; solve supplies the
-documented physical upstream finite train. Direction is propagation CCW from
+are positive. Empty vectors mean calm water. Each component's phase is specified
+directly at the requested dwell midpoint: its carrier phase is
+`k*(x*cos(direction)+y*sin(direction)) - omega*(t-t_mid) + phase`.
+The solve command supplies the documented finite quintic packet; rest, ramp and
+dwell timing are solve inputs, so carrier arrays remain authoritative and do not
+duplicate a derived packet spectrum. Direction is propagation CCW from
 world+x. Arrays are authoritative; no generator replay is required to solve.
 
 ## result.npz

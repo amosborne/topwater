@@ -9,9 +9,31 @@ atalltimes via statedinterpolationguard; dwellfitissuperseded anddiagnosticonly.
 Firsteligiblecutoffbin>=f0, retainalllowerbins/DC/conjugates. FFTonce,
 incrementaloneharmonicperbinonfixedgrid,onefinalIFFT; noIFTscan/rescaling.
 Returnfirstcertifiedeligiblecutoff,notexactcontinuousglobalminimum. Timings
-mustalign10ms, oddtotalstepsvalid. UserwantseventualWECsimstepaligned10ms;
-currentWECsimsettings remain unchanged until futureintegration.
+mustalign10ms, oddtotalstepsvalid. Production WEC-Sim integration uses the
+same10ms timestep. The authorized simple-boat rerun uses rest10/ramp5/dwell100/
+ramp5/rest10, total130s, and phases directly at dwell midpoint65s.
 Old N-based/explicitfmax examples below remainhistorical, notcurrentAPI.
+
+Production integration preserves the four-array Sea input and its physical
+cos(k dot x - omega*(t-midpoint) + phase) convention. Each constructed sideband
+keeps its carrier heading and uses its own dispersion. Equal heading/frequency
+coefficients are summed coherently. Allocate the aggregate0.01m origin envelope
+budget proportional to carrier amplitude; this is not a whole-hull calmness or
+surface-accuracy certificate. Startup/contact gates remain independent.
+
+Retain the packet DC as a constant free-surface offset d. Computational BEM
+geometry, mean CG/CB and restoring matrix K stay fixed. Native initial heave=-d
+lets the full restoring matrix supply the DC load without a second force input.
+Add d once to exported physical body positions and surface heights; radiation
+and wet/contact geometry use the computational frame. WEC-Sim computes applied
+positive-frequency wave forces through its existing public spectral interface.
+No custom WEC-Sim capability or imported Topwater force history is introduced.
+Surface output cadence remains0.08s, independent of the0.01s dynamics clock.
+
+The130s rerun has a fixed end; final boat settling is measured, not promised.
+No automatic extension or artificial damping is authorized by this rerun.
+
+### Historical packet studies and deferred timing proposals
 
 LATESTminimum-cutoffsearchpolicy: absolute1cm ENVELOPEEXCEEDANCEalltimes only;
 the user explicitly superseded earlier dwell-waveform-accuracyrequirements.

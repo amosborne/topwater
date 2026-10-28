@@ -9,8 +9,8 @@ simu.startTime = 0;
 simu.endTime = prepared.time(end);
 simu.rampTime = 0;
 simu.solver = 'ode4';
-simu.dt = .02;
-simu.cicDt = .02;
+simu.dt = n.time_step_s;
+simu.cicDt = n.time_step_s;
 simu.cicEndTime = 10;
 simu.rho = n.rho;
 simu.gravity = n.g;
@@ -25,8 +25,9 @@ body(1).geometryFile = fullfile(pwd,'boat_cg.stl');
 body(1).mass = n.M(1,1);
 body(1).inertia = diag(n.M(4:6,4:6))';
 body(1).inertiaProducts = [n.M(4,5) n.M(4,6) n.M(5,6)];
-% Mean attitude is already in mesh/M/K; the native perturbation starts at zero.
-body(1).initial.displacement = [0 0 0];
+% Computational mean water is zero. The static packet mean is represented by
+% an equal/opposite initial heave; Python restores the physical world offset.
+body(1).initial.displacement = n.initial_q(1:3);
 body(1).initial.axis = [0 1 0];
 body(1).initial.angle = 0;
 body(1).nonlinearHydro = 0;

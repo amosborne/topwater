@@ -63,8 +63,8 @@ assert(size(x,2) == 60 && all(isfinite(x),'all') && all(isfinite(time)));
 assert(numel(time) == numel(prepared.time) && max(abs(time-prepared.time)) < 1e-9);
 assert(abs(time(1)) < 1e-12 && abs(time(end)-prepared.time(end)) < 1e-9);
 q = x(:,1:6); q(:,1:3) = q(:,1:3)-n.cg(:)';
-assert(max(abs(q(1,:))) < 1e-8 && max(abs(x(1,7:12))) < 1e-9, ...
-    'Actual native initial state is not the prepared equilibrium at rest');
+assert(max(abs(q(1,:)-n.initial_q(:)')) < 1e-8 && max(abs(x(1,7:12))) < 1e-9, ...
+    'Actual native initial state differs from the prepared mean-water frame');
 assert(max(abs(x(1,31:36))) < 1e-9,'Initial radiation memory is not zero');
 tolerance = 1e-10*max(abs(native_excitation),[],1);
 assert(all(max(abs(x(:,25:30)-native_excitation),[],1) <= tolerance), ...
@@ -163,7 +163,7 @@ end
 
 function verify_cic(time,velocity,bus,kernel,dt,timeLog,forceLog,radLog)
 N = size(kernel,1)-1;
-assert(N == 500 && dt == .02);
+assert(abs(N*dt-10) < 1e-12 && dt == .01);
 weights = dt*ones(N+1,1); weights([1 end]) = dt/2;
 fullVelocity = [zeros(N+3,6);velocity];
 fullForce = zeros(size(fullVelocity));

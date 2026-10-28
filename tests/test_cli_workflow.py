@@ -8,13 +8,13 @@ from topwater.cli import main, parser
 from topwater.workflow_data import Sea
 
 
-@pytest.mark.parametrize('argv,directory,duration', [
+@pytest.mark.parametrize('argv,directory,dwell', [
     (['solve','60'], Path('.'),60.),
     (['solve','example with spaces','60','--solver=wecsim'],Path('example with spaces'),60.),
 ])
-def test_optional_directory_does_not_consume_required_duration(argv,directory,duration):
+def test_optional_directory_does_not_consume_required_dwell(argv,directory,dwell):
     parsed=parser().parse_args(argv)
-    assert parsed.directory==directory and parsed.duration==duration
+    assert parsed.directory==directory and parsed.dwell==dwell
 
 
 def test_generate_sea_defaults_to_cwd_and_preserves_exact_band_energy(tmp_path,monkeypatch):
@@ -79,23 +79,34 @@ def test_corrupt_result_is_clear_fatal_and_preserves_video(tmp_path,capsys):
     assert (tmp_path/'video.mp4').read_bytes()==b'previous video'
 
 
-def test_wecsim_cli_publishes_result_and_motion_plot(tmp_path, monkeypatch):
+@pytest.mark.parametrize('flags,timing,total,midpoint', [
+    ([], (100., 10., 5.), 130., 65.),
+    (['--rest', '2', '--ramp', '3'], (100., 2., 3.), 110., 55.),
+])
+def test_wecsim_cli_publishes_result_and_motion_plot(tmp_path, monkeypatch, flags, timing, total, midpoint):
     from topwater import wecsim_backend
     from .test_workflow_data import boat, result
     from topwater.workflow_data import Result
     solved = result()
     boat().save(tmp_path/'boat.npz')
     Sea(np.array([]), np.array([]), np.array([]), np.array([])).save(tmp_path/'sea.npz')
+    original_inputs = {name: (tmp_path/name).read_bytes() for name in ('boat.npz', 'sea.npz')}
     calls = []
-    def ready_motion(body, waves, duration):
-        calls.append(duration)
+    def ready_motion(body, waves, dwell_s, *, rest_s, ramp_s):
+        calls.append((dwell_s, rest_s, ramp_s))
         return solved
     monkeypatch.setattr(wecsim_backend, 'solve', ready_motion)
-    assert main(['solve', str(tmp_path), '1', '--solver=wecsim']) == 0
-    assert calls == [1.]
+    assert main(['solve', str(tmp_path), '100', '--solver=wecsim', *flags]) == 0
+    assert calls == [timing]
+    for name, original in original_inputs.items():
+        assert (tmp_path/name).read_bytes() == original
     np.testing.assert_array_equal(Result.load(tmp_path/'result.npz').position_m, solved.position_m)
     assert (tmp_path/'result.png').read_bytes().startswith(b'\x89PNG\r\n\x1a\n')
     log = (tmp_path/'result.log').read_text()
+    assert (f'PACKET dwell_s={timing[0]:g} rest_each_s={timing[1]:g} ramp_each_s={timing[2]:g} '
+            f'total_s={total:g} dwell_midpoint_s={midpoint:g} time_step_s=0.01') in log
+    assert 'DIRECTLY at dwell midpoint' in log
+    assert 'phase zero means a target carrier crest' in log
     assert 'PUBLISHED ' + str(tmp_path/'result.npz') in log
     assert 'PUBLISHED ' + str(tmp_path/'result.png') in log
     assert 'END status=success' in log
@@ -114,3 +125,38 @@ def test_real_render_cli_records_validated_publication_in_video_log(tmp_path):
     assert 'TIMING render preparation_s=' in report
     assert 'verification_s=' in report
     assert 'timings={' not in report
+
+
+@pytest.mark.parametrize('argv,rest,ramp', [
+    (['solve', '100', '--solver=wecsim'], 10., 5.),
+    (['solve', 'example', '100', '--rest', '2', '--ramp', '3', '--solver=wecsim'], 2., 3.),
+])
+def test_solve_exposes_dwell_and_explicit_per_side_timing(argv, rest, ramp):
+    args = parser().parse_args(argv)
+    assert args.dwell == 100.
+    assert args.rest == rest and args.ramp == ramp
+
+
+@pytest.mark.parametrize('dwell,flags,message', [
+    ('nan', [], 'dwell must be positive and finite'),
+    ('0', [], 'dwell must be positive and finite'),
+    ('100', ['--rest', '-1'], 'rest must be nonnegative and finite'),
+    ('100', ['--ramp', '0'], 'ramp must be positive and finite'),
+    ('100', ['--rest', '1.001'], 'rest must align to the fixed 0.01s'),
+    ('100', ['--ramp', '5.005'], 'ramp must align to the fixed 0.01s'),
+    ('100.001', [], 'dwell must align to the fixed 0.01s'),
+])
+def test_bad_packet_timing_is_fatal_before_backend_or_publication(tmp_path, monkeypatch, capsys,
+                                                               dwell, flags, message):
+    from topwater import wecsim_backend
+    monkeypatch.setattr(wecsim_backend, 'solve', lambda *args, **kwargs: pytest.fail('backend must not run'))
+    preserved = {name: name.encode() for name in ('boat.npz', 'sea.npz', 'result.npz', 'result.png', 'video.mp4')}
+    for name, data in preserved.items():
+        (tmp_path/name).write_bytes(data)
+    assert main(['solve', str(tmp_path), dwell, '--solver=wecsim', *flags]) == 2
+    assert message in capsys.readouterr().err
+    for name, data in preserved.items():
+        assert (tmp_path/name).read_bytes() == data
+    log = (tmp_path/'result.log').read_text()
+    assert 'END status=failed' in log and 'output_published=false' in log
+    assert 'PUBLISHED ' not in log

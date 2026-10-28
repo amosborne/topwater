@@ -134,12 +134,15 @@ class Boat(_Archive):
 
 @dataclass(frozen=True, eq=False)
 class Sea(_Archive):
-    """Explicit stationary carriers, independent of a boat and random generator.
+    """Original carrier inputs, independent of a boat and packet timing.
 
-    Directions propagate CCW from world +x (east); elevation has phase
-    k*(x*cos(direction)+y*sin(direction)) - omega*t + phase. Empty arrays mean
-    calm water. Local incoming-train placement is a workflow decision, not a
-    temporal ramp hidden in these arrays.
+    Directions propagate CCW from world +x (east). The physical target phase is
+    k dot x - omega*(t-dwell_midpoint) + phases_rad. Thus the original phase
+    values apply DIRECTLY at the selected dwell midpoint and wave reference
+    point; zero specifies a target carrier crest. Fourier sign conventions may
+    be converted internally, without shifting that reference time or changing
+    these arrays. Finite truncation may depart from the target. Empty arrays
+    mean calm water. Solve constructs packets from these four original vectors.
     """
 
     amplitudes_m: np.ndarray
