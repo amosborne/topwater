@@ -53,5 +53,7 @@ Keep the active project implementation branch baseline/fluid-body; preserve othe
 worktrees. At substantive authorized checkpoints, commit/push this development
 branch, update issue #30 and refresh the handoff. Never push main or create
 bookkeeping PRs. Upstream issues/PRs, outside messages and merges require separate
-user authorization. CI runs only for PRs targeting main; run appropriate local
-checks. Never merge without required checks passing for the PR's current head.
+user authorization. CI is disabled. Use appropriate local checks for the change;
+documentation-only changes need diff/reference review, not numerical runs.
+Physical validity is left to user interpretation of documented assumptions,
+limitations and evidence; automated physical qualification is not a merge gate.

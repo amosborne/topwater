@@ -10,9 +10,17 @@ Status: **unqualified**. Hydrostatics and instantaneous added mass are
 implemented. Coupled time-domain wave response is not. The archived P1
 diagnostic-tank runtime is a different implementation and is not substituted.
 
-## Active qualification goal
+## Current policy
 
-The foundation reset below is complete. The active user-directed goal is a
+CI is disabled. Physical validity is left to user interpretation of documented
+assumptions, limitations and evidence. The local validation tools and historical
+studies below remain available, but physical qualification is not a merge gate.
+No new validity checks or qualification campaign are required for the current
+WEC-Sim workflow cleanup. The handoff and latest user request control active work.
+
+## Historical qualification goal
+
+The foundation reset below is complete. Its user-directed goal was a
 [validated, practical time-domain baseline](time-domain-baseline-goal.md).
 [Capytaine reference qualification](reference-convergence.md) is a prerequisite.
 Study 003 completed unqualified under the original coefficient policy. A new
@@ -82,7 +90,7 @@ representation sensitivity. Geometry readiness is approved, hydrodynamic
 convergence remains unqualified. The 12 GiB cap, conservative estimator and
 accuracy gates are unchanged; finest workspace estimate is 11,703,102,464 bytes.
 
-**Active goal: Capytaine reference qualification.** Regenerate a fresh freeze
+**Optional Capytaine reference qualification procedure.** Regenerate a fresh freeze
 under the current contract before reference generation. Execute:
 
 ```powershell
@@ -109,11 +117,10 @@ The time-domain domain/step/startup/window/amplitude controls are explicitly
 unresolved. A later reviewed contract revision must resolve them in the selected
 implementation; these commands are not a claim that a wave solver exists.
 
-CI keeps generic tests/package checks separate from **Physical baseline
-qualification**. The latter freezes the current inputs and runs the real
-qualification command without generating references. Its expected current
-result is red/unqualified. This is a blocking promotion policy and status
-check; GitHub branch-protection enforcement is not asserted or changed here.
+The former CI workflow ran generic tests, package checks and physical baseline
+qualification. That workflow has been removed. The local qualification command
+still reports unsupported or unqualified cases truthfully; its result does not
+block merging or constitute an automatic judgment of simulation validity.
 
 After actual linear-wave gates pass, use separate goals for nonlinear 6DOF
 minute accuracy and then performance improvement. Capytaine remains external

@@ -4,6 +4,22 @@ Updated 2026-10-28. Latest user request controls scope. Keep baseline/fluid-body
 and preserve other worktrees. Do not resume a physics, padding/reference, mesh or
 speed campaign from historical instructions.
 
+## Current CI policy and cleanup
+
+The user requested removal of CI entirely and leaves physical validity to user
+interpretation. The sole GitHub Actions workflow has been removed; project
+instructions and current validation documentation no longer impose automated
+physical qualification as a merge gate. Existing tests, optional validation
+tools, model limitations and historical evidence remain. No validity checks,
+simulation or qualification campaign were added or run for this cleanup.
+
+GitHub readback on 2026-10-28 confirmed main is not branch-protected and the
+repository has no rulesets, so no obsolete required CI statuses need removal.
+Verification for this change is diff/reference review. Continue on
+baseline/fluid-body; this request does not authorize a merge or main push.
+Diff whitespace checks and independent WEC-Sim expert review passed. Issue #30's
+main description now records this policy and was remotely read back.
+
 ## Completed current delivery
 
 The user accepted the final result.png styling: enlarged centred polar panel
