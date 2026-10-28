@@ -148,7 +148,8 @@ def solve(boat, sea, dwell_s, *, rest_s=10., ramp_s=5.):
             density=WATER_DENSITY, gravity=GRAVITY, depth=np.inf,
             hydrostatic_stiffness=h.stiffness,
             cb=h.center_of_buoyancy, volume=h.displaced_volume,
-            excitation_omega=excitation_omega, radiation_omega=radiation_omega)
+            excitation_omega=excitation_omega, radiation_omega=radiation_omega,
+            green_cache_dir=Path.home()/'.cache/topwater/capytaine-3.0.0')
         motion = integrate_motion(setup, hydro, workspace / 'body', fork)
         started = _stage_started('calm-restoring diagnostics')
         warn_restoring_departures(setup, motion)

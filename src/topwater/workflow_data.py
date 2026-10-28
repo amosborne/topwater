@@ -220,20 +220,30 @@ class Result(_Archive):
                                       (face_offsets, len(faces), 'surface_face_offsets')):
             if offsets[0] != 0 or offsets[-1] != count or np.any(np.diff(offsets) <= 0):
                 raise ValueError(f'{name} must start at zero, increase strictly and span its packed array')
+        previous_connectivity = None
+        previous_count = None
         for i in range(len(surface_times)):
             frame = vertices[vertex_offsets[i]:vertex_offsets[i+1]]
             connectivity = faces[face_offsets[i]:face_offsets[i+1]]
-            if len(frame) < 3 or np.any(connectivity < 0) or np.any(connectivity >= len(frame)):
+            if len(frame) < 3:
                 raise ValueError(f'surface frame {i} has invalid local triangle indices')
-            if len(np.unique(np.sort(connectivity, axis=1), axis=0)) != len(connectivity):
-                raise ValueError(f'surface frame {i} has duplicate faces')
-            if len(np.unique(connectivity)) != len(frame):
-                raise ValueError(f'surface frame {i} contains unused vertices')
+            unchanged = (previous_count == len(frame) and previous_connectivity is not None
+                         and np.array_equal(previous_connectivity, connectivity))
+            if not unchanged:
+                if np.any(connectivity < 0) or np.any(connectivity >= len(frame)):
+                    raise ValueError(f'surface frame {i} has invalid local triangle indices')
+                if len(np.unique(np.sort(connectivity, axis=1), axis=0)) != len(connectivity):
+                    raise ValueError(f'surface frame {i} has duplicate faces')
+                if len(np.unique(connectivity)) != len(frame):
+                    raise ValueError(f'surface frame {i} contains unused vertices')
+            # Reuse only combinatorial proofs for identical local indices. Every
+            # frame's actual 3-D triangles must still be finite/nondegenerate.
             triangles = frame[connectivity]
             a, b = triangles[:, 1]-triangles[:, 0], triangles[:, 2]-triangles[:, 0]
             magnitude = np.linalg.norm(np.cross(a, b), axis=1)
             if np.any(magnitude <= 64*np.finfo(float).eps*np.linalg.norm(a, axis=1)*np.linalg.norm(b, axis=1)):
                 raise ValueError(f'surface frame {i} has degenerate triangles')
+            previous_connectivity, previous_count = connectivity, len(frame)
         values = (times, position, orientation, hull, hull_faces, cg, surface_times,
                   vertices, faces, vertex_offsets, face_offsets)
         for name, value in zip(self.members, values):

@@ -116,12 +116,16 @@ def test_solve_surface_wrapper_keeps_geometry_computational_and_exports_world_on
         assert actual_setup is setup
         assert (tmp_path/'surface-world-offset.json').is_file()
         return water.copy(), faces, np.array([0, 3]), np.array([0, 1])
-    producer = SimpleNamespace(build_hydrodynamics=lambda *args, **kwargs: object(),
+    def build(*args, **kwargs):
+        assert kwargs['green_cache_dir'] == tmp_path/'.cache/topwater/capytaine-3.0.0'
+        return object()
+    producer = SimpleNamespace(build_hydrodynamics=build,
                                reconstruct_total_surface=reconstruct)
     @contextmanager
     def scratch():
         yield tmp_path
     monkeypatch.setattr(backend, 'preflight', lambda: (tmp_path, producer))
+    monkeypatch.setattr(backend.Path, 'home', classmethod(lambda cls: tmp_path))
     monkeypatch.setattr(backend, 'prepare_case', lambda *args, **kwargs: setup)
     monkeypatch.setattr(backend, '_waves', lambda sea: object())
     monkeypatch.setattr(backend, '_scratch_directory', scratch)

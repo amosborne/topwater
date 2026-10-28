@@ -35,6 +35,7 @@ NDBC 46086 observation at 2023-12-23 00:40 UTC, realized with seed 42.
 - [Workflow](docs/workflow.md): boat and sea generation, solve, render and outputs.
 - [File formats](docs/formats.md): numeric arrays, units and coordinate frames.
 - [Model assumptions](docs/model.md): physical method and practical limitations.
+- [Performance](docs/performance.md): simple-boat profiles, speedups and remaining opportunities.
 
 Physical validity is left to user interpretation of the documented assumptions,
 limitations and results. There is no automated qualification or CI merge gate.

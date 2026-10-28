@@ -154,6 +154,16 @@ def _summarize_capytaine_warnings(function):
     return call
 
 
+def _single_threaded(function):
+    """Set the existing one-thread policy once, not once per scalar BEM solve."""
+    @wraps(function)
+    def call(*args, **kwargs):
+        from threadpoolctl import threadpool_limits
+        with threadpool_limits(1):
+            return function(*args, **kwargs)
+    return call
+
+
 def _finite(value, shape, name, *, complex_value=False):
     result = np.asarray(value, dtype=complex if complex_value else float)
     if result.ndim != len(shape) or any(n is not None and n != m for n, m in zip(shape, result.shape)):
@@ -386,7 +396,9 @@ def build_hydrodynamics(wet_triangles, cg, mass_matrix, workspace, *,
     cache = None if green_cache_dir is None else str(Path(green_cache_dir))
     if cache is not None:
         Path(cache).mkdir(parents=True, exist_ok=True)
+    tabulation = _StageProgress('Green-function tabulation', 1, 'table')
     solver = cpt.BEMSolver(green_function=Delhommeau(tabulation_cache_dir=cache))
+    tabulation.finish()
     radiation, diffraction, imported = {}, {}, []
     A = np.empty((len(rad_w), 6, 6)); B = np.empty_like(A)
     Ainf = np.empty((6, 6))
@@ -402,7 +414,7 @@ def build_hydrodynamics(wet_triangles, cg, mass_matrix, workspace, *,
     with threadpool_limits(1):
         for j, mode in enumerate(MODES):
             checkpoint()
-            result = solver.solve(cpt.RadiationProblem(**common, omega=np.inf, radiating_dof=mode), keep_details=True, n_threads=1)
+            result = solver.solve(cpt.RadiationProblem(**common, omega=np.inf, radiating_dof=mode), keep_details=True)
             Ainf[:, j] = [result.added_mass[m] for m in MODES]
             radiation[(np.inf, mode)] = result
             solve_count += 1
@@ -415,7 +427,7 @@ def build_hydrodynamics(wet_triangles, cg, mass_matrix, workspace, *,
             if len(rad_index):
                 for j, mode in enumerate(MODES):
                     checkpoint()
-                    result = solver.solve(cpt.RadiationProblem(**common, omega=float(w), radiating_dof=mode), keep_details=True, n_threads=1)
+                    result = solver.solve(cpt.RadiationProblem(**common, omega=float(w), radiating_dof=mode), keep_details=True)
                     radiation[(float(w), mode)] = result
                     imported.append(result)
                     A[rad_index[0], :, j] = [result.added_mass[m] for m in MODES]
@@ -425,7 +437,7 @@ def build_hydrodynamics(wet_triangles, cg, mass_matrix, workspace, *,
             query_angles = angles[:-1] if len(exc_index) else np.asarray(import_angles)
             for a in query_angles:
                 checkpoint()
-                result = solver.solve(cpt.DiffractionProblem(**common, omega=float(w), wave_direction=float(a)), keep_details=True, n_threads=1)
+                result = solver.solve(cpt.DiffractionProblem(**common, omega=float(w), wave_direction=float(a)), keep_details=True)
                 diffraction[(float(w), float(a))] = result
                 if len(rad_index) and any(abs(a-b) < 1e-12 for b in import_angles):
                     imported.append(result)
@@ -463,6 +475,7 @@ def build_hydrodynamics(wet_triangles, cg, mass_matrix, workspace, *,
 
 
 @_summarize_capytaine_warnings
+@_single_threaded
 def combined_diffraction(hydro, train, xy, *, return_forces=False, checkpoint=None, return_incident=True, allow_boundary=False):
     """Exact sideband combined incident/scattered spectra on the frozen hull.
 
@@ -509,7 +522,7 @@ def combined_diffraction(hydro, train, xy, *, return_forces=False, checkpoint=No
         # The custom boundary condition is the exact spectral linear combination
         # of all incident carriers, not a unit plane wave at the nominal angle.
         problem = LinearPotentialFlowProblem(**common, omega=w, boundary_condition=rhs)
-        result = hydro.solver.solve(problem, keep_details=True, n_threads=1)
+        result = hydro.solver.solve(problem, keep_details=True)
         scattered[iw] = hydro.solver.compute_free_surface_elevation(xy, result)
         if return_forces:
             force[iw] = fk + np.array([result.forces[m] for m in MODES])
@@ -527,6 +540,7 @@ def synthesize_spectrum(omega, coefficients, time_s):
 
 
 @_summarize_capytaine_warnings
+@_single_threaded
 def radiation_velocity_transfer(hydro, xy, omega=None, *, checkpoint=None, shared_green=False, allow_boundary=False):
     """Return H_eta,v=i H_eta,q/omega, shape (omega, point, six modes)."""
     import capytaine as cpt
@@ -534,6 +548,13 @@ def radiation_velocity_transfer(hydro, xy, omega=None, *, checkpoint=None, share
     xy = exterior_field_points(hydro, xy, allow_boundary=allow_boundary)
     frequencies = hydro.radiation_omega if omega is None else _grid(omega, 'omega')
     values = np.empty((len(frequencies), len(xy), 6), dtype=complex)
+    if shared_green:
+        # DefaultMatrixEngine.build_S_matrix merges (copies) this immutable
+        # source mesh on every call, discarding all cached geometric properties.
+        # Use its exact public Green-function evaluator on one merged mesh.
+        # No quadrature, field points or source coefficients change.
+        source_mesh = hydro.body.mesh_including_lid.merged()
+        field_points = np.c_[xy, np.zeros(len(xy))]
     progress = _StageProgress('radiation transfers', len(frequencies), 'frequencies')
     for iw, w in enumerate(frequencies):
         results = []
@@ -543,7 +564,7 @@ def radiation_velocity_transfer(hydro, xy, omega=None, *, checkpoint=None, share
             if key not in hydro.radiation_results:
                 hydro.radiation_results[key] = hydro.solver.solve(cpt.RadiationProblem(
                     body=hydro.body, rho=hydro.density, g=hydro.gravity,
-                    water_depth=hydro.depth, omega=float(w), radiating_dof=mode), keep_details=True, n_threads=1)
+                    water_depth=hydro.depth, omega=float(w), radiating_dof=mode), keep_details=True)
             results.append(hydro.radiation_results[key])
             if not shared_green:
                 eta_q = hydro.solver.compute_free_surface_elevation(xy, hydro.radiation_results[key])
@@ -552,9 +573,11 @@ def radiation_velocity_transfer(hydro, xy, omega=None, *, checkpoint=None, share
             # This is precisely the public field evaluator's S @ sources,
             # batching the six source columns. No new BEM equation or solver.
             representative = results[0]
-            S = hydro.solver.engine.build_S_matrix(np.c_[xy, np.zeros(len(xy))],
-                hydro.body.mesh_including_lid, free_surface=representative.free_surface,
+            S, _ = hydro.solver.engine.green_function.evaluate(field_points,
+                source_mesh, free_surface=representative.free_surface,
                 water_depth=representative.water_depth, wavenumber=representative.encounter_wavenumber)
+            if not np.isfinite(S).all():
+                raise ValueError('Nonfinite Capytaine single-layer field matrix')
             sources = np.column_stack([r.sources for r in results])
             # i/omega * (i*omega/g) * potential = -potential/g.
             values[iw] = -(S @ sources)/hydro.gravity

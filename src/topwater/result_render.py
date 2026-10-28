@@ -563,6 +563,10 @@ def _make_graticule_overlay(figure, lower, upper, normalization, ticks):
     finally:
         overlay.clear()
     artist = figure.figimage(rgba, xo=0, yo=0, origin='upper', resize=False)
+    # The private render canvas, DPI and HUD never change. FigureImage otherwise
+    # repeats RGBA conversion/resampling on every frame despite this static data.
+    from functools import lru_cache
+    artist.make_image = lru_cache(maxsize=1)(artist.make_image)
     artist.set_label('world graticule')
     artist.set_animated(True)
     return artist
@@ -650,6 +654,7 @@ def render_result(result, output_path, settings=None):
     phase_started = time.monotonic()
     topology_changes = 0
     water = previous_faces = previous_count = loops = drawn_triangulation = None
+    previous_xy = previous_projection = None
     fps = float(1/cadence)
     try:
         with tempfile.TemporaryDirectory(prefix='topwater-render-') as temporary:
@@ -676,7 +681,17 @@ def render_result(result, output_path, settings=None):
                         or not np.array_equal(previous_faces, faces)
                     if changed:
                         loops = _topology(faces, len(points))
-                    projected = _projected_frame(points, faces, hull, lower, upper, loops, tri)
+                    fixed_projection = (not changed and len(loops) == 1
+                        and np.array_equal(previous_xy, points[:, :2]))
+                    if fixed_projection:
+                        # All checks here depend only on XY/connectivity and
+                        # the fixed view when there are no interior holes.
+                        # Z and the moving physical contact are still updated.
+                        projected = previous_projection
+                    else:
+                        projected = _projected_frame(points, faces, hull, lower, upper, loops, tri)
+                        previous_xy = points[:, :2].copy()
+                        previous_projection = projected
                     if changed:
                         if water is not None:
                             water.remove()

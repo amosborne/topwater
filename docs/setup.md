@@ -62,6 +62,8 @@ Published files go into the case directory selected on the command line.
 Intermediate BEMIO, MATLAB, Simulink and surface products use OS temporary storage.
 Failed runs can retain a temporary recovery location and print its path.
 Reusable dependencies/caches live outside the checkout under `~/.cache/topwater/`.
+The solver reuses Capytaine's numerical Green-function tabulations under
+`~/.cache/topwater/capytaine-3.0.0`; boat coefficients and motion are recomputed.
 There is no repository-local artifacts directory.
 
 ## Local development
@@ -76,3 +78,6 @@ uv run --locked python scripts/check_distributions.py --directory "$HOME/.cache/
 Tests exercise implementation behavior; they are not a physical qualification
 certificate. MATLAB contract tests under `tests/matlab` are optional native
 regressions and are not invoked by ordinary pytest. No CI workflow is configured.
+
+See [performance](performance.md) for the simple-boat profiling harness,
+measured speedups and remaining opportunities.

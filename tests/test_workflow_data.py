@@ -230,6 +230,18 @@ def test_packed_surface_local_indices_and_independent_times():
         data.surface_frame(-1)
 
 
+def test_repeated_connectivity_still_checks_later_frame_geometry():
+    data = result()
+    vertices, faces = data.surface_frame(1)
+    later = vertices.copy()
+    later[1] = later[0]
+    with pytest.raises(ValueError, match='surface frame 1 has degenerate triangles'):
+        replace(data, surface_vertices_m=np.vstack((vertices, later)),
+                surface_faces=np.vstack((faces, faces)),
+                surface_vertex_offsets=np.array([0, 4, 8]),
+                surface_face_offsets=np.array([0, 2, 4]))
+
+
 @pytest.mark.parametrize('field,value', [
     ('time_s', [0., .5, .5]),
     ('time_s', [-.1, .5, 1.]),

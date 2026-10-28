@@ -90,7 +90,7 @@ def test_approved_graticule_is_cached_transparently_and_drawn_above_each_moving_
         orientation_wxyz=Rotation.from_euler('z', np.array([[.1], [.3], [.5]])).as_quat(scalar_first=True),
         surface_vertices_m=np.vstack((water, water)), surface_faces=np.vstack((faces, faces)),
         surface_vertex_offsets=np.array([0, 4, 8]), surface_face_offsets=np.array([0, 2, 4]))
-    frames, full_draws, cached, layouts, order, norms = [], [], [], [], [], []
+    frames, full_draws, cached, layouts, order, norms, overlays = [], [], [], [], [], [], []
     draw = FigureCanvasAgg.draw
     draw_artist = Figure.draw_artist
     make = module._make_graticule_overlay
@@ -105,6 +105,7 @@ def test_approved_graticule_is_cached_transparently_and_drawn_above_each_moving_
         np.testing.assert_allclose(lower, -upper, atol=1e-15)
         assert norm.vmin == pytest.approx(-.2) and norm.vmax == pytest.approx(.2)
         artist = make(figure, lower, upper, norm, ticks)
+        overlays.append(artist)
         cached.append(np.asarray(artist.get_array()).copy())
         return artist
 
@@ -154,6 +155,7 @@ def test_approved_graticule_is_cached_transparently_and_drawn_above_each_moving_
     assert summary['complete'] and summary['frames'] == len(frames) == 2
     assert len(full_draws) == 2  # One static overlay and one main background, never per frame.
     assert len(cached) == len(layouts) == len(norms) == 1
+    assert overlays[0].make_image.cache_info().misses == 1
     assert order == ['world graticule', 'motion header']*2
     rgba = cached[0]
     assert rgba.shape == (800, 800, 4)
@@ -164,6 +166,66 @@ def test_approved_graticule_is_cached_transparently_and_drawn_above_each_moving_
         np.testing.assert_array_equal(frame[opaque], rgba[opaque])
     assert not np.array_equal(frames[0], frames[1])  # Actual body poses and telemetry change.
     np.testing.assert_array_equal(result.surface_vertices_m, np.vstack((water, water)))
+
+
+@pytest.mark.parametrize('change,expected_checks', [('height', 1), ('xy', 2), ('topology', 2)])
+def test_projection_cache_requires_identical_xy_and_connectivity(tmp_path, monkeypatch, change, expected_checks):
+    from pathlib import Path
+    import imageio_ffmpeg
+    import topwater.result_render as module
+    water = np.array([[-5., -5., 0.], [5., -5., 0.], [5., 5., 0.], [-5., 5., 0.]])
+    faces = np.array([[0, 1, 2], [0, 2, 3]])
+    next_water, next_faces = water.copy(), faces.copy()
+    next_water[:, 2] = .2
+    if change == 'xy':
+        next_water[0, 0] -= .1
+    elif change == 'topology':
+        next_faces = np.array([[0, 1, 3], [1, 2, 3]])
+    result = replace(saved_result(), surface_vertices_m=np.vstack((water, next_water)),
+        surface_faces=np.vstack((faces, next_faces)), surface_vertex_offsets=np.array([0, 4, 8]),
+        surface_face_offsets=np.array([0, 2, 4]))
+    checks = []
+    original = module._projected_frame
+    def check(*args):
+        checks.append(True)
+        return original(*args)
+    def writer(path, *args, **kwargs):
+        Path(path).write_bytes(b'projection-cache test')
+        while True:
+            yield
+    monkeypatch.setattr(module, '_projected_frame', check)
+    monkeypatch.setattr(imageio_ffmpeg, 'write_frames', writer)
+    monkeypatch.setattr(module, '_verify_video', lambda *args: None)
+    render_result(result, tmp_path/'cached.mp4')
+    assert len(checks) == expected_checks
+
+
+def test_fixed_projection_cache_never_skips_moving_hull_hole_checks(tmp_path):
+    original = saved_result()
+    water, faces = original.surface_frame(0)
+    result = replace(original, position_m=np.array([[0., 0., 0.], [.05, 0., 0.], [.1, 0., 0.]]),
+        surface_vertices_m=np.vstack((water, water)), surface_faces=np.vstack((faces, faces)),
+        surface_vertex_offsets=np.array([0, 8, 16]), surface_face_offsets=np.array([0, 8, 16]))
+    destination = tmp_path/'previous.mp4'
+    destination.write_bytes(b'previous movie')
+    with pytest.raises(ValueError, match='uncovered hole'):
+        render_result(result, destination)
+    assert destination.read_bytes() == b'previous movie'
+
+
+def test_projection_cache_rejects_later_folded_xy(tmp_path):
+    water = np.array([[-5., -5., 0.], [5., -5., 0.], [5., 5., 0.], [-5., 5., 0.]])
+    next_water = water.copy()
+    next_water[1] = [*water[0, :2], .2]  # Valid 3-D face, coincident XY projection.
+    faces = np.array([[0, 1, 2], [0, 2, 3]])
+    result = replace(saved_result(), surface_vertices_m=np.vstack((water, next_water)),
+        surface_faces=np.vstack((faces, faces)), surface_vertex_offsets=np.array([0, 4, 8]),
+        surface_face_offsets=np.array([0, 2, 4]))
+    destination = tmp_path/'previous.mp4'
+    destination.write_bytes(b'previous movie')
+    with pytest.raises(ValueError, match='coincident|folded'):
+        render_result(result, destination)
+    assert destination.read_bytes() == b'previous movie'
 
 
 def test_origin_camera_failure_preserves_old_video_when_original_zoom_cannot_cover_trajectory(tmp_path):
