@@ -4,6 +4,27 @@ A case is a directory containing `boat.npz` and `sea.npz`. All archives use the
 [numeric file formats](formats.md); no generator replay is required to solve.
 Commands default to the current directory when DIRECTORY is omitted.
 
+## Generate a boat
+
+```powershell
+uv run topwater boat DIRECTORY --length 7.3152 --beam 2.7432 --deadrise 20 --mass 2500
+```
+
+All four flags are required: hull length and maximum beam in metres, transom
+deadrise in degrees, and total operating mass in kilograms. Length excludes
+outboards and brackets. This example is 24 ft by 9 ft. Generation replaces
+`boat.npz` and `boat.log`; it needs no MATLAB or Capytaine. A failed generation
+preserves the previous boat archive. Existing sea, result and video files are
+left unchanged and may belong to the previous boat until solve/render are run.
+
+The surface is the convex envelope of Marine Gyro's eight warped-V control
+stations, with its upper closure omitted from physical panels. Mass consists
+of distributed hull/deck structure and two equal payload lumps. See the
+[standard boat model](model.md#standard-boat-generator) for formulas, coordinates
+and limitations. Geometry, mass, inertia and stable dry-opening flotation are
+checked before publication. The original nominal family is 20–26 ft with
+18–25 degree transom deadrise; generation reports extrapolation outside it.
+
 ## Generate a sea
 
 ```powershell
@@ -71,11 +92,7 @@ Each command replaces its corresponding log when invoked. Logs include stage
 messages, backend diagnostics, warnings, errors, timing and publication status.
 Read warnings alongside the [model assumptions](model.md).
 
-The simple-boat example contains exactly eight files: `boat.npz`, `sea.npz`,
+The simple-boat example contains exactly nine files: `boat.npz`, `boat.log`, `sea.npz`,
 `sea.log`, `result.npz`, `result.png`, `result.log`, `video.mp4` and `video.log`.
 Its 130 s case has 13,001 motion samples and 1,626 surface/video frames.
 The published video is 800 by 800 pixels at 12.5 fps, with 130.08 s encoded duration.
-Native motion passed its force/motion audits, but the original solve subsequently
-failed during MATLAB cache restoration. The published output used audited saved
-motion and successful reconstruction/render continuations; it does not establish
-one uninterrupted successful original invocation.

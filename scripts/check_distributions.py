@@ -21,6 +21,7 @@ import numpy
 import scipy
 import topwater
 from topwater import sea_states
+from topwater.boat_generation import generate_boat
 from topwater.cli import parser
 from topwater.workflow_data import Boat, Sea, Result
 
@@ -36,6 +37,8 @@ assert resources.files('topwater').joinpath('data/wecsim/run_workflow_case.m').i
 assert resources.files('topwater').joinpath('data/stronger-sea-observation.npz').is_file()
 assert sea_states.catalog()
 assert parser().parse_args(['solve', '100']).solver == 'wecsim'
+boat = generate_boat(7.3152, 2.7432, 20, 2500)
+assert boat.mass_kg == 2500
 for retired in ('bem', 'boundary', 'inertia', 'rankine', 'fluid_boundary', 'surface'):
     assert util.find_spec('topwater.' + retired) is None
 print(f"Installed {info['Name']} {info['Version']} from distribution")

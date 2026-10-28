@@ -12,6 +12,8 @@ Install the simulation dependencies and start MATLAB as described in
 [setup](docs/setup.md). Then run:
 
 ```powershell
+uv run topwater boat examples/simple-boat --length 7.3152 --beam 2.7432 --deadrise 20 --mass 2500
+uv run topwater generate-sea examples/simple-boat --record ndbc-46086-20231223T0040Z --seed 42
 uv run topwater solve examples/simple-boat 100 --rest 10 --ramp 5
 uv run topwater render examples/simple-boat
 ```
@@ -21,7 +23,7 @@ is the sole backend; existing `--solver=wecsim` commands remain accepted.
 Rendering an existing result does not require MATLAB or Capytaine.
 
 The [published example](examples/simple-boat/) contains the boat and sea inputs,
-motion/surface archive, motion and spectrum plot, video and three command logs.
+motion/surface archive, motion and spectrum plot, video and four command logs.
 Its boat is a 24 ft by 9 ft open V-hull with total mass 2,500 kg. The sea is the
 NDBC 46086 observation at 2023-12-23 00:40 UTC, realized with seed 42.
 
@@ -30,7 +32,7 @@ NDBC 46086 observation at 2023-12-23 00:40 UTC, realized with seed 42.
 ## Documentation
 
 - [Setup](docs/setup.md): dependencies, MATLAB and local development.
-- [Workflow](docs/workflow.md): sea generation, solve, render and outputs.
+- [Workflow](docs/workflow.md): boat and sea generation, solve, render and outputs.
 - [File formats](docs/formats.md): numeric arrays, units and coordinate frames.
 - [Model assumptions](docs/model.md): physical method and practical limitations.
 

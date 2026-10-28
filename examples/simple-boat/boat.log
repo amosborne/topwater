@@ -1,0 +1,8 @@
+2026-10-28T22:29:51.786Z INFO boat BEGIN directory=examples\simple-boat length=7.3152 beam=2.7432 deadrise=20.0 mass=2500.0
+2026-10-28T22:29:51.835Z INFO boat STAGE generate convex hull, integrate mass and validate flotation
+2026-10-28T22:29:51.835Z INFO boat MODEL offshore-warped-v/2 control-point convex envelope; structure_kg=0.1*length_ft^3+70; hull/deck=70/30; deck_depth_fraction=0.6; payload_split=50/50; payload_xyz_over_length=(0.05,0,0.03),(0.50,0,0.20); x_from_transom; z_from_lowest_keel_datum
+2026-10-28T22:29:52.268Z INFO boat MASS cg_m=[2.714195793224838, 0.0, 0.7608287112655785] inertia_cg_kg_m2=[[1615.5287671563958, 0.0, -1258.7649071169942], [0.0, 9523.262303399297, 0.0], [-1258.7649071169942, 0.0, 9887.649663249238]]
+2026-10-28T22:29:52.268Z INFO boat STAGE publish validated boat archive
+2026-10-28T22:29:52.270Z INFO boat PUBLISHED examples\simple-boat\boat.npz
+2026-10-28T22:29:52.271Z INFO boat Wrote examples\simple-boat\boat.npz: 36 vertices, 55 physical panels; mass=2500 kg
+2026-10-28T22:29:52.271Z INFO boat END status=success elapsed_s=0.485000 output_published=true warnings=0

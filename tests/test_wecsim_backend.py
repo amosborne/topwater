@@ -31,12 +31,13 @@ def test_full_equilibrium_balances_force_and_moment_on_physical_boat():
     assert h.rim_clearance > 0
 
 
-def test_public_example_preserves_accepted_mean_hull_mass_and_restoring_identity():
+def test_reference_boat_preserves_accepted_mean_hull_mass_and_restoring_identity():
     project = Path(__file__).resolve().parents[1]
     physical = json.loads((project/'tests/data/canonical-boat.json').read_text())
-    boat = Boat.load(project/'examples/simple-boat/boat.npz')
     sea = Sea.load(project/'examples/simple-boat/sea.npz')
-    body = boat.to_body()
+    # Historical field evidence belongs to the canonical fixture. The public
+    # example now uses the standard generator and has its own geometry.
+    body = reference_body()
     setup = prepare_case(body, backend._waves(sea), 60.)
     expected = np.asarray(physical['minimum_wetted_triangles_world_m'])
     actual = setup.wet_triangles_m

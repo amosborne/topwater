@@ -8,6 +8,9 @@ wave excitation through its public spectral inputs and integrates all six body
 motions. Topwater supplies wave components and coefficients, not applied force
 histories. Full dry inertia, restoring coupling, added mass and radiation memory
 remain part of the model; no damping is fitted to force settling.
+Additional linear damping and quadratic viscous drag are explicitly zero,
+and Morison elements are disabled. Radiation damping remains active through
+the WEC-Sim convolution model; no empirical nonlinear roll damping is added.
 
 Motion does not rebuild the mean-hull hydrodynamics. After motion, Topwater
 reconstructs incident, diffracted and radiated water elevation without feedback
@@ -19,6 +22,46 @@ The current hull input supports convex open boats with one inferred opening.
 The example is a 24 ft by 9 ft open V-hull, mass 2,500 kg, with a full inertia
 tensor incorporating hull/structure and amidships/stern loads. Other supported
 boats are supplied through data, not special solver branches.
+
+## Standard boat generator
+
+`topwater boat` defines a convex hull from Marine Gyro's `offshore-warped-v/2`
+keel, chine and sheer controls at eight length stations. These are authored
+shape assumptions, not measured construction offsets. The source is
+`src/+hull/standardShape.m` at Marine Gyro revision
+`651d77d169844295b7c9abea1f8475ed4d064019`. The convex envelope defines the
+surface; additional sections slice that surface rather than interpolating
+deadrise. Its upper closure is an integration/topology helper, with no physical
+panels, mass or pressure area.
+
+Coordinates are x forward from the transom, y port and z upward from the lowest
+profile keel datum. Entered mass is the complete operating mass. Structural
+mass is `0.1 * L_ft^3 + 70` kg, where `L_ft = length_m / 0.3048`.
+The relation approximates an inferred structural remainder in Marine Gyro's
+center-console catalog, not independently measured bare structures.
+
+Of this structural mass, 70% follows the hull bottom/sides and 30% follows an
+internal deck at 60% of local keel-to-sheer depth. As in Marine Gyro, weights
+are section-line lengths integrated longitudinally using trapezoidal quadrature
+(41 stations plus the original controls). This is not a material-density or
+laminate-thickness model. The physical transom contributes buoyancy but has no
+separate structural allocation; its structure is included in the distributed
+budget. First and second moments include the width of each section segment.
+
+The remaining mass is split equally into centerline point masses at
+`(0.05L, 0, 0.03L)` for aft equipment/fuel and `(0.50L, 0, 0.20L)` for central
+equipment/people/gear, with L in metres. These are effective positions chosen
+to approximate the detailed mass model, not literal equipment centroids.
+Lumps have no intrinsic inertia. CG and the full inertia tensor are computed
+from all distributions and offsets; hydrodynamic added inertia remains separate.
+Total mass must exceed structural mass, and calm-water equilibrium must float
+with a dry opening and positive local restoring stiffness.
+
+This standard model was calibrated against assumed center-console layouts,
+primarily 20–26 ft boats with 18–25 degree transom deadrise. It does not model
+cabin configurations, fuel slosh, moving people or specific engine packages.
+Extrapolation is reported; validation checks do not establish real-boat accuracy.
+Measured CG/inertia can instead be supplied through the standard boat archive.
 
 ## Sea and finite packets
 
@@ -72,9 +115,11 @@ audits check implementation consistency; they are not physical-error bounds.
 An earlier 60 s case had a selected-model numerical elevation difference plus
 reference uncertainty of 5.784 mm under a stated high-frequency response envelope.
 That historical bound does NOT qualify the current 130 s packet or other inputs.
-The current example's first/last water frames are within roughly 1.1 mm of calm,
-while full rest intervals reach about 14 cm as incident water crosses the patch.
-Endpoints alone do not establish calm intervals or numerical accuracy.
+The published standard-boat run reports large departures from linear restoring
+and intervals where its diagnostic hull has no contact with the mean reference
+sea. This diagnostic does not determine contact with the moving wave surface.
+Read the retained warnings before interpreting the resulting motion. Calm
+endpoints alone would not establish calm rest intervals or numerical accuracy.
 
 Physical validity is left to user interpretation of these assumptions and the
 computed results. No automated physical qualification or CI merge gate is imposed.

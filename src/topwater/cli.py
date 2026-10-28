@@ -7,6 +7,14 @@ import sys
 def parser():
     root = argparse.ArgumentParser(prog='topwater', description='Topwater workflows')
     commands = root.add_subparsers(dest='command', required=True)
+    boat = commands.add_parser('boat', help='Generate a standard boat; docs/workflow.md',
+                               epilog='Documentation: docs/workflow.md')
+    boat.add_argument('directory', nargs='?', type=Path, default=Path('.'),
+                      help='Example directory (default: current directory)')
+    boat.add_argument('--length', required=True, type=float, help='Hull length in metres')
+    boat.add_argument('--beam', required=True, type=float, help='Maximum hull beam in metres')
+    boat.add_argument('--deadrise', required=True, type=float, help='Transom deadrise in degrees')
+    boat.add_argument('--mass', required=True, type=float, help='Total operating mass in kilograms')
     generate = commands.add_parser('generate-sea',
         help='Generate explicit waves; docs/workflow.md',
         epilog='Documentation: docs/workflow.md')
@@ -55,11 +63,29 @@ def main(argv=None):
     args = parser().parse_args(argv)
     try:
         from .command_log import CommandLog
-        names = {'generate-sea': 'sea.log', 'solve': 'result.log', 'render': 'video.log'}
+        names = {'boat': 'boat.log', 'generate-sea': 'sea.log',
+                 'solve': 'result.log', 'render': 'video.log'}
         details = ' '.join(f'{name}={value}' for name, value in vars(args).items()
                            if name != 'command')
         with CommandLog(args.directory / names[args.command], args.command, details) as log:
-            if args.command == 'generate-sea':
+            if args.command == 'boat':
+                from .boat_generation import generate_boat
+                log.event('INFO', 'STAGE generate convex hull, integrate mass and validate flotation')
+                log.event('INFO', 'MODEL offshore-warped-v/2 control-point convex envelope; '
+                    'structure_kg=0.1*length_ft^3+70; hull/deck=70/30; '
+                    'deck_depth_fraction=0.6; payload_split=50/50; '
+                    'payload_xyz_over_length=(0.05,0,0.03),(0.50,0,0.20); '
+                    'x_from_transom; z_from_lowest_keel_datum')
+                boat = generate_boat(args.length, args.beam, args.deadrise, args.mass)
+                log.event('INFO', f'MASS cg_m={boat.cg_m.tolist()} '
+                          f'inertia_cg_kg_m2={boat.inertia_cg_kg_m2.tolist()}')
+                destination = args.directory / 'boat.npz'
+                log.event('INFO', 'STAGE publish validated boat archive')
+                boat.save(destination, overwrite=True)
+                log.published(destination)
+                print(f'Wrote {destination}: {len(boat.vertices_m)} vertices, '
+                      f'{len(boat.faces)} physical panels; mass={boat.mass_kg:g} kg')
+            elif args.command == 'generate-sea':
                 from . import sea_states
                 from .workflow_data import Sea
                 log.event('INFO', 'STAGE generate observed sea realization')
