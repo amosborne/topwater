@@ -1,6 +1,64 @@
 # Current state: independent numerical-methods review
 
-## Current: fixed10ms cutoff-search implementation accepted
+## Current: published 130 s case and reopened surface review, 2026-10-27
+
+Checkpoint `e0d6ba8` publishes the simple-boat packet case: 130 s of native
+WEC-Sim motion at 10 ms, with 1626 surface/video frames at 80 ms. Functional
+outputs, unchanged cached motion, physical geometry gates and decoded video
+were independently accepted. The final receipt is
+[`packet-integration-final-review1/acceptance.json`](../../../artifacts/workflow/packet-integration-final-review1/acceptance.json),
+SHA256 `3f0c45dfcee929891bbb4b557193ff5f168eb0debe12628faba8d99be8b6685a`.
+This does **not** qualify the new case's surface-height numerical error.
+
+The user now asks to re-review reconstruction and whether its padding is still
+necessary after a naturally ending incident packet. Issue #31 is reopened.
+This assignment completed a read-only method review; it authorized no settings
+change, implementation, numerical allocation or new qualification.
+
+The current `offline_radiation_response` in
+[`_capytaine_surface.py`](../../../src/topwater/_capytaine_surface.py:583)
+uses three distinct policies:
+
+- A 20 s cubic Hermite continuation invents future velocity from the saved final
+  velocity/acceleration to rest. It is not additional WEC-Sim integration.
+- A 1024 s periodic FFT record supplies zero space around that history to reduce
+  interaction with repeated copies. It does not simulate extra physical time.
+- The FFT defaults to half the saved motion interval: 5 ms for the current
+  10 ms native history. This linearly interpolates saved velocity while retaining
+  every native knot exactly. Surface output remains 80 ms.
+
+Ending the incident packet does not establish that body velocity, acceleration
+or radiation memory has settled. Endpoint values were not established by this
+read-only review. Removing the invented future therefore needs an actual height
+sensitivity check. A 10 ms FFT grid clears Nyquist for the retained 48 rad/s
+band (`48 < pi/0.01`), but that alone is not an accuracy certificate. Neither
+1024 s nor any shorter buffer is established as necessary by this review.
+
+The proposed cheapest falsification check is one bounded all-six-mode probe
+screen using the actual saved 130 s velocity/acceleration and the same chosen
+hydrodynamic operator. Inspect endpoint values and compare the current policy
+against separately changing FFT step to 10 ms, removing the future, and reducing
+the record to a candidate 256 s. That last record would leave 64 s before the
+saved history and 62 s afterward with zero future. Current code requires a
+positive future, so testing zero future needs separately authorized helper or
+implementation work. Reuse retained transfer data only after its operator and
+input identities are verified; do not assume old probes match the new case.
+
+Measure height differences throughout the saved interval, including startup.
+A failed probe screen rejects the simplification; a passing screen only
+justifies later whole-surface verification. Keep the user's 10 mm numerical
+height requirement against the chosen linearized model, including reference
+uncertainty. The current policy itself is not reference truth, and incident
+quietness is not a body-rest certificate. No numerical job or code change is
+currently authorized by this proposal.
+
+The historical 60 s selected-case acceptance remains valid only under its
+original inputs, policies and conditional response-envelope assumptions:
+5.784425 mm maximum combined difference and estimated reference uncertainty.
+It does not transfer automatically to this 130 s input. Preserve that evidence
+and all failed studies below under their original policies.
+
+## Historical: fixed 10 ms cutoff-search implementation accepted
 
 modulewave_packets.py a9b14b34..., tests12cd8243..., doc e1a41108... preappend
 reviewed with10msdriver e01aa496. 21testspass0.10s; threeAPIcalls14.05/26.33/
@@ -10,7 +68,7 @@ oddclock handling, norescale/noIFTscan. Guardadds0/0/1bins; firstcertifiednot
 continuousglobalminimum. Rootjobfullycleaned. Evidencepacket-cutoff-search-
 2026-10-27.json and docs/wave-packet-search.md. No nextjob/productionintegration.
 
-## Corrected real-Fourier outcome,2026-10-27
+## Historical: corrected real-Fourier outcome, 2026-10-27
 
 Usercorrected Ncounting:DC+negativeconjugatesfree,Npositive. Priorcomplex
 projection wrongforrequestedtask. Correctedsource/actualaccepted;9casesrootrun
@@ -21,7 +79,7 @@ Noanalyticmagnitude-as-envelope claim, physicalqualitypass or nextallocation.
 
 ## Earlier complex-projection study: superseded and incorrect for this task
 
-## Current outcome: optimizer-free quintic examples, 2026-10-27
+## Historical outcome: optimizer-free quintic examples, 2026-10-27
 
 User requested N10/20/40 for0.01/.1/1Hz, phases0/45/90atMIDPOINT65, window
 rest10/ramp5/dwell100/ramp5/rest10. Directquintic Fourier source+actualreview

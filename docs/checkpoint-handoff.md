@@ -2,10 +2,27 @@
 
 Updated 2026-10-27 local. Follow AGENTS.md; the latest user request controls scope.
 
-## Current goal: packet integration and simple-boat regeneration
+## Current request: re-review surface reconstruction padding (#31)
 
-Implementation and numerical work are complete. Final documentation, evidence,
-issue descriptions and the baseline checkpoint are being published. No numerical
+The user accepted the appearance of the new simulation and asked to revisit #31,
+specifically whether padding is still needed now that the packet has calm ends.
+They also asked whether WEC-Sim used10ms: YES,13001 samples through130s. The
+separate reconstruction FFT currently uses5ms; surface/video sampling is80ms.
+
+Issue31 is reopened with a current-review narrative and preserved historical60s
+acceptance. NMR read-only review separates the invented20s motion continuation,
+1024s periodic FFT record and half-native-step interpolation. No setting or code
+has changed and no new numerical job is allocated. Quiet waves alone do not prove
+the boat settled. Proposed cheapest next check: saved endpoint v/a and a few
+all-six-mode height probes, changing native10ms FFT, zero inventedfuture and a
+shorter record one at a time. Probe agreement is not whole-region qualification;
+the target remains1cm numerical linear-model elevation error including reference
+uncertainty. Do not automatically launch a large study or adopt a padding policy.
+
+## Completed goal: packet integration and simple-boat regeneration
+
+Implementation and numerical work are complete and published at e0d6ba8 on
+baseline/fluid-body, including LFS outputs and updated issues30/36. No numerical
 job remains active; finish60701 and independent idle/null/no-lease readback passed.
 Do not resume a physics, correctness or performance campaign without new scope.
 
