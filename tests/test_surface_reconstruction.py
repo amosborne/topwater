@@ -85,6 +85,38 @@ def test_exterior_trace_maps_only_disturbance_queries():
     assert abs(incident_spectrum(train, mapped)[1, 0]-incident_spectrum(train, original)[1, 0]) > .01
 
 
+@pytest.mark.parametrize('beam', [.2, 10.])
+def test_reconstruction_uses_exact_mean_waterline_trace_for_every_beam(monkeypatch, beam):
+    import topwater._capytaine_surface as producer
+    vertices = np.array([[-2., -beam/2, 0.], [2., -beam/2, 0.],
+                         [2., beam/2, 0.], [-2., beam/2, 0.], [0., 0., -1.]])
+    body = SimpleNamespace(mesh=SimpleNamespace(vertices=vertices), cg=np.zeros(3))
+    hydro = SimpleNamespace(depth=np.inf, body=body)
+    setup = SimpleNamespace(body=body, world_from_native=np.eye(3),
+        physical_faces=np.array([[0, 1, 4], [1, 2, 4], [2, 3, 4], [3, 0, 4]]))
+    stamp = np.array([0., .01])
+    motion = SimpleNamespace(time_s=stamp, velocity_native=np.zeros((2, 6)),
+        acceleration_native=np.zeros((2, 6)), position_m=np.zeros((2, 3)),
+        orientation_wxyz=np.tile([1., 0., 0., 0.], (2, 1)))
+    original_trace = producer.exterior_trace_points
+
+    class TraceChecked(Exception):
+        pass
+
+    def check_trace(hydro, unused_grid, offset, *, allow_boundary):
+        # Exercise the production policy and real admissibility/mapping routine,
+        # then stop before any hydrodynamic solve or surface reconstruction.
+        assert offset == 0. and allow_boundary
+        mapped, continued = original_trace(hydro, [[1.999, 0.], [3., 0.]], offset, allow_boundary=allow_boundary)
+        np.testing.assert_allclose(mapped, [[2., 0.], [3., 0.]], rtol=0, atol=1e-14)
+        np.testing.assert_array_equal(continued, [True, False])
+        raise TraceChecked
+
+    monkeypatch.setattr(producer, 'exterior_trace_points', check_trace)
+    with pytest.raises(TraceChecked):
+        producer.reconstruct_total_surface(hydro, setup, motion, stamp)
+
+
 def test_identified_acceleration_feedthrough_is_explicit_and_uses_actual_acceleration():
     kernel = exponential_kernel()
     kernel.direct_acceleration = np.zeros((1, 6)); kernel.direct_acceleration[0, 0] = .07
@@ -135,7 +167,7 @@ def test_weighted_spectrum_has_no_hidden_factor_or_conjugation():
 def test_total_surface_capability_checks_selected_policy(monkeypatch):
     import topwater._capytaine_surface as producer
     monkeypatch.setattr(producer, '_SURFACE_POLICY_ACCEPTED', False)
-    with pytest.raises(ValueError, match='whole-domain numerical qualification'):
+    with pytest.raises(ValueError, match='reconstruction is unavailable'):
         require_surface_readiness()
     monkeypatch.setattr(producer, '_SURFACE_POLICY_ACCEPTED', True)
     require_surface_readiness()
@@ -392,11 +424,16 @@ def calm_surface_case(monkeypatch, tmp_path):
         body=SimpleNamespace(mesh=SimpleNamespace(vertices=waterline)), depth=np.inf,
         excitation_omega=np.array([.1, 1.]), excitation_headings=np.array([0., 2*np.pi]),
         excitation=np.zeros((2, 2, 6), dtype=complex), K=np.zeros((6, 6)))
-    monkeypatch.setattr(producer, 'radiation_velocity_transfer',
-        lambda h, xy, omega, **kw: np.zeros((len(omega), len(xy), 6), dtype=complex))
+    def radiation_fields(h, xy, omega, **kwargs):
+        assert kwargs['allow_boundary'] is True
+        producer.exterior_field_points(h, xy, allow_boundary=True)
+        return np.zeros((len(omega), len(xy), 6), dtype=complex)
+    monkeypatch.setattr(producer, 'radiation_velocity_transfer', radiation_fields)
 
     def diffraction_fields(h, tr, xy, *, return_forces=False, **kwargs):
         assert not return_forces, 'Production surface path must request fields without a force oracle'
+        assert kwargs['allow_boundary'] is True
+        producer.exterior_field_points(h, xy, allow_boundary=True)
         return (np.zeros((2, len(xy)), dtype=complex),
                 np.zeros((2, len(xy)), dtype=complex))
 
@@ -440,9 +477,9 @@ def test_production_calm_geometry_preserves_original_grid_and_oblique_world_view
         assert np.all(frame[:, :2].max(axis=0) >= center+half)
         assert connectivity.max() < len(frame)
     diagnostic = capsys.readouterr().err
-    assert 'degenerate incident RMS' in diagnostic
-    assert 'no total disturbed-fluid velocity bound' in diagnostic
-    assert 'ORIGINAL source-triangle-centroid' in diagnostic
+    assert 'Surface packing wall time_s' in diagnostic
+    assert 'total-minus-incident metrics' not in diagnostic
+    assert 'wet-set' not in diagnostic
     assert 'field-load-consistency' not in diagnostic
 
 
@@ -460,14 +497,15 @@ def test_failed_frame_preserves_primary_context_and_replays_without_physics(calm
     def failing_metrics(*args, **kwargs):
         raise original_error
 
+    producer.reconstruct_total_surface(case.hydro, case.setup, case.motion, case.stamp)
+    cache = case.hydro.directory.parent/'surface-recovery'/'completed-field.npz'
     monkeypatch.setattr(producer, '_delta_moments', failing_metrics)
     with pytest.raises(producer.SurfaceExportError, match='frame 0, time 0s') as caught:
-        producer.reconstruct_total_surface(case.hydro, case.setup, case.motion, case.stamp)
+        producer.replay_surface_cache(cache, diagnostic_directory=tmp_path/'historical-analysis', analyze=True)
     error = caught.value
     assert error.__cause__ is original_error
     assert error.stage == 'waterline-delta-metrics'
     assert error.frame_index == 0 and error.time_s == 0
-    cache = error.recovery_directory/'completed-field.npz'
     assert cache.is_file()
     report = json.loads((error.recovery_directory/'failure.json').read_text())
     assert report['stage'] == error.stage
@@ -526,3 +564,75 @@ def test_malformed_completed_time_keeps_original_validation_cause(bad_time, tmp_
     assert report['time_s'] is None
     assert report['error_type'] == type(cause).__name__
     assert report['error_message'] == str(cause)
+
+
+@pytest.mark.parametrize('overtopping', [False, True])
+def test_normal_reconstruction_and_replay_skip_contact_and_statistics(calm_surface_case, monkeypatch, tmp_path, overtopping):
+    import topwater.surface_geometry as geometry
+    case = calm_surface_case
+    def forbidden(*args, **kwargs):
+        raise AssertionError('Normal solve/replay must not compute moving contact or surface statistics')
+    for name in ('validate_opening_clearance', 'waterline_segments'):
+        monkeypatch.setattr(geometry, name, forbidden)
+    monkeypatch.setattr(case.producer, '_delta_moments', forbidden)
+    monkeypatch.setattr(case.producer, 'WaterGraphPartition', forbidden)
+    original_position = case.motion.position_m.copy()
+    original_orientation = case.motion.orientation_wxyz.copy()
+    if overtopping:
+        # Deliberately place the entire opening below the zero total surface.
+        case.motion.position_m[:, 2] = -2.
+        original_position = case.motion.position_m.copy()
+    packed = case.producer.reconstruct_total_surface(case.hydro, case.setup, case.motion, case.stamp)
+    cache = case.hydro.directory.parent/'surface-recovery'/'completed-field.npz'
+    replayed = case.producer.replay_surface_cache(cache, diagnostic_directory=tmp_path/'simple-replay')
+    with np.load(cache, allow_pickle=False) as saved:
+        for i in range(len(case.stamp)):
+            start, end = packed[2][i:i+2]
+            np.testing.assert_array_equal(packed[0][start:end],
+                np.c_[saved['xy_native_m'], saved['total_elevation_m'][i]] @ case.embedding.T)
+            start, end = packed[3][i:i+2]
+            np.testing.assert_array_equal(packed[1][start:end], saved['water_faces'])
+    for actual, expected in zip(replayed, packed):
+        np.testing.assert_array_equal(actual, expected)
+    np.testing.assert_array_equal(case.motion.position_m, original_position)
+    np.testing.assert_array_equal(case.motion.orientation_wxyz, original_orientation)
+
+
+@pytest.mark.parametrize('invalid', ['nonfinite', 'fractional-index', 'out-of-range', 'reversed'])
+def test_simple_surface_packing_rejects_malformed_data(invalid, tmp_path):
+    xy = np.array([[0., 0.], [1., 0.], [0., 1.]])
+    data = dict(surface_time_s=np.array([0., .01]), surface_position_m=np.zeros((2, 3)),
+        surface_rotation=np.tile(np.eye(3), (2, 1, 1)), xy_native_m=xy,
+        total_elevation_m=np.zeros((2, 3)), incident_elevation_m=np.zeros((2, 3)),
+        world_from_native=np.eye(3), water_faces=np.array([[0, 1, 2]]))
+    if invalid == 'nonfinite': data['total_elevation_m'][0, 0] = np.nan
+    if invalid == 'fractional-index': data['water_faces'] = np.array([[0., 1., 2.5]])
+    if invalid == 'out-of-range': data['water_faces'][0, 2] = 3
+    if invalid == 'reversed': data['water_faces'] = np.array([[0, 2, 1]])
+    with pytest.raises(ValueError):
+        # Test raw validator directly: diagnostic wrapper changes only context.
+        from topwater._capytaine_surface import _export_completed_field_impl
+        _export_completed_field_impl(data, tmp_path, tmp_path/'unused.npz')
+
+
+
+def test_explicit_boundary_trace_never_admits_strict_interior_queries():
+    vertices = np.array([[-2., -1., 0.], [2., -1., 0.], [2., 1., 0.],
+                         [-2., 1., 0.], [0., 0., -1.]])
+    hydro = SimpleNamespace(body=SimpleNamespace(mesh=SimpleNamespace(vertices=vertices)))
+    boundary = np.array([[2., 0.], [-2., -1.]])
+    np.testing.assert_array_equal(exterior_field_points(hydro, boundary, allow_boundary=True), boundary)
+    with pytest.raises(ValueError, match='Strictly interior'):
+        exterior_field_points(hydro, [[0., 0.], [2., 0.]], allow_boundary=True)
+    with pytest.raises(ValueError, match='strictly outside'):
+        exterior_field_points(hydro, boundary)
+    with pytest.raises(ValueError, match='explicit boundary mode'):
+        exterior_trace_points(hydro, [[1.9, 0.]], 0.)
+    actual = np.array([[1.9, 0.], [2.0001, 0.], [-2., -1.]])
+    mapped, continued = exterior_trace_points(hydro, actual, 0., allow_boundary=True)
+    np.testing.assert_array_equal(mapped, [[2., 0.], [2.0001, 0.], [-2., -1.]])
+    np.testing.assert_array_equal(continued, [True, False, True])
+    train = SimpleNamespace(omega=np.array([0., 1.]), k=np.array([0., .2]),
+        theta=np.array([0.]), C=np.array([[[0., 1.], [0., 0.]]]))
+    np.testing.assert_allclose(incident_spectrum(train, actual)[1], np.exp(1j*.2*actual[:, 0]))
+    assert incident_spectrum(train, actual)[1, 0] != incident_spectrum(train, mapped)[1, 0]

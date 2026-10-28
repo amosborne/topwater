@@ -8,7 +8,7 @@ import tempfile
 from .result_plot import save_motion_plot
 
 
-def save_solve_outputs(result, directory):
+def save_solve_outputs(result, directory, *, sea=None):
     """Prepare both files before publishing; roll back handled replace failures.
 
     Return (result.npz path, result.png path). Same-volume scratch and backups
@@ -16,6 +16,8 @@ def save_solve_outputs(result, directory):
     copies of large result arrays. The two replaces are individually atomic;
     abrupt process termination between them is not globally atomic. If the OS
     also prevents rollback, retain the backups and report their recovery path.
+    The optional original Sea adds its static spectrum to result.png only;
+    it is never stored in result.npz. Production CLI solve supplies this input.
     """
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True)
@@ -26,7 +28,10 @@ def save_solve_outputs(result, directory):
     try:
         if os.stat(staging).st_dev != os.stat(directory).st_dev:
             raise OSError('solve outputs require staging on the destination filesystem')
-        save_motion_plot(result, ready[1])
+        if sea is None:
+            save_motion_plot(result, ready[1])
+        else:
+            save_motion_plot(result, ready[1], sea=sea)
         result.save(ready[0])
         if not all(path.is_file() and path.stat().st_size > 0 for path in ready):
             raise OSError('both solve outputs must be complete files before publication')

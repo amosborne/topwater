@@ -1,5 +1,57 @@
 # Shared physical and producer/consumer contract
 
+## Sea spectrum in result.png, latest user decision 2026-10-28
+
+The spectrum belongs beside the six motion histories in result.png, not in the
+video. Solve passes its already loaded ORIGINAL Sea explicitly to the plot writer;
+neither generated packet sidebands nor reconstructed water supply the spectrum.
+Do not store carrier or spectrum arrays in result.npz. Render remains standalone
+from its saved hull/motion/surface archive and has no spectrum inset.
+
+Keep15degree by0.025Hz WORLD arrival-direction bins (propagation+pi), displaying
+TRUE RMS elevation sqrt(0.5sum(a_i squared)), the linear cividis scale (zero bins use its lower color, no white mask), black labels
+and light grid lines, plus frequency radius/ring labels pointing DOWN on screen.
+The colorbar says Bin RMS elevation(m), using ORIGINAL component amplitudes in
+each bin, with upper bound rounded outward to two significant digits and nice
+interior ticks plus both endpoints. The polar panel fills the right column; its
+colorbar is horizontal below it. This case uses 0..0.12 m. No overall
+titles/subtitles/footer in the motion figure or polar panel; motion x-labels
+are Time(s), with a space before(s). Significant wave height remains
+4sqrt(0.5sum(a_i squared)), without a displayed heading. No polar time chart or compass
+direction labels or angular spokes/ticks; retain frequency rings. Rotate only the display axes so the DEFAULT boat heading points
+up; retain the world bin membership. Default means the solver's current a-squared
+weighted incoming direction, with its existing calm/ambiguous rules. A dotted
+radial line marks actual SAVED INITIAL bow heading relative to that default.
+Today these coincide; a future offset remains visible. This does not implement
+an offset-heading solver option. Preserve the motion plots' common symmetric
+seven nice Y ticks and their centered zero.
+
+## Current reconstruction simplification, user decision 2026-10-27
+
+Normal solve saves the total incident + diffraction + radiation free-surface
+geometry and boat motion in result.npz. Rendering remains standalone and computes
+the moving waterline for display. Normal solve does not compute moving-waterline,
+wetted-area comparisons, disturbance statistics or opening-clearance checks.
+Removal of the opening-clearance flooding gate is intentional and supersedes
+older requirements below. Retain finite values, array/clock/connectivity checks
+and the separate absolute +/-0.01m calm-water analysis.
+
+Radiation uses FFT of the original saved10ms velocities, with the original sample
+count, no oversampling, no padding and no invented future. Do not require a second
+padded reconstruction/reference campaign. Both complete rest intervals and their
+endpoints are measured separately; noncalm water over a spatial patch does not by
+itself establish temporal wraparound or numerical error.
+
+Inside the mean-waterline footprint, incident elevation stays at the true target
+coordinate and only disturbance is continued from the closest point on the mean
+waterline itself, with zero outward offset. Boundary evaluation requires explicit
+admission; actual interior Green-function queries remain prohibited. The selected
+edge/corner check returned finite exact values and approach sequences converging
+toward them. Its original0.1% comparison screen FAILED and remains recorded;
+finite-offset spatial variation is not an isolated evaluator-error measurement.
+The exact trace is an engineering policy, not a new height-accuracy certificate.
+Historical padded/positive-offset studies retain their original settings/claims.
+
 ## Per-component packet interface, corrected user decision2026-10-27
 
 CURRENT cutoff utility uses FIXED10ms sampling. Inputs:f0,phaseDIRECTmidpoint,

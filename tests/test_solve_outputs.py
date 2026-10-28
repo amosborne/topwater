@@ -7,7 +7,7 @@ import numpy as np
 import pytest
 
 from topwater import solve_outputs
-from topwater.workflow_data import Result
+from topwater.workflow_data import Result, Sea
 from tests.test_workflow_data import result as tiny_result
 
 
@@ -49,6 +49,21 @@ def test_success_publishes_real_png_and_matching_archive(tmp_path):
     assert mpimg.imread(plot).shape[0] > 100
     assert {p.name for p in directory.iterdir()} == {'result.npz', 'result.png'}
     assert list(tmp_path.iterdir()) == [directory]
+
+
+def test_original_sea_is_explicit_plot_input_and_never_added_to_result_archive(tmp_path, monkeypatch):
+    data = tiny_result()
+    sea = Sea(np.array([.3]), np.array([1.]), np.array([.4]), np.array([.7]))
+    recorded = []
+    def capture(result, path, *, sea):
+        recorded.append((result, sea))
+        Path(path).write_bytes(b'complete combined plot')
+    monkeypatch.setattr(solve_outputs, 'save_motion_plot', capture)
+    archive, _ = solve_outputs.save_solve_outputs(data, tmp_path/'case', sea=sea)
+    assert recorded == [(data, sea)]
+    with np.load(archive, allow_pickle=False) as saved:
+        assert set(saved.files) == set(Result.members)
+        assert not any(name.startswith('sea_') for name in saved.files)
 
 
 def test_plot_failure_preserves_both_previous_outputs(tmp_path, monkeypatch):

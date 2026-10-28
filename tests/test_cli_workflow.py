@@ -84,23 +84,36 @@ def test_corrupt_result_is_clear_fatal_and_preserves_video(tmp_path,capsys):
     (['--rest', '2', '--ramp', '3'], (100., 2., 3.), 110., 55.),
 ])
 def test_wecsim_cli_publishes_result_and_motion_plot(tmp_path, monkeypatch, flags, timing, total, midpoint):
-    from topwater import wecsim_backend
+    from topwater import solve_outputs, wecsim_backend
     from .test_workflow_data import boat, result
     from topwater.workflow_data import Result
     solved = result()
     boat().save(tmp_path/'boat.npz')
-    Sea(np.array([]), np.array([]), np.array([]), np.array([])).save(tmp_path/'sea.npz')
+    original_sea = Sea([.1, .2], [1., 2.], [.3, .6], [.4, .8])
+    original_sea.save(tmp_path/'sea.npz')
     original_inputs = {name: (tmp_path/name).read_bytes() for name in ('boat.npz', 'sea.npz')}
     calls = []
+    plotted_seas = []
+    publish_pair = solve_outputs.save_solve_outputs
+    def capture_plot_sea(data, directory, *, sea=None):
+        plotted_seas.append(sea)
+        return publish_pair(data, directory, sea=sea)
     def ready_motion(body, waves, dwell_s, *, rest_s, ramp_s):
         calls.append((dwell_s, rest_s, ramp_s))
         return solved
     monkeypatch.setattr(wecsim_backend, 'solve', ready_motion)
+    monkeypatch.setattr(solve_outputs, 'save_solve_outputs', capture_plot_sea)
     assert main(['solve', str(tmp_path), '100', '--solver=wecsim', *flags]) == 0
     assert calls == [timing]
+    assert len(plotted_seas) == 1
+    for name in Sea.members:
+        np.testing.assert_array_equal(getattr(plotted_seas[0], name), getattr(original_sea, name))
     for name, original in original_inputs.items():
         assert (tmp_path/name).read_bytes() == original
     np.testing.assert_array_equal(Result.load(tmp_path/'result.npz').position_m, solved.position_m)
+    with np.load(tmp_path/'result.npz', allow_pickle=False) as archive:
+        assert set(archive.files) == set(Result.members)
+        assert not any(name.startswith('sea_') for name in archive.files)
     assert (tmp_path/'result.png').read_bytes().startswith(b'\x89PNG\r\n\x1a\n')
     log = (tmp_path/'result.log').read_text()
     assert (f'PACKET dwell_s={timing[0]:g} rest_each_s={timing[1]:g} ramp_each_s={timing[2]:g} '

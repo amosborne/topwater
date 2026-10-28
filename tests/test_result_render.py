@@ -76,6 +76,107 @@ def test_render_consumes_variable_topology_and_preserves_hull_hole(tmp_path, cap
     assert list(tmp_path.iterdir()) == [destination]
 
 
+def test_approved_graticule_is_cached_transparently_and_drawn_above_each_moving_frame(tmp_path, monkeypatch):
+    from pathlib import Path
+    from matplotlib.backends.backend_agg import FigureCanvasAgg
+    from matplotlib.figure import Figure
+    import imageio_ffmpeg
+    import topwater.result_render as module
+    original = saved_result()
+    water = np.array([[-5., -5., .2], [5., -5., .2], [5., 5., .2], [-5., 5., .2]])
+    faces = np.array([[0, 1, 2], [0, 2, 3]])
+    result = replace(original,
+        position_m=np.array([[0., 0., 0.], [.1, .05, 0.], [.2, .1, 0.]]),
+        orientation_wxyz=Rotation.from_euler('z', np.array([[.1], [.3], [.5]])).as_quat(scalar_first=True),
+        surface_vertices_m=np.vstack((water, water)), surface_faces=np.vstack((faces, faces)),
+        surface_vertex_offsets=np.array([0, 4, 8]), surface_face_offsets=np.array([0, 2, 4]))
+    frames, full_draws, cached, layouts, order, norms = [], [], [], [], [], []
+    draw = FigureCanvasAgg.draw
+    draw_artist = Figure.draw_artist
+    make = module._make_graticule_overlay
+    edge = module._edge_graticule
+
+    def count_draw(canvas, *args, **kwargs):
+        full_draws.append(canvas.figure)
+        return draw(canvas, *args, **kwargs)
+
+    def capture_cache(figure, lower, upper, norm, ticks):
+        norms.append(norm)
+        np.testing.assert_allclose(lower, -upper, atol=1e-15)
+        assert norm.vmin == pytest.approx(-.2) and norm.vmax == pytest.approx(.2)
+        artist = make(figure, lower, upper, norm, ticks)
+        cached.append(np.asarray(artist.get_array()).copy())
+        return artist
+
+    def capture_edges(figure, axes, lower, upper, norm, ticks):
+        bar, metadata = edge(figure, axes, lower, upper, norm, ticks)
+        assert bar.mappable.norm is norm and bar.mappable.get_cmap().name == 'coolwarm'
+        assert [label.get_text() for label in bar.ax.get_yticklabels()] == ['-0.2', '0', '+0.2']
+        assert any(text.get_text() == 'Z (m)' for text in axes.texts)
+        assert metadata['edge_insets_equal'] and metadata['square_perimeter']
+        assert metadata['edge_inset_fraction'] == .04
+        assert metadata['numeric_labels_on'] == ['bottom', 'left']
+        assert metadata['matching_ticks_on'] == ['top', 'right']
+        assert metadata['all_tick_corner_exclusion_fraction'] == .08
+        assert metadata['numeric_label_corner_exclusion_fraction'] == .12
+        assert metadata['gauge_zero_fraction'] == pytest.approx(.5)
+        assert metadata['world_y_zero_fraction'] == pytest.approx(.5)
+        assert metadata['gauge_metres_per_pixel'] == pytest.approx(metadata['common_metres_per_pixel'])
+        layouts.append(metadata)
+        return bar, metadata
+
+    def capture_order(figure, artist):
+        if artist.get_label() in ('world graticule', 'motion header'):
+            order.append(artist.get_label())
+            main = figure.axes[0]
+            np.testing.assert_allclose(main.get_position().bounds, [0., 0., 1., 1.], atol=1e-15)
+            np.testing.assert_allclose(main.transData.transform([0., 0.]), [400., 400.], atol=1e-10)
+            if artist.get_label() == 'motion header':
+                assert artist.get_fontsize() == 10.5 and artist.get_position() == (.5, .925)
+            for collection in main.collections:
+                if hasattr(collection, 'get_cmap') and collection.get_cmap().name == 'coolwarm':
+                    assert collection.norm is norms[0]
+        return draw_artist(figure, artist)
+
+    def writer(path, *args, **kwargs):
+        Path(path).write_bytes(b'private cached-graticule test stub')
+        while True:
+            frame = yield
+            frames.append(np.asarray(frame).copy())
+
+    monkeypatch.setattr(FigureCanvasAgg, 'draw', count_draw)
+    monkeypatch.setattr(Figure, 'draw_artist', capture_order)
+    monkeypatch.setattr(module, '_make_graticule_overlay', capture_cache)
+    monkeypatch.setattr(module, '_edge_graticule', capture_edges)
+    monkeypatch.setattr(imageio_ffmpeg, 'write_frames', writer)
+    monkeypatch.setattr(module, '_verify_video', lambda *args: None)
+    summary = render_result(result, tmp_path/'approved.mp4')
+    assert summary['complete'] and summary['frames'] == len(frames) == 2
+    assert len(full_draws) == 2  # One static overlay and one main background, never per frame.
+    assert len(cached) == len(layouts) == len(norms) == 1
+    assert order == ['world graticule', 'motion header']*2
+    rgba = cached[0]
+    assert rgba.shape == (800, 800, 4)
+    assert np.any(rgba[:, :, 3] == 0)  # Empty overlay pixels preserve the actual scene.
+    opaque = rgba[:, :, 3] == 255
+    assert np.any(opaque)
+    for frame in frames:
+        np.testing.assert_array_equal(frame[opaque], rgba[opaque])
+    assert not np.array_equal(frames[0], frames[1])  # Actual body poses and telemetry change.
+    np.testing.assert_array_equal(result.surface_vertices_m, np.vstack((water, water)))
+
+
+def test_origin_camera_failure_preserves_old_video_when_original_zoom_cannot_cover_trajectory(tmp_path):
+    original = saved_result()
+    translated = replace(original, position_m=np.tile([10., 0., 0.], (3, 1)),
+                         surface_vertices_m=original.surface_vertices_m+[10., 0., 0.])
+    output = tmp_path/'video.mp4'
+    output.write_bytes(b'previous movie')
+    with pytest.raises(ValueError, match='origin-centred camera'):
+        render_result(translated, output)
+    assert output.read_bytes() == b'previous movie'
+
+
 def test_full_dry_wireframe_black_outline_and_solid_blue_waterline_layers(tmp_path, monkeypatch):
     from pathlib import Path
     from matplotlib.axes import Axes

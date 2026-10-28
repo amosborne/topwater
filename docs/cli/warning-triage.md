@@ -1,6 +1,34 @@
 # Canonical workflow warning triage
 
-## Current accepted 130-second packet run
+## Current simplified reconstruction and spectrum chart
+
+The current result reuses the audited 130-second WEC-Sim motion and contains a
+fresh total incident/diffraction/radiation field. Reconstruction uses the native
+10 ms velocity FFT without padding, oversampling or invented future motion.
+Disturbance continuation samples the exact mean waterline. Normal solve no longer
+runs wetted-area comparisons, disturbance statistics or the opening-clearance
+flooding gate. Their old metrics below are historical, not current pass criteria.
+
+The retained physical warnings still need evaluation: coarse mesh and irregular
+frequencies belong to #32; inherited mean-reference restoring departures and
+unavailable restoring diagnostics belong to #34. They were not removed or
+reclassified as harmless. The new reconstruction log keeps their provenance and
+summarizes repeated Capytaine warnings. Plot-only continuations preserve that
+physical log prefix; plotting and the final plain render add no warnings.
+
+First/last water frames have maximum absolute elevations of 1.066/1.059 mm and
+pass the 10 mm calm threshold. Across the complete initial/final rest intervals,
+the spatial patch reaches 138.844/140.897 mm, mostly from incoming waves crossing
+its outer area. These observations do not measure reconstruction error or prove
+temporal wraparound. No padded-reference comparison was added.
+
+The sea spectrum is only in result.png, using original-carrier RMS contributions
+per bin. Result.npz has its original eleven motion/hull/surface arrays, without
+sea display metadata; video rendering remains standalone. The older selected
+60-second conditional height bound does not qualify the changed 130-second
+method. See the [current run evidence](../experts/simple-boat-workflow-run-2026-10-28.json).
+
+## Historical first 130-second packet run
 
 Implementation `e416ca8` passed 170 focused Python tests in 56.93 s. The new
 case uses 10 s rest, 5 s ramp, 100 s dwell, 5 s ramp and 10 s rest, with a

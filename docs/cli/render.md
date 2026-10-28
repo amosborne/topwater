@@ -83,8 +83,10 @@ durations) and stage timings rounded to milliseconds.
 
 - Matplotlib Agg CPU rendering and bundled FFmpeg via `imageio-ffmpeg`; no GPU
   rendering is claimed.
-- Fixed top-down square view, equal metres, centered over the entire sampled
-  hull-motion envelope, with framing factor 1.45.
+- Fixed full-bleed top-down square view, equal metres, centred on world (0,0).
+  World zero is the centre of the 800-square frame. The half-span remains half
+  the largest sampled hull-motion span times framing factor 1.45; the complete
+  sampled hull must fit after recentering. No boat-relative camera rotation.
 - Whole saved sequence. The CLI sets the rendering budget to
   `max(240 seconds, number of saved water-surface frames * 1 second)` and records
   that choice in `video.log`. It counts `surface_time_s`, not the usually denser
@@ -92,8 +94,17 @@ durations) and stage timings rounded to milliseconds.
   safety limit, not an expected duration. The Python `RenderSettings` API default
   remains 240 seconds. H.264 uses 3 Mbit/s, YUV420p and one encoder thread. Encoder
   finalization is bounded to 30 seconds (or the smaller configured Python budget).
-- Continuous coolwarm water elevation colors, fixed symmetrically about zero
-  using the entire saved surface range. No wave or motion amplification.
+- Continuous coolwarm water elevation colors, fixed symmetrically about calm
+  physical world z=0. The full-run maximum absolute saved height is rounded
+  outward to 0.1 m for nice fixed limits (for example 1.523 m becomes +/-1.6 m).
+  This changes only the display range, with no height, motion or DC-offset change.
+- Plain overlaid world-metre graduations have equal 4% insets on all four sides.
+  Numbers appear only at bottom/left; top/right have matching ticks. Corner
+  clearances prevent perpendicular label clashes. A slim overlaid `Z (m)` gauge
+  uses the water's exact same coolwarm map and normalization. Its zero label is
+  `0`, on the world-Y-zero row, and its height graduations share world Y's metres
+  per pixel. There is no spectrum, opaque instrument panel, cropped viewport,
+  decorative rail, corner bracket or axes box.
 - Off-white mask only where the saved water lies inside the posed hull volume.
   Dry hull faces are transparent; their mesh and rim lines remain visible.
   Bottom-to-top drawing order is water surface (with its interior-water mask),
@@ -111,12 +122,17 @@ durations) and stage timings rounded to milliseconds.
   Separation from the moving blue line is a qualitative geometry comparison,
   not a force or motion accuracy bound. No label, legend, metric, or HUD change
   is added. If the initial hull does not intersect z=0, the reference is empty.
-- TIME/ROLL/PITCH/HEAVE header. Roll/pitch are XYZ Euler departures from the
+- The 10.5-point TIME/ROLL/PITCH/HEAVE header sits inside the upper graticule edge.
+  Roll/pitch are XYZ Euler departures from the
   initial attitude expressed in its initial horizontal heading frame. Heave is
   change in world CG height. Initial equilibrium trim is not wave-driven pitch.
-- One persistent figure with reused hull/header artists and Agg background
-  blitting. Water artists are reused when connectivity is unchanged and rebuilt
-  when topology changes. A full figure redraw is not performed for each frame.
+- One persistent scene figure with reused hull/header artists and Agg background
+  blitting. A small auxiliary Agg figure draws the static graticule/gauge once;
+  its transparent RGBA cache is one standard Matplotlib FigureImage. Each frame
+  draws water/boat layers, then alpha-composites that cached instrument image,
+  then draws telemetry. This keeps instruments visible above moving water.
+  Water artists are reused when connectivity is unchanged and rebuilt when
+  topology changes. A full figure redraw is not performed for each frame.
 
 ## Fatal errors and detection
 
@@ -124,6 +140,7 @@ durations) and stage timings rounded to milliseconds.
 |---|---|
 | Load | Missing/malformed NPZ members, invalid arrays, nonfinite values, invalid hull or surface indices, invalid quaternions or incompatible time endpoints. |
 | Before drawing | Nonuniform surface cadence, undefined initial horizontal heading, invalid output path or unsupported framing/budget. |
+| Before drawing | The complete hull trajectory does not fit the origin-centred view at its fixed zoom, or rounded gauge endpoints lie outside the world-Y view. These presentation limits fail clearly rather than silently moving the camera or rescaling gauge metres. |
 | Before drawing | Ambiguous coplanar physical-hull/flat-z=0 intersection prevents a unique reference waterline. |
 | At each saved frame | Folded/degenerate XY projection, inconsistent face winding, non-manifold/disconnected sheet, crossing boundaries, overlapping/invalid triangulation, or an outer boundary entering the view. |
 | At each saved frame | Uncovered interior water hole outside the opaque hull footprint, or water missing a fixed view corner. A boat-shaped hole is supported. |

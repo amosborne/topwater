@@ -446,6 +446,128 @@ def _publish_video(encoded, output):
         os.replace(ready, output)
 
 
+def _edge_graticule_ticks(lower, upper):
+    """Nice world-metre graduations used by edges and the height gauge."""
+    from matplotlib.ticker import MaxNLocator
+    ticks = {}
+    for axis, name in enumerate(('x', 'y')):
+        lo, hi = float(lower[axis]), float(upper[axis])
+        values = MaxNLocator(nbins=5, steps=[1, 2, 2.5, 5, 10]).tick_values(lo, hi)
+        step = float(values[1]-values[0])
+        major = values[(values >= lo+.08*(hi-lo)) & (values <= lo+.92*(hi-lo))]
+        labelled = major[(major >= lo+.12*(hi-lo)) & (major <= lo+.88*(hi-lo))]
+        minor_step = step/5
+        minor = np.arange(np.ceil(lo/minor_step), np.floor(hi/minor_step)+1)*minor_step
+        ticks[name] = dict(major_world_m=major.tolist(), major_step_m=step,
+                          labelled_world_m=labelled.tolist(),
+                          minor_world_m=minor.tolist(), minor_step_m=minor_step)
+    return ticks
+
+def _edge_graticule(figure, axes, lower, upper, normalization, ticks):
+    """Plain full-bleed edge graduations and a gauge on the SAME metre scale."""
+    from matplotlib.cm import ScalarMappable
+    from matplotlib.lines import Line2D
+
+    def line(x, y, width=1.1):
+        axes.add_line(Line2D(x, y, transform=axes.transAxes, color='black',
+            linewidth=width, clip_on=False, zorder=9))
+
+    def text(x, y, value, **kwargs):
+        axes.text(x, y, value, transform=axes.transAxes, fontfamily='DejaVu Sans Mono',
+            fontsize=9.5, color='black', clip_on=False, zorder=10, **kwargs)
+
+    # No decorative rails, corner brackets, frame or contrast double-lines.
+    for axis, name in enumerate(('x', 'y')):
+        lo, hi = float(lower[axis]), float(upper[axis])
+        major = np.array(ticks[name]['major_world_m'])
+        step = ticks[name]['major_step_m']
+        for value in ticks[name]['minor_world_m']:
+            fraction = (value-lo)/(hi-lo)
+            if not .08 <= fraction <= .92:
+                continue
+            is_major = bool(np.any(abs(major-value) <= step*1e-8))
+            length = .020 if is_major else .010
+            width = 1.1 if is_major else .8
+            if axis == 0:
+                line([fraction, fraction], [.04, .04+length], width)
+                line([fraction, fraction], [.96, .96-length], width)
+            else:
+                line([.04, .04+length], [fraction, fraction], width)
+                line([.96, .96-length], [fraction, fraction], width)
+            if is_major and .12 <= fraction <= .88:
+                label = f'{(0. if abs(value) < step*1e-10 else value):g}'
+                if axis == 0:
+                    text(fraction, .075, label, ha='center', va='bottom')
+                else:
+                    text(.075, fraction, label, ha='left', va='center')
+    text(.5, .009, 'X (m)', ha='center', va='bottom')
+    text(.009, .5, 'Y (m)', ha='left', va='center', rotation=90)
+
+    # Height z=v is placed on exactly the same screen row as world y=v.
+    span_y = float(upper[1]-lower[1])
+    bottom = float((normalization.vmin-lower[1])/span_y)
+    top = float((normalization.vmax-lower[1])/span_y)
+    if not 0. <= bottom < top <= 1.:
+        raise ValueError('This preview requires the rounded height gauge inside the fixed world-Y view; no rescaling is applied')
+    gauge_axes = figure.add_axes((.875, bottom, .018, top-bottom), zorder=11)
+    gauge_axes.patch.set_alpha(0.)
+    bar = figure.colorbar(ScalarMappable(norm=normalization, cmap='coolwarm'), cax=gauge_axes)
+    bar.outline.set_visible(False)
+    bar.set_ticks([normalization.vmin, 0., normalization.vmax],
+        labels=[f'{normalization.vmin:+g}', '0', f'{normalization.vmax:+g}'])
+    minor_step = ticks['y']['minor_step_m']
+    minor = np.arange(np.ceil(normalization.vmin/minor_step),
+                      np.floor(normalization.vmax/minor_step)+1)*minor_step
+    minor = minor[(abs(minor) > minor_step*1e-8) &
+                  (minor > normalization.vmin+minor_step*1e-8) &
+                  (minor < normalization.vmax-minor_step*1e-8)]
+    bar.ax.set_yticks(minor, minor=True)
+    bar.ax.yaxis.set_ticks_position('left')
+    bar.ax.tick_params(which='major', labelsize=9.5, colors='black', width=1.1, length=4, pad=4)
+    bar.ax.tick_params(which='minor', colors='black', width=.8, length=2.5)
+    for label in bar.ax.get_yticklabels():
+        label.set_fontfamily('DejaVu Sans Mono')
+    text(.884, top+.017, 'Z (m)', ha='center', va='bottom')
+    zero_row = float(-lower[1]/span_y)
+    gauge_zero_row = bottom+(top-bottom)*float(normalization(0.))
+    if not np.isclose(gauge_zero_row, zero_row, rtol=0., atol=1e-12):
+        raise ValueError('height gauge zero does not match the world-Y zero row')
+    gauge_metres_per_pixel = float((normalization.vmax-normalization.vmin)/((top-bottom)*800))
+    if not np.isclose(gauge_metres_per_pixel, span_y/800, rtol=1e-12, atol=0.):
+        raise ValueError('height gauge and world-Y graduations must share metres per pixel')
+    return bar, dict(edge_ticks=ticks, gauge_zero_fraction=gauge_zero_row,
+        world_y_zero_fraction=zero_row, gauge_y_fraction=[bottom, top],
+        gauge_end_world_y_m=[normalization.vmin, normalization.vmax],
+        common_metres_per_pixel=span_y/800, gauge_metres_per_pixel=gauge_metres_per_pixel,
+        gauge_minor_step_m=minor_step,
+        edge_insets_equal=True, edge_inset_fraction=.04, square_perimeter=True,
+        square_perimeter_fraction=[.04, .04, .96, .96],
+        all_tick_corner_exclusion_fraction=.08,
+        numeric_label_corner_exclusion_fraction=.12,
+        numeric_labels_on=['bottom', 'left'], matching_ticks_on=['top', 'right'])
+
+def _make_graticule_overlay(figure, lower, upper, normalization, ticks):
+    """Cache standard static HUD artists as one transparent FigureImage."""
+    from matplotlib.backends.backend_agg import FigureCanvasAgg
+    from matplotlib.figure import Figure
+    overlay = Figure(figsize=figure.get_size_inches(), dpi=figure.dpi, facecolor='none')
+    FigureCanvasAgg(overlay)
+    try:
+        axes = overlay.add_axes((0., 0., 1., 1.), aspect='equal', facecolor='none')
+        axes.set_xlim(lower[0], upper[0]); axes.set_ylim(lower[1], upper[1]); axes.set_axis_off()
+        bar, _ = _edge_graticule(overlay, axes, lower, upper, normalization, ticks)
+        if bar.mappable.norm is not normalization:
+            raise ValueError('height gauge must share the water normalization')
+        overlay.canvas.draw()
+        rgba = np.array(overlay.canvas.buffer_rgba(), copy=True)
+    finally:
+        overlay.clear()
+    artist = figure.figimage(rgba, xo=0, yo=0, origin='upper', resize=False)
+    artist.set_label('world graticule')
+    artist.set_animated(True)
+    return artist
+
+
 def render_result(result, output_path, settings=None):
     """Render all saved surface frames to a validated, atomically replaced MP4."""
     if not isinstance(result, Result):
@@ -472,12 +594,15 @@ def render_result(result, output_path, settings=None):
     for position, rotation in zip(positions, rotations):
         xy = (position+local_hull @ rotation.T)[:, :2]
         low, high = np.minimum(low, xy.min(axis=0)), np.maximum(high, xy.max(axis=0))
-    center = (low+high)/2
+    center = np.zeros(2)
     half = float((high-low).max()/2)*settings.framing
     if half <= 0:
         raise ValueError('projected hull has no finite view extent')
+    if np.max(abs(np.r_[low, high])) > half:
+        raise ValueError('origin-centred camera must cover the full hull trajectory at the fixed zoom')
     lower, upper = center-half, center+half
-    magnitude = max(float(abs(result.surface_vertices_m[:, 2]).max()), 1e-12)
+    magnitude = float(np.ceil(max(float(abs(result.surface_vertices_m[:, 2]).max()), 1e-12)/.1)*.1)
+    ticks = _edge_graticule_ticks(lower, upper)
     edges, rim = mesh_edges(result.hull_faces)
     reference = _flat_reference_waterline(positions[0]+local_hull @ rotations[0].T,
                                           result.hull_faces, lower, upper)
@@ -494,6 +619,7 @@ def render_result(result, output_path, settings=None):
     axes = figure.add_axes((0, 0, 1, 1), aspect='equal')
     axes.set_xlim(lower[0], upper[0]); axes.set_ylim(lower[1], upper[1]); axes.set_axis_off()
     normalization = colors.TwoSlopeNorm(vmin=-magnitude, vcenter=0., vmax=magnitude)
+    graticule = _make_graticule_overlay(figure, lower, upper, normalization, ticks)
     interior = PathPatch(_mask_path([]), facecolor='#f3f1e8', edgecolor='none',
                          antialiased=False, alpha=1., zorder=1)
     axes.add_patch(interior)
@@ -507,9 +633,10 @@ def render_result(result, output_path, settings=None):
                                     zorder=4, label='physical waterline')
     for artist in (reference_artist, mesh_artist, rim_artist, contact_artist):
         axes.add_collection(artist)
-    header = figure.text(.5, .985, '', ha='center', va='top', fontsize=14.5,
+    header = figure.text(.5, .925, '', ha='center', va='top', fontsize=10.5,
                          fontfamily='DejaVu Sans Mono', color='black',
                          bbox={'facecolor': 'white', 'edgecolor': 'none', 'alpha': .85, 'pad': 3})
+    header.set_label('motion header')
     for artist in (interior, reference_artist, mesh_artist, rim_artist, contact_artist, header):
         artist.set_animated(True)
     figure.canvas.draw()
@@ -584,6 +711,9 @@ def render_result(result, output_path, settings=None):
                     figure.canvas.restore_region(background)
                     for artist in (water, interior, reference_artist, mesh_artist, rim_artist, contact_artist):
                         axes.draw_artist(artist)
+                    # Full-view water covers static background pixels. Alpha-over
+                    # the cached standard HUD after the scene, before telemetry.
+                    figure.draw_artist(graticule)
                     figure.draw_artist(header)
                     figure.canvas.blit(figure.bbox)
                     draw_seconds += time.monotonic()-drawing

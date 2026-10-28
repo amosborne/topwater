@@ -95,3 +95,43 @@ def test_offline_policy_rejects_unrepresented_knots_or_short_frequency_bank():
         offline_radiation_response(w, H, t, v, a,
             settings=OfflineRadiationSettings(period_s=8., fft_dt_s=1/16,
                 future_s=1., maximum_omega_rad_s=40.))
+
+
+@pytest.mark.parametrize('n', [9, 10, 13001])
+def test_default_native_fft_has_no_resampling_padding_or_future(n):
+    dt = .01
+    t = np.arange(n)*dt
+    v = np.zeros((n, 6)); a = np.zeros_like(v)
+    v[:, 0] = np.sin(2*np.pi*np.arange(n)/n)
+    w = np.array([0., 48.])
+    H = np.zeros((2, 1, 6), dtype=complex)
+    H[:, 0, 0] = 1.
+    actual, evidence = offline_radiation_response(w, H, t, v, a)
+    # Analytical DFT-bin sinusoid: for short records its first bin lies above
+    # the retained band, otherwise this identity transfer preserves it exactly.
+    expected = v[:, 0] if 2*np.pi/(n*dt) <= 48 else np.zeros(n)
+    np.testing.assert_allclose(actual[:, 0], expected, rtol=0, atol=2e-14)
+    assert evidence['n_fft'] == n
+    assert evidence['fft_dt_s'] == pytest.approx(dt)
+    assert evidence['fft_time_origin_s'] == 0
+    assert evidence['period_s'] == pytest.approx(n*dt)
+    assert evidence['future_duration_s'] == 0
+    assert evidence['future_policy'] == 'none'
+    assert evidence['pre_response_max_abs_m'] is None
+    selected, _ = offline_radiation_response(w, H, t, v, a, output_time_s=t[::2])
+    np.testing.assert_array_equal(selected, actual[::2])
+
+
+def test_native_fft_complex_phase_matches_direct_dft_for_odd_length():
+    n, dt = 11, .01
+    t = np.arange(n)*dt
+    v = np.zeros((n, 6)); v[:, 0] = np.sin(2*np.pi*np.arange(n)/n)
+    w = np.array([0., np.pi/dt])
+    H = np.zeros((2, 1, 6), dtype=complex); H[:, 0, 0] = .7+.4j
+    settings = OfflineRadiationSettings(maximum_omega_rad_s=np.pi/dt)
+    actual, _ = offline_radiation_response(w, H, t, v, np.zeros_like(v), settings=settings)
+    k = np.arange(1, (n+1)//2)
+    angle = 2*np.pi*np.arange(n)[:, None]*k/n
+    coefficients = np.exp(-1j*angle).T @ v[:, 0]
+    expected = 2/n*(np.exp(1j*angle) @ ((.7-.4j)*coefficients)).real
+    np.testing.assert_allclose(actual[:, 0], expected, rtol=0, atol=1e-14)

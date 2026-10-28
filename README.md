@@ -68,21 +68,31 @@ the mean-hull linearization.
 The reconstructed diffraction and radiation fields also remain referenced to
 the mean hull. Diffraction follows the incoming waves, while radiation is driven
 by the computed motion. These disturbance fields are not rigidly carried along
-with the animated boat. The moving waterline is obtained afterward by intersecting
-the reconstructed total water surface with the current posed hull; it does not
-feed back into the forces.
+with the animated boat. During rendering, the moving waterline is obtained by
+intersecting the saved total water surface with the current posed hull; it does
+not feed back into the forces. Solve exports the uncut water grid without moving
+waterline, opening-clearance, wetted-area or disturbance-statistics calculations.
+
+Radiation reconstruction uses a single FFT of the saved native velocities and
+an inverse FFT on the same 10 ms clock, without oversampling, zero-padding or an
+invented future trajectory. It retains the full complex frequency response.
+Calm-water elevation over the rest intervals is assessed separately against
++/- 1 cm; finite output alone does not establish the absence of temporal wraparound.
 
 Motion can expose water locations inside the original mean-hull waterline
 footprint, where the exterior hydrodynamic solution is not defined. Today we
 approximate the disturbance at each such location using the nearest mean-waterline
-edge: find its closest boundary point, step outward by
-`min(0.025 m, 0.01 * beam)`, and copy the diffraction and radiation values from
-that exterior sample. Nearby exterior locations within this offset use the same
-trace policy. The incident wave is evaluated at the actual requested location.
-Thus only the disturbance is continued, approximately constant inward along a
-nearest-edge normal; the total water elevation is not held constant. The offset
-specifies where to sample outside the hull, not a maximum continuation distance.
-No blending or continuity guarantee is imposed where the nearest edge changes.
+edge: find its closest boundary point and copy the diffraction and radiation
+values evaluated **on that boundary**, without an outward offset. Exterior
+locations retain their actual coordinates. The incident wave is evaluated at
+the actual requested location. Thus only the disturbance is continued,
+approximately constant inward along a nearest-edge normal; total water elevation
+is not held constant. No blending or continuity guarantee is imposed where the
+nearest edge changes. Strictly interior Green-function queries remain forbidden.
+A small finite-panel evaluation check found finite boundary values approached
+by exterior samples; it supports this engineering choice without proving a
+1 cm elevation-error bound. Earlier saved fields retain their original offset
+policies until explicitly regenerated.
 
 This continuation does not solve a moving fluid boundary. Separation between
 the fixed mean waterline and moving waterline is a useful visual indication of
@@ -139,9 +149,12 @@ extension. See [packet construction](docs/wave-packet-search.md).
 
 Generation writes sea.npz. Solve reads boat.npz/sea.npz and writes the complete
 result.npz and six-DOF motion plot result.png; an existing video is left untouched.
-Render reads only result.npz,
-including its exported hull snapshot, and writes video.mp4 without recomputing
-waves. Results permit independently sampled motion and changing surface topology.
+The PNG includes the six motion histories and a polar spectrum from the original
+sea input, with a bin-RMS-elevation colorbar. Default
+heading points up; a dotted line marks the saved initial heading. Spectrum data are not stored in
+result.npz. Render reads only result.npz, including its exported hull snapshot,
+and writes video.mp4 without recomputing waves. Results permit independently
+sampled motion and changing surface topology.
 Validated data/video outputs are replaced atomically; failures preserve the
 previous data. Commands also write consistently formatted `sea.log`, `result.log`
 and `video.log`, each describing its latest attempt. Logs are replaced at command

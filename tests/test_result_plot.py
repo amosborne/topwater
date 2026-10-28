@@ -5,8 +5,8 @@ import numpy as np
 import pytest
 from scipy.spatial.transform import Rotation
 
-from topwater.result_plot import motion_histories, save_motion_plot
-from topwater.workflow_data import Result
+from topwater.result_plot import _rms_color_maximum, _sea_spectrum, motion_histories, save_motion_plot
+from topwater.workflow_data import Result, Sea
 
 
 def saved_motion_result(times=None):
@@ -24,6 +24,140 @@ def saved_motion_result(times=None):
                   surface_faces=np.array([[0, 1, 2], [0, 1, 2]]),
                   surface_vertex_offsets=np.array([0, 3, 6]),
                   surface_face_offsets=np.array([0, 1, 2]))
+
+
+def test_original_sea_spectrum_bins_power_in_world_from_directions_without_phase():
+    sea = Sea(np.array([.3, .4, .12, .8]),
+        2*np.pi*np.array([.112, .113, .262, .612]),
+        np.array([-np.pi, -np.pi+np.deg2rad(5), -np.pi/2, 0.]), np.zeros(4))
+    angle, frequency, bins, height, heading = _sea_spectrum(sea)
+    np.testing.assert_allclose(np.diff(angle), np.deg2rad(15), rtol=0., atol=1e-15)
+    np.testing.assert_allclose(np.diff(frequency), .025, rtol=0., atol=1e-16)
+    assert frequency[-1] == pytest.approx(.625)  # Include carriers above .5 Hz.
+    expected = np.zeros((25, 24))
+    expected[4, 0], expected[10, 6], expected[24, 12] = np.sqrt(.5)*np.array([.5, .12, .8])
+    np.testing.assert_allclose(bins, expected, rtol=0., atol=1e-15)
+    assert np.sum(bins**2) == pytest.approx(.5*np.sum(sea.amplitudes_m**2))
+    assert height == pytest.approx(4*np.sqrt(.5*np.sum(sea.amplitudes_m**2)))
+    assert height == pytest.approx(4*np.sqrt(np.sum(bins**2)))
+    shifted = replace(sea, phases_rad=np.array([.7, -.4, 1., 2.]))
+    repeated = _sea_spectrum(shifted)
+    np.testing.assert_array_equal(repeated[2], bins)
+    assert repeated[3:] == (height, heading)
+
+
+def test_calm_and_ambiguous_default_sea_headings():
+    calm = Sea(np.array([]), np.array([]), np.array([]), np.array([]))
+    _, frequency, bins, height, heading = _sea_spectrum(calm)
+    assert frequency[-1] == .5 and bins.shape == (20, 24)
+    assert np.count_nonzero(bins) == 0 and height == heading == 0.
+    opposed = Sea(np.ones(2), np.ones(2), np.array([0., np.pi]), np.zeros(2))
+    with pytest.raises(ValueError, match='no unique default boat heading'):
+        _sea_spectrum(opposed)
+    with pytest.raises(TypeError, match='original Sea'):
+        _sea_spectrum(object())
+
+
+@pytest.mark.parametrize('peak, expected', [
+    (0., 1.), (.011, .011), (.115420427, .12), (.1, .1), (.415, .42), (.51, .51), (2.51, 2.6)])
+def test_colorbar_maximum_is_rounded_up_without_altering_bin_values(peak, expected):
+    values = np.array([[peak/3, peak]])
+    before = values.copy()
+    maximum = _rms_color_maximum(values)
+    assert maximum == pytest.approx(expected)
+    assert maximum >= peak
+    np.testing.assert_array_equal(values, before)
+
+
+@pytest.mark.parametrize('propagation, heading_offset, peak, expected_ticks', [
+    (.37, 0., .415, [0., .1, .2, .3, .4, .42]),
+    (-1.2, .23, .115420427, [0., .02, .04, .06, .08, .1, .12])])
+def test_combined_png_preserves_motion_axes_and_marks_actual_heading_relative_to_default(
+        tmp_path, monkeypatch, propagation, heading_offset, peak, expected_ticks):
+    from matplotlib.backends.backend_agg import FigureCanvasAgg
+    from matplotlib.image import imread
+    actual = saved_motion_result([0., .04, .08])
+    default = propagation+np.pi
+    orientation = Rotation.from_euler('z', default+heading_offset).as_quat(scalar_first=True)
+    actual = replace(actual, orientation_wxyz=np.tile(orientation, (3, 1)))
+    sea = Sea(np.array([peak/np.sqrt(.5)]), np.array([2*np.pi*.112]),
+              np.array([propagation]), np.zeros(1))
+    observed = []
+    print_png = FigureCanvasAgg.print_png
+
+    def inspect(canvas, *args, **kwargs):
+        figure = canvas.figure
+        assert len(figure.axes) == 8  # Six histories, polar spectrum and colorbar.
+        motion = figure.axes[:6]
+        polar, bar = figure.axes[6:]
+        assert polar.get_label() == 'sea spectrum'
+        assert polar.get_theta_offset() == pytest.approx(np.pi/2-default)
+        assert polar.get_theta_direction() == 1
+        downward = np.deg2rad(polar.get_rlabel_position())+polar.get_theta_offset()
+        assert np.mod(downward, 2*np.pi) == pytest.approx(3*np.pi/2)
+        mesh = polar.collections[0]
+        assert mesh.get_cmap().name == 'cividis'
+        values = np.ma.asarray(mesh.get_array())
+        zero = np.asarray(values.data) == 0.
+        assert np.any(zero) and not np.any(np.ma.getmaskarray(values))
+        zero_rgba = mesh.to_rgba(values)[zero]
+        np.testing.assert_allclose(zero_rgba,
+            np.tile(mesh.get_cmap()(0.), (int(np.count_nonzero(zero)), 1)), rtol=0., atol=1e-15)
+        assert not np.allclose(mesh.get_cmap()(0.)[:3], [1., 1., 1.])
+        assert polar.get_facecolor()[:3] == (1., 1., 1.)
+        assert all(label.get_color() == 'black' for label in polar.get_yticklabels())
+        np.testing.assert_allclose(polar.collections[0].get_coordinates()[0, :, 0],
+                                   np.linspace(0., 2*np.pi, 25), atol=1e-15)
+        assert all(label.get_text() == '' for label in polar.get_xticklabels())
+        assert len(polar.get_xticks()) == 0
+        assert not any(line.get_visible() for line in polar.get_xgridlines())
+        assert all(line.get_visible() for line in polar.get_ygridlines())
+        assert [label.get_text() for label in polar.get_yticklabels()] == ['0.1 Hz', '0.2', '0.3', '0.4']
+        line = next(line for line in polar.lines if line.get_label() == 'initial boat heading')
+        # The default is computed from Sea, not taken from this actual bow.
+        screen = np.mod(line.get_xdata()+polar.get_theta_offset(), 2*np.pi)
+        np.testing.assert_allclose(screen, np.pi/2+heading_offset, atol=1e-14)
+        assert line.get_linestyle() == ':'
+        assert line.get_color() == 'black'
+        assert bar.get_xlabel() == 'Bin RMS elevation (m)'
+        assert not figure.texts  # No figure supertitle/footer or polar title/subtitles.
+        norm = polar.collections[0].norm
+        assert norm.vmin == 0.
+        assert norm.vmax == pytest.approx(expected_ticks[-1])
+        assert np.max(polar.collections[0].get_array()) == pytest.approx(peak)
+        np.testing.assert_allclose(bar.get_xlim(), [norm.vmin, norm.vmax], atol=1e-15)
+        ticks = bar.get_xticks()
+        np.testing.assert_allclose(ticks, expected_ticks, atol=1e-15)
+        assert np.all((ticks >= 0.) & (ticks <= expected_ticks[-1]))
+        assert min(polar.get_position().x0, bar.get_position().x0) > max(
+            axis.get_position().x1 for axis in motion)
+        assert bar.get_position().y1 < polar.get_position().y0
+        assert bar.get_position().width > bar.get_position().height
+        right_center = 14.75/17.5
+        assert (polar.get_position().x0+polar.get_position().x1)/2 == pytest.approx(right_center)
+        assert (bar.get_position().x0+bar.get_position().x1)/2 == pytest.approx(right_center)
+        assert polar.get_position().height > .75
+        assert polar.get_position().y1 > .95
+        assert polar.get_position().width*17.5 == pytest.approx(5.1)
+        assert polar.get_position().height*6.5 == pytest.approx(5.1)
+        assert bar.get_position().width == pytest.approx(polar.get_position().width)
+        for row in (motion[:3], motion[3:]):
+            first = row[0].get_yticks()
+            assert len(first) == 7 and first[3] == 0.
+            np.testing.assert_allclose(first, -first[::-1], atol=1e-15)
+            for axis in row:
+                np.testing.assert_array_equal(axis.get_yticks(), first)
+                np.testing.assert_allclose(axis.get_ylim(), [first[0], first[-1]], atol=1e-15)
+                np.testing.assert_array_equal(axis.lines[0].get_xdata(), actual.time_s)
+        assert all(axis.get_xlabel() == 'Time (s)' for axis in motion[3:])
+        observed.append(True)
+        return print_png(canvas, *args, **kwargs)
+
+    monkeypatch.setattr(FigureCanvasAgg, 'print_png', inspect)
+    path = tmp_path/'result.png'
+    save_motion_plot(actual, path, sea=sea)
+    assert observed == [True]
+    assert imread(path).shape[:2] == (1170, 3150)
 
 
 def test_all_native_samples_and_six_motions_with_initial_heading_and_trim():
