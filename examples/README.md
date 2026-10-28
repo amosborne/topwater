@@ -14,7 +14,7 @@ sea realization comes from observation `ndbc-46086-20231223T0040Z`, seed 42.
 
 ```powershell
 uv run topwater generate-sea examples/simple-boat --record ndbc-46086-20231223T0040Z --seed 42
-uv run topwater solve examples/simple-boat 60 --solver=wecsim
+uv run topwater solve examples/simple-boat 100 --rest 10 --ramp 5 --solver=wecsim
 uv run topwater render examples/simple-boat
 ```
 
@@ -22,17 +22,29 @@ Each directory argument is optional and defaults to cwd. Solve now automatically
 publishes the NPZ and PNG together; render reads only result.npz. It preserves
 the producer's water mesh and computes waterline intersections separately.
 
-The recorded full run contains 3,001 motion samples and751 surface/video frames,
-including both endpoints. The encoded movie is 60.08 s because the last state
-occupies one frame interval. Public solve took 2393.74 s and render 226.93 s.
-The PNG feature was added afterward and the image was generated from the same
-completed result without rerunning physics; those original command logs remain
-unchanged. Plot histories agree with the retained native histories to rounding.
+The positional time is the full-amplitude dwell. This case uses 10 s rest,
+5 s ramp, 100 s dwell, 5 s ramp and 10 s rest: 130 s total. Carrier phases
+refer directly to the dwell midpoint, 65 s. Packet construction and WEC-Sim
+use a fixed 0.01 s timestep; water/video output uses 0.08 s spacing.
+
+The saved result contains all 13,001 native motion samples and 1,626 validated
+surface/video frames, including both endpoints. The encoded movie lasts
+130.08 s because its final state occupies one frame interval. The original
+boat and sea files are byte-for-byte unchanged.
+
+The native calculation completed before a MATLAB cache-restoration failure.
+The saved motion and completed total field were audited and continued through
+the existing geometry replay, standard Result/PNG publication and ordinary
+render command. The logs record that continuation explicitly. The final video
+passed complete decoding with zero warnings. This is not a claim that the
+original solve invocation completed successfully. The [run record](../docs/experts/packet-integration-run-2026-10-27.json)
+and [warning triage](../docs/cli/warning-triage.md) retain the evidence and limits.
 
 ![Six motion histories](simple-boat/result.png)
 
 This is a working **provisional linear reference**, not a physical-accuracy
 qualification. Read the [command documentation](../docs/cli/solve.md) and
 [actual warning triage](../docs/cli/warning-triage.md). Native coupled dynamics
-are not yet implemented. The current data use the old pinned WEC-Sim fork;
-the new clean reference branch has not been promoted into Topwater.
+are not yet implemented. WEC-Sim uses the maintained release-based reference
+at `6b774228e1f6b31dee473e626204b0ef65e5ec38`. The earlier selected 60-second
+surface-error qualification does not automatically qualify this changed packet.

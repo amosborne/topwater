@@ -100,10 +100,11 @@ frequencies contribute to the reference uncertainty. The difference plus that
 uncertainty must fit within 1 cm. This check does not establish that the linear
 model predicts nonlinear calculations or real water within 1 cm.
 
-For the selected 60-second case, all 5929 surface targets and 751 saved frames
+For the earlier selected 60-second case, all 5929 surface targets and 751 saved frames
 pass: maximum difference is 0.341 mm, and maximum difference plus reference
 uncertainty is 5.784 mm. This relies on a stated high-frequency response envelope;
 see [the qualification and limitations](docs/experts/numerical_methods_researcher/issue31-selected-case-acceptance-2026-10-27.md).
+That bound does not automatically qualify the new 130-second packet case.
 
 ## Current foundation
 
@@ -126,9 +127,15 @@ directory. Filenames are fixed:
 
 ```powershell
 uv run topwater generate-sea examples/simple-boat --record ndbc-46086-20231223T0040Z --seed 42
-uv run topwater solve examples/simple-boat 60 --solver=wecsim
+uv run topwater solve examples/simple-boat 100 --rest 10 --ramp 5 --solver=wecsim
 uv run topwater render examples/simple-boat
 ```
+
+The requested 100 s is dwell: 10 s rest, 5 s ramp, 100 s dwell, 5 s ramp,
+10 s rest give 130 s total. Packet construction and WEC-Sim use a fixed 10 ms
+timestep. Sea phases refer directly to the dwell midpoint, 65 s here. Rest
+defaults to 10 s and ramp to 5 s; the end is fixed, without automatic settling
+extension. See [packet construction](docs/wave-packet-search.md).
 
 Generation writes sea.npz. Solve reads boat.npz/sea.npz and writes the complete
 result.npz and six-DOF motion plot result.png; an existing video is left untouched.

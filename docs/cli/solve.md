@@ -14,8 +14,12 @@ fixed. Full-complex surface reconstruction is enabled following the selected
 uncertainty is 5.78 mm against the chosen linearized model, below the 10 mm target.
 This is conditional selected-case evidence, not a guarantee for other inputs.
 See [the qualification and its assumptions](../experts/numerical_methods_researcher/issue31-selected-case-acceptance-2026-10-27.md).
-The new dwell-based 130-second packet integration is awaiting its own production
-validation; the earlier 60-second trajectory is historical evidence.
+The new dwell-based 130-second packet integration has completed its native
+audits, full-field construction, all 1626 geometry/contact frames, standard
+Result/PNG publication and ordinary video rendering. The saved motion and field
+were audited and continued after an engine-cleanup failure; this does not claim
+a successful original solve invocation. The earlier 60-second surface-error
+qualification does not qualify the changed packet. See the [run record](../experts/packet-integration-run-2026-10-27.json).
 
 The native backend is the intended default. Native coupled dynamics are not yet
 available; omitting `--solver=wecsim` must report that limitation without silently
@@ -114,6 +118,12 @@ The adapter attaches to an existing shared MATLAB engine named
 `CAPYTAINE_REFERENCE`. It does not start or quit MATLAB. Engine visibility and
 required licenses are checked before the native body run. Project automation
 must follow the serial numerical execution procedure before calling the workflow.
+
+If automation overrides TMP/TEMP, configure both initial Simulink cache and
+code-generation folders as siblings of that temporary folder before invoking
+the adapter. The temporary folder must not sit beneath either initial folder.
+Otherwise MATLAB can reject restoration after otherwise completed physics.
+The adapter preserves the original session settings rather than replacing them.
 
 MATLAB stays minimized/headless: the adapter never opens the desktop, model
 editor, or Mechanics Explorer and temporarily disables new figure visibility.

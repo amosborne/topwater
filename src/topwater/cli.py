@@ -97,11 +97,15 @@ def main(argv=None):
             else:
                 from .workflow_data import Result
                 from .result_render import render_result
+                from .visualization import RenderSettings
                 log.event('INFO', 'STAGE load self-contained result')
                 result = Result.load(args.directory / 'result.npz')
                 destination = args.directory / 'video.mp4'
+                settings = RenderSettings(maximum_seconds=max(240., float(len(result.surface_time_s))))
+                log.event('INFO', f'BUDGET render maximum_seconds={settings.maximum_seconds:g} '
+                    f'surface_frames={len(result.surface_time_s)} rule=one_second_per_surface_frame_minimum_240s')
                 log.event('INFO', 'STAGE render and verify complete video')
-                timings = render_result(result, destination)
+                timings = render_result(result, destination, settings=settings)
                 log.published(destination)
                 log.event('INFO',
                     f'VIDEO frames={timings["frames"]} fps={timings["fps"]:g} '

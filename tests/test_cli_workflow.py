@@ -120,6 +120,7 @@ def test_real_render_cli_records_validated_publication_in_video_log(tmp_path):
     report=(tmp_path/'video.log').read_text()
     assert 'STAGE load self-contained result' in report
     assert 'status=success' in report and 'output_published=true' in report
+    assert 'BUDGET render maximum_seconds=240 surface_frames=2' in report
     assert 'VIDEO frames=2 fps=12.5 size=800x800' in report
     assert 'source_end_s=0.080 encoded_duration_s=0.160 verified=true' in report
     assert 'TIMING render preparation_s=' in report
@@ -160,3 +161,37 @@ def test_bad_packet_timing_is_fatal_before_backend_or_publication(tmp_path, monk
     log = (tmp_path/'result.log').read_text()
     assert 'END status=failed' in log and 'output_published=false' in log
     assert 'PUBLISHED ' not in log
+
+
+@pytest.mark.parametrize('motion_count,surface_count,budget', [
+    (13001, 1626, 1626.),
+    (13001, 2, 240.),
+    (2, 751, 751.),
+])
+def test_render_budget_uses_saved_water_frames_not_motion_samples(tmp_path, monkeypatch,
+                                                               motion_count, surface_count, budget):
+    from types import SimpleNamespace
+    from topwater import result_render
+    from topwater.visualization import RenderSettings
+    from topwater.workflow_data import Result
+    saved = SimpleNamespace(time_s=np.linspace(0., 130., motion_count),
+                            surface_time_s=np.linspace(0., 130., surface_count))
+    monkeypatch.setattr(Result, 'load', classmethod(lambda cls, path: saved))
+    calls = []
+    def render(result, destination, settings=None):
+        assert result is saved and destination == tmp_path/'video.mp4'
+        calls.append(settings.maximum_seconds)
+        destination.write_bytes(b'mocked validated video')
+        timings = dict(frames=surface_count, fps=12.5, size=(800, 800), source_end_s=130.,
+            video_duration_s=surface_count/12.5)
+        timings.update({key:0. for key in ('preparation_seconds', 'setup_seconds', 'geometry_seconds',
+            'draw_seconds', 'encoder_start_seconds', 'encoder_send_seconds', 'encoder_close_seconds',
+            'verification_seconds', 'elapsed_s')})
+        return timings
+    monkeypatch.setattr(result_render, 'render_result', render)
+    assert main(['render', str(tmp_path)]) == 0
+    assert calls == [budget]
+    assert RenderSettings().maximum_seconds == 240.
+    log = (tmp_path/'video.log').read_text()
+    assert f'BUDGET render maximum_seconds={budget:g} surface_frames={surface_count}' in log
+    assert 'END status=success' in log and 'output_published=true' in log

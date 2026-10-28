@@ -85,9 +85,13 @@ durations) and stage timings rounded to milliseconds.
   rendering is claimed.
 - Fixed top-down square view, equal metres, centered over the entire sampled
   hull-motion envelope, with framing factor 1.45.
-- Whole saved sequence, default total rendering budget 240 seconds, H.264
-  3 Mbit/s, YUV420p, one encoder thread. Encoder finalization is bounded to
-  30 seconds (or the smaller configured Python rendering budget).
+- Whole saved sequence. The CLI sets the rendering budget to
+  `max(240 seconds, number of saved water-surface frames * 1 second)` and records
+  that choice in `video.log`. It counts `surface_time_s`, not the usually denser
+  motion clock: 1626 saved water frames receive 1626 seconds. This is an upper
+  safety limit, not an expected duration. The Python `RenderSettings` API default
+  remains 240 seconds. H.264 uses 3 Mbit/s, YUV420p and one encoder thread. Encoder
+  finalization is bounded to 30 seconds (or the smaller configured Python budget).
 - Continuous coolwarm water elevation colors, fixed symmetrically about zero
   using the entire saved surface range. No wave or motion amplification.
 - Off-white mask only where the saved water lies inside the posed hull volume.

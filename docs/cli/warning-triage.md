@@ -1,8 +1,71 @@
 # Canonical workflow warning triage
 
-## Current canonical result — issue #31 qualification
+## Current accepted 130-second packet run
 
-The eight files in `examples/simple-boat/` retain the accepted WEC-Sim motion
+Implementation `e416ca8` passed 170 focused Python tests in 56.93 s. The new
+case uses 10 s rest, 5 s ramp, 100 s dwell, 5 s ramp and 10 s rest, with a
+0.01 s native time step. All 13001 native samples and the native phase,
+startup, initial state, applied-force, inertia, equation-of-motion and CIC
+assertions completed. The ordinary invocation failed afterward, during engine
+cache-path restoration, before publishing a new Result.
+
+The saved motion was validated and reused. Recovery2 passed a real restoration
+control, matched the rebuilt operator against all 14 numeric native arrays and
+all netCDF variables, and computed the complete new total field. Geometry-only
+replay passed all 1626 frames and published the accepted Result/PNG pair at
+2026-10-28 05:04:00 UTC. The ordinary CLI video passed at 05:21:46 UTC: 1626
+decoded frames, 800 by 800 pixels, 12.5 fps, source time 0–130 s, encoded duration
+130.08 s and zero video warnings. All eight example files are now accepted.
+No body or field solve was repeated for replay. The original ordinary solve
+still records its cleanup failure; the successful Result log explicitly records
+the private continuation.
+See the [packet integration run record](../experts/packet-integration-run-2026-10-27.json).
+
+| Warning or condition | Meaning and disposition |
+|---|---|
+| Generated packet sidebands | Expected under the approved construction policy. Cutoff is 0.984615 Hz; 59 nodes exceed the original carrier operating limit of 0.533459 Hz. Their amplitude L1 contribution is 0.107014 m, or 0.5749% of total L1. They retain genuine coefficient coverage and are not truncated. This does not qualify their mesh resolution or linear applicability. |
+| Mesh resolution / irregular frequencies | The new coefficient producer flags 1962 of 2388 solves for resolution and 822 for irregular-frequency risk. Further field evaluations retain their own warning records. These are real, unqualified numerical limitations under [#32](https://github.com/amosborne/topwater/issues/32), not measured motion or elevation errors. |
+| Native direction-coverage heuristic | The native transcript warns about direction coverage/coarseness. Its endpoint heuristic differs from actual coefficient-node membership checks, which passed, as did phase and applied-force audits. This does not establish angular coefficient convergence; retain the limitation under #32. |
+| Mean-sea-reference restoring departure | Moment: 8612 samples, first 0 s, last 130 s, peak 195%. Force: 5054 samples, first 13.21 s, last 117.46 s, peak 181%. These compare exact flat mean-sea-reference restoring with linear `-K*q`; they are substantial applicability departures for [#34](https://github.com/amosborne/topwater/issues/34), not nonlinear motion-error percentages. |
+| Restoring diagnostic unavailable | 2459 samples, first 18.06 s, last 116.52 s. The mean-sea reference loses supported contact or reaches the opening. This means the diagnostic cannot assess those poses. It does not establish flooding or loss of contact with the actual reconstructed sea. |
+| Represented wetted surface / actual opening contact | Wetted-area symmetric difference exceeds 10% from 14 to 116.4 s; peak 25.13% at 43.36 s. All 1626 actual reconstructed-surface opening/contact checks passed. The wetted-area departure remains a fixed-mean applicability concern under #34, not a numerical error percentage. |
+| Field/load consistency | The rebuilt operator agrees with the retained operator; this is input identity, not force-field closure. [#33](https://github.com/amosborne/topwater/issues/33) remains separate from mesh accuracy and applicability. |
+| Green-function tabulation / fresh scratch export directory | Operational setup messages. The producer creates its own unique directory before the legacy exporter warns that it already exists. Retain freshness checks; neither message alone establishes a physical failure. |
+| Root-owned MATLAB cache restoration | The original invocation failed because TMP was beneath its initial cache folder. A recovery1 control then failed a raw string comparison of equivalent path representations. Recovery2 passed the actual production restoration control using sibling cache/code-generation folders and normalized path identity; the owned engine quit before field work. This resolves that control's operational failure, not physical accuracy or a fresh ordinary-solve acceptance. |
+| Render verification budget | The first render exceeded a fixed 240-second budget. The CLI budget now scales as `max(240, waterframes)`; 25 CLI tests passed in 3.99 s and the final ordinary render completed in 303.813 s, including 273.828 s of render core work. This was an operational limit, not a physics change or an accuracy gate. |
+| Peak-location log coordinate | The reported peak Z, 0.4378107785 m, remains in the computational mean-water frame. Its world Z is 0.4499780082 m after adding the stored DC offset. Published fields and delta metrics already use the correct transformation; this is a nonblocking diagnostic presentation issue. |
+
+The native phase difference is `1.7583157152500917e-14 m`. The preserved static
+sea-level term is `0.012167229735326152 m`; replay restores it once to motion and
+surface. The complete field cache is bound by SHA-256
+`9f3870fb9f3e91deb9b82ea83b25f62ed24e6acb43ad11dfd0d1acf3157660fb`.
+New publication logs inherit prior warnings with their source attribution;
+private copies preserve the original failed/interrupted logs.
+
+The earlier 60-second case's 1 cm numerical surface qualification does **not**
+transfer to this new packet. Passing runtime identities and balance checks does
+not establish mesh convergence, surface error against the linear model, or
+nonlinear accuracy. Issues #32–34 remain distinct follow-up work.
+
+### Measured new surface disturbance and postprocessing
+
+The following differences are **total-minus-incident surface disturbance**, not
+reconstruction errors. Exterior support excludes the posed hull; the one-beam
+band uses the existing source-triangle selection and projected-area moments.
+
+| Region | RMS disturbance | Reported incident RMS | RMS ratio |
+|---|---:|---:|---:|
+| Full exterior patch | 6.83618 mm | 0.384527 m | 1.77782% |
+| One-beam band | 8.03576 mm | 0.382852 m | 2.09892% |
+
+The resolved absolute peak disturbance is 51.6636 mm at 24.48 s. Geometry
+postprocessing took 934.221 s: wetted-set diagnostics 617.859 s, delta metrics
+266.193 s, opening checks 27.780 s and waterline calculation 21.731 s. These
+timings explain postprocessing cost; they do not imply another physics solve.
+
+## Historical 60-second canonical result — issue #31 qualification
+
+Before the current rerun, the eight files in `examples/simple-boat/` retained the accepted WEC-Sim motion
 and the same boat/sea inputs. The corrected full-complex reconstruction supplies
 all 751 total-surface frames; all 3001 motion samples are unchanged. The refreshed
 video passes complete decode, dimensions and cadence checks: 751 frames,

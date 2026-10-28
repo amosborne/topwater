@@ -1,30 +1,61 @@
 # Current state: Topwater expert
 
 
-## Current authorized packet integration, 2026-10-27
+## Current packet integration, 2026-10-27
 
-Current goal: integrate the fixed10ms minimum-cutoff packet constructor into
-WEC-Sim directory solve and regenerate the simple-boat130s outputs. CLI positional
-time now means DWELL; `100 --rest 10 --ramp 5` selects130s total and midpoint65s.
-Source work in cli.py validates scalar timing/10ms alignment before backend use,
-passes explicit rest/ramp keywords, logs timing/phase semantics and preserves the
-original four-array Sea contract. Sea physical phase remains
-`k dot x - omega*(t-midpoint) + phase`; sign-convention mapping belongs to the
-WEC-Sim expert. Native dynamics are still unavailable.
+The 130 s simple-boat outputs are published and mutually consistent across all
+eight canonical files. Original boat.npz, sea.npz and sea.log bytes are unchanged.
+The CLI positional argument means dwell time: `100 --rest 10 --ramp 5` requests
+10 s rest, 5 s ramp, 100 s dwell, 5 s ramp and 10 s rest. The timestep is fixed
+at 0.01 s and carrier phases are specified directly at midpoint 65 s, using
+`cos(k dot x - omega*(t-midpoint) + phase)`. Core packet integration is committed
+and pushed at `e416ca8`. This workflow uses WEC-Sim; Topwater-native dynamics
+remain unavailable.
 
-CLI/data docs and mocked publication/failure tests are reviewable source only;
-no integration test, packet preflight, MATLAB job or canonical publication has
-been run for this new workflow. Root owns serial execution/acceptance. WEC-Sim
-expert owns backend construction, DC/heading treatment and physical source gates.
-The WEC-Sim design allocates its0.01m incident reference-point budget over
-carriers as0.01*A_j/sum(A); whole-hull startup still needs separate checks.
-This is not a propagated-surface/body accuracy guarantee. Actual packet counts,
-guard feasibility and construction cost remain unmeasured for the384carriers.
+Root ran 170 focused Python integration tests in 56.93 s. Packet preparation
+took 23.102 s for 384 original carriers, of which 368 were active. It produced
+128 positive frequency nodes, 272 active headings and a maximum frequency of
+0.984615 Hz. The certified incident reference-point exceedance was 0.00942218 m
+against the allocated 0.01 m budget; the physical DC sea-level offset was
++0.01216723 m. These describe packet construction, not body-motion or
+propagated-surface accuracy. No new whole-field 1 cm height qualification was
+performed for this 130 s case.
+
+WEC-Sim completed all 13001 motion samples and its production audits. The first
+ordinary CLI attempt failed after about 800 s while restoring the root-owned
+MATLAB engine's CacheFolder/TMP configuration, after integration and its gates
+had completed. Root corrected that configuration and verified restoration with
+a real control. No WEC-Sim fork or source-physics change was needed. The audited
+saved WEC-Sim result was reused; fresh incident, diffraction and radiation
+fields completed and matched the declared operator identity. Existing geometry
+replay completed all physical gates and published Result/PNG. These artifacts
+come from the recorded continuation; the original ordinary solve remains a
+failed attempt because of engine cleanup.
+
+The ordinary render initially reached about 1500 of 1626 frames before its
+fixed 240 s budget expired. A three-file CLI fix now sets the budget to one
+second per saved water frame, with a 240 s minimum, and logs the choice. The
+Python RenderSettings default remains unchanged. Root's 25 focused CLI tests
+passed in 3.99 s. The final ordinary render completed all 1626 frames, which
+were fully decoded at 800 by 800 pixels and 12.5 fps: physical time ends at
+130 s and encoded duration is 130.08 s. The motion PNG is 2160 by 1170 pixels.
+
+Final render session 82186 has terminal exit zero, matching frozen identities,
+an empty guard Job and verified absence of all owned host processes. Finish
+session 60701 also completed with exit zero; independent readback confirmed
+idle state, no owner or active job, and no lease. No numerical jobs are pending.
+Root owns final tracked evidence and checkpoint publication; the WEC-Sim expert
+owns warning triage and backend physics documentation. Root is preparing the
+public run record at `docs/experts/packet-integration-run-2026-10-27.json` after
+independent review.
 
 Sources: [CLI](../../../src/topwater/cli.py),
 [packet search](../../../src/topwater/wave_packets.py),
 [workflow CLI tests](../../../tests/test_cli_workflow.py),
-[packet/search workflow documentation](../../wave-packet-search.md).
+[packet search documentation](../../wave-packet-search.md),
+[render documentation](../../cli/render.md),
+[packet preparation report](../../../artifacts/workflow/packet-production-preflight-attempt1/results/report.json),
+[Python integration test log](../../../artifacts/workflow/packet-production-test-guard2/child.log).
 
 ## Issue31 integration acceptance, 2026-10-27
 

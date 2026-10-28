@@ -1,58 +1,64 @@
 # Checkpoint handoff
 
-Updated2026-10-27 local. Latest user steering controls scope; historical evidence
-and queued assignments do not authorize execution. Follow AGENTS.md.
+Updated 2026-10-27 local. Follow AGENTS.md; the latest user request controls scope.
 
-## ACTIVE USER GOAL: integrate packet utility and rerun simple boat
+## Current goal: packet integration and simple-boat regeneration
 
-User now explicitly authorizes production integration plus full simple-boat
-rerun. CONFIRMED timing: rest10/ramp5/dwell100/ramp5/rest10, total130s,
-native/packet timestep.01s, phases referenced directly at midpoint65s.
-No further user questions are needed for this configuration. Preserve canonical
-boat and sea carrier arrays; regenerate result.npz/result.png/video.mp4 and
-their logs through ordinary directory CLI after targeted integration checks.
+Implementation and numerical work are complete. Final documentation, evidence,
+issue descriptions and the baseline checkpoint are being published. No numerical
+job remains active; finish60701 and independent idle/null/no-lease readback passed.
+Do not resume a physics, correctness or performance campaign without new scope.
 
-TOPreceipt_reliability ownsCLI/Sea docstring/tests/test_cli_workflow.py and
-generate-sea/searchdocs; WECexpertpacket_wecsim_integration owns backend,
-all_wecsim* and shippedMATLABmodelresources, associatedtests andsolve docs.
-CLI agreed solve DIRECTORY DWELL --rest10 --ramp5 --solverwecsim. Rootowns
-npzcontract, acceptance/serialexecution, backups/publication/checkpoints.
-No agent numerical jobs. KeepMATLABhidden. No fork/upstreamchange ormerge.
+The confirmed case is rest10/ramp5/dwell100/ramp5/rest10:130s total, fixed10ms
+packet/native clock, phases directly at dwell midpoint65s. Canonical boat.npz,
+sea.npz and sea.log are byte-identical. New result.npz/result.png/result.log and
+video.mp4/video.log are published. The case has13001 motion samples and1626
+surface/video frames at80ms. Video fully decoded:800x800,12.5fps,130.08s encoded;
+PNG2160x1170. The example directory contains exactly the eight intended files.
 
-Physical integration decisions: useutilityphase=-Sea.phase becauseSea retains
-physicalcos(kx-omega*(t-mid)+phase); conjugateglobalutilityphasors forWEC's
-negative-time convention. Preserve headings, recompute sidebanddispersion and
-coherentlysum equalheading/frequency only. Allocateaggregate1cm budget percarrier
-proportionalamplitude. Keepgenuinehydro support for everyfinalfrequency.
+Source integration checkpoint e416ca8 is pushed on baseline/fluid-body. The last
+source delta changes only the CLI render budget to max(240s,water-frame-count),
+its tests and documentation.170 integration tests passed56.93s;25 focused CLI
+tests passed3.99s. Render API default remains240s. Physical solver/rendering
+algorithms and the maintained WEC-Sim6b774228 reference were unchanged by that fix.
 
-DCgauge approved withindependentCapytaine review: keepcomputationalBEMgeometry/
-meanCG/CB/rotationcenter unchanged; separateworld_vertical_offset d=sumDC.
-Nativeinitialheave=-d, q' nativehydrostaticrestoring suppliesconstantDC load;
-exportposition=computationalmeanCG+R*q'+d once andsurface=dynamicfield+d once.
-No zero-frequency diffraction/radiation, fakeepsilonwaves or Topwater applied
-forcehistories. Startupchecks use netpositiveforcing minusK*q0 andphysicaltotal
-water/velocity. Numericaltests mustexercise full6DOFK offdiagonals, phase/sign,
-DC-only initialphysicalpose, zeroDC recovery andtranslation-covariantwetset.
-Capytainereviewer packet_mean_frame_review authoredno correction/nojobs.
+The actual130s native calculation passed all production phase/startup/fullmass/
+inertia/Newton-Euler/applied-force/CIC gates. Its original solve invocation then
+failed during root-owned MATLAB cache restoration because TMP was inside the
+initial CacheFolder. Corrected sibling folders passed a real restoration control.
+The saved native data were audited (phase error1.7583157152500917e-14m) and genuine
+rebuilt operators matched all native numeric/netCDF values before fresh total
+incident+diffraction+radiation field construction. Completed field hash is
+9f3870fb9f3e91deb9b82ea83b25f62ed24e6acb43ad11dfd0d1acf3157660fb.
 
-Production integration source independently accepted by NMR; Capytaine separately
-reviewed the DC coordinate shift. Pure384-carrier preparation passed in23.102s:
-128positive nodes through0.984615Hz, DC+0.01216723m, summed certified origin
-envelope exceedance0.00942218m. This is not a whole-hull startup certificate.
+Existing geometry replay passed all1626 opening/contact gates and preserved
+cached motion exactly. The final ordinary render succeeded after the original
+240s video ceiling was corrected. Logs identify these continuations honestly;
+do not claim one successful original solve invocation or a repeated native solve.
+All failed attempts, complete fields and original eight-file rollback backup
+remain under artifacts/workflow. No previews or image inspections were performed.
 
-Targeted integration cohort:170passed in56.93s, no skips. Root guard terminal0,
-frozen inputs match, Jobempty and every recorded process absent onhost. Finish
-terminal0; separateidle/null/nojob/nolease readback confirmed. Evidence summary:
-docs/experts/packet-integration-tests-2026-10-27.json. Full130s native solve and
-video remain REQUIRED; no new motion or surface result has been published yet.
+Final successful job: session82186, packet-render-finish-attempt1/manifest.json,
+packet-render-finish-guard1/guard-receipt.json, helper packet-render-finish1.
+Terminal0/frozen-match/guard0/driver0/Job-empty and all owned host process absence
+are verified. Field replay proof is packet-field-replay1/results/report.json;
+native/operator/control proof is packet-native-recovery2/results/report.json.
+Tracked run evidence: docs/experts/packet-integration-run-2026-10-27.json.
 
-Next: reviewed ordinaryCLI launcher artifacts/workflow/simple-boat-packet-run1,
-guard1800s/10GiB/one thread, owned hiddenMATLABengine then solve100 --rest10
---ramp5 --solverwecsim, ownedenginequit and ordinaryrender. Exact8file rollback
-backup verified at artifacts/workflow/simple-boat-packet-rerun-backup1. Inputs
-unchanged. Newpacket invalidates oldtrajectory equality and oldselected60s field
-bound; validate newnativephysics/inputmapping and report applicability limits.
-Fullsurfacecadence remains.08s (12.5fps), separatefrom.01 integrationstep.
+Current result is a provisional linear reference. Old selected60s5.784mm surface
+qualification does not qualify this changed packet. Mesh/irregular-frequency,
+field/load closure and fixed-mean applicability remain separate #32–34 work.
+Actual wet-set difference peaks25.13%; disturbance is6.836mm RMS/full patch and
+8.036mm RMS/near band, with51.664mm peak. These are disturbances, not errors.
+One nonblocking log label uses computational peakZ=.4378107785m; physical world
+Z adds preservedDC=.0121672297m, giving.4499780082m. Published geometry is correct.
+Timing/settling policy remains fixed for this case, without automatic extension.
+
+Coordinator owns final acceptance/checkpoints and issues30/36. Experts have
+completed their bounded source/doc work. Keep baseline/fluid-body; preserve other
+worktrees. No upstream submission, merge or WEC-Sim-fork change is authorized.
+
+## Historical checkpoints (not queued authorization)
 
 ## Current outcome: fixed10ms minimum-cutoff utility implemented
 
