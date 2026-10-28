@@ -1,56 +1,111 @@
 # Current state: independent numerical-methods review
 
-## Current: published 130 s case and reopened surface review, 2026-10-27
+## Current: approved chart and graticule video delivered, 2026-10-28
 
-Checkpoint `e0d6ba8` publishes the simple-boat packet case: 130 s of native
-WEC-Sim motion at 10 ms, with 1626 surface/video frames at 80 ms. Functional
-outputs, unchanged cached motion, physical geometry gates and decoded video
-were independently accepted. The final receipt is
-[`packet-integration-final-review1/acceptance.json`](../../../artifacts/workflow/packet-integration-final-review1/acceptance.json),
-SHA256 `3f0c45dfcee929891bbb4b557193ff5f168eb0debe12628faba8d99be8b6685a`.
-This does **not** qualify the new case's surface-height numerical error.
+Final functional delivery is independently accepted. `result.png` contains the
+six motion histories and a full-height original-Sea polar spectrum, supplied
+explicitly through `save_solve_outputs(..., sea=sea)`. Its horizontal colorbar
+shows original-carrier bin RMS elevation, `sqrt(0.5*sum(a_i**2))`, with linear
+cividis colors over 0--0.12 m. Zero bins remain visible. Default incoming heading
+points up; the dotted line shows actual initial heading. Frequency labels point
+down, with no angular spokes, global title/footer or polar captions. The PNG is
+3150 by 1170 pixels. No spectrum data is stored in Result or drawn in the video.
 
-The user now asks to re-review reconstruction and whether its padding is still
-necessary after a naturally ending incident packet. Issue #31 is reopened.
-This assignment completed a read-only method review; it authorized no settings
-change, implementation, numerical allocation or new qualification.
+The user-approved video uses a full-bleed origin-centred square, metre edge
+graduations, smaller inside header and a Z(m)/0 gauge. The gauge shares the
+water's fixed coolwarm normalization, rounded outward to +/-1.6 m for this case,
+and world-Y metres per pixel. All 1626 frames decoded at 800 by 800, 12.5 fps
+and 130.08 s. Static transparent instruments are cached once and composited
+above the changing scene before telemetry; real-buffer regression tests cover
+orientation, transparency, draw order and changing poses.
 
-The current `offline_radiation_response` in
-[`_capytaine_surface.py`](../../../src/topwater/_capytaine_surface.py:583)
-uses three distinct policies:
+The final seven-module cohort passed **187 tests in 17.22 s**. Delivery took
+492.061 s including tests, PNG publication, ordinary CLI video rendering and
+final decode/identity checks. Frozen source identities remained unchanged;
+terminal and resource guard exited 0 with an empty job. Root confirmed all
+recorded processes absent, finish session 97094 exit 0, and independent
+idle/null/no-lease readback.
 
-- A 20 s cubic Hermite continuation invents future velocity from the saved final
-  velocity/acceleration to rest. It is not additional WEC-Sim integration.
-- A 1024 s periodic FFT record supplies zero space around that history to reduce
-  interaction with repeated copies. It does not simulate extra physical time.
-- The FFT defaults to half the saved motion interval: 5 ms for the current
-  10 ms native history. This linearly interpolates saved velocity while retaining
-  every native knot exactly. Surface output remains 80 ms.
+The final receipt is
+[`actual-delivery-acceptance.json`](../../../artifacts/workflow/approved-layout-delivery-review1/actual-delivery-acceptance.json),
+SHA256 `e967f076671cb97aee3364b4171a1bd37fba808ea9557f327a49b191aa8c6aa2`.
+The eleven-array archive remains byte-for-byte the fresh native-unpadded Result,
+SHA256 `aa050fa5280a4238ed85ef88dedec701da0469f7dcefd05bcdf8aa197e484e11`.
+Motion, full water field, original inputs and physical warning history remain
+unchanged by the final display work. No body, BEM, field or calm analysis was
+rerun for this delivery.
 
-Ending the incident packet does not establish that body velocity, acceleration
-or radiation memory has settled. Endpoint values were not established by this
-read-only review. Removing the invented future therefore needs an actual height
-sensitivity check. A 10 ms FFT grid clears Nyquist for the retained 48 rad/s
-band (`48 < pi/0.01`), but that alone is not an accuracy certificate. Neither
-1024 s nor any shorter buffer is established as necessary by this review.
+The active physical reconstruction remains exact native 10 ms velocity FFT,
+without oversampling, padding or invented future, using the exact mean-waterline
+disturbance trace and pack-only export. Saved calm observations still show about
+1.1 mm at the first/last frames but about 14 cm over complete rest intervals,
+mostly present in incident water. They are not a wraparound proof or numerical
+error certificate. The new 130 s numerical-height accuracy remains unqualified;
+the historical 60 s conditional acceptance retains its original scope. Private
+palette/log comparisons and superseded insets/styles/previews remain preserved.
+No further numerical-method work is allocated; final metadata, issue publication
+and Git checkpointing are coordinator-owned.
 
-The proposed cheapest falsification check is one bounded all-six-mode probe
-screen using the actual saved 130 s velocity/acceleration and the same chosen
-hydrodynamic operator. Inspect endpoint values and compare the current policy
-against separately changing FFT step to 10 ms, removing the future, and reducing
-the record to a candidate 256 s. That last record would leave 64 s before the
-saved history and 62 s afterward with zero future. Current code requires a
-positive future, so testing zero future needs separately authorized helper or
-implementation work. Reuse retained transfer data only after its operator and
-input identities are verified; do not assume old probes match the new case.
+## Historical completed milestone: simplified surface and superseded video inset
 
-Measure height differences throughout the saved interval, including startup.
-A failed probe screen rejects the simplification; a passing screen only
-justifies later whole-surface verification. Keep the user's 10 mm numerical
-height requirement against the chosen linearized model, including reference
-uncertainty. The current policy itself is not reference truth, and incident
-quietness is not a body-rest certificate. No numerical job or code change is
-currently authorized by this proposal.
+The 130 s simple-boat case has been reconstructed afresh from the unchanged
+13001-sample native WEC-Sim trajectory. No new body integration or MATLAB call
+was made. The genuine rebuilt operator matched all 14 retained numeric native
+arrays and all netCDF variables. Portable evidence is
+[`simplified-surface-and-inset-run-2026-10-28.json`](../simplified-surface-and-inset-run-2026-10-28.json).
+
+The current radiation policy uses the exact saved 10 ms velocities, with no
+oversampling, zero padding or invented future. The 13001-point DFT has period
+130.01 s. Full complex six-mode response, its phase convention, 0--48 rad/s
+cutoff and real/imaginary transfer interpolation are retained. Incident and
+mean-hull diffraction are still added separately. The producer source is
+`4c60f9e370fb827fb036431bdc94325b27667612275aa6daaaf11503e6699506`;
+the new completed-field cache is
+`3814bf5cc928206f24e48a6356f359964c4dd71e390055273b61a068301f9ab4`.
+
+Interior disturbance targets now use the exact nearest mean-waterline boundary
+trace; actual exterior queries and incident evaluation remain at their true
+locations. Strict interior Green queries remain prohibited. The small boundary
+probe found finite values approached from outside. Its original 0.1% screen
+failed and remains failed evidence; finite-offset spatial variation supports
+engineering adoption of the exact trace, not a new accuracy certificate.
+
+Normal solve and replay only validate and pack the full uncut water graph.
+Moving waterlines belong to render. Opening-clearance, wet-set comparisons,
+disturbance statistics and clipped total-startup analysis are removed from the
+normal path by user instruction. Historical analysis remains explicitly optional.
+The exact-trace/native-FFT cohort passed 57 tests in 4.34 s.
+
+The user explicitly rejected a second padded reconstruction comparison. That
+proposal and the earlier probe-policy proposals are superseded. Instead, a
+separate saved-field diagnostic reports physical total and incident elevation
+on exterior public-grid vertices during both complete rest intervals. For the
+new unpadded field, maximum total height is 1.066 mm at startup and 1.059 mm at
+the final frame, but reaches 138.844 mm in [0,10] s and 140.897 mm in [120,130] s.
+Incident maxima are nearly the same. These measurements do not identify
+wraparound causation or certify numerical error; quiet endpoints do not imply
+quiet complete rest windows. The 1 cm operational calm criterion is distinct
+from a 1 cm numerical-error allowance against the chosen linearized model.
+
+The superseded delivered video included a fixed original-sea polar spectrum inset.
+Three original carrier arrays were added to Result, including all 384 carriers;
+all 11 prior NPY members and the solve-log prefix remained byte-identical.
+WVHT displays 1.66 m. Ordinary render produced and decoded all 1626 frames at
+800 by 800, 12.5 fps and 130.08 s encoded duration. Motion PNG and original
+boat/sea/sea.log remain unchanged. The integrated data/render/CLI/surface cohort
+passed 177 tests in 10.83 s; this overlaps earlier coverage and is not added to
+it as a distinct-test count. No preview or image inspection was performed.
+
+Independent actual delivery acceptance is
+[`actual-delivery-acceptance.json`](../../../artifacts/workflow/sea-inset-delivery-review1/actual-delivery-acceptance.json),
+SHA256 `e59baae834e3e24843a0d01e1a97d44759c4d2e6a51a2a45b301a86373ad9fa8`.
+Root subsequently confirmed terminal success, frozen inputs, empty guard job,
+all recorded processes absent, finish exit 0 and independent idle/null/no-lease
+readback in
+[`execution-closure.json`](../../../artifacts/workflow/sea-inset-delivery-review1/execution-closure.json).
+No further physics or numerical work is allocated. The new 130 s unpadded
+surface's numerical-height accuracy remains unqualified; the inset adds no
+physical-result claim.
 
 The historical 60 s selected-case acceptance remains valid only under its
 original inputs, policies and conditional response-envelope assumptions:

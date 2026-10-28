@@ -1,5 +1,36 @@
 # Current state: Capytaine expert
 
+## Current user-selected reconstruction policy, 2026-10-28
+
+Current source uses saved native 10 ms velocity samples directly, with no
+oversampling, padding or invented future trajectory. Normal solve/cache replay
+packs the uncut grid without moving-waterline, opening-clearance, wetted-area or
+disturbance-statistics calculations; render owns the moving waterline. Explicit
+historical padded settings and cache analysis remain available separately.
+
+The disturbance trace now evaluates exactly on the closest mean-waterline
+boundary point, with zero outward offset. Incident elevation remains at each
+actual target; exterior targets stay at their actual positions. Boundary
+admission is explicit and strictly interior Green queries remain prohibited.
+The previous 1 cm and older 2.5 cm offset policies remain historical evidence.
+No cached field or body trajectory was relabeled or modified by this source edit.
+
+Evidence: `artifacts/workflow/exact-waterline-evaluation1/results/report.json`
+records Capytaine 3.0.0, 17 mean wet panels, 28 BEM solves (0.1/1/6/48 rad/s,
+six radiation modes and heading-zero diffraction), 7 corners plus 7 edge
+midpoints and exact/10/1/0.1 mm exterior positions. All values were finite;
+the proposed 0.1% screen FAILED (closest 1.2423%, extrapolation 0.2216%).
+`exact-waterline-evaluation2/results/report.json` preserves the complex approach
+sequences: all reported worstpoint sequences approach the exact value as the
+offset shrinks. At 48 rad/s the 0.1 mm free-wave phase scale is 0.02349 rad, so
+finite-offset differences include real spatial variation. This supports the
+engineering choice of the actual boundary trace; it does not certify continuum
+accuracy, every frequency/boat, or a 1 cm time-history elevation error. The
+historical padded 60 s qualification below does not qualify the new policy.
+
+Source-only implementation is awaiting independent review and root's focused
+tests, then a fresh saved-motion field reconstruction and ordinary render.
+
 ## Issue31 accepted and published, 2026-10-27
 
 Independent final review accepts the selected simple-boat60s surface against the

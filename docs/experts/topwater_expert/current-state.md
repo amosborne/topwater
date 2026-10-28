@@ -1,7 +1,90 @@
 # Current state: Topwater expert
 
+## Delivered: spectrum PNG and approved graticule video, 2026-10-28
 
-## Current packet integration, 2026-10-27
+The completed workflow supersedes the retired video inset and carrier-data
+extension below. Result contains exactly eleven motion/hull/surface arrays,
+without sea or spectrum metadata. Its full archive remains byte-for-byte the
+fresh native-unpadded result (SHA aa050fa5...), preserving solved motion and all
+water geometry. `workflow_data.py` and `wecsim_backend.py` retain their verified
+pre-inset source identities (16dc3517 and 6f57e7cb). Video rendering remains
+standalone from this archive.
+
+Normal CLI solve now passes its already loaded original Sea directly to
+`save_solve_outputs(result, directory, sea=sea)`. The delivered 3150 by 1170 PNG
+retains six motion plots beside a full-height original-sea polar spectrum.
+True RMS bin elevation uses sqrt(0.5*sum(a_i squared)), a horizontal CIVIDIS
+colorbar fixed to a linear 0 to 0.12 m scale, and visible zero bins. Default boat
+heading is up; the actual saved initial heading is dotted. The default remains
+the amplitude-squared-weighted mean incoming direction, distinct from actual
+heading. No solver heading offset or physics change is introduced. CLI tests
+verify explicit original-Sea plotting and no sea data in Result.
+
+The final ordinary render uses the user-approved fixed origin-centred square
+view, metre graticules and foreground water-elevation gauge. It has no sea
+spectrum inset. All 1626 frames were decoded: 800 by 800, 12.5 fps and 130.08 s,
+with zero render warnings. Exactly eight canonical files remain. Boat, Sea,
+sea.log and the exact fresh Result are unchanged. Existing calm analysis was
+retained without rerun; no body integration, field reconstruction or MATLAB
+work occurred in this display delivery.
+
+Root's seven-module cohort passed 187 tests in 17.22 s. Final delivery completed
+in 492.061 s. Terminal, guard0/driver0, frozen inputs, empty Job and all owned
+host process absence were verified; finish exited zero and separate readback
+confirmed idle/null/no lease. Implementation and delivery are complete; final
+metadata/issue publication and Git checkpoint remain coordinator-owned.
+
+Evidence: [final delivery report](../../../artifacts/workflow/approved-layout-delivery1/results/report.json),
+[187-test log](../../../artifacts/workflow/approved-layout-delivery1/results/pytest.log),
+[terminal record](../../../artifacts/workflow/approved-layout-delivery-attempt1/terminal.json),
+and [guard receipt](../../../artifacts/workflow/approved-layout-delivery-guard1/guard-receipt.json).
+
+## Retired video inset delivery, 2026-10-28
+
+The following records the completed but superseded delivery; its carrier schema
+and video inset are no longer the current design.
+
+`Result` now carries three original-carrier vectors: `sea_amplitudes_m`,
+`sea_angular_frequencies_rad_s` and `sea_directions_rad`. Directions retain the
+original propagation convention, CCW from fixed world +x. WEC-Sim copies the
+original Sea vectors at its existing final Result construction; packet sidebands
+are not substituted and no second large Result copy is needed. The same data
+contract is available to the future native producer. Current source hashes are
+`workflow_data.py` 7c95c111 and `wecsim_backend.py` 4458376c.
+
+The vectors must be finite, equally sized and present together; amplitudes are
+nonnegative and frequencies positive. Three empty numeric arrays mean specified
+calm water. Legacy archives may omit all three, represented as None; rendering
+then gives a clear missing-carrier error rather than assuming calm water or
+reading sea.npz. New rendering remains self-contained in result.npz.
+
+Root's completed display-only backfill added the 384 original carriers to the
+fresh saved solution. Every original NPY member retained identical bytes, so
+boat motion, hull and water geometry are unchanged. The full solve-log prefix,
+including inherited warnings, was preserved before appending an explicit
+display-only publication block. No body integration, field reconstruction,
+MATLAB call or preview occurred in this delivery. WVHT is calculated generally
+as 4*sqrt(sum(amplitude**2)/2); the current sea gives 1.6574679484080534 m,
+displayed as 1.66 m.
+
+The ordinary render succeeded and all 1626 frames were independently decoded:
+800 by 800, 12.5 fps, 130.08 s encoded duration. Boat/sea/sea.log/result.png bytes
+remain unchanged; the motion PNG is 2160 by 1170. Exactly eight canonical files
+remain. Root ran 177 local tests in 10.83 s. Final delivery and cleanup exited
+zero; the ledger is idle with no owner or active job, and root verified host
+process absence and lease release. Root owns final checkpoint publication.
+
+Evidence: [delivery report](../../../artifacts/workflow/sea-inset-delivery1/results/report.json),
+[original-member and log-prefix proof](../../../artifacts/workflow/sea-inset-delivery1/results/backfill/report.json),
+[local test log](../../../artifacts/workflow/sea-inset-tests2/child.log),
+[data contract](../../../src/topwater/workflow_data.py), and
+[producer integration](../../../src/topwater/wecsim_backend.py).
+
+The notes below retain their original case settings and evidence. In particular,
+the old padded field, opening/contact diagnostics and selected 60 s accuracy
+certificate do not describe or qualify the current simplified 130 s field.
+
+## Historical packet integration, 2026-10-27
 
 The 130 s simple-boat outputs are published and mutually consistent across all
 eight canonical files. Original boat.npz, sea.npz and sea.log bytes are unchanged.

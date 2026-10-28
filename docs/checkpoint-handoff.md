@@ -1,23 +1,73 @@
 # Checkpoint handoff
 
-Updated 2026-10-27 local. Follow AGENTS.md; the latest user request controls scope.
+Updated 2026-10-28. Latest user request controls scope. Keep baseline/fluid-body
+and preserve other worktrees. Do not resume a physics, padding/reference, mesh or
+speed campaign from historical instructions.
 
-## Current request: re-review surface reconstruction padding (#31)
+## Completed current delivery
 
-The user accepted the appearance of the new simulation and asked to revisit #31,
-specifically whether padding is still needed now that the packet has calm ends.
-They also asked whether WEC-Sim used10ms: YES,13001 samples through130s. The
-separate reconstruction FFT currently uses5ms; surface/video sampling is80ms.
+The user accepted the final result.png styling: enlarged centred polar panel
+fills the right column; horizontal colorbar underneath; linear cividis with
+zero bins using the low-end color (no white mask). Current range0..0.12m,
+interior ticks0.02m, actual peak0.115420427m. Generic upper bounds round outward
+to two significant digits. Six motion panels retain common symmetric seven
+nice Y ticks, no overall titles/footer, Time (s) labels. Spectrum uses original
+Sea explicitly, true per-bin RMS,15degree by0.025Hz world arrival bins, default
+heading up, dotted actual initial bow and frequency labels down. No compass
+labels/spokes. Sea/spectrum arrays are not stored in Result or drawn in video.
 
-Issue31 is reopened with a current-review narrative and preserved historical60s
-acceptance. NMR read-only review separates the invented20s motion continuation,
-1024s periodic FFT record and half-native-step interpolation. No setting or code
-has changed and no new numerical job is allocated. Quiet waves alone do not prove
-the boat settled. Proposed cheapest next check: saved endpoint v/a and a few
-all-six-mode height probes, changing native10ms FFT, zero inventedfuture and a
-shorter record one at a time. Probe agreement is not whole-region qualification;
-the target remains1cm numerical linear-model elevation error including reference
-uncertainty. Do not automatically launch a large study or adopt a padding policy.
+The approved full video was regenerated and opened for the user. It is fullbleed
+800square with world origin dead centre, equal4% graticule insets, plain readable
+edge ticks/numbers, small telemetry inside, and a Z (m) gauge aligned with worldY
+scale and zero. Gauge/water share fixed +/-1.6m colors. No preview was generated
+or inspected during the render. Underlying data is unchanged.
+
+187 tests passed17.22s, including actual RGBA overlay/zero-bin checks.
+Final driver:492.061s total; tests19.218s, PNG29.453s, ordinaryrender436.898s,
+extra published-video decode/identity4.572s. Render itself404.656s, including
+geometry199.706s/draw195.175s. All1626frames decoded800x800/12.5fps/130.08s;
+zero render warnings. Source checkpoint ae99596 is pushed. Canonical outputs,
+run evidence and authoritative own issue30/31 bodies are the final checkpoint.
+See docs/experts/simple-boat-workflow-run-2026-10-28.json and private
+artifacts/workflow/approved-layout-delivery1/results/report.json.
+
+## Execution and stopping point
+
+approved-layout-delivery-attempt1 is terminal0, all frozen identities match,
+guard0/driver0/Jobempty. Root verified every recorded host process absent,
+finish_check session97094 completed0, then independently read idle/null/no lease.
+No numerical process or allocated job remains. Root alone owns claims/runs.
+Presentation source accepted by independent reviewer; no new physics or height
+certificate. No further numerical campaign is authorized. User's last review:
+"looks good". Commit/push checkpoints only baseline/fluid-body; no main, merge,
+upstream contact or bookkeeping PR. Agents must not visually inspect previews.
+
+## Completed physical workflow (preserve)
+
+Fresh total incident+diffraction+radiation field from saved audited130s WEC-Sim
+motion: producer4c60f9e, original10ms velocities/13001 FFT points, no oversampling,
+padding or invented future. Exact mean-waterline disturbance trace; incident at
+actual target, strict interior Green evaluations prohibited. Normal solve only
+packs the uncut grid: no moving-waterline/wet-set/disturbance/opening checks.
+Removal of the opening-clearance flooding gate is intentional. Render computes
+moving waterline. Basic finite/shape/connectivity checks remain.
+
+All14 native coefficient arrays and netCDF variables matched; saved motion exact.
+Field cache3814bf5c... under simplified-reconstruction1/results/field-work/.
+Final Result MUST stay EXACT aa050fa5280a4238ed85ef88dedec701da0469f7dcefd05bcdf8aa197e484e11
+(original11 motion/hull/surface members). Boat/Sea/sea.log unchanged. The final overlay
+video is verified1626frames/800square/12.5fps/130.08s. Presentation work changed
+no archive, boat, Sea or sea.log bytes. Exactly8 files in examples/simple-boat. No MATLAB needed.
+
+Native audits29.96s, genuine operator rebuild65.86s, newfield/packing/publication
+400.23s; old15minute geometry diagnostics did NOT run. Calm analysis completed:
+first/last1.066/1.059mm pass1cm; full rest windows138.844/140.897mm mainly incident
+water crossing the spatial patch. Neither these observations nor the old60s
+5.784mm certificate qualifies current130s total numerical height accuracy.
+The28-solve boundary probe was finite/convergent; its initial.1% offset-comparison
+screen FAILED and remains recorded, not silently converted into a pass.
+
+## Historical checkpoints
 
 ## Completed goal: packet integration and simple-boat regeneration
 

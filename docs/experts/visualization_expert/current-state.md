@@ -1,5 +1,89 @@
 # Visualization expert: current state
 
+## Current delivered plots/video, 2026-10-28
+
+Current result-plot source `0e2418b4` and tests `dabadbee` use cividis with a
+LINEAR RMS scale. Original-component bins are 15 degrees by 0.025 Hz and display
+`sqrt(0.5 * sum(a_i^2))` in metres. Every zero bin remains unmasked at the dark
+palette minimum; no positive bin is omitted, clipped or rescaled. The actual
+0.115420427 m maximum rounds outward to 0.12 m using two significant digits,
+with nice interior ticks and exact colorbar endpoints. Log coloring was rejected.
+
+The 3150x1170 result.png retains the 12-inch six-motion region and centres a
+5.1-inch full-height polar circle in the right column, with its horizontal RMS
+colorbar below. No overall title/footer or polar subtitles; x labels are exactly
+`Time (s)`. Shared translation/rotation limits retain seven symmetric nice ticks
+with zero centred. World coming-from histogram edges are unchanged; the polar
+axis rotates the default heading up and marks the actual initial heading with
+a dotted line. Only frequency rings remain, with labels pointing down on screen.
+
+The spectrum belongs ONLY in result.png. Production solve passes original Sea
+explicitly to plotting/publication; Result contains its original 11 physical
+members, with NO sea-carrier arrays. Video rendering remains standalone from
+result.npz and has no spectrum or Sea input. Historical calls without Sea retain
+the 2160x1170 six-motion-only PNG.
+
+The user approved video preview4 and the full re-render is delivered. Production
+renderer `3ce2ebd5` and tests `c0a8214b` passed independent source review. It keeps
+the full-bleed 800-square view centred on world origin with the original zoom
+and full-hull coverage check. Plain equal-inset edge ticks have bottom/left
+numbers, top/right ticks, corner clearance and a smaller inside header. The
+`Z (m)`/`0` gauge shares the water's exact coolwarm normalization, rounded outward
+to 0.1 m (current +/-1.6 m), world-Y metre spacing and zero row. Gray mesh, black
+outline, solid blue moving waterline and fixed dashed reference remain unchanged.
+
+Static graticule/gauge artists are cached once through standard transparent Agg
+and FigureImage. Each frame draws water/boat, cached instruments, then telemetry;
+no per-frame full figure redraw. New encoder-stub tests check two changing poses,
+overlay persistence/transparency/order and unit/zero mapping. The final combined
+187-test cohort PASSED in 17.22 s. The [final delivery evidence](../../../artifacts/workflow/approved-layout-delivery1/results/report.json)
+confirms all 1626 frames decoded at 800x800, 12.5 fps and 130.08 s encoded.
+Ordinary CLI time was 433.312 s; renderer 404.656 s (geometry 199.706 s, drawing
+195.175 s); the complete display-only driver took 492.061 s. These are whole-run
+timings, not an isolated overlay benchmark. Result `aa050fa5` and its saved motion/
+field remain unchanged; no solver or reconstruction reran. Root verified terminal
+0, frozen identity match, guard/driver 0, empty Job, every owned host process
+absent, cleanup 0 and separate idle/null/no-lease state. The video was opened for
+the user without agent inspection. No further visualization job is allocated.
+
+## Historical superseded video spectrum inset, 2026-10-28
+
+The following checkpoint was superseded by moving the spectrum into result.png
+and removing carrier arrays from Result. Its old hashes/timings are historical.
+
+Current renderer `561dbd60`, tests `0a961993` and render documentation `4d8ee9f2`
+are integrated. Root's 177 integration tests passed in 10.83 s after correcting only the
+test fixture's yaw-angle shape; the original failed attempt remains preserved.
+No preview or agent visual review was performed. The approved reference image
+and script supplied the presentation.
+
+The lower-left inset uses original-carrier amplitudes, angular frequencies and
+propagation directions copied into result.npz. Rendering reads that archive
+alone; legacy missing-carrier archives fail clearly, while three empty vectors
+mean calm water. Coming-from angles add pi, fixed world +x/right and +y/up. Magma
+bins show `sqrt(sum(a^2))` at 15 degrees by 0.025 Hz; frequency radius extends beyond
+0.5 Hz when needed to include every carrier. Radial labels remain, with no
+direction labels, colorbar or time chart. The white-backed monospaced WVHT label
+uses `4*sqrt(0.5*sum(a^2))`: this case 1.657467948 m, displayed 1.66 m. Histogram and polar
+artists are prepared once; cached inset pixels restore above each moving scene.
+Tests check fixed encoded inset pixels under hull translation/yaw and exactly
+one full Agg draw/histogram. Existing scene layers and physical geometry remain.
+
+Root's [delivery evidence](../../../artifacts/workflow/sea-inset-delivery1/results/report.json)
+and [video log](../../../examples/simple-boat/video.log) confirm 1626 decoded
+800x800 frames at 12.5 fps, 130.08 s encoded, zero application warnings. Ordinary
+command 332.752 s, CLI 329.157 s, renderer 300.625 s; setup 1.187 s, geometry 206.653 s,
+draw 81.823 s. These are whole-render timings, not isolated inset overhead.
+Carrier attachment preserved every original NPY member byte; no body solve,
+field reconstruction, MATLAB call or calm-analysis rerun occurred for the inset.
+The retained field already uses the newly simplified reconstruction.
+
+The delivery guard completed terminal 0/frozen-match/driver 0/Job-empty. Root
+verified all owned host processes absent, completed lease cleanup and separately
+read idle/null/no-lease state. No further visualization job is allocated. Root
+owns final acceptance and publication; historical sections below retain their
+original policies and evidence.
+
 ## Fixed mean-waterline reference, 2026-10-26
 
 The tested source is integrated into baseline: runtime SHA141046c5, regression
