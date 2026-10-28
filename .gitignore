@@ -12,9 +12,6 @@ dist/
 .coverage
 htmlcov/
 
-# Local simulation and profiling outputs
-artifacts/
-
 # Local credentials
 .env
 .env.*

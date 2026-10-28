@@ -1,7 +1,4 @@
-"""Analytical field-convention fixtures; no Capytaine or MATLAB jobs.
-
-Execution still belongs to the coordinator's serial numerical allocation.
-"""
+"""Analytical field-convention fixtures; no Capytaine or MATLAB jobs."""
 import numpy as np
 import pytest
 from types import SimpleNamespace
@@ -442,18 +439,13 @@ def calm_surface_case(monkeypatch, tmp_path):
         vertices=vertices, physical=physical, boat=boat, embedding=embedding, orientation=orientation)
 
 
-def test_production_calm_geometry_preserves_original_grid_and_oblique_world_view(calm_surface_case, capsys, monkeypatch):
+def test_production_calm_geometry_preserves_original_grid_and_oblique_world_view(calm_surface_case, capsys):
     from topwater.workflow_data import Result
-    import topwater._surface_export as retired_export
     case = calm_surface_case
     producer, hydro, setup, motion, stamp = case.producer, case.hydro, case.setup, case.motion, case.stamp
     vertices, physical, boat = case.vertices, case.physical, case.boat
     embedding, orientation = case.embedding, case.orientation
 
-    def no_remeshing(*args, **kwargs):
-        raise AssertionError('The producer must never trim/remesh its exported total surface')
-
-    monkeypatch.setattr(retired_export, 'export_surface', no_remeshing)
     water, faces, vertex_offsets, face_offsets = producer.reconstruct_total_surface(hydro, setup, motion, stamp)
     result = Result(stamp, motion.position_m, orientation, vertices, physical, boat.cg_m, stamp,
                     water, faces, vertex_offsets, face_offsets)

@@ -85,7 +85,7 @@ def test_cli_help_does_not_need_a_graphics_context(capsys):
         main(['render', '--help'])
     assert stopped.value.code == 0
     help_text = capsys.readouterr().out
-    assert 'directory' in help_text and 'docs/cli/render.md' in help_text
+    assert 'directory' in help_text and 'docs/workflow.md' in help_text
     for unsupported in ('--start', '--end', '--size', '--output'):
         assert unsupported not in help_text
 
@@ -104,8 +104,8 @@ def test_cli_passes_saved_result_and_fixed_output_file(tmp_path, monkeypatch):
     saved.save(tmp_path/'result.npz')
     captured = {}
 
-    def capture(loaded, output):
-        captured.update(result=loaded, output=output)
+    def capture(loaded, output, *, settings):
+        captured.update(result=loaded, output=output, settings=settings)
         report = dict.fromkeys(('preparation_seconds', 'setup_seconds', 'geometry_seconds',
                                 'draw_seconds', 'encoder_start_seconds', 'encoder_send_seconds',
                                 'encoder_close_seconds', 'verification_seconds', 'elapsed_s'), 0.)
@@ -118,6 +118,8 @@ def test_cli_passes_saved_result_and_fixed_output_file(tmp_path, monkeypatch):
     assert main(['render', str(tmp_path)]) == 0
     assert captured['output'] == tmp_path/'video.mp4'
     np.testing.assert_array_equal(captured['result'].time_s, saved.time_s)
+    assert isinstance(captured['settings'], RenderSettings)
+    assert captured['settings'].maximum_seconds == max(240., float(len(saved.surface_time_s)))
 
 
 def test_output_is_an_mp4_filename_not_a_directory(tmp_path):

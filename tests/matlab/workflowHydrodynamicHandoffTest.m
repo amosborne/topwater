@@ -7,9 +7,13 @@ function setup(testCase)
 root = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 fork = getenv('TOPWATER_WECSIM_PATH');
 if isempty(fork)
-    fork = fullfile(root,'artifacts','dependencies','topwater-wec-sim');
+    userHome = getenv('USERPROFILE');
+    if isempty(userHome)
+        userHome = getenv('HOME');
+    end
+    fork = fullfile(userHome,'.cache','topwater','wec-sim');
 end
-assert(isfolder(fork),'A coordinator-frozen WEC-Sim checkout is required');
+assert(isfolder(fork),'The maintained WEC-Sim checkout is required');
 originalPath = path;
 testCase.addTeardown(@() path(originalPath));
 addpath(genpath(fullfile(fork,'source')));

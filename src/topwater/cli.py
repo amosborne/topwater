@@ -8,14 +8,14 @@ def parser():
     root = argparse.ArgumentParser(prog='topwater', description='Topwater workflows')
     commands = root.add_subparsers(dest='command', required=True)
     generate = commands.add_parser('generate-sea',
-        help='Generate explicit waves; docs/cli/generate-sea.md',
-        epilog='Documentation: docs/cli/generate-sea.md')
+        help='Generate explicit waves; docs/workflow.md',
+        epilog='Documentation: docs/workflow.md')
     generate.add_argument('directory', nargs='?', type=Path, default=Path('.'),
                           help='Example directory (default: current directory)')
     generate.add_argument('--record', required=True, help='Packaged observed sea-state ID')
     generate.add_argument('--seed', type=int, help='Random seed; omitted seed is drawn and printed')
-    solve = commands.add_parser('solve', help='Solve an example; docs/cli/solve.md',
-                               epilog='Documentation: docs/cli/solve.md')
+    solve = commands.add_parser('solve', help='Solve an example; docs/workflow.md',
+                               epilog='Documentation: docs/workflow.md')
     solve.add_argument('directory', nargs='?', type=Path, default=Path('.'),
                        help='Example directory (default: current directory)')
     solve.add_argument('dwell', type=float, metavar='DWELL',
@@ -24,10 +24,10 @@ def parser():
                        help='Quiet target interval on each side in seconds (default: 10)')
     solve.add_argument('--ramp', type=float, default=5.,
                        help='Quintic ramp on each side in seconds (default: 5)')
-    solve.add_argument('--solver', choices=('native', 'wecsim'), default='native',
-                       help='Backend (default: native; currently unavailable)')
-    render = commands.add_parser('render', help='Render result.npz; docs/cli/render.md',
-                                epilog='Documentation: docs/cli/render.md')
+    solve.add_argument('--solver', choices=('wecsim',), default='wecsim',
+                       help='Backend (default: wecsim)')
+    render = commands.add_parser('render', help='Render result.npz; docs/workflow.md',
+                                epilog='Documentation: docs/workflow.md')
     render.add_argument('directory', nargs='?', type=Path, default=Path('.'),
                         help='Example directory (default: current directory)')
     return root
@@ -79,9 +79,6 @@ def main(argv=None):
                 log.event('INFO', 'SEA phases_rad specify target carrier phases DIRECTLY at dwell midpoint; '
                     'phase zero means a target carrier crest at the solver wave reference point; '
                     'finite Fourier truncation may depart from that target')
-                if args.solver == 'native':
-                    raise RuntimeError('native coupled dynamics are not implemented; '
-                                       'use --solver=wecsim with its documented dependencies')
                 from .workflow_data import Boat, Sea
                 from .wecsim_backend import solve
                 from .solve_outputs import save_solve_outputs

@@ -18,7 +18,7 @@ class UnsupportedClosureError(ValueError):
 def _envelope_cap(points, faces, normals, eps):
     """Cap absent whole convex support facets; do not invent polygon booleans."""
     from scipy.spatial import ConvexHull
-    from .fluid_boundary import _ears
+    from ._triangulation import _ears
 
     envelope = ConvexHull(points)
     planes = []

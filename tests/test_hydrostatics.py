@@ -9,7 +9,7 @@ from topwater.hydrostatics import (
     FloodingError, LossOfContactError, NoEquilibriumError,
     equilibrate_heave, hydrostatics,
 )
-from topwater.surface import surface_integrals
+from .geometry_helpers import surface_integrals
 from .reference_boat import DEPTH, GRAVITY, WATER_DENSITY, equilibrium, reference_body
 
 

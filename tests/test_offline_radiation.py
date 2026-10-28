@@ -1,4 +1,4 @@
-"""Small independent Fourier controls; coordinator must allocate test execution."""
+"""Small independent Fourier controls for surface reconstruction."""
 import numpy as np
 import pytest
 

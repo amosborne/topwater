@@ -63,7 +63,7 @@ def _find_fork():
         raise BackendUnavailableError('WEC-Sim: Git is required to verify the maintained fork')
     explicit = os.environ.get('TOPWATER_WECSIM_PATH')
     checkout = (Path(explicit).expanduser() if explicit else
-                Path(__file__).resolve().parents[2] / 'artifacts/dependencies/topwater-wec-sim')
+                Path.home() / '.cache/topwater/wec-sim')
     if not (checkout / 'source/objects/bodyClass.m').is_file():
         raise BackendUnavailableError('WEC-Sim: maintained fork not found; set TOPWATER_WECSIM_PATH to its checkout')
     try:

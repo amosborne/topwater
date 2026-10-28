@@ -88,8 +88,8 @@ def replay_surface_cache(cache_path, *, diagnostic_directory, output_path=None, 
     """Pack frozen completed fields and motion; optional historical analysis only.
 
     No Capytaine, MATLAB, body integration or wave synthesis is invoked. The
-    optional output is the ordinary final Result format. The coordinator must
-    freeze this cache and current geometry sources before using the replay.
+    optional output is the ordinary final Result format. Keep the cache and
+    geometry source identities fixed when using the replay.
     """
     path = Path(cache_path)
     with np.load(path, allow_pickle=False) as archive:
@@ -338,8 +338,8 @@ def build_hydrodynamics(wet_triangles, cg, mass_matrix, workspace, *,
     native.mat separately carries genuine dense FK/diffraction coefficients
     with a periodic full-heading seam for native WEC-Sim excitation preparation.
 
-    This function performs numerical work and must only be called by the sole
-    coordinator-allocated numerical owner.  Its files belong in scratch space.
+    This function performs numerical work. Its files belong in per-run scratch
+    space; do not share a mutable workspace between concurrent producers.
     """
     if version('capytaine') != '3.0.0':
         raise ValueError('The reviewed coefficient producer requires Capytaine 3.0.0')
@@ -381,7 +381,7 @@ def build_hydrodynamics(wet_triangles, cg, mass_matrix, workspace, *,
     labels = dict(influenced_dof=list(MODES), radiating_dof=list(MODES))
     body.inertia_matrix = xr.DataArray(M, dims=list(labels), coords=labels)
     body.hydrostatic_stiffness = xr.DataArray(K, dims=list(labels), coords=labels)
-    # A coordinator-owned job-temp cache can be shared by producer instances.
+    # A caller-owned job-temp cache can be shared by producer instances.
     # None preserves the original Green-function settings and no global cache.
     cache = None if green_cache_dir is None else str(Path(green_cache_dir))
     if cache is not None:

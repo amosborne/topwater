@@ -33,7 +33,7 @@ def test_full_equilibrium_balances_force_and_moment_on_physical_boat():
 
 def test_public_example_preserves_accepted_mean_hull_mass_and_restoring_identity():
     project = Path(__file__).resolve().parents[1]
-    physical = json.loads((project/'reference/capytaine/canonical-boat.json').read_text())
+    physical = json.loads((project/'tests/data/canonical-boat.json').read_text())
     boat = Boat.load(project/'examples/simple-boat/boat.npz')
     sea = Sea.load(project/'examples/simple-boat/sea.npz')
     body = boat.to_body()
@@ -85,8 +85,15 @@ def test_held_fork_without_full_directional_bugfixes_fails_before_physics(monkey
         backend.preflight()
 
 
-def test_modified_fork_source_is_rejected_even_at_pinned_head(monkeypatch, tmp_path):
-    checkout=tmp_path/'fork'
+@pytest.mark.parametrize('explicit_path', [False, True])
+def test_external_fork_discovery_rejects_modified_source(monkeypatch, tmp_path, explicit_path):
+    if explicit_path:
+        checkout = tmp_path/'configured fork'
+        monkeypatch.setenv('TOPWATER_WECSIM_PATH', str(checkout))
+    else:
+        checkout = tmp_path/'.cache/topwater/wec-sim'
+        monkeypatch.delenv('TOPWATER_WECSIM_PATH', raising=False)
+        monkeypatch.setattr(Path, 'home', classmethod(lambda cls: tmp_path))
     source=checkout/'source/objects/bodyClass.m'
     source.parent.mkdir(parents=True)
     source.write_text('% frozen producer\n')
@@ -96,7 +103,6 @@ def test_modified_fork_source_is_rejected_even_at_pinned_head(monkeypatch, tmp_p
     git('init')
     git('add','source')
     git('-c','user.name=Test','-c','user.email=test@example.invalid','commit','-m','fixture')
-    monkeypatch.setenv('TOPWATER_WECSIM_PATH',str(checkout))
     monkeypatch.setattr(backend,'SUPPORTED_FORK_COMMIT',git('rev-parse','HEAD'))
     assert backend._find_fork()==checkout.resolve()
     source.write_text('% changed producer\n')

@@ -15,6 +15,13 @@ from topwater.workflow_data import Sea
 def test_optional_directory_does_not_consume_required_dwell(argv,directory,dwell):
     parsed=parser().parse_args(argv)
     assert parsed.directory==directory and parsed.dwell==dwell
+    assert parsed.solver == 'wecsim'
+
+
+def test_retired_native_solver_is_not_a_cli_choice():
+    with pytest.raises(SystemExit) as error:
+        parser().parse_args(['solve', '60', '--solver=native'])
+    assert error.value.code == 2
 
 
 def test_generate_sea_defaults_to_cwd_and_preserves_exact_band_energy(tmp_path,monkeypatch):
@@ -45,7 +52,7 @@ def test_generation_failure_preserves_existing_sea(tmp_path,capsys):
 
 
 @pytest.mark.parametrize('duration',['60','nan','-1'])
-def test_unavailable_native_or_bad_duration_never_replaces_result(tmp_path,duration,capsys):
+def test_missing_inputs_or_bad_duration_never_replaces_result(tmp_path,duration,capsys):
     (tmp_path/'result.npz').write_bytes(b'previous result')
     (tmp_path/'video.mp4').write_bytes(b'previous video')
     (tmp_path/'result.png').write_bytes(b'previous plot')
@@ -81,7 +88,7 @@ def test_corrupt_result_is_clear_fatal_and_preserves_video(tmp_path,capsys):
 
 @pytest.mark.parametrize('flags,timing,total,midpoint', [
     ([], (100., 10., 5.), 130., 65.),
-    (['--rest', '2', '--ramp', '3'], (100., 2., 3.), 110., 55.),
+    (['--solver=wecsim', '--rest', '2', '--ramp', '3'], (100., 2., 3.), 110., 55.),
 ])
 def test_wecsim_cli_publishes_result_and_motion_plot(tmp_path, monkeypatch, flags, timing, total, midpoint):
     from topwater import solve_outputs, wecsim_backend
@@ -103,7 +110,7 @@ def test_wecsim_cli_publishes_result_and_motion_plot(tmp_path, monkeypatch, flag
         return solved
     monkeypatch.setattr(wecsim_backend, 'solve', ready_motion)
     monkeypatch.setattr(solve_outputs, 'save_solve_outputs', capture_plot_sea)
-    assert main(['solve', str(tmp_path), '100', '--solver=wecsim', *flags]) == 0
+    assert main(['solve', str(tmp_path), '100', *flags]) == 0
     assert calls == [timing]
     assert len(plotted_seas) == 1
     for name in Sea.members:
