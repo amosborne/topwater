@@ -1,0 +1,43 @@
+2026-10-28T22:39:17.258Z INFO render BEGIN directory=examples\simple-boat
+2026-10-28T22:39:17.308Z INFO render STAGE load self-contained result
+2026-10-28T22:39:29.998Z INFO render BUDGET render maximum_seconds=1626 surface_frames=1626 rule=one_second_per_surface_frame_minimum_240s
+2026-10-28T22:39:29.998Z INFO render STAGE render and verify complete video
+2026-10-28T22:39:30.518Z INFO render render progress: 1/1626 frames; elapsed=0.516s validation=0.093s mask=0.000s path=0.000s edges=0.000s contact=0.016s draw=0.047s send=0.000s
+2026-10-28T22:39:35.396Z INFO render render progress: 50/1626 frames; elapsed=5.406s validation=1.624s mask=0.078s path=0.000s edges=0.000s contact=0.735s draw=2.577s send=0.032s
+2026-10-28T22:39:40.838Z INFO render render progress: 100/1626 frames; elapsed=10.844s validation=3.002s mask=0.170s path=0.016s edges=0.000s contact=1.409s draw=4.997s send=0.048s
+2026-10-28T22:39:46.265Z INFO render render progress: 150/1626 frames; elapsed=16.266s validation=4.349s mask=0.294s path=0.016s edges=0.000s contact=2.093s draw=7.419s send=0.064s
+2026-10-28T22:39:51.390Z INFO render render progress: 200/1626 frames; elapsed=21.391s validation=5.664s mask=0.387s path=0.032s edges=0.000s contact=2.857s draw=9.668s send=0.079s
+2026-10-28T22:39:56.577Z INFO render render progress: 250/1626 frames; elapsed=26.578s validation=7.007s mask=0.530s path=0.048s edges=0.000s contact=3.557s draw=11.966s send=0.094s
+2026-10-28T22:40:01.781Z INFO render render progress: 300/1626 frames; elapsed=31.781s validation=8.300s mask=0.671s path=0.063s edges=0.000s contact=4.342s draw=14.249s send=0.109s
+2026-10-28T22:40:07.427Z INFO render render progress: 350/1626 frames; elapsed=37.438s validation=9.909s mask=0.734s path=0.063s edges=0.000s contact=5.107s draw=16.750s send=0.125s
+2026-10-28T22:40:13.269Z INFO render render progress: 400/1626 frames; elapsed=43.281s validation=11.409s mask=0.814s path=0.063s edges=0.000s contact=5.873s draw=19.170s send=0.125s
+2026-10-28T22:40:18.547Z INFO render render progress: 450/1626 frames; elapsed=48.547s validation=12.818s mask=0.907s path=0.063s edges=0.000s contact=6.622s draw=21.513s send=0.125s
+2026-10-28T22:40:23.899Z INFO render render progress: 500/1626 frames; elapsed=53.906s validation=14.254s mask=0.984s path=0.063s edges=0.000s contact=7.373s draw=23.858s send=0.125s
+2026-10-28T22:40:29.171Z INFO render render progress: 550/1626 frames; elapsed=59.172s validation=15.600s mask=1.093s path=0.063s edges=0.000s contact=8.121s draw=26.139s send=0.156s
+2026-10-28T22:40:35.103Z INFO render render progress: 600/1626 frames; elapsed=65.110s validation=17.051s mask=1.220s path=0.063s edges=0.000s contact=8.857s draw=28.512s send=0.172s
+2026-10-28T22:40:39.730Z INFO render render progress: 650/1626 frames; elapsed=69.735s validation=18.425s mask=1.347s path=0.079s edges=0.000s contact=9.605s draw=30.856s send=0.188s
+2026-10-28T22:40:45.621Z INFO render render progress: 700/1626 frames; elapsed=75.625s validation=19.894s mask=1.394s path=0.079s edges=0.000s contact=10.382s draw=33.203s send=0.188s
+2026-10-28T22:40:50.272Z INFO render render progress: 750/1626 frames; elapsed=80.281s validation=21.378s mask=1.457s path=0.079s edges=0.000s contact=11.149s draw=35.514s send=0.204s
+2026-10-28T22:40:56.105Z INFO render render progress: 800/1626 frames; elapsed=86.110s validation=22.708s mask=1.599s path=0.079s edges=0.000s contact=11.960s draw=37.825s send=0.204s
+2026-10-28T22:41:02.031Z INFO render render progress: 850/1626 frames; elapsed=92.047s validation=24.144s mask=1.692s path=0.079s edges=0.000s contact=12.770s draw=40.189s send=0.204s
+2026-10-28T22:41:06.947Z INFO render render progress: 900/1626 frames; elapsed=96.953s validation=25.615s mask=1.868s path=0.095s edges=0.000s contact=13.543s draw=42.596s send=0.251s
+2026-10-28T22:41:12.864Z INFO render render progress: 950/1626 frames; elapsed=102.875s validation=26.976s mask=2.025s path=0.095s edges=0.000s contact=14.307s draw=44.892s send=0.298s
+2026-10-28T22:41:17.544Z INFO render render progress: 1000/1626 frames; elapsed=107.547s validation=28.429s mask=2.120s path=0.095s edges=0.000s contact=15.087s draw=47.220s send=0.314s
+2026-10-28T22:41:23.443Z INFO render render progress: 1050/1626 frames; elapsed=113.453s validation=29.850s mask=2.183s path=0.110s edges=0.000s contact=15.867s draw=49.597s send=0.314s
+2026-10-28T22:41:29.420Z INFO render render progress: 1100/1626 frames; elapsed=119.438s validation=31.196s mask=2.342s path=0.110s edges=0.000s contact=16.659s draw=51.879s send=0.345s
+2026-10-28T22:41:34.079Z INFO render render progress: 1150/1626 frames; elapsed=124.094s validation=32.680s mask=2.374s path=0.110s edges=0.000s contact=17.459s draw=54.219s send=0.345s
+2026-10-28T22:41:40.026Z INFO render render progress: 1200/1626 frames; elapsed=130.031s validation=34.117s mask=2.484s path=0.110s edges=0.000s contact=18.256s draw=56.562s send=0.345s
+2026-10-28T22:41:44.756Z INFO render render progress: 1250/1626 frames; elapsed=134.766s validation=35.524s mask=2.593s path=0.126s edges=0.000s contact=19.068s draw=58.891s send=0.360s
+2026-10-28T22:41:50.921Z INFO render render progress: 1300/1626 frames; elapsed=140.938s validation=36.994s mask=2.688s path=0.126s edges=0.000s contact=19.845s draw=61.237s send=0.375s
+2026-10-28T22:41:56.872Z INFO render render progress: 1350/1626 frames; elapsed=146.891s validation=38.290s mask=2.876s path=0.126s edges=0.000s contact=20.692s draw=63.562s send=0.391s
+2026-10-28T22:42:01.618Z INFO render render progress: 1400/1626 frames; elapsed=151.625s validation=39.649s mask=3.046s path=0.126s edges=0.000s contact=21.524s draw=65.919s send=0.391s
+2026-10-28T22:42:07.567Z INFO render render progress: 1450/1626 frames; elapsed=157.578s validation=41.103s mask=3.140s path=0.126s edges=0.000s contact=22.320s draw=68.216s send=0.391s
+2026-10-28T22:42:12.221Z INFO render render progress: 1500/1626 frames; elapsed=162.235s validation=42.604s mask=3.187s path=0.126s edges=0.000s contact=23.097s draw=70.548s send=0.391s
+2026-10-28T22:42:18.089Z INFO render render progress: 1550/1626 frames; elapsed=168.110s validation=44.059s mask=3.311s path=0.126s edges=0.000s contact=23.796s draw=72.895s send=0.391s
+2026-10-28T22:42:24.016Z INFO render render progress: 1600/1626 frames; elapsed=174.031s validation=45.495s mask=3.358s path=0.141s edges=0.000s contact=24.576s draw=75.178s send=0.422s
+2026-10-28T22:42:26.386Z INFO render render progress: 1626/1626 frames; elapsed=176.406s validation=46.247s mask=3.404s path=0.141s edges=0.000s contact=24.950s draw=76.381s send=0.422s
+2026-10-28T22:42:28.014Z INFO render PUBLISHED examples\simple-boat\video.mp4
+2026-10-28T22:42:28.014Z INFO render VIDEO frames=1626 fps=12.5 size=800x800 source_end_s=130.000 encoded_duration_s=130.080 verified=true
+2026-10-28T22:42:28.014Z INFO render TIMING render preparation_s=0.110 setup_s=0.234 geometry_s=99.227 draw_s=76.381 encoder_start_s=0.016 encoder_send_s=0.422 encoder_close_s=0.250 verification_s=1.375 elapsed_s=178.031
+2026-10-28T22:42:28.014Z INFO render Wrote examples\simple-boat\video.mp4
+2026-10-28T22:42:28.014Z INFO render END status=success elapsed_s=190.765000 output_published=true warnings=0

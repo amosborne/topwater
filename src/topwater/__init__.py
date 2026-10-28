@@ -1,4 +1,4 @@
-"""Physical inputs for nonlinear wave-body dynamics; no solver yet."""
+"""Physical inputs for wave-body dynamics; numerical tools live in submodules."""
 
 from .inputs import HullMesh, InitialState, RigidBody, SimulationInputs, WaveComponents
 

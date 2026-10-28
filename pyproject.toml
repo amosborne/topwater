@@ -5,26 +5,42 @@ build-backend = "hatchling.build"
 [project]
 name = "topwater"
 version = "0.1.0.dev0"
-description = "Nonlinear wave-body dynamics in Python"
+description = "Boat motion and water-surface reconstruction with WEC-Sim"
 readme = "README.md"
 requires-python = ">=3.12"
 license = "MIT"
 license-files = ["LICENSE"]
 authors = [{ name = "Alex Osborne" }]
 dependencies = [
+    "numba>=0.67",
     "numpy>=2.0",
     "scipy>=1.14",
+    "threadpoolctl>=3.7.0",
+    "matplotlib>=3.8",
+    "imageio-ffmpeg>=0.6",
 ]
+
+[project.scripts]
+topwater = "topwater.cli:main"
 
 [project.urls]
 Repository = "https://github.com/amosborne/topwater"
 Issues = "https://github.com/amosborne/topwater/issues"
 
 [dependency-groups]
-dev = ["pytest>=8"]
+wecsim = [
+    "capytaine==3.0.0",
+    "matlabengine==25.2.2",
+]
+dev = [
+    "pytest>=8",
+]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/topwater"]
+
+[tool.hatch.build.targets.sdist]
+only-include = ["src", "tests", "scripts", "docs", "README.md", "LICENSE", "pyproject.toml", "uv.lock"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

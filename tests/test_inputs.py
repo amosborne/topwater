@@ -8,6 +8,41 @@ from topwater import HullMesh, InitialState, RigidBody, SimulationInputs, WaveCo
 from topwater.frames import body_to_world
 
 
+def test_opening_metadata_is_owned_and_matches_closure(input_data):
+    source = input_data['body']['mesh']
+    mesh = HullMesh(**source)
+    original = mesh.opening_rim.copy()
+    source['opening_rim'][0] = source['opening_rim'][1]
+    assert_array_equal(mesh.opening_rim, original)
+    assert not mesh.opening_rim.flags.writeable
+    assert not mesh.artificial_faces.flags.writeable
+    assert not mesh.physical_faces.flags.writeable
+    assert len(mesh.physical_faces)+len(mesh.artificial_faces) == len(mesh.faces)
+    with pytest.raises(ValueError, match='duplicate'):
+        HullMesh(**source)
+
+
+@pytest.mark.parametrize('change', ['missing_rim', 'missing_cap', 'wrong_loop', 'wrong_cap'])
+def test_invalid_opening_identity(input_data, change):
+    source = input_data['body']['mesh']
+    if change == 'missing_rim':
+        source['opening_rim'] = []
+    elif change == 'missing_cap':
+        source['artificial_faces'] = []
+    elif change == 'wrong_loop':
+        source['opening_rim'][0], source['opening_rim'][1] = source['opening_rim'][1], source['opening_rim'][0]
+    else:
+        source['artificial_faces'] = source['artificial_faces'][:-1]
+    with pytest.raises(ValueError, match='opening|boundary'):
+        HullMesh(**source)
+
+
+def test_json_requires_explicit_opening_identity(input_data):
+    del input_data['body']['mesh']['artificial_faces']
+    with pytest.raises(ValueError, match='explicitly identify'):
+        SimulationInputs.from_json(json.dumps(input_data))
+
+
 def test_mesh_accepts_rigid_transforms_and_unit_changes(mesh):
     q = [np.sqrt(0.5), 0, 0, np.sqrt(0.5)]
     for scale in (1e-6, 1, 1e6):
@@ -60,7 +95,12 @@ def test_invalid_meshes(mesh, change, message):
         vertices = np.vstack([vertices, vertices + [10, 0, 0]])
         faces = np.vstack([faces, faces + len(mesh.vertices)])
     elif change == "nonmanifold":
-        faces = np.vstack([faces, [faces[0, 0], faces[0, 1], 1]])
+        a, b = faces[0, :2]
+        corner = next(i for i in range(len(vertices))
+            if i not in (a, b)
+            and np.linalg.norm(np.cross(vertices[b]-vertices[a], vertices[i]-vertices[a])) > 0
+            and not np.any(np.all(np.sort(faces, axis=1) == np.sort([a, b, i]), axis=1)))
+        faces = np.vstack([faces, [a, b, corner]])
     with pytest.raises(ValueError, match=message):
         HullMesh(vertices, faces)
 
@@ -179,7 +219,7 @@ def test_calm_water_and_nonidentity_state_round_trip(input_data):
     assert decoded.waves.amplitudes.size == 0
 
 
-@pytest.mark.parametrize("version", [0, 2, True, 1.0, "1"])
+@pytest.mark.parametrize("version", [0, 1, True, 2.0, "2"])
 def test_reject_unsupported_input_version(input_data, version):
     input_data["format_version"] = version
     with pytest.raises(ValueError, match="format_version"):
