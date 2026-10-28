@@ -1,6 +1,69 @@
 # Quintic packet examples: N=10,20,40
 
-## Generated comparisons
+## Corrected generated plots
+
+Rows:0.01/0.1/1Hz with respective phases0/45/90degrees DIRECTLY at65s.
+Columns:N10/20/40 positive components. Every case retains DC and the negative
+conjugates for free. Timing remains rest10/ramp5/dwell100/ramp5/rest10.
+
+![Correct real-wave reconstruction](../images/wave-real-quintic-n-time.png)
+
+![Correct positive-frequency component amplitudes](../images/wave-real-quintic-n-spectrum.png)
+
+Blue is reconstructed REAL elevation; dashed red is the prescribed REAL wave.
+Green lines are the prescribed positive/negative envelope guides. No analytic-
+signal magnitude is mislabeled as the reconstructed envelope. The
+[component phases](../images/wave-real-quintic-n-phase.png) are directly referenced
+to midpoint65s. No midpoint rescaling is applied.
+
+| Base frequency (Hz) | N positive | Full-window peak real-wave error | Quiet peak elevation | Full-window RMS real-wave error |
+|---|---:|---:|---:|---:|
+| 0.01 | 10 | 17.766% | 6.6297% | 4.5008% |
+| 0.01 | 20 | 5.6953% | 3.9204% | 1.6809% |
+| 0.01 | 40 | 0.44875% | 0.44875% | 0.104% |
+| 0.1 | 10 | 27.251% | 23.405% | 6.868% |
+| 0.1 | 20 | 10.699% | 5.3439% | 2.5368% |
+| 0.1 | 40 | 1.2784% | 1.2721% | 0.3513% |
+| 1 | 10 | 33.214% | 27.404% | 7.1213% |
+| 1 | 20 | 18.662% | 6.4808% | 3.5034% |
+| 1 | 40 | 5.6889% | 3.5918% | 1.2816% |
+
+Errors are relative to unit1m amplitude and measured against the real target.
+The retained-coefficient count is Npositive + Nnegative +1DC =2N+1; N itself
+only charges positive components. Independent direct-quadrature/FFT coefficient
+agreement, full FFT/IFFT identity, Hermitian realness and inverse/direct agreement
+are in the [evidence record](../experts/numerical_methods_researcher/real-quintic-packets-2026-10-27.json).
+These checks distinguish correct Fourier reconstruction from finite-N error.
+Largest-coefficient selection minimizes periodic mean-square truncation error;
+peak error need not decrease monotonically with N.
+
+The corrected nine cases and plots took 6.785s. No optimizer
+or image inspection was used. The exact [standalone source](real_quintic_packet_example.py)
+runs with `.venv/Scripts/python.exe docs/research/real_quintic_packet_example.py --output FRESH_DIRECTORY`,
+subject to normal project numerical-execution coordination. No production,
+canonical or WEC-Sim-fork changes occurred.
+
+
+## Current correction: retain DC and negative conjugates
+
+The latest user correction supersedes the positive-only complex-template
+projection shown below. New source/plan: `artifacts/workflow/pulse-real-quintic-design1/`.
+The target is the ordinary real wave `y(u)=a(u)cos(2πf0u+phi)`, `u=t−65`.
+For real-even envelope transform `G`, the positive cosine coefficient is
+`C_j=exp(i phi)G(j/T−f0)+exp(−i phi)G(j/T+f0)`; retain the mean
+`DC=G(f0)cos(phi)`. Reconstruct `DC+Re(sum C_j exp(2πi j u/T))`.
+The full Fourier representation includes `C_j/2` and its negative-frequency
+conjugate. N counts positive components only; N10/20/40 therefore uses21/41/81
+stored Fourier coefficients including DC. No midpoint normalization is applied.
+
+The fixed timing, phases and nested magnitude ranking remain. Direct quadrature
+is checked against an independently sampled real-target FFT. Hermitian IFFT
+checks real reconstruction. The mean is preserved; finiteN midpoint and peak
+errors are measured outputs. New plots show the real target/reconstruction and
+prescribed positive/negative envelope guides, without claiming a reconstructed
+analytic envelope. Root owns execution/publication after independent review.
+
+## Historical positive-only comparisons (superseded)
 
 Rows are base frequency0.01/0.1/1Hz, with respective phases0/45/90degrees
 defined directly at midpoint65s. Columns are N10/20/40. All cases use exactly

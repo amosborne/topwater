@@ -1,5 +1,16 @@
 # Current state: independent numerical-methods review
 
+## Corrected real-Fourier outcome,2026-10-27
+
+Usercorrected Ncounting:DC+negativeconjugatesfree,Npositive. Priorcomplex
+projection wrongforrequestedtask. Correctedsource/actualaccepted;9casesrootrun
+6.785s,fullycleaned. Nooptimizer/rescaling. N40realpeak4.49/12.78/56.89mm;
+quadraturevsFFTcoefs<=3.34e-14,ifft/direct<=9.26e-14,imag<=5.62e-16.
+Plots wave-real-quintic-n-* and real-quintic-packets-2026-10-27.json arecurrent.
+Noanalyticmagnitude-as-envelope claim, physicalqualitypass or nextallocation.
+
+## Earlier complex-projection study: superseded and incorrect for this task
+
 ## Current outcome: optimizer-free quintic examples, 2026-10-27
 
 User requested N10/20/40 for0.01/.1/1Hz, phases0/45/90atMIDPOINT65, window

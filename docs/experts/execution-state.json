@@ -6,16 +6,16 @@
     "manifest":  null,
     "active_numerical_job":  null,
     "last_terminal_evidence":  {
-                                   "job":  "Userexact3carrier .01/.1/1Hz rest10 R5 D100 phases0/45/90degDIRECTmidpoint65 N10/20/40 fixedquintic directFourier topmagnitudes;NOoptimizer;no physicalproducer/canonicalwrite;180s1GiB1thread",
+                                   "job":  "Userexact3carrier .01/.1/1Hz rest10 R5 D100 phases0/45/90degDIRECTmidpoint65 N10/20/40 REALfixedquintic Fourier topNpositive/DC+conjugatesfree;NOrescale/NOoptimizer;no physicalproducer/canonicalwrite;180s1GiB1thread",
                                    "owner":  "/root",
-                                   "producer_pid":  32800,
-                                   "owner_launcher_pid":  32496,
-                                   "started_at":  "2026-10-28T01:48:35.672998+00:00",
+                                   "producer_pid":  12880,
+                                   "owner_launcher_pid":  11776,
+                                   "started_at":  "2026-10-28T02:02:27.749020+00:00",
                                    "exit_code":  0,
                                    "frozen_inputs_match":  true,
                                    "complete":  true,
-                                   "manifest":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\pulse40-three-quintic-attempt1\\manifest.json",
-                                   "output":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\pulse40-three-quintic-attempt1\\output.log"
+                                   "manifest":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\pulse-real-quintic-attempt1\\manifest.json",
+                                   "output":  "C:\\Users\\alex\\topwater\\artifacts\\workflow\\pulse-real-quintic-attempt1\\output.log"
                                },
     "note":  "Exact producer/owner and FFmpeg absence verified by independent CIM; frozen input hashes verified; terminal exit 0. Final separate idle readback follows before lease release."
 }

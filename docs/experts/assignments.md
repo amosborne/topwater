@@ -7,6 +7,13 @@ schedules authorized work and never grants scope. Update status in place.
 
 ## Wave-packet timing and dwell, 2026-10-27
 
+REAL-QUINTIC-CORRECTION, completed: userrequiredDC+negativeconjugatesfree;
+Ncountspositive. NMRauthorednewrealFouriersource,independentNMRreviewedsource/
+actual,TOPpreparedguard;rootran9cases6.785s,fullycleaned,publishedcorrected
+plotsimmediately. Nooptimizer/rescaling/productionchanges. Oldcomplexprojection
+was wrongforrequestedrealwaveconstruction; preservehistorynotcurrentpolicy.
+
+
 QUINTIC-N-COMPARISON, completed: latest user chose NO optimizer and requested
 N10/20/40 for3basefrequencies0.01/.1/1Hz, rest10/ramp5/dwell100/ramp5/rest10,
 phases0/45/90 DIRECTatmidpoint65. NMR authored newquintichelper/plan and note;

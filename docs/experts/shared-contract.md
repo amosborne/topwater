@@ -1,35 +1,35 @@
 # Shared physical and producer/consumer contract
 
-## Per-component packet interface, user decision 2026-10-27
+## Per-component packet interface, corrected user decision2026-10-27
 
-Inputs: base frequency f0, phase phi0 DIRECTLY at dwell MIDPOINT, rest duration,
-ramp duration, dwell duration and maximum spectral-component count N. Timing:
-rest → ramp → dwell → ramp → rest. Total window2*rest+2*ramp+dwell. Each
-original sea component gets its own construction; preserve its amplitude,
-phase and direction. No start-phase conversion is part of the new interface.
-Bandwidth/frequency placement and achieved quality are outputs. A base-wave
-frequency range does not automatically constrain final generated frequencies.
+Inputs:basefrequencyf0,phasephi DIRECTLYatdwellMIDPOINT,rest,ramp,dwell,andN.
+Timing:rest→ramp→dwell→ramp→rest; total2rest+2ramp+dwell. Fixedquintic
+ramps are reversed copies; no optimizer. Each sea component retains amplitude,
+phase and direction; the current examples are1Dtime traces only.
 
-Latest user preference: deterministic fixed quintic ramps, direct Fourier
-coefficients and retain N largest magnitudes, not lowest physical frequencies.
-No optimizer. The example uses rest10/ramp5/dwell100, f0.01/.1/1Hz, midpoint
-phases0/45/90degrees and N10/20/40. Window130s, midpoint65s. Frequency/phase
-bar plots, time trace and measured errors are outputs, not a preset qualitypass.
+N counts POSITIVE-frequency components. DC and negative-frequency conjugates
+are free. Use the REAL target a(t)*cos(2pi*f0*(t-mid)+phi), preserving its mean
+and Hermitian Fourier pairs; no amplitude/phase rescaling. Compute coefficients
+directly, retain N largestpositive magnitudes and their conjugates. Bandwidth,
+placement and achievedquality are outputs. No imposedfinalband/sharedenvelope
+acrosscarriers. Current example:f0.01/.1/1Hz,phi0/45/90at65s,rest10/ramp5/
+dwell100/ramp5/rest10,N10/20/40. A phase reference shift is not an inputfeature.
 
-The present example projects the complex template onto positive j/130Hz modes,
-discards DC/negative analytic content explicitly and separately normalizes the
-midpoint sum. It is not ordinary real-wave Fourier truncation. Report that
-projection loss/meanbias separately from finite-N truncation; it can dominate
-atlowf0 and is not a fundamental physical limit. Largest-coefficient selection
-is rawL2-optimal on the fixed positive dictionary before normalization, not
-minimax. MoreN need not monotonically reduce normalized peakerror.
+The previous complex positiveprojection dropped necessary signed content and
+was wrong for this reconstruction task. Preserve that study under itsoriginal
+policy; do not describe its projection loss as physical necessity. Correctreal
+coefficient:Cpos=e^(iφ)G(f-f0)+e^(-iφ)G(f+f0);DC=G(f0)cosφ. Store fullFFT
+coefficients Cpos/2 with conjugates. Validate against an independent realtarget
+FFT and checkIFFTimaginaryresidue/inverseagreement. FullrealFourier converges;
+finiteN introduces measuredtruncationerror. No predeterminedphysicalqualitypass.
 
-The intended ramp envelope is symmetric when fall reverses rise. Midpoint real
-weights preserve conjugate reflection and mirrored magnitude for anycarrierphi.
-Full oscillating waves need not beeven; no paired physical-frequency requirement
-is imposed. Final component coverage/direction handling and whole-hull physical
-propagation must be reviewed before production use. These are only1D examples.
-No production inputs, canonical results, solver or WEC-Sim fork changed.
+Envelope symmetry belongs to the prescribed a(t); fulloscillatingwave neednot
+beeven for arbitraryphi. Its spectrum is Hermitian aboutzero; no extra paired
+frequency requirement aboutf0. Do not mistake analytic-signal magnitude for
+the prescribed amplitude envelope in broadband/lowcarrier cases. Plot actual
+realreconstruction against actualrealtarget. Generatedphysicalcomponents still
+need producercoverage/spatialreview before productionuse. Canonicaldata,
+production solver and maintainedWECfork are unchanged by theseexamples.
 
 ## Simulation timing integration remains separate
 

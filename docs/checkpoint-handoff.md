@@ -1,53 +1,49 @@
 # Checkpoint handoff
 
-Updated 2026-10-27 local date. Latest user steering controls scope; historical
-evidence and queued assignments do not authorize execution. Follow AGENTS.md.
+Updated2026-10-27 local. Latest user steering controls scope; historical evidence
+and queued assignments do not authorize execution. Follow AGENTS.md.
 
-## Current outcome: optimizer-free quintic examples, issue #36
+## Current outcome: corrected real Fourier examples, issue #36
 
-The user's latest requested example is COMPLETE: three base frequencies
-0.01/0.1/1Hz, phases0/45/90degrees DIRECTLY at dwell MIDPOINT65s, each shown
-for N10/20/40. Exact profile:10s rest,5s ramp,100s dwell,5s ramp,10s rest.
-Latest user preference is NO OPTIMIZER: fixed quintic envelope, direct Fourier
-coefficients, largest-N magnitude selection. No LP/greedy method in this run.
+User identified the prior error: retain DC and negative-frequency conjugates
+FREE; N counts positive components only. Corrected9plots are GENERATED AND
+SHOWN TO USER. They use rest10/ramp5/dwell100/ramp5/rest10, f0.01/.1/1Hz,
+phases0/45/90degrees DIRECTLY at midpoint65s, and N10/20/40 (columns).
+No optimizer or rescaling. Real target a_even*cos(2pi*f0*(t-65)+phi).
+Positive cosine C(f)=e^(iφ)G(f-f0)+e^(-iφ)G(f+f0), DC=G(f0)cosφ.
+Retain largestNpositive plusNnegativeconjugates and1DC (2N+1coeffs).
 
-Plots: docs/images/wave-quintic-n-time.png (2720x1760),
-wave-quintic-n-spectrum.png and wave-quintic-n-phase.png (2720x1600).
-Rows are base frequencies; columns are N10/20/40. Images were NOT inspected;
-source/metrics/header/dimensions/hash verified for user review. Narrative and
-reproducible exact source: docs/research/pulse40-three-examples.md and
-docs/research/quintic_packet_example.py. Full coefficients/metrics/identities:
-docs/experts/numerical_methods_researcher/quintic-packets-2026-10-27.json.
+Current plots docs/images/wave-real-quintic-n-time.png, -spectrum.png, -phase.png.
+Immediate plot checkpoint8f2bf13 pushed after user objected to publicationdelay.
+Time rows are frequencies, columnsN10/20/40. Phasesreferdirectly65s. Images
+were NOT inspected. Show completed plots immediately; do not delay them for
+documentation/GitHub bookkeeping. Earlier complex-projection plots are WRONG
+for this reconstruction task, not a physical lower bound. Preserve ashistory.
 
-Actual helper time6.8867303s, guard8.5s. Each case normalizes its midpoint sum
-to unit amplitude, applies requested phase directly, uses j/130Hz positive
-harmonics and keeps nested10/20/40 largest magnitudes. Symmetric envelope
-magnitudes hold to2.2e-14; anchors to3.4e-16; quadrature128/256 differences
-<=3.1e-16. Tailbound separates omitted positive coefficients from top40.
+Corrected source docs/research/real_quintic_packet_example.py and narrative
+docs/research/pulse40-three-examples.md. Fullcoeffs/metrics/identities:
+docs/experts/numerical_methods_researcher/real-quintic-packets-2026-10-27.json.
+N40 peak REAL errors0.0044874833/0.0127837423/0.0568887706m perunit1m;
+previouswrongerrors0.2448370989/0.0998263302/0.0596923459m. LargestNrealFourier
+selection is L2-optimal on declaredgrid before truncation, not peak-optimal.
+Fullfinitecandidate reference errors0.410/0.242/0.206mm; sampled fullFFT
+roundtrip1.22e-15m; independentquadrature-vsFFT selectedcoefs3.34e-14max;
+inverse/directagreement9.26e-14max; imaginaryresidue<=5.62e-16.
+The remaining error is ordinary finite-N truncation. Do notplot an analytic
+signal's magnitude as the prescribed envelope at lowf0; show actualrealwave
+versusrealquintictarget and target envelope guides. PreserveDCmean exactly.
 
-IMPORTANT limitation: this is positive projection of the COMPLEX template
-a(t)*exp(i(2pi*f0*(t-65)+phi)), NOT ordinary real-wave Fourier truncation.
-DC/negative analytic content is discarded, never folded; normalization changes
-the rawL2 projection. N40 worstcomplexscore bounds29.1142/7.6348/5.8205percent;
-real-target maxerrors24.4837/9.9826/5.9692cm forunit1m. The0.01Hz case loses
-2.895% analyticenergy toDC/negative content and has+3.8236cm meanbias. This is
-a method-specific limitation, not a physical impossibility or accuracy pass.
-Do not call these minimax optima, a production sea or qualified boat physics.
+Root alone ran correctedpulse-real-quintic-attempt1 in6.7850583s (guard8.156s).
+Independent source/actual reviews accepted numerical consistency, not physical
+quality. Producer12880/owner11776/guard32120/driver25300/conhost8048/python31884
+hostabsent; terminal0/frozen/guard0/driver0/Jobempty; finishterminal0/idle/null/
+lease release verified. No active or next numerical job. No canonical/production
+CLI/solver/WEC-fork changes. No upstream activity or merge.
 
-Raw evidence: artifacts/workflow/pulse40-three-quintic-attempt1/results.
-Sourcea957e80224959bec5c3bc1b694a498568188bc9d7348b9b1bb45614e6a69244c;
-source/actual independent reviews accepted consistency, not quality. Root alone
-ran the guarded job; all9cases complete. Producer32800/owner32496/guard33420/
-driver20416/conhost7680/python37344 hostabsent, terminal0/frozen/guard0/driver0/
-Jobempty, finishterminal0; separateidle/null/nojob/nolease readback confirmed.
-No next numerical job is allocated. No production/CLI/canonical/WEC-fork change.
-
-User now has a fully explicit per-component interface:
-f0,phi(midpoint),rest,ramp,dwell,N. Bandwidth/frequency placement/quality outputs.
-Any next study must follow latest user steering; do not resume optimization,
-surface reconstruction, dynamics or performance campaigns automatically.
-At checkpoint commit/push baseline/fluid-body and update authoritative #36/#30
-main bodies; preserve all historical failed-policy studies under originalpolicy.
+Accepted inputs:f0,phi(midpoint),rest,ramp,dwell,Npositive. Fixed quintic profile,
+direct realFourier projection, largestcoefficients. Bandwidth/frequency placement
+and achievedquality are outputs. No additionaloptimizer or quality target.
+Any further work follows latest user request, not queuedhistoricalstudies.
 
 ## Preserved superseded studies
 
