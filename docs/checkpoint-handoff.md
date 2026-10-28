@@ -3,7 +3,69 @@
 Updated2026-10-27 local. Latest user steering controls scope; historical evidence
 and queued assignments do not authorize execution. Follow AGENTS.md.
 
-## Current outcome: corrected real Fourier examples, issue #36
+## Current outcome: fixed10ms minimum-cutoff utility implemented
+
+Latest authorized implementation COMPLETE: src/topwater/wave_packets.py exposes
+quintic_packet/minimum_cutoff_packet. Fixed TIME_STEP_S=.01; durations align10ms;
+odd/evenFFTcounts supported. Solepasscriterion ABSOLUTE max(0,abs(wave)-A*a)
+<=.01m includingrest/ramps/dwell; prior dwellmatchrequirement superseded.
+Eligiblecutoffsstartfirstbin>=carrier, all lowerbinsstillretained. FFTonce,
+fullarrayincrementalharmonicsperbin, onefinalIFFT, no optimizer/IFFTinscan.
+Between-samplecurvature+roundoffguard gives firstCERTIFIEDcutoff, notexact
+continuousminimum. No sample_count/finergridAPI. WEC-Sim currently.02s unchanged;
+user wants eventualworkflowaligned10ms, futureintegrationseparate.
+
+21tests PASS0.10s in rootserialguard; completeAPI14.05/26.33/61.82ms for
+f0.01/.1/1Hz, phi0/45/90atmid65,rest10R5D100,A1,tol.01m. Cutoffs.276923/
+.353846/1.253846Hz,36/46/163positivebins. Certifiedbounds9.9173/8.1251/9.0022mm;
+guardonlyrejection0/0/1. DwellerrorsdiagnosticONLY. Plotwave-minimum-cutoff-10ms.png,
+docs/wave-packet-search.md and packet-cutoff-search-2026-10-27.json current.
+
+Source/actual reviewed independently. Test+benchmark guardterminal0/frozen/
+driver0/Jobempty, allownedprocesseshostabsent; finishsession48349terminal0;
+separateidle/null/noleaseconfirmed. Noactive/nextnumericaljob. No CLI/seaarchive/
+WEC/native/canonicalintegration in this change. Rootcoordinatorownscheckpoint.
+Previousruntime/source/failedstudies staypreserved; userlateststeeringcontrols.
+
+## Earlier examples and superseded implementation proposals
+
+LATESTuserauthorizesIMPLEMENTminimumcutoffsearch. LoadedTopwaterexpert
+receipt_reliability owns src/topwater/wave_packets.py, tests/test_wave_packets.py,
+docs/wave-packet-search.md. IndependentNMRissue31_method_review owns read-only
+review; minimal_pulse_research owns NEWpacket-cutoff-search-example1 driver/plan.
+Rootonlyrunsreviewedtestsandbenchmarkseriallyafterclaim. Scopeonlynewpacket
+utility, no productionsea/CLI/native/WEC/canonicalintegration or physicsjobs.
+
+LATEST timepolicy USERexplicit FIXED10ms forconstruction/search/output, not
+32768samplesdefault and nofiner-gridsecondIFFTbydefault. T130=>13000FFTpoints.
+Each timingconstant mustalign.01s; oddtotalstepcountsneedproperrfftHermitian
+handling. TOPupdatesmodule/tests/docs, NMRbenchmarkdriverupdatede01aa496...
+plan7f24953a... no sample_count/finerargs. AwaitNEW10msreviewreceiptbeforelaunch.
+Core1cmalltimeenvelopegate/incrementalalgorithmunchanged. Userquestions about
+peakchecks/timestepareconceptual, notfurtherimplementationrequirements.
+
+FINAL criterion: userSUPERSEDES prior dwell-accuracycondition. Only all-time
+envelopeEXCEEDANCE max(0,abs(realwave)-A*quinticenvelope)<=0.01m absolute.
+Rootstatedeligiblecutoffsstartatfirstbin>=f0(carriermustremain), not DC-only.
+InputsphaseDIRECTmidpoint, amplitudeexplicit(default1),rest/ramp/dwell/tol_m.
+FFTonce; accumulateDC+onepositivecosine/conjugatepairperstep onFULLgridplus
+exacttimingboundaries; noIFFTinsidecandidate loop, onefinalIFFTvalidation.
+Firstpassingeligiblebin; no binarysearchpeakmonotonicassumption. Dwellerror
+diagnosticONLY, notgate. Reportminimumonvalidationgrid, no continuumproof.
+Userapprovedthisdesignwith'ok sounds good do it'. Measureoverallruntime.
+Oldfmaxplotsalreadyshown4930cba; no rerunpending. Lastjobterminal/leasefinished.
+
+LATEST authorization replaces N input with explicit maximumPHYSICAL frequency.
+Buildrealquinticwave time→FFT→retainDCand|f|<=fmax→IFFT; allbinsbelowcutoff,
+no largest-coefficient ranking/optimizer/rescaling. User requested3cutoffplots.
+Rootselected1.05/1.2/1.5Hz acrosssamef0.01/.1/1Hz,midpointphi0/45/90,
+rest10/ramp5/dwell100/ramp5/rest10. Npositive becomesoutput. Newsourcepulse-fmax-
+design1, reviewpulse-fmax-review1, guardpulse-fmax-guard1. Rootsole60s1GiBjob
+pendingreview, noagentexec/noimageinspection/no productioncanonicalchanges.
+Userobservesnextstepcouldsearchminimumcutoff foracceptablewaveformerror;
+rootexplaineddiscretecutoffscanwithtolerancenotyetselected. FinishCURRENTthree
+cutoffplots first; no automatic error-tolerance study or extra optimizer job.
+Show generated plots before bookkeeping. Lastjobidle/no lease; PIDsreconciled.
 
 User identified the prior error: retain DC and negative-frequency conjugates
 FREE; N counts positive components only. Corrected9plots are GENERATED AND

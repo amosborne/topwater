@@ -1,5 +1,15 @@
 # Current state: independent numerical-methods review
 
+## Current: fixed10ms cutoff-search implementation accepted
+
+modulewave_packets.py a9b14b34..., tests12cd8243..., doc e1a41108... preappend
+reviewed with10msdriver e01aa496. 21testspass0.10s; threeAPIcalls14.05/26.33/
+61.82ms, cutoff.276923/.353846/1.253846Hz andcertifiedbounds<10mm. Solealltime
+envelopegate; no dwellfit. Realharmonicincrementalsum,oneFFT+onefinalIFFT,
+oddclock handling, norescale/noIFTscan. Guardadds0/0/1bins; firstcertifiednot
+continuousglobalminimum. Rootjobfullycleaned. Evidencepacket-cutoff-search-
+2026-10-27.json and docs/wave-packet-search.md. No nextjob/productionintegration.
+
 ## Corrected real-Fourier outcome,2026-10-27
 
 Usercorrected Ncounting:DC+negativeconjugatesfree,Npositive. Priorcomplex

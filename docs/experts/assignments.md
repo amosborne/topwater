@@ -7,6 +7,12 @@ schedules authorized work and never grants scope. Update status in place.
 
 ## Wave-packet timing and dwell, 2026-10-27
 
+PACKET-CUTOFF-IMPLEMENTATION, completed: Topwaterexpertownedwave_packets.py,
+targetedtests/docs; independentNMRreviewed; separateNMRpreparedbenchmarkdriver;
+root alone ranserializedtests+3casebenchmark andallterminal/frozen/host/idle/
+releasechecks. 21tests pass; fixed10msAPIcomplete-call14–62ms. NoIFFTinscan;
+sole1cmalltimeenvelopegate,firstcertifiedcutoff. No productionworkflowintegration.
+
 REAL-QUINTIC-CORRECTION, completed: userrequiredDC+negativeconjugatesfree;
 Ncountspositive. NMRauthorednewrealFouriersource,independentNMRreviewedsource/
 actual,TOPpreparedguard;rootran9cases6.785s,fullycleaned,publishedcorrected

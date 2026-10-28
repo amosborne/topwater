@@ -2,6 +2,26 @@
 
 ## Per-component packet interface, corrected user decision2026-10-27
 
+CURRENT cutoff utility uses FIXED10ms sampling. Inputs:f0,phaseDIRECTmidpoint,
+rest,ramp,dwell,amplitude,absoluteenvelopeerror(.01m). N/fmax areoutputs.
+The only acceptancecriterion is abs(reconstructed)<=A*quinticenvelope+tol,
+atalltimes via statedinterpolationguard; dwellfitissuperseded anddiagnosticonly.
+Firsteligiblecutoffbin>=f0, retainalllowerbins/DC/conjugates. FFTonce,
+incrementaloneharmonicperbinonfixedgrid,onefinalIFFT; noIFTscan/rescaling.
+Returnfirstcertifiedeligiblecutoff,notexactcontinuousglobalminimum. Timings
+mustalign10ms, oddtotalstepsvalid. UserwantseventualWECsimstepaligned10ms;
+currentWECsimsettings remain unchanged until futureintegration.
+Old N-based/explicitfmax examples below remainhistorical, notcurrentAPI.
+
+LATESTminimum-cutoffsearchpolicy: absolute1cm ENVELOPEEXCEEDANCEalltimes only;
+the user explicitly superseded earlier dwell-waveform-accuracyrequirements.
+Check max(0,abs(eta)-A*quinticenvelope)<=tol_m, includingramps/rest. Dwellerror
+isreportedbutnotusedaspasscriterion. Search beginsatfirstfrequencybin>=f0
+to retain carrier. FFTonce, fullwaveincrementalharmonicupdatesperpositivebin,
+DC/conjugatesretained; onefinalIFFTcheck. Eligiblefirstpassonstatedvalidation
+grid+exactboundaries; noimplicitcontinuum/globalaccuracyclaim. Newutility
+implementationauthorized; no productionworkflowintegration yet.
+
 Inputs:basefrequencyf0,phasephi DIRECTLYatdwellMIDPOINT,rest,ramp,dwell,andN.
 Timing:rest→ramp→dwell→ramp→rest; total2rest+2ramp+dwell. Fixedquintic
 ramps are reversed copies; no optimizer. Each sea component retains amplitude,
