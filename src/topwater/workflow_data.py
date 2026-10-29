@@ -15,7 +15,7 @@ import zlib
 import numpy as np
 
 from ._validation import array
-from .boat_geometry import physical_hull
+from .boat.geometry import physical_hull
 from .inputs import RigidBody, WaveComponents
 
 
@@ -43,10 +43,12 @@ def _read_archive(cls, path):
     with ZipFile(path) as archive:
         members = archive.namelist()
         expected = {name+'.npy' for name in cls.members}
-        if len(members) != len(expected) or set(members) != expected:
+        optional = {name+'.npy' for name in getattr(cls, 'optional_members', ())}
+        if len(members) != len(set(members)) or not expected <= set(members) or not set(members) <= expected | optional:
             raise ValueError(f'{cls.__name__} archive must contain exactly {", ".join(cls.members)}')
     with np.load(path, allow_pickle=False) as data:
-        return cls(**{name: data[name] for name in cls.members})
+        names = (*cls.members, *(name for name in getattr(cls, 'optional_members', ()) if name in data))
+        return cls(**{name: data[name] for name in names})
 
 
 def _load(cls, path):
@@ -73,7 +75,9 @@ def _save(value, path, overwrite):
         with tempfile.NamedTemporaryFile(mode='wb', dir=staging,
                                          prefix='.'+path.stem+'-', suffix='.npz', delete=False) as stream:
             temporary = Path(stream.name)
-            np.savez(stream, **{name: getattr(value, name) for name in value.members})
+            names = (*value.members, *(name for name in getattr(value, 'optional_members', ())
+                                      if getattr(value, name) is not None))
+            np.savez(stream, **{name: getattr(value, name) for name in names})
             stream.flush()
             os.fsync(stream.fileno())
         if overwrite:
@@ -194,16 +198,37 @@ class Result(_Archive):
     surface_faces: np.ndarray
     surface_vertex_offsets: np.ndarray
     surface_face_offsets: np.ndarray
+    surface_interval_s: float | None = None
+    view_bounds_xy_m: np.ndarray | None = None
+    video_size_px: np.ndarray | None = None
 
     members = ('time_s', 'position_m', 'orientation_wxyz', 'hull_vertices_m', 'hull_faces',
                'cg_m', 'surface_time_s', 'surface_vertices_m', 'surface_faces',
                'surface_vertex_offsets', 'surface_face_offsets')
+    optional_members = ('surface_interval_s', 'view_bounds_xy_m', 'video_size_px')
 
     def __post_init__(self):
         times = _times(self.time_s, 'time_s')
         surface_times = _times(self.surface_time_s, 'surface_time_s')
         if times[-1] != surface_times[-1]:
             raise ValueError('body and surface time axes must have identical endpoints')
+        if self.surface_interval_s is not None:
+            interval = float(array(self.surface_interval_s, (), 'surface_interval_s'))
+            differences = np.diff(surface_times)
+            if (interval <= 0 or not np.allclose(differences[:-1], interval, atol=1e-9, rtol=1e-7)
+                    or differences[-1] > interval+1e-9):
+                raise ValueError('surface_interval_s must match regular samples with an optional short endpoint interval')
+            object.__setattr__(self, 'surface_interval_s', interval)
+        if self.view_bounds_xy_m is not None:
+            bounds = array(self.view_bounds_xy_m, (2, 2), 'view_bounds_xy_m')
+            if np.any(bounds[1] <= bounds[0]):
+                raise ValueError('view_bounds_xy_m must have positive XY spans')
+            object.__setattr__(self, 'view_bounds_xy_m', bounds)
+        if self.video_size_px is not None:
+            size = _integer(self.video_size_px, (2,), 'video_size_px')
+            if np.any(size <= 0) or np.any(size % 2):
+                raise ValueError('video_size_px must contain positive even width and height')
+            object.__setattr__(self, 'video_size_px', size)
         position = array(self.position_m, (len(times), 3), 'position_m')
         orientation = array(self.orientation_wxyz, (len(times), 4), 'orientation_wxyz')
         if not np.allclose(np.linalg.norm(orientation, axis=1), 1., rtol=0., atol=1e-10):

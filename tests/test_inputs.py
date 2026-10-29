@@ -4,8 +4,12 @@ import numpy as np
 from numpy.testing import assert_allclose, assert_array_equal
 import pytest
 
-from topwater import HullMesh, InitialState, RigidBody, SimulationInputs, WaveComponents
-from topwater.frames import body_to_world
+from topwater import HullMesh
+from topwater import InitialState
+from topwater import RigidBody
+from topwater import SimulationInputs
+from topwater import WaveComponents
+from topwater.geometry.transforms import body_to_world
 
 
 def test_opening_metadata_is_owned_and_matches_closure(input_data):

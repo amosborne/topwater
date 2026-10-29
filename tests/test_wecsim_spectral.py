@@ -3,7 +3,7 @@ from types import SimpleNamespace
 import numpy as np
 import pytest
 
-from topwater._wecsim_spectral import prepare_spectral_inputs
+from topwater.solve.wecsim.spectral import prepare_spectral_inputs
 
 
 def case():

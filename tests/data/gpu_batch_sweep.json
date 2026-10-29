@@ -1,0 +1,823 @@
+{
+  "scope": "Complete unprofiled simple-boat GPU solves including publication, excluding rendering",
+  "selected_gpu_starting_batch": 64,
+  "selection": "Smallest tested batch within 1% of fastest median; 5% initial screening also qualified 32, which was measurably slower",
+  "medians_seconds": {
+    "32": 12.600643500001752,
+    "64": 12.22843410000496,
+    "128": 12.225636499999382,
+    "256": 12.359416999999667,
+    "512": 12.332653600002232,
+    "1024": 12.345439000004262,
+    "8": 14.116178900003433,
+    "16": 13.045383900003799
+  },
+  "output_members_identical": true,
+  "sweeps": [
+    {
+      "scope": "Complete unprofiled simple-boat GPU solve, including publication, excluding rendering",
+      "output_directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-8i2jy7g0",
+      "repeats": 3,
+      "batches": [
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "selection": "Smallest batch within 5% of fastest median",
+      "seed": 42,
+      "runs": [
+        {
+          "repeat": 0,
+          "batch": 128,
+          "warmup": true,
+          "complete_solve_seconds": 12.259423800001969,
+          "output_identical": true,
+          "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-8i2jy7g0\\00-round0-batch128",
+          "backend_events": [
+            "2026-10-29T03:44:15.891Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+            "2026-10-29T03:44:20.437Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+          ]
+        },
+        {
+          "repeat": 1,
+          "batch": 256,
+          "warmup": false,
+          "complete_solve_seconds": 12.568838400002278,
+          "output_identical": true,
+          "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-8i2jy7g0\\01-round1-batch256",
+          "backend_events": [
+            "2026-10-29T03:44:29.220Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+            "2026-10-29T03:44:33.746Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+          ]
+        },
+        {
+          "repeat": 1,
+          "batch": 64,
+          "warmup": false,
+          "complete_solve_seconds": 12.595542100003513,
+          "output_identical": true,
+          "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-8i2jy7g0\\02-round1-batch64",
+          "backend_events": [
+            "2026-10-29T03:44:43.216Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+            "2026-10-29T03:44:47.802Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+          ]
+        },
+        {
+          "repeat": 1,
+          "batch": 128,
+          "warmup": false,
+          "complete_solve_seconds": 12.309171299995796,
+          "output_identical": true,
+          "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-8i2jy7g0\\03-round1-batch128",
+          "backend_events": [
+            "2026-10-29T03:44:56.791Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+            "2026-10-29T03:45:01.385Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+          ]
+        },
+        {
+          "repeat": 1,
+          "batch": 512,
+          "warmup": false,
+          "complete_solve_seconds": 12.367504500005452,
+          "output_identical": true,
+          "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-8i2jy7g0\\04-round1-batch512",
+          "backend_events": [
+            "2026-10-29T03:45:10.240Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+            "2026-10-29T03:45:14.768Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+          ]
+        },
+        {
+          "repeat": 1,
+          "batch": 32,
+          "warmup": false,
+          "complete_solve_seconds": 12.501460300001781,
+          "output_identical": true,
+          "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-8i2jy7g0\\05-round1-batch32",
+          "backend_events": [
+            "2026-10-29T03:45:23.608Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+            "2026-10-29T03:45:28.143Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+          ]
+        },
+        {
+          "repeat": 1,
+          "batch": 1024,
+          "warmup": false,
+          "complete_solve_seconds": 12.352172300001257,
+          "output_identical": true,
+          "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-8i2jy7g0\\06-round1-batch1024",
+          "backend_events": [
+            "2026-10-29T03:45:37.281Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+            "2026-10-29T03:45:41.838Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+          ]
+        },
+        {
+          "repeat": 2,
+          "batch": 256,
+          "warmup": false,
+          "complete_solve_seconds": 12.359416999999667,
+          "output_identical": true,
+          "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-8i2jy7g0\\07-round2-batch256",
+          "backend_events": [
+            "2026-10-29T03:45:50.830Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+            "2026-10-29T03:45:55.391Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+          ]
+        },
+        {
+          "repeat": 2,
+          "batch": 32,
+          "warmup": false,
+          "complete_solve_seconds": 12.600643500001752,
+          "output_identical": true,
+          "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-8i2jy7g0\\08-round2-batch32",
+          "backend_events": [
+            "2026-10-29T03:46:04.367Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+            "2026-10-29T03:46:08.927Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+          ]
+        },
+        {
+          "repeat": 2,
+          "batch": 128,
+          "warmup": false,
+          "complete_solve_seconds": 12.135951799995382,
+          "output_identical": true,
+          "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-8i2jy7g0\\09-round2-batch128",
+          "backend_events": [
+            "2026-10-29T03:46:18.040Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+            "2026-10-29T03:46:22.590Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+          ]
+        },
+        {
+          "repeat": 2,
+          "batch": 512,
+          "warmup": false,
+          "complete_solve_seconds": 12.249553999994532,
+          "output_identical": true,
+          "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-8i2jy7g0\\10-round2-batch512",
+          "backend_events": [
+            "2026-10-29T03:46:31.242Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+            "2026-10-29T03:46:35.755Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+          ]
+        },
+        {
+          "repeat": 2,
+          "batch": 1024,
+          "warmup": false,
+          "complete_solve_seconds": 12.345439000004262,
+          "output_identical": true,
+          "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-8i2jy7g0\\11-round2-batch1024",
+          "backend_events": [
+            "2026-10-29T03:46:44.749Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+            "2026-10-29T03:46:49.270Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+          ]
+        },
+        {
+          "repeat": 2,
+          "batch": 64,
+          "warmup": false,
+          "complete_solve_seconds": 12.179686800001946,
+          "output_identical": true,
+          "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-8i2jy7g0\\12-round2-batch64",
+          "backend_events": [
+            "2026-10-29T03:46:58.110Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+            "2026-10-29T03:47:02.636Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+          ]
+        },
+        {
+          "repeat": 3,
+          "batch": 256,
+          "warmup": false,
+          "complete_solve_seconds": 12.29886290000286,
+          "output_identical": true,
+          "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-8i2jy7g0\\13-round3-batch256",
+          "backend_events": [
+            "2026-10-29T03:47:11.473Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+            "2026-10-29T03:47:15.971Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+          ]
+        },
+        {
+          "repeat": 3,
+          "batch": 64,
+          "warmup": false,
+          "complete_solve_seconds": 12.22843410000496,
+          "output_identical": true,
+          "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-8i2jy7g0\\14-round3-batch64",
+          "backend_events": [
+            "2026-10-29T03:47:24.842Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+            "2026-10-29T03:47:29.386Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+          ]
+        },
+        {
+          "repeat": 3,
+          "batch": 128,
+          "warmup": false,
+          "complete_solve_seconds": 12.225636499999382,
+          "output_identical": true,
+          "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-8i2jy7g0\\15-round3-batch128",
+          "backend_events": [
+            "2026-10-29T03:47:38.250Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+            "2026-10-29T03:47:42.841Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+          ]
+        },
+        {
+          "repeat": 3,
+          "batch": 32,
+          "warmup": false,
+          "complete_solve_seconds": 12.679445599998871,
+          "output_identical": true,
+          "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-8i2jy7g0\\16-round3-batch32",
+          "backend_events": [
+            "2026-10-29T03:47:51.604Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+            "2026-10-29T03:47:56.202Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+          ]
+        },
+        {
+          "repeat": 3,
+          "batch": 512,
+          "warmup": false,
+          "complete_solve_seconds": 12.332653600002232,
+          "output_identical": true,
+          "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-8i2jy7g0\\17-round3-batch512",
+          "backend_events": [
+            "2026-10-29T03:48:05.419Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+            "2026-10-29T03:48:09.933Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+          ]
+        },
+        {
+          "repeat": 3,
+          "batch": 1024,
+          "warmup": false,
+          "complete_solve_seconds": 12.344723199996224,
+          "output_identical": true,
+          "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-8i2jy7g0\\18-round3-batch1024",
+          "backend_events": [
+            "2026-10-29T03:48:18.829Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+            "2026-10-29T03:48:23.404Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+          ]
+        }
+      ],
+      "benchmark_source_sha256": {
+        "scripts\\benchmark_gpu_batches.py": "1d471e8a5fdb4fb9952fe2e63cffcfea473af6cf194c97e5f65d3a9c4e4cfb45",
+        "scripts\\profile_workflow.py": "41ccee31cbdfb8f61497d3189f698da7f1dbbe494806d2143574294c2cbd3366"
+      },
+      "provenance": {
+        "revision": "3b64b016be5008d015a62f0cf026125b23d88dde",
+        "python": "3.12.10",
+        "platform": "Windows-11-10.0.26300-SP0",
+        "cpu_count": 32,
+        "input_sha256": {
+          "boat.npz": "b414b887891f2d3bc765073e6217c88fa77d25c382fe3334638bcf4e0e7d7a65",
+          "sea.npz": "9ba25ba3258e6c4cec47847ef4e52f69b4af84fae55dc07ba471708ee3951ce4"
+        },
+        "package_directory": "C:\\Users\\alex\\Documents\\GitHub\\topwater\\src\\topwater",
+        "source_sha256": {
+          "__init__.py": "179efdd7d137ba6be0183e251509d8d04475bd79a0b44c6517c50317c5a12ea7",
+          "__main__.py": "482b8693e2fe6dbd732e3d7961e03827d3efa187bad11d29da188be580ebbeea",
+          "_capytaine_surface.py": "9595c17bf17d4174ffc13dca7cf39237fdf94222d29fdf6913a26f50db8265b0",
+          "_clipping.py": "02ccba252dd0b171907ac71329c1a9adac3d72736b07b3f396dacdff387ead70",
+          "_triangulation.py": "880379cec0d52ed3bd296de945539fb4147ea49c4afb99fd7e3c39eb57ae8775",
+          "_validation.py": "a9726847a31a8bc15d176c53366634b3945e17c5b23d40a933ee51e4fb9462bf",
+          "_visualization_2d.py": "f478adbff1ac825124c948854384f81e9b23a22daf3cea8a5493e35c2dadd091",
+          "_visualization_geometry.py": "87d021f8af7771326497509fd6d949d38923d56bc6c7f79a07d1bcfa171f9182",
+          "_wecsim_setup.py": "f5bcb7a57c3f3406c8ff9dc2b2515fbd518d0667ee24c5c84beacbb8932f1880",
+          "_wecsim_spectral.py": "317c967c4fb78fe036110c9569a5c8fa8a136ce03cf779fc436c6677674ca43e",
+          "boat_generation.py": "37f349015204e68e4222b83ca3503aad54da7eb715827243f992323e6b1b457d",
+          "boat_geometry.py": "a1b12af191c391d0490f09d4cd3914d96fd8eeb9b3c0ec1aa2323c2cbf3611b2",
+          "cli.py": "ab440f89dea2f88da52dc1a48bc2cb9783c21ab67141e9f90c17d8343949a52d",
+          "command_log.py": "55c79b4b17d2eca86befc9c7947479ac9d106bef8f20a421bc98aef5ddc31482",
+          "constants.py": "ce9a057d759da2d691ffee4dc22716bdcde6900f0f13557fb62a37b04c9f281f",
+          "data/wecsim/build_workflow_model.m": "8feeead6ac82449481173a6139a4679a19622e54074e91eb1d4fdef1aa955e0f",
+          "data/wecsim/native_excitation_startup.m": "5c306141d2e4ae407790e173987473ee9a7e96519c896ce0f0c1e296edf81115",
+          "data/wecsim/native_spectral_excitation.m": "b2546b8b7d91a217c332fa49fb5215719b6b26d6dd0952d8bfd40c44e6255c30",
+          "data/wecsim/prepare_workflow_hydrodynamics.m": "38dd9a75e72eb3681f80c983dc0c781996452e2dec8c918c4db3617e4128e268",
+          "data/wecsim/run_workflow_case.m": "129f11a2c5d000a9c0d38e3b45344cd7eb8e10f7ff99c06206d2a5a983cef80c",
+          "data/wecsim/validate_workflow_hydrodynamics.m": "d6abeffb5ba7891395ea4cbe7ea6d67e1025e76cbfaa235f08bf5110fc2339be",
+          "data/wecsim/wecSimInputFile.m": "2280b90f028c8d01c79d77208f976364cdc79e3da379ee98ae5a3d960bcf340b",
+          "data/wecsim/WorkflowEngineGuard.m": "f21ddb588e0c4c0aa9ef53f1dc248b10cf85ce3df439916e6529564f10fa0073",
+          "frames.py": "d28ca56c843ca9175853a8fd7446801a105683d91f7fbc562c39f0d765e3dbb7",
+          "hydrostatics.py": "2badc70232a526efa2d4188d382d51dd91b198b6c11efb81eefb224fdca182d9",
+          "inputs.py": "411587772faaf880c98ce42ffcf6666e08e5412211f3b431e4faa08dcf8845c3",
+          "native/__init__.py": "952ef46bdbc17cfc55fad2cb63d7a43d822317eadca7d3b3548c2ed879c1ecc6",
+          "native/bem_checks.py": "86a10c37f6c90c28a4c4b5d8ee1d94e0bd76a7512fa62bccd63140eaa98e18dd",
+          "native/dynamics.py": "93b98faf6948b63dc5eb3e7f51bffd133099a2126bf119921d54066346dbb4ae",
+          "native/excitation.py": "123c5c0aafbdd3ee78278c656f44fb118dd3de46713a4790c12168b49f152068",
+          "native/field_backend.py": "3369101757ae19a9ef87db90b7930451dd2880ec0076bfccbde02abf2f75596e",
+          "native/fourier.py": "42470f6b42def51e96f3d9b490ee297e16d469746c0a181244754eb4c8b37289",
+          "native/gpu/__init__.py": "ea2bf210e8205dfe3703254379c08fe2f8f87d1511599fcd5bdafadc092364bf",
+          "native/gpu/backend.py": "99901a361c7215b0a6e444a76ff67587174fa927e6feaa862ca0be47cb884430",
+          "native/gpu/fourier.cl": "91a4ccd0765958fdf96ba44388041589179d7e525472975ba39ccb6cc77cf0c6",
+          "native/gpu/fourier.py": "b0bb4ef8cea16f10d462b4755e16f37de33fc605be79c46ca76b6babc7b94cfe",
+          "native/gpu/potential.cl": "2cff705cc566a93a149c897b93b865c373cee7c8703bb8bfd8f451032a1345cc",
+          "native/gpu/potential.py": "09479b532bdf5a5092fd15888e50faff12c79de140bd93f6d1d0782dd9e45d5f",
+          "native/gpu/potential_cpu.py": "ac3e0e7431631acd72bcaf434aa6b74cc09c106b96b85f4bf221ceb5891297de",
+          "native/gpu/source_cache.py": "5a4ed4f2cb2b553a51928523884050f194939b3bb6858fea297561937cfb9da1",
+          "native/influence.py": "d4e7d412bdf2a85a53b67ca60165ba1a5504e5aba2179310f672bb56e760daa7",
+          "native/packet_basis.py": "9551a9910e2224588557f8c394840cad4a78a0b1ee7e062837388b0169ebdd7d",
+          "native/radiation.py": "f3ce9a567520d5d319d2d8d7d6a629028b43698540df6e32104f8b15f9488194",
+          "native/sampling.py": "a0b698bcc124916e6c076cbf0774a4332fb7e49d8837a9b658c111ac10111c6f",
+          "native/workflow.py": "ba7f3f0f66510df39490bd0f3a73d4ea6918ed1580b7aae66bfb3fa4da72337d",
+          "result_plot.py": "0e2418b47c4f763b5d307e3b5771419df5394b7f392e9de7065801709da674c3",
+          "result_render.py": "b43a96c3bc75ae87375eec33e33cbfbd8ab20948f09d017697b7692f99658590",
+          "sea_states.py": "0ac2d422dc78a20d05cd7123724ba6f67b289145c38d701c8ba139cb5fa8854f",
+          "solve_outputs.py": "a226f6036fb924f4665a3dff71108312b041a602174ef5cd5ebd948bb7ddce4c",
+          "surface_geometry.py": "7a5a942257d789039961a7915e0883d9140ad11132cfe878b901c30721928e94",
+          "visualization.py": "1c6b64b8f4ae0ce5de04526c6a7247d2c85555183abafb49ba94c1d78e694212",
+          "wave_packets.py": "1a02c4de35006e3b8a42d27ada2dff6315564cd09d23c6e27fd4874c71a9b2ac",
+          "wecsim_backend.py": "7681a8c5082cbec256a1cb45929f2d5db1f2620a86f6bc9007696be6b6ad9d4a",
+          "workflow_data.py": "6547e06ab603aab59e9a686c8c0a6bed3382147cf4154ddb5fac99f0fc9a763f"
+        },
+        "dependencies": {
+          "topwater": "0.1.0.dev0",
+          "capytaine": "3.0.0",
+          "numpy": "2.5.4",
+          "scipy": "1.18.1",
+          "numba": "0.68.0",
+          "matplotlib": "3.11.2",
+          "pyopencl": "2026.1.4"
+        },
+        "solver": "native",
+        "device": "gpu",
+        "profiled": false,
+        "matlab_profile": false
+      },
+      "reference_member_sha256": {
+        "cg_m.npy": "a5005aac11e077119434cdda684c8cd926c95fec9f98429f2c60265eb7b9cc4a",
+        "hull_faces.npy": "4c3138f587bba06526df7353f68302169a889c72378de15592599688d348ed14",
+        "hull_vertices_m.npy": "7b667f775eb8d570b3ebf81ccc5ffe3ddbd6a8af55f438e6dc50356114939977",
+        "orientation_wxyz.npy": "d38785222169a0009a90dc1c512a6e0e627e4a7453ee5bf074b474e955ce08e5",
+        "position_m.npy": "981403b5f1028eee9f087cb052b83dd037df9197de89e51c4ab083eaf88f6fd9",
+        "surface_face_offsets.npy": "44eb3021f46152739af04c51652af2ebb94290eaaaef7d5f79f06b942705ab27",
+        "surface_faces.npy": "2750c0796b186da9891bcc4a5181df639ea3374b89cb750c03abd5b5085bc4f4",
+        "surface_time_s.npy": "3aa057d4f9fc2a7619064b2651d059a11edcdc49e653ce16fbfeef3935dfebb6",
+        "surface_vertex_offsets.npy": "05af0d46b9496b90b98037727c11854a71a49eecfa5b001209dbefc94713c224",
+        "surface_vertices_m.npy": "1ff919e0372492bfc28df49e94c57cda6367d747272c3a49f5bf9dfbf4a08b9a",
+        "time_s.npy": "9f54a63a265094269dc62128e3be1633136f4c7f446b1366807a08f9bd13bd75"
+      },
+      "medians_seconds": {
+        "32": 12.600643500001752,
+        "64": 12.22843410000496,
+        "128": 12.225636499999382,
+        "256": 12.359416999999667,
+        "512": 12.332653600002232,
+        "1024": 12.345439000004262
+      },
+      "selected_batch": 32
+    },
+    {
+      "scope": "Complete unprofiled simple-boat GPU solve, including publication, excluding rendering",
+      "output_directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-kfo6xkwg",
+      "repeats": 3,
+      "batches": [
+        8,
+        16
+      ],
+      "selection": "Smallest batch within 5% of fastest median",
+      "seed": 42,
+      "runs": [
+        {
+          "repeat": 0,
+          "batch": 128,
+          "warmup": true,
+          "complete_solve_seconds": 12.277686100002029,
+          "output_identical": true,
+          "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-kfo6xkwg\\00-round0-batch128",
+          "backend_events": [
+            "2026-10-29T03:48:47.658Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+            "2026-10-29T03:48:52.216Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+          ]
+        },
+        {
+          "repeat": 1,
+          "batch": 16,
+          "warmup": false,
+          "complete_solve_seconds": 13.192153800002416,
+          "output_identical": true,
+          "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-kfo6xkwg\\01-round1-batch16",
+          "backend_events": [
+            "2026-10-29T03:49:01.092Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+            "2026-10-29T03:49:05.702Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+          ]
+        },
+        {
+          "repeat": 1,
+          "batch": 8,
+          "warmup": false,
+          "complete_solve_seconds": 14.076836599997478,
+          "output_identical": true,
+          "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-kfo6xkwg\\02-round1-batch8",
+          "backend_events": [
+            "2026-10-29T03:49:15.337Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+            "2026-10-29T03:49:19.805Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+          ]
+        },
+        {
+          "repeat": 2,
+          "batch": 16,
+          "warmup": false,
+          "complete_solve_seconds": 13.045383900003799,
+          "output_identical": true,
+          "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-kfo6xkwg\\03-round2-batch16",
+          "backend_events": [
+            "2026-10-29T03:49:30.488Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+            "2026-10-29T03:49:35.025Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+          ]
+        },
+        {
+          "repeat": 2,
+          "batch": 8,
+          "warmup": false,
+          "complete_solve_seconds": 14.17060710000078,
+          "output_identical": true,
+          "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-kfo6xkwg\\04-round2-batch8",
+          "backend_events": [
+            "2026-10-29T03:49:44.629Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+            "2026-10-29T03:49:49.160Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+          ]
+        },
+        {
+          "repeat": 3,
+          "batch": 8,
+          "warmup": false,
+          "complete_solve_seconds": 14.116178900003433,
+          "output_identical": true,
+          "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-kfo6xkwg\\05-round3-batch8",
+          "backend_events": [
+            "2026-10-29T03:49:59.868Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+            "2026-10-29T03:50:04.364Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+          ]
+        },
+        {
+          "repeat": 3,
+          "batch": 16,
+          "warmup": false,
+          "complete_solve_seconds": 12.92163189999701,
+          "output_identical": true,
+          "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-kfo6xkwg\\06-round3-batch16",
+          "backend_events": [
+            "2026-10-29T03:50:15.129Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+            "2026-10-29T03:50:19.628Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+          ]
+        }
+      ],
+      "benchmark_source_sha256": {
+        "scripts\\benchmark_gpu_batches.py": "1d471e8a5fdb4fb9952fe2e63cffcfea473af6cf194c97e5f65d3a9c4e4cfb45",
+        "scripts\\profile_workflow.py": "41ccee31cbdfb8f61497d3189f698da7f1dbbe494806d2143574294c2cbd3366"
+      },
+      "provenance": {
+        "revision": "3b64b016be5008d015a62f0cf026125b23d88dde",
+        "python": "3.12.10",
+        "platform": "Windows-11-10.0.26300-SP0",
+        "cpu_count": 32,
+        "input_sha256": {
+          "boat.npz": "b414b887891f2d3bc765073e6217c88fa77d25c382fe3334638bcf4e0e7d7a65",
+          "sea.npz": "9ba25ba3258e6c4cec47847ef4e52f69b4af84fae55dc07ba471708ee3951ce4"
+        },
+        "package_directory": "C:\\Users\\alex\\Documents\\GitHub\\topwater\\src\\topwater",
+        "source_sha256": {
+          "__init__.py": "179efdd7d137ba6be0183e251509d8d04475bd79a0b44c6517c50317c5a12ea7",
+          "__main__.py": "482b8693e2fe6dbd732e3d7961e03827d3efa187bad11d29da188be580ebbeea",
+          "_capytaine_surface.py": "9595c17bf17d4174ffc13dca7cf39237fdf94222d29fdf6913a26f50db8265b0",
+          "_clipping.py": "02ccba252dd0b171907ac71329c1a9adac3d72736b07b3f396dacdff387ead70",
+          "_triangulation.py": "880379cec0d52ed3bd296de945539fb4147ea49c4afb99fd7e3c39eb57ae8775",
+          "_validation.py": "a9726847a31a8bc15d176c53366634b3945e17c5b23d40a933ee51e4fb9462bf",
+          "_visualization_2d.py": "f478adbff1ac825124c948854384f81e9b23a22daf3cea8a5493e35c2dadd091",
+          "_visualization_geometry.py": "87d021f8af7771326497509fd6d949d38923d56bc6c7f79a07d1bcfa171f9182",
+          "_wecsim_setup.py": "f5bcb7a57c3f3406c8ff9dc2b2515fbd518d0667ee24c5c84beacbb8932f1880",
+          "_wecsim_spectral.py": "317c967c4fb78fe036110c9569a5c8fa8a136ce03cf779fc436c6677674ca43e",
+          "boat_generation.py": "37f349015204e68e4222b83ca3503aad54da7eb715827243f992323e6b1b457d",
+          "boat_geometry.py": "a1b12af191c391d0490f09d4cd3914d96fd8eeb9b3c0ec1aa2323c2cbf3611b2",
+          "cli.py": "ab440f89dea2f88da52dc1a48bc2cb9783c21ab67141e9f90c17d8343949a52d",
+          "command_log.py": "55c79b4b17d2eca86befc9c7947479ac9d106bef8f20a421bc98aef5ddc31482",
+          "constants.py": "ce9a057d759da2d691ffee4dc22716bdcde6900f0f13557fb62a37b04c9f281f",
+          "data/wecsim/build_workflow_model.m": "8feeead6ac82449481173a6139a4679a19622e54074e91eb1d4fdef1aa955e0f",
+          "data/wecsim/native_excitation_startup.m": "5c306141d2e4ae407790e173987473ee9a7e96519c896ce0f0c1e296edf81115",
+          "data/wecsim/native_spectral_excitation.m": "b2546b8b7d91a217c332fa49fb5215719b6b26d6dd0952d8bfd40c44e6255c30",
+          "data/wecsim/prepare_workflow_hydrodynamics.m": "38dd9a75e72eb3681f80c983dc0c781996452e2dec8c918c4db3617e4128e268",
+          "data/wecsim/run_workflow_case.m": "129f11a2c5d000a9c0d38e3b45344cd7eb8e10f7ff99c06206d2a5a983cef80c",
+          "data/wecsim/validate_workflow_hydrodynamics.m": "d6abeffb5ba7891395ea4cbe7ea6d67e1025e76cbfaa235f08bf5110fc2339be",
+          "data/wecsim/wecSimInputFile.m": "2280b90f028c8d01c79d77208f976364cdc79e3da379ee98ae5a3d960bcf340b",
+          "data/wecsim/WorkflowEngineGuard.m": "f21ddb588e0c4c0aa9ef53f1dc248b10cf85ce3df439916e6529564f10fa0073",
+          "frames.py": "d28ca56c843ca9175853a8fd7446801a105683d91f7fbc562c39f0d765e3dbb7",
+          "hydrostatics.py": "2badc70232a526efa2d4188d382d51dd91b198b6c11efb81eefb224fdca182d9",
+          "inputs.py": "411587772faaf880c98ce42ffcf6666e08e5412211f3b431e4faa08dcf8845c3",
+          "native/__init__.py": "952ef46bdbc17cfc55fad2cb63d7a43d822317eadca7d3b3548c2ed879c1ecc6",
+          "native/bem_checks.py": "86a10c37f6c90c28a4c4b5d8ee1d94e0bd76a7512fa62bccd63140eaa98e18dd",
+          "native/dynamics.py": "93b98faf6948b63dc5eb3e7f51bffd133099a2126bf119921d54066346dbb4ae",
+          "native/excitation.py": "123c5c0aafbdd3ee78278c656f44fb118dd3de46713a4790c12168b49f152068",
+          "native/field_backend.py": "3369101757ae19a9ef87db90b7930451dd2880ec0076bfccbde02abf2f75596e",
+          "native/fourier.py": "42470f6b42def51e96f3d9b490ee297e16d469746c0a181244754eb4c8b37289",
+          "native/gpu/__init__.py": "ea2bf210e8205dfe3703254379c08fe2f8f87d1511599fcd5bdafadc092364bf",
+          "native/gpu/backend.py": "99901a361c7215b0a6e444a76ff67587174fa927e6feaa862ca0be47cb884430",
+          "native/gpu/fourier.cl": "91a4ccd0765958fdf96ba44388041589179d7e525472975ba39ccb6cc77cf0c6",
+          "native/gpu/fourier.py": "b0bb4ef8cea16f10d462b4755e16f37de33fc605be79c46ca76b6babc7b94cfe",
+          "native/gpu/potential.cl": "2cff705cc566a93a149c897b93b865c373cee7c8703bb8bfd8f451032a1345cc",
+          "native/gpu/potential.py": "09479b532bdf5a5092fd15888e50faff12c79de140bd93f6d1d0782dd9e45d5f",
+          "native/gpu/potential_cpu.py": "ac3e0e7431631acd72bcaf434aa6b74cc09c106b96b85f4bf221ceb5891297de",
+          "native/gpu/source_cache.py": "5a4ed4f2cb2b553a51928523884050f194939b3bb6858fea297561937cfb9da1",
+          "native/influence.py": "d4e7d412bdf2a85a53b67ca60165ba1a5504e5aba2179310f672bb56e760daa7",
+          "native/packet_basis.py": "9551a9910e2224588557f8c394840cad4a78a0b1ee7e062837388b0169ebdd7d",
+          "native/radiation.py": "f3ce9a567520d5d319d2d8d7d6a629028b43698540df6e32104f8b15f9488194",
+          "native/sampling.py": "a0b698bcc124916e6c076cbf0774a4332fb7e49d8837a9b658c111ac10111c6f",
+          "native/workflow.py": "ba7f3f0f66510df39490bd0f3a73d4ea6918ed1580b7aae66bfb3fa4da72337d",
+          "result_plot.py": "0e2418b47c4f763b5d307e3b5771419df5394b7f392e9de7065801709da674c3",
+          "result_render.py": "b43a96c3bc75ae87375eec33e33cbfbd8ab20948f09d017697b7692f99658590",
+          "sea_states.py": "0ac2d422dc78a20d05cd7123724ba6f67b289145c38d701c8ba139cb5fa8854f",
+          "solve_outputs.py": "a226f6036fb924f4665a3dff71108312b041a602174ef5cd5ebd948bb7ddce4c",
+          "surface_geometry.py": "7a5a942257d789039961a7915e0883d9140ad11132cfe878b901c30721928e94",
+          "visualization.py": "1c6b64b8f4ae0ce5de04526c6a7247d2c85555183abafb49ba94c1d78e694212",
+          "wave_packets.py": "1a02c4de35006e3b8a42d27ada2dff6315564cd09d23c6e27fd4874c71a9b2ac",
+          "wecsim_backend.py": "7681a8c5082cbec256a1cb45929f2d5db1f2620a86f6bc9007696be6b6ad9d4a",
+          "workflow_data.py": "6547e06ab603aab59e9a686c8c0a6bed3382147cf4154ddb5fac99f0fc9a763f"
+        },
+        "dependencies": {
+          "topwater": "0.1.0.dev0",
+          "capytaine": "3.0.0",
+          "numpy": "2.5.4",
+          "scipy": "1.18.1",
+          "numba": "0.68.0",
+          "matplotlib": "3.11.2",
+          "pyopencl": "2026.1.4"
+        },
+        "solver": "native",
+        "device": "gpu",
+        "profiled": false,
+        "matlab_profile": false
+      },
+      "reference_member_sha256": {
+        "cg_m.npy": "a5005aac11e077119434cdda684c8cd926c95fec9f98429f2c60265eb7b9cc4a",
+        "hull_faces.npy": "4c3138f587bba06526df7353f68302169a889c72378de15592599688d348ed14",
+        "hull_vertices_m.npy": "7b667f775eb8d570b3ebf81ccc5ffe3ddbd6a8af55f438e6dc50356114939977",
+        "orientation_wxyz.npy": "d38785222169a0009a90dc1c512a6e0e627e4a7453ee5bf074b474e955ce08e5",
+        "position_m.npy": "981403b5f1028eee9f087cb052b83dd037df9197de89e51c4ab083eaf88f6fd9",
+        "surface_face_offsets.npy": "44eb3021f46152739af04c51652af2ebb94290eaaaef7d5f79f06b942705ab27",
+        "surface_faces.npy": "2750c0796b186da9891bcc4a5181df639ea3374b89cb750c03abd5b5085bc4f4",
+        "surface_time_s.npy": "3aa057d4f9fc2a7619064b2651d059a11edcdc49e653ce16fbfeef3935dfebb6",
+        "surface_vertex_offsets.npy": "05af0d46b9496b90b98037727c11854a71a49eecfa5b001209dbefc94713c224",
+        "surface_vertices_m.npy": "1ff919e0372492bfc28df49e94c57cda6367d747272c3a49f5bf9dfbf4a08b9a",
+        "time_s.npy": "9f54a63a265094269dc62128e3be1633136f4c7f446b1366807a08f9bd13bd75"
+      },
+      "medians_seconds": {
+        "8": 14.116178900003433,
+        "16": 13.045383900003799
+      },
+      "selected_batch": 16
+    }
+  ],
+  "reusable_workspace_validation": {
+    "scope": "Complete unprofiled simple-boat GPU solve, including publication, excluding rendering",
+    "output_directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-9y4x8603",
+    "repeats": 3,
+    "batches": [
+      64
+    ],
+    "selection": "Smallest batch within 1% of fastest median",
+    "seed": 42,
+    "runs": [
+      {
+        "repeat": 0,
+        "batch": 128,
+        "warmup": true,
+        "complete_solve_seconds": 12.186526699995738,
+        "output_identical": true,
+        "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-9y4x8603\\00-round0-batch128",
+        "backend_events": [
+          "2026-10-29T04:05:55.065Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+          "2026-10-29T04:05:59.607Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+        ]
+      },
+      {
+        "repeat": 1,
+        "batch": 64,
+        "warmup": false,
+        "complete_solve_seconds": 12.218520200003695,
+        "output_identical": true,
+        "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-9y4x8603\\01-round1-batch64",
+        "backend_events": [
+          "2026-10-29T04:06:08.416Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+          "2026-10-29T04:06:12.942Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+        ]
+      },
+      {
+        "repeat": 2,
+        "batch": 64,
+        "warmup": false,
+        "complete_solve_seconds": 12.21495270000014,
+        "output_identical": true,
+        "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-9y4x8603\\02-round2-batch64",
+        "backend_events": [
+          "2026-10-29T04:06:21.770Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+          "2026-10-29T04:06:26.272Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+        ]
+      },
+      {
+        "repeat": 3,
+        "batch": 64,
+        "warmup": false,
+        "complete_solve_seconds": 12.29841419999866,
+        "output_identical": true,
+        "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-batch-sweep-9y4x8603\\03-round3-batch64",
+        "backend_events": [
+          "2026-10-29T04:06:35.154Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+          "2026-10-29T04:06:39.746Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+        ]
+      }
+    ],
+    "benchmark_source_sha256": {
+      "scripts\\benchmark_gpu_batches.py": "eacd23a7eba0646f5058b328a3c124aad10009ebc5c15f9281a02bd6f71fe064",
+      "scripts\\profile_workflow.py": "41ccee31cbdfb8f61497d3189f698da7f1dbbe494806d2143574294c2cbd3366"
+    },
+    "provenance": {
+      "revision": "3b64b016be5008d015a62f0cf026125b23d88dde",
+      "python": "3.12.10",
+      "platform": "Windows-11-10.0.26300-SP0",
+      "cpu_count": 32,
+      "input_sha256": {
+        "boat.npz": "b414b887891f2d3bc765073e6217c88fa77d25c382fe3334638bcf4e0e7d7a65",
+        "sea.npz": "9ba25ba3258e6c4cec47847ef4e52f69b4af84fae55dc07ba471708ee3951ce4"
+      },
+      "package_directory": "C:\\Users\\alex\\Documents\\GitHub\\topwater\\src\\topwater",
+      "source_sha256": {
+        "__init__.py": "179efdd7d137ba6be0183e251509d8d04475bd79a0b44c6517c50317c5a12ea7",
+        "__main__.py": "482b8693e2fe6dbd732e3d7961e03827d3efa187bad11d29da188be580ebbeea",
+        "_capytaine_surface.py": "f304a2e311e51d08498e2bbed5a3b066a1a3d72acb5a4e7bcd88552fcffe3c60",
+        "_clipping.py": "02ccba252dd0b171907ac71329c1a9adac3d72736b07b3f396dacdff387ead70",
+        "_triangulation.py": "880379cec0d52ed3bd296de945539fb4147ea49c4afb99fd7e3c39eb57ae8775",
+        "_validation.py": "a9726847a31a8bc15d176c53366634b3945e17c5b23d40a933ee51e4fb9462bf",
+        "_visualization_2d.py": "f478adbff1ac825124c948854384f81e9b23a22daf3cea8a5493e35c2dadd091",
+        "_visualization_geometry.py": "87d021f8af7771326497509fd6d949d38923d56bc6c7f79a07d1bcfa171f9182",
+        "_wecsim_setup.py": "f5bcb7a57c3f3406c8ff9dc2b2515fbd518d0667ee24c5c84beacbb8932f1880",
+        "_wecsim_spectral.py": "317c967c4fb78fe036110c9569a5c8fa8a136ce03cf779fc436c6677674ca43e",
+        "boat_generation.py": "37f349015204e68e4222b83ca3503aad54da7eb715827243f992323e6b1b457d",
+        "boat_geometry.py": "a1b12af191c391d0490f09d4cd3914d96fd8eeb9b3c0ec1aa2323c2cbf3611b2",
+        "cli.py": "ab440f89dea2f88da52dc1a48bc2cb9783c21ab67141e9f90c17d8343949a52d",
+        "command_log.py": "55c79b4b17d2eca86befc9c7947479ac9d106bef8f20a421bc98aef5ddc31482",
+        "constants.py": "ce9a057d759da2d691ffee4dc22716bdcde6900f0f13557fb62a37b04c9f281f",
+        "data/wecsim/build_workflow_model.m": "8feeead6ac82449481173a6139a4679a19622e54074e91eb1d4fdef1aa955e0f",
+        "data/wecsim/native_excitation_startup.m": "5c306141d2e4ae407790e173987473ee9a7e96519c896ce0f0c1e296edf81115",
+        "data/wecsim/native_spectral_excitation.m": "b2546b8b7d91a217c332fa49fb5215719b6b26d6dd0952d8bfd40c44e6255c30",
+        "data/wecsim/prepare_workflow_hydrodynamics.m": "38dd9a75e72eb3681f80c983dc0c781996452e2dec8c918c4db3617e4128e268",
+        "data/wecsim/run_workflow_case.m": "129f11a2c5d000a9c0d38e3b45344cd7eb8e10f7ff99c06206d2a5a983cef80c",
+        "data/wecsim/validate_workflow_hydrodynamics.m": "d6abeffb5ba7891395ea4cbe7ea6d67e1025e76cbfaa235f08bf5110fc2339be",
+        "data/wecsim/wecSimInputFile.m": "2280b90f028c8d01c79d77208f976364cdc79e3da379ee98ae5a3d960bcf340b",
+        "data/wecsim/WorkflowEngineGuard.m": "f21ddb588e0c4c0aa9ef53f1dc248b10cf85ce3df439916e6529564f10fa0073",
+        "frames.py": "d28ca56c843ca9175853a8fd7446801a105683d91f7fbc562c39f0d765e3dbb7",
+        "hydrostatics.py": "2badc70232a526efa2d4188d382d51dd91b198b6c11efb81eefb224fdca182d9",
+        "inputs.py": "411587772faaf880c98ce42ffcf6666e08e5412211f3b431e4faa08dcf8845c3",
+        "native/__init__.py": "952ef46bdbc17cfc55fad2cb63d7a43d822317eadca7d3b3548c2ed879c1ecc6",
+        "native/bem_checks.py": "86a10c37f6c90c28a4c4b5d8ee1d94e0bd76a7512fa62bccd63140eaa98e18dd",
+        "native/dynamics.py": "93b98faf6948b63dc5eb3e7f51bffd133099a2126bf119921d54066346dbb4ae",
+        "native/excitation.py": "123c5c0aafbdd3ee78278c656f44fb118dd3de46713a4790c12168b49f152068",
+        "native/field_backend.py": "3369101757ae19a9ef87db90b7930451dd2880ec0076bfccbde02abf2f75596e",
+        "native/fourier.py": "42470f6b42def51e96f3d9b490ee297e16d469746c0a181244754eb4c8b37289",
+        "native/gpu/__init__.py": "ea2bf210e8205dfe3703254379c08fe2f8f87d1511599fcd5bdafadc092364bf",
+        "native/gpu/backend.py": "f1f05cda5b598b539ef090cc6b5a380f88a4549ec95aaafadca4bff5e13e8a4a",
+        "native/gpu/fourier.cl": "91a4ccd0765958fdf96ba44388041589179d7e525472975ba39ccb6cc77cf0c6",
+        "native/gpu/fourier.py": "fd4a66f88cf9af6be0a5b30a62cda09eba56bf7716ddc67ce8fcba2f62920765",
+        "native/gpu/memory.py": "b5ca53952f0dc690f266403238cd1877deaf8da9b9fcb88085864f54f40b2d36",
+        "native/gpu/potential.cl": "2cff705cc566a93a149c897b93b865c373cee7c8703bb8bfd8f451032a1345cc",
+        "native/gpu/potential.py": "255bdf06e6ea673185e41a395c4c9e653ba3bc31f653153dd43264e3fea5f99c",
+        "native/gpu/potential_cpu.py": "ac3e0e7431631acd72bcaf434aa6b74cc09c106b96b85f4bf221ceb5891297de",
+        "native/gpu/source_cache.py": "5a4ed4f2cb2b553a51928523884050f194939b3bb6858fea297561937cfb9da1",
+        "native/influence.py": "d4e7d412bdf2a85a53b67ca60165ba1a5504e5aba2179310f672bb56e760daa7",
+        "native/packet_basis.py": "9551a9910e2224588557f8c394840cad4a78a0b1ee7e062837388b0169ebdd7d",
+        "native/radiation.py": "f3ce9a567520d5d319d2d8d7d6a629028b43698540df6e32104f8b15f9488194",
+        "native/sampling.py": "a0b698bcc124916e6c076cbf0774a4332fb7e49d8837a9b658c111ac10111c6f",
+        "native/workflow.py": "ba7f3f0f66510df39490bd0f3a73d4ea6918ed1580b7aae66bfb3fa4da72337d",
+        "result_plot.py": "0e2418b47c4f763b5d307e3b5771419df5394b7f392e9de7065801709da674c3",
+        "result_render.py": "b43a96c3bc75ae87375eec33e33cbfbd8ab20948f09d017697b7692f99658590",
+        "sea_states.py": "0ac2d422dc78a20d05cd7123724ba6f67b289145c38d701c8ba139cb5fa8854f",
+        "solve_outputs.py": "a226f6036fb924f4665a3dff71108312b041a602174ef5cd5ebd948bb7ddce4c",
+        "surface_geometry.py": "7a5a942257d789039961a7915e0883d9140ad11132cfe878b901c30721928e94",
+        "visualization.py": "1c6b64b8f4ae0ce5de04526c6a7247d2c85555183abafb49ba94c1d78e694212",
+        "wave_packets.py": "1a02c4de35006e3b8a42d27ada2dff6315564cd09d23c6e27fd4874c71a9b2ac",
+        "wecsim_backend.py": "7681a8c5082cbec256a1cb45929f2d5db1f2620a86f6bc9007696be6b6ad9d4a",
+        "workflow_data.py": "6547e06ab603aab59e9a686c8c0a6bed3382147cf4154ddb5fac99f0fc9a763f"
+      },
+      "dependencies": {
+        "topwater": "0.1.0.dev0",
+        "capytaine": "3.0.0",
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "numba": "0.68.0",
+        "matplotlib": "3.11.2",
+        "pyopencl": "2026.1.4"
+      },
+      "solver": "native",
+      "device": "gpu",
+      "profiled": false,
+      "matlab_profile": false
+    },
+    "reference_member_sha256": {
+      "cg_m.npy": "a5005aac11e077119434cdda684c8cd926c95fec9f98429f2c60265eb7b9cc4a",
+      "hull_faces.npy": "4c3138f587bba06526df7353f68302169a889c72378de15592599688d348ed14",
+      "hull_vertices_m.npy": "7b667f775eb8d570b3ebf81ccc5ffe3ddbd6a8af55f438e6dc50356114939977",
+      "orientation_wxyz.npy": "d38785222169a0009a90dc1c512a6e0e627e4a7453ee5bf074b474e955ce08e5",
+      "position_m.npy": "981403b5f1028eee9f087cb052b83dd037df9197de89e51c4ab083eaf88f6fd9",
+      "surface_face_offsets.npy": "44eb3021f46152739af04c51652af2ebb94290eaaaef7d5f79f06b942705ab27",
+      "surface_faces.npy": "2750c0796b186da9891bcc4a5181df639ea3374b89cb750c03abd5b5085bc4f4",
+      "surface_time_s.npy": "3aa057d4f9fc2a7619064b2651d059a11edcdc49e653ce16fbfeef3935dfebb6",
+      "surface_vertex_offsets.npy": "05af0d46b9496b90b98037727c11854a71a49eecfa5b001209dbefc94713c224",
+      "surface_vertices_m.npy": "1ff919e0372492bfc28df49e94c57cda6367d747272c3a49f5bf9dfbf4a08b9a",
+      "time_s.npy": "9f54a63a265094269dc62128e3be1633136f4c7f446b1366807a08f9bd13bd75"
+    },
+    "medians_seconds": {
+      "64": 12.218520200003695
+    },
+    "selected_batch": 64
+  },
+  "final_default_solve": {
+    "revision": "3b64b016be5008d015a62f0cf026125b23d88dde",
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "cpu_count": 32,
+    "input_sha256": {
+      "boat.npz": "b414b887891f2d3bc765073e6217c88fa77d25c382fe3334638bcf4e0e7d7a65",
+      "sea.npz": "9ba25ba3258e6c4cec47847ef4e52f69b4af84fae55dc07ba471708ee3951ce4"
+    },
+    "package_directory": "C:\\Users\\alex\\Documents\\GitHub\\topwater\\src\\topwater",
+    "source_sha256": {
+      "__init__.py": "179efdd7d137ba6be0183e251509d8d04475bd79a0b44c6517c50317c5a12ea7",
+      "__main__.py": "482b8693e2fe6dbd732e3d7961e03827d3efa187bad11d29da188be580ebbeea",
+      "_capytaine_surface.py": "f304a2e311e51d08498e2bbed5a3b066a1a3d72acb5a4e7bcd88552fcffe3c60",
+      "_clipping.py": "02ccba252dd0b171907ac71329c1a9adac3d72736b07b3f396dacdff387ead70",
+      "_triangulation.py": "880379cec0d52ed3bd296de945539fb4147ea49c4afb99fd7e3c39eb57ae8775",
+      "_validation.py": "a9726847a31a8bc15d176c53366634b3945e17c5b23d40a933ee51e4fb9462bf",
+      "_visualization_2d.py": "f478adbff1ac825124c948854384f81e9b23a22daf3cea8a5493e35c2dadd091",
+      "_visualization_geometry.py": "87d021f8af7771326497509fd6d949d38923d56bc6c7f79a07d1bcfa171f9182",
+      "_wecsim_setup.py": "f5bcb7a57c3f3406c8ff9dc2b2515fbd518d0667ee24c5c84beacbb8932f1880",
+      "_wecsim_spectral.py": "317c967c4fb78fe036110c9569a5c8fa8a136ce03cf779fc436c6677674ca43e",
+      "boat_generation.py": "37f349015204e68e4222b83ca3503aad54da7eb715827243f992323e6b1b457d",
+      "boat_geometry.py": "a1b12af191c391d0490f09d4cd3914d96fd8eeb9b3c0ec1aa2323c2cbf3611b2",
+      "cli.py": "ab440f89dea2f88da52dc1a48bc2cb9783c21ab67141e9f90c17d8343949a52d",
+      "command_log.py": "55c79b4b17d2eca86befc9c7947479ac9d106bef8f20a421bc98aef5ddc31482",
+      "constants.py": "ce9a057d759da2d691ffee4dc22716bdcde6900f0f13557fb62a37b04c9f281f",
+      "data/wecsim/build_workflow_model.m": "8feeead6ac82449481173a6139a4679a19622e54074e91eb1d4fdef1aa955e0f",
+      "data/wecsim/native_excitation_startup.m": "5c306141d2e4ae407790e173987473ee9a7e96519c896ce0f0c1e296edf81115",
+      "data/wecsim/native_spectral_excitation.m": "b2546b8b7d91a217c332fa49fb5215719b6b26d6dd0952d8bfd40c44e6255c30",
+      "data/wecsim/prepare_workflow_hydrodynamics.m": "38dd9a75e72eb3681f80c983dc0c781996452e2dec8c918c4db3617e4128e268",
+      "data/wecsim/run_workflow_case.m": "129f11a2c5d000a9c0d38e3b45344cd7eb8e10f7ff99c06206d2a5a983cef80c",
+      "data/wecsim/validate_workflow_hydrodynamics.m": "d6abeffb5ba7891395ea4cbe7ea6d67e1025e76cbfaa235f08bf5110fc2339be",
+      "data/wecsim/wecSimInputFile.m": "2280b90f028c8d01c79d77208f976364cdc79e3da379ee98ae5a3d960bcf340b",
+      "data/wecsim/WorkflowEngineGuard.m": "f21ddb588e0c4c0aa9ef53f1dc248b10cf85ce3df439916e6529564f10fa0073",
+      "frames.py": "d28ca56c843ca9175853a8fd7446801a105683d91f7fbc562c39f0d765e3dbb7",
+      "hydrostatics.py": "2badc70232a526efa2d4188d382d51dd91b198b6c11efb81eefb224fdca182d9",
+      "inputs.py": "411587772faaf880c98ce42ffcf6666e08e5412211f3b431e4faa08dcf8845c3",
+      "native/__init__.py": "952ef46bdbc17cfc55fad2cb63d7a43d822317eadca7d3b3548c2ed879c1ecc6",
+      "native/bem_checks.py": "86a10c37f6c90c28a4c4b5d8ee1d94e0bd76a7512fa62bccd63140eaa98e18dd",
+      "native/dynamics.py": "93b98faf6948b63dc5eb3e7f51bffd133099a2126bf119921d54066346dbb4ae",
+      "native/excitation.py": "123c5c0aafbdd3ee78278c656f44fb118dd3de46713a4790c12168b49f152068",
+      "native/field_backend.py": "3369101757ae19a9ef87db90b7930451dd2880ec0076bfccbde02abf2f75596e",
+      "native/fourier.py": "42470f6b42def51e96f3d9b490ee297e16d469746c0a181244754eb4c8b37289",
+      "native/gpu/__init__.py": "ea2bf210e8205dfe3703254379c08fe2f8f87d1511599fcd5bdafadc092364bf",
+      "native/gpu/backend.py": "f1f05cda5b598b539ef090cc6b5a380f88a4549ec95aaafadca4bff5e13e8a4a",
+      "native/gpu/fourier.cl": "91a4ccd0765958fdf96ba44388041589179d7e525472975ba39ccb6cc77cf0c6",
+      "native/gpu/fourier.py": "fd4a66f88cf9af6be0a5b30a62cda09eba56bf7716ddc67ce8fcba2f62920765",
+      "native/gpu/memory.py": "b5ca53952f0dc690f266403238cd1877deaf8da9b9fcb88085864f54f40b2d36",
+      "native/gpu/potential.cl": "2cff705cc566a93a149c897b93b865c373cee7c8703bb8bfd8f451032a1345cc",
+      "native/gpu/potential.py": "4c05a39d8b486a415987b51b518a6d4eaf852e024768bd3caca958eee4d1f760",
+      "native/gpu/potential_cpu.py": "ac3e0e7431631acd72bcaf434aa6b74cc09c106b96b85f4bf221ceb5891297de",
+      "native/gpu/source_cache.py": "5a4ed4f2cb2b553a51928523884050f194939b3bb6858fea297561937cfb9da1",
+      "native/influence.py": "d4e7d412bdf2a85a53b67ca60165ba1a5504e5aba2179310f672bb56e760daa7",
+      "native/packet_basis.py": "9551a9910e2224588557f8c394840cad4a78a0b1ee7e062837388b0169ebdd7d",
+      "native/radiation.py": "f3ce9a567520d5d319d2d8d7d6a629028b43698540df6e32104f8b15f9488194",
+      "native/sampling.py": "a0b698bcc124916e6c076cbf0774a4332fb7e49d8837a9b658c111ac10111c6f",
+      "native/workflow.py": "ba7f3f0f66510df39490bd0f3a73d4ea6918ed1580b7aae66bfb3fa4da72337d",
+      "result_plot.py": "0e2418b47c4f763b5d307e3b5771419df5394b7f392e9de7065801709da674c3",
+      "result_render.py": "b43a96c3bc75ae87375eec33e33cbfbd8ab20948f09d017697b7692f99658590",
+      "sea_states.py": "0ac2d422dc78a20d05cd7123724ba6f67b289145c38d701c8ba139cb5fa8854f",
+      "solve_outputs.py": "a226f6036fb924f4665a3dff71108312b041a602174ef5cd5ebd948bb7ddce4c",
+      "surface_geometry.py": "7a5a942257d789039961a7915e0883d9140ad11132cfe878b901c30721928e94",
+      "visualization.py": "1c6b64b8f4ae0ce5de04526c6a7247d2c85555183abafb49ba94c1d78e694212",
+      "wave_packets.py": "1a02c4de35006e3b8a42d27ada2dff6315564cd09d23c6e27fd4874c71a9b2ac",
+      "wecsim_backend.py": "7681a8c5082cbec256a1cb45929f2d5db1f2620a86f6bc9007696be6b6ad9d4a",
+      "workflow_data.py": "6547e06ab603aab59e9a686c8c0a6bed3382147cf4154ddb5fac99f0fc9a763f"
+    },
+    "dependencies": {
+      "topwater": "0.1.0.dev0",
+      "capytaine": "3.0.0",
+      "numpy": "2.5.4",
+      "scipy": "1.18.1",
+      "numba": "0.68.0",
+      "matplotlib": "3.11.2",
+      "pyopencl": "2026.1.4"
+    },
+    "solver": "native",
+    "device": "gpu",
+    "profiled": false,
+    "radiation_chunk_points": null,
+    "matlab_profile": false,
+    "stages": {
+      "solve": {
+        "status": 0,
+        "wall_seconds": 12.423961300002702
+      }
+    },
+    "solve_backend_events": [
+      "2026-10-29T04:09:16.113Z INFO solve FIELD_BACKEND device=gpu name=gfx1201 driver=3683.0 (PAL,LC)",
+      "2026-10-29T04:09:20.637Z INFO solve SOURCE_CACHE hit key=69e4da214734c92b15cf11657472eeb98a565b570a26f0a3a4b7aee1f83d853a"
+    ]
+  },
+  "final_default_output_identical": true
+}

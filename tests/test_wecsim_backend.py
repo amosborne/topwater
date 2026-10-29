@@ -1,6 +1,5 @@
 """WEC adapter boundaries without a MATLAB or Capytaine simulation."""
 from types import SimpleNamespace
-import io
 import json
 from pathlib import Path
 import subprocess
@@ -13,11 +12,15 @@ from scipy.io import savemat
 from scipy.optimize import linear_sum_assignment
 from scipy.spatial.transform import Rotation
 
-from topwater._wecsim_setup import IncomingTrain, floating_equilibrium, prepare_case
-from topwater import wecsim_backend as backend
-from topwater.hydrostatics import hydrostatics
+from topwater.solve.preparation import waves_from_sea, IncomingTrain
+from topwater.solve.preparation import floating_equilibrium
+from topwater.solve.preparation import prepare_case
+from topwater.solve.wecsim import engine as backend
+from topwater.solve import workflow
+from topwater.boat.hydrostatics import hydrostatics
 from topwater.inputs import InitialState
-from topwater.workflow_data import Boat, Sea
+from topwater.workflow_data import Boat
+from topwater.workflow_data import Sea
 from .reference_boat import reference_body
 
 
@@ -34,11 +37,11 @@ def test_full_equilibrium_balances_force_and_moment_on_physical_boat():
 def test_reference_boat_preserves_accepted_mean_hull_mass_and_restoring_identity():
     project = Path(__file__).resolve().parents[1]
     physical = json.loads((project/'tests/data/canonical-boat.json').read_text())
-    sea = Sea.load(project/'examples/simple-boat/sea.npz')
+    sea = Sea.load(project/'examples/simple-boat-native/sea.npz')
     # Historical field evidence belongs to the canonical fixture. The public
     # example now uses the standard generator and has its own geometry.
     body = reference_body()
-    setup = prepare_case(body, backend._waves(sea), 60.)
+    setup = prepare_case(body, waves_from_sea(sea), 60.)
     expected = np.asarray(physical['minimum_wetted_triangles_world_m'])
     actual = setup.wet_triangles_m
     assert len(actual) == len(expected) == 17, 'selected-case field evidence requires the same 17 panels'
@@ -59,29 +62,12 @@ def test_reference_boat_preserves_accepted_mean_hull_mass_and_restoring_identity
     assert_allclose(setup.hydrostatic.stiffness, expected_hydrostatic.stiffness, rtol=0, atol=1e-6)
 
 
-def test_unqualified_surface_stops_before_any_physical_preparation(monkeypatch, tmp_path):
-    monkeypatch.setattr(backend, 'SUPPORTED_FORK_COMMIT', 'qualified-fixture')
-    monkeypatch.setattr(backend.metadata, 'version',
-                        lambda name: {'capytaine': '3.0.0', 'matlabengine': '25.2.2'}[name])
-    monkeypatch.setattr(backend, '_find_fork', lambda: tmp_path)
-    monkeypatch.setattr(backend.util, 'find_spec', lambda name: object())
-
-    def unqualified():
-        raise ValueError('total surface awaits physical pilot')
-
-    producer = SimpleNamespace(build_hydrodynamics=lambda: None, require_surface_readiness=unqualified)
-    monkeypatch.setattr(backend, 'import_module', lambda name: producer)
-    monkeypatch.setattr(backend, 'prepare_case', lambda *args: pytest.fail('must not prepare physics'))
-    with pytest.raises(ValueError, match='awaits physical pilot'):
-        backend.preflight()
-
-
 def test_held_fork_without_full_directional_bugfixes_fails_before_physics(monkeypatch, tmp_path):
     monkeypatch.setattr(backend, 'SUPPORTED_FORK_COMMIT', '9952634f6f2e2746a1626484e27c3003d1e1d5a9')
     monkeypatch.setattr(backend.metadata, 'version',
                         lambda name: {'capytaine': '3.0.0', 'matlabengine': '25.2.2'}[name])
     monkeypatch.setattr(backend, '_find_fork', lambda: tmp_path)
-    monkeypatch.setattr(backend, 'prepare_case', lambda *args: pytest.fail('must not prepare physics'))
+    monkeypatch.setattr(workflow, 'prepare_case', lambda *args: pytest.fail('must not prepare physics'))
     with pytest.raises(backend.BackendUnavailableError, match='lacks corrected FullDir phases'):
         backend.preflight()
 
@@ -152,7 +138,7 @@ def test_native_mean_pose_and_global_embedding_are_applied_once(monkeypatch, tmp
         coefficients=np.zeros((2, 2)), original_omega_rad_s=np.array([1., 2.]),
         native_omega_rad_s=np.array([1., 2.]), omega_roundtrip_error_rad_s=np.zeros(2),
         domega_rad_s=np.ones(2), dtheta_rad=np.ones(2))
-    monkeypatch.setattr('topwater._wecsim_spectral.prepare_spectral_inputs', lambda *_: spectral)
+    monkeypatch.setattr('topwater.solve.wecsim.spectral.prepare_spectral_inputs', lambda *_: spectral)
     motion = backend.integrate_motion(setup, hydro, tmp_path/'case', tmp_path)
     prepared = backend.loadmat(tmp_path/'case/prepared-case.mat')
     assert 'force' not in prepared
@@ -215,19 +201,6 @@ def test_native_excitation_checks_whole_packet_not_only_carriers(packet_max, acc
             backend._validate_excitation_support(setup, hydro)
 
 
-def test_warning_aggregation_does_not_repeat_every_sample():
-    stream = io.StringIO()
-    warning = backend.WarningSummary(stream)
-    warning.observe('restoring', 1., 'departure', severity=.11)
-    warning.observe('restoring', 2., 'departure', severity=.21)
-    warning.observe('restoring', 3., 'departure', severity=.12)
-    warning.finish()
-    lines = stream.getvalue().splitlines()
-    assert len(lines) == 2
-    assert 'at 1 s' in lines[0]
-    assert '3 samples' in lines[1] and 'peak departure 21%' in lines[1]
-
-
 def test_shared_engine_restoration_runs_when_initialization_throws(monkeypatch, tmp_path):
     class Engine:
         restored = False
@@ -282,8 +255,8 @@ def test_matlab_cleanup_failure_keeps_primary_transcript_and_recovery(
     cleanup_error = backend.EngineCleanupError('ENGINE_CLEANUP_MARKER')
     directory = tmp_path/'scratch'
     directory.mkdir()
-    real_rmtree = backend.shutil.rmtree
-    monkeypatch.setattr(backend.tempfile, 'mkdtemp', lambda **kwargs: str(directory))
+    real_rmtree = workflow.shutil.rmtree
+    monkeypatch.setattr(workflow.tempfile, 'mkdtemp', lambda **kwargs: str(directory))
 
     class Engine:
         def pwd(self, **kwargs):
@@ -312,7 +285,7 @@ def test_matlab_cleanup_failure_keeps_primary_transcript_and_recovery(
     try:
         with pytest.raises(backend.EngineCleanupError) as caught:
             with CommandLog(log_path, 'solve'):
-                with backend._scratch_directory():
+                with workflow.scratch_directory('wecsim'):
                     if caller_handling_error:
                         try:
                             raise ValueError('UNRELATED_CALLER_MARKER')
@@ -465,28 +438,28 @@ def test_scratch_is_removed_only_after_verified_engine_cleanup(unreconciled):
     expected = backend.EngineCleanupError if unreconciled else ValueError
     try:
         with pytest.raises(expected):
-            with backend._scratch_directory() as directory:
+            with workflow.scratch_directory('wecsim') as directory:
                 raise expected('failure after a workflow stage')
         assert directory.exists() == unreconciled
     finally:
         if directory is not None and directory.exists():
-            backend.shutil.rmtree(directory)
+            workflow.shutil.rmtree(directory)
 
 
 def test_scratch_cleanup_failure_preserves_primary_exception(monkeypatch, tmp_path, capsys):
     directory = tmp_path/'scratch'
     directory.mkdir()
-    real_rmtree = backend.shutil.rmtree
+    real_rmtree = workflow.shutil.rmtree
     primary = ValueError('surface geometry failed at frame 217')
-    monkeypatch.setattr(backend.tempfile, 'mkdtemp', lambda **kwargs: str(directory))
+    monkeypatch.setattr(workflow.tempfile, 'mkdtemp', lambda **kwargs: str(directory))
 
     def locked(path):
         raise PermissionError('KH.dat is locked')
 
-    monkeypatch.setattr(backend.shutil, 'rmtree', locked)
+    monkeypatch.setattr(workflow.shutil, 'rmtree', locked)
     try:
         with pytest.raises(ValueError) as caught:
-            with backend._scratch_directory():
+            with workflow.scratch_directory('wecsim'):
                 raise primary
         assert caught.value is primary
         assert 'KH.dat is locked' in capsys.readouterr().err
@@ -499,16 +472,16 @@ def test_scratch_cleanup_failure_preserves_primary_exception(monkeypatch, tmp_pa
 def test_scratch_cleanup_failure_without_primary_is_fatal(monkeypatch, tmp_path):
     directory = tmp_path/'scratch'
     directory.mkdir()
-    real_rmtree = backend.shutil.rmtree
-    monkeypatch.setattr(backend.tempfile, 'mkdtemp', lambda **kwargs: str(directory))
+    real_rmtree = workflow.shutil.rmtree
+    monkeypatch.setattr(workflow.tempfile, 'mkdtemp', lambda **kwargs: str(directory))
 
     def locked(path):
         raise PermissionError('KH.dat is locked')
 
-    monkeypatch.setattr(backend.shutil, 'rmtree', locked)
+    monkeypatch.setattr(workflow.shutil, 'rmtree', locked)
     try:
-        with pytest.raises(backend.ScratchCleanupError, match='KH.dat is locked'):
-            with backend._scratch_directory():
+        with pytest.raises(workflow.ScratchCleanupError, match='KH.dat is locked'):
+            with workflow.scratch_directory('wecsim'):
                 pass
         assert directory.exists()
     finally:
@@ -518,17 +491,17 @@ def test_scratch_cleanup_failure_without_primary_is_fatal(monkeypatch, tmp_path)
 def test_surface_replay_exception_retains_own_scratch(monkeypatch, tmp_path):
     directory = tmp_path/'scratch'
     directory.mkdir()
-    real_rmtree = backend.shutil.rmtree
+    real_rmtree = workflow.shutil.rmtree
 
     class SurfaceExportError(RuntimeError):
         recovery_directory = directory/'surface-recovery'
 
     primary = SurfaceExportError('invalid waterline')
-    monkeypatch.setattr(backend.tempfile, 'mkdtemp', lambda **kwargs: str(directory))
-    monkeypatch.setattr(backend.shutil, 'rmtree', lambda path: pytest.fail('replay directory must remain'))
+    monkeypatch.setattr(workflow.tempfile, 'mkdtemp', lambda **kwargs: str(directory))
+    monkeypatch.setattr(workflow.shutil, 'rmtree', lambda path: pytest.fail('replay directory must remain'))
     try:
         with pytest.raises(SurfaceExportError) as caught:
-            with backend._scratch_directory():
+            with workflow.scratch_directory('wecsim'):
                 raise primary
         assert caught.value is primary
         assert directory.exists()

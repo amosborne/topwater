@@ -4,11 +4,13 @@ import numpy as np
 from numpy.testing import assert_allclose
 import pytest
 from scipy.spatial.transform import Rotation
-from topwater import HullMesh, InitialState
-from topwater.hydrostatics import (
-    FloodingError, LossOfContactError, NoEquilibriumError,
-    equilibrate_heave, hydrostatics,
-)
+from topwater import HullMesh
+from topwater import InitialState
+from topwater.boat.hydrostatics import FloodingError
+from topwater.boat.hydrostatics import LossOfContactError
+from topwater.boat.hydrostatics import NoEquilibriumError
+from topwater.boat.hydrostatics import equilibrate_heave
+from topwater.boat.hydrostatics import hydrostatics
 from .geometry_helpers import surface_integrals
 from .reference_boat import DEPTH, GRAVITY, WATER_DENSITY, equilibrium, reference_body
 

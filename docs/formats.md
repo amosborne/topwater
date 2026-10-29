@@ -53,10 +53,17 @@ does not duplicate the derived finite packet spectrum.
 | surface_faces | sum(Fs) x 3 | Packed triangles, indices LOCAL to each frame |
 | surface_vertex_offsets | S+1 | Frame boundaries in packed vertices |
 | surface_face_offsets | S+1 | Frame boundaries in packed faces |
+| surface_interval_s | scalar, optional | Regular output interval; renderer omits a short final interval |
+| view_bounds_xy_m | 2 x 2, optional | Solver-owned world XY view: lower row, upper row |
+| video_size_px | 2, optional | Intended video width and height in pixels; positive even integers |
 
 Offsets start at zero, increase strictly and end at the corresponding packed
 array length. Pose a hull vertex with `position + R @ (vertex - cg)`.
-The result's hull is authoritative for that result.
+The result's hull is authoritative for that result. New solves include the three
+output-control arrays; legacy archives may omit them. Archives without video dimensions retain 800 by
+800 rendering compatibility. Surface times consist of
+regular output samples and the exact endpoint, which may add a shorter final
+interval. A movie uses the regular samples without resampling the fluid.
 
 Surface geometry is mandatory and represents total water elevation. It preserves
 the sampling grid without cutting/remeshing at the hull. Portions inside the

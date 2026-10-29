@@ -3,13 +3,11 @@ from numpy.testing import assert_allclose
 import pytest
 
 from topwater import InitialState
-from topwater.frames import (
-    body_to_world,
-    propagation_angle_from_bearing,
-    rotation_matrix,
-    shift_moment,
-    world_to_body,
-)
+from topwater.geometry.transforms import body_to_world
+from topwater.geometry.transforms import propagation_angle_from_bearing
+from topwater.geometry.transforms import rotation_matrix
+from topwater.geometry.transforms import shift_moment
+from topwater.geometry.transforms import world_to_body
 
 
 @pytest.mark.parametrize(("axis", "expected"), [

@@ -5,23 +5,29 @@ build-backend = "hatchling.build"
 [project]
 name = "topwater"
 version = "0.1.0.dev0"
-description = "Boat motion and water-surface reconstruction with WEC-Sim"
+description = "Native boat motion and water-surface reconstruction"
 readme = "README.md"
 requires-python = ">=3.12"
 license = "MIT"
 license-files = ["LICENSE"]
 authors = [{ name = "Alex Osborne" }]
 dependencies = [
+    "capytaine==3.0.0",
     "numba>=0.67",
     "numpy>=2.0",
     "scipy>=1.14",
     "threadpoolctl>=3.7.0",
     "matplotlib>=3.8",
     "imageio-ffmpeg>=0.6",
+    "pillow>=10",
+    "skia-python>=144,<145",
 ]
 
 [project.scripts]
 topwater = "topwater.cli:main"
+
+[project.optional-dependencies]
+gpu = ["pyopencl>=2026.1.4,<2027", "wgpu>=0.32,<0.33"]
 
 [project.urls]
 Repository = "https://github.com/amosborne/topwater"
@@ -29,7 +35,6 @@ Issues = "https://github.com/amosborne/topwater/issues"
 
 [dependency-groups]
 wecsim = [
-    "capytaine==3.0.0",
     "matlabengine==25.2.2",
 ]
 dev = [

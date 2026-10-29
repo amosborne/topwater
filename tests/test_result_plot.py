@@ -5,8 +5,12 @@ import numpy as np
 import pytest
 from scipy.spatial.transform import Rotation
 
-from topwater.result_plot import _rms_color_maximum, _sea_spectrum, motion_histories, save_motion_plot
-from topwater.workflow_data import Result, Sea
+from topwater.solve.plot import _rms_color_maximum
+from topwater.solve.plot import _sea_spectrum
+from topwater.solve.plot import motion_histories
+from topwater.solve.plot import save_motion_plot
+from topwater.workflow_data import Result
+from topwater.workflow_data import Sea
 
 
 def saved_motion_result(times=None):
@@ -229,7 +233,7 @@ def test_png_dimensions_and_complete_history_publication(tmp_path, monkeypatch):
 @pytest.mark.parametrize('failure', ['encode', 'publish'])
 def test_plot_failure_preserves_old_png_and_removes_staging(tmp_path, monkeypatch, failure):
     from matplotlib.backends.backend_agg import FigureCanvasAgg
-    import topwater.result_plot as module
+    import topwater.solve.plot as module
     destination = tmp_path/'case'/'result.png'
     destination.parent.mkdir()
     destination.write_bytes(b'old chart')
@@ -258,7 +262,7 @@ def test_plot_rejects_wrong_contract_and_extension(tmp_path):
 @pytest.mark.parametrize('extent', [0., 1e-9, 1., 1e9])
 def test_seven_nice_ticks_zero_middle_shared_rows_and_limits(tmp_path, monkeypatch, extent):
     from matplotlib.backends.backend_agg import FigureCanvasAgg
-    import topwater.result_plot as module
+    import topwater.solve.plot as module
     times = np.array([0., 1., 2.])
     histories = extent*np.array([[0., 0., 0., 0., 0., 0.],
                                  [1., -.4, .7, -8., 3., .5],

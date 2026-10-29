@@ -9,8 +9,9 @@ def test_shared_source_mesh_preserves_native_field_matrices_and_complex_transfer
     cpt = pytest.importorskip('capytaine')
     from capytaine.green_functions.delhommeau import Delhommeau
     from threadpoolctl import threadpool_info, threadpool_limits
-    from topwater._capytaine_surface import MODES, radiation_velocity_transfer
-    from topwater._wecsim_setup import floating_equilibrium
+    from topwater.solve.types import MODES
+    from .reference_surface import radiation_velocity_transfer
+    from topwater.solve.preparation import floating_equilibrium
     from .reference_boat import reference_body
 
     body = reference_body()

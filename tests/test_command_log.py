@@ -52,11 +52,10 @@ def test_tee_preserves_console_once_and_formats_every_file_line(tmp_path, consol
 
 
 @pytest.mark.parametrize('message', [
-    'warning [calm-restoring-force] at 1s: departure',
-    'warning summary [calm-restoring-force]: 3 samples',
+    'warning [solver] at 1s: numerical issue',
+    'warning summary [solver]: 3 samples',
     'WARNING Capytaine mesh resolution',
     'Capytaine: Mesh resolution warning applies to 8 solves',
-    'WEC-Sim applicability: wet-set exceeds 10%',
     'Surface numerical approximation: provisional field',
     '\x1b[33mWarning: native model approximation\x1b[0m',
     'C:\\case\\result_plot.py:46: UserWarning: Six-motion Euler labels are ambiguous',

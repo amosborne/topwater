@@ -2,18 +2,19 @@
 from types import SimpleNamespace
 
 import numpy as np
+import pytest
 from numpy.testing import assert_allclose
 
-from topwater._wecsim_setup import IncomingTrain
-from topwater._wecsim_spectral import _coherent_waves
+from topwater.solve.preparation import IncomingTrain
+from topwater.solve.wecsim.spectral import _coherent_waves
 from topwater.inputs import WaveComponents
-from topwater.wave_packets import minimum_cutoff_packet
+from topwater.solve.packets import minimum_cutoff_packet
 
 
 def test_phase_is_direct_at_dwell_midpoint_with_existing_negative_time_sign():
     phase, heading, amplitude = np.pi/2, .73, .2
     waves = WaveComponents([amplitude], [2*np.pi*.1], [heading], [phase])
-    train = IncomingTrain(waves, 1.)
+    train = IncomingTrain(waves)
     packet = minimum_cutoff_packet(.1, -phase, 10., 5., 100., amplitude_m=amplitude)
     assert_allclose(train.elevation([[0., 0.]], packet.target.time_s)[:, 0],
                     packet.elevation_m, rtol=0, atol=1e-13)
@@ -36,7 +37,7 @@ def test_phase_is_direct_at_dwell_midpoint_with_existing_negative_time_sign():
 def test_aggregate_budget_preserves_original_carriers_and_real_dc():
     waves = WaveComponents([.1, .2], [2*np.pi*.1, 2*np.pi*.2], [.2, 1.3], [.4, -.7])
     originals = [x.copy() for x in (waves.amplitudes, waves.angular_frequencies, waves.directions, waves.phases)]
-    train = IncomingTrain(waves, 1.)
+    train = IncomingTrain(waves)
     assert_allclose([row['allocated_tolerance_m'] for row in train.packet_diagnostics], [.01/3, .02/3])
     assert train.certified_origin_exceedance_m <= .01
     assert_allclose(train.dc_mean_m, sum(train.dc_by_carrier_m), rtol=0, atol=0)
@@ -70,14 +71,14 @@ def test_empty_sea_has_valid_exactly_zero_native_spectrum():
 
 
 def test_nyquist_singleton_is_not_doubled_when_packet_reaches_grid_endpoint(monkeypatch):
-    import topwater._wecsim_setup as setup_module
+    import topwater.solve.preparation as setup_module
     # A controlled packet isolates adapter normalization; no bandwidth search.
     packet = SimpleNamespace(positive_components=4, coefficients=np.array([.02, .1j, .2, .3j, .04]),
         target=SimpleNamespace(time_s=np.arange(8)*.01), dc_m=.02, cutoff_hz=50.,
         diagnostics={'certified_envelope_exceedance_bound_m': 0.})
     monkeypatch.setattr(setup_module, 'minimum_cutoff_packet', lambda *args, **kwargs: packet)
     waves = WaveComponents([.2], [2*np.pi*.1], [.3], [.4])
-    train = IncomingTrain(waves, 1., rest_s=0., ramp_s=.02, dwell_s=.04)
+    train = IncomingTrain(waves, rest_s=0., ramp_s=.02, dwell_s=.04)
     assert_allclose(train.C[0, 0, -1], .04)
     assert_allclose(train.C[0, 0, 1:-1], np.conj(2*packet.coefficients[1:-1]))
 
@@ -93,47 +94,55 @@ def test_static_mean_coordinate_shift_retains_full_restoring_couplings():
                         -stiffness@physical_q+mean*stiffness[:, 2], atol=1e-14)
 
 
-def test_solve_surface_wrapper_keeps_geometry_computational_and_exports_world_once(monkeypatch, tmp_path):
+@pytest.mark.parametrize('solver', ['native', 'wecsim'])
+def test_solve_surface_wrapper_keeps_geometry_computational_and_exports_world_once(monkeypatch, tmp_path, solver):
     from contextlib import contextmanager
-    from topwater import wecsim_backend as backend
-    from topwater import workflow_data
-
+    from topwater.solve import workflow
+    from topwater.solve.native import backend as native_backend
+    from topwater.solve.wecsim import backend as wecsim_backend
+    from topwater.solve.types import Motion, PreparedMotion
+    motion_backend = native_backend if solver == 'native' else wecsim_backend
     d = .007
-    physical_positions = np.array([[0., 0., .2], [.1, 0., .21]])
-    stamp = np.array([0., .08])
-    motion = backend.NativeMotion(stamp, np.zeros((2, 6)), np.zeros((2, 6)),
-        np.zeros((2, 6)), physical_positions.copy(),
-        np.tile([1., 0., 0., 0.], (2, 1)), np.zeros((2, 6)))
-    setup = SimpleNamespace(hydrostatic=SimpleNamespace(stiffness=np.eye(6),
-        center_of_buoyancy=np.zeros(3), displaced_volume=1.), world_vertical_offset_m=d,
-        wet_triangles_m=np.zeros((1, 3, 3)), mean_cg_m=np.zeros(3), mass_matrix=np.eye(6),
-        train=SimpleNamespace(omega=np.array([0., .1]), certify_incident_startup=lambda setup: None))
+    positions = np.array([[0., 0., .2], [.1, 0., .21]])
+    stamp = np.array([0., .1])
+    motion = Motion(stamp, np.zeros((2, 6)), np.zeros((2, 6)), np.zeros((2, 6)),
+        positions.copy(), np.tile([1., 0., 0., 0.], (2, 1)), np.zeros((2, 6)))
+    setup = SimpleNamespace(world_vertical_offset_m=d,
+        train=SimpleNamespace(certify_incident_startup=lambda setup: None))
     water = np.array([[0., 0., -.001], [1., 0., 0.], [0., 1., .001]])
     faces = np.array([[0, 1, 2]])
-    def reconstruct(hydro, actual_setup, computational_motion, times):
-        assert_allclose(computational_motion.position_m, physical_positions-[0., 0., d])
-        assert_allclose(motion.position_m, physical_positions)
-        assert actual_setup is setup
+    hydro = object()
+    selected = []
+    closed = []
+    field_backend = SimpleNamespace(close=lambda: closed.append(True))
+    def field(coefficients, device, **kwargs):
+        assert coefficients is hydro
+        selected.append(device)
+        return field_backend
+    def reconstruct(coefficients, actual_setup, computational, times, **kwargs):
+        assert coefficients is hydro and actual_setup is setup
+        assert_allclose(computational.position_m, positions-[0., 0., d])
+        assert_allclose(motion.position_m, positions)
         assert (tmp_path/'surface-world-offset.json').is_file()
+        assert kwargs['field_backend'] is field_backend
         return water.copy(), faces, np.array([0, 3]), np.array([0, 1])
-    def build(*args, **kwargs):
-        assert kwargs['green_cache_dir'] == tmp_path/'.cache/topwater/capytaine-3.0.0'
-        return object()
-    producer = SimpleNamespace(build_hydrodynamics=build,
-                               reconstruct_total_surface=reconstruct)
     @contextmanager
-    def scratch():
+    def scratch(name):
+        assert name == solver
         yield tmp_path
-    monkeypatch.setattr(backend, 'preflight', lambda: (tmp_path, producer))
-    monkeypatch.setattr(backend.Path, 'home', classmethod(lambda cls: tmp_path))
-    monkeypatch.setattr(backend, 'prepare_case', lambda *args, **kwargs: setup)
-    monkeypatch.setattr(backend, '_waves', lambda sea: object())
-    monkeypatch.setattr(backend, '_scratch_directory', scratch)
-    monkeypatch.setattr(backend, 'integrate_motion', lambda *args: motion)
-    monkeypatch.setattr(backend, 'warn_restoring_departures', lambda *args: None)
-    monkeypatch.setattr(workflow_data, 'Result', lambda **kwargs: SimpleNamespace(**kwargs))
+    monkeypatch.setattr(motion_backend, 'preflight', lambda options, influence: None)
+    monkeypatch.setattr(motion_backend, 'prepare', lambda *args: PreparedMotion(hydro))
+    monkeypatch.setattr(motion_backend, 'integrate', lambda *args: motion)
+    monkeypatch.setattr(workflow, 'prepare_case', lambda *args, **kwargs: setup)
+    monkeypatch.setattr(workflow, 'waves_from_sea', lambda sea: object())
+    monkeypatch.setattr(workflow, 'scratch_directory', scratch)
+    monkeypatch.setattr(workflow, 'select_field_backend', field)
+    monkeypatch.setattr(workflow.producer, 'reconstruct_total_surface', reconstruct)
+    monkeypatch.setattr(workflow, 'Result', lambda **kwargs: SimpleNamespace(**kwargs))
     boat = SimpleNamespace(to_body=lambda: object(), vertices_m=water, faces=faces, cg_m=np.zeros(3))
-    result = backend.solve(boat, object(), 100.)
-    assert_allclose(result.position_m, physical_positions)
+    result = workflow.solve(boat, object(), 100., solver=solver)
+    assert_allclose(result.position_m, positions)
     assert_allclose(result.surface_vertices_m, water+[0., 0., d])
     assert_allclose(water[:, 2], [-.001, 0., .001])
+    assert selected == ['auto' if solver == 'native' else 'cpu']
+    assert closed == [True]

@@ -1,0 +1,21 @@
+{
+  "integration_seconds": 4.052978899999289,
+  "maximum_position_error_m": 0.0019951924715859693,
+  "maximum_orientation_error_deg": 0.03368809210482197,
+  "excitation_max_abs_difference": 7.044036465231329e-10,
+  "kernel_max_abs_difference": 5.593392415903509e-10,
+  "tolerance_position_m": 0.01,
+  "tolerance_orientation_deg": 0.1,
+  "motion_samples": 13001,
+  "surface_frames": 1626,
+  "matlab_engine_installed": false,
+  "profiled_solve_seconds": 175.4629144999999,
+  "profiled_render_seconds": 75.07664700000169,
+  "dependencies": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "numba": "0.68.1",
+    "matplotlib": "3.11.2"
+  },
+  "reference_sha256": "f86a6f7e2d5390d077b0909b91c4c6f2725a5d74fccadb21bfe70d4860690573"
+}

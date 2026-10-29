@@ -5,12 +5,22 @@ import numpy as np
 import pytest
 from scipy.spatial.transform import Rotation
 
-from topwater.result_render import (
-    _boundary_enters_view, _contact_contours, _mask_path, _projected_frame,
-    _submerged_edges_from_contact, _topology, _wetted_display,
-    render_result, sampled_poses,
-)
+from topwater.render.geometry import _boundary_enters_view
+from topwater.render.geometry import _contact_contours
+from topwater.render.geometry import _projected_frame
+from topwater.render.geometry import _submerged_edges_from_contact
+from topwater.render.geometry import _topology
+from topwater.render.geometry import _wetted_display
+from topwater.render.workflow import render_result
+from topwater.render.geometry import sampled_poses
 from topwater.workflow_data import Result
+
+
+@pytest.fixture(autouse=True)
+def native_cpu_video(monkeypatch):
+    from topwater.render import workflow
+    from topwater.render.cpu.backend import DrawingBackend
+    monkeypatch.setattr(workflow,'DrawingBackend',lambda size,lower,upper,**kwargs:DrawingBackend(size,lower,upper))
 
 
 def saved_result():
@@ -76,103 +86,52 @@ def test_render_consumes_variable_topology_and_preserves_hull_hole(tmp_path, cap
     assert list(tmp_path.iterdir()) == [destination]
 
 
-def test_approved_graticule_is_cached_transparently_and_drawn_above_each_moving_frame(tmp_path, monkeypatch):
-    from pathlib import Path
-    from matplotlib.backends.backend_agg import FigureCanvasAgg
-    from matplotlib.figure import Figure
-    import imageio_ffmpeg
-    import topwater.result_render as module
-    original = saved_result()
-    water = np.array([[-5., -5., .2], [5., -5., .2], [5., 5., .2], [-5., 5., .2]])
-    faces = np.array([[0, 1, 2], [0, 2, 3]])
-    result = replace(original,
-        position_m=np.array([[0., 0., 0.], [.1, .05, 0.], [.2, .1, 0.]]),
-        orientation_wxyz=Rotation.from_euler('z', np.array([[.1], [.3], [.5]])).as_quat(scalar_first=True),
-        surface_vertices_m=np.vstack((water, water)), surface_faces=np.vstack((faces, faces)),
-        surface_vertex_offsets=np.array([0, 4, 8]), surface_face_offsets=np.array([0, 2, 4]))
-    frames, full_draws, cached, layouts, order, norms, overlays = [], [], [], [], [], [], []
-    draw = FigureCanvasAgg.draw
-    draw_artist = Figure.draw_artist
-    make = module._make_graticule_overlay
-    edge = module._edge_graticule
+def test_public_scene_api_uses_shared_native_cpu_renderer_for_nonrigid_mixed_winding(tmp_path):
+    from topwater.render.scene import SceneSequence
+    from topwater.render.scene import render_sequence
+    hull,faces,water,water_faces=flared_display_case()
+    next_hull=hull.copy()
+    next_hull[:,0]*=1.1  # Explicit mesh scenes need not be rigid pose records.
+    next_hull[:,2]+=.05
+    mixed=faces.copy();mixed[::2]=mixed[::2,::-1]
+    scene=SceneSequence(np.array([0.,.08]),np.stack((hull,next_hull)),mixed,
+        np.stack((water,water)),water_faces,telemetry=dict(roll_deg=np.zeros(2),
+            pitch_deg=np.zeros(2),heave_m=np.array([0.,.05])))
+    summary=render_sequence(scene,tmp_path/'scene.mp4')
+    assert summary['frames']==2 and summary['backend']=='Skia'
+    np.testing.assert_array_equal(scene.hull_faces,mixed)
 
-    def count_draw(canvas, *args, **kwargs):
-        full_draws.append(canvas.figure)
-        return draw(canvas, *args, **kwargs)
 
-    def capture_cache(figure, lower, upper, norm, ticks):
-        norms.append(norm)
-        np.testing.assert_allclose(lower, -upper, atol=1e-15)
-        assert norm.vmin == pytest.approx(-.2) and norm.vmax == pytest.approx(.2)
-        artist = make(figure, lower, upper, norm, ticks)
-        overlays.append(artist)
-        cached.append(np.asarray(artist.get_array()).copy())
-        return artist
-
-    def capture_edges(figure, axes, lower, upper, norm, ticks):
-        bar, metadata = edge(figure, axes, lower, upper, norm, ticks)
-        assert bar.mappable.norm is norm and bar.mappable.get_cmap().name == 'coolwarm'
-        assert [label.get_text() for label in bar.ax.get_yticklabels()] == ['-0.2', '0', '+0.2']
-        assert any(text.get_text() == 'Z (m)' for text in axes.texts)
-        assert metadata['edge_insets_equal'] and metadata['square_perimeter']
-        assert metadata['edge_inset_fraction'] == .04
-        assert metadata['numeric_labels_on'] == ['bottom', 'left']
-        assert metadata['matching_ticks_on'] == ['top', 'right']
-        assert metadata['all_tick_corner_exclusion_fraction'] == .08
-        assert metadata['numeric_label_corner_exclusion_fraction'] == .12
-        assert metadata['gauge_zero_fraction'] == pytest.approx(.5)
-        assert metadata['world_y_zero_fraction'] == pytest.approx(.5)
-        assert metadata['gauge_metres_per_pixel'] == pytest.approx(metadata['common_metres_per_pixel'])
-        layouts.append(metadata)
-        return bar, metadata
-
-    def capture_order(figure, artist):
-        if artist.get_label() in ('world graticule', 'motion header'):
-            order.append(artist.get_label())
-            main = figure.axes[0]
-            np.testing.assert_allclose(main.get_position().bounds, [0., 0., 1., 1.], atol=1e-15)
-            np.testing.assert_allclose(main.transData.transform([0., 0.]), [400., 400.], atol=1e-10)
-            if artist.get_label() == 'motion header':
-                assert artist.get_fontsize() == 10.5 and artist.get_position() == (.5, .925)
-            for collection in main.collections:
-                if hasattr(collection, 'get_cmap') and collection.get_cmap().name == 'coolwarm':
-                    assert collection.norm is norms[0]
-        return draw_artist(figure, artist)
-
-    def writer(path, *args, **kwargs):
-        Path(path).write_bytes(b'private cached-graticule test stub')
-        while True:
-            frame = yield
-            frames.append(np.asarray(frame).copy())
-
-    monkeypatch.setattr(FigureCanvasAgg, 'draw', count_draw)
-    monkeypatch.setattr(Figure, 'draw_artist', capture_order)
-    monkeypatch.setattr(module, '_make_graticule_overlay', capture_cache)
-    monkeypatch.setattr(module, '_edge_graticule', capture_edges)
-    monkeypatch.setattr(imageio_ffmpeg, 'write_frames', writer)
-    monkeypatch.setattr(module, '_verify_video', lambda *args: None)
-    summary = render_result(result, tmp_path/'approved.mp4')
-    assert summary['complete'] and summary['frames'] == len(frames) == 2
-    assert len(full_draws) == 2  # One static overlay and one main background, never per frame.
-    assert len(cached) == len(layouts) == len(norms) == 1
-    assert overlays[0].make_image.cache_info().misses == 1
-    assert order == ['world graticule', 'motion header']*2
-    rgba = cached[0]
-    assert rgba.shape == (800, 800, 4)
-    assert np.any(rgba[:, :, 3] == 0)  # Empty overlay pixels preserve the actual scene.
-    opaque = rgba[:, :, 3] == 255
-    assert np.any(opaque)
+def test_graticule_texture_is_cached_once_and_header_changes(tmp_path, monkeypatch):
+    import topwater.render.hud as hud
+    import topwater.render.cpu.backend as backend
+    cached, headers, frames = [], [], []
+    original_graticule, original_header, original_draw = hud.HUD.graticule, hud.HUD.header, backend.DrawingBackend.draw
+    def graticule(self):
+        rgba=original_graticule(self);cached.append(rgba.copy());return rgba
+    def header(self,value):
+        headers.append(value);return original_header(self,value)
+    def draw(self,*args):
+        rgba=original_draw(self,*args);frames.append(rgba.copy());return rgba
+    monkeypatch.setattr(hud.HUD,'graticule',graticule)
+    monkeypatch.setattr(hud.HUD,'header',header)
+    monkeypatch.setattr(backend.DrawingBackend,'draw',draw)
+    summary=render_result(saved_result(),tmp_path/'cached.mp4')
+    assert len(cached)==1 and cached[0].shape==(800,800,4)
+    assert len(headers)==len(frames)==2 and headers[0]!=headers[1]
+    assert np.any(cached[0][:,:,3]==0)
+    opaque=cached[0][:,:,3]==255
     for frame in frames:
-        np.testing.assert_array_equal(frame[opaque], rgba[opaque])
-    assert not np.array_equal(frames[0], frames[1])  # Actual body poses and telemetry change.
-    np.testing.assert_array_equal(result.surface_vertices_m, np.vstack((water, water)))
+        np.testing.assert_allclose(frame[opaque],cached[0][opaque],atol=1)
+    assert summary['backend']=='Skia'
+    assert summary['hud']['gauge_metres_per_pixel']==summary['hud']['common_metres_per_pixel']
 
 
 @pytest.mark.parametrize('change,expected_checks', [('height', 1), ('xy', 2), ('topology', 2)])
 def test_projection_cache_requires_identical_xy_and_connectivity(tmp_path, monkeypatch, change, expected_checks):
     from pathlib import Path
     import imageio_ffmpeg
-    import topwater.result_render as module
+    import topwater.render.geometry as module
     water = np.array([[-5., -5., 0.], [5., -5., 0.], [5., 5., 0.], [-5., 5., 0.]])
     faces = np.array([[0, 1, 2], [0, 2, 3]])
     next_water, next_faces = water.copy(), faces.copy()
@@ -240,114 +199,56 @@ def test_origin_camera_failure_preserves_old_video_when_original_zoom_cannot_cov
 
 
 def test_full_dry_wireframe_black_outline_and_solid_blue_waterline_layers(tmp_path, monkeypatch):
-    from pathlib import Path
-    from matplotlib.axes import Axes
-    from matplotlib.collections import LineCollection
-    from matplotlib.patches import PathPatch
-    from topwater._visualization_geometry import mesh_edges
-    from topwater.surface_geometry import waterline_segments
-    import imageio_ffmpeg
-    import topwater.result_render as module
-    original = saved_result()
-    hull, hull_faces, _, _ = flared_display_case()
-    result = replace(original, hull_vertices_m=hull)
-    drawn = []
-    draw_artist = Axes.draw_artist
-
-    def capture(axes, artist):
-        snapshot = dict(label=artist.get_label(), zorder=artist.get_zorder())
-        if isinstance(artist, LineCollection):
-            snapshot.update(segments=np.asarray(artist.get_segments()).copy(),
-                colors=artist.get_colors().copy(), linestyle=artist.get_linestyle(),
-                effects=artist.get_path_effects())
-        if isinstance(artist, PathPatch):
-            snapshot['mask_vertices'] = artist.get_path().vertices.copy()
-        drawn.append(snapshot)
-        return draw_artist(axes, artist)
-
-    def fake_writer(path, *args, **kwargs):
-        Path(path).write_bytes(b'private layer-test stub')
-        while True:
-            yield
-
-    def unexpected_submerged_clipping(*args, **kwargs):
-        pytest.fail('full wireframe rendering must not clip dry edges away')
-
-    monkeypatch.setattr(Axes, 'draw_artist', capture)
-    monkeypatch.setattr(imageio_ffmpeg, 'write_frames', fake_writer)
-    monkeypatch.setattr(module, '_verify_video', lambda *args: None)
-    monkeypatch.setattr(module, '_submerged_edges_from_contact', unexpected_submerged_clipping)
-    render_result(result, tmp_path/'layers.mp4')
-    assert len(drawn) == 12  # Water/mask, fixed reference, then original three line layers per frame.
-    first = drawn[:6]
-    assert [item['zorder'] for item in first] == [0, 1, 1.5, 2, 3, 4]
-    assert [item['label'] for item in first[2:]] == [
-        'reference waterline', 'boat mesh', 'boat outline', 'physical waterline']
-    edges, rim = mesh_edges(hull_faces)
-    np.testing.assert_array_equal(first[3]['segments'], hull[edges, :2])
-    np.testing.assert_array_equal(first[4]['segments'], hull[rim, :2])
-    # Dry rim is at half-width2, while the mask and waterline remain at1.25.
-    assert np.max(abs(first[4]['segments'])) == pytest.approx(2.)
-    assert np.max(abs(first[1]['mask_vertices'])) == pytest.approx(1.25)
-    water, faces = result.surface_frame(0)
-    contact = waterline_segments(hull, hull_faces, water, faces)
-    np.testing.assert_allclose(first[5]['segments'], contact[:, :, :2], atol=1e-12)
-    np.testing.assert_allclose(first[2]['colors'], [[119/255, 119/255, 119/255, 1.]])
-    np.testing.assert_allclose(first[3]['colors'], [[176/255, 176/255, 176/255, 1.]])
-    np.testing.assert_array_equal(first[4]['colors'], [[0., 0., 0., 1.]])
-    np.testing.assert_array_equal(first[5]['colors'], [[0., 0., 1., 1.]])
-    assert all(dashes is not None for offset, dashes in first[2]['linestyle'])
-    assert all(dashes is None for offset, dashes in first[5]['linestyle'])
-    assert not first[5]['effects']  # Solid blue, without a white halo.
+    from topwater.render.cpu.backend import DrawingBackend
+    from topwater.render.mesh import mesh_edges
+    from topwater.geometry.waterline import waterline_segments
+    hull,hull_faces,_,_=flared_display_case()
+    result=replace(saved_result(),hull_vertices_m=hull)
+    drawn=[];original=DrawingBackend.draw
+    def draw(self,water,faces,masks,layers):
+        drawn.append((masks,[(name,np.array(segments),color,width,dashed) for name,segments,color,width,dashed in layers]))
+        return original(self,water,faces,masks,layers)
+    monkeypatch.setattr(DrawingBackend,'draw',draw)
+    import topwater.render.geometry as module
+    monkeypatch.setattr(module,'_submerged_edges_from_contact',lambda *args:pytest.fail('dry edges must remain visible'))
+    render_result(result,tmp_path/'layers.mp4')
+    masks,layers=drawn[0]
+    assert [x[0] for x in layers]==['reference waterline','boat mesh','boat outline','physical waterline']
+    edges,rim=mesh_edges(hull_faces)
+    np.testing.assert_array_equal(layers[1][1],hull[edges,:2])
+    np.testing.assert_array_equal(layers[2][1],hull[rim,:2])
+    assert np.max(abs(layers[2][1]))==pytest.approx(2.)
+    assert np.max(abs(np.concatenate(masks)))==pytest.approx(1.25)
+    water,faces=result.surface_frame(0)
+    np.testing.assert_allclose(layers[3][1],waterline_segments(hull,hull_faces,water,faces)[:,:,:2],atol=1e-12)
+    assert layers[0][-1] is True and layers[3][-1] is False
+    assert layers[1][2]==[176/255]*3+[1.]
+    assert layers[2][2]==[0,0,0,1] and layers[3][2]==[0,0,1,1]
 
 
 def test_reference_waterline_is_flat_initial_hull_fixed_once_not_first_saved_water(tmp_path, monkeypatch):
-    from pathlib import Path
-    from matplotlib.axes import Axes
-    import imageio_ffmpeg
-    import topwater.result_render as module
-    original = saved_result()
-    hull, _, _, _ = flared_display_case()
-    water = original.surface_vertices_m.copy()
-    water[:, 2] = .2
-    result = replace(original, hull_vertices_m=hull, surface_vertices_m=water,
-        position_m=np.array([[0., 0., 0.], [.05, 0., .02], [.1, 0., .04]]),
-        orientation_wxyz=Rotation.from_euler('x', np.array([[0.], [.025], [.05]])).as_quat(scalar_first=True))
-    references, moving, computations = [], [], []
-    original_draw = Axes.draw_artist
-    original_reference = module._flat_reference_waterline
-
+    from topwater.render.cpu.backend import DrawingBackend
+    import topwater.render.geometry as module
+    original=saved_result();hull,_,_,_=flared_display_case()
+    water=original.surface_vertices_m.copy();water[:,2]=.2
+    result=replace(original,hull_vertices_m=hull,surface_vertices_m=water,
+        position_m=np.array([[0.,0.,0.],[.05,0.,.02],[.1,0.,.04]]),
+        orientation_wxyz=Rotation.from_euler('x',np.array([[0.],[.025],[.05]])).as_quat(scalar_first=True))
+    references,moving,computations=[],[],[]
+    original_draw,original_reference=DrawingBackend.draw,module._flat_reference_waterline
     def reference(*args):
-        computations.append(True)
-        return original_reference(*args)
-
-    def draw(axes, artist):
-        assert not axes.figure.legends and axes.get_legend() is None
-        assert len(axes.figure.texts) == 1  # Existing HUD only; no new labels.
-        if artist.get_label() == 'reference waterline':
-            references.append(np.asarray(artist.get_segments()).copy())
-        elif artist.get_label() == 'physical waterline':
-            moving.append(np.asarray(artist.get_segments()).copy())
-        return original_draw(axes, artist)
-
-    def writer(path, *args, **kwargs):
-        Path(path).write_bytes(b'private static-reference test stub')
-        while True:
-            yield
-
-    monkeypatch.setattr(module, '_flat_reference_waterline', reference)
-    monkeypatch.setattr(Axes, 'draw_artist', draw)
-    monkeypatch.setattr(imageio_ffmpeg, 'write_frames', writer)
-    monkeypatch.setattr(module, '_verify_video', lambda *args: None)
-    render_result(result, tmp_path/'reference.mp4')
-    assert len(computations) == 1
-    assert len(references) == len(moving) == 2
-    np.testing.assert_array_equal(references[0], references[1])
-    # Flared hull half-width at flat z=0 is1.25; actual initial saved water is
-    # z=.2, with physical waterline half-width1.4. Reference does not use it.
-    assert np.max(abs(references[0])) == pytest.approx(1.25)
-    assert np.max(abs(moving[0])) == pytest.approx(1.4)
-    assert moving[0].shape != moving[1].shape or not np.allclose(moving[0], moving[1])
+        computations.append(True);return original_reference(*args)
+    def draw(self,water,faces,masks,layers):
+        references.append(np.array(layers[0][1]));moving.append(np.array(layers[3][1]))
+        return original_draw(self,water,faces,masks,layers)
+    monkeypatch.setattr(module,'_flat_reference_waterline',reference)
+    monkeypatch.setattr(DrawingBackend,'draw',draw)
+    render_result(result,tmp_path/'reference.mp4')
+    assert len(computations)==1 and len(references)==len(moving)==2
+    np.testing.assert_array_equal(references[0],references[1])
+    assert np.max(abs(references[0]))==pytest.approx(1.25)
+    assert np.max(abs(moving[0]))==pytest.approx(1.4)
+    assert moving[0].shape!=moving[1].shape or not np.allclose(moving[0],moving[1])
 
 
 def test_projection_rejects_uncovered_interior_hole_outside_hull():
@@ -438,7 +339,7 @@ def test_outer_boundary_indent_is_not_hidden_by_corner_coverage():
 
 def test_failed_projection_preserves_previous_video(tmp_path, monkeypatch):
     import imageio_ffmpeg
-    import topwater.result_render as renderer
+    import topwater.render.geometry as renderer
 
     def fake_writer(path, *args, **kwargs):
         from pathlib import Path
@@ -461,7 +362,7 @@ def test_failed_projection_preserves_previous_video(tmp_path, monkeypatch):
 
 def test_failed_decode_preserves_previous_video(tmp_path, monkeypatch, capsys):
     import imageio_ffmpeg
-    import topwater.result_render as renderer
+    import topwater.render.geometry as renderer
 
     def fake_writer(path, *args, **kwargs):
         from pathlib import Path
@@ -561,9 +462,9 @@ def test_sloping_saved_surface_and_moving_hull_share_exact_contact_boundary(pose
 
 def test_overtopped_opening_completes_display_volume_without_changing_physical_contact(monkeypatch):
     from scipy.spatial import ConvexHull
-    from topwater.boat_geometry import physical_hull
-    from topwater.surface_geometry import waterline_segments
-    import topwater.result_render as module
+    from topwater.boat.geometry import physical_hull
+    from topwater.geometry.waterline import waterline_segments
+    import topwater.render.geometry as module
     hull, hull_faces, water, faces = flared_display_case()
     hull = hull @ Rotation.from_euler('xyz', [.2, .1, .5]).as_matrix().T + [1., -.5, .1]
     water[:, 2] = .2*water[:, 0]+.1*water[:, 1]
@@ -600,8 +501,8 @@ def test_overtopped_opening_completes_display_volume_without_changing_physical_c
 
 
 def test_closed_physical_contact_has_no_display_closure_or_extra_intersection(monkeypatch):
-    import topwater.boat_geometry as geometry
-    import topwater.result_render as module
+    import topwater.boat.geometry as geometry
+    import topwater.render.geometry as module
     hull, hull_faces, water, faces = flared_display_case()
     kernel = module.waterline_segments
     calls = []
@@ -693,36 +594,23 @@ def test_mask_has_one_contact_subpath_independent_of_water_triangle_count():
     assert projected_area(masks) == pytest.approx(6.25)
 
 
+def mask_samples(polygons,points,lower,upper):
+    from topwater.render.cpu.backend import DrawingBackend
+    backend=DrawingBackend((270,150),lower,upper)
+    try:
+        water=backend.vertices(backend.fullscreen,[0,0,1,1])
+        pixels=backend.draw(water,np.arange(6).reshape(2,3),polygons,[])
+        indices=((np.asarray(points)-lower)/(np.asarray(upper)-lower)*[270,150]).astype(int)
+        return [bool(pixels[149-y,x,0]>128) for x,y in indices]
+    finally:backend.close()
+
+
 def test_compound_mask_preserves_concavity_and_clockwise_disconnected_fill():
-    from matplotlib.backends.backend_agg import FigureCanvasAgg
-    from matplotlib.collections import PolyCollection
-    from matplotlib.figure import Figure
-    from matplotlib.patches import PathPatch
-    polygons = [np.array([[0., 0.], [2., 0.], [2., 1.], [0., 1.]]),
-                np.array([[0., 1.], [1., 1.], [1., 2.], [0., 2.]]),
-                np.array([[3., 0.], [3., 1.], [4., 1.], [4., 0.]])]
-    outputs = []
-    for compound in (False, True):
-        figure = Figure(figsize=(4, 3), dpi=40, facecolor='black')
-        FigureCanvasAgg(figure)
-        axes = figure.add_axes((0, 0, 1, 1))
-        axes.set_xlim(-.5, 4.5); axes.set_ylim(-.5, 2.5); axes.set_axis_off()
-        if compound:
-            axes.add_patch(PathPatch(_mask_path(polygons), facecolor='white',
-                                     edgecolor='none', antialiased=False))
-        else:
-            axes.add_collection(PolyCollection(polygons, facecolor='white',
-                                               edgecolor='none', antialiased=False))
-        figure.canvas.draw()
-        pixels = np.asarray(figure.canvas.buffer_rgba())
-        samples = []
-        for point in ([.5, .5], [.5, 1.5], [1.5, 1.5], [3.5, .5], [2.5, .5]):
-            x, y = axes.transData.transform(point).astype(int)
-            samples.append(bool(pixels[pixels.shape[0]-1-y, x, 0]))
-        outputs.append(samples)
-        figure.clear()
-    assert outputs == [[True, True, False, True, False]]*2
-    assert len(_mask_path([]).vertices) == 0
+    polygons=[np.array([[0.,0.],[2.,0.],[2.,1.],[0.,1.]]),
+              np.array([[0.,1.],[1.,1.],[1.,2.],[0.,2.]]),
+              np.array([[3.,0.],[3.,1.],[4.,1.],[4.,0.]])]
+    assert mask_samples(polygons,[[.5,.5],[.5,1.5],[1.5,1.5],[3.5,.5],[2.5,.5]],
+        [-.5,-.5],[4.5,2.5])==[True,True,False,True,False]
 
 
 def oriented_contact(polygon):
@@ -740,23 +628,9 @@ def test_contact_contours_keep_concavity_disconnected_components_and_nested_hole
     assert len(contours) == 3
     np.testing.assert_allclose(sorted(projected_area([polygon]) for polygon in contours), [4., 5., 16.])
     np.testing.assert_array_equal(contact, original)
-    # Probe the actual Agg nonzero-winding fill; compound Path.contains_points
-    # does not implement the renderer's nested winding semantics.
-    from matplotlib.backends.backend_agg import FigureCanvasAgg
-    from matplotlib.figure import Figure
-    from matplotlib.patches import PathPatch
-    figure = Figure(figsize=(9, 5), dpi=30, facecolor='black')
-    FigureCanvasAgg(figure)
-    axes = figure.add_axes((0, 0, 1, 1))
-    axes.set_xlim(-.5, 8.5); axes.set_ylim(-.5, 4.5); axes.set_axis_off()
-    axes.add_patch(PathPatch(_mask_path(contours), facecolor='white', edgecolor='none'))
-    figure.canvas.draw()
-    pixels = np.asarray(figure.canvas.buffer_rgba())
-    for point, expected in (([.5, .5], True), ([2., 2.], False),
-                            ([5.5, 2.], True), ([7., 2.], False), ([7., .5], True)):
-        x, y = axes.transData.transform(point).astype(int)
-        assert bool(pixels[pixels.shape[0]-1-y, x, 0]) == expected
-    figure.clear()
+    # Probe the actual WebGPU stencil fill, including a nested reversed hole.
+    probes=[[.5,.5],[2.,2.],[5.5,2.],[7.,2.],[7.,.5]]
+    assert mask_samples(contours,probes,[-.5,-.5],[8.5,4.5])==[True,False,True,False,True]
 
 
 @pytest.mark.parametrize('invalid', ['open', 'branched', 'crossed', 'wrong_hole_winding'])

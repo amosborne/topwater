@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 from scipy.io import loadmat, savemat
 
-from topwater._capytaine_surface import _native_excitation_payload
+from topwater.solve.wecsim.exchange import _native_excitation_payload
 
 
 def coefficient_fixture():

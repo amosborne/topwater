@@ -7,7 +7,7 @@ import numpy as np
 from numpy.testing import assert_allclose, assert_array_equal
 import pytest
 
-from topwater import sea_states
+from topwater.sea import states as sea_states
 
 
 def test_baseline_matches_independent_native_noaa_energy_and_direction_row():
@@ -53,7 +53,7 @@ def test_catalog_is_nine_distinct_joint_observations_with_readonly_owned_arrays(
 def test_realization_retains_each_observed_bands_variance_for_every_seed():
     state = sea_states.observed()
     for seed in (0, 42, 2**32-1):
-        waves = sea_states.realize(state, beam_m=9*.3048, seed=seed)
+        waves = sea_states.realize(state, seed=seed)
         amplitudes = waves.amplitudes.reshape(48, 8)
         frequency = waves.angular_frequencies.reshape(48, 8)/(2*np.pi)
         assert_allclose(np.sum(amplitudes**2, axis=1), state.band_amplitudes_m**2, rtol=3e-15)
@@ -68,7 +68,7 @@ def test_realization_retains_each_observed_bands_variance_for_every_seed():
 def test_direction_convention_and_stratified_realization_retain_observed_harmonics():
     state = sea_states.observed()
     count = 256
-    waves = sea_states.realize(state, beam_m=9*.3048, seed=42, components_per_band=count)
+    waves = sea_states.realize(state, seed=42, components_per_band=count)
     # Convert east/CCW PROPAGATION back to nautical FROM; test against all four
     # measured harmonics, rather than a plot or a mean heading alone.
     theta = (1.5*np.pi-waves.directions.reshape(48, count)) % (2*np.pi)
@@ -83,8 +83,8 @@ def test_direction_convention_and_stratified_realization_retain_observed_harmoni
 
 def test_optional_seed_records_fresh_seed_and_explicit_arrays_replay(monkeypatch):
     monkeypatch.setattr(sea_states.secrets, 'randbits', lambda bits: 123456)
-    generated = sea_states.realize(beam_m=9*.3048)
-    repeated = sea_states.realize(beam_m=9*.3048, seed=generated.seed)
+    generated = sea_states.realize()
+    repeated = sea_states.realize(seed=generated.seed)
     saved = sea_states.dumps_realization(generated)
     replayed = sea_states.loads_realization(saved)
     assert generated.seed == 123456
@@ -98,52 +98,59 @@ def test_optional_seed_records_fresh_seed_and_explicit_arrays_replay(monkeypatch
         return np.sum(waves.amplitudes*np.cos(k*(3*np.cos(waves.directions)-2*np.sin(waves.directions))
             -waves.angular_frequencies*7+waves.phases))
     assert elevation(generated) == elevation(replayed)
-    changed = sea_states.realize(beam_m=9*.3048, seed=generated.seed+1)
+    changed = sea_states.realize(seed=generated.seed+1)
     assert not np.array_equal(generated.phases, changed.phases)
     assert_array_equal(generated.amplitudes, changed.amplitudes)
 
 
-def test_incompatible_support_rejected_without_changing_observation_or_replay():
-    # This actual hour has positive measured energy through 0.495 Hz. The median
-    # hour's zero tail ends earlier and need not be rejected for an 11 ft beam.
+def test_realization_replay_retains_observation_and_checks_variance():
     state = sea_states.observed('ndbc-46086-20230704T0340Z')
     before = state.band_amplitudes_m.copy()
-    with pytest.raises(ValueError, match='no bands were removed'):
-        sea_states.realize(state, beam_m=11*.3048, seed=42)
-    waves = sea_states.realize(state, beam_m=9*.3048, seed=42)
-    with pytest.raises(ValueError, match='no bands were removed'):
-        sea_states.loads_realization(sea_states.dumps_realization(waves), beam_m=11*.3048)
+    waves = sea_states.realize(state, seed=42)
+    replayed = sea_states.loads_realization(sea_states.dumps_realization(waves))
     assert_array_equal(state.band_amplitudes_m, before)
-    equality_beam = 9.81/(4*np.pi*state.frequency_edges_hz[-1]**2)
-    sea_states.realize(state, beam_m=equality_beam, seed=42)
+    for name in ('amplitudes', 'angular_frequencies', 'directions', 'phases'):
+        assert_array_equal(getattr(waves, name), getattr(replayed, name))
     corrupt = json.loads(sea_states.dumps_realization(waves))
     corrupt['waves']['amplitudes'][int(np.argmax(waves.amplitudes))] *= 2
     with pytest.raises(ValueError, match='variance'):
         sea_states.loads_realization(json.dumps(corrupt))
 
 
-def test_frequency_ceiling_rejects_full_positive_support_even_for_small_beam():
+def test_full_positive_high_frequency_support_is_not_clipped():
     state = sea_states.observed()
-    outside = replace(state, frequency_edges_hz=state.frequency_edges_hz*2)
-    with pytest.raises(ValueError, match='no bands were removed'):
-        sea_states.realize(outside, beam_m=.1, seed=42)
+    high = replace(state, frequency_edges_hz=state.frequency_edges_hz*3)
+    original = sea_states.realize(state, seed=42)
+    waves = sea_states.realize(high, seed=42)
+    repeated = sea_states.realize(high, seed=42)
+    replayed = sea_states.loads_realization(sea_states.dumps_realization(waves))
+    assert np.max(waves.angular_frequencies[waves.amplitudes > 0]/(2*np.pi)) > .6
+    assert_allclose(waves.angular_frequencies, original.angular_frequencies*3, rtol=1e-15)
+    assert_allclose(np.sum(waves.amplitudes**2)/2, high.variance_m2, rtol=8e-15)
+    for name in ('amplitudes', 'directions', 'phases'):
+        assert_array_equal(getattr(waves, name), getattr(original, name))
+    for name in ('amplitudes', 'angular_frequencies', 'directions', 'phases'):
+        assert_array_equal(getattr(waves, name), getattr(repeated, name))
+        assert_array_equal(getattr(waves, name), getattr(replayed, name))
 
 
 @pytest.mark.parametrize('seed', [True, -1, 2**32, 1.5])
 def test_invalid_seed_is_not_coerced(seed):
     with pytest.raises(ValueError, match='uint32'):
-        sea_states.realize(beam_m=9*.3048, seed=seed)
+        sea_states.realize(seed=seed)
 
 
-def test_input_wave_envelope_checks_actual_components_and_observed_support():
+def test_solve_preserves_components_beyond_old_domain_limits(capsys):
     from topwater import WaveComponents
+    from topwater.solve.preparation import prepare_case
+    from .reference_boat import reference_body
 
-    waves = WaveComponents([.1, 0.], 2*np.pi*np.array([.2, 1.]), [0., 0.], [0., 0.])
-    sea_states.validate_envelope(waves, beam_m=3.)
-    energetic_short = WaveComponents([.1], [2*np.pi*.6], [0.], [0.])
-    with pytest.raises(ValueError, match='wavelength'):
-        sea_states.validate_envelope(energetic_short, beam_m=3.)
-    observed = WaveComponents([.1], [2*np.pi*.2], [0.], [0.],
-        provenance={'observed_active_frequency_max_hz': '.6'})
-    with pytest.raises(ValueError, match='no bands were removed'):
-        sea_states.validate_envelope(observed, beam_m=3.)
+    waves = WaveComponents([.1, .02, 0.], 2*np.pi*np.array([.8, 1.2, 12.]),
+        [.2, .3, .4], [.1, .2, .3],
+        provenance={'observed_active_frequency_max_hz': '4.0'})
+    setup = prepare_case(reference_body(), waves, 2., rest_s=1., ramp_s=1.)
+    assert_array_equal(setup.native_waves.amplitudes, waves.amplitudes)
+    assert_array_equal(setup.native_waves.angular_frequencies, waves.angular_frequencies)
+    assert_array_equal(setup.train.carriers.angular_frequencies, waves.angular_frequencies)
+    assert setup.train.omega[-1]/(2*np.pi) >= 1.2
+    assert 'packet-sideband-operating-envelope' not in capsys.readouterr().err

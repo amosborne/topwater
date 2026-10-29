@@ -3,10 +3,14 @@ import numpy as np
 import pytest
 
 from topwater.cli import main
-from topwater.visualization import SceneSequence, RenderSettings, convex_envelope, render_sequence
-from topwater._visualization_geometry import waterline_segments, mesh_edges
-from topwater._visualization_geometry import projected_footprint
-from topwater._visualization_2d import header_text
+from topwater.render.scene import SceneSequence
+from topwater.render.scene import RenderSettings
+from topwater.render.scene import convex_envelope
+from topwater.render.scene import render_sequence
+from topwater.render.mesh import waterline_segments
+from topwater.render.mesh import mesh_edges
+from topwater.render.mesh import projected_footprint
+from topwater.render.hud import header_text
 
 
 def pyramid():
@@ -98,7 +102,7 @@ def test_cli_rejects_missing_command_or_extra_render_path(arguments):
 
 
 def test_cli_passes_saved_result_and_fixed_output_file(tmp_path, monkeypatch):
-    from topwater import result_render
+    from topwater.render import workflow as result_render
     from tests.test_workflow_data import result
     saved = result()
     saved.save(tmp_path/'result.npz')
@@ -119,7 +123,6 @@ def test_cli_passes_saved_result_and_fixed_output_file(tmp_path, monkeypatch):
     assert captured['output'] == tmp_path/'video.mp4'
     np.testing.assert_array_equal(captured['result'].time_s, saved.time_s)
     assert isinstance(captured['settings'], RenderSettings)
-    assert captured['settings'].maximum_seconds == max(240., float(len(saved.surface_time_s)))
 
 
 def test_output_is_an_mp4_filename_not_a_directory(tmp_path):

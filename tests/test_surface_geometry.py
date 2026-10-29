@@ -4,7 +4,8 @@ import numpy as np
 import pytest
 from scipy.spatial import ConvexHull
 
-from topwater.surface_geometry import validate_opening_clearance, waterline_segments
+from topwater.geometry.waterline import validate_opening_clearance
+from topwater.geometry.waterline import waterline_segments
 
 
 def box():
@@ -28,8 +29,25 @@ def field(z=0.):
 
 
 def test_render_and_producer_use_identical_kernel():
-    from topwater._visualization_geometry import waterline_segments as renderer_contact
+    from topwater.render.mesh import waterline_segments as renderer_contact
     assert renderer_contact is waterline_segments
+
+
+def test_far_field_faces_leave_physical_contact_bit_identical():
+    from scipy.spatial.transform import Rotation
+    hull, faces, _, caps = box()
+    hull = hull @ Rotation.from_euler('xyz', [.07, -.13, .2]).as_matrix().T
+    water, connectivity = field()
+    water[:, 2] = .08*water[:, 0]-.03*water[:, 1]
+    expected = waterline_segments(hull, faces, water, connectivity, artificial_faces=caps)
+    # Irrelevant triangles surround the hull on all three axes; adding them
+    # must preserve both coordinates and contact ordering, without remeshing.
+    distant = np.concatenate([water+100*sign*np.eye(3)[j]
+                              for j in range(3) for sign in (-1., 1.)])
+    distant_faces = np.concatenate([connectivity+(i+1)*len(water) for i in range(6)])
+    actual = waterline_segments(hull, faces, np.vstack((water, distant)),
+        np.vstack((connectivity, distant_faces)), artificial_faces=caps)
+    np.testing.assert_array_equal(actual, expected)
 
 
 def test_independent_waterline_preserves_full_rectangular_field_and_physical_hull():

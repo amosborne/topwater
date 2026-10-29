@@ -10,12 +10,27 @@ uv sync --locked
 uv run topwater --help
 ```
 
-The base installation supports input/output, sea generation, plotting and video
-rendering. The renderer uses the FFmpeg executable supplied by imageio-ffmpeg.
+The base installation supports the complete native solve and render workflow,
+including Capytaine 3.0.0. MATLAB and Simulink are not required. Video drawing
+uses native Skia CPU rasterization by default when GPU drawing is unavailable;
+no OpenGL/Vulkan driver or GPU emulation is required for this CPU path. Encoding
+uses the FFmpeg executable supplied by imageio-ffmpeg.
 
-## Simulation dependencies
+On Linux, install the Fontconfig and OpenGL shared libraries required by the
+Skia wheel; see [Skia installation](https://skia-python.github.io/skia-python/install.html).
+The CPU rasterizer does not create a GPU context.
 
-The supported simulation setup is MATLAB R2025b, matlabengine 25.2.2,
+For GPU reconstruction and video drawing, use `uv sync --locked --extra gpu` and
+`uv run --extra gpu topwater solve ...`. The optional package uses an installed
+float64-capable OpenCL GPU driver for reconstruction and WebGPU-compatible
+graphics drivers for drawing; see [GPU setup](gpu.md). These are independent:
+video drawing does not require OpenCL or double precision. Both stages select
+their native CPU path when optional GPU support is unavailable.
+
+## Optional WEC-Sim reference backend
+
+For explicit `topwater solve ... --solver=wecsim`, the supported setup is
+MATLAB R2025b, matlabengine 25.2.2,
 Capytaine 3.0.0 and licensed Simulink, Simscape and Simscape Multibody.
 Git must be available to verify the WEC-Sim revision.
 

@@ -1,0 +1,1 @@
+"""Hardware GPU drawing resources."""

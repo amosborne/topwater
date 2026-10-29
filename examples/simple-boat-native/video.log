@@ -1,0 +1,37 @@
+2026-10-29T15:57:12.467Z INFO render BEGIN directory=examples\simple-boat-native
+2026-10-29T15:57:12.532Z INFO render STAGE load self-contained result
+2026-10-29T15:57:13.993Z INFO render STAGE render and verify complete video
+2026-10-29T15:57:14.880Z INFO render render backend: {'vendor': 'AMD proprietary driver', 'architecture': '', 'device': 'AMD Radeon RX 9070 XT', 'description': '26.10.1 (LLPC)', 'stackgroup_min_size': 4, 'stackgroup_max_size': 128, 'vendor_id': 4098, 'device_id': 30032, 'adapter_type': 'DiscreteGPU', 'backend_type': 'Vulkan'}
+2026-10-29T15:57:15.280Z INFO render render progress: 1/1301 frames; elapsed=1.297s
+2026-10-29T15:57:15.917Z INFO render render progress: 50/1301 frames; elapsed=1.922s
+2026-10-29T15:57:16.575Z INFO render render progress: 100/1301 frames; elapsed=2.578s
+2026-10-29T15:57:17.279Z INFO render render progress: 150/1301 frames; elapsed=3.297s
+2026-10-29T15:57:18.003Z INFO render render progress: 200/1301 frames; elapsed=4.016s
+2026-10-29T15:57:18.870Z INFO render render progress: 250/1301 frames; elapsed=4.875s
+2026-10-29T15:57:20.063Z INFO render render progress: 300/1301 frames; elapsed=6.078s
+2026-10-29T15:57:21.329Z INFO render render progress: 350/1301 frames; elapsed=7.344s
+2026-10-29T15:57:22.688Z INFO render render progress: 400/1301 frames; elapsed=8.703s
+2026-10-29T15:57:23.839Z INFO render render progress: 450/1301 frames; elapsed=9.844s
+2026-10-29T15:57:25.043Z INFO render render progress: 500/1301 frames; elapsed=11.047s
+2026-10-29T15:57:26.234Z INFO render render progress: 550/1301 frames; elapsed=12.250s
+2026-10-29T15:57:27.285Z INFO render render progress: 600/1301 frames; elapsed=13.297s
+2026-10-29T15:57:28.380Z INFO render render progress: 650/1301 frames; elapsed=14.391s
+2026-10-29T15:57:29.608Z INFO render render progress: 700/1301 frames; elapsed=15.625s
+2026-10-29T15:57:30.577Z INFO render render progress: 750/1301 frames; elapsed=16.594s
+2026-10-29T15:57:31.514Z INFO render render progress: 800/1301 frames; elapsed=17.531s
+2026-10-29T15:57:32.472Z INFO render render progress: 850/1301 frames; elapsed=18.484s
+2026-10-29T15:57:33.472Z INFO render render progress: 900/1301 frames; elapsed=19.484s
+2026-10-29T15:57:34.515Z INFO render render progress: 950/1301 frames; elapsed=20.531s
+2026-10-29T15:57:35.579Z INFO render render progress: 1000/1301 frames; elapsed=21.594s
+2026-10-29T15:57:36.580Z INFO render render progress: 1050/1301 frames; elapsed=22.594s
+2026-10-29T15:57:37.644Z INFO render render progress: 1100/1301 frames; elapsed=23.656s
+2026-10-29T15:57:38.745Z INFO render render progress: 1150/1301 frames; elapsed=24.750s
+2026-10-29T15:57:39.886Z INFO render render progress: 1200/1301 frames; elapsed=25.891s
+2026-10-29T15:57:41.000Z INFO render render progress: 1250/1301 frames; elapsed=27.016s
+2026-10-29T15:57:41.733Z INFO render render progress: 1300/1301 frames; elapsed=27.750s
+2026-10-29T15:57:41.747Z INFO render render progress: 1301/1301 frames; elapsed=27.766s
+2026-10-29T15:57:43.359Z INFO render PUBLISHED examples\simple-boat-native\video.mp4
+2026-10-29T15:57:43.359Z INFO render VIDEO frames=1301 fps=10 size=800x800 source_end_s=130.000 encoded_duration_s=130.100 verified=true
+2026-10-29T15:57:43.359Z INFO render TIMING render preparation_s=0.109 setup_s=0.891 geometry_s=13.642 draw_s=4.783 encoder_start_s=0.016 encoder_send_s=7.980 encoder_close_s=0.468 verification_s=1.141 elapsed_s=29.375
+2026-10-29T15:57:43.359Z INFO render Wrote examples\simple-boat-native\video.mp4
+2026-10-29T15:57:43.360Z INFO render END status=success elapsed_s=30.891000 output_published=true warnings=0

@@ -1,0 +1,307 @@
+{
+  "package_directory": "C:\\Users\\alex\\Documents\\GitHub\\topwater\\src\\topwater",
+  "source_sha256": {
+    "__init__.py": "179efdd7d137ba6be0183e251509d8d04475bd79a0b44c6517c50317c5a12ea7",
+    "__main__.py": "482b8693e2fe6dbd732e3d7961e03827d3efa187bad11d29da188be580ebbeea",
+    "_capytaine_surface.py": "918ca50725a627cd7b97d9e0090b93d61a82c28d3d3efbd605e2646115d5151d",
+    "_clipping.py": "02ccba252dd0b171907ac71329c1a9adac3d72736b07b3f396dacdff387ead70",
+    "_triangulation.py": "880379cec0d52ed3bd296de945539fb4147ea49c4afb99fd7e3c39eb57ae8775",
+    "_validation.py": "a9726847a31a8bc15d176c53366634b3945e17c5b23d40a933ee51e4fb9462bf",
+    "_visualization_2d.py": "f478adbff1ac825124c948854384f81e9b23a22daf3cea8a5493e35c2dadd091",
+    "_visualization_geometry.py": "87d021f8af7771326497509fd6d949d38923d56bc6c7f79a07d1bcfa171f9182",
+    "_wecsim_setup.py": "bb8a6a8fb04e3b07b0b0ea9a878eeaf5cb51fdbc4ef67f85c5ee80b9db5d0b8a",
+    "_wecsim_spectral.py": "317c967c4fb78fe036110c9569a5c8fa8a136ce03cf779fc436c6677674ca43e",
+    "boat_generation.py": "37f349015204e68e4222b83ca3503aad54da7eb715827243f992323e6b1b457d",
+    "boat_geometry.py": "a1b12af191c391d0490f09d4cd3914d96fd8eeb9b3c0ec1aa2323c2cbf3611b2",
+    "cli.py": "82ebf3139f2a91524c55896feafacd5e5ae2c689453167c38e300846afed4491",
+    "command_log.py": "55c79b4b17d2eca86befc9c7947479ac9d106bef8f20a421bc98aef5ddc31482",
+    "constants.py": "ce9a057d759da2d691ffee4dc22716bdcde6900f0f13557fb62a37b04c9f281f",
+    "data/wecsim/build_workflow_model.m": "8feeead6ac82449481173a6139a4679a19622e54074e91eb1d4fdef1aa955e0f",
+    "data/wecsim/native_excitation_startup.m": "5c306141d2e4ae407790e173987473ee9a7e96519c896ce0f0c1e296edf81115",
+    "data/wecsim/native_spectral_excitation.m": "b2546b8b7d91a217c332fa49fb5215719b6b26d6dd0952d8bfd40c44e6255c30",
+    "data/wecsim/prepare_workflow_hydrodynamics.m": "38dd9a75e72eb3681f80c983dc0c781996452e2dec8c918c4db3617e4128e268",
+    "data/wecsim/run_workflow_case.m": "129f11a2c5d000a9c0d38e3b45344cd7eb8e10f7ff99c06206d2a5a983cef80c",
+    "data/wecsim/validate_workflow_hydrodynamics.m": "d6abeffb5ba7891395ea4cbe7ea6d67e1025e76cbfaa235f08bf5110fc2339be",
+    "data/wecsim/wecSimInputFile.m": "2280b90f028c8d01c79d77208f976364cdc79e3da379ee98ae5a3d960bcf340b",
+    "data/wecsim/WorkflowEngineGuard.m": "f21ddb588e0c4c0aa9ef53f1dc248b10cf85ce3df439916e6529564f10fa0073",
+    "frames.py": "d28ca56c843ca9175853a8fd7446801a105683d91f7fbc562c39f0d765e3dbb7",
+    "hydrostatics.py": "2badc70232a526efa2d4188d382d51dd91b198b6c11efb81eefb224fdca182d9",
+    "inputs.py": "411587772faaf880c98ce42ffcf6666e08e5412211f3b431e4faa08dcf8845c3",
+    "native/__init__.py": "ee18c366374cadef6d784612c2f4c6b01bf71d42b0b38e1d8cb61a477c40debe",
+    "native/bem_checks.py": "86a10c37f6c90c28a4c4b5d8ee1d94e0bd76a7512fa62bccd63140eaa98e18dd",
+    "native/capytaine.py": "db32b396ca70cd1c9d9949bf2ec64cda1711a362983896afc1d74b5b2837a2e6",
+    "native/cpu/__init__.py": "5b02a2bb7fd5b74559466ff37a82494fe0d80d05f98358c3ed280be7121544c1",
+    "native/cpu/backend.py": "16c9a842b63b5ce3a08bdeb0848b5a09c1a36eefba182fc7b9bf2bba931865df",
+    "native/cpu/fourier.py": "6ef9aede19718520f2923f51bf5da5330462cff389d689ab088d8f46682ed03d",
+    "native/cpu/potential.py": "253d0040da35ef01545c1405cb23f299a488a59bc3a84ddae2cc8273d6648b91",
+    "native/dynamics.py": "c2319d59f313bb839d167a33d8df79d00e947b0b8dee1d7a762001ec06cb7e63",
+    "native/excitation.py": "123c5c0aafbdd3ee78278c656f44fb118dd3de46713a4790c12168b49f152068",
+    "native/field_backend.py": "d137dd97b58e098e4e96c2652f489dc8893844fa6623ab2475167c1ea5828faa",
+    "native/fields.py": "703f17812a6a1aa52d1981b49fd350ccf1d2c40d9230b2f6b7eff746eeec93ef",
+    "native/fourier.py": "9ad4c2c522b265fe79d8752182f1c78645a3f5b734e6fb80bd4f2e44ffdedd6c",
+    "native/gpu/__init__.py": "ea2bf210e8205dfe3703254379c08fe2f8f87d1511599fcd5bdafadc092364bf",
+    "native/gpu/backend.py": "10fbbfd1b17f5b78e014bdb54073751c849788b6208ff6f0421599e74928de2b",
+    "native/gpu/fourier.cl": "91a4ccd0765958fdf96ba44388041589179d7e525472975ba39ccb6cc77cf0c6",
+    "native/gpu/fourier.py": "9d159a14cbe176b7c52456df90704fa7200e20c9eb4d6b49cc72806703b23881",
+    "native/gpu/memory.py": "b5ca53952f0dc690f266403238cd1877deaf8da9b9fcb88085864f54f40b2d36",
+    "native/gpu/potential.cl": "2cff705cc566a93a149c897b93b865c373cee7c8703bb8bfd8f451032a1345cc",
+    "native/gpu/potential.py": "ef93ff5c76541ec8f566c6aa9068a4f0c19bda3ec5c905b2f5b6abbec96132f5",
+    "native/influence.py": "d4e7d412bdf2a85a53b67ca60165ba1a5504e5aba2179310f672bb56e760daa7",
+    "native/packet_basis.py": "9551a9910e2224588557f8c394840cad4a78a0b1ee7e062837388b0169ebdd7d",
+    "native/radiation.py": "66020cd1d15272c6fb9b264fb8c9905d619e1b2e5f6fdfeef29a5aee1e010172",
+    "native/sampling.py": "53cd76130f05be32d1a94fae900cca39571c39aad046cce8518235b31817f9d2",
+    "native/settings.py": "bb3b162491f8ee747692606da397d7d1a4fd2133b904564bd275aa3f5d3bd7de",
+    "native/source_cache.py": "5a4ed4f2cb2b553a51928523884050f194939b3bb6858fea297561937cfb9da1",
+    "native/surface.py": "192b6d71ac9decedf03452c4e0b10a1e10fd3215729daf6f8bbf20c15641fef4",
+    "native/transfer.py": "c3a7d364fa18a0b976c437f4f5621c4523fdc2255adb901a29ff140183daf98c",
+    "native/workflow.py": "37f1d0136ea1d594e11458493720c3846598b5408101fd81dba264f54cfb8ac2",
+    "result_plot.py": "0e2418b47c4f763b5d307e3b5771419df5394b7f392e9de7065801709da674c3",
+    "result_render.py": "da47d045806702dc7ea1de0c317d65800e16ddf57e6f0b180799a96f7fccdff5",
+    "sea_states.py": "0ac2d422dc78a20d05cd7123724ba6f67b289145c38d701c8ba139cb5fa8854f",
+    "solve_outputs.py": "a226f6036fb924f4665a3dff71108312b041a602174ef5cd5ebd948bb7ddce4c",
+    "surface_geometry.py": "7a5a942257d789039961a7915e0883d9140ad11132cfe878b901c30721928e94",
+    "visualization.py": "1c6b64b8f4ae0ce5de04526c6a7247d2c85555183abafb49ba94c1d78e694212",
+    "wave_packets.py": "bccf4f3ca5fd76848a0d295b9b2b07c2bc7881b887ddb473b956770c19cc8e8d",
+    "wecsim_backend.py": "776a0f3fdbfb9430fac4f58fb1d19846a2dab94885aeaa12d465d147076b3509",
+    "workflow_data.py": "0250bcde24f96aeef5269ca2e588bf866f3bb2d14febde3fe89feb4221cbc051"
+  },
+  "dependencies": {
+    "topwater": "0.1.0.dev0",
+    "capytaine": "3.0.0",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "numba": "0.68.0",
+    "matplotlib": "3.11.2",
+    "pyopencl": "2026.1.4"
+  },
+  "defaults": {
+    "time_step_s": 0.01,
+    "fps": 10.0,
+    "packet_tolerance_m": 0.01,
+    "surface_spacing_m": 0.1875,
+    "surface_padding_beams": 1.0,
+    "radiation_memory_s": 10.0,
+    "radiation_kernel_nodes": 2401,
+    "coefficient_step_rad_s": 0.1,
+    "excitation_bandwidth_rad_s": 3.4,
+    "radiation_bandwidth_rad_s": 12.0,
+    "heading_step_deg": 15.0,
+    "surface_max_omega_rad_s": null,
+    "surface_omega_step_rad_s": 0.025,
+    "batch_points": null,
+    "cpu_workers": null
+  },
+  "directory": "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-solve-options-benchmark-r1vmlvcv",
+  "runs": [
+    {
+      "name": "default_cpu",
+      "arguments": [
+        "solve",
+        "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-solve-options-benchmark-r1vmlvcv\\default_cpu",
+        "100",
+        "--device",
+        "cpu"
+      ],
+      "complete_solve_seconds": 18.15190920000896,
+      "motion_samples": 13001,
+      "surface_samples": 1301,
+      "endpoint_s": 130.0,
+      "surface_interval_s": 0.1,
+      "view_bounds_xy_m": [
+        [
+          -7.722181781898964,
+          -6.796515581925916
+        ],
+        [
+          6.137572529980007,
+          7.0632387299530555
+        ]
+      ]
+    },
+    {
+      "name": "default_gpu",
+      "arguments": [
+        "solve",
+        "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-solve-options-benchmark-r1vmlvcv\\default_gpu",
+        "100",
+        "--device",
+        "gpu"
+      ],
+      "complete_solve_seconds": 10.924944200000027,
+      "motion_samples": 13001,
+      "surface_samples": 1301,
+      "endpoint_s": 130.0,
+      "surface_interval_s": 0.1,
+      "view_bounds_xy_m": [
+        [
+          -7.722181781898964,
+          -6.796515581925916
+        ],
+        [
+          6.137572529980007,
+          7.0632387299530555
+        ]
+      ],
+      "maximum_member_difference": {
+        "time_s": 0.0,
+        "position_m": 0.0,
+        "orientation_wxyz": 0.0,
+        "hull_vertices_m": 0.0,
+        "hull_faces": 0.0,
+        "cg_m": 0.0,
+        "surface_time_s": 0.0,
+        "surface_vertices_m": 1.3739009929736312e-15,
+        "surface_faces": 0.0,
+        "surface_vertex_offsets": 0.0,
+        "surface_face_offsets": 0.0
+      }
+    },
+    {
+      "name": "coarse_gpu",
+      "arguments": [
+        "solve",
+        "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-solve-options-benchmark-r1vmlvcv\\coarse_gpu",
+        "100.02",
+        "--device",
+        "gpu",
+        "--time-step",
+        ".02"
+      ],
+      "complete_solve_seconds": 16.143875000008848,
+      "motion_samples": 6502,
+      "surface_samples": 1302,
+      "endpoint_s": 130.02,
+      "surface_interval_s": 0.1,
+      "view_bounds_xy_m": [
+        [
+          -7.723136445459595,
+          -6.794352175425799
+        ],
+        [
+          6.133479292383949,
+          7.062263562417745
+        ]
+      ],
+      "movie_frames": 1301,
+      "movie_fps": 10.0,
+      "movie_last_time_s": 130.0
+    },
+    {
+      "name": "tight_gpu",
+      "arguments": [
+        "solve",
+        "C:\\Users\\alex\\AppData\\Local\\Temp\\topwater-solve-options-benchmark-r1vmlvcv\\tight_gpu",
+        "100.02",
+        "--device",
+        "gpu",
+        "--time-step",
+        ".005",
+        "--packet-tolerance",
+        ".005",
+        "--surface-spacing",
+        ".25"
+      ],
+      "complete_solve_seconds": 16.196340399998007,
+      "motion_samples": 26005,
+      "surface_samples": 1302,
+      "endpoint_s": 130.02,
+      "surface_interval_s": 0.1,
+      "view_bounds_xy_m": [
+        [
+          -7.722889291620324,
+          -6.792855875218201
+        ],
+        [
+          6.13511749398092,
+          7.065150910383043
+        ]
+      ],
+      "movie_frames": 1301,
+      "movie_fps": 10.0,
+      "movie_last_time_s": 130.0,
+      "complete_render_seconds": 42.49807860000874
+    }
+  ],
+  "custom_run_provenance": {
+    "package_directory": "C:\\Users\\alex\\Documents\\GitHub\\topwater\\src\\topwater",
+    "source_sha256": {
+      "__init__.py": "179efdd7d137ba6be0183e251509d8d04475bd79a0b44c6517c50317c5a12ea7",
+      "__main__.py": "482b8693e2fe6dbd732e3d7961e03827d3efa187bad11d29da188be580ebbeea",
+      "_capytaine_surface.py": "918ca50725a627cd7b97d9e0090b93d61a82c28d3d3efbd605e2646115d5151d",
+      "_clipping.py": "02ccba252dd0b171907ac71329c1a9adac3d72736b07b3f396dacdff387ead70",
+      "_triangulation.py": "880379cec0d52ed3bd296de945539fb4147ea49c4afb99fd7e3c39eb57ae8775",
+      "_validation.py": "a9726847a31a8bc15d176c53366634b3945e17c5b23d40a933ee51e4fb9462bf",
+      "_visualization_2d.py": "f478adbff1ac825124c948854384f81e9b23a22daf3cea8a5493e35c2dadd091",
+      "_visualization_geometry.py": "87d021f8af7771326497509fd6d949d38923d56bc6c7f79a07d1bcfa171f9182",
+      "_wecsim_setup.py": "bb8a6a8fb04e3b07b0b0ea9a878eeaf5cb51fdbc4ef67f85c5ee80b9db5d0b8a",
+      "_wecsim_spectral.py": "317c967c4fb78fe036110c9569a5c8fa8a136ce03cf779fc436c6677674ca43e",
+      "boat_generation.py": "37f349015204e68e4222b83ca3503aad54da7eb715827243f992323e6b1b457d",
+      "boat_geometry.py": "a1b12af191c391d0490f09d4cd3914d96fd8eeb9b3c0ec1aa2323c2cbf3611b2",
+      "cli.py": "82ebf3139f2a91524c55896feafacd5e5ae2c689453167c38e300846afed4491",
+      "command_log.py": "55c79b4b17d2eca86befc9c7947479ac9d106bef8f20a421bc98aef5ddc31482",
+      "constants.py": "ce9a057d759da2d691ffee4dc22716bdcde6900f0f13557fb62a37b04c9f281f",
+      "data/wecsim/build_workflow_model.m": "8feeead6ac82449481173a6139a4679a19622e54074e91eb1d4fdef1aa955e0f",
+      "data/wecsim/native_excitation_startup.m": "5c306141d2e4ae407790e173987473ee9a7e96519c896ce0f0c1e296edf81115",
+      "data/wecsim/native_spectral_excitation.m": "b2546b8b7d91a217c332fa49fb5215719b6b26d6dd0952d8bfd40c44e6255c30",
+      "data/wecsim/prepare_workflow_hydrodynamics.m": "38dd9a75e72eb3681f80c983dc0c781996452e2dec8c918c4db3617e4128e268",
+      "data/wecsim/run_workflow_case.m": "129f11a2c5d000a9c0d38e3b45344cd7eb8e10f7ff99c06206d2a5a983cef80c",
+      "data/wecsim/validate_workflow_hydrodynamics.m": "d6abeffb5ba7891395ea4cbe7ea6d67e1025e76cbfaa235f08bf5110fc2339be",
+      "data/wecsim/wecSimInputFile.m": "2280b90f028c8d01c79d77208f976364cdc79e3da379ee98ae5a3d960bcf340b",
+      "data/wecsim/WorkflowEngineGuard.m": "f21ddb588e0c4c0aa9ef53f1dc248b10cf85ce3df439916e6529564f10fa0073",
+      "frames.py": "d28ca56c843ca9175853a8fd7446801a105683d91f7fbc562c39f0d765e3dbb7",
+      "hydrostatics.py": "2badc70232a526efa2d4188d382d51dd91b198b6c11efb81eefb224fdca182d9",
+      "inputs.py": "411587772faaf880c98ce42ffcf6666e08e5412211f3b431e4faa08dcf8845c3",
+      "native/__init__.py": "3dcc41cd5dfb42616f2a879d6186332cc4399fbf1f300f31d84ea082bc0c15aa",
+      "native/bem_checks.py": "86a10c37f6c90c28a4c4b5d8ee1d94e0bd76a7512fa62bccd63140eaa98e18dd",
+      "native/capytaine.py": "db32b396ca70cd1c9d9949bf2ec64cda1711a362983896afc1d74b5b2837a2e6",
+      "native/cpu/__init__.py": "5b02a2bb7fd5b74559466ff37a82494fe0d80d05f98358c3ed280be7121544c1",
+      "native/cpu/backend.py": "16c9a842b63b5ce3a08bdeb0848b5a09c1a36eefba182fc7b9bf2bba931865df",
+      "native/cpu/fourier.py": "6ef9aede19718520f2923f51bf5da5330462cff389d689ab088d8f46682ed03d",
+      "native/cpu/potential.py": "253d0040da35ef01545c1405cb23f299a488a59bc3a84ddae2cc8273d6648b91",
+      "native/dynamics.py": "c2319d59f313bb839d167a33d8df79d00e947b0b8dee1d7a762001ec06cb7e63",
+      "native/excitation.py": "123c5c0aafbdd3ee78278c656f44fb118dd3de46713a4790c12168b49f152068",
+      "native/field_backend.py": "d137dd97b58e098e4e96c2652f489dc8893844fa6623ab2475167c1ea5828faa",
+      "native/fields.py": "703f17812a6a1aa52d1981b49fd350ccf1d2c40d9230b2f6b7eff746eeec93ef",
+      "native/fourier.py": "9ad4c2c522b265fe79d8752182f1c78645a3f5b734e6fb80bd4f2e44ffdedd6c",
+      "native/gpu/__init__.py": "ea2bf210e8205dfe3703254379c08fe2f8f87d1511599fcd5bdafadc092364bf",
+      "native/gpu/backend.py": "10fbbfd1b17f5b78e014bdb54073751c849788b6208ff6f0421599e74928de2b",
+      "native/gpu/fourier.cl": "91a4ccd0765958fdf96ba44388041589179d7e525472975ba39ccb6cc77cf0c6",
+      "native/gpu/fourier.py": "9d159a14cbe176b7c52456df90704fa7200e20c9eb4d6b49cc72806703b23881",
+      "native/gpu/memory.py": "b5ca53952f0dc690f266403238cd1877deaf8da9b9fcb88085864f54f40b2d36",
+      "native/gpu/potential.cl": "2cff705cc566a93a149c897b93b865c373cee7c8703bb8bfd8f451032a1345cc",
+      "native/gpu/potential.py": "ef93ff5c76541ec8f566c6aa9068a4f0c19bda3ec5c905b2f5b6abbec96132f5",
+      "native/influence.py": "d4e7d412bdf2a85a53b67ca60165ba1a5504e5aba2179310f672bb56e760daa7",
+      "native/packet_basis.py": "9551a9910e2224588557f8c394840cad4a78a0b1ee7e062837388b0169ebdd7d",
+      "native/radiation.py": "66020cd1d15272c6fb9b264fb8c9905d619e1b2e5f6fdfeef29a5aee1e010172",
+      "native/sampling.py": "53cd76130f05be32d1a94fae900cca39571c39aad046cce8518235b31817f9d2",
+      "native/settings.py": "bb3b162491f8ee747692606da397d7d1a4fd2133b904564bd275aa3f5d3bd7de",
+      "native/source_cache.py": "5a4ed4f2cb2b553a51928523884050f194939b3bb6858fea297561937cfb9da1",
+      "native/surface.py": "192b6d71ac9decedf03452c4e0b10a1e10fd3215729daf6f8bbf20c15641fef4",
+      "native/transfer.py": "c3a7d364fa18a0b976c437f4f5621c4523fdc2255adb901a29ff140183daf98c",
+      "native/workflow.py": "37f1d0136ea1d594e11458493720c3846598b5408101fd81dba264f54cfb8ac2",
+      "result_plot.py": "0e2418b47c4f763b5d307e3b5771419df5394b7f392e9de7065801709da674c3",
+      "result_render.py": "da47d045806702dc7ea1de0c317d65800e16ddf57e6f0b180799a96f7fccdff5",
+      "sea_states.py": "0ac2d422dc78a20d05cd7123724ba6f67b289145c38d701c8ba139cb5fa8854f",
+      "solve_outputs.py": "a226f6036fb924f4665a3dff71108312b041a602174ef5cd5ebd948bb7ddce4c",
+      "surface_geometry.py": "7a5a942257d789039961a7915e0883d9140ad11132cfe878b901c30721928e94",
+      "visualization.py": "1c6b64b8f4ae0ce5de04526c6a7247d2c85555183abafb49ba94c1d78e694212",
+      "wave_packets.py": "b266f19037db3f1390566f3d40a11899df5a7bd2e6d14330b61ff44ac39cead2",
+      "wecsim_backend.py": "776a0f3fdbfb9430fac4f58fb1d19846a2dab94885aeaa12d465d147076b3509",
+      "workflow_data.py": "0250bcde24f96aeef5269ca2e588bf866f3bb2d14febde3fe89feb4221cbc051"
+    },
+    "dependencies": {
+      "topwater": "0.1.0.dev0",
+      "capytaine": "3.0.0",
+      "numpy": "2.5.4",
+      "scipy": "1.18.1",
+      "numba": "0.68.0",
+      "matplotlib": "3.11.2",
+      "pyopencl": "2026.1.4"
+    }
+  },
+  "infeasible_packet_controls": {
+    "time_step_s": 0.02,
+    "packet_tolerance_m": 0.005,
+    "reason": "No available Fourier cutoff certifies this sea on this timestep; finer sampling succeeds."
+  }
+}

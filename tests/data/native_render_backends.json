@@ -1,0 +1,257 @@
+{
+  "case": "current simple-boat-native result; 130 s, 1301 frames, 10 fps, 800x800",
+  "timing_scope": "complete render_result including setup, scene drawing, encoding, full decode verification and publication; archive loading recorded separately",
+  "results": {
+    "cpu": {
+      "complete": true,
+      "frames": 1301,
+      "fps": 10.0,
+      "size": [
+        800,
+        800
+      ],
+      "source_end_s": 130.0,
+      "video_duration_s": 130.1,
+      "preparation_seconds": 0.09399999999732245,
+      "setup_seconds": 0.062000000005355105,
+      "geometry_seconds": 13.708000000013271,
+      "draw_seconds": 36.79200000000128,
+      "encoder_send_seconds": 0.45400000001245644,
+      "encoder_start_seconds": 0.014999999999417923,
+      "encoder_close_seconds": 0.375,
+      "verification_seconds": 1.1410000000032596,
+      "elapsed_s": 53.01600000000326,
+      "topology_changes": 0,
+      "ambiguous_euler_labels": false,
+      "validation_seconds": 0.3119999999762513,
+      "mask_path_seconds": 0.0,
+      "mask_seconds": 3.176999999996042,
+      "edge_seconds": 0.0,
+      "contact_seconds": 10.516000000017812,
+      "backend": "Skia",
+      "adapter": {
+        "device": "Skia native CPU rasterizer",
+        "adapter_type": "CPU",
+        "backend_type": "Skia"
+      },
+      "hud": {
+        "common_metres_per_pixel": 0.017248408926091776,
+        "gauge_metres_per_pixel": 0.017248408926091776,
+        "world_y_zero_fraction": 0.49041338734181916,
+        "gauge_zero_fraction": 0.49041338734181916,
+        "edge_ticks": {
+          "x": {
+            "major_world_m": [
+              -5.0,
+              0.0
+            ],
+            "major_step_m": 5.0,
+            "labelled_world_m": [
+              -5.0,
+              0.0
+            ],
+            "minor_world_m": [
+              -7.0,
+              -6.0,
+              -5.0,
+              -4.0,
+              -3.0,
+              -2.0,
+              -1.0,
+              0.0,
+              1.0,
+              2.0,
+              3.0,
+              4.0,
+              5.0,
+              6.0
+            ],
+            "minor_step_m": 1.0
+          },
+          "y": {
+            "major_world_m": [
+              -5.0,
+              0.0,
+              5.0
+            ],
+            "major_step_m": 5.0,
+            "labelled_world_m": [
+              -5.0,
+              0.0,
+              5.0
+            ],
+            "minor_world_m": [
+              -6.0,
+              -5.0,
+              -4.0,
+              -3.0,
+              -2.0,
+              -1.0,
+              0.0,
+              1.0,
+              2.0,
+              3.0,
+              4.0,
+              5.0,
+              6.0,
+              7.0
+            ],
+            "minor_step_m": 1.0
+          }
+        }
+      },
+      "archive_load_s": 1.4591468999860808,
+      "input_sha256": "ddc4002dee211767f030372077ba5cd088ea2372af05a8b384718c835463e22e"
+    },
+    "gpu": {
+      "complete": true,
+      "frames": 1301,
+      "fps": 10.0,
+      "size": [
+        800,
+        800
+      ],
+      "source_end_s": 130.0,
+      "video_duration_s": 130.1,
+      "preparation_seconds": 0.031000000002677552,
+      "setup_seconds": 0.9219999999913853,
+      "geometry_seconds": 13.914000000047963,
+      "draw_seconds": 4.272999999971944,
+      "encoder_send_seconds": 8.028999999980442,
+      "encoder_start_seconds": 0.0,
+      "encoder_close_seconds": 0.4850000000005821,
+      "verification_seconds": 1.1560000000026776,
+      "elapsed_s": 29.031000000002678,
+      "topology_changes": 0,
+      "ambiguous_euler_labels": false,
+      "validation_seconds": 0.22100000000500586,
+      "mask_path_seconds": 0.0,
+      "mask_seconds": 3.3760000000183936,
+      "edge_seconds": 0.0,
+      "contact_seconds": 10.506000000037602,
+      "backend": "Vulkan",
+      "adapter": {
+        "vendor": "AMD proprietary driver",
+        "architecture": "",
+        "device": "AMD Radeon RX 9070 XT",
+        "description": "26.10.1 (LLPC)",
+        "stackgroup_min_size": 4,
+        "stackgroup_max_size": 128,
+        "vendor_id": 4098,
+        "device_id": 30032,
+        "adapter_type": "DiscreteGPU",
+        "backend_type": "Vulkan"
+      },
+      "hud": {
+        "common_metres_per_pixel": 0.017248408926091776,
+        "gauge_metres_per_pixel": 0.017248408926091776,
+        "world_y_zero_fraction": 0.49041338734181916,
+        "gauge_zero_fraction": 0.49041338734181916,
+        "edge_ticks": {
+          "x": {
+            "major_world_m": [
+              -5.0,
+              0.0
+            ],
+            "major_step_m": 5.0,
+            "labelled_world_m": [
+              -5.0,
+              0.0
+            ],
+            "minor_world_m": [
+              -7.0,
+              -6.0,
+              -5.0,
+              -4.0,
+              -3.0,
+              -2.0,
+              -1.0,
+              0.0,
+              1.0,
+              2.0,
+              3.0,
+              4.0,
+              5.0,
+              6.0
+            ],
+            "minor_step_m": 1.0
+          },
+          "y": {
+            "major_world_m": [
+              -5.0,
+              0.0,
+              5.0
+            ],
+            "major_step_m": 5.0,
+            "labelled_world_m": [
+              -5.0,
+              0.0,
+              5.0
+            ],
+            "minor_world_m": [
+              -6.0,
+              -5.0,
+              -4.0,
+              -3.0,
+              -2.0,
+              -1.0,
+              0.0,
+              1.0,
+              2.0,
+              3.0,
+              4.0,
+              5.0,
+              6.0,
+              7.0
+            ],
+            "minor_step_m": 1.0
+          }
+        }
+      },
+      "archive_load_s": 1.4591468999860808,
+      "input_sha256": "ddc4002dee211767f030372077ba5cd088ea2372af05a8b384718c835463e22e"
+    }
+  },
+  "previous_same_case": {
+    "native_cpu_before_indexed_and_bgra_s": 79.06299999999464,
+    "gpu_before_indexed_s": 29.203000000008615
+  },
+  "decoded_frame_comparison": {
+    "start": {
+      "frame": 0,
+      "maximum_channel_difference": 87,
+      "mean_channel_difference": 0.22043020833333332,
+      "fraction_pixels_different": 0.087334375
+    },
+    "strong-roll": {
+      "frame": 435,
+      "maximum_channel_difference": 85,
+      "mean_channel_difference": 0.4272234375,
+      "fraction_pixels_different": 0.277090625
+    },
+    "end": {
+      "frame": 1300,
+      "maximum_channel_difference": 80,
+      "mean_channel_difference": 0.2240828125,
+      "fraction_pixels_different": 0.0861703125
+    }
+  },
+  "comparison_policy": "Different native CPU analytic coverage and GPU 4-sample coverage; quantized vertex colors and H264 encoding can differ. Scene geometry and physical contact are identical inputs; byte identity is not claimed.",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "python": "3.12.10",
+  "source_sha256": {
+    "src\\topwater\\render\\backend.py": "4d300e9ae10e8818c65f7fcbb0578ec9089fa36879364845362f9f358e6dec67",
+    "src\\topwater\\render\\coolwarm.npy": "34afabab2c4a7449e2d9473f7ebef07df53f2e6588f5948f409ec61d4540ab97",
+    "src\\topwater\\render\\frames.py": "7788e3ea5d07f3059fe90f5bf9cc366fb04269e0ea5e42bd024bd7217f0a59ff",
+    "src\\topwater\\render\\geometry.py": "1cee7ad4d203402bcfcfde6c8292f6a7b7a2aef075af854c13761b6255e0f17c",
+    "src\\topwater\\render\\hud.py": "c0600ce24cf61fef68fa44181778127bb4bc9331e3c751f4f06ce2ae66195d39",
+    "src\\topwater\\render\\mesh.py": "d86e5d58709219176d497112228eaab227017ce74f5d3f629840a5f0a47764ba",
+    "src\\topwater\\render\\scene.py": "e9b5cd08cf8d2519d2b29550b21a50294c7c7a316d11b69b4eb83534f0ded8de",
+    "src\\topwater\\render\\workflow.py": "4875005c43c1918dad45cd4b97525d9af75817d3ebb3dc56d3078d158d9dfb47",
+    "src\\topwater\\render\\__init__.py": "ef0aefbdf28da8ce030049d4c9b45994f28c496a354e5670e37ae6cbe88d3b70",
+    "src\\topwater\\render\\cpu\\backend.py": "d92a912da0d5c2499a64e38576389c11f12ad21804e38056929f5f57a55b605e",
+    "src\\topwater\\render\\cpu\\__init__.py": "9ca57b37ec9b69d8c6324b4291b1caa4ea56af57fe24cd248963e10377d4e03e",
+    "src\\topwater\\render\\gpu\\backend.py": "fe07fc521b4c95f67ca996f1e1a0cd01334e3b87be3fd1a8551aac8d80faedad",
+    "src\\topwater\\render\\gpu\\__init__.py": "d2be30d0cd7a28077e0aabe5303549c96adf86b0ac955a9273648dc5ed18855e"
+  }
+}

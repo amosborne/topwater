@@ -5,8 +5,11 @@ import numpy as np
 import pytest
 from scipy.spatial import ConvexHull
 
-from topwater.boat_generation import generate_boat, _geometry, _structure_moments
-from topwater.cli import main, parser
+from topwater.boat.generation import generate_boat
+from topwater.boat.generation import _geometry
+from topwater.boat.generation import _structure_moments
+from topwater.cli import main
+from topwater.cli import parser
 from topwater.workflow_data import Boat
 
 
@@ -92,7 +95,7 @@ def test_added_total_mass_goes_only_to_the_two_payload_points(standard):
 
 def test_public_example_uses_the_documented_generator_inputs():
     project = Path(__file__).resolve().parents[1]
-    saved = Boat.load(project/'examples/simple-boat/boat.npz')
+    saved = Boat.load(project/'examples/simple-boat-native/boat.npz')
     generated = generate_boat(7.3152, 2.7432, 20, 2500)
     for name in Boat.members:
         np.testing.assert_array_equal(getattr(saved, name), getattr(generated, name))
@@ -140,10 +143,10 @@ def test_failed_generation_preserves_previous_archive(tmp_path):
 
 
 def test_failed_flotation_preserves_previous_archive(tmp_path, monkeypatch):
-    from topwater import _wecsim_setup
+    from topwater.boat import hydrostatics as boat_hydrostatics
     def failure(body):
         raise ValueError('equilibrium is not stably restoring')
-    monkeypatch.setattr(_wecsim_setup, 'floating_equilibrium', failure)
+    monkeypatch.setattr(boat_hydrostatics, 'floating_equilibrium', failure)
     (tmp_path/'boat.npz').write_bytes(b'previous boat')
     assert main(['boat', str(tmp_path), *FLAGS]) == 2
     assert (tmp_path/'boat.npz').read_bytes() == b'previous boat'

@@ -2,7 +2,10 @@
 import numpy as np
 import pytest
 
-from topwater.wave_packets import TIME_STEP_S, _diagnostics, minimum_cutoff_packet, quintic_packet
+from topwater.solve.packets import TIME_STEP_S
+from topwater.solve.packets import _diagnostics
+from topwater.solve.packets import minimum_cutoff_packet
+from topwater.solve.packets import quintic_packet
 
 
 @pytest.mark.parametrize('phase', [0., np.pi/4, np.pi/2])
@@ -130,7 +133,7 @@ def test_invalid_inputs_fail_clearly(argument, value):
 
 
 def test_underresolved_and_impossible_certification_fail_clearly():
-    with pytest.raises(ValueError, match='Fixed 10ms grid'):
+    with pytest.raises(ValueError, match='Timestep grid'):
         quintic_packet(10., 0., 1., 1., 4.)
     with pytest.raises(ValueError, match='No cutoff through Nyquist'):
         minimum_cutoff_packet(.43, .7, 1., 1., 4.,
@@ -143,5 +146,5 @@ def test_underresolved_and_impossible_certification_fail_clearly():
 def test_timing_must_align_to_10ms_without_silent_rounding(argument, value):
     inputs = dict(frequency_hz=.43, phase_rad=.7, rest_s=1., ramp_s=1., dwell_s=4.)
     inputs[argument] = value
-    with pytest.raises(ValueError, match='align to the fixed 0.01s'):
+    with pytest.raises(ValueError, match='align to the 0.01s'):
         minimum_cutoff_packet(**inputs)

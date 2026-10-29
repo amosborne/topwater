@@ -21,7 +21,7 @@ import time
 _ANSI = re.compile(r'\x1b(?:\[[0-?]*[ -/]*[@-~]|\][^\x07\x1b]*(?:\x07|\x1b\\)|[@-_])')
 _WARNING = re.compile(
     r'^\s*(?:warning(?:\s+summary)?\s*(?:\[|:)|'
-    r'WEC-Sim applicability:|Surface numerical approximation:)', re.IGNORECASE)
+    r'Surface numerical approximation:)', re.IGNORECASE)
 _ERROR = re.compile(r'^\s*(?:ERROR|CRITICAL|FATAL)\b', re.IGNORECASE)
 # Capytaine's Rich handler renders a time column (or spaces when repeated),
 # a level column, and then the message. Match that header before inferring the

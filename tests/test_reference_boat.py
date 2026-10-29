@@ -4,8 +4,11 @@ from numpy.testing import assert_allclose
 import pytest
 from scipy.spatial.transform import Rotation
 
-from topwater import HullMesh, InitialState
-from topwater.hydrostatics import FloodingError, LossOfContactError, hydrostatics
+from topwater import HullMesh
+from topwater import InitialState
+from topwater.boat.hydrostatics import FloodingError
+from topwater.boat.hydrostatics import LossOfContactError
+from topwater.boat.hydrostatics import hydrostatics
 from .reference_boat import (
     BEAM, CHINE_BEAM_FRACTION, DEADRISE_DEGREES, DEPTH, GRAVITY, LENGTH,
     MOTOR_MASS, MOTOR_POSITION, PAYLOAD_MASS, PAYLOAD_POSITION, SHELL_MASS,

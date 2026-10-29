@@ -10,8 +10,10 @@ import numpy as np
 from scipy.optimize import brentq
 from scipy.spatial.transform import Rotation
 
-from topwater import HullMesh, InitialState, RigidBody
-from topwater.hydrostatics import equilibrate_heave
+from topwater import HullMesh
+from topwater import InitialState
+from topwater import RigidBody
+from topwater.boat.hydrostatics import equilibrate_heave
 
 
 LENGTH = 24*.3048

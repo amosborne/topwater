@@ -2,10 +2,10 @@
 import numpy as np
 import pytest
 
-from topwater._capytaine_surface import (
-    OfflineRadiationSettings, offline_radiation_response,
-    cosine_kernel, convolve_radiation,
-)
+from topwater.solve.settings import OfflineRadiationSettings
+from topwater.solve.fourier import offline_radiation_response
+from tests.reference_surface import cosine_kernel
+from tests.reference_surface import convolve_radiation
 
 
 def compact_case():
@@ -20,8 +20,9 @@ def compact_case():
     H[1:, 0, 0] = .7+.4j
     H[1:, 0, 4] = -.2-.6j
     H[:, 1] = 1.3*H[:, 0]
+    H[-1] = 0.
     settings = OfflineRadiationSettings(period_s=period, fft_dt_s=dt,
-        future_s=1., maximum_omega_rad_s=w[-2])
+        future_s=1.)
     return stamp, v, a, w, H, settings
 
 
@@ -61,7 +62,7 @@ def test_future_hermite_uses_final_acceleration_without_adding_direct_force():
     H[:] = 0
     H[:, 0, 0] = np.exp(-1j*w*.25)
     settings = OfflineRadiationSettings(period_s=8., fft_dt_s=1/32,
-        future_s=1., maximum_omega_rad_s=w[-1])
+        future_s=1.)
     v[:, 0] = t; a[:, 0] = 1.
     response, evidence = offline_radiation_response(w, H, t, v, a, settings=settings)
     u = .25
@@ -94,7 +95,7 @@ def test_offline_policy_rejects_unrepresented_knots_or_short_frequency_bank():
     with pytest.raises(ValueError, match='exactly represented'):
         offline_radiation_response(w, H, t, v, a,
             settings=OfflineRadiationSettings(period_s=8., fft_dt_s=1/16,
-                future_s=1., maximum_omega_rad_s=40.))
+                future_s=1.))
 
 
 @pytest.mark.parametrize('n', [9, 10, 13001])
@@ -103,13 +104,12 @@ def test_default_native_fft_has_no_resampling_padding_or_future(n):
     t = np.arange(n)*dt
     v = np.zeros((n, 6)); a = np.zeros_like(v)
     v[:, 0] = np.sin(2*np.pi*np.arange(n)/n)
-    w = np.array([0., 48.])
-    H = np.zeros((2, 1, 6), dtype=complex)
+    w = 2*np.pi*np.fft.rfftfreq(n,dt)
+    H = np.zeros((len(w), 1, 6), dtype=complex)
     H[:, 0, 0] = 1.
     actual, evidence = offline_radiation_response(w, H, t, v, a)
-    # Analytical DFT-bin sinusoid: for short records its first bin lies above
-    # the retained band, otherwise this identity transfer preserves it exactly.
-    expected = v[:, 0] if 2*np.pi/(n*dt) <= 48 else np.zeros(n)
+    # Identity transfer must preserve even short records above the old cutoff.
+    expected = v[:, 0]
     np.testing.assert_allclose(actual[:, 0], expected, rtol=0, atol=2e-14)
     assert evidence['n_fft'] == n
     assert evidence['fft_dt_s'] == pytest.approx(dt)
@@ -126,9 +126,9 @@ def test_native_fft_complex_phase_matches_direct_dft_for_odd_length():
     n, dt = 11, .01
     t = np.arange(n)*dt
     v = np.zeros((n, 6)); v[:, 0] = np.sin(2*np.pi*np.arange(n)/n)
-    w = np.array([0., np.pi/dt])
-    H = np.zeros((2, 1, 6), dtype=complex); H[:, 0, 0] = .7+.4j
-    settings = OfflineRadiationSettings(maximum_omega_rad_s=np.pi/dt)
+    w = 2*np.pi*np.fft.rfftfreq(n,dt)
+    H = np.zeros((len(w), 1, 6), dtype=complex); H[:, 0, 0] = .7+.4j
+    settings = OfflineRadiationSettings()
     actual, _ = offline_radiation_response(w, H, t, v, np.zeros_like(v), settings=settings)
     k = np.arange(1, (n+1)//2)
     angle = 2*np.pi*np.arange(n)[:, None]*k/n

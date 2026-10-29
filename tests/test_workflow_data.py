@@ -6,8 +6,10 @@ from zipfile import ZipFile
 import numpy as np
 import pytest
 
-from topwater.boat_geometry import physical_hull
-from topwater.workflow_data import Boat, Result, Sea
+from topwater.boat.geometry import physical_hull
+from topwater.workflow_data import Boat
+from topwater.workflow_data import Result
+from topwater.workflow_data import Sea
 
 
 def open_box():
@@ -84,7 +86,7 @@ def test_nonplanar_cap_preserves_collinear_rim_vertices():
 
 
 def test_partial_nonplanar_cap_has_distinct_backend_limitation():
-    from topwater.boat_geometry import UnsupportedClosureError
+    from topwater.boat.geometry import UnsupportedClosureError
     vertices, faces = open_box()
     with pytest.raises(UnsupportedClosureError, match='valid hull'):
         physical_hull(vertices, np.delete(faces, 3, axis=0))
@@ -132,7 +134,7 @@ def test_extra_opening_rejected():
 
 
 def test_geometric_overlap_and_t_junction_are_not_valid_adjacency():
-    from topwater.boat_geometry import _check_intersections
+    from topwater.boat.geometry import _check_intersections
     # Same support plane and distinct indices: one triangle lies within another.
     points = np.array([[0., 0., 0.], [2., 0., 0.], [0., 2., 0.],
                        [.2, .2, 0.], [.6, .2, 0.], [.2, .6, 0.]])

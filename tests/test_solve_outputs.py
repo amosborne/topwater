@@ -6,8 +6,9 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from topwater import solve_outputs
-from topwater.workflow_data import Result, Sea
+from topwater.solve import outputs as solve_outputs
+from topwater.workflow_data import Result
+from topwater.workflow_data import Sea
 from tests.test_workflow_data import result as tiny_result
 
 

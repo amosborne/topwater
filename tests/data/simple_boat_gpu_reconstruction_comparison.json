@@ -1,0 +1,38 @@
+{
+  "cpu_potential_only": {
+    "cpu_threads": 8,
+    "reconstruction_backend": "cpu-potential-only",
+    "reconstruction_seconds": 34.00509270000475,
+    "gpu_incident_and_diffraction": false,
+    "surface_vertex_max_abs_difference_m": 3.3306690738754696e-16,
+    "motion_max_position_difference_m": 0.0,
+    "surface_topology_identical": true
+  },
+  "gpu_radiation_only": {
+    "device": "gfx1201",
+    "cpu_threads": 1,
+    "reconstruction_backend": "gpu",
+    "reconstruction_seconds": 33.23809579999943,
+    "surface_vertex_max_abs_difference_m": 3.3306690738754696e-16,
+    "motion_max_position_difference_m": 0.0,
+    "surface_topology_identical": true
+  },
+  "gpu_all_fields": {
+    "device": "gfx1201",
+    "cpu_threads": 1,
+    "reconstruction_backend": "gpu",
+    "reconstruction_seconds": 13.464053799994872,
+    "gpu_incident_and_diffraction": true,
+    "surface_vertex_max_abs_difference_m": 8.881784197001252e-16,
+    "motion_max_position_difference_m": 0.0,
+    "surface_topology_identical": true
+  },
+  "warning_policy": "Production warning aggregation enabled for all three runs",
+  "source_sha256": {
+    "scripts\\prototype_gpu_surface.py": "8f8078fd596225533559616a8d782a7e3ff7af67d8462eb45ddba09a00ee3555",
+    "src\\topwater\\native\\gpu\\potential.py": "3f018aa857328d5de1c8cc8e8b7cdfcb4dc6b4b00149b7f3ed5eba2b2964a834",
+    "src\\topwater\\native\\gpu\\potential_cpu.py": "ac3e0e7431631acd72bcaf434aa6b74cc09c106b96b85f4bf221ceb5891297de",
+    "src\\topwater\\native\\gpu\\__init__.py": "eedfa70c7e532b0fda81bcb240bec7fcca67cc60a0a7acab950b43c34d97593a",
+    "src\\topwater\\native\\gpu\\potential.cl": "a6beba275e1047717cd19d7e5a72b4fdc0dd0db70d2d29a36bb9878db5771c13"
+  }
+}

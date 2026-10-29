@@ -3,6 +3,7 @@
 from importlib.metadata import metadata
 from pathlib import Path
 import tomllib
+from packaging.requirements import Requirement
 
 import topwater
 
@@ -20,6 +21,6 @@ def test_package_metadata():
     assert installed["License-Expression"] == project["license"]
     declared = installed.get_all("Requires-Dist", [])
     core = {item for item in declared if 'extra ==' not in item}
-    assert core == set(project["dependencies"])
+    assert {Requirement(item) for item in core} == {Requirement(item) for item in project["dependencies"]}
     assert set(installed.get_all("Provides-Extra", [])) == set(project.get("optional-dependencies", {}))
     assert topwater.__file__ is not None

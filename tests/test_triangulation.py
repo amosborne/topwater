@@ -3,7 +3,7 @@ import numpy as np
 
 
 def test_ear_triangulation_retains_collinear_vertices_and_concavity():
-    from topwater._triangulation import _ears
+    from topwater.geometry.triangulation import _ears
     v=np.array([[0.,0.,0.],[1,0,0],[2,0,0],[2,1,0],[1,1,0],[1,2,0],[0,2,0],[0,1,0]])
     triangles=np.array(_ears(range(len(v)),v,np.array([0.,0.,1.])))
     reversed_triangles=np.array(_ears(list(reversed(range(len(v)))),v,np.array([0.,0.,1.])))

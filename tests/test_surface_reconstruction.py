@@ -1,17 +1,28 @@
 """Analytical field-convention fixtures; no Capytaine or MATLAB jobs."""
 import numpy as np
 import pytest
+from topwater.solve import analysis, recovery
+from topwater.solve.evidence import SurfaceExportError
 from types import SimpleNamespace
 
-from topwater._capytaine_surface import (
-    SurfaceKernel, convolve_radiation, recover_transfer, synthesize_spectrum,
-    require_surface_readiness, cosine_kernel, exterior_field_points,
-    exterior_trace_points, incident_spectrum,
-    WaterGraphPartition, _regular_grid, _grid_p1_values, _delta_moments,
-    _waterline_distance_xy, _waterline_band_xy, _split_metric_polygon,
-    _clip_area_polygon, _polygon_area,
-)
-from topwater.surface_geometry import waterline_segments
+from tests.reference_surface import SurfaceKernel
+from tests.reference_surface import convolve_radiation
+from tests.reference_surface import recover_transfer
+from topwater.solve.surface import synthesize_spectrum
+from tests.reference_surface import cosine_kernel
+from topwater.solve.surface import exterior_field_points
+from topwater.solve.surface import exterior_trace_points
+from topwater.solve.surface import incident_spectrum
+from topwater.solve.analysis import WaterGraphPartition
+from topwater.solve.surface import _regular_grid
+from topwater.solve.analysis import _grid_p1_values
+from topwater.solve.analysis import _delta_moments
+from topwater.solve.analysis import _waterline_distance_xy
+from topwater.solve.analysis import _waterline_band_xy
+from topwater.solve.analysis import _split_metric_polygon
+from topwater.solve.analysis import _clip_area_polygon
+from topwater.solve.analysis import _polygon_area
+from topwater.geometry.waterline import waterline_segments
 
 
 def exponential_kernel(*, accepted=True):
@@ -84,7 +95,7 @@ def test_exterior_trace_maps_only_disturbance_queries():
 
 @pytest.mark.parametrize('beam', [.2, 10.])
 def test_reconstruction_uses_exact_mean_waterline_trace_for_every_beam(monkeypatch, beam):
-    import topwater._capytaine_surface as producer
+    import topwater.solve.surface as producer
     vertices = np.array([[-2., -beam/2, 0.], [2., -beam/2, 0.],
                          [2., beam/2, 0.], [-2., beam/2, 0.], [0., 0., -1.]])
     body = SimpleNamespace(mesh=SimpleNamespace(vertices=vertices), cg=np.zeros(3))
@@ -111,7 +122,8 @@ def test_reconstruction_uses_exact_mean_waterline_trace_for_every_beam(monkeypat
 
     monkeypatch.setattr(producer, 'exterior_trace_points', check_trace)
     with pytest.raises(TraceChecked):
-        producer.reconstruct_total_surface(hydro, setup, motion, stamp)
+        producer.reconstruct_total_surface(hydro, setup, motion, stamp,
+            field_backend=SimpleNamespace(radiation_chunk_points=128))
 
 
 def test_identified_acceleration_feedthrough_is_explicit_and_uses_actual_acceleration():
@@ -159,15 +171,6 @@ def test_weighted_spectrum_has_no_hidden_factor_or_conjugation():
     t = np.array([0., .17, 1.2])
     expected = sum((coefficients[i, 0]*np.exp(-1j*w*t)).real for i, w in enumerate(omega))
     np.testing.assert_allclose(synthesize_spectrum(omega, coefficients, t)[:, 0], expected, atol=1e-14)
-
-
-def test_total_surface_capability_checks_selected_policy(monkeypatch):
-    import topwater._capytaine_surface as producer
-    monkeypatch.setattr(producer, '_SURFACE_POLICY_ACCEPTED', False)
-    with pytest.raises(ValueError, match='reconstruction is unavailable'):
-        require_surface_readiness()
-    monkeypatch.setattr(producer, '_SURFACE_POLICY_ACCEPTED', True)
-    require_surface_readiness()
 
 
 def test_wet_set_area_is_geometric_and_owns_shared_vertical_prism_edges_once():
@@ -389,10 +392,9 @@ def calm_surface_case(monkeypatch, tmp_path):
     """Geometry/integration control with analytical zero fields, no BEM job."""
     from scipy.spatial.transform import Rotation
     from topwater.workflow_data import Boat
-    import topwater._capytaine_surface as producer
+    import topwater.solve.surface as producer
     # These analytical zero-field tests qualify geometry integration only.
     # They do not certify the production numerical surface policy.
-    monkeypatch.setattr(producer, '_SURFACE_POLICY_ACCEPTED', True)
 
     vertices = np.array([[-1., -1., 0.], [1., -1., 0.], [1., 1., 0.], [-1., 1., 0.],
                          [-1., -1., 1.], [1., -1., 1.], [1., 1., 1.], [-1., 1., 1.]])
@@ -425,7 +427,6 @@ def calm_surface_case(monkeypatch, tmp_path):
         assert kwargs['allow_boundary'] is True
         producer.exterior_field_points(h, xy, allow_boundary=True)
         return np.zeros((len(omega), len(xy), 6), dtype=complex)
-    monkeypatch.setattr(producer, 'radiation_velocity_transfer', radiation_fields)
 
     def diffraction_fields(h, tr, xy, *, return_forces=False, **kwargs):
         assert not return_forces, 'Production surface path must request fields without a force oracle'
@@ -435,6 +436,18 @@ def calm_surface_case(monkeypatch, tmp_path):
                 np.zeros((2, len(xy)), dtype=complex))
 
     monkeypatch.setattr(producer, 'combined_diffraction', diffraction_fields)
+    from topwater.solve.cpu.fourier import CPUFourierWorkspace as FourierWorkspace
+    from topwater.solve.transfer import Transfer
+    workspace = FourierWorkspace()
+    def transfer(h, xy, omega):
+        values = radiation_fields(h, xy, omega, allow_boundary=True)
+        return Transfer(values, values.shape)
+    backend = SimpleNamespace(radiation_chunk_points=128, fourier=workspace,
+        prepare_radiation=lambda stamp, output, omega, settings, count: settings.chunk_points,
+        radiation_transfer=transfer, prepend_zero=lambda value: value.with_zero(),
+        incident_spectrum=producer.incident_spectrum,
+        finish_radiation=workspace.reset_buffers, close=workspace.close)
+    monkeypatch.setattr('topwater.solve.field_backend.select_field_backend', lambda *args, **kw: backend)
     return SimpleNamespace(producer=producer, hydro=hydro, setup=setup, motion=motion, stamp=stamp,
         vertices=vertices, physical=physical, boat=boat, embedding=embedding, orientation=orientation)
 
@@ -483,7 +496,7 @@ def test_failed_frame_preserves_primary_context_and_replays_without_physics(calm
     case.setup.world_vertical_offset_m = world_vertical_offset
     case.setup.train.envelope_tolerance_m = .01
     producer = case.producer
-    original_metrics = producer._delta_moments
+    original_metrics = analysis._delta_moments
     original_error = ValueError('sentinel contact diagnostic failure')
 
     def failing_metrics(*args, **kwargs):
@@ -491,9 +504,9 @@ def test_failed_frame_preserves_primary_context_and_replays_without_physics(calm
 
     producer.reconstruct_total_surface(case.hydro, case.setup, case.motion, case.stamp)
     cache = case.hydro.directory.parent/'surface-recovery'/'completed-field.npz'
-    monkeypatch.setattr(producer, '_delta_moments', failing_metrics)
-    with pytest.raises(producer.SurfaceExportError, match='frame 0, time 0s') as caught:
-        producer.replay_surface_cache(cache, diagnostic_directory=tmp_path/'historical-analysis', analyze=True)
+    monkeypatch.setattr(analysis, '_delta_moments', failing_metrics)
+    with pytest.raises(SurfaceExportError, match='frame 0, time 0s') as caught:
+        recovery.replay_surface_cache(cache, diagnostic_directory=tmp_path/'historical-analysis', analyze=True)
     error = caught.value
     assert error.__cause__ is original_error
     assert error.stage == 'waterline-delta-metrics'
@@ -506,17 +519,16 @@ def test_failed_frame_preserves_primary_context_and_replays_without_physics(calm
     with np.load(error.recovery_directory/'failure-frame.npz', allow_pickle=False) as saved:
         assert saved['water_vertices_world_m'].shape[1] == 3
         assert saved['hull_faces'].shape[1] == 3
-        assert saved['reference_normal_native'].shape == (3,)
-    monkeypatch.setattr(producer, '_delta_moments', original_metrics)
+        assert 'reference_normal_native' not in saved.files
+    monkeypatch.setattr(analysis, '_delta_moments', original_metrics)
 
     def no_physics(*args, **kwargs):
         raise AssertionError('A geometry replay must not execute a field producer')
 
-    monkeypatch.setattr(producer, 'radiation_velocity_transfer', no_physics)
     monkeypatch.setattr(producer, 'combined_diffraction', no_physics)
     monkeypatch.setattr(producer, 'incident_spectrum', no_physics)
     output = tmp_path/'replayed-result.npz'
-    producer.replay_surface_cache(cache, diagnostic_directory=tmp_path/'replay-diagnostics', output_path=output)
+    recovery.replay_surface_cache(cache, diagnostic_directory=tmp_path/'replay-diagnostics', output_path=output)
     result = Result.load(output)
     np.testing.assert_array_equal(result.position_m, case.motion.position_m+[0., 0., world_vertical_offset])
     np.testing.assert_allclose(result.surface_vertices_m[:, 2], world_vertical_offset, atol=1e-14)
@@ -538,7 +550,8 @@ def test_failed_frame_preserves_primary_context_and_replays_without_physics(calm
 @pytest.mark.parametrize('bad_time', ['missing', 'empty', 'nonnumeric'])
 def test_malformed_completed_time_keeps_original_validation_cause(bad_time, tmp_path):
     import json
-    from topwater._capytaine_surface import SurfaceExportError, replay_surface_cache
+    from topwater.solve.evidence import SurfaceExportError
+    from topwater.solve.recovery import replay_surface_cache
     data = dict(cache_version=np.array(1), producer_source_sha256=np.array('diagnostic-fixture'))
     if bad_time == 'empty':
         data['surface_time_s'] = np.empty(0)
@@ -560,14 +573,14 @@ def test_malformed_completed_time_keeps_original_validation_cause(bad_time, tmp_
 
 @pytest.mark.parametrize('overtopping', [False, True])
 def test_normal_reconstruction_and_replay_skip_contact_and_statistics(calm_surface_case, monkeypatch, tmp_path, overtopping):
-    import topwater.surface_geometry as geometry
+    import topwater.geometry.waterline as geometry
     case = calm_surface_case
     def forbidden(*args, **kwargs):
         raise AssertionError('Normal solve/replay must not compute moving contact or surface statistics')
     for name in ('validate_opening_clearance', 'waterline_segments'):
         monkeypatch.setattr(geometry, name, forbidden)
-    monkeypatch.setattr(case.producer, '_delta_moments', forbidden)
-    monkeypatch.setattr(case.producer, 'WaterGraphPartition', forbidden)
+    monkeypatch.setattr(analysis, '_delta_moments', forbidden)
+    monkeypatch.setattr(analysis, 'WaterGraphPartition', forbidden)
     original_position = case.motion.position_m.copy()
     original_orientation = case.motion.orientation_wxyz.copy()
     if overtopping:
@@ -576,7 +589,7 @@ def test_normal_reconstruction_and_replay_skip_contact_and_statistics(calm_surfa
         original_position = case.motion.position_m.copy()
     packed = case.producer.reconstruct_total_surface(case.hydro, case.setup, case.motion, case.stamp)
     cache = case.hydro.directory.parent/'surface-recovery'/'completed-field.npz'
-    replayed = case.producer.replay_surface_cache(cache, diagnostic_directory=tmp_path/'simple-replay')
+    replayed = recovery.replay_surface_cache(cache, diagnostic_directory=tmp_path/'simple-replay')
     with np.load(cache, allow_pickle=False) as saved:
         for i in range(len(case.stamp)):
             start, end = packed[2][i:i+2]
@@ -603,7 +616,7 @@ def test_simple_surface_packing_rejects_malformed_data(invalid, tmp_path):
     if invalid == 'reversed': data['water_faces'] = np.array([[0, 2, 1]])
     with pytest.raises(ValueError):
         # Test raw validator directly: diagnostic wrapper changes only context.
-        from topwater._capytaine_surface import _export_completed_field_impl
+        from topwater.solve.recovery import _export_completed_field_impl
         _export_completed_field_impl(data, tmp_path, tmp_path/'unused.npz')
 
 
@@ -628,3 +641,25 @@ def test_explicit_boundary_trace_never_admits_strict_interior_queries():
         theta=np.array([0.]), C=np.array([[[0., 1.], [0., 0.]]]))
     np.testing.assert_allclose(incident_spectrum(train, actual)[1], np.exp(1j*.2*actual[:, 0]))
     assert incident_spectrum(train, actual)[1, 0] != incident_spectrum(train, mapped)[1, 0]
+
+
+def test_surface_sampling_is_ten_pixels_and_padding_changes_physical_extent(calm_surface_case):
+    from topwater.solve import SolveOptions
+    from topwater.solve.settings import VIDEO_SIZE_PX
+    from topwater.solve.settings import SURFACE_PIXELS_PER_SAMPLE
+    case = calm_surface_case
+    outputs = []
+    workspace = case.hydro.directory.parent
+    for padding in (.5, 1.):
+        options = SolveOptions(surface_padding_beams=padding)
+        case.hydro.directory = workspace/str(padding)/"hydrodynamics"
+        surface = case.producer.reconstruct_total_surface(case.hydro, case.setup, case.motion,
+            case.stamp, surface_options=options)
+        outputs.append(surface)
+        cache = case.hydro.directory.parent/'surface-recovery'/'completed-field.npz'
+        with np.load(cache, allow_pickle=False) as saved:
+            metres_per_pixel = np.diff(surface.view_bounds_xy_m[:, 0])[0]/VIDEO_SIZE_PX[0]
+            assert np.diff(saved['axis_x_m']).max()/metres_per_pixel <= SURFACE_PIXELS_PER_SAMPLE+1e-10
+            np.testing.assert_array_equal(saved['view_bounds_xy_m'], surface.view_bounds_xy_m)
+            np.testing.assert_array_equal(saved['video_size_px'], VIDEO_SIZE_PX)
+    assert np.ptp(outputs[1].view_bounds_xy_m[:, 0]) > np.ptp(outputs[0].view_bounds_xy_m[:, 0])

@@ -3,14 +3,17 @@
 ## Forces, motion and reconstruction
 
 Capytaine computes hydrodynamic responses about one fixed mean hull, including
-its equilibrium pose, draft and waterline. The maintained WEC-Sim fork computes
-wave excitation through its public spectral inputs and integrates all six body
-motions. Topwater supplies wave components and coefficients, not applied force
-histories. Full dry inertia, restoring coupling, added mass and radiation memory
+its equilibrium pose, draft and waterline. The native Python solver computes
+coherent wave excitation and integrates all six body motions. The optional
+maintained WEC-Sim backend uses the same physical wave components and coefficient
+policies. Full dry inertia, restoring coupling, added mass and radiation memory
 remain part of the model; no damping is fitted to force settling.
 Additional linear damping and quadratic viscous drag are explicitly zero,
 and Morison elements are disabled. Radiation damping remains active through
-the WEC-Sim convolution model; no empirical nonlinear roll damping is added.
+the ten-second convolution model; no empirical nonlinear roll damping is added.
+The native solver eliminates the WEC-Sim residual added-mass delay by solving
+the instantaneous coupled acceleration equations. Its RK4 stages use causal
+radiation quadrature and quaternion attitude. See [native details](native.md).
 
 Motion does not rebuild the mean-hull hydrodynamics. After motion, Topwater
 reconstructs incident, diffracted and radiated water elevation without feedback
@@ -69,20 +72,18 @@ The packaged catalog contains nine observed Southern California spectra from
 NOAA NDBC station 46086. Its JSON retains source URLs/hashes and observed record
 identities. Synthetic frequencies, directions and uniform random phases realize
 the measured spectrum; they do not replay the original measured elevation history.
-Observed support is 0.03-0.495 Hz. When a beam is supplied, the deep-water generator
-rejects positive-energy bands above 0.6 Hz or with wavelengths shorter than twice
-that beam; it does not crop or renormalize an incompatible observation. CLI sea
-generation does not supply a boat beam. Solve checks the incoming carriers against
-the actual boat's operating envelope.
+Observed support is 0.03-0.495 Hz. Generation and replay preserve the full
+observed spectrum and measured band energies. No frequency/boat-size screen,
+physical-validity warning, or spectrum clipping is applied.
 
-Solve constructs finite quintic packets at 10 ms sampling. It retains DC and
+Solve constructs finite quintic packets at the selected timestep (default 10 ms). It retains DC and
 conjugate Fourier pairs and searches the first certified eligible cutoff at or
 above the carrier. The only packet search criterion is absolute exceedance of
-the target envelope, with a shared 0.01 m origin budget allocated by carrier
+the target envelope, with a shared origin budget (`--packet-tolerance`, default 0.01 m) allocated by carrier
 amplitude. This is not a dwell-waveform-fit or whole-hull calmness certificate.
 Equal frequency/heading components combine coherently. Each sideband keeps its
-heading and uses its own dispersion. Generated sidebands can exceed the original
-carrier operating band; warnings and coefficient coverage do not prove mesh accuracy.
+heading and uses its own dispersion. Generated sidebands retain genuine coefficient coverage. Capytaine checks mesh
+resolution and irregular frequencies once at the start of the solve.
 
 Packet DC is a constant sea-level offset. Computational BEM geometry and stiffness
 stay fixed. Native initial heave supplies its restoring load, and the offset is
@@ -90,7 +91,7 @@ added once to exported physical motion and water elevation.
 
 ## Surface policy
 
-Radiation uses the original saved 10 ms velocities and their complete complex
+Radiation uses the original saved motion velocities (default 10 ms) and their complete complex
 transfer response, with one unpadded FFT and no oversampling or invented future.
 This finite periodic construction has no general causality or wraparound guarantee.
 
@@ -115,11 +116,5 @@ audits check implementation consistency; they are not physical-error bounds.
 An earlier 60 s case had a selected-model numerical elevation difference plus
 reference uncertainty of 5.784 mm under a stated high-frequency response envelope.
 That historical bound does NOT qualify the current 130 s packet or other inputs.
-The published standard-boat run reports large departures from linear restoring
-and intervals where its diagnostic hull has no contact with the mean reference
-sea. This diagnostic does not determine contact with the moving wave surface.
-Read the retained warnings before interpreting the resulting motion. Calm
-endpoints alone would not establish calm rest intervals or numerical accuracy.
-
 Physical validity is left to user interpretation of these assumptions and the
 computed results. No automated physical qualification or CI merge gate is imposed.

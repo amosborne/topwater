@@ -1,0 +1,147 @@
+{
+  "case": "examples/simple-boat",
+  "dwell_s": 100.0,
+  "rest_s": 10.0,
+  "ramp_s": 5.0,
+  "motion_samples": 13001,
+  "surface_frames": 1626,
+  "complete_solve_seconds": {
+    "cpu": 162.72350200000074,
+    "gpu": 26.233179900002142,
+    "locked_gpu": 20.932589900003222,
+    "initial_profile": 38.92329069999687,
+    "optimized_profile": 28.927113499994448
+  },
+  "isolated_wheel_speedup": 6.2029651998074185,
+  "comparisons": {
+    "cpu": {
+      "motion_identical": true,
+      "surface_topology_identical": true,
+      "max_surface_vertex_difference_m": 0.0
+    },
+    "gpu": {
+      "motion_identical": true,
+      "surface_topology_identical": true,
+      "max_surface_vertex_difference_m": 1.1102230246251565e-15
+    },
+    "locked_gpu": {
+      "motion_identical": true,
+      "surface_topology_identical": true,
+      "max_surface_vertex_difference_m": 1.1102230246251565e-15
+    }
+  },
+  "cpu_path_source_unchanged_since_isolated_test": true,
+  "measurements": {
+    "cpu": {
+      "directory": "topwater-profile-yifc6nuq",
+      "profiled": false,
+      "python": "3.12.10",
+      "dependencies": {
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "numba": "0.68.1",
+        "matplotlib": "3.11.2"
+      }
+    },
+    "gpu": {
+      "directory": "topwater-profile-mnohlgwc",
+      "profiled": false,
+      "python": "3.12.10",
+      "dependencies": {
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "numba": "0.68.1",
+        "matplotlib": "3.11.2"
+      }
+    },
+    "locked_gpu": {
+      "directory": "topwater-profile-9bt0mlbq",
+      "profiled": false,
+      "python": "3.12.10",
+      "dependencies": {
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "numba": "0.68.0",
+        "matplotlib": "3.11.2"
+      }
+    },
+    "initial_profile": {
+      "directory": "topwater-profile-3u2leus3",
+      "profiled": true,
+      "python": "3.12.10",
+      "dependencies": {
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "numba": "0.68.0",
+        "matplotlib": "3.11.2"
+      }
+    },
+    "optimized_profile": {
+      "directory": "topwater-profile-do8ga0sy",
+      "profiled": true,
+      "python": "3.12.10",
+      "dependencies": {
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "numba": "0.68.0",
+        "matplotlib": "3.11.2"
+      }
+    }
+  },
+  "scope": "Complete solve including output publication; no rendering; isolated wheel environments contain no MATLAB; CPU wheel contains no PyOpenCL",
+  "final_gpu_source_sha256": {
+    "src/topwater/__init__.py": "179efdd7d137ba6be0183e251509d8d04475bd79a0b44c6517c50317c5a12ea7",
+    "src/topwater/__main__.py": "482b8693e2fe6dbd732e3d7961e03827d3efa187bad11d29da188be580ebbeea",
+    "src/topwater/_capytaine_surface.py": "31d06e36fb5e408f14ac0f4dddaba9f0cff97cb381633b10bc9a9d0c32db84fa",
+    "src/topwater/_clipping.py": "02ccba252dd0b171907ac71329c1a9adac3d72736b07b3f396dacdff387ead70",
+    "src/topwater/_triangulation.py": "880379cec0d52ed3bd296de945539fb4147ea49c4afb99fd7e3c39eb57ae8775",
+    "src/topwater/_validation.py": "a9726847a31a8bc15d176c53366634b3945e17c5b23d40a933ee51e4fb9462bf",
+    "src/topwater/_visualization_2d.py": "f478adbff1ac825124c948854384f81e9b23a22daf3cea8a5493e35c2dadd091",
+    "src/topwater/_visualization_geometry.py": "87d021f8af7771326497509fd6d949d38923d56bc6c7f79a07d1bcfa171f9182",
+    "src/topwater/_wecsim_setup.py": "f5bcb7a57c3f3406c8ff9dc2b2515fbd518d0667ee24c5c84beacbb8932f1880",
+    "src/topwater/_wecsim_spectral.py": "317c967c4fb78fe036110c9569a5c8fa8a136ce03cf779fc436c6677674ca43e",
+    "src/topwater/boat_generation.py": "37f349015204e68e4222b83ca3503aad54da7eb715827243f992323e6b1b457d",
+    "src/topwater/boat_geometry.py": "a1b12af191c391d0490f09d4cd3914d96fd8eeb9b3c0ec1aa2323c2cbf3611b2",
+    "src/topwater/cli.py": "ab440f89dea2f88da52dc1a48bc2cb9783c21ab67141e9f90c17d8343949a52d",
+    "src/topwater/command_log.py": "1d4067f1848941436997491ae7339c89549920eb5727b36ddbe3c7a1b9e0b4ac",
+    "src/topwater/constants.py": "ce9a057d759da2d691ffee4dc22716bdcde6900f0f13557fb62a37b04c9f281f",
+    "src/topwater/data/wecsim/build_workflow_model.m": "8feeead6ac82449481173a6139a4679a19622e54074e91eb1d4fdef1aa955e0f",
+    "src/topwater/data/wecsim/native_excitation_startup.m": "5c306141d2e4ae407790e173987473ee9a7e96519c896ce0f0c1e296edf81115",
+    "src/topwater/data/wecsim/native_spectral_excitation.m": "b2546b8b7d91a217c332fa49fb5215719b6b26d6dd0952d8bfd40c44e6255c30",
+    "src/topwater/data/wecsim/prepare_workflow_hydrodynamics.m": "38dd9a75e72eb3681f80c983dc0c781996452e2dec8c918c4db3617e4128e268",
+    "src/topwater/data/wecsim/run_workflow_case.m": "129f11a2c5d000a9c0d38e3b45344cd7eb8e10f7ff99c06206d2a5a983cef80c",
+    "src/topwater/data/wecsim/validate_workflow_hydrodynamics.m": "d6abeffb5ba7891395ea4cbe7ea6d67e1025e76cbfaa235f08bf5110fc2339be",
+    "src/topwater/data/wecsim/wecSimInputFile.m": "2280b90f028c8d01c79d77208f976364cdc79e3da379ee98ae5a3d960bcf340b",
+    "src/topwater/data/wecsim/WorkflowEngineGuard.m": "f21ddb588e0c4c0aa9ef53f1dc248b10cf85ce3df439916e6529564f10fa0073",
+    "src/topwater/frames.py": "d28ca56c843ca9175853a8fd7446801a105683d91f7fbc562c39f0d765e3dbb7",
+    "src/topwater/hydrostatics.py": "2badc70232a526efa2d4188d382d51dd91b198b6c11efb81eefb224fdca182d9",
+    "src/topwater/inputs.py": "411587772faaf880c98ce42ffcf6666e08e5412211f3b431e4faa08dcf8845c3",
+    "src/topwater/native/__init__.py": "952ef46bdbc17cfc55fad2cb63d7a43d822317eadca7d3b3548c2ed879c1ecc6",
+    "src/topwater/native/dynamics.py": "93b98faf6948b63dc5eb3e7f51bffd133099a2126bf119921d54066346dbb4ae",
+    "src/topwater/native/excitation.py": "123c5c0aafbdd3ee78278c656f44fb118dd3de46713a4790c12168b49f152068",
+    "src/topwater/native/field_backend.py": "3369101757ae19a9ef87db90b7930451dd2880ec0076bfccbde02abf2f75596e",
+    "src/topwater/native/gpu/__init__.py": "ea2bf210e8205dfe3703254379c08fe2f8f87d1511599fcd5bdafadc092364bf",
+    "src/topwater/native/gpu/backend.py": "24f4311fb422ac324aeedf6f2b51af4d9ac3833e6c68f94b395e238da34e0eb5",
+    "src/topwater/native/gpu/potential.cl": "695e1bddccc2d08b15ff445e292fb52ded9992f29adff24b16ca22639e398d82",
+    "src/topwater/native/gpu/potential.py": "0a19b67ba54cd23d3bc2f54e50f957b16b79e8cdbbce41e9aac41360d5fb3ef8",
+    "src/topwater/native/gpu/potential_cpu.py": "ac3e0e7431631acd72bcaf434aa6b74cc09c106b96b85f4bf221ceb5891297de",
+    "src/topwater/native/influence.py": "d4e7d412bdf2a85a53b67ca60165ba1a5504e5aba2179310f672bb56e760daa7",
+    "src/topwater/native/packet_basis.py": "9551a9910e2224588557f8c394840cad4a78a0b1ee7e062837388b0169ebdd7d",
+    "src/topwater/native/radiation.py": "f3ce9a567520d5d319d2d8d7d6a629028b43698540df6e32104f8b15f9488194",
+    "src/topwater/native/workflow.py": "0b3f72441d6ebd62b7a52c231424391a8b8c2d67bbee073d3dc3cb21e5aea415",
+    "src/topwater/result_plot.py": "0e2418b47c4f763b5d307e3b5771419df5394b7f392e9de7065801709da674c3",
+    "src/topwater/result_render.py": "b43a96c3bc75ae87375eec33e33cbfbd8ab20948f09d017697b7692f99658590",
+    "src/topwater/sea_states.py": "0ac2d422dc78a20d05cd7123724ba6f67b289145c38d701c8ba139cb5fa8854f",
+    "src/topwater/solve_outputs.py": "a226f6036fb924f4665a3dff71108312b041a602174ef5cd5ebd948bb7ddce4c",
+    "src/topwater/surface_geometry.py": "7a5a942257d789039961a7915e0883d9140ad11132cfe878b901c30721928e94",
+    "src/topwater/visualization.py": "1c6b64b8f4ae0ce5de04526c6a7247d2c85555183abafb49ba94c1d78e694212",
+    "src/topwater/wave_packets.py": "1a02c4de35006e3b8a42d27ada2dff6315564cd09d23c6e27fd4874c71a9b2ac",
+    "src/topwater/wecsim_backend.py": "46dd8cbb39375073f8f0f242abfa2a8d10fd77452c74e753d411828f7f19615b",
+    "src/topwater/workflow_data.py": "6547e06ab603aab59e9a686c8c0a6bed3382147cf4154ddb5fac99f0fc9a763f"
+  },
+  "input_sha256": {
+    "boat.npz": "b414b887891f2d3bc765073e6217c88fa77d25c382fe3334638bcf4e0e7d7a65",
+    "sea.npz": "9ba25ba3258e6c4cec47847ef4e52f69b4af84fae55dc07ba471708ee3951ce4"
+  },
+  "tests_passed": 494
+}
